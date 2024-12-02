@@ -169,6 +169,41 @@ if ($params ["act"] == "load"){
             ,$coinType, $myID, $coinAmount, 3, $reason, $myID
         );
     }
+}elseif ($params ["act"] == "transferCoin"){
+
+    $transferAmount = $_POST['transferAmount'];
+    $receiverId = $_POST['receiverId'];
+
+    $usersCoin = $db->query('SELECT `sL4U` AS "L4U", `sNickName` AS "nickName" FROM `staffs` WHERE `sID` = ?;', $myID)->fetchArray();
+    if ($transferAmount <= $usersCoin['L4U']) {
+
+        $usersCoinNew["L4U"] = $usersCoin['L4U']-$transferAmount;
+        $usersName = $usersCoin['nickName'];
+
+        $receiverCoin = $db->query('SELECT `sL4U` AS "L4U", `sNickName` AS "nickName" FROM `staffs` WHERE `sID` = ?;', $receiverId)->fetchArray();
+        $receiverCoinNew["L4U"] = $receiverCoin['L4U']+$transferAmount;
+        $receiverName = $receiverCoin['nickName'];
+
+        $update = $db->query('UPDATE `staffs` SET `sL4U` = ? WHERE `sID` = ?;',$usersCoinNew["L4U"], $myID);
+        $update = $db->query('UPDATE `staffs` SET `sL4U` = ? WHERE `sID` = ?;',$receiverCoinNew["L4U"], $receiverId);
+        $params["affected"] = $update->affectedRows();
+
+        $coinAmount = $transferAmount;
+        $coinType = 1;
+
+        $reason = $db->query('SELECT `name` FROM `spendtype` WHERE `id` = ?;', '2')->fetchArray();
+        $newReason = $usersName ." ". $reason['name'] ." ". $transferAmount . " to ". $receiverName;
+
+        $insert = $db->query('INSERT INTO `CoinLogs`(`coinType`, `ownerID`, `amount`, `giveBy`, `reason`, `activityID`) VALUES (?,?,?,?,?,?);'
+            ,$coinType, $myID, $coinAmount, $myID, $newReason, 10
+        );
+        $insert = $db->query('INSERT INTO `SpendLogs` (`coinType`, `ownerID`, `amount`, `spendType`, `reason`, `spendBy`) VALUES (?,?,?,?,?,?);'
+            ,$coinType, $myID, $coinAmount, 4, $newReason, $myID
+        );
+    } else {
+        $params["error"] = "จำนวนเหรียญไม่เพียงพอ";
+    }
+
 }elseif ($params ["act"] == "redeem"){
 
     $redeemType = $_POST['redeemType'];

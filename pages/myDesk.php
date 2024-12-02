@@ -701,7 +701,7 @@ $loginID = $_SESSION['id'];
                                             ?>
                                             <div class="form-group mr-2">
                                                 <select id="receiver" name="receiver" class="form-control">
-                                                <option value="" disabled selected>-- Please choose a receiver --</option>
+                                                <option value="receiver" disabled selected>-- Please choose a receiver --</option>
                                                     <?php foreach ($receiver as $row) { ?>
                                                         <option value="<?php echo $row['sID']; ?>">
                                                             <?php echo $no.': '.$row['sNickName'] . ' ( ' . nameOnly($row['sName']) . ' )'; ?>
@@ -714,15 +714,11 @@ $loginID = $_SESSION['id'];
                                             </div>
 
                                             <?php if("#transferAmount" <= $coins["l4u"]){ ?>
-                                                <a type="button" class="btn btn-primary" onclick="TransferCoin(transferAmount,receivers)">Transfer</a>
+                                                <a href="#" type="button" class="btn btn-primary" onclick="transferCoin()" class="btn btn-primary" >Transfer</a>
                                             <?php }else{ ?>
                                                 <a href="#" class="btn btn-secondary disabled" >Not enough</a>
                                             <?php }//else ?>
 
-                                            <div class="form-group form-inline">
-                                                <label for="transferAmount" class="mr-sm-2">AMOUNT</label>
-                                                <input id="transferAmount" onchange="" class="form-control w-25 mr-sm-2" type="number" value="" value="<?php echo $coins["l4u"]; ?>" step="1" min="0" max="<?php echo $coins["l4u"]; ?>">
-                                                <span class="mr-sm-2">>></span>
                                             <?php
                                         } else { ?>
                                             <div class="form-group">
@@ -1062,14 +1058,45 @@ $loginID = $_SESSION['id'];
 
     }//calConvert
 
-    const TransferCoin = () => {
+    const transferCoin = () => {
         let confirmText = "Are you sure you want to Transfer your coin? \nYou can't undo this action.";
         let ans = confirm(confirmText);
 
-        const transferAmount = $('#transferAmount');
-        const receiver = $('#receivers');
+        const transferAmount = $('#transferAmount').val();
+        const receiverId = $('#receiver').find(":selected").val();
 
-    }
+        if (ans){
+            let params = {
+                act: "transferCoin",
+                transferAmount: transferAmount,
+                receiverId: receiverId
+            };
+
+            console.log(params);
+
+            const reqAjax = $.ajax({
+                url: "assets/php/actionCoin.php",
+                method: "POST",
+                async: false,
+                cache: false,
+                dataType: "json",
+                data: params,
+            });
+
+            reqAjax.done(function (res) {
+                console.log(res);
+                if (res.error === undefined){location.reload();}
+                else {alert(res.error);}
+                //location.reload();
+            });
+
+            reqAjax.fail(function (xhr, status, error) {
+                console.log("ajax request fail!!");
+                console.log(status + ": " + error);
+            });
+        }
+
+    }//transferCoin
 
     const makeRedeem = (spend, type) => {
         let confirmText = "Are you sure you want to redeem your "+spend+" coins? \nYou cannot undo this action.";
@@ -1103,7 +1130,8 @@ $loginID = $_SESSION['id'];
                 console.log(status + ": " + error);
             });
         }
-    }
+
+    }//makeRedeem
 </script>
 <?php
 function showDate($data){
