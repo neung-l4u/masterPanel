@@ -89,7 +89,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist
 
 # Gatsby files
 .cache/
@@ -128,3 +128,16 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+/assets/db/initDB.php
+/pages/examples
+/modules/mini/logs
+/modules/signup/assets/db/initDB.php
+/modules/signup/cgi-bin
+/modules/templates/assets/img/Res1/old/Res1Home.ai
+/modules/voucher/assets/AiFiles
+/modules/voucher/phpInfo.php
+/modules/templates/assets/db/initDB.php
+/modules/testAjax/assets/db/initDB.php
+/modules/templates/upload
+
