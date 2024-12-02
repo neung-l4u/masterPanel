@@ -102,4 +102,14 @@ switch ($menuPage){
         $datatable["show"] = "false";
         $datatable["src"] = "";
         break;
+    case "myProfile":
+        $showPage = "myProfile.php";
+        $activeMenu["lv1"] = "myProfile";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $datatable2["show"] = "false";
+        $datatable2["src"] = "";
+        $datatable["showDatatableStats"] = "false";
+        break;
 }

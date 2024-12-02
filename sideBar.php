@@ -18,11 +18,11 @@ include ('assets/api/checkSession.php');
         <div class="user-panel mt-3 pb-3 mb-3 d-flex justify-content-between">
             <div class="d-flex">
                 <div class="image">
-                    <img src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>" class="img-circle elevation-2" alt="User Image">
+                    <a href="main.php?p=myProfile"><img src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>" class="img-circle elevation-2" alt="User Image"></a>
                 </div>
                 <div class="info">
-                    <a href="#" class="d-block"><?php echo $_SESSION['name']; ?></a>
-                    <a href="#" class="d-block"><?php echo $_SESSION['levelName']; ?></a>
+                    <a href="main.php?p=myProfile" class="d-block"><?php echo $_SESSION['name']; ?></a>
+                    <a href="main.php?p=myProfile" class="d-block"><?php echo $_SESSION['levelName']; ?></a>
 
                     <div class="d-block d-flex justify-content-between">
                         <span class="text-warning font-weight-bold">L4U : </span>
@@ -58,6 +58,12 @@ include ('assets/api/checkSession.php');
                     <a href="main.php?p=myDesk" class="nav-link <?php echo $activeMenu["lv1"] == "myDesk" ? "active":""; ?>">
                         <svg class="nav-icon mr-2" height="1.5em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"  fill="<?php echo $activeMenu["lv1"] == "myDesk" ? "#FB8500":"#a7acb6"; ?>"/></svg>
                         <p>My Desk</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="main.php?p=myProfile" class="nav-link <?php echo $activeMenu["lv1"] == "myProfile" ? "active":""; ?>">
+                        <svg class="nav-icon mr-2" height="1.5em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 512 512"><path d="M96 0C60.7 0 32 28.7 32 64l0 384c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-384c0-35.3-28.7-64-64-64L96 0zM208 288l64 0c44.2 0 80 35.8 80 80c0 8.8-7.2 16-16 16l-192 0c-8.8 0-16-7.2-16-16c0-44.2 35.8-80 80-80zm-32-96a64 64 0 1 1 128 0 64 64 0 1 1 -128 0zM512 80c0-8.8-7.2-16-16-16s-16 7.2-16 16l0 64c0 8.8 7.2 16 16 16s16-7.2 16-16l0-64zM496 192c-8.8 0-16 7.2-16 16l0 64c0 8.8 7.2 16 16 16s16-7.2 16-16l0-64c0-8.8-7.2-16-16-16zm16 144c0-8.8-7.2-16-16-16s-16 7.2-16 16l0 64c0 8.8 7.2 16 16 16s16-7.2 16-16l0-64z"  fill="<?php echo $activeMenu["lv1"] == "myProfile" ? "#FB8500":"#a7acb6"; ?>"/></svg>
+                        <p>My Profile</p>
                     </a>
                 </li>
                 <?php if($userLevel<=3){ ?>
