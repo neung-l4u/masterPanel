@@ -1,0 +1,8 @@
+label{
+    font-weight: bold;
+    margin-right:20px;
+    margin-left:20px;
+}
+.none{
+    display:none; !important;
+}

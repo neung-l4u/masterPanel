@@ -1,0 +1,383 @@
+{
+  "AU": {
+    "label": "Australia",
+    "state": [
+      {
+        "code": "CT",
+        "text": "Australian Capital Territory"
+      },
+      {
+        "code": "NS",
+        "text": "New South Wales"
+      },
+      {
+        "code": "NT",
+        "text": "Northern Territory"
+      },
+      {
+        "code": "QL",
+        "text": "Queensland"
+      },
+      {
+        "code": "SA",
+        "text": "South Australia"
+      },
+      {
+        "code": "TS",
+        "text": "Tasmania"
+      },
+      {
+        "code": "VI",
+        "text": "Victoria"
+      },
+      {
+        "code": "WA",
+        "text": "Western Australia"
+      }
+    ]
+  },
+  "NZ": {
+    "label": "New Zealand",
+    "state": [
+      {
+        "code": "NZ-BOP",
+        "text": "Bay of Plenty"
+      },
+      {
+        "code": "NZ-AUK",
+        "text": "Auckland"
+      },
+      {
+        "code": "NZ-GIS",
+        "text": "Gisborne"
+      },
+      {
+        "code": "NZ-CAN",
+        "text": "Canterbury"
+      },
+      {
+        "code": "NZ-MBH",
+        "text": "Marlborough"
+      },
+      {
+        "code": "NZ-HKB",
+        "text": "Hawke's Bay"
+      },
+      {
+        "code": "NZ-NSN",
+        "text": "Nelson"
+      },
+      {
+        "code": "NZ-MWT",
+        "text": "Manawatu-Wanganui"
+      },
+      {
+        "code": "NZ-OTA",
+        "text": "Otago"
+      },
+      {
+        "code": "NZ-NTL",
+        "text": "Northland"
+      },
+      {
+        "code": "NZ-TAS",
+        "text": "Tasman"
+      },
+      {
+        "code": "NZ-STL",
+        "text": "Southland"
+      },
+      {
+        "code": "NZ-WKO",
+        "text": "Waikato"
+      },
+      {
+        "code": "NZ-TKI",
+        "text": "Taranaki"
+      },
+      {
+        "code": "NZ-WTC",
+        "text": "West Coast"
+      },
+      {
+        "code": "NZ-WGN",
+        "text": "Wellington"
+      }
+    ]
+  },
+  "GB": {
+    "label": "United Kingdom",
+    "state": [
+      {
+        "code": "ENG",
+        "text": "England"
+      },
+      {
+        "code": "SCO",
+        "text": "Scotland"
+      },
+      {
+        "code": "WAL",
+        "text": "Wales"
+      },
+      {
+        "code": "NIR",
+        "text": "Northern Ireland"
+      }
+    ]
+  },
+  "CA": {
+    "label": "Canada",
+    "state": [
+      {
+        "code": "ON",
+        "text": "Ontario"
+      },
+      {
+        "code": "QC",
+        "text": "Quebec"
+      },
+      {
+        "code": "NS",
+        "text": "Nova Scotia"
+      },
+      {
+        "code": "NB",
+        "text": "New Brunswick"
+      },
+      {
+        "code": "MB",
+        "text": "Manitoba"
+      },
+      {
+        "code": "BC",
+        "text": "British Columbia"
+      },
+      {
+        "code": "PE",
+        "text": "Prince Edward Island"
+      },
+      {
+        "code": "SK",
+        "text": "Saskatchewan"
+      },
+      {
+        "code": "AB",
+        "text": "Alberta"
+      },
+      {
+        "code": "NL",
+        "text": "Newfoundland and Labrador "
+      }
+    ]
+  },
+  "US": {
+    "label": "United States",
+    "state": [
+      {
+        "code": "AL",
+        "text": "Alabama"
+      },
+      {
+        "code": "AK",
+        "text": "Alaska"
+      },
+      {
+        "code": "AZ",
+        "text": "Arizona"
+      },
+      {
+        "code": "AR",
+        "text": "Arkansas"
+      },
+      {
+        "code": "CA",
+        "text": "California"
+      },
+      {
+        "code": "CO",
+        "text": "Colorado"
+      },
+      {
+        "code": "CT",
+        "text": "Connecticut"
+      },
+      {
+        "code": "DE",
+        "text": "Delaware"
+      },
+      {
+        "code": "DC",
+        "text": "District of Columbia"
+      },
+      {
+        "code": "FL",
+        "text": "Florida"
+      },
+      {
+        "code": "GA",
+        "text": "Georgia"
+      },
+      {
+        "code": "HI",
+        "text": "Hawaii"
+      },
+      {
+        "code": "ID",
+        "text": "Idaho"
+      },
+      {
+        "code": "IL",
+        "text": "Illinois"
+      },
+      {
+        "code": "IN",
+        "text": "Indiana"
+      },
+      {
+        "code": "IA",
+        "text": "Iowa"
+      },
+      {
+        "code": "KS",
+        "text": "Kansas"
+      },
+      {
+        "code": "KY",
+        "text": "Kentucky"
+      },
+      {
+        "code": "LA",
+        "text": "Louisiana"
+      },
+      {
+        "code": "MD",
+        "text": "Maryland"
+      },
+      {
+        "code": "MA",
+        "text": "Massachusetts"
+      },
+      {
+        "code": "ME",
+        "text": "Maine"
+      },
+      {
+        "code": "MI",
+        "text": "Michigan"
+      },
+      {
+        "code": "MS",
+        "text": "Mississippi"
+      },
+      {
+        "code": "MO",
+        "text": "Missouri"
+      },
+      {
+        "code": "MN",
+        "text": "Minnesota"
+      },
+      {
+        "code": "MT",
+        "text": "Montana"
+      },
+      {
+        "code": "NE",
+        "text": "Nebraska"
+      },
+      {
+        "code": "NV",
+        "text": "Nevada"
+      },
+      {
+        "code": "NH",
+        "text": "New Hampshire"
+      },
+      {
+        "code": "NJ",
+        "text": "New Jersey"
+      },
+      {
+        "code": "NM",
+        "text": "New Mexico"
+      },
+      {
+        "code": "NY",
+        "text": "New York"
+      },
+      {
+        "code": "NC",
+        "text": "North Carolina"
+      },
+      {
+        "code": "ND",
+        "text": "North Dakota"
+      },
+      {
+        "code": "OH",
+        "text": "Ohio"
+      },
+      {
+        "code": "OK",
+        "text": "Oklahoma"
+      },
+      {
+        "code": "OR",
+        "text": "Oregon"
+      },
+      {
+        "code": "PA",
+        "text": "Pennsylvania"
+      },
+      {
+        "code": "RI",
+        "text": "Rhode Island"
+      },
+      {
+        "code": "SC",
+        "text": "South Carolina"
+      },
+      {
+        "code": "SD",
+        "text": "South Dakota"
+      },
+      {
+        "code": "TN",
+        "text": "Tennessee"
+      },
+      {
+        "code": "TX",
+        "text": "Texas"
+      },
+      {
+        "code": "UT",
+        "text": "Utah"
+      },
+      {
+        "code": "VA",
+        "text": "Virginia"
+      },
+      {
+        "code": "VT",
+        "text": "Vermont"
+      },
+      {
+        "code": "WA",
+        "text": "Washington"
+      },
+      {
+        "code": "WV",
+        "text": "West Virginia"
+      },
+      {
+        "code": "WI",
+        "text": "Wisconsin"
+      },
+      {
+        "code": "WY",
+        "text": "Wyoming"
+      }
+    ]
+  }
+}

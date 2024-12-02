@@ -1,0 +1,20 @@
+li.active a:link, form a:link {
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+}
+
+/* visited link */
+li.active a:visited, form a:visited {
+    color: white;
+}
+
+/* mouse over link */
+li.active a:hover, form a:hover {
+    color: red;
+}
+
+/* selected link */
+li.active a:active, form a:active {
+    color: blue;
+}

@@ -1,0 +1,65 @@
+div#placeCoinStat{
+    width: 80%;
+    margin: auto;
+}
+
+div#placeTeamsStat{
+    width: 80%;
+    margin: auto;
+}
+div.user_card{
+    width: 20rem;
+    cursor: pointer;
+    border-radius: 2%;
+}
+
+img.profile-coin-img{
+    height: 8rem;
+    width: 8rem;
+    border: #ACACAC solid 1px;
+    border-radius: 50%;
+}
+
+.user_name{
+    width: 9rem;
+    font-weight: bold;
+    color:#6E9FC0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user_name_full{
+    font-weight: bold;
+    color:#6E9FC0;
+}
+.user_team{
+
+}
+.coin_l4u, .coin_ceo{
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+.coin_l4u_big, .coin_ceo_big{
+    font-size: 1.5rem;
+}
+.card_stat{
+    width: 30%;
+}
+div#coinHistory{
+    border: #EEEEEE 1px solid;
+    border-radius: 4%;
+    height: 5rem;
+    overflow-y: auto;
+}
+
+div#coinHistory li{
+    color: #ACACAC;
+    font-size: small;
+    display: list-item;
+    list-style-type: "+ ";
+}
+
+div#coinHistory li:hover{
+    background-color: rgba(230, 230, 230, 0.7);
+}

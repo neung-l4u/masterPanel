@@ -1,0 +1,58 @@
+/* Style Button */
+.btn-primary {
+  justify-content: center;
+}
+
+.container {
+  position: relative;
+  left: calc((100vw - 100%) / 2);
+}
+
+/* Style the form */
+.container-box {
+  background-color: #ffffff;
+  padding: 40px;
+  min-width: 300px;
+}
+
+/* Style the input fields */
+input {
+  padding: 10px;
+  width: 100%;
+  font-size: 17px;
+  font-family: Raleway;
+  border: 1px solid #aaaaaa;
+}
+
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+  background-color: #ffdddd;
+}
+
+/* Hide all steps by default: */
+.tab {
+  width: 100%;
+  display: none;
+}
+
+.form-control {
+  margin: 0 0 20px 0;
+}
+
+.btn-file {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #ced4da;
+}
+
+.form-group {
+  padding: 30px;
+}
+
+.input-group {
+  margin-bottom: 30px;
+}
+
+.as-console-wrapper {
+  display: none !important;
+}
