@@ -49,10 +49,10 @@ $loginID = $_SESSION['id'];
 
                             <ul class="list-group list-group-unbordered mb-3">
                                 <li class="list-group-item">
-                                    <b>L4U</b> <a class="float-right"><?php echo number_format($coins['l4u'],2); ?></a>
+                                    <b><i class="fas fa-coins"></i> L4U</b> <a class="float-right"><?php echo number_format($coins['l4u'],2); ?></a>
                                 </li>
                                 <li class="list-group-item">
-                                    <b>CEO</b> <a class="float-right"><?php echo number_format($coins['ceo'],2); ?></a>
+                                    <b><i class="fas fa-coins"></i> CEO</b> <a class="float-right"><?php echo number_format($coins['ceo'],2); ?></a>
                                 </li>
                             </ul>
 
@@ -117,31 +117,56 @@ $loginID = $_SESSION['id'];
                 <div class="col-md-9">
                     <div class="card">
                         <div class="card-header p-2">
+                            <?php
+                            $logs = $db->query('SELECT CL.`id`, CT.`name` AS "coin", CL.`ownerID`, CL.`amount`, ST.`sNickName` AS "nick",ST.`sName` AS "from", ST.`sPic` AS "pic", CL.`reason`, CL.`giveOn`, CL.`lastUpdate`, CL.`activityID`, CA.`aName` 
+                                                        FROM `CoinLogs` CL, `staffs` ST, `CoinType` CT, `CoinActivities` CA 
+                                                        WHERE CL.`ownerID`= ? AND CL.`status` = ? AND CL.`giveBy` = ST.`sID` AND CL.`coinType` = `CT`.`id` AND CL.`activityID` = CA.`aID`
+                                                        ORDER BY CL.`giveOn` DESC;'
+                                , $loginID, 1)->fetchAll();
+                            ?>
                             <ul class="nav nav-pills">
-                                <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Activity</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="#activity" data-toggle="tab">
+                                        <i class="fas fa-list"></i> Activity (<?php echo number_format(count($logs)); ?> items)
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#settings" data-toggle="tab">
+                                        <i class="fas fa-edit"></i> Settings
+                                    </a>
+                                </li>
                             </ul>
                         </div><!-- /.card-header -->
                         <div class="card-body">
                             <div class="tab-content">
-                                <div class="active tab-pane" id="activity">
+                                <div class="active tab-pane" id="activity" style="max-height: 700px; overflow-y: scroll;">
+                                    <?php
+                                    if (count($logs)>=1) {
+                                        $i = count($logs);
+                                        foreach ($logs as $row) {
+                                            ?>
                                     <!-- Post -->
                                     <div class="post">
                                         <div class="user-block">
                                             <img class="img-circle img-bordered-sm" src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>" alt="user image">
                                             <span class="username">
-                                              <a href="#">Activity name</a>
+                                              <a href="#">item <?php echo $i; ?>: <?php echo $row['aName']; ?></a>
                                               <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
                                             </span>
-                                            <span class="description">by who? - 7:30 PM today</span>
+                                            <span class="description">by <?php echo $row['nick']; ?> - <?php echo showDate($row['giveOn']); ?></span>
                                         </div>
                                         <!-- /.user-block -->
                                         <p class="text-muted">
-                                            -- The Activity list will show here soon. --
+                                            <?php echo $row['reason']; ?>
                                         </p>
 
                                     </div>
                                     <!-- /.post -->
+                                            <?php
+                                            $i--;
+                                        }//foreach
+                                    }//if
+                                    ?>
 
                                 </div>
                                 <!-- /.tab-pane -->
@@ -245,3 +270,8 @@ $loginID = $_SESSION['id'];
         }//else
     }//cmdSubmit
 </script>
+<?php
+function showDate($data){
+    return date( "d/m/Y (H:i)", strtotime($data));
+}
+?>

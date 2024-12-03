@@ -85,9 +85,16 @@ $loginID = $_SESSION['id'];
                 <!-- DIRECT CHAT -->
                 <div class="card direct-chat direct-chat-warning">
                     <div class="card-header">
-                        <h3 class="card-title">History of receiving coins</h3>
+                        <h3 class="card-title">History of receiving coins (Last 30 days)</h3>
+                        <?php
+                        $logs = $db->query('SELECT CL.`id`, CT.`name` AS "coin", CL.`ownerID`, CL.`amount`, ST.`sNickName` AS "nick",ST.`sName` AS "from", ST.`sPic` AS "pic", CL.`reason`, CL.`giveOn`, CL.`lastUpdate`, CL.`activityID`  
+                                FROM `CoinLogs` CL, `staffs` ST, `CoinType` CT
+                                WHERE CL.`ownerID`= ? AND CL.`status` = ? AND CL.`giveBy` = ST.`sID` AND CL.`coinType` = `CT`.`id` AND CL.`giveOn` >= DATE_ADD(LAST_DAY(DATE_SUB(NOW(), INTERVAL 2 MONTH)), INTERVAL 1 DAY) 
+                                ORDER BY CL.`giveOn` DESC LIMIT 0,5;'
+                            , $loginID, 1)->fetchAll();
+                        ?>
                         <div class="card-tools">
-                            <span title="3 New Messages" class="badge badge-warning">3</span>
+                            <span title="<?php echo count($logs); ?> New Coin" class="badge badge-warning"><?php echo count($logs); ?> news</span>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fas fa-minus"></i>
                             </button>
@@ -105,16 +112,10 @@ $loginID = $_SESSION['id'];
                         <div class="direct-chat-messages">
                             <!-- Message. Default to the left -->
                             <?php
-                            $logs = $db->query('SELECT CL.`id`, CT.`name` AS "coin", CL.`ownerID`, CL.`amount`, ST.`sNickName` AS "nick",ST.`sName` AS "from", ST.`sPic` AS "pic", CL.`reason`, CL.`giveOn`, CL.`lastUpdate` 
-                                FROM `CoinLogs` CL, `staffs` ST, `CoinType` CT
-                                WHERE CL.`ownerID`= ? AND CL.`status` = ? AND CL.`giveBy` = ST.`sID` AND CL.`coinType` = `CT`.`id`
-                                ORDER BY CL.`giveOn` DESC;'
-                                , $loginID, 1)->fetchAll();
-
                             if (count($logs)>=1){
                                 foreach ($logs as $row){
                                     $params['logs'][] = $row['amount'].' '.$row['coin'].' By '.$row['from'].' - '.showDate($row['giveOn']).' # '.$row['reason'];
-                                ?>
+                                    ?>
                                 <div class="direct-chat-msg">
                                     <div class="direct-chat-infos clearfix">
                                         <span class="direct-chat-name float-left">By : <?php echo showName($row['nick'],$row['from']); ?></span>
@@ -1130,11 +1131,7 @@ function l4uToCEO($param){
 }
 
 function nameOnly($fullName){
-    //$fullName  = "Sorasak Thanomsap";l
-
     $tmp = explode(" ", $fullName);
-    //$tmp[0] = "Sorasak";
-    //$tmp[1] = "Thanomsap";
     return $tmp[0];
 }//nameOnly
 ?>
