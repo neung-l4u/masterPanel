@@ -454,7 +454,7 @@ $loginID = $_SESSION['id'];
                 <div class="modal-body">
                     <div class="card">
                         <div class="card-body d-flex flex-column">
-                            <h4>How it works?</h4>
+                            <h4>How does it work?</h4>
                                 <ol>
                                     <li>Only L4U coins are available for redemption. If you have CEO coins, please use the <span class="text-success font-weight-bold">coin convert menu</span>.</li>
                                     <li>The redeem button becomes available once you have enough coins to redeem.</li>
@@ -558,7 +558,7 @@ $loginID = $_SESSION['id'];
                 <div class="modal-body">
                     <div class="card">
                         <div class="card-body d-flex flex-column">
-                            <h4>How it works?</h4>
+                            <h4>How does it work?</h4>
                             <ol>
                                 <li>Coins used to pay for items or special privileges in the system  <span class="text-success font-weight-bold">must be L4U coins only</span>.</li>
                                 <li>You can freely exchange coins between L4U and CEO.</li>
@@ -649,10 +649,10 @@ $loginID = $_SESSION['id'];
                 <div class="modal-body">
                     <div class="card">
                             <div class="card-body d-flex flex-column">
-                                <h4>How it works?</h4>
+                                <h4>How does it work?</h4>
                                 <ol>
-                                    <li><span class="text-success font-weight-bold">Transferred coin must be L4U coins only</span>.</li>
-                                    <li>bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.</li>
+                                    <li>Transferred coin must be <span class="text-success font-weight-bold">L4U coins only</span>.</li>
+                                    <li>You cannot undo this action.</li>
                                 </ol>
                                 <div>
                                     <h5>Your coin : </h5>
@@ -754,13 +754,14 @@ $loginID = $_SESSION['id'];
                     <div class="card">
                         <div class="card-body d-flex flex-column">
                             <div>
-                            <h4>How it works?</h4>
+                            <h4>How does it work?</h4>
                                 <ol>
                                     <li>Only L4U coins are available for redemption. If you have CEO coins, please use the <span class="text-success font-weight-bold">coin convert menu</span>.</li>
                                     <li>The redeem button becomes available once you have enough coins to redeem.</li>
                                     <li>Please make an exchange transaction before the 20th of every month.</li>
                                     <li>If you make an exchange transaction after the 21st of the month, it will be carried over to the next month.</li>
-                                    <li>The redeemed money will be credited to your account along with your salary. </li>
+                                    <li>The value of the gift exchanged will be adjusted based on current economic conditions.</li>
+                                    <li>Admin will contact you for gift delivery details.</li>
                                 </ol>
                             <div>
                                 <h5>Your coin : </h5>
@@ -868,71 +869,6 @@ $loginID = $_SESSION['id'];
 
     const formSave = () => {
         console.log('form save');
-
-        /*const formAction = $("#formAction");
-        const typeID = $("#typeID");
-        const year = $("#year");
-        const month = $("#month");
-        const typeExpense = $("#typeExpense");
-        const totalBkkOffice = $("#totalBkkOffice");
-        const totalTHOperation = $("#totalTHOperation");
-        const totalCEOLiving = $("#totalCEOLiving");
-        const datepicker = $("#datepicker");
-        const inputNickName = $("#inputNickName");
-        const inputName = $("#inputName");
-        const inputTeam = $("#inputTeam");
-        const inputStatus = $("#inputStatus");
-
-        let values = 0;
-        switch (typeID.val()){
-            case "formEmployee":
-                values = 0;
-                break;
-            case "formBkkExpense":
-                values = totalBkkOffice.val();
-                break;
-            case "formCEOLiving":
-                values = totalCEOLiving.val();
-                break;
-            case "formThOperation":
-                values = totalTHOperation.val();
-                break;
-        }
-
-        let params = {
-            act: "save",
-            formAction: formAction.val(),
-            year: year.val(),
-            month: month.val(),
-            value: values,
-            typeExpense: typeExpense.val(),
-            typeID: typeID.val(),
-            datepicker: datepicker.val(),
-            nickName: inputNickName.val(),
-            name: inputName.val(),
-            team: inputTeam.val(),
-            status: inputStatus.val()
-        };
-
-        const reqAjax = $.ajax({
-            url: "assets/php/actionCompany.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: params,
-        });
-
-        reqAjax.done(function (res) {
-            console.log(res);
-            modalForm.hide();
-            //resetForm();
-        });
-
-        reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
-            console.log(status + ": " + error);
-        });*/
     }// const
 
     const resetForm = () => {
@@ -1158,11 +1094,7 @@ function l4uToCEO($param){
 }
 
 function nameOnly($fullName){
-    //$fullName  = "Sorasak Thanomsap";l
-
     $tmp = explode(" ", $fullName);
-    //$tmp[0] = "Sorasak";
-    //$tmp[1] = "Thanomsap";
     return $tmp[0];
 }//nameOnly
 ?>
