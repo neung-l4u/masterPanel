@@ -195,7 +195,7 @@ if ($params ["act"] == "load"){
         $newReason = $usersName ." ". $reason['name'] ." ". $transferAmount . " to ". $receiverName;
 
         $insert = $db->query('INSERT INTO `CoinLogs`(`coinType`, `ownerID`, `amount`, `giveBy`, `reason`, `activityID`) VALUES (?,?,?,?,?,?);'
-            ,$coinType, $myID, $coinAmount, $myID, $newReason, 10
+            ,$coinType, $myID, $coinAmount, $myID, $newReason, 13
         );
         $insert = $db->query('INSERT INTO `SpendLogs` (`coinType`, `ownerID`, `amount`, `spendType`, `reason`, `spendBy`) VALUES (?,?,?,?,?,?);'
             ,$coinType, $myID, $coinAmount, 4, $newReason, $myID
@@ -239,7 +239,7 @@ if ($params ["act"] == "load"){
     $coinAmount = $params["input"]*-1;
     $coinType = 1;
     $insert = $db->query('INSERT INTO `CoinLogs`(`coinType`, `ownerID`, `amount`, `giveBy`, `reason`, `activityID`) VALUES (?,?,?,?,?,?);'
-        ,$coinType, $myID, $coinAmount, $myID, $reason, 10
+        ,$coinType, $myID, $coinAmount, $myID, $reason, 12
     );
     $insert = $db->query('INSERT INTO `SpendLogs` (`coinType`, `ownerID`, `amount`, `spendType`, `reason`, `spendBy`) VALUES (?,?,?,?,?,?);'
         ,$coinType, $myID, $coinAmount, 4, $reason, $myID
