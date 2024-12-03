@@ -107,6 +107,6 @@ switch ($menuPage){
         $activeMenu["lv1"] = "l4uPassword";
         $activeMenu["lv2"] = "";
         $datatable["show"] = "true";
-        $datatable["src"] = "pages/tableRendering/dataStaffs.php";
+        $datatable["src"] = "pages/tableRendering/dataPassword.php";
         break;
 }
