@@ -10,17 +10,8 @@ $data = array("data"=> array());
 
 foreach ($result as $row) {
 
-    if($row["pwLink"] == null){
-        $row["pwLink"] = "-";
-    }else{
-        $row["pwLink"] = '<a href="'.$row["pwLink"].'">'.$row["pwLink"].'</a>';
-    }
-
-    if($row["pwNote"] == null){
-        $row["pwNote"] = "-";
-    }else{
-        $row["pwNote"];
-    }
+    $row["pwLink"] = ($row["pwLink"] == null) ? "-" : '<a href="'.$row["pwLink"].'">'.$row["pwLink"].'</a>';
+    $row["pwNote"] = ($row["pwNote"] == null) ? "-" : $row["pwNote"];
 
     $data["data"][] = array(
         $row["pwName"],
