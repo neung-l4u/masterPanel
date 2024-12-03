@@ -28,9 +28,9 @@ $userLevel = $_SESSION['level'];
         <li class="nav-item d-none d-sm-inline-block">
             <a href="https://signup.localforyou.com/devV2.7" target="_blank" class="nav-link">Sign up form</a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
+        <!--<li class="nav-item d-none d-sm-inline-block">
             <a href="modules/cancellation/views/index.php?token=1" target="_blank" class="nav-link">Cancellation Form</a>
-        </li>
+        </li>-->
     </ul>
 
     <!-- Right navbar links -->
