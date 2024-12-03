@@ -40,6 +40,7 @@ if(isset($_POST['act'])){
             $_SESSION['password'] = $data["password"];
             $_SESSION['teamID'] = $account["teamID"];
             $_SESSION['name'] = $account['sName'];
+            $_SESSION['tName'] = $account['sTName'];
             $_SESSION['userPic'] = $account['sPic'];
             $_SESSION['L4UCoin'] = $account['sL4U'];
             $_SESSION['CEOCoin'] = $account['sCEO'];

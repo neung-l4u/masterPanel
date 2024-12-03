@@ -129,6 +129,10 @@ out
 .yarn/install-state.gz
 .pnp.*
 
+# IDE
+.idea
+
+
 /assets/db/initDB.php
 /pages/examples
 /modules/mini/logs
