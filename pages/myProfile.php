@@ -224,7 +224,7 @@ $loginID = $_SESSION['id'];
 
             console.log(payload);
 
-            /*const reqAjax = $.ajax({
+            const reqAjax = $.ajax({
                 url: "assets/php/actionStaffs.php",
                 method: "POST",
                 async: false,
@@ -241,7 +241,7 @@ $loginID = $_SESSION['id'];
             reqAjax.fail(function (xhr, status, error) {
                 console.log("ajax request fail!!");
                 console.log(status + ": " + error);
-            });*/
+            });
         }//else
     }//cmdSubmit
 </script>

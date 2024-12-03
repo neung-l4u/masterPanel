@@ -277,7 +277,7 @@ $loginID = $_SESSION['id'];
         <!-- /.row -->
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-lg-6 col-md-12 col-sm-12">
                 <!-- USERS LIST -->
                 <div class="card">
                     <div class="card-header">

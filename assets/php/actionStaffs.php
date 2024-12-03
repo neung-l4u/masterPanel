@@ -3,6 +3,7 @@ global $db;
 session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
+$myID = $_SESSION['id'];
 
 $salt = "L4U";
 $params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
@@ -61,6 +62,20 @@ if ($params ["action"] == "setStatus"){
 
         $params["affected"] = $update->affectedRows();
     }
+
+}elseif ($params ["action"] == "changePassword"){
+    if (!empty($_REQUEST['password'])){
+        $passwordHash = md5($salt . $_REQUEST['password']);
+    }else{
+        $passwordHash = md5($salt . "Localeats#2023");
+    }
+
+    $params["newPassword"] = $passwordHash;
+
+    $update = $db->query('UPDATE `staffs` SET `sPassword` = ? WHERE sID = ?;', $params["newPassword"], $myID);
+    $params["affected"] = $update->affectedRows();
+
+    $_SESSION['password'] = $_REQUEST['password'];
 
 }elseif ($params ["action"] == "setDelete"){
     $delete = $db->query('UPDATE `staffs` SET `sDeleteAt` = NOW(), `sDeleteBy` = ? WHERE sID = ?;', $_SESSION['id'], $params ["id"]);
