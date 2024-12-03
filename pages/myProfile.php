@@ -160,22 +160,27 @@ $loginID = $_SESSION['id'];
                                                 <?php echo $_SESSION['email']; ?>
                                             </div>
                                         </div>
+                                        
                                         <div class="form-group row">
-                                            <label for="inputName2" class="col-sm-2 col-form-label">Current Password</label>
-                                            <div class="col-sm-10">
-                                                <?php echo $_SESSION['password']; ?>
+                                            <label for="currentPassword" class="col-sm-2 col-form-label">Current Password</label>
+                                            <div class="col-sm-10 input-group" id="show_hide_password">
+                                                <input class="form-control pass" id="currentPassword" type="password" disabled value="<?php echo $_SESSION['password'];?>">
+                                                <div class="input-group-append">
+                                                    <i onclick="showHidePassword();" class="input-group-text fa fa-eye-slash" aria-hidden="true"></i>
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div class="form-group row">
                                             <label for="inputNewPassword" class="col-sm-2 col-form-label">New Password</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="inputNewPassword" placeholder="New Password">
+                                                <input type="password" autocomplete="new-password" class="form-control pass" id="inputNewPassword" placeholder="New Password">
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="inputRetype" class="col-sm-2 col-form-label">Retype</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="inputRetype" placeholder="Retype password">
+                                                <input type="password" autocomplete="new-password" class="form-control pass" id="inputRetype" placeholder="Retype password">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -209,6 +214,18 @@ $loginID = $_SESSION['id'];
 </div>
 <!-- /.content -->
 <script>
+    const showHidePassword = () => {
+        if($('#currentPassword').attr("type") === "text"){
+            $('.pass').attr('type', 'password');
+            $('#show_hide_password i').addClass( "fa-eye-slash" );
+            $('#show_hide_password i').removeClass( "fa-eye" );
+        }else if($('#currentPassword').attr("type") === "password"){
+            $('.pass').attr('type', 'text');
+            $('#show_hide_password i').removeClass( "fa-eye-slash" );
+            $('#show_hide_password i').addClass( "fa-eye" );
+        }
+    };
+
     const cmdSubmit = () => {
         const newPassword = $('#inputNewPassword').val();
         const retypePassword = $('#inputRetype').val();
