@@ -8,91 +8,14 @@
             "items": [
               {
                 "name": "Pro Online Ordering System",
-                "product_id": "prod_PYK1UB6QPY0SM9",
-                "price_id": "price_1OjDN1AVc0AdHeDfpCzJ57P7",
+                "product_id": "prod_R83vFNV0sK2MDn",
+                "price_id": "AUPO01M00O-02",
                 "currency": "aud",
                 "amount": 19900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
-              },
-              {
-                "name": "Social Media Marketing Bundle",
-                "product_id": "prod_PH80IdzhllGC0P",
-                "price_id": "ROT004AU00",
-                "currency": "aud",
-                "amount": 54900,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": true
-              },
-              {
-                "name": "Direct Marketing Bundle",
-                "product_id": "prod_PH8CJQVTUVKVaw",
-                "price_id": "ROT010AU00",
-                "currency": "aud",
-                "amount": 54900,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": true
-              },
-              {
-                "name": "Mega Marketing Bundle",
-                "product_id": "prod_PH8OOh0WnfZJqB",
-                "price_id": "ROT016AU00",
-                "currency": "aud",
-                "amount": 104900,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": true
-              },
-              {
-                "name": "Social Media Marketing Solo",
-                "product_id": "prod_PH7tcEToTuT4Up",
-                "price_id": "ROT001AU00",
-                "currency": "aud",
-                "amount": 39900,
-                "type": "solo",
-                "status": "show",
-                "ext": "/Month",
-                "gst": true
-              },
-              {
-                "name": "Direct Marketing Solo",
-                "product_id": "prod_PH857vAIXVIXJB",
-                "price_id": "ROT007AU00",
-                "currency": "aud",
-                "amount": 39900,
-                "type": "solo",
-                "status": "show",
-                "ext": "/Month",
-                "gst": true
-              },
-              {
-                "name": "Mega Marketing Solo",
-                "product_id": "prod_PH8ISZiaYdytx3",
-                "price_id": "ROT013AU00",
-                "currency": "aud",
-                "amount": 89900,
-                "type": "solo",
-                "status": "show",
-                "ext": "/Month",
-                "gst": true
-              },
-              {
-                "name": "Add-on Only",
-                "product_id": "prod_QhXCyNqi2nM0eI",
-                "price_id": "AOT006AU",
-                "currency": "aud",
-                "amount": 0,
-                "type": "solo",
-                "status": "show",
-                "ext": "",
-                "gst": false
               }
             ]
           },
