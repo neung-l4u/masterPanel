@@ -3117,8 +3117,8 @@
             "items": [
               {
                 "name": "Pro Online Ordering System",
-                "product_id": "prod_OL07NeDwRot9Ai",
-                "price_id": "price_1NYK7dI6vmxJT6OmiIPoGMnN",
+                "product_id": "prod_R84UX6mscVHlUV",
+                "price_id": "price_1QFoMoI6vmxJT6Om9jD7W4ks",
                 "currency": "usd",
                 "amount": 9700,
                 "type": "bundle",
@@ -3128,8 +3128,8 @@
               },
               {
                 "name": "Social Media Marketing Bundle",
-                "product_id": "prod_PLXguDkQHuEXm1",
-                "price_id": "price_1OWqauI6vmxJT6Om9oqSS0FT",
+                "product_id": "prod_R8RzO8qs4bzxza",
+                "price_id": "price_1QGB53I6vmxJT6Om0U0hJSxy",
                 "currency": "usd",
                 "amount": 44700,
                 "type": "bundle",
@@ -3139,8 +3139,8 @@
               },
               {
                 "name": "Direct Marketing Bundle",
-                "product_id": "prod_PLY2gSAPKUYsn7",
-                "price_id": "price_1OWqwZI6vmxJT6OmdppR2G5l",
+                "product_id": "prod_R8RoqCEITEiXlV",
+                "price_id": "price_1QGAvBI6vmxJT6OmYWvAH8Iu",
                 "currency": "usd",
                 "amount": 44700,
                 "type": "bundle",
@@ -3150,8 +3150,8 @@
               },
               {
                 "name": "Mega Marketing Bundle",
-                "product_id": "prod_PLYCNz8LLVXzFQ",
-                "price_id": "price_1Orz4kI6vmxJT6Om8pO7AHKV",
+                "product_id": "prod_R8VX62PH4rgttO",
+                "price_id": "price_1QGEWVI6vmxJT6OmZFr4nfFw",
                 "currency": "usd",
                 "amount": 94700,
                 "type": "bundle",
