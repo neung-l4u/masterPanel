@@ -375,17 +375,10 @@ $currentDate = date('d/m/Y');
 
                                     <div class="form-group row pt-2">
                                         <label class="col-3 control-label col-form-label">
-                                            Support Language
+                                            Owner First Language
                                             <b class="red">*</b>
                                         </label>
                                         <div class="row col-6 pt-2">
-                                            <span class="col gx-1">
-                                                <input type="radio" id="supportEng" class="form-check-input supportLanguage" value="English"
-                                                       name="00N2v00000IyVqN" checked>
-                                                <label class="form-check-label" for="supportEng">
-                                                    English
-                                                </label>
-                                            </span>
                                             <span class="col gx-1">
                                                 <input type="radio" id="supportTh" class="form-check-input supportLanguage"
                                                        value="Thai only" name="00N2v00000IyVqN">
@@ -394,10 +387,18 @@ $currentDate = date('d/m/Y');
                                                 </label>
                                             </span>
                                             <span class="col gx-1">
+                                                <input type="radio" id="supportEng" class="form-check-input supportLanguage" value="English"
+                                                       name="00N2v00000IyVqN" checked>
+                                                <label class="form-check-label" for="supportEng">
+                                                    English
+                                                </label>
+                                            </span>
+                                            
+                                            <span class="col gx-1">
                                                 <input type="radio" id="supportEngTH" class="form-check-input supportLanguage"
                                                        value="English and Thai" name="00N2v00000IyVqN" checked>
                                                 <label class="form-check-label" for="supportEngTH">
-                                                    English & Thai
+                                                    Thai & English
                                                 </label>
                                             </span>
                                         </div>
