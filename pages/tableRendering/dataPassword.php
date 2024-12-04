@@ -1,16 +1,18 @@
 <?php
-global $db;
 session_start();
+global $db;
+$loginID = $_SESSION['id'];
+$levelID = $_SESSION['level'];
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$result = $db->query('SELECT p.id, p.pwName, p.pwLink, p.pwUser, p.pwPass, p.pwNote, l.lName FROM `passwordmanager` p , `userLevel` l WHERE  p.pwLevel = l.lID;')->fetchAll();
+$result = $db->query('SELECT p.id, p.pwName, p.pwLink, p.pwUser, p.pwPass, p.pwNote, l.lName, p.pwLevel FROM `passwordmanager` p , `userLevel` l  WHERE  p.pwLevel = l.lID AND p.pwLevel >= ?;', $levelID)->fetchAll();
 
 $data = array("data"=> array());
 
 foreach ($result as $row) {
 
-    $row["pwLink"] = ($row["pwLink"] == null) ? "-" : '<a href="'.$row["pwLink"].'">'.$row["pwLink"].'</a>';
+    $row["pwLink"] = ($row["pwLink"] == null) ? "-" : '<a href="'.$row["pwLink"].'" target="_blank">'.$row["pwLink"].'</a>';
     $row["pwNote"] = ($row["pwNote"] == null) ? "-" : $row["pwNote"];
 
     $row["copyUser"] = '<input type="text" id="' . $row["pwUser"] . '" value="' . $row["pwUser"] . '" readonly style="position: absolute; left: -9999px;">
@@ -23,7 +25,7 @@ foreach ($result as $row) {
         function copyText(elementId) {
             var copyText = document.getElementById(elementId);
             navigator.clipboard.writeText(copyText.value).then(function() {
-                alert("Copied the text: " + copyText.value);
+                showCopy();
             }).catch(function(error) {
                 console.error("Error copying text: ", error);
             });
@@ -31,10 +33,10 @@ foreach ($result as $row) {
     </script>';
 
     $data["data"][] = array(
-        $row["pwName"],
+        "<b>" . $row["lName"] . "</b> : " .$row["pwName"],
         $row["pwLink"],
-        $row["pwUser"] . " " . $row["copyUser"],
-        $row["pwPass"] . " " . $row["copyPass"],
+        $row["copyUser"] . " " . $row["pwUser"],
+        $row["copyPass"] . " " . $row["pwPass"],
         $row["pwNote"],
     );
 }

@@ -31,11 +31,11 @@ $userLevel = $_SESSION['level'];
         <li class="nav-item d-none d-sm-inline-block">
             <a href="modules/cancellation/views/index.php?token=1" target="_blank" class="nav-link">Cancellation Form</a>
         </li>
-        <?php if($_SESSION['level']<=2){ ?>
+        <?php //if($_SESSION['level']<=2){ ?>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="main.php?p=l4uPassword" class="nav-link">L4U Password</a>
         </li>
-        <?php } ?>
+        <?php //} ?>
     </ul>
 
     <!-- Right navbar links -->

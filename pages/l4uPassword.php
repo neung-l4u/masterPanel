@@ -40,8 +40,8 @@ $loginID = $_SESSION['id'];
                                 <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:20%">Name</th>
-                                        <th style="width:20%">Link</th>
+                                        <th style="width:25%">Level : Name</th>
+                                        <th style="width:15%">Link</th>
                                         <th style="width:20%">User</th>
                                         <th style="width:15%">Password</th>
                                         <th style="width:20%">Note</th>
@@ -58,6 +58,7 @@ $loginID = $_SESSION['id'];
                                     </tfoot>
                                 </table>
                             </div>
+                            
                             <!-- /.card-body -->
                         </div>
                     </div>
@@ -66,6 +67,20 @@ $loginID = $_SESSION['id'];
             </div><!-- /.col-md-12 -->
         </div><!-- /.row -->
 
+        <div id="alert" style="
+        display: float; 
+        right: 20px; 
+        bottom: 30px; 
+        position: fixed; 
+        background-color: #007bff; 
+        color: white; 
+        padding: 15px; 
+        border-radius: 5px;
+        z-index: 1;
+        box-shadow: 0 4px 4px 0 rgb(191 191 191 / 20%);
+        ">
+            Text Copied
+        </div>
 
         <!-- Modal -->
         <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
@@ -77,5 +92,12 @@ $loginID = $_SESSION['id'];
 <!-- /.content -->
 
 <script>
+
+    function showCopy() {
+        $("#alert").fadeIn(500);
+        setTimeout(function() {
+            $("#alert").fadeOut();
+        }, 1000);
+    }
 
 </script>
