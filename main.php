@@ -223,6 +223,8 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
             resetForm();
         });
 
+        $("#alert").hide();
+
     });//ready
 
     const reloadTable = () => {
