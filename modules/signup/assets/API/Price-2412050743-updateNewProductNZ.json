@@ -938,8 +938,8 @@
               "items": [
                 {
                   "name": "Website Makeover/ Build template customize",
-                  "product_id": "prod_PObEuFydYokqxp",
-                  "price_id": "AOT001NZ",
+                  "product_id": "prod_R7h5efbb08kx3N",
+                  "price_id": "NZWMT03M00O-02",
                   "currency": "nzd",
                   "amount": 39900,
                   "type": "website",
@@ -949,8 +949,8 @@
                 },
                 {
                   "name": "Website Makeover/ Build fully custumize",
-                  "product_id": "prod_PObeVHz57mjUeK",
-                  "price_id": "AOT002NZ",
+                  "product_id": "prod_R7gs2UH7LTbyVm",
+                  "price_id": "NZWMF03M00O-02",
                   "currency": "nzd",
                   "amount": 99500,
                   "type": "website",
@@ -960,8 +960,8 @@
                 },
                 {
                   "name": "Influencer Package",
-                  "product_id": "",
-                  "price_id": "",
+                  "product_id": "prod_R848XKqmSD1kAG",
+                  "price_id": "NZIFU03M00O-02",
                   "currency": "nzd",
                   "amount": 99900,
                   "type": "both",
@@ -978,8 +978,8 @@
               "items": [
                 {
                   "name": "A6 Flyers x 1,000 pcs",
-                  "product_id": "prod_OL479AsMTDYV92",
-                  "price_id": "price_1NYO04AVc0AdHeDfYIE9sElv",
+                  "product_id": "prod_R83z8CA1t11xS6",
+                  "price_id": "NZFLY0310KO-02",
                   "currency": "nzd",
                   "amount": 12500,
                   "type": "flyers",
@@ -989,8 +989,8 @@
                 },
                 {
                   "name": "A6 Flyers x 2,000 pcs",
-                  "product_id": "prod_OL4BZSpuSv8EVV",
-                  "price_id": "price_1NYO3wAVc0AdHeDf3KkPBVpV",
+                  "product_id": "prod_R842EPPU0jCIpd",
+                  "price_id": "NZFLY0320KO-02",
                   "currency": "nzd",
                   "amount": 21000,
                   "type": "flyers",
@@ -1000,8 +1000,8 @@
                 },
                 {
                   "name": "A6 Flyers x 5,000 pcs",
-                  "product_id": "prod_OL4Fs5Zx0hHvCL",
-                  "price_id": "price_1NYO7VAVc0AdHeDfvsIf0vNj",
+                  "product_id": "prod_R8441i7PqdNFR0",
+                  "price_id": "NZFLY0350KO-02",
                   "currency": "nzd",
                   "amount": 40000,
                   "type": "flyers",
@@ -1011,8 +1011,8 @@
                 },
                 {
                   "name": "A6 Flyers x 10,000 pcs",
-                  "product_id": "prod_OL4UmdcD1dqOap",
-                  "price_id": "price_1NYOMGAVc0AdHeDfPCwmUcbo",
+                  "product_id": "prod_R83x1OymYGIJ3H",
+                  "price_id": "NZFLY0305KO-02",
                   "currency": "nzd",
                   "amount": 70000,
                   "type": "flyers",
@@ -1022,8 +1022,8 @@
                 },
                 {
                   "name": "Fridge Magnet x 500 pcs",
-                  "product_id": "prod_OL4XAQB5SwR4qi",
-                  "price_id": "price_1NYOP5AVc0AdHeDfxX6brAla",
+                  "product_id": "prod_R84F4qJpiMXlas",
+                  "price_id": "NZMAG0310KO-02",
                   "currency": "nzd",
                   "amount": 15000,
                   "type": "fridge",
@@ -1033,8 +1033,8 @@
                 },
                 {
                   "name": "Fridge Magnet x 1,000 pcs",
-                  "product_id": "prod_OL4efJA7ySW5o5",
-                  "price_id": "price_1NYOVtAVc0AdHeDfouFOlJpm",
+                  "product_id": "prod_R84IenowckXzaM",
+                  "price_id": "NZMAG0320KO-02",
                   "currency": "nzd",
                   "amount": 24000,
                   "type": "fridge",
@@ -1055,8 +1055,8 @@
                 },
                 {
                   "name": "Fridge Magnet x 4,000 pcs",
-                  "product_id": "prod_OL4jsv3OP9YQIq",
-                  "price_id": "price_1NYOasAVc0AdHeDfdr12he0O",
+                  "product_id": "prod_R84KLQN01MHoWA",
+                  "price_id": "NZMAG0340KO-02",
                   "currency": "nzd",
                   "amount": 85000,
                   "type": "fridge",
@@ -1066,8 +1066,8 @@
                 },
                 {
                   "name": "Menu / Massage Pricing Design",
-                  "product_id": "prod_OL4mvsGbN7MABQ",
-                  "price_id": "price_1NYOdrAVc0AdHeDfqKPNht6n",
+                  "product_id": "prod_R87kH6C9JSbaKf",
+                  "price_id": "NZMEN03M00O-02",
                   "currency": "nzd",
                   "amount": 19900,
                   "type": "menu",
@@ -1089,8 +1089,8 @@
           "SetupFee": [
             {
               "name": "Setup Fee (No Contract)",
-              "product_id": "prod_QXLi2Yeo5CkUq9",
-              "price_id": "AOT003NZ",
+              "product_id": "prod_R7hQC4aXxd4YpL",
+              "price_id": "NZSTF03M00O-02",
               "currency": "nzd",
               "amount": 39900,
               "type": "setup",
@@ -1100,8 +1100,8 @@
             },
             {
               "name": "Setup Fee (3 months)",
-              "product_id": "prod_QXLi2Yeo5CkUq9",
-              "price_id": "AOT004NZ",
+              "product_id": "prod_R7hNjWcYhd5HIE",
+              "price_id": "NZSTF03M03O-02",
               "currency": "nzd",
               "amount": 14900,
               "type": "setup",
@@ -1111,8 +1111,8 @@
             },
             {
               "name": "Setup Fee (12 months)",
-              "product_id": "prod_QXLi2Yeo5CkUq9",
-              "price_id": "AOT005NZ",
+              "product_id": "prod_R7hHMwGEieHHtn",
+              "price_id": "NZSTF03M12O-02",
               "currency": "nzd",
               "amount": 0,
               "type": "setup",
