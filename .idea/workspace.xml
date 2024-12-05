@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="228aada5-cf80-4c42-867d-0980577910ab" name="Changes" comment="hide menu cancellation">
-      <change beforePath="$PROJECT_DIR$/pages/myDesk.php" beforeDir="false" afterPath="$PROJECT_DIR$/pages/myDesk.php" afterDir="false" />
+    <list default="true" id="228aada5-cf80-4c42-867d-0980577910ab" name="Changes" comment="merge pw manager">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sideBar.php" beforeDir="false" afterPath="$PROJECT_DIR$/sideBar.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,22 +26,22 @@
     &quot;assignee&quot;: &quot;neung-l4u&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:neung-l4u/masterPanel.git",
-    "accountId": "8cd4a499-dc5a-4f97-b115-cb1610b97100"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:neung-l4u/masterPanel.git&quot;,
+    &quot;accountId&quot;: &quot;8cd4a499-dc5a-4f97-b115-cb1610b97100&quot;
   },
-  "recentNewPullRequestHead": {
-    "server": {
-      "useHttp": false,
-      "host": "github.com",
-      "port": null,
-      "suffix": null
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
     },
-    "owner": "neung-l4u",
-    "repository": "masterPanel"
+    &quot;owner&quot;: &quot;neung-l4u&quot;,
+    &quot;repository&quot;: &quot;masterPanel&quot;
   }
-}]]></component>
+}</component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/usr/local/Cellar/php@7.4/7.4.30/bin/php">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/composer" />
@@ -97,6 +98,8 @@
       <updated>1733107726768</updated>
       <workItem from="1733107727778" duration="29887000" />
       <workItem from="1733207161234" duration="2873000" />
+      <workItem from="1733279924172" duration="869000" />
+      <workItem from="1733281100598" duration="4699000" />
     </task>
     <task id="LOCAL-00001" summary="add new file">
       <option name="closed" value="true" />
@@ -154,7 +157,31 @@
       <option name="project" value="LOCAL" />
       <updated>1733207267186</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="hide menu cancellation">
+      <option name="closed" value="true" />
+      <created>1733280097116</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1733280097116</updated>
+    </task>
+    <task id="LOCAL-00009" summary="hide menu cancellation">
+      <option name="closed" value="true" />
+      <created>1733280253624</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1733280253624</updated>
+    </task>
+    <task id="LOCAL-00010" summary="merge pw manager">
+      <option name="closed" value="true" />
+      <created>1733280467399</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1733280467399</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,6 +204,7 @@
     <MESSAGE value="fix eye css" />
     <MESSAGE value="fix redeem description detail" />
     <MESSAGE value="hide menu cancellation" />
-    <option name="LAST_COMMIT_MESSAGE" value="hide menu cancellation" />
+    <MESSAGE value="merge pw manager" />
+    <option name="LAST_COMMIT_MESSAGE" value="merge pw manager" />
   </component>
 </project>

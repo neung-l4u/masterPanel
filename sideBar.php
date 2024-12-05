@@ -66,14 +66,14 @@ include ('assets/api/checkSession.php');
                         <p>My Profile</p>
                     </a>
                 </li>
-                <?php if($userLevel<=3){ ?>
+                <?php /*if($userLevel<=3){ */?><!--
                 <li class="nav-item">
-                    <a href="main.php?p=dashboard" class="nav-link <?php echo $activeMenu["lv1"] == "dashboard" ? "active":""; ?>">
-                        <svg class="nav-icon mr-2" height="1.5em" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 80" x="0px" y="0px"><path d="M12.669,52.23c5.03,4.807,11.837,7.77,19.328,7.77,15.105,0,27.447-12.025,27.975-27.004h-27.576L12.669,52.23Z" fill="<?php echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; ?>"/><path d="M32.989,4.025V30.996h26.982c-.52-14.646-12.335-26.457-26.982-26.971Z" fill="<?php echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; ?>"/><path d="M30.989,4.026C16.016,4.559,3.997,16.898,3.997,32c0,7.231,2.755,13.83,7.271,18.803L30.989,31.574V4.026Z" fill="<?php echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; ?>"/></svg>
+                    <a href="main.php?p=dashboard" class="nav-link <?php /*echo $activeMenu["lv1"] == "dashboard" ? "active":""; */?>">
+                        <svg class="nav-icon mr-2" height="1.5em" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 80" x="0px" y="0px"><path d="M12.669,52.23c5.03,4.807,11.837,7.77,19.328,7.77,15.105,0,27.447-12.025,27.975-27.004h-27.576L12.669,52.23Z" fill="<?php /*echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; */?>"/><path d="M32.989,4.025V30.996h26.982c-.52-14.646-12.335-26.457-26.982-26.971Z" fill="<?php /*echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; */?>"/><path d="M30.989,4.026C16.016,4.559,3.997,16.898,3.997,32c0,7.231,2.755,13.83,7.271,18.803L30.989,31.574V4.026Z" fill="<?php /*echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; */?>"/></svg>
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <?php } ?>
+                --><?php /*} */?>
                 <?php if($userLevel<=3){ ?>
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "revenueTracking" ? "menu-is-opening menu-open":""; ?>">
                     <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "revenueTracking" ? "active":""; ?>">
