@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="228aada5-cf80-4c42-867d-0980577910ab" name="Changes" comment="add couponCode.json">
+    <list default="true" id="228aada5-cf80-4c42-867d-0980577910ab" name="Changes" comment="new discount read from couponCode.json">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/signup/assets/API/couponCode.json" beforeDir="false" afterPath="$PROJECT_DIR$/modules/signup/assets/API/couponCode.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/signup/assets/js/bootstrap-multi-step-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/modules/signup/assets/js/bootstrap-multi-step-form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/signup/formHidden.php" beforeDir="false" afterPath="$PROJECT_DIR$/modules/signup/formHidden.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/navBar.php" beforeDir="false" afterPath="$PROJECT_DIR$/navBar.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sideBar.php" beforeDir="false" afterPath="$PROJECT_DIR$/sideBar.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/signup/assets/js/ajaxFunction.js" beforeDir="false" afterPath="$PROJECT_DIR$/modules/signup/assets/js/ajaxFunction.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,7 +166,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733445045693</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="new discount read from couponCode.json">
+      <option name="closed" value="true" />
+      <created>1733465218740</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1733465218740</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -194,6 +198,7 @@
     <MESSAGE value="fix redeem description detail" />
     <MESSAGE value="hide menu cancellation" />
     <MESSAGE value="add couponCode.json" />
-    <option name="LAST_COMMIT_MESSAGE" value="add couponCode.json" />
+    <MESSAGE value="new discount read from couponCode.json" />
+    <option name="LAST_COMMIT_MESSAGE" value="new discount read from couponCode.json" />
   </component>
 </project>

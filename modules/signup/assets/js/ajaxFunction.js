@@ -553,18 +553,29 @@ function requestToPay() {
         }, {});
     }
     /////
+    if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
+    const objCode = $("#couponCode");
+    let inputCode = objCode.val().trim().toUpperCase();
+    let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
+    let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
+
+    let discountObject = discountList[formData.formCountry];
+    //alert("discountObject");
+    //console.log("discountObject = ",discountObject);
 
     let textDiscount = couponCode.val().trim().toUpperCase();
-    let Payment_Coupon_Obj = settings.Payment_Detail.coupon_Code[formCountry];
+    //let Payment_Coupon_Obj = settings.Payment_Detail.coupon_Code[formCountry];
+    let Payment_Coupon_Obj = discountObject;
     let textDiscount2 = couponCode2.val().trim().toUpperCase();
-    let Payment_Coupon_Obj2 = settings.Payment_Detail.coupon_Code[formCountry];
+    //let Payment_Coupon_Obj2 = settings.Payment_Detail.coupon_Code[formCountry];
+    let Payment_Coupon_Obj2 = discountObject;
     let codeDiscount = {};
 
-    if (typeof Payment_Coupon_Obj[textDiscount] !== "undefined") { //check this coupon code is exist in setting list
+    if (typeof Payment_Coupon_Obj !== "undefined") { //check this coupon code is exist in setting list
         let pid = "";
             pid = cloneCart["subscription"][0]; //read main product ID
         let cid = "";
-            cid = Payment_Coupon_Obj[textDiscount].code; //read stripe coupon code
+            cid = Payment_Coupon_Obj.code; //read stripe coupon code
         codeDiscount = { [pid] : cid } ; //set main coupon code
     }else{
         let pid = "";
@@ -575,7 +586,7 @@ function requestToPay() {
 
     let addOnDiscountCode = {};
     let materialDiscountCode = (formCountry==="US" || formCountry==="CA") ? "" : "suhgy7Fb";
-    let freewebDiscountCode = Payment_Coupon_Obj["FREEWEB"]["code"];
+    let freewebDiscountCode = "Freeweb";
 
     let applyAddonCode = "";
     if (textDiscount2 === "FREEWEB"){
@@ -662,6 +673,7 @@ function requestToPay() {
     if(formCountry === "GB"){ newCountry= "UK"; }
     else { newCountry = formCountry; }
 
+    //alert("codeDiscount = "+codeDiscount);
     let stripePayload = {
         "env": selectEnv,
         "country": newCountry,
