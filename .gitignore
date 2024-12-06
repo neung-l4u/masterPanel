@@ -130,6 +130,8 @@ out
 
 # IDE
 .idea
+.idea/
+/.idea
 
 
 /assets/db/initDB.php

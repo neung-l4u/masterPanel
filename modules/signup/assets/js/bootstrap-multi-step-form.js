@@ -997,7 +997,7 @@ const loadCouponObject = () => {
   });
 
   loadCoupon.done(function(res) {
-    console.log(res);
+    //console.log(res);
     couponObjectList = res;
     return true;
   });
@@ -1043,18 +1043,12 @@ function applyCoupon() {
     $("#couponCode2").attr('disabled', 'disabled');
   }
 
-  console.log("inputCode = ", inputCode);
-  let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
-  console.log("formData.formCountry = ",formData.formCountry);
-  console.log("read objCode = ", discountList);
-  console.log("read objCode2 = ", discountList[formData.formCountry]);
-  let discountObject = discountList[formData.formCountry];
+    let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
+    let discountObject = discountList[formData.formCountry];
 
-
-  //if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in setting list
-  if (typeof discountObject !== "undefined") { //check this coupon code is exist in setting list
+  if (typeof discountObject !== "undefined") { //Check if this coupon code is available in your settings list.
     discountFlag = true;
-    discountValue =  discountObject.discount; //get discount value of this coupon
+    discountValue =  discountObject.discount; //get the discount value of this coupon
     let findSmile = inputCode.search("SMILE");
 
     if(findSmile===1){
