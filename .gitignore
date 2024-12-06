@@ -132,6 +132,7 @@ out
 .idea
 .idea/
 /.idea
+.idea/workspace.xml
 
 
 /assets/db/initDB.php
