@@ -130,7 +130,9 @@ out
 
 # IDE
 .idea
+.idea/
 /.idea
+.idea/workspace.xml
 
 
 /assets/db/initDB.php
