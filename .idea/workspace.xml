@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="228aada5-cf80-4c42-867d-0980577910ab" name="Changes" comment="git ignore .idea">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-    </list>
+    <list default="true" id="228aada5-cf80-4c42-867d-0980577910ab" name="Changes" comment="merge feature new product 2024 to dev" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -204,7 +202,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733444197594</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="merge feature new product 2024 to dev">
+      <option name="closed" value="true" />
+      <created>1733471954660</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1733471954660</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -230,6 +236,8 @@
     <MESSAGE value="merge pw manager" />
     <MESSAGE value="hide menu dashboard on sidebar" />
     <MESSAGE value="git ignore .idea" />
-    <option name="LAST_COMMIT_MESSAGE" value="git ignore .idea" />
+    <MESSAGE value="modify git ignore" />
+    <MESSAGE value="merge feature new product 2024 to dev" />
+    <option name="LAST_COMMIT_MESSAGE" value="merge feature new product 2024 to dev" />
   </component>
 </project>
