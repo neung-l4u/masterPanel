@@ -1,103 +1,219 @@
 {
-    "Coupon":{
-        "1TRIAL" : 
-        {
-            "Restaurant":{
-                    "Discount" :
-                    [
-                        {"AU": 19800, "Code": "1TrialRest"},
-                        {"NZ": 19800, "Code": "1TrialRest"},
-                        {"UK": 6800, "Code": "1TrialRest"},
-                        {"US": 9600, "Code": "1TrialRest"},
-                        {"CA": 9600, "Code": "1TrialRest"},
-                        {"TH": 0, "Code": "1TrialRest"}
-                    ]
+    "Coupon": {
+        "1TRIAL": {
+            "Restaurant": {
+                "AU": {
+                    "discount": 19800,
+                    "code": "1TrialRest"
+                },
+                "NZ": {
+                    "discount": 19800,
+                    "code": "1TrialRest"
+                },
+                "UK": {
+                    "discount": 6800,
+                    "code": "1TrialRest"
+                },
+                "US": {
+                    "discount": 9600,
+                    "code": "1TrialRest"
+                },
+                "CA": {
+                    "discount": 9600,
+                    "code": "1TrialRest"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "1TrialRest"
+                }
             },
-            "Massage":{
-                "Discount" :
-                [
-                    {"AU": 9600, "Code": "1TrialMass"},
-                    {"NZ": 9600, "Code": "1TrialMass"},
-                    {"UK": 6800, "Code": "1TrialMass"},
-                    {"US": 9600, "Code": "1TrialMass"},
-                    {"CA": 9600, "Code": "1TrialMass"},
-                    {"TH": 0, "Code": "1TrialMass"}
-                ]
+            "Massage": {
+                "AU": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "NZ": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "UK": {
+                    "discount": 6800,
+                    "code": "1TrialMass"
+                },
+                "US": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "CA": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "1TrialMass"
+                }
             }
         },
-        "1SMILE" : 
-        {
-            "Restaurant":{
-                    "Discount" :
-                    [
-                        {"AU": 19800, "Code": "1TrialRest"},
-                        {"NZ": 19800, "Code": "1TrialRest"},
-                        {"UK": 6800, "Code": "1TrialRest"},
-                        {"US": 9600, "Code": "1TrialRest"},
-                        {"CA": 9600, "Code": "1TrialRest"},
-                        {"TH": 0, "Code": "1TrialRest"}
-                    ]
+        "1SMILE": {
+            "Restaurant": {
+                "AU": {
+                    "discount": 19800,
+                    "code": "1TrialRest"
+                },
+                "NZ": {
+                    "discount": 19800,
+                    "code": "1TrialRest"
+                },
+                "UK": {
+                    "discount": 6800,
+                    "code": "1TrialRest"
+                },
+                "US": {
+                    "discount": 9600,
+                    "code": "1TrialRest"
+                },
+                "CA": {
+                    "discount": 9600,
+                    "code": "1TrialRest"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "1TrialRest"
+                }
             },
-            "Massage":{
-                "Discount" :
-                [
-                    {"AU": 9600, "Code": "1TrialMass"},
-                    {"NZ": 9600, "Code": "1TrialMass"},
-                    {"UK": 6800, "Code": "1TrialMass"},
-                    {"US": 9600, "Code": "1TrialMass"},
-                    {"CA": 9600, "Code": "1TrialMass"},
-                    {"TH": 0, "Code": "1TrialMass"}
-                ]
+            "Massage": {
+                "AU": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "NZ": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "UK": {
+                    "discount": 6800,
+                    "code": "1TrialMass"
+                },
+                "US": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "CA": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "1TrialMass"
+                }
             }
         },
-        "WAWIO" : 
-        {
-            "Restaurant":{
-                    "Discount" :
-                    [
-                        {"AU": 19800, "Code": "1TrialRest"},
-                        {"NZ": 19800, "Code": "1TrialRest"},
-                        {"UK": 6800, "Code": "1TrialRest"},
-                        {"US": 9600, "Code": "1TrialRest"},
-                        {"CA": 9600, "Code": "1TrialRest"},
-                        {"TH": 0, "Code": "1TrialRest"}
-                    ]
+        "WAWIO": {
+            "Restaurant": {
+                "AU": {
+                    "discount": 19800,
+                    "code": "1TrialRest"
+                },
+                "NZ": {
+                    "discount": 19800,
+                    "code": "1TrialRest"
+                },
+                "UK": {
+                    "discount": 6800,
+                    "code": "1TrialRest"
+                },
+                "US": {
+                    "discount": 9600,
+                    "code": "1TrialRest"
+                },
+                "CA": {
+                    "discount": 9600,
+                    "code": "1TrialRest"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "1TrialRest"
+                }
             },
-            "Massage":{
-                "Discount" :
-                [
-                    {"AU": 9600, "Code": "1TrialMass"},
-                    {"NZ": 9600, "Code": "1TrialMass"},
-                    {"UK": 6800, "Code": "1TrialMass"},
-                    {"US": 9600, "Code": "1TrialMass"},
-                    {"CA": 9600, "Code": "1TrialMass"},
-                    {"TH": 0, "Code": "1TrialMass"}
-                ]
+            "Massage": {
+                "AU": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "NZ": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "UK": {
+                    "discount": 6800,
+                    "code": "1TrialMass"
+                },
+                "US": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "CA": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "1TrialMass"
+                }
             }
         },
-        "FREEWEB" : 
-        {
-            "Restaurant":{
-                    "Discount" :
-                    [
-                        {"AU": 39900, "Code": "Freeweb"},
-                        {"NZ": 39900, "Code": "Freeweb"},
-                        {"UK": 29900, "Code": "Freeweb"},
-                        {"US": 39900, "Code": "Freeweb"},
-                        {"CA": 39900, "Code": "Freeweb"},
-                        {"TH": 0, "Code": "Freeweb"}
-                    ]
+        "FREEWEB": {
+            "Restaurant": {
+                "AU": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "NZ": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "UK": {
+                    "discount": 29900,
+                    "code": "Freeweb"
+                },
+                "US": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "CA": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "Freeweb"
+                }
             },
-            "Massage":{
-                "Discount" :
-                [
-                    {"AU": 39900, "Code": "Freeweb"},
-                    {"NZ": 39900, "Code": "Freeweb"},
-                    {"UK": 29900, "Code": "Freeweb"},
-                    {"US": 39900, "Code": "Freeweb"},
-                    {"CA": 39900, "Code": "Freeweb"},
-                    {"TH": 0, "Code": "Freeweb"}
-                ]
+            "Massage": {
+                "AU": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "NZ": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "UK": {
+                    "discount": 29900,
+                    "code": "Freeweb"
+                },
+                "US": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "CA": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "Freeweb"
+                }
             }
         }
     }

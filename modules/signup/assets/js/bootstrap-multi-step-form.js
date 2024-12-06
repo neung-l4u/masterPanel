@@ -13,6 +13,8 @@ let addonProduct2 = [];
 let readMainProduct = [];
 let readAddonProduct = [];
 
+let couponObjectList = {};
+
 let cart = {
   "subscription": [],
   "add_on": []
@@ -979,8 +981,36 @@ function listProductItems() {
 ////////
 }
 
-function applyCoupon() {
+const loadCouponObject = () => {
+  let payload = {
+    mode : "read",
+    token: Math.random()
+  };
 
+  const loadCoupon = $.ajax({
+    url: "assets/API/couponCode.json",
+    method: 'POST',
+    async: false,
+    cache: false,
+    dataType: 'json',
+    data: payload
+  });
+
+  loadCoupon.done(function(res) {
+    console.log(res);
+    couponObjectList = res;
+    return true;
+  });
+
+  loadCoupon.fail(function(xhr, status, error) {
+    console.log("ajax Load Coupon Json fail!!");
+    console.log(status + ': ' + error);
+    return false;
+  });
+}//loadCouponObject
+
+function applyCoupon() {
+  if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
   const objCode = $("#couponCode");
   let inputCode = objCode.val().trim().toUpperCase();
   objCode.val(inputCode);
@@ -992,6 +1022,9 @@ function applyCoupon() {
 
   let discountFlag = false;
   let cal = 0;
+  //formData.formCountry << AU NZ CA UK US
+  let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
+
   let Settings_Coupon_Obj = settings.Payment_Detail.coupon_Code[formData.formCountry];
   let discountValue = 0;
   let gstDecimal = 0;
@@ -1010,9 +1043,18 @@ function applyCoupon() {
     $("#couponCode2").attr('disabled', 'disabled');
   }
 
-  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in setting list
+  console.log("inputCode = ", inputCode);
+  let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
+  console.log("formData.formCountry = ",formData.formCountry);
+  console.log("read objCode = ", discountList);
+  console.log("read objCode2 = ", discountList[formData.formCountry]);
+  let discountObject = discountList[formData.formCountry];
+
+
+  //if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in setting list
+  if (typeof discountObject !== "undefined") { //check this coupon code is exist in setting list
     discountFlag = true;
-    discountValue =  Settings_Coupon_Obj[inputCode].discount; //get discount value of this coupon
+    discountValue =  discountObject.discount; //get discount value of this coupon
     let findSmile = inputCode.search("SMILE");
 
     if(findSmile===1){
