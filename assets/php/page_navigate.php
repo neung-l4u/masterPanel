@@ -112,4 +112,11 @@ switch ($menuPage){
         $datatable2["src"] = "";
         $datatable["showDatatableStats"] = "false";
         break;
+    case "l4uPassword":
+        $showPage = "l4uPassword.php";
+        $activeMenu["lv1"] = "l4uPassword";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataPassword.php";
+        break;
 }

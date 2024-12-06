@@ -38,7 +38,7 @@
         <option value="Smile Dinning">Smile Dinning</option>
         <option value="Wawio">Wawio</option>
     </select>
-    <input type="hidden" id="signupFormVersion" maxlength="80" name="00N9s000000VWbf" value="2.7.3 + Monday" />
+    <input type="hidden" id="signupFormVersion" maxlength="80" name="00N9s000000VWbf" value="2.8 New Product" />
     <input type="hidden" id="paymentRequestTimestamp" maxlength="100" name="00N9s000000QhRe" />
     <input type="hidden" name="00N9s000000Qlfw" id="initPackage" class="initProject" maxlength="255">
     <input type="hidden" name="00N9s000000Qlg1" id="initDineInTableOrdering" class="initProject" maxlength="255">

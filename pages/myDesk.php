@@ -309,7 +309,7 @@ $loginID = $_SESSION['id'];
                             foreach ($spendLogs as $row){ ?>
                             <div class="col-xl-4 col-lg-12 col-sm-12 col-md-12">
                                 <div class="d-flex flex-r info-box">
-                                        <img class="info-box-icon bg-info elevation-1 mr-2" width="150" src="modules/templates/assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
+                                        <img class="info-box-icon bg-info elevation-1 mr-2" width="150" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
 
                                         <div class="info-box-content">
                                             <span class="img-rounded">

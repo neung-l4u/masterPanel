@@ -66,14 +66,14 @@ include ('assets/api/checkSession.php');
                         <p>My Profile</p>
                     </a>
                 </li>
-                <?php if($userLevel<=3){ ?>
+                <?php /*if($userLevel<=3){ */?><!--
                 <li class="nav-item">
-                    <a href="main.php?p=dashboard" class="nav-link <?php echo $activeMenu["lv1"] == "dashboard" ? "active":""; ?>">
-                        <svg class="nav-icon mr-2" height="1.5em" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 80" x="0px" y="0px"><path d="M12.669,52.23c5.03,4.807,11.837,7.77,19.328,7.77,15.105,0,27.447-12.025,27.975-27.004h-27.576L12.669,52.23Z" fill="<?php echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; ?>"/><path d="M32.989,4.025V30.996h26.982c-.52-14.646-12.335-26.457-26.982-26.971Z" fill="<?php echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; ?>"/><path d="M30.989,4.026C16.016,4.559,3.997,16.898,3.997,32c0,7.231,2.755,13.83,7.271,18.803L30.989,31.574V4.026Z" fill="<?php echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; ?>"/></svg>
+                    <a href="main.php?p=dashboard" class="nav-link <?php /*echo $activeMenu["lv1"] == "dashboard" ? "active":""; */?>">
+                        <svg class="nav-icon mr-2" height="1.5em" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 80" x="0px" y="0px"><path d="M12.669,52.23c5.03,4.807,11.837,7.77,19.328,7.77,15.105,0,27.447-12.025,27.975-27.004h-27.576L12.669,52.23Z" fill="<?php /*echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; */?>"/><path d="M32.989,4.025V30.996h26.982c-.52-14.646-12.335-26.457-26.982-26.971Z" fill="<?php /*echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; */?>"/><path d="M30.989,4.026C16.016,4.559,3.997,16.898,3.997,32c0,7.231,2.755,13.83,7.271,18.803L30.989,31.574V4.026Z" fill="<?php /*echo $activeMenu["lv1"] == "dashboard" ? "#FB8500":"#a7acb6"; */?>"/></svg>
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <?php } ?>
+                --><?php /*} */?>
                 <?php if($userLevel<=3){ ?>
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "revenueTracking" ? "menu-is-opening menu-open":""; ?>">
                     <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "revenueTracking" ? "active":""; ?>">
@@ -130,6 +130,14 @@ include ('assets/api/checkSession.php');
                 </li>
                 <?php } ?>
 
+                <?php ?>
+                <li class="nav-item">
+                    <a href="main.php?p=l4uPassword" class="nav-link <?php echo $activeMenu["lv1"] == "l4uPassword" ? "active":""; ?>">
+                        <svg class="nav-icon mr-2"  height="1em"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M336 352c97.2 0 176-78.8 176-176S433.2 0 336 0S160 78.8 160 176c0 18.7 2.9 36.8 8.3 53.7L7 391c-4.5 4.5-7 10.6-7 17l0 80c0 13.3 10.7 24 24 24l80 0c13.3 0 24-10.7 24-24l0-40 40 0c13.3 0 24-10.7 24-24l0-40 40 0c6.4 0 12.5-2.5 17-7l33.3-33.3c16.9 5.4 35 8.3 53.7 8.3zM376 96a40 40 0 1 1 0 80 40 40 0 1 1 0-80z" fill="<?php echo $activeMenu["lv1"] == "l4uPassword" ? "#FB8500":"#a7acb6"; ?>" /></svg>
+                        <p>Password</p>
+                    </a>
+                </li>
+                <?php ?>
 
                 <?php if($userLevel<=2){ ?>
                     <li class="nav-item <?php echo $activeMenu["lv1"] == "settings" ? "menu-is-opening menu-open":""; ?>">
@@ -179,7 +187,7 @@ include ('assets/api/checkSession.php');
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="https://signup.localforyou.com/devV2.7/" target="_blank" class="nav-link">
+                    <a href="modules/signup/index.php" target="_blank" class="nav-link">
                         <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V285.7l-86.8 86.8c-10.3 10.3-17.5 23.1-21 37.2l-18.7 74.9c-2.3 9.2-1.8 18.8 1.3 27.5H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128zM549.8 235.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-29.4 29.4-71-71 29.4-29.4c15.6-15.6 40.9-15.6 56.6 0zM311.9 417L441.1 287.8l71 71L382.9 487.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z" fill="#A4CAE9" /></svg>
                         <p>
                             Sign up form
