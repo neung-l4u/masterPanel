@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="228aada5-cf80-4c42-867d-0980577910ab" name="Changes" comment="merge pw manager">
+    <list default="true" id="228aada5-cf80-4c42-867d-0980577910ab" name="Changes" comment="hide menu dashboard on sidebar">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sideBar.php" beforeDir="false" afterPath="$PROJECT_DIR$/sideBar.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +99,7 @@
       <workItem from="1733107727778" duration="29887000" />
       <workItem from="1733207161234" duration="2873000" />
       <workItem from="1733279924172" duration="869000" />
-      <workItem from="1733281100598" duration="4699000" />
+      <workItem from="1733281100598" duration="6981000" />
     </task>
     <task id="LOCAL-00001" summary="add new file">
       <option name="closed" value="true" />
@@ -181,7 +181,23 @@
       <option name="project" value="LOCAL" />
       <updated>1733280467399</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="hide menu dashboard on sidebar">
+      <option name="closed" value="true" />
+      <created>1733377026903</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1733377026903</updated>
+    </task>
+    <task id="LOCAL-00012" summary="hide menu dashboard on sidebar">
+      <option name="closed" value="true" />
+      <created>1733377041035</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1733377041035</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -205,6 +221,7 @@
     <MESSAGE value="fix redeem description detail" />
     <MESSAGE value="hide menu cancellation" />
     <MESSAGE value="merge pw manager" />
-    <option name="LAST_COMMIT_MESSAGE" value="merge pw manager" />
+    <MESSAGE value="hide menu dashboard on sidebar" />
+    <option name="LAST_COMMIT_MESSAGE" value="hide menu dashboard on sidebar" />
   </component>
 </project>
