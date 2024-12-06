@@ -414,7 +414,7 @@
                   "product_id": "prod_R842EqQ3eI1yRE",
                   "price_id": "NZPAO03M00O-02",
                   "currency": "nzd",
-                  "amount": 3900,
+                  "amount": 4900,
                   "type": "promotion",
                   "status": "show",
                   "ext": "/Month",
@@ -537,28 +537,6 @@
                 "gst": false
               },
               {
-                "name": "3 Months Pay Upfront - Direct Marketing Solo",
-                "product_id": "prod_R7hlpR2TPJHWkS",
-                "price_id": "NZSS02P03O-02",
-                "currency": "nzd",
-                "amount": 80730,
-                "type": "solo",
-                "status": "show",
-                "ext": "/Month",
-                "gst": false
-              },
-              {
-                "name": "3 Months Pay Upfront - Mega Marketing Solo",
-                "product_id": "prod_R844FMvnt8rTXA",
-                "price_id": "NZMS02P03O-02",
-                "currency": "nzd",
-                "amount": 161730,
-                "type": "solo",
-                "status": "show",
-                "ext": "/Month",
-                "gst": false
-              },
-              {
                 "name": "Add-on Only",
                 "product_id": "prod_R7gizhOilGxbc1",
                 "price_id": "NZADO03M00O-02",
@@ -613,7 +591,7 @@
                 "price_id": "NZBO02P03O-02",
                 "currency": "nzd",
                 "amount": 26190,
-                "type": "solo",
+                "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -838,7 +816,7 @@
                 "price_id": "NZSS02P12O-02",
                 "currency": "nzd",
                 "amount": 191040,
-                "type": "bundle",
+                "type": "solo",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -849,7 +827,7 @@
                 "price_id": "NZDS02P12O-02",
                 "currency": "nzd",
                 "amount": 191040,
-                "type": "bundle",
+                "type": "solo",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -860,7 +838,7 @@
                 "price_id": "NZMS02P12O-02",
                 "currency": "nzd",
                 "amount": 383040,
-                "type": "bundle",
+                "type": "solo",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false

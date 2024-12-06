@@ -466,7 +466,7 @@
                 "price_id": "price_1QFoMoI6vmxJT6Om9jD7W4ks",
                 "currency": "usd",
                 "amount": 9700,
-                "type": "massage",
+                "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
