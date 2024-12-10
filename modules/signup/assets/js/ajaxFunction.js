@@ -557,21 +557,25 @@ function requestToPay() {
     const objCode = $("#couponCode");
     let inputCode = objCode.val().trim().toUpperCase();
     let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
-    let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
-
-    let discountObject = discountList[formData.formCountry];
-    //alert("discountObject");
-    //console.log("discountObject = ",discountObject);
-
-    let textDiscount = couponCode.val().trim().toUpperCase();
-    //let Payment_Coupon_Obj = settings.Payment_Detail.coupon_Code[formCountry];
-    let Payment_Coupon_Obj = discountObject;
+    let Payment_Coupon_Obj;
     let textDiscount2 = couponCode2.val().trim().toUpperCase();
-    //let Payment_Coupon_Obj2 = settings.Payment_Detail.coupon_Code[formCountry];
-    let Payment_Coupon_Obj2 = discountObject;
+
+    try { //try to create discountList form JSON file *this will error if nothing filled in the main coupon code field
+        let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
+        let discountObject = discountList[formData.formCountry];
+        let textDiscount = couponCode.val().trim().toUpperCase();
+        let Payment_Coupon_Obj = discountObject;
+        let Payment_Coupon_Obj2 = discountObject;
+    } catch (error) {
+        console.log("--This is catch case --");
+        console.error('JSON parsing error:', error.message);
+        console.log("--End catch case --");
+    }
+
     let codeDiscount = {};
 
-    if (typeof Payment_Coupon_Obj !== "undefined") { //check this coupon code is exist in setting list
+
+    if (typeof Payment_Coupon_Obj !== "undefined") { //check this coupon code is exist in a setting list
         let pid = "";
             pid = cloneCart["subscription"][0]; //read main product ID
         let cid = "";
