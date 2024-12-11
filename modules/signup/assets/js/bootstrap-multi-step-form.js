@@ -269,6 +269,8 @@ $('#formCountry').change(function() {
   const countryTextOnly = $("#countryTextOnly");
   const bsbDirectDebit_div = $(".bsbDirectDebit_div");
   const routing_number_div = $(".routing_number_div");
+  const domainHelpAU = $("#domainHelpAU");
+  const domainHelpUS = $("#domainHelpUS");
   countryValue.val($(this).val());
   inputBusinessNumber.removeClass("is-invalid");
   resetForm();
@@ -294,6 +296,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.show();
       routing_number_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
       break;
     case "NZ":
       labelBusinessNumber.html("NZBN");
@@ -315,6 +319,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       methodDebit.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
       break;
     case "UK":
       inputBusinessNumber.attr('required', true);
@@ -335,6 +341,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("UK");
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
       break;
     case "CA":
       inputBusinessNumber.attr('required', true);
@@ -355,6 +363,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("CA");
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
       break;
     case "US":
       inputBusinessNumber.attr('required', true);
@@ -375,6 +385,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("US");
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
       break;
     default:
       labelBusinessNumber.html("ABN");
@@ -392,7 +404,9 @@ $('#formCountry').change(function() {
       selectState.show();
       methodDebit.show();
       bsbDirectDebit_div.show();
-      routing_number_div.hide();
+      // routing_number_div.hide();
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
   }
   optionState();
 });
@@ -1603,3 +1617,29 @@ const setShowPrice = () => {
   amountText.html(showPrice.GrandTotal);
 
 }
+
+function trimSpace(param, place) {
+  //console.log("Old Card = "+param);
+  //console.log("Place = "+place);
+  let newText = "";
+  newText = param.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');
+  newText = newText.trim();
+  //console.log("New Card = "+newText);
+  //return(newText);
+
+  if(place === 1){ //cardNumber
+    $("#creditCardNumber").val(newText);
+  } else if(place === 2){ //dateNumber
+    $("#creditExpireDate").val(newText);
+  } 
+}//trimSpace
+
+function checkDomain(param) {
+  const domainName = param;
+  const baseUrlAU = 'https://localforyoudomains.com/domain-names/search/?domain=';
+  const baseUrlUS = 'https://localforyoudomains.com/domain-names/search/?domain=';
+  //const baseUrlUS = 'https://www.godaddy.com/th-th/domainsearch/find?domainToCheck=';
+
+  $('#domainHelpAU').find('a').attr('href', baseUrlAU + domainName);
+  $('#domainHelpUS').find('a').attr('href', baseUrlUS + domainName);
+}//checkDomain
