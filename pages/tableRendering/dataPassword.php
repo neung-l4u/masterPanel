@@ -2,12 +2,20 @@
 session_start();
 global $db;
 $loginID = $_SESSION['id'];
+$teamID = $_SESSION['teamID'];
 $levelID = $_SESSION['level'];
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$result = $db->query('SELECT p.id, p.pwName, p.pwLink, p.pwUser, p.pwPass, p.pwNote, l.lName, p.pwLevel FROM `passwordmanager` p , `userLevel` l  WHERE  p.pwLevel = l.lID AND p.pwLevel >= ?;', $levelID)->fetchAll();
-
+$result = $db->query('SELECT p.id, p.pwName, p.pwLink, p.pwUser, p.pwPass, p.pwNote, l.lName, p.pwLevel, t.name, p.pwTeam, s.sectorName
+                      FROM `passwordmanager` p, `userLevel` l, `team` t, `sector` s  
+                      WHERE p.pwLevel = l.lID 
+                      AND p.pwTeam = t.id
+                      AND p.pwSector = s.id
+                      AND p.pwLevel >= ?
+                      AND p.pwTeam = ?
+                      ;', $levelID, $teamID)->fetchAll();
+                      
 $data = array("data"=> array());
 
 foreach ($result as $row) {
@@ -19,21 +27,11 @@ foreach ($result as $row) {
     <button onclick="copyText(\'' . $row["pwUser"] . '\')" style="color: #bbb; border: none; background: none;"><i class="far fa-copy"></i></button>';
 
     $row["copyPass"] = '<input type="text" id="' . $row["pwPass"] . '" value="' . $row["pwPass"] . '" readonly style="position: absolute; left: -9999px;">
-    <button onclick="copyText(\'' . $row["pwPass"] . '\')" style="color: #bbb; border: none; background: none;"><i class="far fa-copy"></i></button>
-    
-    <script>
-        function copyText(elementId) {
-            var copyText = document.getElementById(elementId);
-            navigator.clipboard.writeText(copyText.value).then(function() {
-                showCopy();
-            }).catch(function(error) {
-                console.error("Error copying text: ", error);
-            });
-        }
-    </script>';
+    <button onclick="copyText(\'' . $row["pwPass"] . '\')" style="color: #bbb; border: none; background: none;"><i class="far fa-copy"></i></button>';
 
     $data["data"][] = array(
-        "<b>" . $row["lName"] . "</b> : " .$row["pwName"],
+        "<b>" . $row["sectorName"] . " : " . $row["name"] . " : " . $row["lName"] . "</b>" ,
+        $row["pwName"],
         $row["pwLink"],
         $row["copyUser"] . " " . $row["pwUser"],
         $row["copyPass"] . " " . $row["pwPass"],

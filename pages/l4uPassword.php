@@ -40,15 +40,17 @@ $loginID = $_SESSION['id'];
                                 <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:25%">Level : Name</th>
+                                        <th style="width:15%">Type : Team : Level</th>
+                                        <th style="width:25%">Name</th>
                                         <th style="width:15%">Link</th>
                                         <th style="width:20%">User</th>
                                         <th style="width:15%">Password</th>
-                                        <th style="width:20%">Note</th>
+                                        <th style="width:10%">Note</th>
                                     </tr>
                                     </thead>
                                     <tfoot class="thead-light">
                                     <tr>
+                                        <th>Type</th>
                                         <th>Name</th>
                                         <th>Link</th>
                                         <th>User</th>
@@ -100,4 +102,12 @@ $loginID = $_SESSION['id'];
         }, 1000);
     }
 
+    function copyText(elementId) {
+        var copyText = document.getElementById(elementId);
+        navigator.clipboard.writeText(copyText.value).then(function() {
+            showCopy();
+        }).catch(function(error) {
+            console.error("Error copying text: ", error);
+        });
+    }
 </script>
