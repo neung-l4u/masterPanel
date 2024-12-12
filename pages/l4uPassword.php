@@ -2,6 +2,13 @@
 global $db, $date;
 $loginID = $_SESSION['id'];
 ?>
+<style>
+    abbr[title] {
+        border-bottom: none !important;
+        cursor: help !important;
+        text-decoration: none !important;
+    }
+</style>
 
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -31,7 +38,12 @@ $loginID = $_SESSION['id'];
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-end">
-                        
+                        <!-- Button trigger modal -->
+                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
+                        </button>
+
+                        <!-- Modal -->
                     </div>
 
                     <div class="card-body">
@@ -40,7 +52,8 @@ $loginID = $_SESSION['id'];
                                 <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:15%">Type : Team : Level</th>
+                                        <th style="width:5%">Type</th>
+                                        <th style="width:10%">Team : Level</th>
                                         <th style="width:25%">Name</th>
                                         <th style="width:15%">Link</th>
                                         <th style="width:20%">User</th>
@@ -51,6 +64,7 @@ $loginID = $_SESSION['id'];
                                     <tfoot class="thead-light">
                                     <tr>
                                         <th>Type</th>
+                                        <th>Team : Level</th>
                                         <th>Name</th>
                                         <th>Link</th>
                                         <th>User</th>
@@ -86,7 +100,94 @@ $loginID = $_SESSION['id'];
 
         <!-- Modal -->
         <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
-            
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="formModalLabel">Form Password</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="d-flex flex-column">
+
+                            <div class="row mb-5">
+                                <div class="col-4">
+                                    <div class="form-group row">
+                                        <label for="inputType" class="col-2 col-form-label">Type</label>
+                                        <div class="col">
+                                            <select id="inputType" class="custom-select">
+                                                <option value="1">Internal</option>
+                                                <option value="2">Client</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group row">
+                                        <label for="inputLevel" class="col-2 col-form-label">Level</label>
+                                        <div class="col">
+                                            <select id="inputLevel" class="custom-select">
+                                                <option value="1">Super Admin</option>
+                                                <option value="2">Admin</option>
+                                                <option value="3">Manager</option>
+                                                <option value="4" selected>User</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group row">
+                                        <label for="inputTeam" class="col-2 col-form-label">Team</label>
+                                        <div class="col">
+                                            <select id="inputTeam" class="custom-select">
+                                                <option value="0" selected>-- None --</option>
+                                                <?php
+                                                $teams = $db->query('SELECT `id`, `name`, `fullName` FROM `Team` ORDER BY `idx`;')->fetchAll();
+                                                foreach ($teams as $row){
+                                                    ?>
+                                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['name'].' : '.$row['fullName']; ?></option>
+                                                <?php }//foreach ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="inputpwName">Password Name</label>
+                                <input type="text" class="form-control" id="inputpwName" maxlength="255" placeholder="Eg. Demoeat Log-in">
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="inputAccessLink">Access Link</label>
+                                <input type="text" class="form-control" id="inputAccessLink" maxlength="255" placeholder="Enter Access Link">
+                                <small id="linkHelp" class="form-text text-muted">e.g. htttps://localforyou.com</small>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="inputUserName">Username</label>
+                                <input type="text" class="form-control" id="inputUserName" maxlength="50" placeholder="Enter Username">
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="inputPassword">Password <small id="passwordNotAllow" class="text-danger" style="display: none;">Not allow to edit encrypted data.</small></label>
+                                <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="Localeats#2023">
+                                <small id="passwordHelp" class="form-text text-muted">Default password is Localeats#2023.</small>
+                            </div>
+                            
+                            <input type="hidden" name="editID" id="editID" value="">
+                            <input type="hidden" name="formAction" id="formAction" value="add">
+                        </div> <!-- flex -->
+                    </div> <!-- modal-body -->
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit">Save changes</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div><!-- /.container-fluid -->
@@ -94,6 +195,100 @@ $loginID = $_SESSION['id'];
 <!-- /.content -->
 
 <script>
+    const setEdit = (id) => {
+        const inputName = $("#inputName");
+        const inputEmail = $("#inputEmail");
+        const inputPhone = $("#inputPhone");
+        const inputPassword = $("#inputPassword");
+        const passwordNotAllow = $("#passwordNotAllow");
+        const inputLevel = $("#inputLevel");
+        const statusOn = $("#statusOn");
+        const statusOff = $("#statusOff");
+        const editID = $("#editID");
+        const formAction = $("#formAction");
+
+        const reqAjax = $.ajax({
+            url: "assets/php/actionPassword.php",
+            method: "POST",
+            async: false,
+            cache: false,
+            dataType: "json",
+            data: {
+                act: "loadUpdate",
+                id: id,
+            },
+        });
+
+        reqAjax.done(function (res) {
+            console.log(res);
+            inputName.val(res.name);
+            inputEmail.val(res.email);
+            inputPhone.val(res.phone);
+            inputPassword.val("Encrypted : " + res.password).attr('disabled', 'disabled');
+            passwordNotAllow.show();
+            inputLevel.val(res.level);
+            if(res.status === 1) {
+                statusOff.prop('checked', false);
+                statusOn.prop('checked', true);
+            }else{
+                statusOn.prop('checked', false);
+                statusOff.prop('checked', true);
+            }
+            editID.val(res.id);
+            formAction.val("edit");
+            modalFormAction("open");
+        });
+
+        reqAjax.fail(function (xhr, status, error) {
+            console.log("ajax request fail!!");
+            console.log(status + ": " + error);
+        });
+    }// const
+
+    const formSave = () => {
+        const inputName = $("#inputName");
+        const inputEmail = $("#inputEmail");
+        const inputPhone = $("#inputPhone");
+        const inputPassword = $("#inputPassword");
+        const inputLevel = $("#inputLevel");
+        const editID = $("#editID");
+        const formAction = $("#formAction");
+
+        let statusValue = $("input[name='inputStatus']:checked").val();
+
+        const reqAjax = $.ajax({
+            url: "assets/php/actionPassword.php",
+            method: "POST",
+            async: false,
+            cache: false,
+            dataType: "json",
+            data: {
+                act: "save",
+                inputName : inputName.val(),
+                inputEmail : inputEmail.val(),
+                inputPhone : inputPhone.val(),
+                inputPassword : inputPassword.val(),
+                inputLevel : inputLevel.val(),
+                inputStatus : statusValue,
+                editID : editID.val(),
+                formAction : formAction.val()
+            },
+        });
+
+        reqAjax.done(function (res) {
+
+            modalFormAction("close");
+            console.log(res);
+            reloadTable();
+            resetForm();
+            $("#formModal").modal('hide');
+        });
+
+        reqAjax.fail(function (xhr, status, error) {
+            console.log("ajax request fail!!");
+            console.log(status + ": " + error);
+        });
+    }// const
 
     function showCopy() {
         $("#alert").fadeIn(500);

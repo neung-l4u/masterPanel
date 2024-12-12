@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 12, 2024 at 09:19 AM
+-- Generation Time: Dec 12, 2024 at 09:38 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,30 @@ SET time_zone = "+00:00";
 --
 -- Database: `db_localforyou`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `passwordmanager`
+--
+
+CREATE TABLE `passwordmanager` (
+  `id` tinyint(4) NOT NULL,
+  `pwName` varchar(255) NOT NULL,
+  `pwLink` varchar(255) NOT NULL,
+  `pwUser` varchar(255) NOT NULL,
+  `pwPass` text NOT NULL,
+  `pwLevel` tinyint(1) NOT NULL COMMENT 'Table userlevel',
+  `pwTeam` tinyint(2) NOT NULL,
+  `pwType` tinyint(1) NOT NULL,
+  `pwNote` text NOT NULL,
+  `pwCreateBy` tinyint(3) DEFAULT NULL,
+  `pwCreateAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `pwUpdateBy` tinyint(3) DEFAULT NULL,
+  `pwUpdateAt` datetime DEFAULT NULL,
+  `pwDeleteBy` tinyint(3) DEFAULT NULL,
+  `pwDeleteAt` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `passwordmanager`
@@ -48,6 +72,26 @@ INSERT INTO `passwordmanager` (`id`, `pwName`, `pwLink`, `pwUser`, `pwPass`, `pw
 (27, 'Mr.Hen', '', 'Client01 - Sale', 'Client01 - SE', 4, 3, 2, '', NULL, '2024-12-12 13:19:09', NULL, NULL, NULL, NULL),
 (28, 'Mrs.Mai', '', 'Client02 - Sale', 'Client02 - SE', 4, 3, 2, '', NULL, '2024-12-12 13:19:09', NULL, NULL, NULL, NULL),
 (29, 'Prapa Thai Remedial', '', 'Client01 - Information Technology', 'Client01 - IT', 4, 5, 2, '', NULL, '2024-12-12 13:19:09', NULL, NULL, NULL, NULL);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `passwordmanager`
+--
+ALTER TABLE `passwordmanager`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `passwordmanager`
+--
+ALTER TABLE `passwordmanager`
+  MODIFY `id` tinyint(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
