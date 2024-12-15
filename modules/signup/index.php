@@ -1238,9 +1238,9 @@ $currentDate = date('d/m/Y');
                                                                      onkeyup="applyCoupon();"
                                                              />
                                                              </span>
-                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">
-                                                                <i class="fa-solid fa-magnifying-glass"></i>
-                                                            </a>
+<!--                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">-->
+<!--                                                                <i class="fa-solid fa-magnifying-glass"></i>-->
+<!--                                                            </a>-->
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1265,9 +1265,9 @@ $currentDate = date('d/m/Y');
                                                                      onkeyup="applyCoupon2();"
                                                              />
                                                              </span>
-                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">
-                                                                <i class="fa-solid fa-magnifying-glass"></i>
-                                                            </a>
+<!--                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">-->
+<!--                                                                <i class="fa-solid fa-magnifying-glass"></i>-->
+<!--                                                            </a>-->
                                                         </div>
                                                     </div>
                                                 </div>

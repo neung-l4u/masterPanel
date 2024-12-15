@@ -557,15 +557,16 @@ function requestToPay() {
     const objCode = $("#couponCode");
     let inputCode = objCode.val().trim().toUpperCase();
     let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
-    let Payment_Coupon_Obj;
     let textDiscount2 = couponCode2.val().trim().toUpperCase();
+    let Payment_Coupon_Obj = {};
+    let Payment_Coupon_Obj2 = {};
 
     try { //try to create discountList form JSON file *this will error if nothing filled in the main coupon code field
         let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
         let discountObject = discountList[formData.formCountry];
         let textDiscount = couponCode.val().trim().toUpperCase();
-        let Payment_Coupon_Obj = discountObject;
-        let Payment_Coupon_Obj2 = discountObject;
+        Payment_Coupon_Obj = discountObject;
+        Payment_Coupon_Obj2 = discountObject;
     } catch (error) {
         console.log("--This is catch case --");
         console.error('JSON parsing error:', error.message);
@@ -574,18 +575,18 @@ function requestToPay() {
 
     let codeDiscount = {};
 
-
     if (typeof Payment_Coupon_Obj !== "undefined") { //check this coupon code is exist in a setting list
+        console.log("เจอส่วนลดแล้ว");
         let pid = "";
             pid = cloneCart["subscription"][0]; //read main product ID
         let cid = "";
             cid = Payment_Coupon_Obj.code; //read stripe coupon code
-        codeDiscount = { [pid] : cid } ; //set main coupon code
+        codeDiscount = { [pid] : cid } ; //set the main coupon code
     }else{
         let pid = "";
         pid = cloneCart["subscription"][0]; //read main product ID
         let cid = "";
-        codeDiscount = { [pid] : cid } ; //set main coupon code
+        codeDiscount = { [pid] : cid } ; //set the main coupon code
     }
 
     let addOnDiscountCode = {};
@@ -677,7 +678,6 @@ function requestToPay() {
     if(formCountry === "GB"){ newCountry= "UK"; }
     else { newCountry = formCountry; }
 
-    //alert("codeDiscount = "+codeDiscount);
     let stripePayload = {
         "env": selectEnv,
         "country": newCountry,
