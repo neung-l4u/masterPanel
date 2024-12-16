@@ -1,12 +1,17 @@
 <?php
 $id=$_REQUEST['id'];
+require_once ("../assets/php/share_function.php");
 ?>
-
+<style>
+    input::placeholder, textarea::placeholder, .custom-file-label {
+        color: #dddddd !important;
+    }
+</style>
 
 <!--    <link rel="stylesheet" href="../assets/css/bootstrap.4.5.2.min.css">-->
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
     <link rel="stylesheet" href="../assets/css/project_detail.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
 
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/iro5.5.2.min.js"></script> <!--color picker plugin-->
@@ -74,56 +79,6 @@ $id=$_REQUEST['id'];
         <li class="breadcrumb-item active projectName" aria-current="page" id="projectName"></li>
     </ol>
 </nav>
-
-<div class="border rounded mb-5 p-5">
-    <div class="row">
-        <div class="col">
-            <h5 class="text-secondary">Test.</h5>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <?php
-            function getRandomPic($shopType, $picType)
-            {
-                $mainDir = "";
-                if (strtolower($shopType)=="restaurant"){
-                    $mainDir = "restaurant";
-                }else if(strtolower($shopType)=="massage"){
-                    $mainDir = "massages";
-                }
-                $path = '../assets/img/sample_image/'.$mainDir."/".$picType;
-
-                $dir2 = $path."/".$picType;
-                $allFile = array();
-                foreach (new DirectoryIterator($path) as $file) {
-                    if ($file->isFile()) {
-                        //echo "<div>" . $file->getFilename() . "</div>";
-                        $allFile[] = $file->getFilename();
-                    }//if
-                }//foreach
-
-                $rand_keys = array_rand($allFile, 1);
-                echo '<h1>'.$allFile[$rand_keys].'</h1>';
-                //return($allFile[$rand_keys]);
-            }//getRandomPic
-
-            getRandomPic("massage", "other");
-
-
-//            get All Files
-            /*$dir = '../assets/img/sample_image';
-            foreach (new DirectoryIterator($dir) as $file) {
-                if ($file->isFile()) {
-                    print "<div>" . $file->getFilename() . "</div>";
-                }
-            }*/
-
-
-            ?>
-        </div>
-    </div>
-</div>
 
 <!-- Project Information -->
 <div class="border rounded mb-5 p-5">
