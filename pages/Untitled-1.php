@@ -57,12 +57,11 @@ $loginID = $_SESSION['id'];
                                         <tr>
                                             <th style="width:5%">Type</th>
                                             <th style="width:10%">Team : Level</th>
-                                            <th style="width:20%">Name</th>
+                                            <th style="width:25%">Name</th>
                                             <th style="width:15%">Link</th>
                                             <th style="width:20%">User</th>
-                                            <th style="width:14%">Password</th>
-                                            <th style="width:8%">Note</th>
-                                            <th style="width:8%"></th>
+                                            <th style="width:15%">Password</th>
+                                            <th style="width:10%">Note</th>
                                         </tr>
                                     </thead>
                                     <tfoot class="thead-light">
@@ -74,7 +73,6 @@ $loginID = $_SESSION['id'];
                                             <th>User</th>
                                             <th>Password</th>
                                             <th>Note</th>
-                                            <th></th>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -167,7 +165,7 @@ $loginID = $_SESSION['id'];
                             <div class="form-group mb-3">
                                 <label for="inputAccessLink">Access Link</label>
                                 <input type="text" class="form-control" id="inputAccessLink" maxlength="255"
-                                    placeholder="e.g. https://localforyou.com" required>
+                                    placeholder="e.g. htttps://localforyou.com" required>
                             </div>
 
                             <div class="form-group mb-3">
@@ -206,83 +204,6 @@ $loginID = $_SESSION['id'];
 <!-- /.content -->
 
 <script>
-     const setEdit = (id) => {
-        const inputLevel = $("#inputLevel");
-        const inputTeam = $("#inputTeam");
-        const inputType = $("#inputType");
-        const inputpwName = $("#inputpwName");
-        const inputAccessLink = $("#inputAccessLink");
-        const inputUserName = $("#inputUserName");
-        const inputPassword = $("#inputPassword");
-        const inputNote = $("#inputNote");
-        const editID = $("#editID");
-        const formAction = $("#formAction");
-
-        const reqAjax = $.ajax({
-            url: "assets/php/actionPassword.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: {
-                act: "loadUpdate",
-                id: id,
-            },
-        });
-
-        reqAjax.done(function (res) {
-            console.log(res);
-            inputType.val(res.inputType);
-            inputTeam.val(res.inputTeam);
-            inputLevel.val(res.inputLevel);
-            inputpwName.val(res.inputpwName);
-            inputAccessLink.val(res.inputAccessLink);
-            inputUserName.val(res.inputUserName);
-            inputPassword.val(res.inputPassword);
-            inputNote.val(res.inputNote);
-            editID.val(res.id);
-            formAction.val("edit");
-            modalFormAction("open");
-        });
-
-        reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
-            console.log(status + ": " + error);
-        });
-    }// const
-
-    const setDel = (id) => {
-        const confirmDelete = confirm("Are you sure you want to delete this entry? This action cannot be undone.");
-        if (!confirmDelete) {
-            return;
-        }
-
-        const reqAjax = $.ajax({
-            url: "assets/php/actionPassword.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: {
-                act: "setDelete",
-                id: id,
-            },
-        });
-
-        reqAjax.done(function (res) {
-            console.log(res);
-            if (res.success) {
-                reloadTable();
-            } else {
-                alert("Failed to delete the entry. Please try again.");
-            }
-        });
-
-        reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
-            console.log(status + ": " + error);
-        });
-    };
     
     const formSave = () => {
         const inputType = $("#inputType");
@@ -292,9 +213,10 @@ $loginID = $_SESSION['id'];
         const inputAccessLink = $("#inputAccessLink");
         const inputUserName = $("#inputUserName");
         const inputPassword = $("#inputPassword");
-        const inputNote = $("#inputNote");
         const editID = $("#editID");
         const formAction = $("#formAction");
+
+        let statusValue = $("input[name='inputStatus']:checked").val();
 
         const reqAjax = $.ajax({
             url: "assets/php/actionPassword.php",
@@ -304,14 +226,12 @@ $loginID = $_SESSION['id'];
             dataType: "json",
             data: {
                 act: "save",
-                inputType: inputType.val(),
-                inputTeam: inputTeam.val(),
-                inputLevel: inputLevel.val(),
-                inputpwName: inputpwName.val(),
-                inputAccessLink: inputAccessLink.val(),
-                inputUserName: inputUserName.val(),
+                inputName: inputName.val(),
+                inputEmail: inputEmail.val(),
+                inputPhone: inputPhone.val(),
                 inputPassword: inputPassword.val(),
-                inputNote: inputNote.val(),
+                inputLevel: inputLevel.val(),
+                inputStatus: statusValue,
                 editID: editID.val(),
                 formAction: formAction.val()
             },
@@ -331,31 +251,6 @@ $loginID = $_SESSION['id'];
             console.log(status + ": " + error);
         });
     } // const
-
-    const resetForm = () => {
-        const inputType = $("#inputType");
-        const inputTeam = $("#inputTeam");
-        const inputLevel = $("#inputLevel");
-        const inputpwName = $("#inputpwName");
-        const inputAccessLink = $("#inputAccessLink");
-        const inputUserName = $("#inputUserName");
-        const inputPassword = $("#inputPassword");
-        const inputNote = $("#inputNote");
-        const editID = $("#editID");
-        const formAction = $("#formAction");
-
-        inputType.val('');
-        inputTeam.val('');
-        inputLevel.val('');
-        inputpwName.val('');
-        inputAccessLink.val('');
-        inputUserName.val('');
-        inputPassword.val('');
-        inputNote.val('');
-        editID.val('');
-        formAction.val('add');
-    }// const
-
 
     function showCopy() {
         $("#alert").fadeIn(500);
