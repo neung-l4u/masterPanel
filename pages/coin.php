@@ -224,7 +224,7 @@ $teamIDHardcode = array(
                     <div class="modal-body">
                         <div class="card">
                             <div class="card-body d-flex align-items-start">
-                                <img id="profile-coin-img" class="profile-coin-img mr-4" src="dist/img/crews/18-Mui.png"
+                                <img id="profile-coin-img" class="profile-coin-img mr-4" src="assets/img/crews/no_pic.png"
                                      alt="message user image">
                                 <div class="mr-4">
                                     <h4 id="user_name" class="user_name_full">Name</h4>
@@ -308,7 +308,7 @@ $teamIDHardcode = array(
                                     <div class="form-group col-10">
                                         <label id="coinReasonLabel" for="coinReason">Reason</label>
                                         <textarea class="form-control" id="coinReason" rows="2"></textarea>
-                                        <small id="reasonHelp" class="form-text text-muted">e.g. Win Prize on Company
+                                        <small id="reasonHelp" class="form-text text-muted">e.g., Win Prize on Company
                                             meeting</small>
                                     </div>
                                     <div class="col"></div>
@@ -526,13 +526,13 @@ $teamIDHardcode = array(
     </script>
 
 <?php
-function reFormatDate($param)
+function reFormatDate($param): string
 {
     $tmp = explode("-", $param);
     return $tmp[2] . "/" . $tmp[1] . "/" . $tmp[0];
 }
 
-function showName($nick, $full)
+function showName($nick, $full): string
 {
     $tmp = explode(" ", $full);
     $getName = ($nick == $tmp[0]) ? $tmp[1] : $tmp[0];
