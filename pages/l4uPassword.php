@@ -38,14 +38,17 @@ $loginID = $_SESSION['id'];
     <div class="container-fluid">
 
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-end">
-                        <!-- Button trigger modal -->
-                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
-                        </button>
-                        <!-- Modal -->
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="text-danger">You will only be able to see your own team passwords and passwords shared by others.</p>
+                            <!-- Button trigger modal -->
+                            <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
+                            </button>
+                            <!-- Modal -->
+                        </div>
                     </div>
 
                     <div class="card-body">
@@ -55,18 +58,20 @@ $loginID = $_SESSION['id'];
                                     style="width:100%">
                                     <thead class="thead-dark">
                                         <tr>
+                                            <th style="width:5%">Share</th>
                                             <th style="width:10%">Team:Type</th>
                                             <th style="width:5%">Level</th>
-                                            <th style="width:25%">Name</th>
-                                            <th style="width:20%">User</th>
-                                            <th style="width:20%">Password</th>
+                                            <th style="width:28%">Name</th>
+                                            <th style="width:17%">User</th>
+                                            <th style="width:17%">Password</th>
                                             <th style="width:5%">Link</th>
                                             <th style="width:5%">Note</th>
-                                            <th style="width:10%"></th>
+                                            <th style="width:8%"></th>
                                         </tr>
                                     </thead>
                                     <tfoot class="thead-dark">
                                         <tr>
+                                            <th>Share</th>
                                             <th>Team:Type</th>
                                             <th>Level</th>
                                             <th>Name</th>
