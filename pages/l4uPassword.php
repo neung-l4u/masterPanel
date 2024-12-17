@@ -86,7 +86,7 @@ $loginID = $_SESSION['id'];
         </div><!-- /.row -->
 
         <div id="alert" style="
-            display: float; 
+            display: block;
             right: 20px; 
             bottom: 30px; 
             position: fixed; 
