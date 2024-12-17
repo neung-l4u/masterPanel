@@ -303,34 +303,7 @@ global $db, $date;
         });
     }// const
 
-    const setDel = (id) => {
-        let answer = confirm("Are you sure you want to delete this? \n This item will be deleted immediately. \n\n You can't undo this action.");
-
-        if (answer){
-            const reqAjax = $.ajax({
-                url: "assets/php/actionStaffs.php",
-                method: "POST",
-                async: false,
-                cache: false,
-                dataType: "json",
-                data: {
-                    act: "setDelete",
-                    id: id,
-                },
-            });
-
-            reqAjax.done(function (res) {
-                reloadTable();
-                //Set form
-            });
-
-            reqAjax.fail(function (xhr, status, error) {
-                console.log("ajax request fail!!");
-                console.log(status + ": " + error);
-            });
-        } //if
-
-    }// const
+    
 
 
     const resetForm = () => {
