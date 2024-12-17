@@ -124,7 +124,7 @@
               {
                 "name": "Mega Marketing Bundle",
                 "product_id": "prod_R84YOthueA3olV",
-                "price_id": "AUMB01M03S-02",
+                "price_id": "AUMB01M03O-02",
                 "currency": "aud",
                 "amount": 74900,
                 "type": "bundle",
@@ -1450,8 +1450,8 @@
               },
               {
                 "name": "Mega Marketing Solo",
-                "product_id": "NZMS01M12O-02",
-                "price_id": "ROT033NZ12",
+                "product_id": "prod_R87BgE7r0ZMPAw",
+                "price_id": "NZMS01M12O-02",
                 "currency": "nzd",
                 "amount": 39900,
                 "type": "solo",
