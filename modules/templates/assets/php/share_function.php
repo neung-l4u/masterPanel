@@ -7,7 +7,7 @@ parameters
     $fullPath = true, false (default false)
 
   example 1:
-    $getPic = getRandomPic("massage", "bg");
+    $getPic = getRandomPic("restaurant", "logo");
     will return >> bg5.webp
 
   example 2:
