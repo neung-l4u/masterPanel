@@ -38,17 +38,14 @@ $loginID = $_SESSION['id'];
     <div class="container-fluid">
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <p class="text-danger">You will only be able to see your own team passwords and passwords shared by others.</p>
-                            <!-- Button trigger modal -->
-                            <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
-                            </button>
-                            <!-- Modal -->
-                        </div>
+                    <div class="card-header d-flex justify-content-end">
+                        <!-- Button trigger modal -->
+                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
+                        </button>
+                        <!-- Modal -->
                     </div>
 
                     <div class="card-body">
@@ -58,28 +55,24 @@ $loginID = $_SESSION['id'];
                                     style="width:100%">
                                     <thead class="thead-dark">
                                         <tr>
-                                            <th style="width:5%">Share</th>
-                                            <th style="width:10%">Team:Type</th>
-                                            <th style="width:5%">Level</th>
-                                            <th style="width:28%">Name</th>
-                                            <th style="width:17%">User</th>
-                                            <th style="width:17%">Password</th>
-                                            <th style="width:5%">Link</th>
-                                            <th style="width:5%">Note</th>
-                                            <th style="width:8%"></th>
+                                            <th style="width:5%">Type</th>
+                                            <th style="width:10%">Team : Level</th>
+                                            <th style="width:25%">Name</th>
+                                            <th style="width:15%">Link</th>
+                                            <th style="width:20%">User</th>
+                                            <th style="width:15%">Password</th>
+                                            <th style="width:10%">Note</th>
                                         </tr>
                                     </thead>
-                                    <tfoot class="thead-dark">
+                                    <tfoot class="thead-light">
                                         <tr>
-                                            <th>Share</th>
-                                            <th>Team:Type</th>
-                                            <th>Level</th>
+                                            <th>Type</th>
+                                            <th>Team : Level</th>
                                             <th>Name</th>
+                                            <th>Link</th>
                                             <th>User</th>
                                             <th>Password</th>
-                                            <th>Link</th>
                                             <th>Note</th>
-                                            <th></th>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -91,7 +84,7 @@ $loginID = $_SESSION['id'];
         </div><!-- /.row -->
 
         <div id="alert" style="
-            display: block;
+            display: float; 
             right: 20px; 
             bottom: 30px; 
             position: fixed; 
@@ -119,23 +112,23 @@ $loginID = $_SESSION['id'];
                     <div class="modal-body">
                         <div class="d-flex flex-column">
 
-                            <div class="row mb-3">
-                                <div class="col-6">
+                            <div class="row mb-5">
+                                <div class="col-4">
                                     <div class="form-group row">
-                                        <label for="inputType" class="col-3 col-form-label">Type</label>
+                                        <label for="inputType" class="col-2 col-form-label">Type</label>
                                         <div class="col">
-                                            <select id="inputType" class="custom-select">
-                                                <option value="Internal" selected>Internal</option>
-                                                <option value="Customer">Customer</option>
+                                            <select id="inputType" class="custom-select" required>
+                                                <option value="1">Internal</option>
+                                                <option value="2">Client</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                     <div class="form-group row">
-                                        <label for="inputTeam" class="col-3 col-form-label">Team</label>
+                                        <label for="inputTeam" class="col-2 col-form-label">Team</label>
                                         <div class="col">
-                                            <select id="inputTeam" class="custom-select">
+                                            <select id="inputTeam" class="custom-select" required>
                                                 <option value="0" selected>-- None --</option>
                                                 <?php
                                                 $teams = $db->query('SELECT `id`, `name`, `fullName` FROM `Team` ORDER BY `idx`;')->fetchAll();
@@ -148,28 +141,15 @@ $loginID = $_SESSION['id'];
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-6">
+                                <div class="col-4">
                                     <div class="form-group row">
-                                        <label for="inputLevel" class="col-3 col-form-label">View Level</label>
+                                        <label for="inputLevel" class="col-2 col-form-label">Level</label>
                                         <div class="col">
-                                            <select id="inputLevel" class="custom-select">
+                                            <select id="inputLevel" class="custom-select" required>
                                                 <option value="1">Super Admin</option>
                                                 <option value="2">Admin</option>
                                                 <option value="3">Manager</option>
                                                 <option value="4" selected>User</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group row">
-                                        <label for="sharePW" class="col-3 col-form-label">Share</label>
-                                        <div class="col">
-                                            <select id="sharePW" class="custom-select">
-                                                <option value="0" selected>No - Another team can't see this</option>
-                                                <option value="1">Yes - Another team can see this</option>
                                             </select>
                                         </div>
                                     </div>
@@ -185,7 +165,7 @@ $loginID = $_SESSION['id'];
                             <div class="form-group mb-3">
                                 <label for="inputAccessLink">Access Link</label>
                                 <input type="text" class="form-control" id="inputAccessLink" maxlength="255"
-                                    placeholder="e.g. https://localforyou.com" required>
+                                    placeholder="e.g. htttps://localforyou.com" required>
                             </div>
 
                             <div class="form-group mb-3">
@@ -224,85 +204,6 @@ $loginID = $_SESSION['id'];
 <!-- /.content -->
 
 <script>
-     const setEdit = (id) => {
-        const inputLevel = $("#inputLevel");
-        const inputTeam = $("#inputTeam");
-        const inputType = $("#inputType");
-        const inputpwName = $("#inputpwName");
-        const inputAccessLink = $("#inputAccessLink");
-        const inputUserName = $("#inputUserName");
-        const inputPassword = $("#inputPassword");
-        const inputNote = $("#inputNote");
-        const editID = $("#editID");
-        const formAction = $("#formAction");
-        const inputSharePW = $("#sharePW");
-
-        let reqAjax = $.ajax({
-            url: "assets/php/actionPassword.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: {
-                act: "loadUpdate",
-                id: id,
-            },
-        });
-
-        reqAjax.done(function (res) {
-            console.log(res);
-            inputType.val(res.inputType);
-            inputTeam.val(res.inputTeam);
-            inputLevel.val(res.inputLevel);
-            inputSharePW.val(res.inputSharePW);
-            inputpwName.val(res.inputpwName);
-            inputAccessLink.val(res.inputAccessLink);
-            inputUserName.val(res.inputUserName);
-            inputPassword.val(res.inputPassword);
-            inputNote.val(res.inputNote);
-            editID.val(res.id);
-            formAction.val("edit");
-            modalFormAction("open");
-        });
-
-        reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
-            console.log(status + ": " + error);
-        });
-    }// const
-
-    const setDel = (id) => {
-        const confirmDelete = confirm("Are you sure you want to delete this entry? This action cannot be undone.");
-        if (!confirmDelete) {
-            return;
-        }
-
-        const reqAjax = $.ajax({
-            url: "assets/php/actionPassword.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: {
-                act: "setDelete",
-                id: id,
-            },
-        });
-
-        reqAjax.done(function (res) {
-            console.log(res);
-            if (res.success) {
-                reloadTable();
-            } else {
-                alert("Failed to delete the entry. Please try again.");
-            }
-        });
-
-        reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
-            console.log(status + ": " + error);
-        });
-    };
     
     const formSave = () => {
         const inputType = $("#inputType");
@@ -312,10 +213,10 @@ $loginID = $_SESSION['id'];
         const inputAccessLink = $("#inputAccessLink");
         const inputUserName = $("#inputUserName");
         const inputPassword = $("#inputPassword");
-        const inputSharePW = $("#sharePW");
-        const inputNote = $("#inputNote");
         const editID = $("#editID");
         const formAction = $("#formAction");
+
+        let statusValue = $("input[name='inputStatus']:checked").val();
 
         const reqAjax = $.ajax({
             url: "assets/php/actionPassword.php",
@@ -325,15 +226,12 @@ $loginID = $_SESSION['id'];
             dataType: "json",
             data: {
                 act: "save",
-                inputType: inputType.val(),
-                inputTeam: inputTeam.val(),
-                inputLevel: inputLevel.val(),
-                inputpwName: inputpwName.val(),
-                inputAccessLink: inputAccessLink.val(),
-                inputUserName: inputUserName.val(),
+                inputName: inputName.val(),
+                inputEmail: inputEmail.val(),
+                inputPhone: inputPhone.val(),
                 inputPassword: inputPassword.val(),
-                inputSharePW: inputSharePW.val(),
-                inputNote: inputNote.val(),
+                inputLevel: inputLevel.val(),
+                inputStatus: statusValue,
                 editID: editID.val(),
                 formAction: formAction.val()
             },
@@ -353,31 +251,6 @@ $loginID = $_SESSION['id'];
             console.log(status + ": " + error);
         });
     } // const
-
-    const resetForm = () => {
-        const inputType = $("#inputType");
-        const inputTeam = $("#inputTeam");
-        const inputLevel = $("#inputLevel");
-        const inputpwName = $("#inputpwName");
-        const inputAccessLink = $("#inputAccessLink");
-        const inputUserName = $("#inputUserName");
-        const inputPassword = $("#inputPassword");
-        const inputNote = $("#inputNote");
-        const editID = $("#editID");
-        const formAction = $("#formAction");
-
-        inputType.val('');
-        inputTeam.val('');
-        inputLevel.val('');
-        inputpwName.val('');
-        inputAccessLink.val('');
-        inputUserName.val('');
-        inputPassword.val('');
-        inputNote.val('');
-        editID.val('');
-        formAction.val('add');
-    }// const
-
 
     function showCopy() {
         $("#alert").fadeIn(500);

@@ -124,7 +124,7 @@
               {
                 "name": "Mega Marketing Bundle",
                 "product_id": "prod_R84YOthueA3olV",
-                "price_id": "AUMB01M03S-02",
+                "price_id": "AUMB01M03O-02",
                 "currency": "aud",
                 "amount": 74900,
                 "type": "bundle",
@@ -1450,8 +1450,8 @@
               },
               {
                 "name": "Mega Marketing Solo",
-                "product_id": "NZMS01M12O-02",
-                "price_id": "ROT033NZ12",
+                "product_id": "prod_R87BgE7r0ZMPAw",
+                "price_id": "NZMS01M12O-02",
                 "currency": "nzd",
                 "amount": 39900,
                 "type": "solo",
@@ -2216,11 +2216,10 @@
                 "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 6900,
-                "type": "solo",
+                "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Social Media Marketing Bundle",
@@ -2231,11 +2230,10 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
-                "name": "Direct Marketing Bundle (Not incl SMS Spend)",
+                "name": "Direct Marketing Bundle",
                 "product_id": "prod_PvxKyDfw97GWZl",
                 "price_id": "UK1TRIAL",
                 "currency": "gbp",
@@ -2243,11 +2241,10 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
-                "name": "Mega Marketing Bundle (600+ Cus)",
+                "name": "Mega Marketing Bundle",
                 "product_id": "prod_PvxKyDfw97GWZl",
                 "price_id": "UK1TRIAL",
                 "currency": "gbp",
@@ -2255,8 +2252,7 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Social Media Marketing Solo",
@@ -2267,11 +2263,10 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
-                "name": "Direct Marketing Solo (SMS spend not incl - .06c per sms)",
+                "name": "Direct Marketing Solo",
                 "product_id": "prod_PvxKyDfw97GWZl",
                 "price_id": "UK1TRIAL",
                 "currency": "gbp",
@@ -2279,11 +2274,10 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
-                "name": "Mega Marketing Solo (600+ Cus)",
+                "name": "Mega Marketing Solo",
                 "product_id": "prod_PvxKyDfw97GWZl",
                 "price_id": "UK1TRIAL",
                 "currency": "gbp",
@@ -2291,15 +2285,24 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
+              },
+              {
+                "name": "Add-on Only",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 0,
+                "type": "solo",
+                "status": "show",
+                "ext": "",
+                "gst": false
               }
             ]
           },
           {
             "period": 3,
             "items": [
-
               {
                 "name": "Social Media Marketing Bundle",
                 "product_id": "prod_PvxKyDfw97GWZl",
@@ -2309,11 +2312,10 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
-                "name": "Direct Marketing Bundle (Not incl SMS Spend)",
+                "name": "Direct Marketing Bundle",
                 "product_id": "prod_PvxKyDfw97GWZl",
                 "price_id": "UK1TRIAL",
                 "currency": "gbp",
@@ -2321,11 +2323,10 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
-                "name": "Mega Marketing Bundle (600+ Cus)",
+                "name": "Mega Marketing Bundle",
                 "product_id": "prod_PvxKyDfw97GWZl",
                 "price_id": "UK1TRIAL",
                 "currency": "gbp",
@@ -2333,8 +2334,51 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
+              },
+              {
+                "name": "3 Months Pay Upfront - Pro Online Ordering System",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 18630,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "3 Months Pay Upfront - Social Media Marketing Bundle",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 42930,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "3 Months Pay Upfront - Direct Marketing Bundle",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 42930,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "3 Months Pay Upfront - Mega Marketing Bundle",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 80730,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               },
               {
                 "name": "Social Media Marketing Solo",
@@ -2345,11 +2389,10 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
-                "name": "Direct Marketing Solo (SMS spend not incl - .06c per sms)",
+                "name": "Direct Marketing Solo",
                 "product_id": "prod_PvxKyDfw97GWZl",
                 "price_id": "UK1TRIAL",
                 "currency": "gbp",
@@ -2357,11 +2400,10 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
-                "name": "Mega Marketing Solo (600+ Cus)",
+                "name": "Mega Marketing Solo",
                 "product_id": "prod_PvxKyDfw97GWZl",
                 "price_id": "UK1TRIAL",
                 "currency": "gbp",
@@ -2369,92 +2411,40 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
-              },
-              {
-                "name": "3 Months Pay Upfront - Pro Online Ordering System",
-                "product_id": "prod_Q8z4bVsZAQNJnw",
-                "price_id": "ROT063UK03",
-                "currency": "gbp",
-                "amount": 18630,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
-              },
-              {
-                "name": "3 Months Pay Upfront - Social Media Marketing Bundle",
-                "product_id": "prod_Q8zBCk9DttMHNl",
-                "price_id": "ROT067UK03",
-                "currency": "gbp",
-                "amount": 42930,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
-              },
-              {
-                "name": "3 Months Pay Upfront - Direct Marketing Bundle",
-                "product_id": "prod_Q8zDXirXCUXVYj",
-                "price_id": "ROT068UK03",
-                "currency": "gbp",
-                "amount": 42930,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
-              },
-              {
-                "name": "3 Months Pay Upfront - Mega Marketing Bundle",
-                "product_id": "prod_Q8zFitgKJboknB",
-                "price_id": "ROT069UK03",
-                "currency": "gbp",
-                "amount": 80730,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "3 Months Pay Upfront - Social Media Marketing Solo",
-                "product_id": "prod_Q8z6ePvowiFMQ5",
-                "price_id": "ROT064UK03",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 29430,
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "3 Months Pay Upfront - Direct Marketing Solo",
-                "product_id": "prod_Q8z7qQFXfVRDZn",
-                "price_id": "ROT065UK03",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 29430,
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "3 Months Pay Upfront - Mega Marketing Solo",
-                "product_id": "prod_Q8z96ywVbFM1yv",
-                "price_id": "ROT066UK03",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 67230,
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               }
             ]
           },
@@ -2462,88 +2452,147 @@
             "period": 12,
             "items": [
               {
-                "name": "12 Months Pay Upfront - Pro Online Ordering System",
-                "product_id": "prod_Q8z5xAS9p9zRxx",
-                "price_id": "ROT063UK12",
+                "name": "Social Media Marketing Bundle",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
-                "amount": 66240,
-                "type": "solo",
+                "amount": 15900,
+                "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
+              },
+              {
+                "name": "Direct Marketing Bundle",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 15900,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Mega Marketing Bundle",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 24900,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "12 Months Pay Upfront - Pro Online Ordering System",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 66240,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               },
               {
                 "name": "12 Months Pay Upfront - Social Media Marketing Bundle",
-                "product_id": "prod_Q8zCOaFjrmYBcV",
-                "price_id": "ROT067UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 152640,
-                "type": "solo",
+                "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "12 Months Pay Upfront - Direct Marketing Bundle",
-                "product_id": "prod_Q8zEHSApgGdyit",
-                "price_id": "ROT068UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 152640,
-                "type": "solo",
+                "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "12 Months Pay Upfront - Mega Marketing Bundle",
-                "product_id": "prod_Q8zF57QOsUpEvd",
-                "price_id": "ROT069UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 287040,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
+              },
+              {
+                "name": "Social Media Marketing Solo",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 10900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+              {
+                "name": "Direct Marketing Solo",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 10900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+              {
+                "name": "Mega Marketing Solo",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 19900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
               },
               {
                 "name": "12 Months Pay Upfront - Social Media Marketing Solo",
-                "product_id": "prod_Q8z6WJjUsVzNZH",
-                "price_id": "ROT064UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 104640,
-                "type": "bundle",
+                "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "12 Months Pay Upfront - Direct Marketing Solo",
-                "product_id": "prod_Q8z9im0wwdU0v5",
-                "price_id": "ROT065UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 104640,
-                "type": "bundle",
+                "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "12 Months Pay Upfront - Mega Marketing Solo",
-                "product_id": "prod_Q8zB1vsKXL9oOX",
-                "price_id": "ROT066UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 239040,
-                "type": "bundle",
+                "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               }
             ]
           }
@@ -2553,6 +2602,28 @@
             {
               "period": "all",
               "items": [
+                {
+                  "name": "Promotions Add-on",
+                  "product_id": "prod_R842EqQ3eI1yRE",
+                  "price_id": "UKPAO03M00O-02",
+                  "currency": "gbp",
+                  "amount": 2900,
+                  "type": "promotion",
+                  "status": "show",
+                  "ext": "/Month",
+                  "gst": true
+                },
+                {
+                  "name": "Mob App",
+                  "product_id": "prod_R87pFxjWntSErO",
+                  "price_id": "UKMBA03M00O-02",
+                  "currency": "gbp",
+                  "amount": 9900,
+                  "type": "mobile",
+                  "status": "show",
+                  "ext": "/Month",
+                  "gst": true
+                }
               ]
             }
           ],
@@ -2565,56 +2636,7 @@
           "Materials": [
             {
               "period": "all",
-              "items": [
-                {
-                  "name": "A6 Flyers x 1,000 pcs",
-                  "product_id": "prod_OL479AsMTDYV92",
-                  "price_id": "AMA001UK",
-                  "currency": "gbp",
-                  "amount": 4500,
-                  "type": "flyers",
-                  "status": "show",
-                  "ext": "",
-                  "gst": false,
-                  "setup_fee": 0
-                },
-                {
-                  "name": "A6 Flyers x 2,000 pcs",
-                  "product_id": "prod_OL4BZSpuSv8EVV",
-                  "price_id": "AMA002UK",
-                  "currency": "gbp",
-                  "amount": 5500,
-                  "type": "flyers",
-                  "status": "show",
-                  "ext": "",
-                  "gst": false,
-                  "setup_fee": 0
-                },
-                {
-                  "name": "A6 Flyers x 5,000 pcs",
-                  "product_id": "prod_OL4Fs5Zx0hHvCL",
-                  "price_id": "AMA003UK",
-                  "currency": "gbp",
-                  "amount": 8500,
-                  "type": "flyers",
-                  "status": "show",
-                  "ext": "",
-                  "gst": false,
-                  "setup_fee": 0
-                },
-                {
-                  "name": "A6 Flyers x 10,000 pcs",
-                  "product_id": "prod_OL4UmdcD1dqOap",
-                  "price_id": "AMA004UK",
-                  "currency": "gbp",
-                  "amount": 14000,
-                  "type": "flyers",
-                  "status": "show",
-                  "ext": "",
-                  "gst": false,
-                  "setup_fee": 0
-                }
-              ]
+              "items": []
             }
           ],
           "Others": [
@@ -2636,11 +2658,10 @@
                 "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 6900,
-                "type": "solo",
+                "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Social Media Marketing Bundle",
@@ -2651,8 +2672,7 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Direct Marketing Bundle (Not incl SMS Spend)",
@@ -2663,8 +2683,7 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Mega Marketing Bundle (600+ Cus)",
@@ -2675,8 +2694,7 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Social Media Marketing Solo",
@@ -2687,8 +2705,7 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Direct Marketing Solo (SMS spend not incl - .06c per sms)",
@@ -2699,8 +2716,7 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Mega Marketing Solo (600+ Cus)",
@@ -2711,8 +2727,18 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
+              },
+              {
+                "name": "Add-on Only",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 0,
+                "type": "solo",
+                "status": "show",
+                "ext": "",
+                "gst": false
               }
             ]
           },
@@ -2728,8 +2754,7 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Direct Marketing Bundle (Not incl SMS Spend)",
@@ -2740,8 +2765,7 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Mega Marketing Bundle (600+ Cus)",
@@ -2752,8 +2776,51 @@
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
+              },
+              {
+                "name": "3 Months Pay Upfront - Localforyou Booking System",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 18630,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "3 Months Pay Upfront - Social Media Marketing Bundle",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 42930,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "3 Months Pay Upfront - Direct Marketing Bundle",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 42930,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "3 Months Pay Upfront - Mega Marketing Bundle",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 80730,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               },
               {
                 "name": "Social Media Marketing Solo",
@@ -2764,8 +2831,7 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Direct Marketing Solo (SMS spend not incl - .06c per sms)",
@@ -2776,8 +2842,7 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "Mega Marketing Solo (600+ Cus)",
@@ -2788,92 +2853,40 @@
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
-              },
-              {
-                "name": "3 Months Pay Upfront - Localforyou Booking System",
-                "product_id": "prod_Q8zGh8agbYCqLT",
-                "price_id": "MOT063UK03",
-                "currency": "gbp",
-                "amount": 18630,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
-              },
-              {
-                "name": "3 Months Pay Upfront - Social Media Marketing Bundle",
-                "product_id": "prod_Q8zRJ1Zt3JNqmB",
-                "price_id": "MOT067UK03",
-                "currency": "gbp",
-                "amount": 42930,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
-              },
-              {
-                "name": "3 Months Pay Upfront - Direct Marketing Bundle",
-                "product_id": "prod_Q8zUAjIbYnCP0t",
-                "price_id": "MOT068UK03",
-                "currency": "gbp",
-                "amount": 42930,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
-              },
-              {
-                "name": "3 Months Pay Upfront - Mega Marketing Bundle",
-                "product_id": "prod_Q8zVu4b5P4OGg3",
-                "price_id": "MOT069UK03",
-                "currency": "gbp",
-                "amount": 80730,
-                "type": "bundle",
-                "status": "show",
-                "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "3 Months Pay Upfront - Social Media Marketing Solo",
-                "product_id": "prod_Q8zIMwZiD6aTLy",
-                "price_id": "MOT064UK03",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 29430,
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "3 Months Pay Upfront - Direct Marketing Solo",
-                "product_id": "prod_Q8zJjtVISemSwN",
-                "price_id": "MOT065UK03",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 29430,
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               },
               {
                 "name": "3 Months Pay Upfront - Mega Marketing Solo",
-                "product_id": "prod_Q8zO2IBqeZTKa3",
-                "price_id": "MOT066UK03",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 67230,
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
               }
             ]
           },
@@ -2881,88 +2894,147 @@
             "period": 12,
             "items": [
               {
+                "name": "Social Media Marketing Bundle",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 15900,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Direct Marketing Bundle (Not incl SMS Spend)",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 15900,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Mega Marketing Bundle (600+ Cus)",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 24900,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
                 "name": "12 Months Pay Upfront - Localforyou Booking System",
-                "product_id": "prod_Q8zHTm2FME8snn",
-                "price_id": "MOT063UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 66240,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
                },
               {
                 "name": "12 Months Pay Upfront - Social Media Marketing Bundle",
-                "product_id": "prod_Q8zSRhS6Q0eZ1z",
-                "price_id": "MOT067UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 152640,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
                },
               {
                 "name": "12 Months Pay Upfront - Direct Marketing Bundle",
-                "product_id": "prod_Q8zVNNmh2rasf4",
-                "price_id": "MOT068UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 152640,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
                },
               {
                 "name": "12 Months Pay Upfront - Mega Marketing Bundle",
-                "product_id": "prod_Q8zWoZqEsjGQYc",
-                "price_id": "MOT069UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 287040,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
                },
+               {
+                "name": "Social Media Marketing Solo",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 10900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+               {
+                "name": "Direct Marketing Solo",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 10900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+              {
+                "name": "Mega Marketing Solo",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
+                "currency": "gbp",
+                "amount": 19900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
               {
                 "name": "12 Months Pay Upfront - Social Media Marketing Solo",
-                "product_id": "prod_Q8zIt8dcgqrmeN",
-                "price_id": "MOT064UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 104640,
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
                },
               {
                 "name": "12 Months Pay Upfront - Direct Marketing Solo",
-                "product_id": "prod_Q8zKS54O6RmM7p",
-                "price_id": "MOT065UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 104640,
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
                },
               {
                 "name": "12 Months Pay Upfront - Mega Marketing Solo",
-                "product_id": "prod_Q8zRjeyrr4f4iS",
-                "price_id": "MOT066UK12",
+                "product_id": "prod_PvxKyDfw97GWZl",
+                "price_id": "UK1TRIAL",
                 "currency": "gbp",
                 "amount": 239040,
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
-                "gst": false,
-                "setup_fee": 0
+                "gst": false
                }
             ]
           }
@@ -2985,54 +3057,6 @@
             {
               "period": "all",
               "items": [
-                {
-                  "name": "A6 Flyers x 1,000 pcs",
-                  "product_id": "prod_OL479AsMTDYV92",
-                  "price_id": "AMA001UK",
-                  "currency": "gbp",
-                  "amount": 4500,
-                  "type": "flyers",
-                  "status": "show",
-                  "ext": "",
-                  "gst": false,
-                  "setup_fee": 0
-                },
-                {
-                  "name": "A6 Flyers x 2,000 pcs",
-                  "product_id": "prod_OL4BZSpuSv8EVV",
-                  "price_id": "AMA002UK",
-                  "currency": "gbp",
-                  "amount": 5500,
-                  "type": "flyers",
-                  "status": "show",
-                  "ext": "",
-                  "gst": false,
-                  "setup_fee": 0
-                },
-                {
-                  "name": "A6 Flyers x 5,000 pcs",
-                  "product_id": "prod_OL4Fs5Zx0hHvCL",
-                  "price_id": "AMA003UK",
-                  "currency": "gbp",
-                  "amount": 8500,
-                  "type": "flyers",
-                  "status": "show",
-                  "ext": "",
-                  "gst": false,
-                  "setup_fee": 0
-                },
-                {
-                  "name": "A6 Flyers x 10,000 pcs",
-                  "product_id": "prod_OL4UmdcD1dqOap",
-                  "price_id": "AMA004UK",
-                  "currency": "gbp",
-                  "amount": 14000,
-                  "type": "flyers",
-                  "status": "show",
-                  "ext": "",
-                  "gst": false,
-                  "setup_fee": 0
-                }
               ]
             }
           ],
@@ -3057,24 +3081,68 @@
               "period": "all",
               "items": [
                 {
-                  "name": "Social Media Management (2 x Mthly FB/Insta + GMB)",
-                  "product_id": "prod_Q3msuILEJYVVUS",
-                  "price_id": "AOT62UK",
+                  "name": "Website Hosting + Email included",
+                  "product_id": "prod_R7hB7F0ZxruMuO",
+                  "price_id": "UKWHT03M00O-02",
                   "currency": "gbp",
                   "amount": 2900,
-                  "type": "Management",
+                  "type": "email",
                   "status": "show",
                   "ext": "/Month",
-                  "gst": false,
-                  "setup_fee": 0
-              }
+                  "gst": false
+                },
+                {
+                  "name": "Social Media Management",
+                  "product_id": "prod_R7kvpr3QDF3bXV",
+                  "price_id": "UKSMM03M00O-02",
+                  "currency": "gbp",
+                  "amount": 2900,
+                  "type": "both",
+                  "status": "show",
+                  "ext": "/Month",
+                  "gst": false
+                }
               ]
             }
           ],
           "Onetime": [
             {
               "period": "all",
-              "items": []
+              "items": [
+                {
+                  "name": "Website Makeover/ Build template customize",
+                  "product_id": "prod_R7h5efbb08kx3N",
+                  "price_id": "UKWMT03M00O-02",
+                  "currency": "gbp",
+                  "amount": 29900,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Website Makeover/ Build fully custumize",
+                  "product_id": "prod_R7gs2UH7LTbyVm",
+                  "price_id": "UKWMF03M00O-02",
+                  "currency": "gbp",
+                  "amount": 69500,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Influencer Package",
+                  "product_id": "prod_R848XKqmSD1kAG",
+                  "price_id": "UKIFU03M00O-02",
+                  "currency": "gbp",
+                  "amount": 99900,
+                  "type": "both",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                }
+              ]
             }
           ],
           "Materials": [
