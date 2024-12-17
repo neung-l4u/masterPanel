@@ -25,7 +25,7 @@ if ($teamID==1){ //CS
 
 
 $result = $db->query('SELECT p.id, p.pwName, p.pwLink, p.pwUser, p.pwPass, p.pwNote, l.lName, p.pwLevel, t.name, p.pwTeam, p.pwType
-                      FROM `passwordmanager` p, `userLevel` l, `team` t
+                      FROM `passwordmanager` p, `userLevel` l, `Team` t
                       WHERE p.pwLevel = l.lID 
                       AND p.pwTeam = t.id
                       AND p.pwLevel >= ? '.$teamCondition, $levelID)->fetchAll();
