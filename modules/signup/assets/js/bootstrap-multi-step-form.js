@@ -1057,72 +1057,33 @@ function applyCoupon() {
     $("#couponCode2").attr('disabled', 'disabled');
   }
 
+  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB"])
+  inputCode = inputCode.toUpperCase();
+  const foundCoupon = availableCoupon.has(inputCode)
+
+  if(foundCoupon) {
     let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
     let discountObject = discountList[formData.formCountry];
 
-  if (typeof discountObject !== "undefined") { //Check if this coupon code is available in your settings list.
-    discountFlag = true;
-    discountValue =  discountObject.discount; //get the discount value of this coupon
-    let findSmile = inputCode.search("SMILE");
-
-    if(findSmile===1){
-      inputReferredSupplier.val("Smile Dinning");
-    }else if(inputCode==="WAWIO"){
-      inputReferredSupplier.val("Wawio");
-    }else {
-      inputReferredSupplier.val("");
+    if (typeof discountObject !== "undefined") { //Check if this coupon code is available in your settings list.
+      discountFlag = true;
+      discountValue = discountObject.discount; //get the discount value of this coupon
     }
-  }
 
-  //// select initial product offering
-  if(discountFlag){
-    let productName = offeringProduct.name;
-    if((productName==="Pro Online Ordering System") && (inputCode==="1TRIAL")){
-      inputInitialProductOffering.val("Promotions - Pro + $1 Trial");
-    }else if((productName==="Social Media Marketing Bundle") && (inputCode==="1TRIAL")){
-      inputInitialProductOffering.val("Promotions - Social Bundle + $1 Trial");
-    }else if((productName==="Direct Marketing Bundle") && (inputCode==="1TRIAL")){
-      inputInitialProductOffering.val("Promotions - Direct Bundle + $1 Trial");
-    }else if((productName==="Mega Marketing Bundle") && (inputCode==="1TRIAL")){
-      inputInitialProductOffering.val("Promotions - Mega Bundle + $1 Trail");
-    }else if((productName==="Social Media Marketing Solo") && (inputCode==="1SMILE")){
-      inputInitialProductOffering.val("Promotions - Social + $1 Smile");
-    }else if((productName==="Direct Marketing Solo") && (inputCode==="1SMILE")){
-      inputInitialProductOffering.val("Promotions - Direct + $1 Smile");
-    }else if((productName==="Mega Marketing Solo") && (inputCode==="1TRIAL")){
-      inputInitialProductOffering.val("Promotions - Mega + $1 Trail");
-    }else if((productName==="Localforyou Booking System") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Booking System + Freeweb");
-    }else if((productName==="Social Media Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Social Bundle + Freeweb");
-    }else if((productName==="Direct Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Direct Bundle + Freeweb");
-    }else if((productName==="Mega Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Mega Bundle + Freeweb");
-    }else if((productName==="Social Media Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Social + Freeweb");
-    }else if((productName==="Direct Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Direct + Freeweb");
-    }else if((productName==="Mega Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Mega + Freeweb");
-    }else{
-      inputInitialProductOffering.val(offeringProduct.current);
+    if (!discountFlag) {
+      discountAmount.removeClass("text-success").addClass("text-danger").html("does not match any coupon code");
+      cal = 0;
+    } else if (discountFlag) {
+      cal = discountValue;
+      couponCurrency.show();
+      discountAmount.removeClass("text-danger").addClass("text-success").html(cal);
     }
+
+    discountNumber.val(cal);
+    setShowPrice();
+  }else {
+    console.log("Code not match");
   }
-  //
-
-
-  if (!discountFlag){
-    discountAmount.removeClass("text-success").addClass("text-danger").html("does not match any coupon code");
-    cal = 0;
-  }else if(discountFlag){
-    cal = discountValue;
-    couponCurrency.show();
-    discountAmount.removeClass("text-danger").addClass("text-success").html(cal);
-  }
-
-  discountNumber.val(cal);
-  setShowPrice();
 
 }//function applyCoupon
 
@@ -1157,40 +1118,9 @@ function applyCoupon2() {
     $("#couponCode").attr('disabled', 'disabled');
   }
 
-  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in setting list
+  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in a setting list
     discountFlag = true;
-    discountValue =  Settings_Coupon_Obj[inputCode].discount; //get discount value of this coupon
-    let findSmile = inputCode.search("SMILE");
-
-    if(findSmile===1){
-      inputReferredSupplier.val("Smile Dinning");
-    }else if(inputCode==="WAWIO"){
-      inputReferredSupplier.val("Wawio");
-    }else {
-      inputReferredSupplier.val("");
-    }
-  }
-
-  //// select initial product offering
-  if(discountFlag){
-    let productName = offeringProduct.name;
-    if((productName==="Localforyou Booking System") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Booking System + Freeweb");
-    }else if((productName==="Social Media Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Social Bundle + Freeweb");
-    }else if((productName==="Direct Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Direct Bundle + Freeweb");
-    }else if((productName==="Mega Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Mega Bundle + Freeweb");
-    }else if((productName==="Social Media Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Social + Freeweb");
-    }else if((productName==="Direct Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Direct + Freeweb");
-    }else if((productName==="Mega Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Mega + Freeweb");
-    }else{
-      inputInitialProductOffering.val(offeringProduct.current);
-    }
+    discountValue =  Settings_Coupon_Obj[inputCode].discount; //get the discount value of this coupon
   }
   //
 
