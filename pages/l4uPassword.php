@@ -65,7 +65,7 @@ $loginID = $_SESSION['id'];
                                             <th style="width:10%"></th>
                                         </tr>
                                     </thead>
-                                    <tfoot class="thead-light">
+                                    <tfoot class="thead-dark">
                                         <tr>
                                             <th>Team:Type</th>
                                             <th>Level</th>
@@ -114,23 +114,23 @@ $loginID = $_SESSION['id'];
                     <div class="modal-body">
                         <div class="d-flex flex-column">
 
-                            <div class="row mb-5">
-                                <div class="col-4">
+                            <div class="row mb-3">
+                                <div class="col-6">
                                     <div class="form-group row">
-                                        <label for="inputType" class="col-2 col-form-label">Type</label>
+                                        <label for="inputType" class="col-3 col-form-label">Type</label>
                                         <div class="col">
-                                            <select id="inputType" class="custom-select" required>
-                                                <option value="1">Internal</option>
-                                                <option value="2">Client</option>
+                                            <select id="inputType" class="custom-select">
+                                                <option value="Internal" selected>Internal</option>
+                                                <option value="Customer">Customer</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-6">
                                     <div class="form-group row">
-                                        <label for="inputTeam" class="col-2 col-form-label">Team</label>
+                                        <label for="inputTeam" class="col-3 col-form-label">Team</label>
                                         <div class="col">
-                                            <select id="inputTeam" class="custom-select" required>
+                                            <select id="inputTeam" class="custom-select">
                                                 <option value="0" selected>-- None --</option>
                                                 <?php
                                                 $teams = $db->query('SELECT `id`, `name`, `fullName` FROM `Team` ORDER BY `idx`;')->fetchAll();
@@ -143,15 +143,28 @@ $loginID = $_SESSION['id'];
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-6">
                                     <div class="form-group row">
-                                        <label for="inputLevel" class="col-2 col-form-label">Level</label>
+                                        <label for="inputLevel" class="col-3 col-form-label">View Level</label>
                                         <div class="col">
-                                            <select id="inputLevel" class="custom-select" required>
+                                            <select id="inputLevel" class="custom-select">
                                                 <option value="1">Super Admin</option>
                                                 <option value="2">Admin</option>
                                                 <option value="3">Manager</option>
                                                 <option value="4" selected>User</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group row">
+                                        <label for="sharePW" class="col-3 col-form-label">Share</label>
+                                        <div class="col">
+                                            <select id="sharePW" class="custom-select">
+                                                <option value="0" selected>No - Another team can't see this</option>
+                                                <option value="1">Yes - Another team can see this</option>
                                             </select>
                                         </div>
                                     </div>
@@ -217,8 +230,9 @@ $loginID = $_SESSION['id'];
         const inputNote = $("#inputNote");
         const editID = $("#editID");
         const formAction = $("#formAction");
+        const inputSharePW = $("#sharePW");
 
-        const reqAjax = $.ajax({
+        let reqAjax = $.ajax({
             url: "assets/php/actionPassword.php",
             method: "POST",
             async: false,
@@ -235,6 +249,7 @@ $loginID = $_SESSION['id'];
             inputType.val(res.inputType);
             inputTeam.val(res.inputTeam);
             inputLevel.val(res.inputLevel);
+            inputSharePW.val(res.inputSharePW);
             inputpwName.val(res.inputpwName);
             inputAccessLink.val(res.inputAccessLink);
             inputUserName.val(res.inputUserName);
@@ -292,6 +307,7 @@ $loginID = $_SESSION['id'];
         const inputAccessLink = $("#inputAccessLink");
         const inputUserName = $("#inputUserName");
         const inputPassword = $("#inputPassword");
+        const inputSharePW = $("#sharePW");
         const inputNote = $("#inputNote");
         const editID = $("#editID");
         const formAction = $("#formAction");
@@ -311,6 +327,7 @@ $loginID = $_SESSION['id'];
                 inputAccessLink: inputAccessLink.val(),
                 inputUserName: inputUserName.val(),
                 inputPassword: inputPassword.val(),
+                inputSharePW: inputSharePW.val(),
                 inputNote: inputNote.val(),
                 editID: editID.val(),
                 formAction: formAction.val()

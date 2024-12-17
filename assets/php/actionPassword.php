@@ -22,7 +22,7 @@ if ($params ["action"] == "loadUpdate"){
     $params["inputUserName"] = $row["pwUser"];
     $params["inputPassword"] = $row["pwPass"];
     $params["inputNote"] = $row["pwNote"];
-
+    $params["inputSharePW"] = $row["pwShare"];
 }elseif ($params ["action"] == "save"){
     $params["txt"] = "Got it";
 
