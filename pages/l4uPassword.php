@@ -55,24 +55,24 @@ $loginID = $_SESSION['id'];
                                     style="width:100%">
                                     <thead class="thead-dark">
                                         <tr>
-                                            <th style="width:5%">Type</th>
-                                            <th style="width:10%">Team : Level</th>
-                                            <th style="width:20%">Name</th>
-                                            <th style="width:15%">Link</th>
+                                            <th style="width:10%">Team:Type</th>
+                                            <th style="width:5%">Level</th>
+                                            <th style="width:25%">Name</th>
                                             <th style="width:20%">User</th>
-                                            <th style="width:14%">Password</th>
-                                            <th style="width:8%">Note</th>
-                                            <th style="width:8%"></th>
+                                            <th style="width:20%">Password</th>
+                                            <th style="width:5%">Link</th>
+                                            <th style="width:5%">Note</th>
+                                            <th style="width:10%"></th>
                                         </tr>
                                     </thead>
                                     <tfoot class="thead-light">
                                         <tr>
-                                            <th>Type</th>
-                                            <th>Team : Level</th>
+                                            <th>Team:Type</th>
+                                            <th>Level</th>
                                             <th>Name</th>
-                                            <th>Link</th>
                                             <th>User</th>
                                             <th>Password</th>
+                                            <th>Link</th>
                                             <th>Note</th>
                                             <th></th>
                                         </tr>
@@ -86,7 +86,7 @@ $loginID = $_SESSION['id'];
         </div><!-- /.row -->
 
         <div id="alert" style="
-            display: float; 
+            display: block;
             right: 20px; 
             bottom: 30px; 
             position: fixed; 
