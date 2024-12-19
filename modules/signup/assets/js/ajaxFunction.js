@@ -708,7 +708,10 @@ function requestToPay() {
 
     modalRespondAction('open','success');
 
-    if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe
+    //เทสส่งอีเมล
+    sendMailToL4UTeam();
+
+    /*if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe
         const reqPay = $.ajax({
             url: paymentURL,
             method: 'POST',
@@ -768,7 +771,7 @@ function requestToPay() {
             sendMailToL4UTeam();
             modalRespondAction('open', 'success');
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
-    }
+    }*/
 
     return res.message;
 
@@ -780,6 +783,7 @@ const sendMail = () => {
         "mode" : "confirm",
         "shopName" : $("#00N2v00000IyVqB").val(),
         "fullName" : formData.owner.firstName+" "+formData.owner.lastName,
+        "acceptAutoPilotAI" : $("#acceptAutoPilotAI").val(),
         "email" : $("#email").val()
     }
 
@@ -845,6 +849,7 @@ const sendMailToL4UTeam = () => {
         formMobile: $("#mobile").val(),
         formBestTime: $("#00N9s000000Nl1G").val(),
         formNote: $("#additionComment").val(),
+        acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         token: Math.random()
     };
 
@@ -966,6 +971,7 @@ const createLogs = (stripePayload) => {
         EmailInvoice: $("#emailInvoiceOther").val(),
         Routing_number: $("#routingDirectDebit").val(),
         AccountNumber: $("#acnDirectDebit").val(),
+        acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         AdditionNote: $("#additionComment").val(),
         ShopAgent: $("#byAgent").val(),
         ReferredByPerson: $("#byPerson").val(),

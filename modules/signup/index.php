@@ -64,7 +64,6 @@ $currentDate = date('d/m/Y');
                         <button type="button" id="backupFormUS" class="btn btn-secondary backupButton" onclick="backupPayment('US');" >US</button>
                         <button type="button" id="backupFormCA" class="btn btn-secondary backupButton" onclick="backupPayment('CA');" >CA</button>
                     </div>
-<!--                    <button type="button" id="saveForm" class="btn btn-secondary toolElements" disabled style="display: none;">Save Form Progress</button>-->
                 </div>
             </div>
             <button type="button" class="btnOpen" onclick="toggleLeftNav();" style="position: fixed; bottom: 50px; right: 30px;"><i class="fa-solid fa-note-sticky"></i></button>
@@ -280,7 +279,7 @@ $currentDate = date('d/m/Y');
                                                     class="form-control"
                                                     name="00N2v00000IyVqB"
                                                     onchange="setRestaurantName(this.value);"
-                                                    placeholder="Chaba Thai Bistro"
+                                                    placeholder="Authentic Thai Bistro"
                                                     autocomplete="off"
                                                     value="<?php echo $test["shop"]; ?>"
                                             />
@@ -660,7 +659,7 @@ $currentDate = date('d/m/Y');
                                                     <input type="hidden" id="passwordBooking" class="form-control"
                                                            name="00N9s000000VUem" value="Localbooking" maxlength="100">
                                                     <small id="BookpasswordHelp" class="form-text text-muted">
-                                                        This is a temporary default password , you can change it later.
+                                                        This is a temporary default password, you can change it later.
                                                     </small>
                                                 </div>
                                             </div>
@@ -701,7 +700,7 @@ $currentDate = date('d/m/Y');
                                                     <input type="text" id="passwordShoppingCart" class="form-control"
                                                            name="passwordShoppingCart" value="Localeats" disabled>
                                                     <small id="passwordHelp" class="form-text text-muted">
-                                                        This is a temporary default password , you can change it later.
+                                                        This is a temporary default password, you can change it later.
                                                     </small>
                                                 </div>
                                             </div>
@@ -1651,7 +1650,7 @@ $currentDate = date('d/m/Y');
                                                     withdraw monthly payments as agreed from this Credit Card.
                                                 </li>
                                                 <li class="fw-bold">I understand that no contract period applies and I can
-                                                    cancel at anytime (3 Days Notice required).
+                                                    cancel at anytime (3-day Notice required).
                                                 </li>
                                             </ol>
                                             <div class="form-check">
@@ -1659,6 +1658,14 @@ $currentDate = date('d/m/Y');
                                                        id="acceptAgreement" onclick="checkAcceptAgreement();">
                                                 <label class="form-check-label acceptAgreement" for="acceptAgreement">
                                                     Yes, proceed to application.
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="acceptAutoPilotAI" value="true" onclick="checkAcceptAgreement();">
+                                                <label for="acceptAutoPilotAI">
+                                                    I acknowledge
+                                                    and agree
+                                                    that AI-powered marketing will be applied as part of the package
                                                 </label>
                                             </div>
                                             <div class="form-check mb-3">
@@ -1706,7 +1713,6 @@ $currentDate = date('d/m/Y');
                                                         <option value="Honey Tummaput">Honey Tummaput</option>
                                                         <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
                                                         <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
-                                                        <!--<option value="Steve Fazakerley">Steve Fazakerley</option>-->
                                                         <option value="Other">Other</option>
                                                     </select>
                                                 </div>

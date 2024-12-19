@@ -152,8 +152,9 @@ $(".back").on("click", function () {
 function checkAcceptAgreement() {
   const acceptAgreement = $("#acceptAgreement").is(":checked");
   const acceptTerms = $("#acceptTerms").is(":checked");
+  const acceptAutoPilotAI = $("#acceptAutoPilotAI").is(":checked");
 
-  if (acceptAgreement && acceptTerms){
+  if (acceptAgreement && acceptTerms && acceptAutoPilotAI){
     cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false);
   }else{
     cmdSubmit.removeClass("btn-outline-success").addClass("btn-outline-danger").prop("disabled", true);
