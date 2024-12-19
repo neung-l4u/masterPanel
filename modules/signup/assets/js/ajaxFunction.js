@@ -708,10 +708,9 @@ function requestToPay() {
 
     modalRespondAction('open','success');
 
-    //เทสส่งอีเมล
-    sendMailToL4UTeam();
+    //เทสส่งอีเมล sendMailToL4UTeam();
 
-    /*if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe
+    if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe
         const reqPay = $.ajax({
             url: paymentURL,
             method: 'POST',
@@ -771,7 +770,7 @@ function requestToPay() {
             sendMailToL4UTeam();
             modalRespondAction('open', 'success');
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
-    }*/
+    }
 
     return res.message;
 
