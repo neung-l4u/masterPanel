@@ -1,44 +1,44 @@
 <?php
-// global $db;
-// session_start();
-// include '../../assets/db/db.php';
-// include "../../assets/db/initDB.php";
+ global $db;
+ session_start();
+ include 'assets/db/db.php';
+ include "assets/db/initDB.php";
 
-$result = array(
-    "success" => false,
-    "msg" => "Send email fail!!",
-    "result" => 0
-);
+$mode = $_POST['mode'];
+$country = $_POST['country'];
+$city = $_POST['city'];
+$shopname = $_POST['shopname'];
+$tradingname = $_POST['tradingname'];
+$address = $_POST['address'];
+$state = $_POST['state'];
+$zip = $_POST['zip'];
+$firstname = $_POST['firstname'];
+$lastname = $_POST['lastname'];
+$mobile = $_POST['mobile'];
+$email = $_POST['email'];
+$reason = $_POST['reason'];
+$other = $_POST['other'];
+$lastdate = $_POST['lastdate'];
+$feedback = $_POST['feedback'];
 
-$param = array(
-    "mode" => !empty($_REQUEST["mode"]) ? $_REQUEST["mode"] : "-",
-    "token" => !empty($_REQUEST["token"]) ? $_REQUEST["token"] : "-",
-    "country" => !empty($_REQUEST["country"]) ? $_REQUEST["country"] : "-",
-    "shopname" => !empty($_REQUEST["shopname"]) ? $_REQUEST["shopname"] : "-",
-    "tradingname" => !empty($_REQUEST["tradingname"]) ? $_REQUEST["tradingname"] : "-",
-    "address" => !empty($_REQUEST["address"]) ? $_REQUEST["address"] : "-",
-    "city" => !empty($_REQUEST["city"]) ? $_REQUEST["city"] : "-",
-    "state" => !empty($_REQUEST["state"]) ? $_REQUEST["state"] : "-",
-    "zip" => !empty($_REQUEST["zip"]) ? $_REQUEST["zip"] : "-",
-    "firstname" => !empty($_REQUEST["firstname"]) ? $_REQUEST["firstname"] : "-",
-    "lastname" => !empty($_REQUEST["lastname"]) ? $_REQUEST["lastname"] : "-",
-    "mobile" => !empty($_REQUEST["mobile"]) ? $_REQUEST["mobile"] : "-",
-    "email" => !empty($_REQUEST["email"]) ? $_REQUEST["email"] : "-",
-    "reason" => !empty($_REQUEST["reason"]) ? $_REQUEST["reason"] : "-",
-    "other" => !empty($_REQUEST["other"]) ? $_REQUEST["other"] : "-",
-    "lastdate" => !empty($_REQUEST["lastdate"]) ? $_REQUEST["lastdate"] : "-",
-    "feedback" => !empty($_REQUEST["feedback"]) ? $_REQUEST["feedback"] : "-",
-    "thisPage" => "activeajax",
+if (empty($other)){
+    $other = null;
+}
+if ($mode == "save"){
+    $insert = $db->query('INSERT INTO `Cancellation`
+                            (`county`, `city`, `shopname`, `trading`, `address`, `state`, `zip`, `firstname`, `lastname`, `mobile`, `email`, `other`, `reason`, `lastdate`, `feedback`) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
+        ,$country, $city, $shopname, $tradingname, $address, $state, $zip, $firstname, $lastname, $mobile, $email, $other, $reason, $lastdate, $feedback
+    );
 
-     "token" => !empty($_REQUEST["token"]) ? $_REQUEST["token"] : "-",
-);
+    $params['result'] = "Save to Database by Bas";
+}else if ($mode == "update") {
 
-    // if ($_REQUEST["mode"] == "send"){
+}else if ($mode == "read") {
 
-    //  
+}
 
-    // }else{
+//$params['name'] = 'L4U = '.$shop_name;
 
-    // }
- echo json_encode($param);
+ echo json_encode($params);
 ?>

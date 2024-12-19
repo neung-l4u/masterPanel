@@ -14,7 +14,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
         <img src="assets/img/newL4U-logo-100x100.png" alt="L4U Logo">
         <div class="d-flex flex-column">
             <h1>Local For You Services</h1>
-            <p>Online cancellation form.</p>
+            <p>Online Unsubscribe Form.</p>
         </div>
     </div>
 </header>
@@ -44,8 +44,9 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     <option selected value="">Please select Country</option>
                                     <option value="AU">Australia</option>
                                     <option value="NZ">New Zealand</option>
-                                    <option value="TH">Thailand</option>
                                     <option value="US">United States</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="CA">Canada</option>
                                 </select>
                             </div>
 
@@ -343,13 +344,15 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
 
                     <div class="card-footer">
                             <div class="float-end">
-                                <span id="loadingAjax"></span>
+                                <span id="loadingAjax" class="text-success">Form Submited</span>
 
                                 <button 
                                     type="button" 
                                     class="btn btn-success" 
                                     id="cancelBtn" 
-                                    onclick="mailsend()">
+                                    onclick="allAction()"
+                                    >
+                                    
                                     Confirm
                                 </button>
                             </div>
@@ -388,6 +391,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
 
     $( document ).ready(function() {
         $("#other").hide()
+        $("#loadingAjax").hide()
     });
 
     const cancelFrm = {};
@@ -776,10 +780,10 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
         }
     }
 
-    function mailsend(){
-        let payload = 
+    function saveToDB(){
+                let payload = 
             {
-                mode : "send",
+                mode : "save",
                 country: $("#formCountry").val(),
                 city: $("#city").val(),
                 shopname: $("#shopName").val(),
@@ -795,11 +799,9 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                 other: $("#boxother").val(),
                 lastdate: $("#lastDate").val(),
                 feedback: $("#additionComment").val(),
-
-                token: Math.random()
         };
 
-        const sendL4UMail = $.ajax({
+        const ajaxSaveDB = $.ajax({
             url: "activeajax.php",
             method: 'POST',
             async: false,
@@ -808,21 +810,71 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
             data: payload
         });
 
-        sendL4UMail.done(function(res) {
+
+        ajaxSaveDB.done(function(res) {
             console.log(res);
-            //alert("Send email successful");
+            // alert("Send Data To Database successful");
             return true;
         });
 
-        sendL4UMail.fail(function(xhr, status, error) {
-            console.log("ajax Send L4U Mail alert fail!!");
+        ajaxSaveDB.fail(function(xhr, status, error) {
+            console.log("ajax Send Date to Database fail!!");
             console.log(status + ': ' + error);
-            //alert("Send L4U Mail alert fail!!");
+            // alert("Send Data To Database fail!!");
             return false;
         });
 
-        // console.log('payload = ',payload);
+        console.log('payload = ',payload);
 
+     }//saveToDB
+
+     function mailsend(){
+
+        // alert ("mailsend call");
+        let payload = 
+            {
+                mode : "send",
+                shopName: $("#shopName").val(),
+                fullName: $("#first_name","#last_name").val(),
+                email: $("#email").val(),
+        };
+
+        const sendMail = $.ajax({
+            url: "L4UEmailUnsubscribe.php",
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: payload
+        });
+
+
+        sendMail.done(function(res) {
+            console.log(res);
+            // alert("Send email successful");
+            return true;
+        });
+
+        sendMail.fail(function(xhr, status, error) {
+            console.log("ajax Send Date to Database fail!!");
+            console.log(status + ': ' + error);
+            // alert("Submit Successful");
+            return false;
+        });
+
+        console.log('payload = ',payload);
+    }//mailsend
+
+    function allAction(){
+        saveToDB();
+        mailsend();
+        $("#loadingAjax").fadeIn(300);
+        setTimeout(reSubmit, 3000);
+               
+    }
+    function reSubmit(){
+        //alert ("chagne Page")
+        location.replace("https://localforyou.com/")
     }
 
 </script>

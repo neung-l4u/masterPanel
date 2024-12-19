@@ -4,7 +4,7 @@ include '../db/db.php';
 include "../db/initDB.php";
 
 $mode = $_POST['mode'];
-$shop_name = $_POST['shop_name'];
+$shop_name = $_POST['shop_nameGGGG'];
 $shop_type = $_POST['shop_type'];
 $template = $_POST['template'];
 $po_name = $_POST['po_name'];
@@ -18,7 +18,7 @@ if ($mode == "save"){
         ,$shop_type, $template, $po_name, $shop_name, $address
     );
 
-    $params['result'] = "Save to Database";
+    $params['result'] = "Save to Database by Bas";
 }else if ($mode == "update") {
 
 }else if ($mode == "read") {

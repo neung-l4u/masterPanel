@@ -135,7 +135,7 @@
 
             let payload = {
                 mode : "save",
-                shop_name : $("#shopName").val(),
+                shop_nameGGGG : $("#shopName").val(),
                 shop_type : $("#shopType").val(),
                 template : $("#template").val(),
                 po_name : $("#po").val(),
@@ -143,7 +143,7 @@
                 token: Math.random()
             };
 
-            //console.log("Payload", payload);
+            console.log("Payload", payload);
 
             const callAjax = $.ajax({
                 url: "assets/php/actionAjax.php",
