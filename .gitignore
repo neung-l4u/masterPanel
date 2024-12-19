@@ -102,7 +102,6 @@ out
 
 # vuepress v2.x temp and cache directory
 .temp
-.cache
 
 # Docusaurus cache and generated files
 .docusaurus
@@ -131,6 +130,9 @@ out
 
 # IDE
 .idea
+.idea/
+/.idea
+.idea/workspace.xml
 
 
 /assets/db/initDB.php
@@ -144,4 +146,6 @@ out
 /modules/templates/assets/db/initDB.php
 /modules/testAjax/assets/db/initDB.php
 /modules/templates/upload
+/modules/signup/assets/.DS_Store
+
 

@@ -375,17 +375,10 @@ $currentDate = date('d/m/Y');
 
                                     <div class="form-group row pt-2">
                                         <label class="col-3 control-label col-form-label">
-                                            Support Language
+                                            Owner First Language
                                             <b class="red">*</b>
                                         </label>
                                         <div class="row col-6 pt-2">
-                                            <span class="col gx-1">
-                                                <input type="radio" id="supportEng" class="form-check-input supportLanguage" value="English"
-                                                       name="00N2v00000IyVqN" checked>
-                                                <label class="form-check-label" for="supportEng">
-                                                    English
-                                                </label>
-                                            </span>
                                             <span class="col gx-1">
                                                 <input type="radio" id="supportTh" class="form-check-input supportLanguage"
                                                        value="Thai only" name="00N2v00000IyVqN">
@@ -394,10 +387,18 @@ $currentDate = date('d/m/Y');
                                                 </label>
                                             </span>
                                             <span class="col gx-1">
+                                                <input type="radio" id="supportEng" class="form-check-input supportLanguage" value="English"
+                                                       name="00N2v00000IyVqN" checked>
+                                                <label class="form-check-label" for="supportEng">
+                                                    English
+                                                </label>
+                                            </span>
+                                            
+                                            <span class="col gx-1">
                                                 <input type="radio" id="supportEngTH" class="form-check-input supportLanguage"
                                                        value="English and Thai" name="00N2v00000IyVqN" checked>
                                                 <label class="form-check-label" for="supportEngTH">
-                                                    English & Thai
+                                                    Thai & English
                                                 </label>
                                             </span>
                                         </div>
@@ -974,39 +975,38 @@ $currentDate = date('d/m/Y');
                                             <div class="card">
                                                 <div class="card-body">
                                                     <h6 class="card-title fw-semibold">New Domain Name to Register</h6>
-                                                    <div class="card-text pt-2">
-                                                        <div class="row">
-                                                            <div class="col-10">
-                                                                <label for="newDomain">New Domain name</label>
-                                                                <span class="input-group mb-2">
-                                                                    <label for="newDomain"
-                                                                           class="input-group-text">https://</label>
-                                                                    <input
-                                                                            type="text"
-                                                                            id="newDomain"
-                                                                            class="form-control text-lowercase"
-                                                                            name="00N2v00000IyVq3"
-                                                                            maxlength="255"
-                                                                            autocomplete="off"
-                                                                            placeholder="www.localforyou.com"
-                                                                    />
-                                                                </span>
-                                                                <small id="domainHelp" class="form-text">
-                                                                    <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
-                                                                        Check Availability
-                                                                    </a>
-                                                                </small>
+                                                    <div class="card-text pt-2">                                        
 
-                                                            </div>
-                                                            <div class="col-1 text-end pt-4">
-                                                                <a class="link-primary"
-                                                                   href="https://localforyoudomains.com/" target="_blank"
-                                                                   title="Check Availability" tabindex="-1">
-                                                                    <i class="fa-solid fa-magnifying-glass"
-                                                                       tabindex="-1"></i>
+                                                    <div class="row">
+                                                        <div class="col-10">
+                                                            <label for="newDomain">New Domain name</label>
+                                                            <span class="input-group mb-2">
+                                                                <label for="newDomain" class="input-group-text">https://</label>
+                                                                <input
+                                                                    type="text"
+                                                                    id="newDomain"
+                                                                    class="form-control text-lowercase"
+                                                                    name="00N2v00000IyVq3"
+                                                                    maxlength="255"
+                                                                    autocomplete="off"
+                                                                    placeholder="www.localforyou.com"
+                                                                    oninput="checkDomain(this.value)"
+                                                                /> 
+                                                            </span>
+                                                            <small id="domainHelpAU" class="form-text">
+                                                                <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
+                                                                    Check Availability AU, NZ, UK
                                                                 </a>
-                                                            </div>
+                                                            </small>
+                                                            <br>
+                                                            <small id="domainHelpUS" class="form-text">
+                                                                <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
+                                                                    Check Availability US, CA
+                                                                </a>
+                                                            </small>
                                                         </div>
+                                                    </div>
+                                            
                                                     </div>
                                                 </div>
                                             </div>
@@ -1238,9 +1238,9 @@ $currentDate = date('d/m/Y');
                                                                      onkeyup="applyCoupon();"
                                                              />
                                                              </span>
-                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">
-                                                                <i class="fa-solid fa-magnifying-glass"></i>
-                                                            </a>
+<!--                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">-->
+<!--                                                                <i class="fa-solid fa-magnifying-glass"></i>-->
+<!--                                                            </a>-->
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1265,9 +1265,9 @@ $currentDate = date('d/m/Y');
                                                                      onkeyup="applyCoupon2();"
                                                              />
                                                              </span>
-                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">
-                                                                <i class="fa-solid fa-magnifying-glass"></i>
-                                                            </a>
+<!--                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">-->
+<!--                                                                <i class="fa-solid fa-magnifying-glass"></i>-->
+<!--                                                            </a>-->
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1400,10 +1400,10 @@ $currentDate = date('d/m/Y');
                                                                             id="creditCardNumber"
                                                                             name="creditCardNumber"
                                                                             type="text"
-                                                                            maxlength="16"
+                                                                            maxlength="20"
                                                                             autocomplete="off"
                                                                             placeholder="4242424242424242"
-                                                                            oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                                            oninput="trimSpace(this.value, 1)"
                                                                             value="<?php echo $test["card"]; ?>"
                                                                     />
                                                                 </div>
@@ -1416,15 +1416,15 @@ $currentDate = date('d/m/Y');
                                                                             Expiration Date
                                                                         </label>
                                                                         <input
-                                                                                type="text"
-                                                                                class="form-control"
-                                                                                id="creditExpireDate"
-                                                                                name="creditExpireDate"
-                                                                                placeholder="03/24"
-                                                                                maxlength="5"
-                                                                                autocomplete="0ff"
-                                                                                oninput="this.value = this.value.replace(/[^0-9|/]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                                                                required
+                                                                            type="text"
+                                                                            class="form-control"
+                                                                            id="creditExpireDate"
+                                                                            name="creditExpireDate"
+                                                                            placeholder="03/24"
+                                                                            maxlength="5"
+                                                                            autocomplete="0ff"
+                                                                            onkeyup="trimSpace(this.value, 2)"
+                                                                            required
                                                                         />
                                                                     </div>
                                                                     <div class="d-flex flex-column w-50">
@@ -1434,15 +1434,15 @@ $currentDate = date('d/m/Y');
                                                                             Code CVV
                                                                         </label>
                                                                         <input
-                                                                                type="password"
-                                                                                class="form-control"
-                                                                                id="creditCCV"
-                                                                                name="creditCCV"
-                                                                                autocomplete="off"
-                                                                                maxlength="5"
-                                                                                placeholder="508"
-                                                                                required
-                                                                                value="<?php echo $test["cvv"]; ?>"
+                                                                            type="password"
+                                                                            class="form-control"
+                                                                            id="creditCCV"
+                                                                            name="creditCCV"
+                                                                            autocomplete="off"
+                                                                            maxlength="5"
+                                                                            placeholder="508"
+                                                                            required
+                                                                            value="<?php echo $test["cvv"]; ?>"
                                                                         />
                                                                     </div>
                                                                 </div>
@@ -1689,57 +1689,74 @@ $currentDate = date('d/m/Y');
                                             </div>
                                         </div>
                                         <div id="agreementBottom"
-                                             class="box1 p-4 shadow-sm w-100 d-flex justify-content-evenly">
-                                            <div>
-                                                <label for="byAgent" class="form-label">
-                                                    <i class="fa-solid fa-person"></i> &nbsp;
-                                                    Sales Agent
-                                                </label>
-                                                <select class="form-select" name="00N2u000000mNZG" id="byAgent">
-                                                    <option value="">--None--</option>
-                                                    <option value="Boom Piyakorn">Boom Piyakorn</option>
-                                                    <option value="Ball Anirut">Ball Anirut</option>
-                                                    <option value="Eve Arriya">Eve Arriya</option>
-                                                    <option value="Faye Thitiporn">Faye Thitiporn</option>
-                                                    <option value="Fern Paweena">Fern Paweena</option>
-                                                    <option value="Honey Tummaput">Honey Tummaput</option>
-                                                    <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
-                                                    <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
-                                                    <!--<option value="Steve Fazakerley">Steve Fazakerley</option>-->
-                                                    <option value="Other">Other</option>
-                                                </select>
+                                            class="box1 p-4 shadow-sm w-100 d-flex justify-content-evenly">
+                                            <div class="row">
+                                                <div>
+                                                    <label for="byAgent" class="form-label">
+                                                        <i class="fa-solid fa-person"></i> &nbsp;
+                                                        Sales Agent
+                                                    </label>
+                                                    <select class="form-select" name="00N2u000000mNZG" id="byAgent">
+                                                        <option value="">--None--</option>
+                                                        <option value="Boom Piyakorn">Boom Piyakorn</option>
+                                                        <option value="Ball Anirut">Ball Anirut</option>
+                                                        <option value="Eve Arriya">Eve Arriya</option>
+                                                        <option value="Faye Thitiporn">Faye Thitiporn</option>
+                                                        <option value="Fern Paweena">Fern Paweena</option>
+                                                        <option value="Honey Tummaput">Honey Tummaput</option>
+                                                        <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
+                                                        <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
+                                                        <!--<option value="Steve Fazakerley">Steve Fazakerley</option>-->
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label for="byPerson" class="form-label">
+                                                        <i class="fa-solid fa-person"></i> &nbsp;
+                                                        Referred by (Person)
+                                                    </label>
+                                                    <input
+                                                            class="form-control"
+                                                            id="byPerson"
+                                                            maxlength="100"
+                                                            name="00N2v00000IyVq9"
+                                                            type="text"
+                                                            autocomplete="off"
+                                                            placeholder="Jane Doe"
+                                                            value="<?php echo $test["person"]; ?>"
+                                                    />
+                                                </div>
                                             </div>
-                                            <div>
-                                                <label for="byPerson" class="form-label">
-                                                    <i class="fa-solid fa-person"></i> &nbsp;
-                                                    Referred by (Person)
-                                                </label>
-                                                <input
-                                                        class="form-control"
-                                                        id="byPerson"
-                                                        maxlength="100"
-                                                        name="00N2v00000IyVq9"
-                                                        type="text"
-                                                        autocomplete="off"
-                                                        placeholder="Jane Doe"
-                                                        value="<?php echo $test["person"]; ?>"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label for="byRestaurant" class="form-label">
-                                                    <i class="fa-solid fa-house-user"></i> &nbsp;
-                                                    Referred by (Shop)
-                                                </label>
-                                                <input
-                                                        class="form-control"
-                                                        id="byRestaurant"
-                                                        maxlength="200"
-                                                        name="00N2v00000IyVqA"
-                                                        type="text"
-                                                        autocomplete="off"
-                                                        placeholder="The Thai Bistro"
-                                                        value="<?php echo $test["refShop"]; ?>"
-                                                />
+                                            <div class="row">
+                                                <div>
+                                                    <label for="byPartner" class="form-label">
+                                                        <i class="fa-solid fa-handshake"></i> &nbsp;
+                                                        Referred Partner (JV)
+                                                    </label>
+                                                    <select class="form-select" name="byPartner" id="byPartner">
+                                                        <option value="">--None--</option>
+                                                        <option value="Smile Pos">Smile Pos</option>
+                                                        <option value="Wawio">Wawio</option>
+                                                        <option value="Jean">Jean</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label for="byRestaurant" class="form-label">
+                                                        <i class="fa-solid fa-house-user"></i> &nbsp;
+                                                        Referred by (Shop)
+                                                    </label>
+                                                    <input
+                                                            class="form-control"
+                                                            id="byRestaurant"
+                                                            maxlength="200"
+                                                            name="00N2v00000IyVqA"
+                                                            type="text"
+                                                            autocomplete="off"
+                                                            placeholder="The Thai Bistro"
+                                                            value="<?php echo $test["refShop"]; ?>"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

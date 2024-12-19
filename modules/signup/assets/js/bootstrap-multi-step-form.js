@@ -13,6 +13,8 @@ let addonProduct2 = [];
 let readMainProduct = [];
 let readAddonProduct = [];
 
+let couponObjectList = {};
+
 let cart = {
   "subscription": [],
   "add_on": []
@@ -267,6 +269,8 @@ $('#formCountry').change(function() {
   const countryTextOnly = $("#countryTextOnly");
   const bsbDirectDebit_div = $(".bsbDirectDebit_div");
   const routing_number_div = $(".routing_number_div");
+  const domainHelpAU = $("#domainHelpAU");
+  const domainHelpUS = $("#domainHelpUS");
   countryValue.val($(this).val());
   inputBusinessNumber.removeClass("is-invalid");
   resetForm();
@@ -292,6 +296,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.show();
       routing_number_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
       break;
     case "NZ":
       labelBusinessNumber.html("NZBN");
@@ -313,6 +319,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       methodDebit.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
       break;
     case "UK":
       inputBusinessNumber.attr('required', true);
@@ -333,6 +341,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("UK");
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
       break;
     case "CA":
       inputBusinessNumber.attr('required', true);
@@ -353,6 +363,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("CA");
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
       break;
     case "US":
       inputBusinessNumber.attr('required', true);
@@ -373,6 +385,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("US");
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
       break;
     default:
       labelBusinessNumber.html("ABN");
@@ -390,7 +404,9 @@ $('#formCountry').change(function() {
       selectState.show();
       methodDebit.show();
       bsbDirectDebit_div.show();
-      routing_number_div.hide();
+      // routing_number_div.hide();
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
   }
   optionState();
 });
@@ -979,8 +995,36 @@ function listProductItems() {
 ////////
 }
 
-function applyCoupon() {
+const loadCouponObject = () => {
+  let payload = {
+    mode : "read",
+    token: Math.random()
+  };
 
+  const loadCoupon = $.ajax({
+    url: "assets/API/couponCode.json",
+    method: 'POST',
+    async: false,
+    cache: false,
+    dataType: 'json',
+    data: payload
+  });
+
+  loadCoupon.done(function(res) {
+    //console.log(res);
+    couponObjectList = res;
+    return true;
+  });
+
+  loadCoupon.fail(function(xhr, status, error) {
+    console.log("ajax Load Coupon Json fail!!");
+    console.log(status + ': ' + error);
+    return false;
+  });
+}//loadCouponObject
+
+function applyCoupon() {
+  if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
   const objCode = $("#couponCode");
   let inputCode = objCode.val().trim().toUpperCase();
   objCode.val(inputCode);
@@ -992,6 +1036,9 @@ function applyCoupon() {
 
   let discountFlag = false;
   let cal = 0;
+  //formData.formCountry << AU NZ CA UK US
+  let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
+
   let Settings_Coupon_Obj = settings.Payment_Detail.coupon_Code[formData.formCountry];
   let discountValue = 0;
   let gstDecimal = 0;
@@ -1010,69 +1057,33 @@ function applyCoupon() {
     $("#couponCode2").attr('disabled', 'disabled');
   }
 
-  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in setting list
-    discountFlag = true;
-    discountValue =  Settings_Coupon_Obj[inputCode].discount; //get discount value of this coupon
-    let findSmile = inputCode.search("SMILE");
+  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB"])
+  inputCode = inputCode.toUpperCase();
+  const foundCoupon = availableCoupon.has(inputCode)
 
-    if(findSmile===1){
-      inputReferredSupplier.val("Smile Dinning");
-    }else if(inputCode==="WAWIO"){
-      inputReferredSupplier.val("Wawio");
-    }else {
-      inputReferredSupplier.val("");
+  if(foundCoupon) {
+    let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
+    let discountObject = discountList[formData.formCountry];
+
+    if (typeof discountObject !== "undefined") { //Check if this coupon code is available in your settings list.
+      discountFlag = true;
+      discountValue = discountObject.discount; //get the discount value of this coupon
     }
-  }
 
-  //// select initial product offering
-  if(discountFlag){
-    let productName = offeringProduct.name;
-    if((productName==="Pro Online Ordering System") && (inputCode==="1TRIAL")){
-      inputInitialProductOffering.val("Promotions - Pro + $1 Trial");
-    }else if((productName==="Social Media Marketing Bundle") && (inputCode==="1TRIAL")){
-      inputInitialProductOffering.val("Promotions - Social Bundle + $1 Trial");
-    }else if((productName==="Direct Marketing Bundle") && (inputCode==="1TRIAL")){
-      inputInitialProductOffering.val("Promotions - Direct Bundle + $1 Trial");
-    }else if((productName==="Mega Marketing Bundle") && (inputCode==="1TRIAL")){
-      inputInitialProductOffering.val("Promotions - Mega Bundle + $1 Trail");
-    }else if((productName==="Social Media Marketing Solo") && (inputCode==="1SMILE")){
-      inputInitialProductOffering.val("Promotions - Social + $1 Smile");
-    }else if((productName==="Direct Marketing Solo") && (inputCode==="1SMILE")){
-      inputInitialProductOffering.val("Promotions - Direct + $1 Smile");
-    }else if((productName==="Mega Marketing Solo") && (inputCode==="1TRIAL")){
-      inputInitialProductOffering.val("Promotions - Mega + $1 Trail");
-    }else if((productName==="Localforyou Booking System") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Booking System + Freeweb");
-    }else if((productName==="Social Media Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Social Bundle + Freeweb");
-    }else if((productName==="Direct Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Direct Bundle + Freeweb");
-    }else if((productName==="Mega Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Mega Bundle + Freeweb");
-    }else if((productName==="Social Media Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Social + Freeweb");
-    }else if((productName==="Direct Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Direct + Freeweb");
-    }else if((productName==="Mega Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Mega + Freeweb");
-    }else{
-      inputInitialProductOffering.val(offeringProduct.current);
+    if (!discountFlag) {
+      discountAmount.removeClass("text-success").addClass("text-danger").html("does not match any coupon code");
+      cal = 0;
+    } else if (discountFlag) {
+      cal = discountValue;
+      couponCurrency.show();
+      discountAmount.removeClass("text-danger").addClass("text-success").html(cal);
     }
+
+    discountNumber.val(cal);
+    setShowPrice();
+  }else {
+    console.log("Code not match");
   }
-  //
-
-
-  if (!discountFlag){
-    discountAmount.removeClass("text-success").addClass("text-danger").html("does not match any coupon code");
-    cal = 0;
-  }else if(discountFlag){
-    cal = discountValue;
-    couponCurrency.show();
-    discountAmount.removeClass("text-danger").addClass("text-success").html(cal);
-  }
-
-  discountNumber.val(cal);
-  setShowPrice();
 
 }//function applyCoupon
 
@@ -1107,40 +1118,9 @@ function applyCoupon2() {
     $("#couponCode").attr('disabled', 'disabled');
   }
 
-  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in setting list
+  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in a setting list
     discountFlag = true;
-    discountValue =  Settings_Coupon_Obj[inputCode].discount; //get discount value of this coupon
-    let findSmile = inputCode.search("SMILE");
-
-    if(findSmile===1){
-      inputReferredSupplier.val("Smile Dinning");
-    }else if(inputCode==="WAWIO"){
-      inputReferredSupplier.val("Wawio");
-    }else {
-      inputReferredSupplier.val("");
-    }
-  }
-
-  //// select initial product offering
-  if(discountFlag){
-    let productName = offeringProduct.name;
-    if((productName==="Localforyou Booking System") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Booking System + Freeweb");
-    }else if((productName==="Social Media Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Social Bundle + Freeweb");
-    }else if((productName==="Direct Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Direct Bundle + Freeweb");
-    }else if((productName==="Mega Marketing Bundle") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Mega Bundle + Freeweb");
-    }else if((productName==="Social Media Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Social + Freeweb");
-    }else if((productName==="Direct Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Direct + Freeweb");
-    }else if((productName==="Mega Marketing Solo") && (inputCode==="FREEWEB")){
-      inputInitialProductOffering.val("Promotions - Mega + Freeweb");
-    }else{
-      inputInitialProductOffering.val(offeringProduct.current);
-    }
+    discountValue =  Settings_Coupon_Obj[inputCode].discount; //get the discount value of this coupon
   }
   //
 
@@ -1567,3 +1547,29 @@ const setShowPrice = () => {
   amountText.html(showPrice.GrandTotal);
 
 }
+
+function trimSpace(param, place) {
+  //console.log("Old Card = "+param);
+  //console.log("Place = "+place);
+  let newText = "";
+  newText = param.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');
+  newText = newText.trim();
+  //console.log("New Card = "+newText);
+  //return(newText);
+
+  if(place === 1){ //cardNumber
+    $("#creditCardNumber").val(newText);
+  } else if(place === 2){ //dateNumber
+    $("#creditExpireDate").val(newText);
+  } 
+}//trimSpace
+
+function checkDomain(param) {
+  const domainName = param;
+  const baseUrlAU = 'https://localforyoudomains.com/domain-names/search/?domain=';
+  const baseUrlUS = 'https://localforyoudomains.com/domain-names/search/?domain=';
+  //const baseUrlUS = 'https://www.godaddy.com/th-th/domainsearch/find?domainToCheck=';
+
+  $('#domainHelpAU').find('a').attr('href', baseUrlAU + domainName);
+  $('#domainHelpUS').find('a').attr('href', baseUrlUS + domainName);
+}//checkDomain

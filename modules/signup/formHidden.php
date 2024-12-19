@@ -1,4 +1,6 @@
 <div class="hiddenForm none">
+    <input type="hidden" id="signupFormVersion" maxlength="80" name="00N9s000000VWbf" value="2.8 New Product" />
+    
     <input type="hidden" id="firstTimePayment" name="00N2u000000mNZ5">
     <input type="hidden" id="customerStripeEmail" class="Customer Stripe Email" name="00N9s000000PDD3" value="">
     <input type="hidden" id="customerStripeID" class="customerStripeID" name="00N9s000000QYtB" value="">
@@ -38,7 +40,7 @@
         <option value="Smile Dinning">Smile Dinning</option>
         <option value="Wawio">Wawio</option>
     </select>
-    <input type="hidden" id="signupFormVersion" maxlength="80" name="00N9s000000VWbf" value="2.7.3 + Monday" />
+  
     <input type="hidden" id="paymentRequestTimestamp" maxlength="100" name="00N9s000000QhRe" />
     <input type="hidden" name="00N9s000000Qlfw" id="initPackage" class="initProject" maxlength="255">
     <input type="hidden" name="00N9s000000Qlg1" id="initDineInTableOrdering" class="initProject" maxlength="255">

@@ -26,7 +26,7 @@ $userLevel = $_SESSION['level'];
                 <a href="https://forms.monday.com/forms/da9ca9feccd4e43b4d264a3b45ba38ed?r=apse2" target="_blank" class="nav-link">Coin Request</a>
             </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="https://signup.localforyou.com/devV2.7" target="_blank" class="nav-link">Sign up form</a>
+            <a href="modules/signup/index.php" target="_blank" class="nav-link">Sign up form</a>
         </li>
         <!--<li class="nav-item d-none d-sm-inline-block">
             <a href="modules/cancellation/views/index.php?token=1" target="_blank" class="nav-link">Cancellation Form</a>

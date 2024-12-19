@@ -553,29 +553,45 @@ function requestToPay() {
         }, {});
     }
     /////
-
-    let textDiscount = couponCode.val().trim().toUpperCase();
-    let Payment_Coupon_Obj = settings.Payment_Detail.coupon_Code[formCountry];
+    if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
+    const objCode = $("#couponCode");
+    let inputCode = objCode.val().trim().toUpperCase();
+    let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
     let textDiscount2 = couponCode2.val().trim().toUpperCase();
-    let Payment_Coupon_Obj2 = settings.Payment_Detail.coupon_Code[formCountry];
+    let Payment_Coupon_Obj = {};
+    let Payment_Coupon_Obj2 = {};
+
+    try { //try to create discountList form JSON file *this will error if nothing filled in the main coupon code field
+        let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
+        let discountObject = discountList[formData.formCountry];
+        let textDiscount = couponCode.val().trim().toUpperCase();
+        Payment_Coupon_Obj = discountObject;
+        Payment_Coupon_Obj2 = discountObject;
+    } catch (error) {
+        console.log("--This is catch case --");
+        console.error('JSON parsing error:', error.message);
+        console.log("--End catch case --");
+    }
+
     let codeDiscount = {};
 
-    if (typeof Payment_Coupon_Obj[textDiscount] !== "undefined") { //check this coupon code is exist in setting list
+    if (typeof Payment_Coupon_Obj !== "undefined") { //check this coupon code is exist in a setting list
+        console.log("เจอส่วนลดแล้ว");
         let pid = "";
             pid = cloneCart["subscription"][0]; //read main product ID
         let cid = "";
-            cid = Payment_Coupon_Obj[textDiscount].code; //read stripe coupon code
-        codeDiscount = { [pid] : cid } ; //set main coupon code
+            cid = Payment_Coupon_Obj.code; //read stripe coupon code
+        codeDiscount = { [pid] : cid } ; //set the main coupon code
     }else{
         let pid = "";
         pid = cloneCart["subscription"][0]; //read main product ID
         let cid = "";
-        codeDiscount = { [pid] : cid } ; //set main coupon code
+        codeDiscount = { [pid] : cid } ; //set the main coupon code
     }
 
     let addOnDiscountCode = {};
     let materialDiscountCode = (formCountry==="US" || formCountry==="CA") ? "" : "suhgy7Fb";
-    let freewebDiscountCode = Payment_Coupon_Obj["FREEWEB"]["code"];
+    let freewebDiscountCode = "Freeweb";
 
     let applyAddonCode = "";
     if (textDiscount2 === "FREEWEB"){
@@ -806,6 +822,7 @@ const sendMailToL4UTeam = () => {
         formSalesAgent: $("#byAgent option:selected").text(),
         formContractPeriod: $("#ContractPeriod").val(),
         formRefPerson: $("#byPerson").val(),
+        formRefPartner: $("#byPartner").val(),
         formCoupon: $("#couponCode").val(),
         formRefShop: $("#byRestaurant").val(),
         formFirstTimePayment: $("#firstTimePayment").val(),
@@ -952,6 +969,7 @@ const createLogs = (stripePayload) => {
         AdditionNote: $("#additionComment").val(),
         ShopAgent: $("#byAgent").val(),
         ReferredByPerson: $("#byPerson").val(),
+        formRefPartner: $("#byPartner").val(),
         ReferredByShop: $("#byRestaurant").val(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
