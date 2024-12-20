@@ -147,6 +147,11 @@ global $db, $date;
                                 <input type="text" class="form-control" id="inputNickName" maxlength="50" placeholder="Enter Staff Nick Name">
                             </div>
 
+                            <div class="form-group mb-5">
+                                <label for="inputBirthday">Birthday</label>
+                                <input type="text" class="form-control" id="inputBirthday" placeholder="dd-mm-yyyy">
+                            </div>
+
                             <div class="form-group">
                                 <label for="inputEmail">Email</label>
                                 <input type="email" class="form-control" id="inputEmail" placeholder="Enter Staff Email">
@@ -155,14 +160,14 @@ global $db, $date;
 
                             <div class="form-group">
                                 <label for="inputPhone">Phone</label>
-                                <input type="tel" class="form-control" id="inputPhone" placeholder="Enter Staff Phone">
+                                <input type="tel" class="form-control" id="inputPhone" placeholder="Enter Staff Phone" maxlength="10">
                                 <small id="phoneHelp" class="form-text text-muted">e.g. 0891234567</small>
                             </div>
 
                             <div class="form-group mb-3">
                                 <label for="inputPassword">Password <small id="passwordNotAllow" class="text-danger" style="display: none;">Not allow to edit encrypted data.</small></label>
-                                <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="Localeats#2023">
-                                <small id="passwordHelp" class="form-text text-muted">Default password is Localeats#2023.</small>
+                                <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="Localeats#2024">
+                                <small id="passwordHelp" class="form-text text-muted">Default password is Localeats#2024.</small>
                             </div>
 
                             <input type="hidden" name="editID" id="editID" value="">
@@ -210,6 +215,8 @@ global $db, $date;
 
     const setEdit = (id) => {
         const inputName = $("#inputName");
+        const inputNickName = $("#inputNickName");
+        const inputBirthday = $("#inputBirthday");
         const inputEmail = $("#inputEmail");
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
@@ -235,6 +242,8 @@ global $db, $date;
         reqAjax.done(function (res) {
             console.log(res);
             inputName.val(res.name);
+            inputNickName.val(res.nickname);
+            inputBirthday.val(res.DOB);
             inputEmail.val(res.email);
             inputPhone.val(res.phone);
             inputPassword.val("Encrypted : " + res.password).attr('disabled', 'disabled');
@@ -260,6 +269,8 @@ global $db, $date;
 
     const formSave = () => {
         const inputName = $("#inputName");
+        const inputNickName = $("#inputNickName");
+        const inputBirthday = $("#inputBirthday");
         const inputEmail = $("#inputEmail");
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
@@ -269,15 +280,11 @@ global $db, $date;
 
         let statusValue = $("input[name='inputStatus']:checked").val();
 
-        const reqAjax = $.ajax({
-            url: "assets/php/actionStaffs.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: {
+        let payload = {
                 act: "save",
                 inputName : inputName.val(),
+                inputNickName : inputNickName.val(),
+                inputBirthday : inputBirthday.val(),
                 inputEmail : inputEmail.val(),
                 inputPhone : inputPhone.val(),
                 inputPassword : inputPassword.val(),
@@ -285,7 +292,17 @@ global $db, $date;
                 inputStatus : statusValue,
                 editID : editID.val(),
                 formAction : formAction.val()
-            },
+            };
+
+            // console.log(payload);
+
+        const reqAjax = $.ajax({
+            url: "assets/php/actionStaffs.php",
+            method: "POST",
+            async: false,
+            cache: false,
+            dataType: "json",
+            data: payload
         });
 
         reqAjax.done(function (res) {
@@ -308,6 +325,7 @@ global $db, $date;
 
     const resetForm = () => {
         const inputName = $("#inputName");
+        const inputNickName = $("#inputNickName");
         const inputEmail = $("#inputEmail");
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
@@ -319,11 +337,12 @@ global $db, $date;
         const passwordNotAllow = $("#passwordNotAllow");
 
         inputName.val('');
+        inputNickName.val('');
         inputEmail.val('');
         inputPhone.val('');
-        inputPassword.val('Localeats#2023').removeAttr('disabled');
+        inputPassword.val('Localeats#2024').removeAttr('disabled');
         passwordNotAllow.hide();
-        inputLevel.val('3');
+        inputLevel.val('4');
         statusOn.prop('checked', true);
         statusOff.prop('checked', false);
         editID.val('');

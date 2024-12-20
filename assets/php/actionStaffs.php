@@ -19,6 +19,7 @@ if ($params ["action"] == "setStatus"){
     //echo $update->affectedRows();
     $params["affected"] = $update->affectedRows();
 }elseif ($params ["action"] == "loadUpdate"){
+
     $row = $db->query('SELECT * FROM `staffs` WHERE sID = ?;',$params ["id"])->fetchArray();
     $params["name"] = $row["sName"];
     $params["email"] = $row["sEmail"];
@@ -26,6 +27,10 @@ if ($params ["action"] == "setStatus"){
     $params["password"] = $row["sPassword"];
     $params["level"] = $row["sLevel"];
     $params["status"] = $row["sStatus"];
+    $params["address"] = $row["sAddress"];
+    $params["nickname"] = $row["sNickName"];
+    $params["birthday"] = $row["sDOB"];//yyyy-mm-dd > dd-mm-yyyy
+    $params["DOB"] = dateSqltoHuman($row["sDOB"]);//dd-mm-yyyy > yyyy-mm-dd
 
 }elseif ($params ["action"] == "save"){
     $params["txt"] = "Got it";
@@ -42,22 +47,26 @@ if ($params ["action"] == "setStatus"){
     $params["inputPassword"] = $passwordHash;
     $params["inputLevel"] = !empty($_REQUEST['inputLevel']) ? $_REQUEST['inputLevel'] : "3";
     $params["inputStatus"] = !empty($_REQUEST['inputStatus']) ? $_REQUEST['inputStatus'] : "0";
+    $params["inputNickName"] = !empty($_REQUEST['inputNickName']) ? $_REQUEST['inputNickName'] : "";
+    $params["inputBirthday"] = !empty($_REQUEST['inputBirthday']) ? dateHumantoSql($_REQUEST['inputBirthday']) : NULL;
+
     $params["by"] = $_SESSION['id'];
 
     if($params ["formAction"]=='add'){
         $insert = $db->query('INSERT INTO `staffs`
-                                (`sName`, `sEmail`, `sMobile`, `sPassword`, `sStatus`, `sLevel`, `sUpdateBy`) 
-                                VALUES (?, ?, ?, ?, ?, ?, ?);'
-            ,$params["inputName"],$params["inputEmail"],$params["inputPhone"],$params["inputPassword"],$params["inputStatus"],$params["inputLevel"],$params["by"]
+                                (`sName`, `sNickName`,`sDOB`,`sEmail`, `sMobile`, `sPassword`, `sStatus`, `sLevel`, `sUpdateBy`) 
+                                VALUES (?,?,?,?, ?, ?, ?, ?, ?);'
+            ,$params["inputName"],$params["inputNickName"],$params["inputBirthday"],$params["inputEmail"],$params["inputPhone"],$params["inputPassword"],$params["inputStatus"],$params["inputLevel"],$params["by"]
         );
 
         $params["affected"] = $insert->affectedRows();
         $params["insertedID"] = $db->lastInsertID();
     }elseif($params ["formAction"]=='edit'){
+
         $update = $db->query('UPDATE `staffs` SET 
-                                `sName`= ?, `sEmail` = ?, `sMobile` =?, `sStatus` = ?, `sLevel` = ?, `sUpdateBy`= ?, sUpdateAt = NOW() 
+                                `sName`= ?, `sNickName`=?, `sDOB`= ?,`sEmail` = ?, `sMobile` =?, `sStatus` = ?, `sLevel` = ?, `sUpdateBy`= ?, sUpdateAt = NOW() 
                                 WHERE sID = ? ;'
-            ,$params["inputName"],$params["inputEmail"],$params["inputPhone"],$params["inputStatus"],$params["inputLevel"],$params["by"],$params ["editID"]
+            ,$params["inputName"],$params["inputNickName"],$params["inputBirthday"],$params["inputEmail"],$params["inputPhone"],$params["inputStatus"],$params["inputLevel"],$params["by"],$params ["editID"]
         );
 
         $params["affected"] = $update->affectedRows();
@@ -83,3 +92,17 @@ if ($params ["action"] == "setStatus"){
 }
 
 echo json_encode($params);
+
+function dateSqltoHuman($databd){//input yyyy-mm-dd
+    $arr = explode("-",$databd);
+    $Brithday = $arr[2]."-".$arr[1]."-".$arr[0];
+
+    return ($Brithday);//output dd/mm/yyyy
+};
+
+function dateHumantoSql($databd){//dd/mm/yyyy
+    $arr = explode("-",$databd);
+    $Human = $arr[2]."-".$arr[1]."-".$arr[0];
+
+    return ($Human);//output yyyy-mm-dd
+};

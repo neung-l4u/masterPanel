@@ -22,7 +22,7 @@ include ('assets/api/checkSession.php');
                 </div>
                 <div class="info">
                     <a href="main.php?p=myProfile" class="d-block"><?php echo $_SESSION['name']; ?></a>
-                    <a href="main.php?p=myProfile" class="d-block"><?php echo $_SESSION['levelName']; ?></a>
+                    <a href="main.php?p=myProfile" class="d-block">Level: <?php echo $_SESSION['levelName']; ?></a>
 
                     <div class="d-block d-flex justify-content-between">
                         <span class="text-warning font-weight-bold">L4U : </span>
