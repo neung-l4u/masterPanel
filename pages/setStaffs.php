@@ -55,7 +55,7 @@ global $db, $date;
                                         <th style="width:10%"></th>
                                     </tr>
                                     </thead>
-                                    <tfoot class="thead-light">
+                                    <tfoot class="thead-dark">
                                     <tr>
                                         <th>Name</th>
                                         <th>Email</th>
@@ -105,7 +105,7 @@ global $db, $date;
                                 </div>
                             </div>
 
-                            <div class="row mb-5">
+                            <div class="row">
                                 <div class="col-6">
                                     <div class="form-group row">
                                         <label for="inputLevel" class="col-2 col-form-label">Level</label>
@@ -136,38 +136,110 @@ global $db, $date;
                                     </div>
                                 </div>
                             </div>
+                             <!-- Level and Team-->
 
-                            <div class="form-group mb-3">
-                                <label for="inputName">Full Name</label>
-                                <input type="text" class="form-control" id="inputName" maxlength="255" placeholder="Eg. Sorasak Thanomsap">
+
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <div class="form-group mb-3 row">
+                                        <label class="col-3 col-form-label" for="inputStartDate">StartDate</label>
+                                        <input type="date" class="form-control col" id="inputStartDate" placeholder="dd-mm-yyyy">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                <div class="form-group mb-3 row">
+                                    <label class="col-3 col-form-label" for="inputEmployeeNumber">Emp No.</label>
+                                    <input type="text" class="form-control col" id="inputEmployeeNumber" maxlength="50" placeholder="Enter Employee Number">
+                                </div>
+                                </div>
+                            </div>
+                            <!-- StartDate and Emp No.-->
+
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputName">Full Name</label>
+                                        <input type="text" class="form-control" id="inputName" maxlength="255" placeholder="Eg. Sorasak Thanomsap">
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-group mb-5">
-                                <label for="inputNickName">Nick Name</label>
-                                <input type="text" class="form-control" id="inputNickName" maxlength="50" placeholder="Enter Staff Nick Name">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputNickName">Nick Name</label>
+                                        <input type="text" class="form-control" id="inputNickName" maxlength="50" placeholder="Enter Staff Nick Name">
+                                    </div>
+                                </div>
+
                             </div>
 
-                            <div class="form-group mb-5">
-                                <label for="inputBirthday">Birthday</label>
-                                <input type="date" class="form-control" id="inputBirthday" placeholder="dd-mm-yyyy">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputBirthday">Birthday</label>
+                                        <input type="date" class="form-control" id="inputBirthday" placeholder="dd-mm-yyyy">
+                                     </div>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="inputEmail">Email</label>
-                                <input type="email" class="form-control" id="inputEmail" placeholder="Enter Staff Email">
-                                <small id="emailHelp" class="form-text text-muted">e.g. mail@localforyou.com.</small>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputAddress">Address</label>
+                                        <input type="text" class="form-control" id="inputAddress" maxlength="50" placeholder="Enter Address">
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="inputPhone">Phone</label>
-                                <input type="tel" class="form-control" id="inputPhone" placeholder="Enter Staff Phone" maxlength="10">
-                                <small id="phoneHelp" class="form-text text-muted">e.g. 0891234567</small>
+                            <div class="row mb-5">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputReligion" class="col-2 col-form-label">Religion</label>    
+                                        <select id="inputReligion" class="custom-select">
+                                            <option value="1" selected>-- ไม่ระบุ --</option>
+                                            <?php
+                                            $teams = $db->query('SELECT `rID`, `rThane` AS "thai" FROM `Religion` WHERE rID <> 1 ORDER BY `rThane`;')->fetchAll();
+                                            foreach ($teams as $row){
+                                                ?>
+                                                <option value="<?php echo $row['rID']; ?>"><?php echo $row['thai']; ?></option>
+                                            <?php }//foreach ?>
+                                        </select>        
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-group mb-3">
-                                <label for="inputPassword">Password <small id="passwordNotAllow" class="text-danger" style="display: none;">Not allow to edit encrypted data.</small></label>
-                                <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="Localeats#2024">
-                                <small id="passwordHelp" class="form-text text-muted">Default password is Localeats#2024.</small>
+                            
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputEmail">Email</label>
+                                        <input type="email" class="form-control" id="inputEmail" placeholder="Enter Staff Email">
+                                        <small id="emailHelp" class="form-text text-muted">e.g. mail@localforyou.com.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputPhone">Phone</label>
+                                        <input type="tel" class="form-control" id="inputPhone" placeholder="Enter Staff Phone" maxlength="10">
+                                        <small id="phoneHelp" class="form-text text-muted">e.g. 0891234567</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputPassword">Password <small id="passwordNotAllow" class="text-danger" style="display: none;">Not allow to edit encrypted data.</small></label>
+                                        <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="Localeats#2024">
+                                        <small id="passwordHelp" class="form-text text-muted">Default password is Localeats#2024.</small>
+                                    </div>
+                                </div>
                             </div>
 
                             <input type="hidden" name="editID" id="editID" value="">
@@ -216,17 +288,20 @@ global $db, $date;
     const setEdit = (id) => {
         const inputName = $("#inputName");
         const inputNickName = $("#inputNickName");
+        const inputStartDate = $("#inputStartDate");
+        const inputEmployeeNumber = $("#inputEmployeeNumber");
+        const inputAddress = $("#inputAddress");
         const inputBirthday = $("#inputBirthday");
         const inputEmail = $("#inputEmail");
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
         const passwordNotAllow = $("#passwordNotAllow");
         const inputLevel = $("#inputLevel");
+        const inputReligion = $("#inputReligion");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
         const editID = $("#editID");
         const formAction = $("#formAction");
-
         const reqAjax = $.ajax({
             url: "assets/php/actionStaffs.php",
             method: "POST",
@@ -239,16 +314,21 @@ global $db, $date;
             },
         });
 
+        
         reqAjax.done(function (res) {
             console.log(res);
             inputName.val(res.name);
             inputNickName.val(res.nickname);
             inputBirthday.val(res.birthday);
+            inputStartDate.val(res.startdate);
+            inputEmployeeNumber.val(res.employeenumber);
+            inputAddress.val(res.address);
             inputEmail.val(res.email);
             inputPhone.val(res.phone);
             inputPassword.val("Encrypted : " + res.password).attr('disabled', 'disabled');
             passwordNotAllow.show();
             inputLevel.val(res.level);
+            inputReligion.val(res.religion)
             if(res.status === 1) {
                 statusOff.prop('checked', false);
                 statusOn.prop('checked', true);
@@ -264,16 +344,20 @@ global $db, $date;
         reqAjax.fail(function (xhr, status, error) {
             console.log("ajax request fail!!");
             console.log(status + ": " + error);
-        });
+        })
     }// const
 
     const formSave = () => {
         const inputName = $("#inputName");
         const inputNickName = $("#inputNickName");
         const inputBirthday = $("#inputBirthday");
+        const inputStartDate = $("#inputStartDate");
+        const inputEmployeeNumber = $("#inputEmployeeNumber");
+        const inputAddress = $("#inputAddress");
         const inputEmail = $("#inputEmail");
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
+        const inputReligion = $("#inputReligion");
         const inputLevel = $("#inputLevel");
         const editID = $("#editID");
         const formAction = $("#formAction");
@@ -285,15 +369,21 @@ global $db, $date;
                 inputName : inputName.val(),
                 inputNickName : inputNickName.val(),
                 inputBirthday : inputBirthday.val(),
+                inputStartDate : inputStartDate.val(),
+                inputEmployeeNumber : inputEmployeeNumber.val(),
+                inputAddress : inputAddress.val(),
                 inputEmail : inputEmail.val(),
                 inputPhone : inputPhone.val(),
                 inputPassword : inputPassword.val(),
+                inputReligion : inputReligion.val(),
                 inputLevel : inputLevel.val(),
                 inputStatus : statusValue,
                 editID : editID.val(),
                 formAction : formAction.val()
             };
 
+            console.log("payload=",payload);
+            
         const reqAjax = $.ajax({
             url: "assets/php/actionStaffs.php",
             method: "POST",
@@ -302,7 +392,7 @@ global $db, $date;
             dataType: "json",
             data: payload
         });
-
+            
         reqAjax.done(function (res) {
             modalFormAction("close");
             console.log(res);
@@ -315,6 +405,7 @@ global $db, $date;
             console.log("ajax request fail!!");
             console.log(status + ": " + error);
         });
+        
     }// const
 
 
@@ -322,9 +413,13 @@ global $db, $date;
         const inputName = $("#inputName");
         const inputNickName = $("#inputNickName");
         const inputBirthday = $("#inputBirthday");
+        const inputStartDate = $("#inputStartDate");
+        const inputEmployeeNumber = $("#inputEmployeeNumber");
+        const inputAddress = $("#inputAddress");
         const inputEmail = $("#inputEmail");
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
+        const inputReligion = $("#inputReligion");
         const inputLevel = $("#inputLevel");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
@@ -332,14 +427,25 @@ global $db, $date;
         const formAction = $("#formAction");
         const passwordNotAllow = $("#passwordNotAllow");
 
+        const date = new Date();
+
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+        let currentDate = `${year}-${month}-${day}`;
+
         inputName.val('');
         inputNickName.val('');
         inputBirthday.val('');
+        inputStartDate.val(currentDate);
+        inputEmployeeNumber.val('');
+        inputAddress.val('');
         inputEmail.val('');
         inputPhone.val('');
         inputPassword.val('Localeats#2024').removeAttr('disabled');
         passwordNotAllow.hide();
         inputLevel.val('4');
+        inputReligion.val('1');
         statusOn.prop('checked', true);
         statusOff.prop('checked', false);
         editID.val('');
