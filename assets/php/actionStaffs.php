@@ -12,11 +12,8 @@ $params["editID"] = !empty($_REQUEST['editID']) ? $_REQUEST['editID'] : "";
 $params["status"] = !empty($_REQUEST['status']) ? 1 : 0;
 $params["formAction"] = !empty($_REQUEST['formAction']) ? $_REQUEST['formAction'] : 'add';
 
-
-
 if ($params ["action"] == "setStatus"){
     $update = $db->query('UPDATE `staffs` SET `sStatus` = ? WHERE `staffs`.`sID` = ?;', $params ["status"], $params ["id"]);
-    //echo $update->affectedRows();
     $params["affected"] = $update->affectedRows();
 }elseif ($params ["action"] == "loadUpdate"){
 
@@ -29,8 +26,7 @@ if ($params ["action"] == "setStatus"){
     $params["status"] = $row["sStatus"];
     $params["address"] = $row["sAddress"];
     $params["nickname"] = $row["sNickName"];
-    $params["birthday"] = $row["sDOB"];//yyyy-mm-dd > dd-mm-yyyy
-    $params["DOB"] = dateSqltoHuman($row["sDOB"]);//dd-mm-yyyy > yyyy-mm-dd
+    $params["birthday"] = $row["sDOB"];//yyyy-mm-dd
 
 }elseif ($params ["action"] == "save"){
     $params["txt"] = "Got it";
@@ -48,7 +44,7 @@ if ($params ["action"] == "setStatus"){
     $params["inputLevel"] = !empty($_REQUEST['inputLevel']) ? $_REQUEST['inputLevel'] : "3";
     $params["inputStatus"] = !empty($_REQUEST['inputStatus']) ? $_REQUEST['inputStatus'] : "0";
     $params["inputNickName"] = !empty($_REQUEST['inputNickName']) ? $_REQUEST['inputNickName'] : "";
-    $params["inputBirthday"] = !empty($_REQUEST['inputBirthday']) ? dateHumantoSql($_REQUEST['inputBirthday']) : NULL;
+    $params["inputBirthday"] = !empty($_REQUEST['inputBirthday']) ? $_REQUEST['inputBirthday'] : NULL;
 
     $params["by"] = $_SESSION['id'];
 

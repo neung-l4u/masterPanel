@@ -76,13 +76,13 @@ global $db, $date;
 
 
         <!-- Modal -->
-        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="formModalLabel">Form Staff</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                            <span>&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -149,7 +149,7 @@ global $db, $date;
 
                             <div class="form-group mb-5">
                                 <label for="inputBirthday">Birthday</label>
-                                <input type="text" class="form-control" id="inputBirthday" placeholder="dd-mm-yyyy">
+                                <input type="date" class="form-control" id="inputBirthday" placeholder="dd-mm-yyyy">
                             </div>
 
                             <div class="form-group">
@@ -243,7 +243,7 @@ global $db, $date;
             console.log(res);
             inputName.val(res.name);
             inputNickName.val(res.nickname);
-            inputBirthday.val(res.DOB);
+            inputBirthday.val(res.birthday);
             inputEmail.val(res.email);
             inputPhone.val(res.phone);
             inputPassword.val("Encrypted : " + res.password).attr('disabled', 'disabled');
@@ -294,8 +294,6 @@ global $db, $date;
                 formAction : formAction.val()
             };
 
-            // console.log(payload);
-
         const reqAjax = $.ajax({
             url: "assets/php/actionStaffs.php",
             method: "POST",
@@ -306,7 +304,6 @@ global $db, $date;
         });
 
         reqAjax.done(function (res) {
-
             modalFormAction("close");
             console.log(res);
             reloadTable();
@@ -320,12 +317,11 @@ global $db, $date;
         });
     }// const
 
-    
-
 
     const resetForm = () => {
         const inputName = $("#inputName");
         const inputNickName = $("#inputNickName");
+        const inputBirthday = $("#inputBirthday");
         const inputEmail = $("#inputEmail");
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
@@ -338,6 +334,7 @@ global $db, $date;
 
         inputName.val('');
         inputNickName.val('');
+        inputBirthday.val('');
         inputEmail.val('');
         inputPhone.val('');
         inputPassword.val('Localeats#2024').removeAttr('disabled');
