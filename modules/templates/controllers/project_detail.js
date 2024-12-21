@@ -114,6 +114,21 @@ function nextPrev(step) {
     }
 }
 
+
+const setHex = (param,box) => { //for set text in span follow color picker
+    const theme1Hex = $("#theme1Hex");
+    const theme2Hex = $("#theme2Hex");
+    const theme3Hex = $("#theme3Hex");
+    if (box===1){
+        theme1Hex.html(param);
+    }else if (box===2){
+        theme2Hex.html(param);
+    }else if (box===3){
+        theme3Hex.html(param);
+    }
+    return true;
+}//const
+
 $('#prevPageBtn').click(function() {
     nextPrev(-1);
 });

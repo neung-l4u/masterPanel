@@ -1,77 +1,18 @@
 <?php
+global $db, $date;
 $id=$_REQUEST['id'];
 require_once ("../assets/php/share_function.php");
+require_once ("../assets/db/db.php");
 ?>
 <style>
-    input::placeholder, textarea::placeholder, .custom-file-label {
-        color: #dddddd !important;
-    }
+
 </style>
 
 <!--    <link rel="stylesheet" href="../assets/css/bootstrap.4.5.2.min.css">-->
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
     <link rel="stylesheet" href="../assets/css/project_detail.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
-
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
-    <script src="../assets/js/iro5.5.2.min.js"></script> <!--color picker plugin-->
-
-<!--<script src="../assets/js/modernizr-custom.js"></script>-->
-
-    <script>
-        let colorPicker;
-        const defaultColor = "#0000ff";
-
-        window.addEventListener("load", startup, false);
-
-        function startup() {
-            colorPicker = document.querySelector("#color-picker");
-            colorPicker.value = defaultColor;
-            colorPicker.addEventListener("input", updateFirst, false);
-            colorPicker.addEventListener("change", updateAll, false);
-            colorPicker.select();
-        }
-
-        function updateFirst(event) {
-            const p = document.querySelector("p");
-            if (p) {
-                p.style.color = event.target.value;
-            }
-        }
-
-        function updateAll(event) {
-            document.querySelectorAll("p").forEach((p) => {
-                p.style.color = event.target.value;
-            });
-        }
-
-        const aaa = () => {
-          let color = $("#coco").val();
-          //alert("color = "+color);
-          $("#cocoCode").val(color);
-        }
-
-        const bbb = () => {
-            let color = $("#cocoCode").val();
-
-            let str = '#FFFFFF';
-            if(color.length>7){
-                str = color.substr(0, 7);
-            }else if(color.length<7){
-                str = str.padEnd(6, "F");
-            }
-
-            let position = str.search('#');
-            if (position===-1){
-                str = str.padStart(7, "#");
-            }
-
-            //alert("color = "+color);
-            $("#coco").val(color);
-        }
-    </script>
-
-
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -81,7 +22,7 @@ require_once ("../assets/php/share_function.php");
 </nav>
 
 <!-- Project Information -->
-<div class="border rounded mb-5 p-5">
+<div class="border rounded mb-4 px-5 py-3">
     <div class="row">
         <div class="col">
             <h5 class="text-secondary">Project info.</h5>
@@ -115,7 +56,7 @@ require_once ("../assets/php/share_function.php");
 </div>
 
 <!-- Business Information -->
-<div class="border rounded mb-5 p-5">
+<div class="border rounded mb-4 px-5 py-3">
     <div class="row">
         <div class="col">
             <h5 class="text-secondary">Business info.</h5>
@@ -123,124 +64,112 @@ require_once ("../assets/php/share_function.php");
     </div>
 
     <div class="row">
-        <div class="col-8">
-            <div class="mb-3">
-                <label for="businessName" class="form-label">Business Name</label>
-                <input type="text" class="form-control" id="businessName" placeholder="" readonly>
+        <div class="col-7">
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="businessName" class="form-label">Business Name</label>
+                        <input type="text" class="form-control" id="businessName" placeholder="" readonly>
+                    </div>
+                </div>
             </div>
 
-            <div class="input-group mb-3">
-                <label for="businessEmail" class="input-group-text" id="basic-addon3">Email</label>
-                <input type="email" class="form-control" id="businessEmail" aria-describedby="basic-addon3" placeholder="admin@localforyou.com">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <label for="businessEmail" class="input-group-text" id="basic-addon3">Email</label>
+                                <input type="email" class="form-control" id="businessEmail" placeholder="admin@localforyou.com">
+                            </div>
+                        </div>
+                        <div class="col">
+                                <div class="input-group mb-3">
+                                    <label for="businessPhone" class="input-group-text" id="basic-addon3">Phone</label>
+                                    <input type="tel" class="form-control" id="businessPhone" placeholder="+6112345678">
+                                </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="input-group mb-3">
-                <label for="businessPhone" class="input-group-text" id="basic-addon3">Phone</label>
-                <input type="tel" class="form-control" id="businessPhone" aria-describedby="basic-addon3" placeholder="+6112345678">
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="businessAddress" class="form-label">Address</label>
+                        <textarea class="form-control" id="businessAddress" rows="3"></textarea>
+                    </div>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label for="businessAddress" class="form-label">Address</label>
-                <textarea class="form-control" id="businessAddress" rows="3"></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label for="openingHours" class="form-label">Opening hour</label>
-                <textarea class="form-control" id="openingHours" rows="3"></textarea>
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="openingHours" class="form-label">Opening hour</label>
+                        <textarea class="form-control" id="openingHours" rows="7"></textarea>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-4">
-            <div>
-                <label for="logoImg" class="form-label">Logo</label>
-                <form method="post" action="" enctype="multipart/form-data" id="myFormLogo">
-                    <div class="col">
-                        <img class="preview" src="../assets/img/default.png" id="imgLogo" alt="place">
-                        <p id="picNameLogo"></p>
-                        <input type="file" class="file-input" id="fileLogo" />
-                        <button type="submit" class="button" id="btnUpload">Upload</button>
-                    </div>
-                </form>
-            </div>
 
-            <div>
-                <label for="coco">Color picker</label>
-                <input type="color" name="color" id="coco" value="#0000ff" onchange="aaa();">
-                <input type="text" id="cocoCode" onblur="bbb();" maxlength="7" minlength="7">
+        <div class="col-5">
+            <div class="row">
+                <div class="col py-3 px-3">
+                    <label for="logoImg" class="form-label">Logo</label>
+                    <form method="post" action="" enctype="multipart/form-data" id="myFormLogo">
+                            <img class="preview" src="../assets/img/default.png" id="imgLogo" alt="place">
+                            <p id="picNameLogo" class="text-muted"> -- no pic --</p>
+                            <div class="row">
+                                <input type="file" class="file-input col-8" id="fileLogo" />
+                                <button type="submit" class="button col" id="btnUpload">Upload</button>
+                            </div>
+                    </form>
+                </div>
+            </div>
+            <div class="mt-3 border rounded py-3 pl-3">
+                <div class="mt-3 d-flex flex-row gap-3 align-items-center">
+                    <label for="theme1">Color Theme #1</label>
+                    <input type="color" onchange="setHex(this.value,1);" id="theme1" value="#ffffff">
+                    <span id="theme1Hex" class="codeHex">#ffffff</span>
+                </div>
+                <div class="mt-3 d-flex flex-row gap-3 align-items-center">
+                    <label for="theme2">Color Theme #2</label>
+                    <input type="color" onchange="setHex(this.value,2);" id="theme2" value="#ffffff">
+                    <span id="theme2Hex" class="codeHex">#ffffff</span>
+                </div>
+                <div class="mt-3 d-flex flex-row gap-3 align-items-center">
+                    <label for="theme3">Color Theme #3</label>
+                    <input type="color" onchange="setHex(this.value,3);"  id="theme3" value="#ffffff">
+                    <span id="theme3Hex" class="codeHex">#ffffff</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-
-
-    <div class="row">
-<!-- Details -->
-
-<!-- Logo -->
-        <div class="col-3">
-            <label for="logoImg" class="form-label">Logo</label>
-            <form method="post" action="" enctype="multipart/form-data" id="myFormLogo">
-                <div class="col">
-                    <img class="preview" src="../assets/img/default.png" id="imgLogo" alt="place">
-                    <p id="picNameLogo"></p>
-                    <input type="file" class="file-input" id="fileLogo" />
-                    <button type="submit" class="button" id="btnUpload">Upload</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="row">
-<!-- Opening Hours -->
-        <div class="col">
-            <div class="mb-3">
-                <label for="openingHours" class="form-label">Opening hour</label>
-                <textarea class="form-control" id="openingHours" rows="3"></textarea>
-            </div>
-        </div>
-    </div>
-
-<!-- Theme Color -->
-    <div class="row">
-        <div class="col">
-            <label for="colorInput" class="form-label">Color picker</label>
-            <input type="color" class="form-control form-control-color" id="colorInput" value="#563d7c" style="width: 150px; height: 150px;"
-                title="Choose your color">
-        </div>
-        <div class="col">
-            <p>
-                An example demonstrating the use of the
-                <code>&lt;input type="color"&gt;</code> control.
-            </p>
-            <label for="coco">Color picker</label>
-            <input type="color" name="color" id="coco" value="#0000ff" onchange="aaa();">
-            <input type="text" id="cocoCode" onblur="bbb();" maxlength="7" minlength="7">
-            <p>
-                Watch the paragraph colors change when you adjust the color picker. As you
-                make changes in the color picker, the first paragraph's color changes, as a
-                preview (this uses the <code>input</code> event). When you close the color
-                picker, the <code>change</code> event fires, and we detect that to change
-                every paragraph to the selected color.
-            </p>
-            <a href="#" onclick="aaa();">alert</a>
-        </div>
-    </div>
-
 <!-- Domain -->
-    <div class="row mb-3 p-3 border rounded">
+<div class="border rounded mb-4 px-5 py-3">
+    <div class="row">
+        <div class="col">
+            <h5 class="text-secondary">Customer's Domain name & Hosting.</h5>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-6">
-            <label for="domainHave">Client's domain Log-in details</label>
+            <label for="domainHave">Domain Log-in</label>
             <div class="form-check ml-1">
                 <input class="form-check-input domainHave" type="checkbox" value="" id="domainHave">
-                <label for="domainHave">Yes</label>
-
+                <label for="domainHave">Yes, we got it.</label>
                 <div class="domainbox" id="domainBox">
                     <div class="mb-4">
-                        <select class="form-select" aria-label="Domain Type" id="domainType">
-                            <option disabled>Select Domain Type</option>
-                            <option selected value="1">Our Dreamscape</option>
-                            <option value="2">Other</option>
-                            <option value="3">Unknown</option>
+                        <select id="domainProvider" class="custom-select">
+                            <option value="0" selected>-- None --</option>
+                            <?php
+                            $domains = $db->query('SELECT `id`, `name` FROM `DomainProviders` ORDER BY `name`;')->fetchAll();
+                            foreach ($domains as $row){
+                                ?>
+                                <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                            <?php }//foreach ?>
                         </select>
                     </div>
 
@@ -262,12 +191,12 @@ require_once ("../assets/php/share_function.php");
             </div>
         </div>
 
-<!-- Hosting -->
-        <div class="col-6 border-left">
-            <label for="hostingHave">Client's hosting Log-in details</label>
+        <!-- Hosting -->
+        <div class="col-6">
+            <label for="hostingHave">Hosting Log-in</label>
             <div class="form-check ml-1">
                 <input class="form-check-input hostingHave" type="checkbox" value="" id="hostingHave">
-                <label for="hostingHave">Yes</label>
+                <label for="hostingHave">Yes, we got it.</label>
 
                 <div class="hostingbox" id="hostingBox">
                     <div class="row">
@@ -288,6 +217,8 @@ require_once ("../assets/php/share_function.php");
             </div>
         </div>
     </div>
+</div>
+
 
 <!-- Shop Type -->
     <div class="row mb-3 p-3 border rounded">
@@ -311,6 +242,13 @@ require_once ("../assets/php/share_function.php");
 
                     <input type="text" class="form-control resOtherSystem" id="resOtherSystem" placeholder="System Name">
                 </div>
+                <div>
+                    <input class="form-check-input orderOther" type="checkbox" value="" id="needEmail">
+                    <label for="needEmail">Need email inbox under shop domain name.</label><br>
+                    <small class="text-muted">e.g. info@hoonhaymassage.co.nz</small>
+                </div>
+
+
             </div>
         </div>
 
@@ -1929,7 +1867,9 @@ require_once ("../assets/php/share_function.php");
 <script src="../controllers/project_detail.js"></script>
 <script>
 
-//console.log("Form Submitted");
+
+
+    //console.log("Form Submitted");
 
     $(document).ready(function(){
 
@@ -1959,6 +1899,7 @@ require_once ("../assets/php/share_function.php");
             const shopType = row.shopTypeID;
 
             $('.projectName').text(projectName);
+            $('#businessName').val(projectName);
             $('.businessName').val(projectName);
             $(".shopType").html(shopType === 1 ? "Restaurant" : "Massage");
             $("#ShopType").val(shopType === 1 ? "Restaurant" : "Massage");
