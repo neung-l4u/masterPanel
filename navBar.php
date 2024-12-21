@@ -37,6 +37,9 @@ $userLevel = $_SESSION['level'];
             <a href="main.php?p=l4uPassword" class="nav-link">L4U Password</a>
         </li>
         <?php //} ?>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="modules/cancellation/views/index.php?token=123" class="nav-link">Unsubscribe Form</a>
+        </li>
     </ul>
 
     <!-- Right navbar links -->

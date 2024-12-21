@@ -42,40 +42,40 @@ $param = array(
 );
 
 // test data
-// $param = array(
-//     "formDate" => "29/08/2024",
-//     "leadSource" => "Test Sign Up Form",
-//     "formVersion" => "2.7.1",
-//     "formProduct" => "Pro Online Ordering Systems",
-//     "formSalesAgent" => "Sorasak Thanomsap",
-//     "formContractPeriod" => "0 Months",
-//     "formRefPerson" => "Jane Doe",
-//     "formCoupon" => "",
-//     "formRefShop" => "L4U test shop",
-//     "formFirstTimePayment" => "$1.0 AUD",
-//     "formPaymentMethod" => "Invoice",
-//     "formFlyer" => "Do not need",
-//     "formDineIn" => "Do not need",
-//     "formMagnet" => "Do not need",
-//     "formSocialMedia" => "Do not need",
-//     "formMenuDesign" => "Do not need",
-//     "formWebsiteMakeOver" => "Do not need",
-//     "formADVPromo" => "Do not need",
-//     "formWebHosting" => "Do not need",
-//     "formInfluencer" => "Do not need",
-//     "formCustomerType" => "Thai Restaurants &amp; Takeaways",
-//     "formShopName" => "Neung Test Shop",
-//     "formCountry" => "Australia",
-//     "formState" => "VI : Victoria",
-//     "formFullName" => "Neung Test Shop AU",
-//     "formEmail" => "neung@localforyou.com",
-//     "formMobile" => "0891234567",
-//     "formBestTime" => "All day All night",
-//     "formNote" => "This is test data",
-//     "mode" => "alert",
-//     "token" => "6.552534",
-//     "formInitialProductOffering" => "Pro Online Ordering Systems"
-// );
+$param = array(
+    "formDate" => "29/08/2024",
+    "leadSource" => "Test Sign Up Form",
+    "formVersion" => "2.7.1",
+    "formProduct" => "Pro Online Ordering Systems",
+    "formSalesAgent" => "Sorasak Thanomsap",
+    "formContractPeriod" => "0 Months",
+    "formRefPerson" => "Jane Doe",
+    "formCoupon" => "",
+    "formRefShop" => "L4U test shop",
+    "formFirstTimePayment" => "$1.0 AUD",
+    "formPaymentMethod" => "Invoice",
+    "formFlyer" => "Do not need",
+    "formDineIn" => "Do not need",
+    "formMagnet" => "Do not need",
+    "formSocialMedia" => "Do not need",
+    "formMenuDesign" => "Do not need",
+    "formWebsiteMakeOver" => "Do not need",
+    "formADVPromo" => "Do not need",
+    "formWebHosting" => "Do not need",
+    "formInfluencer" => "Do not need",
+    "formCustomerType" => "Thai Restaurants &amp; Takeaways",
+    "formShopName" => "Neung Test Shop",
+    "formCountry" => "Australia",
+    "formState" => "VI : Victoria",
+    "formFullName" => "Neung Test Shop AU",
+    "formEmail" => "neung@localforyou.com",
+    "formMobile" => "0891234567",
+    "formBestTime" => "All day All night",
+    "formNote" => "This is test data",
+    "mode" => "alert",
+    "token" => "6.552534",
+    "formInitialProductOffering" => "Pro Online Ordering Systems"
+);
 
 $param['mode'] = "alert";
 // end test data
@@ -83,7 +83,7 @@ $param['mode'] = "alert";
 $system = array(
     "emailSenderName" => "Unsubscribe Form",
     "emailSenderEmail" => "bas@localforyou.com",
-    "emailSubject" => "New ". $param["formCountry"]." Subscriber",
+    "emailSubject" => "Unsubscriber",
     "emailAdministrator" => "bas@localforyou.com"
 );
 
@@ -96,19 +96,17 @@ $system["emailBody"] = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-
 //     $system["emailAlertTo"] = "admin@localforyou.com";
 // }
 
-$system["emailAlertTo"] = "neonetipong@gmail.com"; // test data
-
-$system["emailAlertTo"] = "malimongcon@gmail.com";
+$system["emailAlertTo"] = "malimongcon@gmail.com"; // test data
 
 $mailHeaders = [
-    'From' => 'cancellation Form <noreply@localforyou.com>',
+    'From' => 'Unsubscribe Form <noreply@localforyou.com>',
     'Cc' => '',
-    'Bcc' => 'mark@localforyou.com',
-    'Reply-To' => 'neung@localforyou.com',
-    'X-Sender' => 'LocalForYou <neung@localforyou.com>',
+    'Bcc' => 'bas@localforyou.com',
+    'Reply-To' => 'bas@localforyou.com',
+    'X-Sender' => 'LocalForYou <bas@localforyou.com>',
     'X-Mailer' => 'PHP/' . phpversion(),
     'X-Priority' => '1',
-    'Return-Path' => 'neung@localforyou.com',
+    'Return-Path' => 'bas@localforyou.com',
     'MIME-Version' => '1.0',
     'Content-Type' => 'text/html; charset=utf-8'
 ];
