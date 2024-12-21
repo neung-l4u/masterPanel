@@ -19,11 +19,13 @@ if ($params ["action"] == "setStatus"){
 
     $row = $db->query('SELECT * FROM `staffs` WHERE sID = ?;',$params ["id"])->fetchArray();
     $params["name"] = $row["sName"];
+    $params["tname"] = $row["sTName"];
     $params["email"] = $row["sEmail"];
     $params["phone"] = $row["sMobile"];
     $params["password"] = $row["sPassword"];
     $params["level"] = $row["sLevel"];
     $params["religion"] = $row["rID"];
+    $params["team"] = $row["teamID"];
     $params["status"] = $row["sStatus"];
     $params["address"] = $row["sAddress"];
     $params["nickname"] = $row["sNickName"];
@@ -42,6 +44,7 @@ if ($params ["action"] == "setStatus"){
     }
 
     $params["inputName"] = !empty($_REQUEST['inputName']) ? $_REQUEST['inputName'] : "invalid Name";
+    $params["inputTname"] = !empty($_REQUEST['inputTname']) ? $_REQUEST['inputTname'] : "invalid Thai Name";
     $params["inputEmail"] = !empty($_REQUEST['inputEmail']) ? $_REQUEST['inputEmail'] : "invalid Email";
     $params["inputPhone"] = !empty($_REQUEST['inputPhone']) ? $_REQUEST['inputPhone'] : "invalid Phone";
     $params["inputPassword"] = $passwordHash;
@@ -53,15 +56,16 @@ if ($params ["action"] == "setStatus"){
     $params["inputStartDate"] = !empty($_REQUEST['inputStartDate']) ? $_REQUEST['inputStartDate'] : NULL;
     $params["inputEmployeeNumber"] = !empty($_REQUEST['inputEmployeeNumber']) ? $_REQUEST['inputEmployeeNumber'] : NULL;
     $params["inputAddress"] = !empty($_REQUEST['inputAddress']) ? $_REQUEST['inputAddress'] : NULL;
+    $params["inputTeam"] = !empty($_REQUEST['inputTeam']) ? $_REQUEST['inputTeam'] : "7";
 
 
     $params["by"] = $_SESSION['id'];
 
     if($params ["formAction"]=='add'){
         $insert = $db->query('INSERT INTO `staffs`
-                                (`sName`, `sNickName`,`sDOB`,`sActiveDate`,`sEmpID`,`sAddress`,`sEmail`, `sMobile`, `sPassword`, `sStatus`, `sLevel`, `sUpdateBy`) 
-                                VALUES (?,?,?,?,?,?,?, ?, ?,?, ?, ?, ?);'
-            ,$params["inputName"],$params["inputNickName"],$params["inputBirthday"],$params["inputStartDate"],$params["inputEmployeeNumber"],$params["inputAddress"],$params["inputEmail"],$params["inputPhone"],$params["inputPassword"],$params["inputStatus"],$params["inputLevel"],$params["by"]
+                                (`sName`,`STName`, `sNickName`,`sDOB`,`sActiveDate`,`sEmpID`,`sAddress`,`sEmail`, `sMobile`, `sPassword`,`rID`,`teamID`, `sStatus`, `sLevel`, `sCreateBy`) 
+                                VALUES (?,?,?,?,?,?,?,?,?, ?,?, ?,?,?,?);'
+            ,$params["inputName"],$params["inputTname"],$params["inputNickName"],$params["inputBirthday"],$params["inputStartDate"],$params["inputEmployeeNumber"],$params["inputAddress"],$params["inputEmail"],$params["inputPhone"],$params["inputPassword"],$params["inputReligion"],$params["inputTeam"],$params["inputStatus"],$params["inputLevel"],$myID
         );
 
         $params["affected"] = $insert->affectedRows();
@@ -69,9 +73,9 @@ if ($params ["action"] == "setStatus"){
     }elseif($params ["formAction"]=='edit'){
 
         $update = $db->query('UPDATE `staffs` SET 
-                                `sName`= ?, `sNickName`=?, `sDOB`= ?, `rID`= ?, `sActiveDate`= ?, `sEmpID`= ?, `sAddress`= ?,`sEmail` = ?, `sMobile` =?, `sStatus` = ?, `sLevel` = ?, `sUpdateBy`= ?, sUpdateAt = NOW() 
+                                `sName`= ?,`sTName`= ?, `sNickName`=?, `sDOB`= ?, `rID`= ?, `sActiveDate`= ?, `sEmpID`= ?, `sAddress`= ?,`sEmail` = ?, `sMobile` =?,`rID` = ?,`teamID` = ?, `sStatus` = ?, `sLevel` = ?, `sUpdateBy`= ?, sUpdateAt = NOW() 
                                 WHERE sID = ? ;'
-            ,$params["inputName"],$params["inputNickName"],$params["inputBirthday"],$params["inputReligion"],$params["inputStartDate"],$params["inputEmployeeNumber"],$params["inputAddress"],$params["inputEmail"],$params["inputPhone"],$params["inputStatus"],$params["inputLevel"],$params["by"],$params ["editID"]
+            ,$params["inputName"],$params["inputTname"],$params["inputNickName"],$params["inputBirthday"],$params["inputReligion"],$params["inputStartDate"],$params["inputEmployeeNumber"],$params["inputAddress"],$params["inputEmail"],$params["inputPhone"],$params["inputReligion"],$params["inputTeam"],$params["inputStatus"],$params["inputLevel"],$params["by"],$params ["editID"]
         );
 
         $params["affected"] = $update->affectedRows();
@@ -92,7 +96,8 @@ if ($params ["action"] == "setStatus"){
     $_SESSION['password'] = $_REQUEST['password'];
 
 }elseif ($params ["action"] == "setDelete"){
-    $delete = $db->query('UPDATE `staffs` SET `sDeleteAt` = NOW(), `sDeleteBy` = ? WHERE sID = ?;', $_SESSION['id'], $params ["id"]);
+
+    $delete = $db->query('UPDATE `staffs` SET `sDeleteAt` = NOW(),`sStatus` = 0, `sDeleteBy` = ? WHERE sID = ?;', $_SESSION['id'], $params ["id"]);
     $params["affected"] = $delete->affectedRows();
 }
 

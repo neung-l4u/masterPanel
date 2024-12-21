@@ -1,5 +1,7 @@
 <?php
 global $db, $date;
+
+$password = "Localeats#".date("Y");
 ?>
 
 <!-- Content Header (Page header) -->
@@ -149,7 +151,7 @@ global $db, $date;
                                 <div class="col-6">
                                 <div class="form-group mb-3 row">
                                     <label class="col-3 col-form-label" for="inputEmployeeNumber">Emp No.</label>
-                                    <input type="text" class="form-control col" id="inputEmployeeNumber" maxlength="50" placeholder="Enter Employee Number">
+                                    <input type="text" class="form-control col" id="inputEmployeeNumber" maxlength="6" placeholder="e.g. LOC061">
                                 </div>
                                 </div>
                             </div>
@@ -160,7 +162,16 @@ global $db, $date;
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="inputName">Full Name</label>
-                                        <input type="text" class="form-control" id="inputName" maxlength="255" placeholder="Eg. Sorasak Thanomsap">
+                                        <input type="text" class="form-control" id="inputName" maxlength="255" placeholder="e.g. Peeraphat Malimongkhon">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputTname">Thai Name</label>
+                                        <input type="text" class="form-control" id="inputTname" maxlength="255" placeholder="e.g. พีรภัทร มะลิมงคล">
                                     </div>
                                 </div>
                             </div>
@@ -188,7 +199,7 @@ global $db, $date;
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="inputAddress">Address</label>
-                                        <input type="text" class="form-control" id="inputAddress" maxlength="50" placeholder="Enter Address">
+                                        <textarea id="inputAddress" class="form-control" placeholder="Enter Address" rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -236,8 +247,8 @@ global $db, $date;
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="inputPassword">Password <small id="passwordNotAllow" class="text-danger" style="display: none;">Not allow to edit encrypted data.</small></label>
-                                        <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="Localeats#2024">
-                                        <small id="passwordHelp" class="form-text text-muted">Default password is Localeats#2024.</small>
+                                        <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="<?php echo $password;?>">
+                                        <small id="passwordHelp" class="form-text text-muted">Default password is <?php echo $password;?>.</small>
                                     </div>
                                 </div>
                             </div>
@@ -287,6 +298,7 @@ global $db, $date;
 
     const setEdit = (id) => {
         const inputName = $("#inputName");
+        const inputTname = $("#inputTname");
         const inputNickName = $("#inputNickName");
         const inputStartDate = $("#inputStartDate");
         const inputEmployeeNumber = $("#inputEmployeeNumber");
@@ -298,6 +310,7 @@ global $db, $date;
         const passwordNotAllow = $("#passwordNotAllow");
         const inputLevel = $("#inputLevel");
         const inputReligion = $("#inputReligion");
+        const inputTeam = $("#inputTeam");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
         const editID = $("#editID");
@@ -318,6 +331,7 @@ global $db, $date;
         reqAjax.done(function (res) {
             console.log(res);
             inputName.val(res.name);
+            inputTname.val(res.tname);
             inputNickName.val(res.nickname);
             inputBirthday.val(res.birthday);
             inputStartDate.val(res.startdate);
@@ -329,6 +343,7 @@ global $db, $date;
             passwordNotAllow.show();
             inputLevel.val(res.level);
             inputReligion.val(res.religion)
+            inputTeam.val(res.team)
             if(res.status === 1) {
                 statusOff.prop('checked', false);
                 statusOn.prop('checked', true);
@@ -349,6 +364,7 @@ global $db, $date;
 
     const formSave = () => {
         const inputName = $("#inputName");
+        const inputTname = $("#inputTname");
         const inputNickName = $("#inputNickName");
         const inputBirthday = $("#inputBirthday");
         const inputStartDate = $("#inputStartDate");
@@ -358,6 +374,7 @@ global $db, $date;
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
         const inputReligion = $("#inputReligion");
+        const inputTeam = $("#inputTeam");
         const inputLevel = $("#inputLevel");
         const editID = $("#editID");
         const formAction = $("#formAction");
@@ -367,6 +384,7 @@ global $db, $date;
         let payload = {
                 act: "save",
                 inputName : inputName.val(),
+                inputTname : inputTname.val(),
                 inputNickName : inputNickName.val(),
                 inputBirthday : inputBirthday.val(),
                 inputStartDate : inputStartDate.val(),
@@ -376,6 +394,7 @@ global $db, $date;
                 inputPhone : inputPhone.val(),
                 inputPassword : inputPassword.val(),
                 inputReligion : inputReligion.val(),
+                inputTeam : inputTeam.val(),
                 inputLevel : inputLevel.val(),
                 inputStatus : statusValue,
                 editID : editID.val(),
@@ -411,6 +430,7 @@ global $db, $date;
 
     const resetForm = () => {
         const inputName = $("#inputName");
+        const inputTname = $("#inputTname");
         const inputNickName = $("#inputNickName");
         const inputBirthday = $("#inputBirthday");
         const inputStartDate = $("#inputStartDate");
@@ -420,6 +440,7 @@ global $db, $date;
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
         const inputReligion = $("#inputReligion");
+        const inputTeam = $("#inputTeam");
         const inputLevel = $("#inputLevel");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
@@ -435,6 +456,7 @@ global $db, $date;
         let currentDate = `${year}-${month}-${day}`;
 
         inputName.val('');
+        inputTname.val('');
         inputNickName.val('');
         inputBirthday.val('');
         inputStartDate.val(currentDate);
@@ -446,10 +468,52 @@ global $db, $date;
         passwordNotAllow.hide();
         inputLevel.val('4');
         inputReligion.val('1');
+        inputTeam.val('0');
         statusOn.prop('checked', true);
         statusOff.prop('checked', false);
         editID.val('');
         formAction.val('add');
     }// const
+
+    const setDel = (delID) => {
+        //alert ("Delete"+delID);
+
+        let answer = confirm ("Are you sure to delete this Staff?");
+
+        console.log (answer);
+        if (answer === true){
+            let payload = {
+                act: "setDelete",
+                id : delID
+            };
+
+            console.log("payload=",payload);
+
+            const reqAjax = $.ajax({
+                url: "assets/php/actionStaffs.php",
+                method: "POST",
+                async: false,
+                cache: false,
+                dataType: "json",
+                data: payload
+            });
+                
+            reqAjax.done(function (res) {
+                modalFormAction("close");
+                console.log(res);
+                reloadTable();
+                resetForm();
+                $("#formModal").modal('hide');
+            });
+
+            reqAjax.fail(function (xhr, status, error) {
+                console.log("ajax request fail!!");
+                console.log(status + ": " + error);
+            });
+
+        }//if
+
+
+    }//setDel
 
 </script>
