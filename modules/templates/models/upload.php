@@ -32,7 +32,7 @@ if(isset($_FILES['file']['name'])){
         if(move_uploaded_file($_FILES['file']['tmp_name'],$location)){
             /* Rename file */
 
-            $currentDate = date("ymd_His");
+            $currentDate = date("ymdHis");
             $newName = $subfolder . "/" . $prefix . "_" . $projectID . "_" . $currentDate . "." . $imageExt;
             //echo "New name: ";
 

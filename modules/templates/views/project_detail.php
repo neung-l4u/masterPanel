@@ -1,12 +1,10 @@
 <?php
+require_once ("../assets/db/db.php");
+require_once ("../assets/db/initDB.php");
+require_once ("../assets/php/share_function.php");
 global $db, $date;
 $id=$_REQUEST['id'];
-require_once ("../assets/php/share_function.php");
-require_once ("../assets/db/db.php");
 ?>
-<style>
-
-</style>
 
 <!--    <link rel="stylesheet" href="../assets/css/bootstrap.4.5.2.min.css">-->
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
@@ -16,7 +14,7 @@ require_once ("../assets/db/db.php");
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="../views/main.php">Projects</a></li>
+        <li class="breadcrumb-item"><a href="../views/main.php?m=project">Projects</a></li>
         <li class="breadcrumb-item active projectName" aria-current="page" id="projectName"></li>
     </ol>
 </nav>
@@ -161,16 +159,20 @@ require_once ("../assets/db/db.php");
                 <input class="form-check-input domainHave" type="checkbox" value="" id="domainHave">
                 <label for="domainHave">Yes, we got it.</label>
                 <div class="domainbox" id="domainBox">
-                    <div class="mb-4">
-                        <select id="domainProvider" class="custom-select">
-                            <option value="0" selected>-- None --</option>
-                            <?php
-                            $domains = $db->query('SELECT `id`, `name` FROM `DomainProviders` ORDER BY `name`;')->fetchAll();
-                            foreach ($domains as $row){
-                                ?>
-                                <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
-                            <?php }//foreach ?>
-                        </select>
+                    <div class="mb-4 row">
+                        <label for="domainProvider" class="col-sm-2 col-form-label">Provider</label>
+                        <div class="col-sm-10">
+                            <select id="domainProvider" class="custom-select">
+                                <option value="0" selected>-- None --</option>
+                                <?php
+                                $domains = $db->query('SELECT `id`, `name` FROM `DomainProviders` WHERE status=1 AND id<>11 ORDER BY `name`;')->fetchAll();
+                                foreach ($domains as $row){
+                                    ?>
+                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                <?php }//foreach ?>
+                                <option value="11">Other</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="row">
@@ -220,41 +222,45 @@ require_once ("../assets/db/db.php");
 </div>
 
 
-<!-- Shop Type -->
-    <div class="row mb-3 p-3 border rounded">
+<!-- Require Systems -->
+<div class="border rounded mb-4 px-5 py-3">
+    <div class="row">
+        <div class="col">
+            <h5 class="text-secondary">Require Systems.</h5>
+        </div>
+    </div>
 
-<!-- Restaurant System -->
-        <div class="col-6" id="resSystem">
-            <div class="form-check ml-1">
+        <!-- Restaurant System -->
+            <div id="resSystem" class="form-check">
                 <div>
                     <input class="form-check-input gloriahave" type="checkbox" value="" id="gloriaHave">
                     <label for="gloriaHave">Gloria Food</label>
                 </div>
 
                 <div>
-                    <input type="text" class="form-control gloriabox" id="orderURL" placeholder="Order Online URL">
-                    <input type="text" class="form-control gloriabox" id="tableURL" placeholder="Table Reservation URL">
+                    <div class="gloriabox">
+                        <label for="orderURL">Order Online</label>
+                        <input type="text" class="form-control" id="orderURL" placeholder="-- URL --">
+                    </div>
+                    <div class="gloriabox">
+                        <label for="tableURL">Table Reservation</label>
+                        <input type="text" class="form-control" id="tableURL" placeholder="-- URL --">
+                    </div>
                 </div>
 
                 <div>
                     <input class="form-check-input orderOther" type="checkbox" value="" id="orderOther">
                     <label for="orderOther">Other Ordering System</label>
-
-                    <input type="text" class="form-control resOtherSystem" id="resOtherSystem" placeholder="System Name">
+                    <div class="resOtherSystem">
+                        <label for="resOtherSystem">System Name</label>
+                        <input type="text" class="form-control" id="resOtherSystem" placeholder="System Name">
+                    </div>
                 </div>
-                <div>
-                    <input class="form-check-input orderOther" type="checkbox" value="" id="needEmail">
-                    <label for="needEmail">Need email inbox under shop domain name.</label><br>
-                    <small class="text-muted">e.g. info@hoonhaymassage.co.nz</small>
-                </div>
-
-
             </div>
-        </div>
 
-<!-- Massage System -->
-        <div class="col-6" id="masSystem">
-            <div class="form-check ml-1">
+        <!-- Massage System -->
+
+            <div id="masSystem" class="form-check">
                 <div>
                     <input class="form-check-input amelia" type="checkbox" value="" id="amelia">
                     <label for="amelia">Amelia</label>
@@ -268,53 +274,84 @@ require_once ("../assets/db/db.php");
                 <div>
                     <input class="form-check-input bookOther" type="checkbox" value="" id="bookOther">
                     <label for="bookOther">Other Booking System</label>
-                
-                    <input type="text" class="form-control masOtherSystem" id="masOtherSystem" placeholder="System Name">
+                    <div class="masOtherSystem">
+                        <label for="masOtherSystem">System Name</label>
+                        <input type="text" class="form-control" id="masOtherSystem" placeholder="System Name">
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </div>
+        <div class="form-check">
+            <input class="form-check-input orderOther" type="checkbox" value="" id="needEmail">
+            <label for="needEmail">Need email inbox under shop domain name.</label>
+            <small class="text-muted">e.g. info@hoonhaymassage.co.nz</small>
+        </div>
+</div>
 
 <!-- Social Media -->
-    <div class="row mb-3 p-3 border rounded">
-        <label for="">Social Media</label>
+<div class="border rounded mb-4 px-5 py-3">
+    <div class="row">
         <div class="col">
-            <input type="text" class="form-control" id="facebookURL" placeholder="Facebook URL">
-            <input type="text" class="form-control" id="instagramURL" placeholder="Instagram URL">
-        </div>
-        <div class="col">
-            <input type="text" class="form-control" id="youtubeURL" placeholder="Youtube URL">
-            <input type="text" class="form-control" id="tiktokURL" placeholder="Tiktok URL">
+            <h5 class="text-secondary">Social Media.</h5>
         </div>
     </div>
 
     <div class="row">
         <div class="col">
-            <input id="cmdSubmit" class="btn btn-primary" type="button" value="Save">
+            <div class="input-group mb-3">
+                <label for="facebookURL" class="input-group-text">Facebook</label>
+                <input type="text" class="form-control" id="facebookURL" placeholder="URL">
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group mb-3">
+                <label for="instagramURL" class="input-group-text">Instagram</label>
+                <input type="text" class="form-control" id="instagramURL" placeholder="URL">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="input-group mb-3">
+                <label for="youtubeURL" class="input-group-text">Youtube</label>
+                <input type="text" class="form-control" id="youtubeURL" placeholder="URL">
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group mb-3">
+                <label for="tiktokURL" class="input-group-text">Tiktok</label>
+                <input type="text" class="form-control" id="tiktokURL" placeholder="URL">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mb-5">
+    <div class="col">
+        <input id="cmdSubmit" class="btn btn-primary" type="button" value="Save">
+    </div>
+</div>
+
+<!-- Website Information -->
+<div class="border rounded mb-4 px-5 py-3">
+    <div class="row">
+        <div class="col">
+            <h5 class="text-secondary">Template Details.</h5>
         </div>
     </div>
 
-
-<!-- Website Infomation -->
+<!-- Template Type -->
     <div class="row">
-        <h3>Template Details</h3>
-
-<!-- Select Type -->
-    <div class="row">
-
-        <!-- Template Type -->
         <div class="col mb-4">
-            <label for="">Template</label>
-            <select class="form-select" aria-label="Template" id="TemplateType" onchange="setLayout();">
-                <option disabled>Select Template</option>
-                <option selected value="1">Template 1</option>
+            <label for="TemplateType"><span class="shopType">Unknown</span> Template</label>
+            <select class="form-select" id="TemplateType" onchange="setLayout();">
+                <option selected disabled> -- Select Template -- </option>
+                <option value="1">Template 1</option>
                 <option value="2">Template 2</option>
                 <option value="3">Template 3</option>
             </select>
         </div>
     </div>
-
+<!-- Neung Here-->
 <!-- Template Restaurant 1 -->
     <div id="TemRes1">
         <div class="row">
@@ -347,6 +384,8 @@ require_once ("../assets/db/db.php");
                                         <button type="submit" class="button" id="btnUpload">Upload</button>
                                     </div>
                                 </form>
+
+
                             </div>
 
                             <div>
@@ -659,7 +698,7 @@ require_once ("../assets/db/db.php");
             </div>
 
             <div class="col-6">
-                <img id="res1Img" src="../assets/img/Res1Home.png" class="img-fluid">
+                <img id="res1Img" src="../assets/img/Res1Home.png" class="img-fluid" alt="Restaurant 1">
             </div>
 
         </div>
@@ -991,7 +1030,7 @@ require_once ("../assets/db/db.php");
             </div>
 
             <div class="col-6">
-                <img id="res2Img" src="../assets/img/Res2Home.png" class="img-fluid">
+                <img id="res2Img" src="../assets/img/Res2Home.png" class="img-fluid" alt="Restaurant 2">
             </div>
 
         </div>
@@ -1302,7 +1341,7 @@ require_once ("../assets/db/db.php");
             </div>
 
             <div class="col-6">
-                <img id="res3Img" src="../assets/img/Res3Home.png" class="img-fluid">
+                <img id="res3Img" src="../assets/img/Res3Home.png" class="img-fluid" alt="Restaurant 3">
             </div>
         </div>
     </div>
@@ -1382,12 +1421,12 @@ require_once ("../assets/db/db.php");
                                 <div class="input-group">
                                     <input type="file" class="form-control imginp btn btn-default btn-file" id="imgInp" multiple>
                                 </div>
-                                <img id='img-upload-1' />
-                                <img id='img-upload-2' />
-                                <img id='img-upload-3' />
-                                <img id='img-upload-4' />
-                                <img id='img-upload-5' />
-                                <img id='img-upload-6' />
+                                <img id='img-upload-1' alt="image upload 1"/>
+                                <img id='img-upload-2' alt="image upload 2"/>
+                                <img id='img-upload-3' alt="image upload 3"/>
+                                <img id='img-upload-4' alt="image upload 4"/>
+                                <img id='img-upload-5' alt="image upload 5"/>
+                                <img id='img-upload-6' alt="image upload 6"/>
 
                             </div>
                         </div>
@@ -1430,12 +1469,12 @@ require_once ("../assets/db/db.php");
                                 <div class="input-group">
                                     <input type="file" class="form-control imginp btn btn-default btn-file" id="imgInp" multiple>
                                 </div>
-                                <img id='img-upload-1' />
-                                <img id='img-upload-2' />
-                                <img id='img-upload-3' />
-                                <img id='img-upload-4' />
-                                <img id='img-upload-5' />
-                                <img id='img-upload-6' />
+                                <img id='img-upload-1' alt="image upload 1"/>
+                                <img id='img-upload-2' alt="image upload 2"/>
+                                <img id='img-upload-3' alt="image upload 3"/>
+                                <img id='img-upload-4' alt="image upload 4"/>
+                                <img id='img-upload-5' alt="image upload 5"/>
+                                <img id='img-upload-6' alt="image upload 6"/>
 
                             </div>
                         </div>
@@ -1565,12 +1604,12 @@ require_once ("../assets/db/db.php");
                                 <div class="input-group">
                                     <input type="file" class="form-control imginp btn btn-default btn-file" id="imgInp" multiple>
                                 </div>
-                                <img id='img-upload-1' />
-                                <img id='img-upload-2' />
-                                <img id='img-upload-3' />
-                                <img id='img-upload-4' />
-                                <img id='img-upload-5' />
-                                <img id='img-upload-6' />
+                                <img id='img-upload-1' alt="image upload 1"/>
+                                <img id='img-upload-2' alt="image upload 2"/>
+                                <img id='img-upload-3' alt="image upload 3"/>
+                                <img id='img-upload-4' alt="image upload 4"/>
+                                <img id='img-upload-5' alt="image upload 5"/>
+                                <img id='img-upload-6' alt="image upload 6"/>
 
                             </div>
                         </div>
@@ -1613,12 +1652,12 @@ require_once ("../assets/db/db.php");
                                 <div class="input-group">
                                     <input type="file" class="form-control imginp btn btn-default btn-file" id="imgInp" multiple>
                                 </div>
-                                <img id='img-upload-1' />
-                                <img id='img-upload-2' />
-                                <img id='img-upload-3' />
-                                <img id='img-upload-4' />
-                                <img id='img-upload-5' />
-                                <img id='img-upload-6' />
+                                <img id='img-upload-1' alt="image upload 1"/>
+                                <img id='img-upload-2' alt="image upload 2"/>
+                                <img id='img-upload-3' alt="image upload 3"/>
+                                <img id='img-upload-4' alt="image upload 4"/>
+                                <img id='img-upload-5' alt="image upload 5"/>
+                                <img id='img-upload-6' alt="image upload 6"/>
 
                             </div>
                         </div>
@@ -1667,7 +1706,7 @@ require_once ("../assets/db/db.php");
             </div>
 
             <div class="col-6">
-                <img id="mas2Img" src="../assets/img/Mas2Home.png" class="img-fluid">
+                <img id="mas2Img" src="../assets/img/Mas2Home.png" class="img-fluid" alt="Massage 2">
             </div>
         </div>
     </div>
@@ -1746,12 +1785,12 @@ require_once ("../assets/db/db.php");
                                 <div class="input-group">
                                     <input type="file" class="form-control imginp btn btn-default btn-file" id="imgInp" multiple>
                                 </div>
-                                <img id='img-upload-1' />
-                                <img id='img-upload-2' />
-                                <img id='img-upload-3' />
-                                <img id='img-upload-4' />
-                                <img id='img-upload-5' />
-                                <img id='img-upload-6' />
+                                <img id='img-upload-1' alt="image upload 1"/>
+                                <img id='img-upload-2' alt="image upload 2"/>
+                                <img id='img-upload-3' alt="image upload 3"/>
+                                <img id='img-upload-4' alt="image upload 4"/>
+                                <img id='img-upload-5' alt="image upload 5"/>
+                                <img id='img-upload-6' alt="image upload 6"/>
 
                             </div>
                         </div>
@@ -1848,12 +1887,12 @@ require_once ("../assets/db/db.php");
             </div>
 
             <div class="col-6">
-                <img id="mas3Img" src="../assets/img/Mas3Home.png" class="img-fluid">
+                <img id="mas3Img" src="../assets/img/Mas3Home.png" class="img-fluid" alt="Massage3">
             </div>
         </div>
     </div>
 
-    </div>
+</div>
 
 <input type="hidden" id="projectID" value="<?php echo $id; ?>">
 
@@ -1866,15 +1905,14 @@ require_once ("../assets/db/db.php");
 <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
 <script src="../controllers/project_detail.js"></script>
 <script>
+    const projectID = $("#projectID").val();
 
+    $(()=>{ //ready
+        loadProjectData();
 
+    }); //ready
 
-    //console.log("Form Submitted");
-
-    $(document).ready(function(){
-
-        const projectID = $("#projectID").val();
-
+    const loadProjectData = () => {
         let payload = {
             mode : "loadArray",
             projectID : projectID
@@ -1890,23 +1928,17 @@ require_once ("../assets/db/db.php");
         });
 
         callAjax.done(function(res) {
-            console.log("return = ",res);
-
-            let allData = res.data.length;
-            let row = res.data;
-
-            const projectName = row.projectName;
-            const shopType = row.shopTypeID;
-
-            $('.projectName').text(projectName);
-            $('#businessName').val(projectName);
-            $('.businessName').val(projectName);
-            $(".shopType").html(shopType === 1 ? "Restaurant" : "Massage");
-            $("#ShopType").val(shopType === 1 ? "Restaurant" : "Massage");
-            $(".projectOwner").html(row.sNickName);
-            $("#projectOwner").val(row.sNickName);
-            $(".projectCountry").html(row.countryName);
-
+            console.log("loadProjectData = ",res)
+            $('.projectName').text(res.projectName);
+            $('#businessName').val(res.projectName);
+            $('.businessName').val(res.projectName);
+            $(".shopType").html(res.typeName);
+            $("#ShopType").val(res.typeName);
+            $(".projectOwner").html(res.sNickName);
+            $("#projectOwner").val(res.sNickName);
+            $(".projectCountry").html(res.countryName);
+            setLayout();
+            selectPage();
             return true;
         });
 
@@ -1915,66 +1947,14 @@ require_once ("../assets/db/db.php");
             console.log(status + ': ' + error);
             return false;
         });
+    }//const loadProjectData
 
-        setLayout();
 
-        // Upload Group Preview
-        function handleFormSubmit(formId, imgId, picNameId, fileInputId, prefixId) {
-            $("#" + formId).on("submit", function (e) { // จะทำงานก็ต่อเมื่อกด submit ฟอร์ม
-                e.preventDefault(); // ปิดการใช้งาน submit ปกติ เพื่อใช้งานผ่าน ajax
 
-                let fd = new FormData(); // สร้างตัวแปรมาเตรียมไว้ที่เราจะเก็บข้อมูลในฟอร์ม (รูปที่เลือกมา)
-                let files = $("#" + fileInputId)[0].files; //เป็นการดึงข้อมูลรูปภาพเพื่อเตรียมเช็คไฟล์ก่อนทำงานส่วน Ajax
-                let projectId = projectID;
-
-                if (files.length > 0) { // เช็คว่ามีไฟล์รูปภาพอยู่หรือไม่
-
-                    fd.append('file', files[0]); //ดึงไฟล์รูปภาพไปใส่ตัวแปรที่เตรียมไว้
-                    fd.append('projectId', projectId);
-                    fd.append('prefixId', prefixId);
-
-                    $.ajax({
-                        url: '../models/upload.php',
-                        type: 'post',
-                        data: fd, //ข้อมูลไฟล์รูปภาพจาก input ที่อ่านมา
-                        contentType: false,
-                        processData: false,
-                        success: function(response) { //พอทำงาน ajax สำเร็จ จะรับค่ามาจาก JSON เก็บในตัวแปร response
-
-                            if (response !== "0") {
-                                let fullPath = response;
-                                const splitPath = fullPath.split("/");
-                                const newName = splitPath[3];
-
-                                $("#" + imgId).attr("src", response);
-                                $("#" + picNameId).val(newName);
-                            } else {
-                                alert("File not uploaded");
-                            }
-                        }
-                    });
-                } else {
-                    alert("Please select a file.");
-                }
-            });
-        }
-
-        //PATTERN -> handleFormSubmit(formId, imgId, picNameId,, fileInputId, prefixId(ตั้งอะไรก็ได้ตรงนี้เลยไม่ได้ดึงจากฟอร์ม))
-        handleFormSubmit("myFormLogo", "imgLogo", "picNameLogo", "fileLogo", "Logo");
-        handleFormSubmit("myFormTdR1HeadHomeImg", "tdR1HeadHomeImg", "picNametdR1HeadHomeImg", "filetdR1HeadHomeImg", "HeadHomeImg");
-        handleFormSubmit("myFormTdR1Featured1", "tdR1Featured1", "picNametdR1Featured1", "filetdR1Featured1", "Featured1");
-        handleFormSubmit("myFormTdR1Featured2", "tdR1Featured2", "picNametdR1Featured2", "filetdR1Featured2", "Featured2");
-        handleFormSubmit("myFormTdR1Featured3", "tdR1Featured3", "picNametdR1Featured3", "filetdR1Featured3", "Featured3");
-        handleFormSubmit("myFormTdR1Featured4", "tdR1Featured4", "picNametdR1Featured4", "filetdR1Featured4", "Featured4");
-
-        // End Upload Group Preview
-    
-    });
 
     $("#cmdSubmit").click(function () {
         let payload = {
             mode : "save",
-
         //BUSINESS_DETAILS
             businessName: $('#businessName').val(),
             //businessLogo: $('#businessName').val(),
@@ -2189,5 +2169,46 @@ require_once ("../assets/db/db.php");
         //     return false;
         // });
     });
+
+
+    function handleFormSubmit(formId, imgId, picNameId, fileInputId, prefixId) {
+        $("#" + formId).on("submit", function (e) {
+            e.preventDefault();
+            let fd = new FormData();
+            let files = $("#" + fileInputId)[0].files;
+
+            if (files.length > 0) {
+                fd.append('file', files[0]);
+                fd.append('projectId', projectID);
+                fd.append('prefixId', prefixId);
+
+                $.ajax({
+                    url: '../models/upload.php',
+                    type: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+
+                        if (response !== "0") {
+                            const splitPath = response.split("/");
+                            const newName = splitPath[3];
+                            $("#" + imgId).attr("src", response);
+                            $("#" + picNameId).val(newName);
+                        }else { alert("File not uploaded"); }
+                    }
+                });//ajax
+            } else { alert("Please select a file."); }
+        });//on submitting
+    }//function handleFormSubmit
+
+    //Upload Group Preview
+    handleFormSubmit("myFormLogo", "imgLogo", "picNameLogo", "fileLogo", "Logo");
+    handleFormSubmit("myFormTdR1HeadHomeImg", "tdR1HeadHomeImg", "picNametdR1HeadHomeImg", "filetdR1HeadHomeImg", "HeadHomeImg");
+    handleFormSubmit("myFormTdR1Featured1", "tdR1Featured1", "picNametdR1Featured1", "filetdR1Featured1", "Featured1");
+    handleFormSubmit("myFormTdR1Featured2", "tdR1Featured2", "picNametdR1Featured2", "filetdR1Featured2", "Featured2");
+    handleFormSubmit("myFormTdR1Featured3", "tdR1Featured3", "picNametdR1Featured3", "filetdR1Featured3", "Featured3");
+    handleFormSubmit("myFormTdR1Featured4", "tdR1Featured4", "picNametdR1Featured4", "filetdR1Featured4", "Featured4");
+    // End Upload Group Preview
 
 </script>

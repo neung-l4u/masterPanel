@@ -14,7 +14,11 @@ function save() {
     console.log(payload);
 }//function save
 
-$(".domainbox, .hostingbox, .gloriabox, .resOtherSystem, .masOtherSystem").hide();
+$(".domainbox").hide();
+$(".hostingbox").hide();
+$(".gloriabox").hide();
+$(".resOtherSystem").hide();
+$(".masOtherSystem").hide();
 
 function toggleBox(checkbox, box) {
     $(checkbox).on("click", function () {
@@ -35,7 +39,7 @@ toggleBox(".bookOther", ".masOtherSystem");
 function setLayout() {
     let ShopType = $('#ShopType').val();
     let TemplateType = $('#TemplateType').find(":selected").val();
-    console.log('ShopType: ' + ShopType);
+    console.log('ShopType = ' + ShopType);
     console.log('TemplateType: ' + TemplateType);
 
     const resSystem = $('#resSystem');
@@ -72,7 +76,7 @@ function setLayout() {
 }
 
 function selectPage(page) {
-    var imageMap = {
+    let imageMap = {
         'tab-res1Home':  '#res1Img,../assets/img/Res1Home.png',
         'tab-res1About': '#res1Img,../assets/img/Res1About.png',
         'tab-res1Contact': '#res1Img,../assets/img/Res1Contact.png',
@@ -96,16 +100,16 @@ function selectPage(page) {
         'tab-mas3Contact': '#mas3Img,../assets/img/Mas3Contact.png'
     };
 
-    var imgData = imageMap[page] || '#res1Img,../assets/img/Res1Home.png';
-    var [imgSelector, imgSrc] = imgData.split(',');
+    let imgData = imageMap[page] || '#res1Img,../assets/img/Res1Home.png';
+    let [imgSelector, imgSrc] = imgData.split(',');
     $(imgSelector).attr('src', imgSrc);
 }
 
 function nextPrev(step) {
-    var $activeTab = $('.nav-tabs .nav-link.active');
-    var $tabs = $('.nav-tabs .nav-link');
-    var currentIndex = $tabs.index($activeTab);
-    var newIndex = currentIndex + step;
+    let $activeTab = $('.nav-tabs .nav-link.active');
+    let $tabs = $('.nav-tabs .nav-link');
+    let currentIndex = $tabs.index($activeTab);
+    let newIndex = currentIndex + step;
 
     // Ensure the new index is within bounds
     if (newIndex >= 0 && newIndex < $tabs.length) {
@@ -137,11 +141,6 @@ $('#nextPageBtn').click(function() {
     nextPrev(1);
 });
 
-$(function() {
-    setLayout();
-    selectPage();
-
-});//ready
 
 // $('#nextPagePrev').click(function(e){
 //   e.preventDefault();
