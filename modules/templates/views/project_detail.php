@@ -10,7 +10,7 @@ $id=$_REQUEST['id'];
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
     <link rel="stylesheet" href="../assets/css/project_detail.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
-    <script src="../assets/js/jquery-3.7.1.min.js"></script>
+
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -1895,12 +1895,9 @@ $id=$_REQUEST['id'];
 </div>
 
 <input type="hidden" id="projectID" value="<?php echo $id; ?>">
-
-<!--<script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
-<script src="/assets/js/jquery3.5.1.min.js"></script>-->
 <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
-<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>-->
-<!--<script src="../assets/js/bootstrap.bundle.min.js"></script>-->
+
+
 <script src="../assets/js/jquery-3.7.1.min.js"></script>
 <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
 <script src="../controllers/project_detail.js"></script>
@@ -1948,9 +1945,6 @@ $id=$_REQUEST['id'];
             return false;
         });
     }//const loadProjectData
-
-
-
 
     $("#cmdSubmit").click(function () {
         let payload = {
@@ -2149,7 +2143,7 @@ $id=$_REQUEST['id'];
 
         console.log("Payload", payload);
 
-        const callAjax = $.ajax({
+        /*const callAjax = $.ajax({
             url: "../models/actionAjax.php",
             method: 'POST',
             async: false,
@@ -2158,17 +2152,17 @@ $id=$_REQUEST['id'];
             data: payload
         });
 
-        // callAjax.done(function(res) {
-        //     console.log('return',res);
-        //     return true;
-        // });
+        callAjax.done(function(res) {
+            console.log('return',res);
+            return true;
+        });
 
-        // callAjax.fail(function(xhr, status, error) {
-        //     console.log("ajax fail!!");
-        //     console.log(status + ': ' + error);
-        //     return false;
-        // });
-    });
+        callAjax.fail(function(xhr, status, error) {
+            console.log("ajax fail!!");
+            console.log(status + ': ' + error);
+            return false;
+        });*/
+    });//cmdSubmit.click
 
 
     function handleFormSubmit(formId, imgId, picNameId, fileInputId, prefixId) {
