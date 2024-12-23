@@ -26,6 +26,11 @@ switch ($menu) {
         $title = 'Home';
         $view = 'home.php';
         $menu = 'home';
+    case 'detail-res1':
+        $title = 'Template Restaurant 1';
+        $view = 'res1.php';
+        $menu = 'res1';
+        break;
 }
 ?>
 <!DOCTYPE html>
