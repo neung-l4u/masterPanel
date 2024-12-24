@@ -42,4 +42,24 @@ function getRandomPic($shopType, $picType, $fullPath=false)
     }
 }//getRandomPic
 
+/*
+----- function getRandomPic ------
+parameters
+    $name = any shop name
+
+  example 1:
+    $shopName = "Hello My Pizza Boy's & Co.";
+    $folderName = sanitizeFolderName($shopName);
+    echo $folderName; // Outputs: Hello_My_Pizza_Boys_Co
+*/
+function sanitizeFolderName($name): string
+{
+    $name = trim($name);
+    // Remove spaces and disallowed characters
+    $sanitized = preg_replace('/[^a-zA-Z0-9_-]/', '', str_replace(' ', '_', $name));
+    return trim($sanitized);
+}
+
+
+
 ?>

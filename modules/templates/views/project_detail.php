@@ -7,7 +7,7 @@ $id=$_REQUEST['id'];
 ?>
 
 <!--    <link rel="stylesheet" href="../assets/css/bootstrap.4.5.2.min.css">-->
-    <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
+<link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css" xmlns:input="http://www.w3.org/1999/html">
     <link rel="stylesheet" href="../assets/css/project_detail.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
 
@@ -66,8 +66,8 @@ $id=$_REQUEST['id'];
             <div class="row">
                 <div class="col">
                     <div class="mb-3">
-                        <label for="businessName" class="form-label">Business Name</label>
-                        <input type="text" class="form-control" id="businessName" placeholder="" readonly>
+                        <label for="bsName" class="form-label">Business Name</label>
+                        <input type="text" class="form-control" id="bsName" placeholder="" readonly>
                     </div>
                 </div>
             </div>
@@ -77,14 +77,14 @@ $id=$_REQUEST['id'];
                     <div class="row">
                         <div class="col">
                             <div class="input-group mb-3">
-                                <label for="businessEmail" class="input-group-text" id="basic-addon3">Email</label>
-                                <input type="email" class="form-control" id="businessEmail" placeholder="admin@localforyou.com">
+                                <label for="bsEmail" class="input-group-text" id="basic-addon3">Email</label>
+                                <input type="email" class="form-control" id="bsEmail" placeholder="admin@localforyou.com">
                             </div>
                         </div>
                         <div class="col">
                                 <div class="input-group mb-3">
-                                    <label for="businessPhone" class="input-group-text" id="basic-addon3">Phone</label>
-                                    <input type="tel" class="form-control" id="businessPhone" placeholder="+6112345678">
+                                    <label for="bsPhone" class="input-group-text" id="basic-addon3">Phone</label>
+                                    <input type="tel" class="form-control" id="bsPhone" placeholder="+6112345678">
                                 </div>
                         </div>
                     </div>
@@ -94,8 +94,8 @@ $id=$_REQUEST['id'];
             <div class="row">
                 <div class="col">
                     <div class="mb-3">
-                        <label for="businessAddress" class="form-label">Address</label>
-                        <textarea class="form-control" id="businessAddress" rows="3"></textarea>
+                        <label for="bsAddress" class="form-label">Address</label>
+                        <textarea class="form-control" id="bsAddress" rows="3"></textarea>
                     </div>
                 </div>
             </div>
@@ -103,8 +103,8 @@ $id=$_REQUEST['id'];
             <div class="row">
                 <div class="col">
                     <div class="mb-3">
-                        <label for="openingHours" class="form-label">Opening hour</label>
-                        <textarea class="form-control" id="openingHours" rows="7"></textarea>
+                        <label for="bsOpen" class="form-label">Opening hour</label>
+                        <textarea class="form-control" id="bsOpen" rows="7"></textarea>
                     </div>
                 </div>
             </div>
@@ -116,7 +116,7 @@ $id=$_REQUEST['id'];
                     <label for="logoImg" class="form-label">Logo</label>
                     <form method="post" action="" enctype="multipart/form-data" id="myFormLogo">
                             <img class="preview" src="../assets/img/default.png" id="imgLogo" alt="place">
-                            <p id="picNameLogo" class="text-muted"> -- no pic --</p>
+                            <input type="hidden" id="picNameLogo" value="">
                             <div class="row">
                                 <input type="file" class="file-input col-8" id="fileLogo" />
                                 <button type="submit" class="button col" id="btnUpload">Upload</button>
@@ -156,7 +156,7 @@ $id=$_REQUEST['id'];
         <div class="col-6">
             <label for="domainHave">Domain Log-in</label>
             <div class="form-check ml-1">
-                <input class="form-check-input domainHave" type="checkbox" value="" id="domainHave">
+                <input class="form-check-input domainHave" type="checkbox" value="1" id="domainHave">
                 <label for="domainHave">Yes, we got it.</label>
                 <div class="domainbox" id="domainBox">
                     <div class="mb-4 row">
@@ -185,7 +185,7 @@ $id=$_REQUEST['id'];
                         <div class="col">
                             <div class="input-group mb-3">
                                 <label for="domainPass" class="input-group-text" id="basic-addon3">Password</label>
-                                <input type="password" class="form-control domainpass" id="domainPass" aria-describedby="basic-addon3" placeholder="">
+                                <input type="text" class="form-control domainpass" id="domainPass" aria-describedby="basic-addon3" placeholder="">
                             </div>
                         </div>
                     </div>
@@ -211,7 +211,7 @@ $id=$_REQUEST['id'];
                         <div class="col">
                             <div class="input-group mb-3">
                                 <label for="hostingPass" class="input-group-text" id="basic-addon3">Password</label>
-                                <input type="password" class="form-control hostingPass" id="hostingPass" aria-describedby="basic-addon3" placeholder="">
+                                <input type="text" class="form-control hostingPass" id="hostingPass" aria-describedby="basic-addon3" placeholder="">
                             </div>
                         </div>
                     </div>
@@ -282,9 +282,9 @@ $id=$_REQUEST['id'];
             </div>
 
         <div class="form-check">
-            <input class="form-check-input orderOther" type="checkbox" value="" id="needEmail">
+            <input class="form-check-input orderOther" type="checkbox" value="1" id="needEmail">
             <label for="needEmail">Need email inbox under shop domain name.</label>
-            <small class="text-muted">e.g. info@hoonhaymassage.co.nz</small>
+            <small class="text-muted">e.g., info@hoonhaymassage.co.nz</small>
         </div>
 </div>
 
@@ -325,11 +325,6 @@ $id=$_REQUEST['id'];
         </div>
     </div>
 </div>
-<div class="row mb-5">
-    <div class="col">
-        <input id="cmdSubmit" class="btn btn-primary" type="button" value="Save">
-    </div>
-</div>
 
 <!-- Website Information -->
 <div class="border rounded mb-4 px-5 py-3">
@@ -339,19 +334,28 @@ $id=$_REQUEST['id'];
         </div>
     </div>
 
-<!-- Template Type -->
+    <!-- Template Type -->
     <div class="row">
-        <div class="col mb-4">
-            <label for="TemplateType"><span class="shopType">Unknown</span> Template</label>
-            <select class="form-select" id="TemplateType" onchange="setLayout();">
+        <div class="col-6 mb-4">
+            <label for="TemplateSelect"><span class="shopType">Unknown</span> Template</label>
+            <select class="form-select" id="TemplateSelect" onchange="setLayout();">
                 <option selected disabled> -- Select Template -- </option>
                 <option value="1">Template 1</option>
                 <option value="2">Template 2</option>
                 <option value="3">Template 3</option>
             </select>
         </div>
+        <div class="col-6 placeholder bg-secondary text-light">
+            template pic here
+        </div>
     </div>
-<!-- Neung Here-->
+</div>
+
+<div class="row mb-5">
+    <div>
+        <input id="cmdSubmit" class="btn btn-primary" type="button" value="Save">
+    </div>
+</div>
 
 <input type="hidden" id="projectID" value="<?php echo $id; ?>">
 <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
@@ -362,10 +366,43 @@ $id=$_REQUEST['id'];
 <script src="../controllers/project_detail.js"></script>
 <script>
     const projectID = $("#projectID").val();
+    const hiddenShopType = $("#ShopType");
+    const inputName = $("#bsName");
+    const inputEmail = $("#bsEmail");
+    const inputPhone = $("#bsPhone");
+    const inputAddress = $("#bsAddress");
+    const inputOpen = $("#bsOpen");
+    const hiddenPicLogo = $("#picNameLogo");
+    const selTheme1Hex = $("#theme1");
+    const selTheme2Hex = $("#theme2");
+    const selTheme3Hex = $("#theme3");
+    const TemplateSelect = $("#TemplateSelect");
+    const chkDomainHave = $("#domainHave");
+    const selDomainProvider = $("#domainProvider");
+    const inputDomainUser = $("#domainUser");
+    const inputDomainPass = $("#domainPass");
+    const chkNeedEmail = $("#needEmail");
+    const chkHostingHave = $("#hostingHave");
+    const inputHostingUser = $("#hostingUser");
+    const inputHostingPass = $("#hostingPass");
+    const chkGloriaHave = $("#gloriaHave");
+    const inputOrderURL = $("#orderURL");
+    const inputTableURL = $("#tableURL");
+    const chkOrderOther = $("#orderOther");
+    const inputResOtherSystem = $("#resOtherSystem");
+    const chkAmelia = $("#amelia");
+    const chkVoucher = $("#voucher");
+    const chkBookOther = $("#bookOther");
+    const inputMasOtherSystem = $("#masOtherSystem");
+    const inputFacebookURL = $("#facebookURL");
+    const inputInstagramURL = $("#instagramURL");
+    const inputYoutubeURL = $("#youtubeURL");
+    const inputTiktokURL = $("#tiktokURL");
+    const hiddenProjectOwner = $("#projectOwner");
+
 
     $(()=>{ //ready
         loadProjectData();
-
     }); //ready
 
     const loadProjectData = () => {
@@ -386,12 +423,12 @@ $id=$_REQUEST['id'];
         callAjax.done(function(res) {
             console.log("loadProjectData = ",res)
             $('.projectName').text(res.projectName);
-            $('#businessName').val(res.projectName);
+            inputName.val(res.projectName);
             $('.businessName').val(res.projectName);
             $(".shopType").html(res.typeName);
-            $("#ShopType").val(res.typeName);
+            hiddenShopType.val(res.typeName);
             $(".projectOwner").html(res.sNickName);
-            $("#projectOwner").val(res.sNickName);
+            hiddenProjectOwner.val(res.sNickName);
             $(".projectCountry").html(res.countryName);
             setLayout();
             selectPage();
@@ -408,46 +445,47 @@ $id=$_REQUEST['id'];
     $("#cmdSubmit").click(function () {
         let payload = {
             mode : "save",
-        //BUSINESS_DETAILS
-            businessName: $('#businessName').val(),
-            //businessLogo: $('#businessName').val(),
-            businessEmail: $('#businessEmail').val(),
-            businessPhone: $('#businessPhone').val(),
-            businessAddress: $('#businessAddress').val(),
-            openingHours: $('#openingHours').val(),
-            colorInput: $('#colorInput').val(),
-            domainHave: $("#domainHave").prop("checked") ? 1 : 0,
-            domainType: $('#domainType').val(),
-            domainUser: $('#domainUser').val(),
-            domainPass: $('#domainPass').val(),
-            hostingHave: $('#hostingHave').prop("checked") ? 1 : 0,
-            //hostingType: $('#hostingType').prop("checked") ? 1 : 0,
-            hostingUser: $('#hostingUser').val(),
-            hostingPass: $('#hostingPass').val(),
-            //resSystem: $('#resSystem').prop("checked") ? 1 : 0,
-            gloriaHave: $('#gloriaHave').prop("checked") ? 1 : 0,
-            orderURL: $('#orderURL').val(),
-            tableURL: $('#tableURL').val(),
-            orderOther: $('#orderOther').prop("checked") ? 1 : 0,
-            resOtherSystem: $('#resOtherSystem').val(),
-            //masSystem: $('#masSystem').prop("checked") ? 1 : 0,
-            amelia: $('#amelia').prop("checked") ? 1 : 0,
-            voucher: $('#voucher').prop("checked") ? 1 : 0,
-            bookOther: $('#bookOther').prop("checked") ? 1 : 0,
-            masOtherSystem: $('#masOtherSystem').val(),
-            facebookURL: $('#facebookURL').val(),
-            instagramURL: $('#instagramURL').val(),
-            youtubeURL: $('#youtubeURL').val(),
-            tiktokURL: $('#tiktokURL').val(),
-            projectOwner: $('#projectOwner').val(),
+            businessName: inputName.val(),
+            businessEmail: inputEmail.val(),
+            businessPhone: inputPhone.val(),
+            businessAddress: inputAddress.val(),
+            openingHours: inputOpen.val(),
+            logo: hiddenPicLogo.val(),
+            colorTheme1: selTheme1Hex.val(),
+            colorTheme2: selTheme2Hex.val(),
+            colorTheme3: selTheme3Hex.val(),
+            domainHave: !!chkDomainHave.prop("checked"),
+            domainProvider: selDomainProvider.val(),
+            domainUser: inputDomainUser.val(),
+            domainPass: inputDomainPass.val(),
+            hostingHave: !!chkHostingHave.prop("checked"),
+            hostingUser: inputHostingUser.val(),
+            hostingPass: inputHostingPass.val(),
+            gloriaHave: !!chkGloriaHave.prop("checked"),
+            orderURL: inputOrderURL.val(),
+            tableURL: inputTableURL.val(),
+            orderOther: !!chkOrderOther.prop("checked"),
+            resOtherSystem: inputResOtherSystem.val(),
+            amelia: !!chkAmelia.prop("checked"),
+            voucher: !!chkVoucher.prop("checked"),
+            bookOther: !!chkBookOther.prop("checked"),
+            needEmail: !!chkNeedEmail.prop("checked"),
+            masOtherSystem: inputMasOtherSystem.val(),
+            facebookURL: inputFacebookURL.val(),
+            instagramURL: inputInstagramURL.val(),
+            youtubeURL: inputYoutubeURL.val(),
+            tiktokURL: inputTiktokURL.val(),
+            projectOwner: hiddenProjectOwner.val(),
+            projectID: projectID,
+            shopType: hiddenShopType.val(),
+            TemplateSelect: TemplateSelect.val(),
             token: Math.random()
-
         };
 
         console.log("Payload", payload);
 
-        /*const callAjax = $.ajax({
-            url: "../models/actionAjax.php",
+        const callAjax = $.ajax({
+            url: "../models/businessDetail.php",
             method: 'POST',
             async: false,
             cache: false,
@@ -464,7 +502,7 @@ $id=$_REQUEST['id'];
             console.log("ajax fail!!");
             console.log(status + ': ' + error);
             return false;
-        });*/
+        });
     });//cmdSubmit.click
 
 
@@ -501,11 +539,12 @@ $id=$_REQUEST['id'];
 
     //Upload Group Preview
     handleFormSubmit("myFormLogo", "imgLogo", "picNameLogo", "fileLogo", "Logo");
+    /* อันนี้น่าจะเป็นของหน้า template อื่น
     handleFormSubmit("myFormTdR1HeadHomeImg", "tdR1HeadHomeImg", "picNametdR1HeadHomeImg", "filetdR1HeadHomeImg", "HeadHomeImg");
     handleFormSubmit("myFormTdR1Featured1", "tdR1Featured1", "picNametdR1Featured1", "filetdR1Featured1", "Featured1");
     handleFormSubmit("myFormTdR1Featured2", "tdR1Featured2", "picNametdR1Featured2", "filetdR1Featured2", "Featured2");
     handleFormSubmit("myFormTdR1Featured3", "tdR1Featured3", "picNametdR1Featured3", "filetdR1Featured3", "Featured3");
-    handleFormSubmit("myFormTdR1Featured4", "tdR1Featured4", "picNametdR1Featured4", "filetdR1Featured4", "Featured4");
+    handleFormSubmit("myFormTdR1Featured4", "tdR1Featured4", "picNametdR1Featured4", "filetdR1Featured4", "Featured4");*/
     // End Upload Group Preview
 
 </script>
