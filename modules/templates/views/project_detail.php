@@ -4,7 +4,14 @@ require_once ("../assets/db/initDB.php");
 require_once ("../assets/php/share_function.php");
 global $db, $date;
 $id=$_REQUEST['id'];
+
+$row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Restaurant", "Massage") as "typeName", p.countryID, c.name AS "countryName", s.sNickName 
+        FROM tb_project p, staffs s, Countries c 
+        WHERE p.projectOwner = s.sID AND p.countryID = c.id AND p.projectID = ?;', $id)->fetchArray();
+
 ?>
+
+
 
 <!--    <link rel="stylesheet" href="../assets/css/bootstrap.4.5.2.min.css">-->
 <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css" xmlns:input="http://www.w3.org/1999/html">
@@ -15,7 +22,7 @@ $id=$_REQUEST['id'];
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../views/main.php?m=project">Projects</a></li>
-        <li class="breadcrumb-item active projectName" aria-current="page" id="projectName"></li>
+        <li class="breadcrumb-item active projectName" aria-current="page" id="projectName"><?php echo $row['projectName']; ?></li>
     </ol>
 </nav>
 
@@ -31,26 +38,26 @@ $id=$_REQUEST['id'];
             <ul>
                 <li>
                     <span class="fw-bold">Name: </span>
-                    <span class="projectName">Unknown</span>
+                    <span class="projectName"><?php echo $row['projectName']; ?></span>
                 </li>
                 <li>
                     <span class="fw-bold">Type: </span>
-                    <span class="shopType">Unknown</span>
+                    <span class="shopType"><?php echo $row['typeName']; ?></span>
                 </li>
                 <li>
                     <span class="fw-bold">PO: </span>
-                    <span class="projectOwner">Unknown</span>
+                    <span class="projectOwner"><?php echo $row['sNickName']; ?></span>
                 </li>
                 <li>
                     <span class="fw-bold">Country:</span>
-                    <span class="projectCountry">Unknown</span>
+                    <span class="projectCountry"><?php echo $row['countryName']; ?></span>
                 </li>
             </ul>
         </div>
     </div>
 
-    <input type="hidden" class="form-control" id="projectOwner">
-    <input type="hidden" class="form-control" id="ShopType">
+    <input type="hidden" class="form-control" id="projectOwner" value="<?php echo $row['sNickName']; ?>">
+    <input type="hidden" class="form-control" id="ShopType" value="<?php echo $row['typeName']; ?>">
 </div>
 
 <!-- Business Information -->
@@ -67,7 +74,7 @@ $id=$_REQUEST['id'];
                 <div class="col">
                     <div class="mb-3">
                         <label for="bsName" class="form-label">Business Name</label>
-                        <input type="text" class="form-control" id="bsName" placeholder="" readonly>
+                        <input type="text" class="form-control" id="bsName" placeholder="" value="<?php echo $row['projectName']; ?>" readonly>
                     </div>
                 </div>
             </div>
@@ -101,10 +108,16 @@ $id=$_REQUEST['id'];
             </div>
 
             <div class="row">
-                <div class="col">
+                <div class="col-6">
                     <div class="mb-3">
                         <label for="bsOpen" class="form-label">Opening hour</label>
                         <textarea class="form-control" id="bsOpen" rows="7"></textarea>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label for="bsOpen" class="form-label">Pickup And Delivery</label>
+                        <textarea class="form-control" id="bsPickup" rows="7"></textarea>
                     </div>
                 </div>
             </div>
@@ -176,18 +189,16 @@ $id=$_REQUEST['id'];
                     </div>
 
                     <div class="row">
-                        <div class="col">
                             <div class="input-group mb-3">
                                 <label for="domainUser" class="input-group-text" id="basic-addon3">User</label>
                                 <input type="text" class="form-control domainuser" id="domainUser" aria-describedby="basic-addon3" placeholder="">
                             </div>
-                        </div>
-                        <div class="col">
+                        
                             <div class="input-group mb-3">
                                 <label for="domainPass" class="input-group-text" id="basic-addon3">Password</label>
                                 <input type="text" class="form-control domainpass" id="domainPass" aria-describedby="basic-addon3" placeholder="">
                             </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -199,21 +210,32 @@ $id=$_REQUEST['id'];
             <div class="form-check ml-1">
                 <input class="form-check-input hostingHave" type="checkbox" value="" id="hostingHave">
                 <label for="hostingHave">Yes, we got it.</label>
-
                 <div class="hostingbox" id="hostingBox">
+                    <div class="mb-4 row">
+                        <label for="hostingProvider" class="col-sm-2 col-form-label">Provider</label>
+                        <div class="col-sm-10">
+                            <select id="hostingProvider" class="custom-select">
+                                <option value="0" selected>-- None --</option>
+                                <?php
+                                $hostings = $db->query('SELECT `id`, `name` FROM `HostingProviders` WHERE status=1 AND id<>11 ORDER BY `name`;')->fetchAll();
+                                foreach ($hostings as $row){
+                                    ?>
+                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                <?php }//foreach ?>
+                                <option value="11">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="row">
-                        <div class="col">
                             <div class="input-group mb-3">
                                 <label for="hostingUser" class="input-group-text" id="basic-addon3">User</label>
                                 <input type="text" class="form-control hostingUser" id="hostingUser" aria-describedby="basic-addon3" placeholder="">
                             </div>
-                        </div>
-                        <div class="col">
                             <div class="input-group mb-3">
                                 <label for="hostingPass" class="input-group-text" id="basic-addon3">Password</label>
                                 <input type="text" class="form-control hostingPass" id="hostingPass" aria-describedby="basic-addon3" placeholder="">
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -285,6 +307,10 @@ $id=$_REQUEST['id'];
             <input class="form-check-input orderOther" type="checkbox" value="1" id="needEmail">
             <label for="needEmail">Need email inbox under shop domain name.</label>
             <small class="text-muted">e.g., info@hoonhaymassage.co.nz</small>
+                <div class="masOtherSystem">
+                        <label for="masOtherSystem">System Name</label>
+                        <input type="text" class="form-control" id="masOtherSystem" placeholder="System Name">
+                    </div>
         </div>
 </div>
 
@@ -360,7 +386,6 @@ $id=$_REQUEST['id'];
 <input type="hidden" id="projectID" value="<?php echo $id; ?>">
 <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
 
-
 <script src="../assets/js/jquery-3.7.1.min.js"></script>
 <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
 <script src="../controllers/project_detail.js"></script>
@@ -372,6 +397,7 @@ $id=$_REQUEST['id'];
     const inputPhone = $("#bsPhone");
     const inputAddress = $("#bsAddress");
     const inputOpen = $("#bsOpen");
+    const inputPickup = $("#bsPickup");
     const hiddenPicLogo = $("#picNameLogo");
     const selTheme1Hex = $("#theme1");
     const selTheme2Hex = $("#theme2");
@@ -383,6 +409,7 @@ $id=$_REQUEST['id'];
     const inputDomainPass = $("#domainPass");
     const chkNeedEmail = $("#needEmail");
     const chkHostingHave = $("#hostingHave");
+    const selHostingProvider = $("#hostingProvider");
     const inputHostingUser = $("#hostingUser");
     const inputHostingPass = $("#hostingPass");
     const chkGloriaHave = $("#gloriaHave");
@@ -422,14 +449,6 @@ $id=$_REQUEST['id'];
 
         callAjax.done(function(res) {
             console.log("loadProjectData = ",res)
-            $('.projectName').text(res.projectName);
-            inputName.val(res.projectName);
-            $('.businessName').val(res.projectName);
-            $(".shopType").html(res.typeName);
-            hiddenShopType.val(res.typeName);
-            $(".projectOwner").html(res.sNickName);
-            hiddenProjectOwner.val(res.sNickName);
-            $(".projectCountry").html(res.countryName);
             setLayout();
             selectPage();
             return true;
@@ -450,6 +469,7 @@ $id=$_REQUEST['id'];
             businessPhone: inputPhone.val(),
             businessAddress: inputAddress.val(),
             openingHours: inputOpen.val(),
+            pickupAndDelivery: inputPickup.val(),
             logo: hiddenPicLogo.val(),
             colorTheme1: selTheme1Hex.val(),
             colorTheme2: selTheme2Hex.val(),
@@ -485,7 +505,7 @@ $id=$_REQUEST['id'];
         console.log("Payload", payload);
 
         const callAjax = $.ajax({
-            url: "../models/businessDetail.php",
+            url: "../models/project_detail.php",
             method: 'POST',
             async: false,
             cache: false,
