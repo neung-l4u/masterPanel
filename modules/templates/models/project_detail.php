@@ -53,6 +53,7 @@ $data['token'] = !empty($_POST['token']) ? $_POST['token'] : "no token";
 
 if ($data['mode'] ==  "save") {
     $select = $db->query('UPDATE `tb_project` SET `email`=?,`phone`=?,`address`=?,`openingHours`=?,`pickupAndDelivery`=?,`logo`=?,`colorTheme1`=?,`colorTheme2`=?,`colorTheme3`=?,`domainHave`=?,`domainProvidersID`=?,`domainUser`=?,`domainPass`=?,`hostingHave`=?,`hostingProvidersID`=?,`hostingUser`=?,`hostingPass`=?,`gloriaHave`=?,`orderURL`=?,`tableURL`=?,`orderOther`=?,`resOtherSystem`=?,`amelia`=?,`voucher`=?,`bookOther`=?,`masOtherSystem`=?,`needEmail`=?,`facebookURL`=?,`instagramURL`=?,`youtubeURL`=?,`tiktokURL`=?,`updateBy`=? WHERE `projectID`=?',
+        $data['email'],
         $data['phone'],
         $data['address'],
         $data['openingHours'],
@@ -85,7 +86,7 @@ if ($data['mode'] ==  "save") {
         $data['tiktokURL'],
         $myID,
         $data['projectID']
-    )->fetchArray();
+    );
     $params[ 'result'] = "complete";
     $params['data'] = $data;
 

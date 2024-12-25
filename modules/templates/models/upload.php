@@ -1,10 +1,18 @@
 <?php
+require_once ("../assets/db/db.php");
+require_once ("../assets/db/initDB.php");
+require_once ("../assets/php/share_function.php");
 
 if(isset($_FILES['file']['name'])){
 
     $projectID = $_POST['projectId'];
     $prefix = isset($_POST['prefixId']) ? $_POST['prefixId'] : 'Section';
 
+    $row = $db->query('SELECT projectName FROM `tb_project` WHERE projectID = ?;', $projectID)->fetchArray();
+
+    $projectName = sanitizeFolderName($row["projectName"]);
+
+    
     /* Getting file name */
     $filename = $_FILES['file']['name'];
     $oldName = $filename;
@@ -23,7 +31,7 @@ if(isset($_FILES['file']['name'])){
     /* Check a file extension */
     if(in_array(strtolower($imageFileType), $valid_extensions)) {
 
-        $subfolder = "../upload/" . $projectID;
+        $subfolder = "../upload/". $projectID . "-" . $projectName;
         if (!is_dir($subfolder)) {
             mkdir($subfolder, 0777, true);
         }

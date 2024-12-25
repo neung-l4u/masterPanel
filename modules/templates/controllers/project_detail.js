@@ -21,8 +21,8 @@ $(".resOtherSystem").hide();
 $(".masOtherSystem").hide();
 
 function toggleBox(checkbox, box) {
-    $(checkbox).on("click", function () {
-        if ($(this).is(":checked")) {
+    $(checkbox).on("change", function () {
+        if ($(this).is(":checked")) { 
             $(box).show(300);
         } else {
             $(box).hide(200);
@@ -212,3 +212,59 @@ $('#nextPageBtn').click(function() {
 
 //   return valid;
 // }
+
+/*
+----- function Upload Preview ------
+    
+เปลี่ยนเฉพาะ form id โดยตั้งชื่อ form นำหน้า ตามด้วย prefix
+
+<label for="formLogo" class="form-label">Logo</label>
+    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formLogo">
+        <img class="preview" src="../assets/img/default.png" alt="place">
+        <input class="picname" type="hidden" value="">
+        <div class="row">
+            <input type="file" class="file-input col-8" />
+            <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+        </div>
+    </form>
+*/
+
+const handleFormSubmit = (button) => {
+    const $form = $(button).closest(".uploadForm");
+    const $preview = $form.find(".preview");
+    const $prefixId = $(button).closest(".uploadForm").attr("id");
+    const $fileInput = $form.find(".file-input");
+
+    let fd = new FormData();
+    let files = $fileInput[0].files;
+    let newPrefix = $prefixId.substring(4);
+
+    if (files.length > 0) {
+        fd.append('file', files[0]);
+        fd.append('projectId', projectID);
+        fd.append('prefixId', newPrefix);
+
+            $.ajax({
+                url: '../models/upload.php',
+                type: 'post',
+                data: fd,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response !== "0") {
+                        const splitPath = response.split("/");
+                        const newName = splitPath[splitPath.length - 1];
+                        $preview.attr("src", response);
+                        $form.find(".picname").val(newName);
+                    } else {
+                        alert("File not uploaded");
+                    }
+                },
+            error: function () {
+                alert("An error occurred while uploading the file.");
+            }
+        });
+    } else {
+        alert("Please select a file.");
+    }
+};

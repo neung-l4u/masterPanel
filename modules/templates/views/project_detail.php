@@ -5,7 +5,7 @@ require_once ("../assets/php/share_function.php");
 global $db, $date;
 $id=$_REQUEST['id'];
 
-$row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Restaurant", "Massage") as "typeName", p.countryID, c.name AS "countryName", s.sNickName 
+$row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "typeName", p.countryID, c.name AS "countryName", s.sNickName 
         FROM tb_project p, staffs s, Countries c 
         WHERE p.projectOwner = s.sID AND p.countryID = c.id AND p.projectID = ?;', $id)->fetchArray();
 
@@ -85,13 +85,13 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
                         <div class="col">
                             <div class="input-group mb-3">
                                 <label for="bsEmail" class="input-group-text" id="basic-addon3">Email</label>
-                                <input type="email" class="form-control" id="bsEmail" placeholder="admin@localforyou.com">
+                                <input type="email" class="form-control" id="bsEmail" placeholder="admin@localforyou.com" value="<?php echo $row['email']; ?>">
                             </div>
                         </div>
                         <div class="col">
                                 <div class="input-group mb-3">
                                     <label for="bsPhone" class="input-group-text" id="basic-addon3">Phone</label>
-                                    <input type="tel" class="form-control" id="bsPhone" placeholder="+6112345678">
+                                    <input type="tel" class="form-control" id="bsPhone" placeholder="+6112345678" value="<?php echo $row['phone']; ?>">
                                 </div>
                         </div>
                     </div>
@@ -102,7 +102,7 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
                 <div class="col">
                     <div class="mb-3">
                         <label for="bsAddress" class="form-label">Address</label>
-                        <textarea class="form-control" id="bsAddress" rows="3"></textarea>
+                        <textarea class="form-control" id="bsAddress" rows="3" ><?php echo $row['address']; ?></textarea>
                     </div>
                 </div>
             </div>
@@ -111,13 +111,13 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
                 <div class="col-6">
                     <div class="mb-3">
                         <label for="bsOpen" class="form-label">Opening hour</label>
-                        <textarea class="form-control" id="bsOpen" rows="7"></textarea>
+                        <textarea class="form-control" id="bsOpen" rows="7"><?php echo $row['openingHours']; ?></textarea>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="mb-3">
                         <label for="bsOpen" class="form-label">Pickup And Delivery</label>
-                        <textarea class="form-control" id="bsPickup" rows="7"></textarea>
+                        <textarea class="form-control" id="bsPickup" rows="7"><?php echo $row['pickupAndDelivery']; ?></textarea>
                     </div>
                 </div>
             </div>
@@ -126,32 +126,32 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
         <div class="col-5">
             <div class="row">
                 <div class="col py-3 px-3">
-                    <label for="logoImg" class="form-label">Logo</label>
-                    <form method="post" action="" enctype="multipart/form-data" id="myFormLogo">
-                            <img class="preview" src="../assets/img/default.png" id="imgLogo" alt="place">
-                            <input type="hidden" id="picNameLogo" value="">
-                            <div class="row">
-                                <input type="file" class="file-input col-8" id="fileLogo" />
-                                <button type="submit" class="button col" id="btnUpload">Upload</button>
-                            </div>
+                    <label for="formLogo" class="form-label">Logo</label>
+                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formLogo">
+                        <img class="preview" src="../assets/img/default.png" alt="place">
+                        <input class="picname" type="hidden" value="">
+                        <div class="row">
+                            <input type="file" class="file-input col-8" />
+                            <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                        </div>
                     </form>
                 </div>
             </div>
             <div class="mt-3 border rounded py-3 pl-3">
                 <div class="mt-3 d-flex flex-row gap-3 align-items-center">
                     <label for="theme1">Color Theme #1</label>
-                    <input type="color" onchange="setHex(this.value,1);" id="theme1" value="#ffffff">
-                    <span id="theme1Hex" class="codeHex">#ffffff</span>
+                    <input type="color" onchange="setHex(this.value,1);" id="theme1" value="<?php echo $row['colorTheme1']; ?>">
+                    <span id="theme1Hex" class="codeHex"><?php echo $row['colorTheme1']; ?></span>
                 </div>
                 <div class="mt-3 d-flex flex-row gap-3 align-items-center">
                     <label for="theme2">Color Theme #2</label>
-                    <input type="color" onchange="setHex(this.value,2);" id="theme2" value="#ffffff">
-                    <span id="theme2Hex" class="codeHex">#ffffff</span>
+                    <input type="color" onchange="setHex(this.value,2);" id="theme2" value="<?php echo $row['colorTheme2']; ?>">
+                    <span id="theme2Hex" class="codeHex"><?php echo $row['colorTheme2']; ?></span>
                 </div>
                 <div class="mt-3 d-flex flex-row gap-3 align-items-center">
                     <label for="theme3">Color Theme #3</label>
-                    <input type="color" onchange="setHex(this.value,3);"  id="theme3" value="#ffffff">
-                    <span id="theme3Hex" class="codeHex">#ffffff</span>
+                    <input type="color" onchange="setHex(this.value,3);"  id="theme3" value="<?php echo $row['colorTheme3']; ?>">
+                    <span id="theme3Hex" class="codeHex"><?php echo $row['colorTheme3']; ?></span>
                 </div>
             </div>
         </div>
@@ -169,7 +169,7 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
         <div class="col-6">
             <label for="domainHave">Domain Log-in</label>
             <div class="form-check ml-1">
-                <input class="form-check-input domainHave" type="checkbox" value="1" id="domainHave">
+                <input class="form-check-input domainHave" type="checkbox" value="" id="domainHave" <?php echo $row['domainHave'] == 1 ? 'checked' : ''; ?>>
                 <label for="domainHave">Yes, we got it.</label>
                 <div class="domainbox" id="domainBox">
                     <div class="mb-4 row">
@@ -179,9 +179,11 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
                                 <option value="0" selected>-- None --</option>
                                 <?php
                                 $domains = $db->query('SELECT `id`, `name` FROM `DomainProviders` WHERE status=1 AND id<>11 ORDER BY `name`;')->fetchAll();
-                                foreach ($domains as $row){
+                                foreach ($domains as $val){
                                     ?>
-                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                    <option value="<?php echo $val['id']; ?>" <?php echo $row['domainProvidersID'] == $val['id'] ? 'selected' : ''; ?> >
+                                        <?php echo $val['name']; ?>
+                                    </option>
                                 <?php }//foreach ?>
                                 <option value="11">Other</option>
                             </select>
@@ -191,12 +193,12 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
                     <div class="row">
                             <div class="input-group mb-3">
                                 <label for="domainUser" class="input-group-text" id="basic-addon3">User</label>
-                                <input type="text" class="form-control domainuser" id="domainUser" aria-describedby="basic-addon3" placeholder="">
+                                <input type="text" class="form-control domainuser" id="domainUser" aria-describedby="basic-addon3" placeholder="" value="<?php echo $row['domainUser']; ?>">
                             </div>
                         
                             <div class="input-group mb-3">
                                 <label for="domainPass" class="input-group-text" id="basic-addon3">Password</label>
-                                <input type="text" class="form-control domainpass" id="domainPass" aria-describedby="basic-addon3" placeholder="">
+                                <input type="text" class="form-control domainpass" id="domainPass" aria-describedby="basic-addon3" placeholder="" value="<?php echo $row['domainPass']; ?>">
                             </div>
                         
                     </div>
@@ -208,7 +210,7 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
         <div class="col-6">
             <label for="hostingHave">Hosting Log-in</label>
             <div class="form-check ml-1">
-                <input class="form-check-input hostingHave" type="checkbox" value="" id="hostingHave">
+                <input class="form-check-input hostingHave" type="checkbox" value="" id="hostingHave" <?php echo $row['hostingHave'] == 1 ? 'checked' : ''; ?>>
                 <label for="hostingHave">Yes, we got it.</label>
                 <div class="hostingbox" id="hostingBox">
                     <div class="mb-4 row">
@@ -218,9 +220,11 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
                                 <option value="0" selected>-- None --</option>
                                 <?php
                                 $hostings = $db->query('SELECT `id`, `name` FROM `HostingProviders` WHERE status=1 AND id<>11 ORDER BY `name`;')->fetchAll();
-                                foreach ($hostings as $row){
+                                foreach ($hostings as $val){
                                     ?>
-                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                    <option value="<?php echo $val['id']; ?>"  <?php echo $row['hostingProvidersID'] == $val['id'] ? 'selected' : ''; ?> >
+                                        <?php echo $val['name']; ?>
+                                    </option>
                                 <?php }//foreach ?>
                                 <option value="11">Other</option>
                             </select>
@@ -230,11 +234,11 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
                     <div class="row">
                             <div class="input-group mb-3">
                                 <label for="hostingUser" class="input-group-text" id="basic-addon3">User</label>
-                                <input type="text" class="form-control hostingUser" id="hostingUser" aria-describedby="basic-addon3" placeholder="">
+                                <input type="text" class="form-control hostingUser" id="hostingUser" aria-describedby="basic-addon3" placeholder="" value="<?php echo $row['hostingUser']; ?>">
                             </div>
                             <div class="input-group mb-3">
                                 <label for="hostingPass" class="input-group-text" id="basic-addon3">Password</label>
-                                <input type="text" class="form-control hostingPass" id="hostingPass" aria-describedby="basic-addon3" placeholder="">
+                                <input type="text" class="form-control hostingPass" id="hostingPass" aria-describedby="basic-addon3" placeholder="" value="<?php echo $row['hostingPass']; ?>">
                             </div>
                     </div>
                 </div>
@@ -255,27 +259,27 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
         <!-- Restaurant System -->
             <div id="resSystem" class="form-check">
                 <div>
-                    <input class="form-check-input gloriahave" type="checkbox" value="" id="gloriaHave">
+                    <input class="form-check-input gloriahave" type="checkbox" value="" id="gloriaHave" <?php echo $row['gloriaHave'] == 1 ? 'checked' : ''; ?>>
                     <label for="gloriaHave">Gloria Food</label>
                 </div>
 
                 <div>
                     <div class="gloriabox">
                         <label for="orderURL">Order Online</label>
-                        <input type="text" class="form-control" id="orderURL" placeholder="-- URL --">
+                        <input type="text" class="form-control" id="orderURL" placeholder="-- URL --" value="<?php echo $row['orderURL']; ?>">
                     </div>
                     <div class="gloriabox">
                         <label for="tableURL">Table Reservation</label>
-                        <input type="text" class="form-control" id="tableURL" placeholder="-- URL --">
+                        <input type="text" class="form-control" id="tableURL" placeholder="-- URL --" value="<?php echo $row['tableURL']; ?>">
                     </div>
                 </div>
 
                 <div>
-                    <input class="form-check-input orderOther" type="checkbox" value="" id="orderOther">
+                    <input class="form-check-input orderOther" type="checkbox" value="" id="orderOther" <?php echo $row['orderOther'] == 1 ? 'checked' : ''; ?>>
                     <label for="orderOther">Other Ordering System</label>
                     <div class="resOtherSystem">
                         <label for="resOtherSystem">System Name</label>
-                        <input type="text" class="form-control" id="resOtherSystem" placeholder="System Name">
+                        <input type="text" class="form-control" id="resOtherSystem" placeholder="System Name" value="<?php echo $row['resOtherSystem']; ?>">
                     </div>
                 </div>
             </div>
@@ -284,33 +288,29 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
 
             <div id="masSystem" class="form-check">
                 <div>
-                    <input class="form-check-input amelia" type="checkbox" value="" id="amelia">
+                    <input class="form-check-input amelia" type="checkbox" value="" id="amelia" <?php echo $row['amelia'] == 1 ? 'checked' : ''; ?>>
                     <label for="amelia">Amelia</label>
                 </div>
 
                 <div>
-                    <input class="form-check-input voucher" type="checkbox" value="" id="voucher">
+                    <input class="form-check-input voucher" type="checkbox" value="" id="voucher" <?php echo $row['	voucher'] == 1 ? 'checked' : ''; ?>>
                     <label for="voucher">Voucher</label>
                 </div>
 
                 <div>
-                    <input class="form-check-input bookOther" type="checkbox" value="" id="bookOther">
+                    <input class="form-check-input bookOther" type="checkbox" value="" id="bookOther" <?php echo $row['bookOther'] == 1 ? 'checked' : ''; ?>>
                     <label for="bookOther">Other Booking System</label>
                     <div class="masOtherSystem">
                         <label for="masOtherSystem">System Name</label>
-                        <input type="text" class="form-control" id="masOtherSystem" placeholder="System Name">
+                        <input type="text" class="form-control" id="masOtherSystem" placeholder="System Name" value="<?php echo $row['masOtherSystem']; ?>">
                     </div>
                 </div>
             </div>
 
         <div class="form-check">
-            <input class="form-check-input orderOther" type="checkbox" value="1" id="needEmail">
+            <input class="form-check-input orderOther" type="checkbox" value="1" id="needEmail" <?php echo $row['needEmail'] == 1 ? 'checked' : ''; ?>>
             <label for="needEmail">Need email inbox under shop domain name.</label>
             <small class="text-muted">e.g., info@hoonhaymassage.co.nz</small>
-                <div class="masOtherSystem">
-                        <label for="masOtherSystem">System Name</label>
-                        <input type="text" class="form-control" id="masOtherSystem" placeholder="System Name">
-                    </div>
         </div>
 </div>
 
@@ -326,13 +326,13 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
         <div class="col">
             <div class="input-group mb-3">
                 <label for="facebookURL" class="input-group-text">Facebook</label>
-                <input type="text" class="form-control" id="facebookURL" placeholder="URL">
+                <input type="text" class="form-control" id="facebookURL" placeholder="URL" value="<?php echo $row['facebookURL']; ?>">
             </div>
         </div>
         <div class="col">
             <div class="input-group mb-3">
                 <label for="instagramURL" class="input-group-text">Instagram</label>
-                <input type="text" class="form-control" id="instagramURL" placeholder="URL">
+                <input type="text" class="form-control" id="instagramURL" placeholder="URL" value="<?php echo $row['instagramURL']; ?>">
             </div>
         </div>
     </div>
@@ -340,13 +340,13 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
         <div class="col">
             <div class="input-group mb-3">
                 <label for="youtubeURL" class="input-group-text">Youtube</label>
-                <input type="text" class="form-control" id="youtubeURL" placeholder="URL">
+                <input type="text" class="form-control" id="youtubeURL" placeholder="URL" value="<?php echo $row['youtubeURL']; ?>">
             </div>
         </div>
         <div class="col">
             <div class="input-group mb-3">
                 <label for="tiktokURL" class="input-group-text">Tiktok</label>
-                <input type="text" class="form-control" id="tiktokURL" placeholder="URL">
+                <input type="text" class="form-control" id="tiktokURL" placeholder="URL" value="<?php echo $row['tiktokURL']; ?>">
             </div>
         </div>
     </div>
@@ -449,6 +449,9 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
 
         callAjax.done(function(res) {
             console.log("loadProjectData = ",res)
+            res.domainHave == 1 ? $("#domainBox").show() :  $("#domainBox").hide();
+            res.hostingHave == 1 ? $("#hostingBox").show() :  $("#hostingBox").hide();
+            res.masOtherSystem == 1 ? $("#masOtherSystem").show() :  $("#masOtherSystem").hide();
             setLayout();
             selectPage();
             return true;
@@ -464,10 +467,10 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
     $("#cmdSubmit").click(function () {
         let payload = {
             mode : "save",
-            businessName: inputName.val(),
-            businessEmail: inputEmail.val(),
-            businessPhone: inputPhone.val(),
-            businessAddress: inputAddress.val(),
+            projectName: inputName.val(),
+            email: inputEmail.val(),
+            phone: inputPhone.val(),
+            address: inputAddress.val(),
             openingHours: inputOpen.val(),
             pickupAndDelivery: inputPickup.val(),
             logo: hiddenPicLogo.val(),
@@ -475,10 +478,11 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
             colorTheme2: selTheme2Hex.val(),
             colorTheme3: selTheme3Hex.val(),
             domainHave: !!chkDomainHave.prop("checked"),
-            domainProvider: selDomainProvider.val(),
+            domainProvidersID: selDomainProvider.val(),
             domainUser: inputDomainUser.val(),
             domainPass: inputDomainPass.val(),
             hostingHave: !!chkHostingHave.prop("checked"),
+            hostingProvidersID: selHostingProvider.val(),
             hostingUser: inputHostingUser.val(),
             hostingPass: inputHostingPass.val(),
             gloriaHave: !!chkGloriaHave.prop("checked"),
@@ -524,47 +528,5 @@ $row = $db->query('SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Rest
             return false;
         });
     });//cmdSubmit.click
-
-
-    const handleFormSubmit = (formId, imgId, picNameId, fileInputId, prefixId) => {
-        $("#" + formId).on("submit", function (e) {
-            e.preventDefault();
-            let fd = new FormData();
-            let files = $("#" + fileInputId)[0].files;
-
-            if (files.length > 0) {
-                fd.append('file', files[0]);
-                fd.append('projectId', projectID);
-                fd.append('prefixId', prefixId);
-
-                $.ajax({
-                    url: '../models/upload.php',
-                    type: 'post',
-                    data: fd,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-
-                        if (response !== "0") {
-                            const splitPath = response.split("/");
-                            const newName = splitPath[3];
-                            $("#" + imgId).attr("src", response);
-                            $("#" + picNameId).val(newName);
-                        }else { alert("File not uploaded"); }
-                    }
-                });//ajax
-            } else { alert("Please select a file."); }
-        });//on submitting
-    }//function handleFormSubmit
-
-    //Upload Group Preview
-    handleFormSubmit("myFormLogo", "imgLogo", "picNameLogo", "fileLogo", "Logo");
-    /* อันนี้น่าจะเป็นของหน้า template อื่น
-    handleFormSubmit("myFormTdR1HeadHomeImg", "tdR1HeadHomeImg", "picNametdR1HeadHomeImg", "filetdR1HeadHomeImg", "HeadHomeImg");
-    handleFormSubmit("myFormTdR1Featured1", "tdR1Featured1", "picNametdR1Featured1", "filetdR1Featured1", "Featured1");
-    handleFormSubmit("myFormTdR1Featured2", "tdR1Featured2", "picNametdR1Featured2", "filetdR1Featured2", "Featured2");
-    handleFormSubmit("myFormTdR1Featured3", "tdR1Featured3", "picNametdR1Featured3", "filetdR1Featured3", "Featured3");
-    handleFormSubmit("myFormTdR1Featured4", "tdR1Featured4", "picNametdR1Featured4", "filetdR1Featured4", "Featured4");*/
-    // End Upload Group Preview
 
 </script>

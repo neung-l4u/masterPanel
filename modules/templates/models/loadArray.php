@@ -12,18 +12,18 @@ $projectID = $_POST['projectID'];
 
 if ($mode == "loadArray"){
     $row = $db->query(
-        'SELECT  p.projectName, p.shopTypeID, IF(p.shopTypeID=1, "Restaurant", "Massage") as "typeName", p.countryID, c.name AS "countryName", s.sNickName 
-        FROM tb_project p, staffs s, Countries c 
-        WHERE p.projectOwner = s.sID AND p.countryID = c.id AND p.projectID = ?;', $projectID)->fetchArray();
+        'SELECT * 
+        FROM tb_project
+        WHERE projectID = ?;', $projectID)->fetchArray();
 
-
-    $params["projectID"] = $projectID;
-    $params["projectName"] = $row["projectName"];
-    $params["shopTypeID"] = $row["shopTypeID"];
-    $params["typeName"] = $row["typeName"];
-    $params["countryID"] = $row["countryID"];
-    $params["countryName"] = $row["countryName"];
-    $params["sNickName"] = $row["sNickName"];
+    $params["domainHave"] = $row["domainHave"];
+    $params["hostingHave"] = $row["hostingHave"];
+    $params["gloriaHave"] = $row["gloriaHave"];
+    $params["orderOther"] = $row["orderOther"];
+    $params["amelia"] = $row["amelia"];
+    $params["voucher"] = $row["voucher"];
+    $params["bookOther"] = $row["bookOther"];
+    $params["needEmail"] = $row["needEmail"];
 
     $params['result'] = "found ".count($row)." data";
 }
