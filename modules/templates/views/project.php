@@ -19,6 +19,7 @@
                 <tr>
                     <th class="col_id">#</th>
                     <th class="col_type">Type</th>
+                    <th class="col_template">Template</th>
                     <th class="col_name">Name</th>
                     <th class="col_status">Status</th>
                     <th class="col_owner">Owner</th>
@@ -43,24 +44,47 @@
             </div>
             <form action="#" id="frmProject">
                 <div class="modal-body">
-                    <div class="d-flex flex-column">
-                        <div class="form-group">
-                            <label for="projectName">Project name</label>
-                            <input type="text" class="form-control" id="projectName" placeholder="HoonHay" autocomplete="off">
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="projectName">Project name</label>
+                                <input type="text" class="form-control" id="projectName" placeholder="HoonHay" autocomplete="off">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="shopType">Shop type</label>
-                            <select class="form-control" id="shopType">
-                                <option value="0">--- Select ---</option>
-                                <option value="1">Restaurant</option>
-                                <option value="2">Massage</option>
-                            </select>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="shopType">Shop type</label>
+                                <select class="form-control" id="shopType">
+                                    <option value="0">--- Select ---</option>
+                                    <option value="1">Restaurant</option>
+                                    <option value="2">Massage</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="country">Country</label>
-                            <select class="form-control" id="country">
-                                <option value="0">--- Select ---</option>
-                            </select>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="selectedTemplate">Template</label>
+                                <select class="form-control" id="selectedTemplate">
+                                    <option value="1">Template no. 1</option>
+                                    <option value="2">Template no. 2</option>
+                                    <option value="3">Template no. 3</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <select class="form-control" id="country">
+                                    <option value="0">--- Select ---</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
