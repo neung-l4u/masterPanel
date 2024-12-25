@@ -107,7 +107,6 @@ input.invalid {
 .preview {
     width: 150px;
     max-height: 50%;
-    aspect-ratio: 1 / 1;
     object-fit: cover;
     border: 1px solid lightgrey;
     margin: 0 auto;
