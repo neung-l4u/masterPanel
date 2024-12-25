@@ -4,15 +4,9 @@ require_once ("../assets/db/initDB.php");
 require_once ("../assets/php/share_function.php");
 global $db, $date;
 $id=$_REQUEST['id'];
-
-$row = $db->query('SELECT projectName, shopTypeID FROM `tb_project` WHERE projectID = ?;',$id)->fetchArray();
-
-$projectID = $id;
-$projectName = $row["projectName"];
-$shopTypeID = $row["shopTypeID"];
 ?>
 
-<link rel="stylesheet" href="../assets/css/project_detail.css">
+ <link rel="stylesheet" href="../assets/css/template.css">
 
 <!-- Template Restaurant 2 -->
 <div id="TemRes2">
@@ -28,171 +22,17 @@ $shopTypeID = $row["shopTypeID"];
 
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="res2Home" role="tabpanel" aria-labelledby="nav-home-tab">
-                    <div class="row pt-3">
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2HomeSlider1">
-                                <label class="custom-file-label" for="tdR2HomeSlider1">Image Slider Set 1 1920x415 pixels</label>
-                            </div>
+                    
+                    <label for="formLogo" class="form-label">Logo</label>
+                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formLogo">
+                        <img class="preview" src="../assets/img/default.png" alt="place">
+                        <input class="picname" type="hidden" value="">
+                        <div class="row">
+                            <input type="file" class="file-input col-8" />
+                            <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
                         </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2HomeSlider2">
-                                <label class="custom-file-label" for="tdR2HomeSlider1">Image Slider Set 2 1920x415 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2HomeSlider3">
-                                <label class="custom-file-label" for="tdR2HomeSlider3">Image Slider Set 3 1920x415 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <textarea class="form-control" id="tdR2Delivery" rows="3" placeholder="Pickup & Delivery Service"></textarea>
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion1" placeholder="Promotion Headline #1">
-                        </div>
-
-                        <div>
-                            <textarea class="form-control" id="tdR2HomePromotion1Body" rows="3" placeholder="Promotion Message #1"></textarea>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2Carousel">
-                                <label class="custom-file-label" for="tdR2Carousel">Promotion Image Carousel 800x1000 pixels (4 Image)</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FeaturedImg">
-                                <label class="custom-file-label" for="tdR2FeaturedImg">Featured Menu Image #1 600x800 pixels (8 Image)</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2PromotionImg2">
-                                <label class="custom-file-label" for="tdR2PromotionImg2">Promotion Background Image Carousel 2201x1068 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion2" placeholder="Promotion Headline #2">
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2ReviewBg">
-                                <label class="custom-file-label" for="tdR2ReviewBg">Reviews Background Image 2201x1068 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <textarea class="form-control" id="tdR2TestimonialText1" rows="3" placeholder="Testimonial #1"></textarea>
-                        
-                            <div class="d-flex flex-row gap-1">
-                                <input type="text" class="col-8 form-control" id="tdR2TestimonialName1" placeholder="Name">
-                            
-                                <div class="col-4 custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2TestimonialImg1">
-                                    <label class="custom-file-label" for="tdR2TestimonialImg1">Photo</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <textarea class="form-control" id="tdR2TestimonialText2" rows="3" placeholder="Testimonial #2"></textarea>
-                        
-                            <div class="d-flex flex-row gap-1">
-                                <input type="text" class="col-8 form-control" id="tdR2TestimonialName2" placeholder="Name">
-                            
-                                <div class="col-4 custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2TestimonialImg2">
-                                    <label class="custom-file-label" for="tdR2TestimonialImg2">Photo</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <textarea class="form-control" id="tdR2TestimonialText3" rows="3" placeholder="Testimonial #3"></textarea>
-                        
-                            <div class="d-flex flex-row gap-1">
-                                <input type="text" class="col-8 form-control" id="tdR2TestimonialName3" placeholder="Name">
-                            
-                                <div class="col-4 custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2TestimonialImg3">
-                                    <label class="custom-file-label" for="tdR2TestimonialImg3">Photo</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2PromotionImg3">
-                                <label class="custom-file-label" for="tdR2PromotionImg3">Promotion Image #3 952x952 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion3" placeholder="Promotion Headline #3">
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion3Body" placeholder="Promotion Message #3">
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FooterImg1">
-                                <label class="custom-file-label" for="tdR2FooterImg1">Footer Image #1 600x600 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FooterImg2">
-                                <label class="custom-file-label" for="tdR2FooterImg2">Footer Image #2 600x600 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FooterImg3">
-                                <label class="custom-file-label" for="tdR2FooterImg3">Footer Image #3 600x600 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FooterImg4">
-                                <label class="custom-file-label" for="tdR2FooterImg4">Footer Image #4 600x600 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion4" placeholder="Promotion Headline #4">
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion4Body" placeholder="Promotion Message #4">
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FooterBgImg">
-                                <label class="custom-file-label" for="tdR2FooterBgImg">Footer Background Image 2201x1068 pixels</label>
-                            </div>
-                        </div>
-
-                    </div>
+                    </form>
+                
                 </div>
                 <div class="tab-pane fade" id="res2About" role="tabpanel" aria-labelledby="nav-about-tab">
                     <div class="row pt-3">
@@ -345,7 +185,12 @@ $shopTypeID = $row["shopTypeID"];
 
     </div>
 </div>
+<!-- End Template Restaurant 2 -->
 
+<input type="hidden" id="projectID" value="<?php echo $id; ?>">
+<input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
+
+<script src="../controllers/template.js"></script>
 <script>
     $("#cmdSubmit").click(function () {
         let payload = {
@@ -410,7 +255,7 @@ $shopTypeID = $row["shopTypeID"];
         console.log("Payload", payload);
 
         const callAjax = $.ajax({
-            url: "../models/actionAjax.php",
+            url: "../models/ajaxRes2.php",
             method: 'POST',
             async: false,
             cache: false,

@@ -22,14 +22,40 @@ switch ($menu) {
         $view = 'project_detail.php';
         $menu = 'detail';
         break;
+    case 'res1':
+        $title = 'Template Restaurant 1';
+        $view = 'res1.php';
+        $menu = 'res1';
+        break;
+    case 'res2':
+        $title = 'Template Restaurant 2';
+        $view = 'res2.php';
+        $menu = 'res2';
+        break;
+    case 'res3':
+        $title = 'Template Restaurant 3';
+        $view = 'res3.php';
+        $menu = 'res3';
+        break;
+    case 'mas1':
+        $title = 'Template Massage 1';
+        $view = 'mas1.php';
+        $menu = 'mas1';
+        break;
+    case 'mas2':
+        $title = 'Template Massage 2';
+        $view = 'mas2.php';
+        $menu = 'mas2';
+        break;
+    case 'mas3':
+        $title = 'Template Massage 3';
+        $view = 'mas3.php';
+        $menu = 'mas3';
+        break;
     default:
         $title = 'Home';
         $view = 'home.php';
         $menu = 'home';
-    case 'detail-res1':
-        $title = 'Template Restaurant 1';
-        $view = 'res1.php';
-        $menu = 'res1';
         break;
 }
 ?>
@@ -45,8 +71,14 @@ switch ($menu) {
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title><?php echo $title; ?></title>
+
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
     <link rel="stylesheet" href="../assets/css/main.css">
+
+    <script src="../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
+    <script src="../controllers/main.js"></script>
+    
 </head>
 <body>
     <?php include ('topNav.php');?>
@@ -59,9 +91,7 @@ switch ($menu) {
     <?php include($view);?>
 </div>
 
-<script src="../assets/js/jquery-3.7.1.min.js"></script>
-<script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
-<script src="../controllers/main.js"></script>
+
 
 </body>
 </html>

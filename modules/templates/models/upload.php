@@ -8,11 +8,14 @@ if(isset($_FILES['file']['name'])){
     $projectID = $_POST['projectId'];
     $prefix = isset($_POST['prefixId']) ? $_POST['prefixId'] : 'Section';
 
-    $row = $db->query('SELECT projectName FROM `tb_project` WHERE projectID = ?;', $projectID)->fetchArray();
-
-    $projectName = sanitizeFolderName($row["projectName"]);
-
-    
+    if (!empty($projectID)) {
+        $row = $db->query('SELECT projectName FROM `tb_project` WHERE projectID = ?;', $projectID)->fetchArray();
+        $projectName = sanitizeFolderName($row["projectName"]);
+    } else {
+        $projectName = "Noname";
+        $projectID = 0;
+    }
+       
     /* Getting file name */
     $filename = $_FILES['file']['name'];
     $oldName = $filename;
