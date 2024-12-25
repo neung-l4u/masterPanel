@@ -9,6 +9,7 @@ include "../assets/db/initDB.php";
 $param['act'] = (!empty($_REQUEST['act'])) ? trim($_REQUEST['act']) : ''; //ใช้เลือกเคสด้านล่างที่ต้องทำ
 $param['name'] = (!empty($_REQUEST['name'])) ? trim($_REQUEST['name']) : ''; //ชื่อโปรเจคที่ส่งมา
 $param['shopTypeID'] = (!empty($_REQUEST['shopTypeID'])) ? trim($_REQUEST['shopTypeID']) : '';
+$param['selectedTemplate'] = (!empty($_REQUEST['selectedTemplate'])) ? trim($_REQUEST['selectedTemplate']) : null;
 $param['status'] = (!empty($_REQUEST['status'])) ? trim($_REQUEST['status']) : '1'; //1=Draft , 2=Send
 $param['country'] = (!empty($_REQUEST['country'])) ? trim($_REQUEST['country']) : ''; //ตามตาราง Countries
 $param['editID'] = (!empty($_REQUEST['editID'])) ? trim($_REQUEST['editID']) : ''; //จะส่งมาเฉพาะเคส setEdit , Update
@@ -27,12 +28,14 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
     $return['data'] = '';
     $return['act'] = $param['act'];
 }else if ( $param['act'] == 'read' ) { //อ่าน project ทั้งหมดของ user นี้
-    $projects = $db->query('SELECT pj.projectID, pj.projectName, t.name AS "shopType", pj.statusID, s.sNickName AS "owner", c.name AS "countryName" ,pj.projectTimestamp 
+    $projects = $db->query('SELECT pj.projectID, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, s.sNickName AS "owner", c.name AS "countryName" ,pj.projectTimestamp 
                             FROM `tb_project` pj, `staffs` s ,`Countries` c , `tb_shopType` t
                             WHERE pj.projectOwner = s.sID 
                               AND pj.countryID = c.id 
                               AND pj.shopTypeID = t.id 
-                              AND pj.projectOwner = ?', $param['ownerID'])->fetchAll();
+                              AND pj.projectOwner = ?
+                              AND pj.deleteAt IS NULL'
+        , $param['ownerID'])->fetchAll();
     $row = array();
     $i = 0;
     foreach ($projects as $project) {
@@ -56,14 +59,14 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
     $return['result'] = 'success';
     $return['data'] = $row;
 }else if ( $param['act'] == 'update' ) { //อัพเดท project
-    $project = $db->query('UPDATE tb_project SET `projectName` = ?, `shopTypeID` = ?, `countryID` = ?  WHERE `projectID` = ?'
-        , $param['name'], $param['country'], $param['shopTypeID'], $param['editID']);
+    $project = $db->query('UPDATE tb_project SET `projectName` = ?, `shopTypeID` = ?, `selectedTemplate` = ?, `countryID` = ?  WHERE `projectID` = ?'
+        , $param['name'], $param['shopTypeID'], $param['selectedTemplate'], $param['country'], $param['editID']);
 
     $return['result'] = 'success';
     $return['msg'] = 'project updated';
 }else if ( $param['act'] == 'add' ) {  //เพิ่ม project
-    $project = $db->query('INSERT INTO `tb_project`(`projectName`, `shopTypeID`, `statusID`, `projectOwner`, `countryID`) VALUES (?,?,?,?,?)'
-        , $param['name'], $param['shopTypeID'], 1, $param['ownerID'], $param['country']);
+    $project = $db->query('INSERT INTO `tb_project`(`projectName`, `shopTypeID`, `selectedTemplate`, `statusID`, `projectOwner`, `countryID`) VALUES (?,?,?,?,?,?)'
+        , $param['name'], $param['shopTypeID'], $param['selectedTemplate'], 1, $param['ownerID'], $param['country']);
 
     $return['result'] = 'success';
     $return['msg'] = 'project created';

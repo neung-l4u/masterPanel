@@ -4,11 +4,9 @@ const inputCountry = $("#country");
 const inputEditID = $("#editID");
 const inputAction = $("#frmAction");
 const inputLoginID = $("#loginID");
+const selectedTemplate = $("#selectedTemplate");
 
 let payload = {};
-
-
-
 
 $(function() {
     loadData();
@@ -73,22 +71,27 @@ const loadData = () => {
         const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
         const iconOn = '<img src="../assets/img/on.svg" alt="Status On" title="Status On" class="status_icon">'
         const iconOff = '<img src="../assets/img/off.svg" alt="Status Off" title="Status Off" class="status_icon">';
+        const iconTemplate = '<img src="../assets/img/template.svg" alt="Template" title="Template" class="action_icon">';
 
         if (allData>0) {
             row.forEach(item => {
-                let {projectID : id, projectName : name, shopType, owner, countryName : country, projectTimeStamp, statusID : status} = item;
+                let {projectID : id, projectName : name, shopType, selectedTemplate, owner, countryName : country, projectTimeStamp, statusID : status} = item;
                 let icon = (status===1) ? 'Draft' : 'Send';
                 let url = `main.php?m=detail&id=${id}`;
+                let temPage = (shopType==="Restaurant") ? 'res' : 'mas';
+                temPage = temPage+selectedTemplate;
+                let templateUrl = `main.php?m=${temPage}&id=${id}`;
                 $('#projectData > tbody:last-child').append(
                     `<tr>
                         <td>${++i}</td>
                         <td>${shopType}</td>
+                        <td style="text-align: center;">${selectedTemplate}</td>
                         <td>${name}</td>
                         <td>${icon}</td>
                         <td>${owner}</td>
                         <td>${country}</td>
                         <td style="text-align: right;">
-                        
+                            <a href="${templateUrl}">${iconTemplate}</a>
                             <a href="${url}">${iconNext}</a>
                             <a href="#" onclick="setEdit(${id});">${iconEdit}</a>
                             <a href="#" onclick="setDel(${id});">${iconDelete}</a>
@@ -136,15 +139,17 @@ const setEdit = (id) => {
         });
 
         readProject.done(function(res) {
+            console.log(res);
             let row = res.data;
 
             row.forEach( item => {
-                let {projectID : id, projectName : name, shopTypeID, projectOwner : owner, countryID : country, projectTimeStamp, statusID : status} = item;
+                let {projectID : id, projectName : name, shopTypeID, selectedTemplate, projectOwner : owner, countryID : country, projectTimeStamp, statusID : status} = item;
                 console.log("name = ",name);
                 console.log("id = ",id);
                 console.log("country = ",country);
                 inputProjectName.val(name);
                 inputShopTypeID.val(shopTypeID);
+                $("#selectedTemplate").val(selectedTemplate);
                 inputCountry.val(country);
                 inputEditID.val(id);
                 inputAction.val('update');
@@ -199,6 +204,7 @@ const saveForm = () => {
         act: inputAction.val(),
         name: inputProjectName.val(),
         shopTypeID: inputShopTypeID.val(),
+        selectedTemplate: selectedTemplate.val(),
         country: inputCountry.val(),
         editID: inputEditID.val(),
         ownerID: inputLoginID.val(),
