@@ -71,7 +71,7 @@ const loadData = () => {
         const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
         const iconOn = '<img src="../assets/img/on.svg" alt="Status On" title="Status On" class="status_icon">'
         const iconOff = '<img src="../assets/img/off.svg" alt="Status Off" title="Status Off" class="status_icon">';
-        const iconTemplate = '<img src="../assets/img/template.svg" alt="Template" title="Template" class="action_icon">';
+        const iconTemplate = '<img src="../assets/img/template.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
 
         if (allData>0) {
             row.forEach(item => {
@@ -90,7 +90,7 @@ const loadData = () => {
                         <td>${icon}</td>
                         <td>${owner}</td>
                         <td>${country}</td>
-                        <td style="text-align: right;">
+                        <td class="d-flex justify-content-end gap-2">
                             <a href="${templateUrl}">${iconTemplate}</a>
                             <a href="${url}">${iconNext}</a>
                             <a href="#" onclick="setEdit(${id});">${iconEdit}</a>

@@ -22,6 +22,36 @@ switch ($menu) {
         $view = 'project_detail.php';
         $menu = 'detail';
         break;
+    case 'res1':
+        $title = 'Restaurant 1';
+        $view = 'res1.php';
+        $menu = 'project';
+        break;
+    case 'res2':
+        $title = 'Restaurant 2';
+        $view = 'res2.php';
+        $menu = 'project';
+        break;
+    case 'res3':
+        $title = 'Restaurant 3';
+        $view = 'res3.php';
+        $menu = 'project';
+        break;
+    case 'mas1':
+        $title = 'Massage 1';
+        $view = 'mas1.php';
+        $menu = 'project';
+        break;
+    case 'mas2':
+        $title = 'Massage 2';
+        $view = 'mas2.php';
+        $menu = 'project';
+        break;
+    case 'mas3':
+        $title = 'Massage 3';
+        $view = 'mas3.php';
+        $menu = 'project';
+        break;
     default:
         $title = 'Home';
         $view = 'home.php';

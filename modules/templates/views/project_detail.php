@@ -10,11 +10,7 @@ $row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "
         WHERE p.projectOwner = s.sID AND p.countryID = c.id AND p.projectID = ?;', $id)->fetchArray();
 
 ?>
-
-
-
-<!--    <link rel="stylesheet" href="../assets/css/bootstrap.4.5.2.min.css">-->
-<link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css" xmlns:input="http://www.w3.org/1999/html">
+    <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css" xmlns:input="http://www.w3.org/1999/html">
     <link rel="stylesheet" href="../assets/css/project_detail.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
 
@@ -52,14 +48,37 @@ $row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "
                     <span class="fw-bold">Country:</span>
                     <span class="projectCountry"><?php echo $row['countryName']; ?></span>
                 </li>
+                <li>
+                    <span class="fw-bold">Template:</span>
+                    <span class="shopType"><?php echo ($row['shopTypeID']==1 ? "Restaurant" : "Massage"); ?></span> Template No. <?php echo $row['selectedTemplate']; ?>
+                </li>
             </ul>
         </div>
     </div>
 
     <input type="hidden" class="form-control" id="projectOwner" value="<?php echo $row['sNickName']; ?>">
     <input type="hidden" class="form-control" id="ShopType" value="<?php echo $row['typeName']; ?>">
+    <select class="form-select" id="TemplateSelect" onchange="setLayout();" style="display: none;">
+        <option value="1" <?php echo ($row['selectedTemplate']==1) ? "selected":""; ?>>Template 1</option>
+        <option value="2" <?php echo ($row['selectedTemplate']==2) ? "selected":""; ?>>Template 2</option>
+        <option value="3" <?php echo ($row['selectedTemplate']==3) ? "selected":""; ?>>Template 3</option>
+    </select>
 </div>
 
+<!-- Template Type -->
+<div class="border rounded mb-4 px-5 py-3">
+    <div class="row">
+        <div class="col">
+            <div class="mb-2">
+                <h5 class="text-secondary">Template Example.</h5>
+            </div>
+            <?php
+            $picName = ($row['shopTypeID']==1 ? "Res" : "Mas").$row['selectedTemplate']."Home.png";
+            ?>
+            <img src="../assets/img/<?php echo $picName; ?>" alt="<?php echo $picName; ?>" style="width: 100%;">
+        </div>
+    </div>
+</div>
 <!-- Business Information -->
 <div class="border rounded mb-4 px-5 py-3">
     <div class="row">
@@ -352,34 +371,17 @@ $row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "
     </div>
 </div>
 
-<!-- Website Information -->
-<div class="border rounded mb-4 px-5 py-3">
-    <div class="row">
-        <div class="col">
-            <h5 class="text-secondary">Template Details.</h5>
-        </div>
-    </div>
-
-    <!-- Template Type -->
-    <div class="row">
-        <div class="col-6 mb-4">
-            <label for="TemplateSelect"><span class="shopType">Unknown</span> Template</label>
-            <select class="form-select" id="TemplateSelect" onchange="setLayout();">
-                <option selected disabled> -- Select Template -- </option>
-                <option value="1">Template 1</option>
-                <option value="2">Template 2</option>
-                <option value="3">Template 3</option>
-            </select>
-        </div>
-        <div class="col-6 placeholder bg-secondary text-light">
-            template pic here
-        </div>
-    </div>
-</div>
-
 <div class="row mb-5">
-    <div>
+    <div class="col">
         <input id="cmdSubmit" class="btn btn-primary" type="button" value="Save">
+    </div>
+    <div class="col text-right">
+        <?php
+        $url = "main.php?";
+        $url .= "m=".($row['shopTypeID']==1 ? "res" : "mas").$row['selectedTemplate'];
+        $url .= "&id=".$id;
+        ?>
+        <a href="<?php echo $url; ?>" class="btn btn-primary">Next</a>
     </div>
 </div>
 
