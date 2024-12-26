@@ -191,9 +191,8 @@ $shopTypeID = $row["shopTypeID"];
                 </div>
 
                 <div class="col-6" style="text-align:right;">
-
-                    <button type="button" class="btn btn-light" id="prevPageBtn" onclick="nextPrev(-1)">Back</button>
-                    <button type="button" class="btn btn-primary" id="nextPageBtn" onclick="nextPagePrev(1)">Next</button>
+                    <button type="button" class="btn btn-light" id="prevPageBtn">Back</button>
+                    <button type="button" class="btn btn-primary" id="nextPageBtn">Next</button>
                 </div>
             </div>
         </div>
@@ -212,8 +211,6 @@ $shopTypeID = $row["shopTypeID"];
 
 <script src="../controllers/template.js"></script>
 <script>
-    //const projectID = $("#projectID").val();
-    
     $("#cmdSubmit").click(function () {
         let payload = {
             mode : "save",
