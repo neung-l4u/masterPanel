@@ -71,8 +71,13 @@ switch ($menu) {
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title><?php echo $title; ?></title>
+    
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
     <link rel="stylesheet" href="../assets/css/main.css">
+
+    <script src="../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
+    <script src="../controllers/main.js"></script>
 </head>
 <body>
     <?php include ('topNav.php');?>
@@ -84,10 +89,6 @@ switch ($menu) {
     </div>
     <?php include($view);?>
 </div>
-
-<script src="../assets/js/jquery-3.7.1.min.js"></script>
-<script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
-<script src="../controllers/main.js"></script>
 
 </body>
 </html>

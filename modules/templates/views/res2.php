@@ -12,7 +12,7 @@ $projectName = $row["projectName"];
 $shopTypeID = $row["shopTypeID"];
 ?>
 
-<link rel="stylesheet" href="../assets/css/project_detail.css">
+<link rel="stylesheet" href="../assets/css/template.css">
 
 <!-- Template Restaurant 2 -->
 <div id="TemRes2">
@@ -30,11 +30,16 @@ $shopTypeID = $row["shopTypeID"];
                 <div class="tab-pane fade show active" id="res2Home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <div class="row pt-3">
 
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2HomeSlider1">
-                                <label class="custom-file-label" for="tdR2HomeSlider1">Image Slider Set 1 1920x415 pixels</label>
-                            </div>
+                        <div class="col py-3 px-3">
+                            <label for="formLogo" class="form-label">Logo</label>
+                            <form method="post" enctype="multipart/form-data" class="uploadForm" id="formLogo">
+                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                <input class="picname" type="hidden" value="">
+                                <div class="row">
+                                    <input type="file" class="file-input col-8" />
+                                    <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                </div>
+                            </form>
                         </div>
 
                         <div>
@@ -345,8 +350,16 @@ $shopTypeID = $row["shopTypeID"];
 
     </div>
 </div>
+<!-- EndTemplate Restaurant 2 -->
 
+
+<input type="hidden" id="projectID" value="<?php echo $id; ?>">
+<input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
+
+<script src="../controllers/template.js"></script>
 <script>
+    //const projectID = $("#projectID").val();
+
     $("#cmdSubmit").click(function () {
         let payload = {
             mode : "save",
@@ -410,7 +423,7 @@ $shopTypeID = $row["shopTypeID"];
         console.log("Payload", payload);
 
         const callAjax = $.ajax({
-            url: "../models/actionAjax.php",
+            url: "../models/ajaxRes3.php",
             method: 'POST',
             async: false,
             cache: false,

@@ -12,7 +12,7 @@ $projectName = $row["projectName"];
 $shopTypeID = $row["shopTypeID"];
 ?>
 
- <link rel="stylesheet" href="../assets/css/template.css">
+<link rel="stylesheet" href="../assets/css/template.css">
 
 <!-- Template Massage 3 -->
 <div id="TemMas3">
@@ -204,6 +204,8 @@ $shopTypeID = $row["shopTypeID"];
 
 <script src="../controllers/template.js"></script>
 <script>
+    //const projectID = $("#projectID").val();
+
     $("#cmdSubmit").click(function () {
         let payload = {
             mode : "save",

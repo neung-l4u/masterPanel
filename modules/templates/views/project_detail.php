@@ -454,8 +454,6 @@ $row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "
             res.domainHave == 1 ? $("#domainBox").show() :  $("#domainBox").hide();
             res.hostingHave == 1 ? $("#hostingBox").show() :  $("#hostingBox").hide();
             res.masOtherSystem == 1 ? $("#masOtherSystem").show() :  $("#masOtherSystem").hide();
-            setLayout();
-            selectPage();
             return true;
         });
 

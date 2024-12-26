@@ -36,6 +36,10 @@ const settings = {
     US: {
       "Restaurant": "2.9% + 30 cent",
       "Massage": "4% + 30 cent"
+    },
+    TH: {
+      "Restaurant": "2.9% + 30 cent",
+      "Massage": "4% + 30 cent"
     }
   },
   socials: [

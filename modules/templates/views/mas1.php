@@ -12,7 +12,7 @@ $projectName = $row["projectName"];
 $shopTypeID = $row["shopTypeID"];
 ?>
 
- <link rel="stylesheet" href="../assets/css/template.css">
+<link rel="stylesheet" href="../assets/css/template.css">
 
 <!-- Template Massage 1 -->
 <div id="TemMas1">
@@ -32,8 +32,17 @@ $shopTypeID = $row["shopTypeID"];
                     <div class="row">
                         <div class="col">
 
-                            <label for="">1. Business Logo - Header</label>
-                            <input type="file" class="form-control btn btn-default btn-file" id="">
+                            <div class="col py-3 px-3">
+                                <label for="formLogo" class="form-label">Logo</label>
+                                <form method="post" enctype="multipart/form-data" class="uploadForm" id="formLogo">
+                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                    <input class="picname" type="hidden" value="">
+                                    <div class="row">
+                                        <input type="file" class="file-input col-8" />
+                                        <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                    </div>
+                                </form>
+                            </div>
 
                             <label for="">2. Business Phone</label>
                             <input type="text" class="form-control" id="" placeholder="">
@@ -203,6 +212,8 @@ $shopTypeID = $row["shopTypeID"];
 
 <script src="../controllers/template.js"></script>
 <script>
+    //const projectID = $("#projectID").val();
+    
     $("#cmdSubmit").click(function () {
         let payload = {
             mode : "save",
@@ -266,7 +277,7 @@ $shopTypeID = $row["shopTypeID"];
         console.log("Payload", payload);
 
         const callAjax = $.ajax({
-            url: "../models/ajaxmas1.php",
+            url: "../models/ajaxMas1.php",
             method: 'POST',
             async: false,
             cache: false,
