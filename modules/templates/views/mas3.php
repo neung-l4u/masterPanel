@@ -204,8 +204,6 @@ $shopTypeID = $row["shopTypeID"];
 
 <script src="../controllers/template.js"></script>
 <script>
-    //const projectID = $("#projectID").val();
-
     $("#cmdSubmit").click(function () {
         let payload = {
             mode : "save",
