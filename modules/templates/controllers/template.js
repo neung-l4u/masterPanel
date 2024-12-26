@@ -36,21 +36,12 @@ function nextPrev(step) {
     let currentIndex = $tabs.index($activeTab);
     let newIndex = currentIndex + step;
 
-    // Ensure the new index is within bounds
     if (newIndex >= 0 && newIndex < $tabs.length) {
-        $tabs.eq(newIndex).tab('show'); // Show the new tab
-        updateImage(newIndex);          // Update the image (assumes this function is defined)
+        $tabs.eq(newIndex).tab('show');
     }
 }
-
-// Attach event listeners
-$('#prevPageBtn').click(function () {
-    nextPrev(-1);
-});
-
-$('#nextPageBtn').click(function () {
-    nextPrev(1);
-});
+$('#prevPageBtn').click(function() { nextPrev(-1); });
+$('#nextPageBtn').click(function() { nextPrev(1); });
 
 const handleFormSubmit = (button) => {
     const $form = $(button).closest(".uploadForm");
