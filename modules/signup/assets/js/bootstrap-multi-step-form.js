@@ -400,7 +400,7 @@ $('#formCountry').change(function() {
       lookup.hide();
       zipLabel.html("Zip Code")
       textGST.html("VAT");
-      fakeNumber.html("2025550175");
+      fakeNumber.html("0895117447");
       countryTextOnly.val("Thailand");
       methodDebit.show();
       routing_number_div.show();
