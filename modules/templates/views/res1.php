@@ -81,7 +81,7 @@ $shopTypeID = $row["shopTypeID"];
                         <!-- 8.Featured Dish Image #1 & 9.Featured Dish Image #2-->
                         <div class="row mb-3">
                             <div class="col-6">
-                                <!-- <form method="post" action="" enctype="multipart/form-data" id="myFormTdR1Featured1">
+                                <form method="post" action="" enctype="multipart/form-data" id="formTdR1Featured1">
                                     <div class="d-flex flex-column">
                                         <label for="filetdR1Featured1">8.Featured Dish Image #1</label>
                                         <div class="d-flex flex-column gap-2 p-2 border rounded">  
@@ -89,17 +89,17 @@ $shopTypeID = $row["shopTypeID"];
                                                 <img class="preview" src="../assets/img/default.png" id="tdR1Featured1" alt="place">
                                                 <input type="hidden" id="dish1" value="">
                                             </div>
-                                            <div class="d-flex flex-column gap-2">
+                                            <!-- <div class="d-flex flex-column gap-2">
                                                 <input type="file" class="file-input" id="filetdR1Featured1" />
-                                                <button type="submit" class="button" id="btnUpload" onclick="handleFormSubmit(this)>Upload</button>
+                                                <button type="submit" class="button" id="btnUpload" onclick="handleFormSubmit(this);>Upload</button>
                                                 <div>
                                                     <input type="text" class="form-control" id="tdR1Featuredname1" placeholder="Featured Dish Name #1">
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
-                                </form> -->
-                                <div class="d-flex flex-column mb-3">
+                                </form>
+                                <!-- <div class="d-flex flex-column mb-3">
                                     <div class="d-flex flex-column gap-2 p-2 border rounded">  
                                         <img class="preview" src="../assets/img/default.png" alt="place">
                                         <input class="picname" type="hidden" value="">
@@ -107,7 +107,7 @@ $shopTypeID = $row["shopTypeID"];
                                             <input type="file" class="file-input col-8" />
                                             <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
 
