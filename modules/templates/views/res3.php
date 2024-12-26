@@ -5,14 +5,19 @@ require_once ("../assets/php/share_function.php");
 global $db, $date;
 $id=$_REQUEST['id'];
 
-$row = $db->query('SELECT projectName, shopTypeID FROM `tb_project` WHERE projectID = ?;',$id)->fetchArray();
-
+$row = $db->query('SELECT *, IF(shopTypeID=1, "Restaurant", "Massage") as "typeName" FROM `tb_project` WHERE projectID = ?;',$id)->fetchArray();
 $projectID = $id;
-$projectName = $row["projectName"];
-$shopTypeID = $row["shopTypeID"];
 ?>
 
 <link rel="stylesheet" href="../assets/css/template.css">
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../views/main.php?m=project">Projects</a></li>
+        <li class="breadcrumb-item projectName" aria-current="page" id="projectName"><a href="../views/main.php?m=detail&id=<?php echo $projectID; ?>"><?php echo $row['projectName']; ?></a></li>
+        <li class="breadcrumb-item active" aria-current="page" id="projectTemplate"><?php echo $row['typeName']; ?> <?php echo $row['selectedTemplate']; ?></li>
+    </ol>
+</nav>
 
 <!-- Template Restaurant 3 -->
 <div id="TemRes3">
@@ -20,9 +25,9 @@ $shopTypeID = $row["shopTypeID"];
         <div class="col-6">
             <nav>
                 <div class="nav nav-tabs page-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-item nav-link active" id="nav-res3Home" data-bs-toggle="tab" data-bs-target="#res3Home" type="button" role="tab" aria-selected="true" onclick="selectPage('tab-res3Home');">Home</button>
-                    <button class="nav-item nav-link" id="nav-res3About" data-bs-toggle="tab" data-bs-target="#res3About" type="button" role="tab" aria-selected="false" onclick="selectPage('tab-res3About');">About</button>
-                    <button class="nav-item nav-link" id="nav-res3Contact" data-bs-toggle="tab" data-bs-target="#res3Contact" type="button" role="tab" aria-selected="false" onclick="selectPage('tab-res3Contact');">Contact</button>
+                    <button class="nav-item nav-link active" id="tab-res3Home" data-bs-toggle="tab" data-bs-target="#res3Home" type="button" role="tab" aria-selected="true">Home</button>
+                    <button class="nav-item nav-link" id="tab-res3About" data-bs-toggle="tab" data-bs-target="#res3About" type="button" role="tab" aria-selected="false">About</button>
+                    <button class="nav-item nav-link" id="tab-res3Contact" data-bs-toggle="tab" data-bs-target="#res3Contact" type="button" role="tab" aria-selected="false">Contact</button>
                 </div>
             </nav>
 

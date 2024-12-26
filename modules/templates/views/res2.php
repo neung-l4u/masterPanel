@@ -5,14 +5,19 @@ require_once ("../assets/php/share_function.php");
 global $db, $date;
 $id=$_REQUEST['id'];
 
-$row = $db->query('SELECT projectName, shopTypeID FROM `tb_project` WHERE projectID = ?;',$id)->fetchArray();
-
+$row = $db->query('SELECT *, IF(shopTypeID=1, "Restaurant", "Massage") as "typeName" FROM `tb_project` WHERE projectID = ?;',$id)->fetchArray();
 $projectID = $id;
-$projectName = $row["projectName"];
-$shopTypeID = $row["shopTypeID"];
 ?>
 
 <link rel="stylesheet" href="../assets/css/template.css">
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../views/main.php?m=project">Projects</a></li>
+        <li class="breadcrumb-item projectName" aria-current="page" id="projectName"><a href="../views/main.php?m=detail&id=<?php echo $projectID; ?>"><?php echo $row['projectName']; ?></a></li>
+        <li class="breadcrumb-item active" aria-current="page" id="projectTemplate"><?php echo $row['typeName']; ?> <?php echo $row['selectedTemplate']; ?></li>
+    </ol>
+</nav>
 
 <!-- Template Restaurant 2 -->
 <div id="TemRes2">
@@ -20,239 +25,521 @@ $shopTypeID = $row["shopTypeID"];
         <div class="col-6">
             <nav>
                 <div class="nav nav-tabs page-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-item nav-link active" id="nav-res2Home" data-bs-toggle="tab" data-bs-target="#res2Home" type="button" role="tab" aria-selected="true" onclick="selectPage('tab-res2Home');">Home</button>
-                    <button class="nav-item nav-link" id="nav-res2About" data-bs-toggle="tab" data-bs-target="#res2About" type="button" role="tab" aria-selected="false" onclick="selectPage('tab-res2About');">About</button>
-                    <button class="nav-item nav-link" id="nav-res2Contact" data-bs-toggle="tab" data-bs-target="#res2Contact" type="button" role="tab" aria-selected="false" onclick="selectPage('tab-res2Contact');">Contact</button>
+                    <button class="nav-item nav-link active" id="tab-res2Home" data-bs-toggle="tab" data-bs-target="#res2Home" type="button" role="tab" aria-selected="true">Home</button>
+                    <button class="nav-item nav-link" id="tab-res2About" data-bs-toggle="tab" data-bs-target="#res2About" type="button" role="tab" aria-selected="false">About</button>
+                    <button class="nav-item nav-link" id="tab-res2Contact" data-bs-toggle="tab" data-bs-target="#res2Contact" type="button" role="tab" aria-selected="false">Contact</button>
                 </div>
             </nav>
 
+            <!-- Content Page -->
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="res2Home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <div class="row pt-3">
+                        <div class="col">
+                            <div>
+                                <label for="formSliderSet1">1.Image Slider Set 1</label>
+                                <form method="post" enctype="multipart/form-data" class="uploadForm" id="formSliderSet1">
+                                    <div class="d-flex flex-column mb-3">
+                                        <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                            <img class="preview" src="../assets/img/default.png" alt="place">
+                                            <input class="picname" type="hidden" value="">
+                                            <div class="d-flex flex-row gap-2">
+                                                <input type="file" class="file-input col-8" />
+                                                <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div>
+                                <label for="formSliderSet2">2.Image Slider Set 2</label>
+                                <form method="post" enctype="multipart/form-data" class="uploadForm" id="formSliderSet2">
+                                    <div class="d-flex flex-column mb-3">
+                                        <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                            <img class="preview" src="../assets/img/default.png" alt="place">
+                                            <input class="picname" type="hidden" value="">
+                                            <div class="d-flex flex-row gap-2">
+                                                <input type="file" class="file-input col-8" />
+                                                <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div>
+                                <label for="formSliderSet3">3.Image Slider Set 3</label>
+                                <form method="post" enctype="multipart/form-data" class="uploadForm" id="formSliderSet3">
+                                    <div class="d-flex flex-column mb-3">
+                                        <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                            <img class="preview" src="../assets/img/default.png" alt="place">
+                                            <input class="picname" type="hidden" value="">
+                                            <div class="d-flex flex-row gap-2">
+                                                <input type="file" class="file-input col-8" />
+                                                <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
 
-                        <div class="col py-3 px-3">
-                            <label for="formLogo" class="form-label">Logo</label>
-                            <form method="post" enctype="multipart/form-data" class="uploadForm" id="formLogo">
-                                <img class="preview" src="../assets/img/default.png" alt="place">
-                                <input class="picname" type="hidden" value="">
-                                <div class="row">
-                                    <input type="file" class="file-input col-8" />
-                                    <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                            <div class="col">
+                                <label for="tdR1Slogan">4.Promotion Headline #1</label>
+                                <input type="text" class="form-control" id="r2PromotionHeadline1" placeholder="Promotion Headline #1">
+                            </div>
+
+                            <div class="col">
+                                <label for="tdR1Slogan">5. Promotion Message #1</label>
+                                <input type="text" class="form-control" id="r2PromotionMessage1" placeholder="Business Slogan">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div>
+                                        <label for="formPromotionImg1">6. Promotion Image Carousel</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formPromotionImg1">
+                                            <div class="d-flex flex-column mb-3">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-row gap-2">
+                                                        <input type="file" class="file-input col-8" />
+                                                        <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div>
+                                        <label for="formPromotionImg2">Promotion Image Carousel</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formPromotionImg2">
+                                            <div class="d-flex flex-column mb-3">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-row gap-2">
+                                                        <input type="file" class="file-input col-8" />
+                                                        <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
-                            </form>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2HomeSlider2">
-                                <label class="custom-file-label" for="tdR2HomeSlider1">Image Slider Set 2 1920x415 pixels</label>
+                                <div class="col-6">
+                                    <div>
+                                        <label for="formPromotionImg3">Promotion Image Carousel</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formPromotionImg3">
+                                            <div class="d-flex flex-column mb-3">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-row gap-2">
+                                                        <input type="file" class="file-input col-8" />
+                                                        <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div>
+                                        <label for="formPromotionImg4">Promotion Image Carousel</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formPromotionImg4">
+                                            <div class="d-flex flex-column mb-3">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-row gap-2">
+                                                        <input type="file" class="file-input col-8" />
+                                                        <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2HomeSlider3">
-                                <label class="custom-file-label" for="tdR2HomeSlider3">Image Slider Set 3 1920x415 pixels</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="formFeaturedImg1">7. Featured Menu Image #1</label>
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formFeaturedImg1">
+                                        <div class="d-flex flex-column mb-3">
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-row gap-2">
+                                                    <input type="file" class="file-input col-8" />
+                                                    <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-6">
+                                    <label for="formFeaturedImg2">8. Featured Menu Image #2</label>
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formFeaturedImg2">
+                                        <div class="d-flex flex-column mb-3">
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-row gap-2">
+                                                    <input type="file" class="file-input col-8" />
+                                                    <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-
-                        <div>
-                            <textarea class="form-control" id="tdR2Delivery" rows="3" placeholder="Pickup & Delivery Service"></textarea>
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion1" placeholder="Promotion Headline #1">
-                        </div>
-
-                        <div>
-                            <textarea class="form-control" id="tdR2HomePromotion1Body" rows="3" placeholder="Promotion Message #1"></textarea>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2Carousel">
-                                <label class="custom-file-label" for="tdR2Carousel">Promotion Image Carousel 800x1000 pixels (4 Image)</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="formFeaturedImg1">9. Featured Menu Image #3</label>
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formFeaturedImg3">
+                                        <div class="d-flex flex-column mb-3">
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-row gap-2">
+                                                    <input type="file" class="file-input col-8" />
+                                                    <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-6">
+                                    <label for="formFeaturedImg1">10. Featured Menu Image #4</label>
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formFeaturedImg4">
+                                        <div class="d-flex flex-column mb-3">
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-row gap-2">
+                                                    <input type="file" class="file-input col-8" />
+                                                    <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FeaturedImg">
-                                <label class="custom-file-label" for="tdR2FeaturedImg">Featured Menu Image #1 600x800 pixels (8 Image)</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div>
+                                        <label for="formFeaturedImg1">7. Featured Menu Image #5</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formFeaturedImg5">
+                                            <div class="d-flex flex-column mb-3">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-row gap-2">
+                                                        <input type="file" class="file-input col-8" />
+                                                        <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div>
+                                        <label for="formFeaturedImg2">8. Featured Menu Image #6</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formFeaturedImg6">
+                                            <div class="d-flex flex-column mb-3">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-row gap-2">
+                                                        <input type="file" class="file-input col-8" />
+                                                        <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div>
+                                        <label for="formFeaturedImg1">9. Featured Menu Image #7</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formFeaturedImg7">
+                                            <div class="d-flex flex-column mb-3">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-row gap-2">
+                                                        <input type="file" class="file-input col-8" />
+                                                        <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div>
+                                        <label for="formFeaturedImg1">10. Featured Menu Image #8</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formFeaturedImg8">
+                                            <div class="d-flex flex-column mb-3">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-row gap-2">
+                                                        <input type="file" class="file-input col-8" />
+                                                        <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2PromotionImg2">
-                                <label class="custom-file-label" for="tdR2PromotionImg2">Promotion Background Image Carousel 2201x1068 pixels</label>
+                            <!-- 10.Featured Dish Image #3 & 11.Featured Dish Image #4-->
+                            <div class="row mb-5">
+                                <div class="col-6">
+                                    <form method="post" action="" enctype="multipart/form-data" id="myFormTdR1Featured3">
+                                        <div class="d-flex flex-column">
+                                            <label for="filetdR1Featured3">10.Featured Dish Image #3</label>
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                <div class="d-flex flex-column ">
+                                                    <img class="preview" src="../assets/img/default.png" id="tdR1Featured4" alt="place">
+                                                    <input type="hidden" id="dish3" value="">
+                                                </div>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <input type="file" class="file-input" id="filetdR1Featured3" />
+                                                    <button type="submit" class="button" id="btnUpload">Upload</button>
+                                                    <div>
+                                                        <input type="text" class="form-control" id="tdR1Featuredname3" placeholder="Featured Dish Name #3">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-6">
+                                    <form method="post" action="" enctype="multipart/form-data" id="myFormTdR1Featured4">
+                                        <div class="d-flex flex-column">
+                                            <label for="filetdR1Featured4">11.Featured Dish Image #4</label>
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                <div class="d-flex flex-column ">
+                                                    <img class="preview" src="../assets/img/default.png" id="tdR1Featured4" alt="place">
+                                                    <input type="hidden" id="dish4" value="">
+                                                </div>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <input type="file" class="file-input" id="filetdR1Featured4"/>
+                                                    <button type="submit" class="button" id="btnUpload">Upload</button>
+                                                    <div>
+                                                        <input type="text" class="form-control" id="tdR1Featuredname4" placeholder="Featured Dish Name #4">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
+                            <!-- END-->
 
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion2" placeholder="Promotion Headline #2">
-                        </div>
+                            <!-- Testimonial Box1-->
 
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2ReviewBg">
-                                <label class="custom-file-label" for="tdR2ReviewBg">Reviews Background Image 2201x1068 pixels</label>
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <form method="post" action="" enctype="multipart/form-data" id="myFormTdR1TestimonialImg1">
+                                        <div class="d-flex flex-column">
+                                            <label for="tdR1TestimonialImg1">12. Testimonial image #1</label>
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                <div class="d-flex flex-column ">
+                                                    <img class="preview" src="../assets/img/default.png" id="tdR1Featured1" alt="place">
+                                                    <input type="hidden" id="testimg1" value="">
+                                                </div>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <input type="file" class="file-input" id="filetdR1Featured1" />
+                                                    <button type="submit" class="button" id="btnUpload">Upload</button>
+                                                    <textarea class="form-control" id="tdR1TestimonialText1" rows="3" placeholder="Testimonial #1"></textarea>
+                                                    <input type="text" class="form-control" id="tdR1TestimonialName1" placeholder="Name #1">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="col-6">
+                                    <form method="post" action="" enctype="multipart/form-data" id="myFormTdR1TestimonialImg2">
+                                        <div class="d-flex flex-column">
+                                            <label for="tdR1TestimonialImg2">13. Testimonial image #2</label>
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                <div class="d-flex flex-column ">
+                                                    <img class="preview" src="../assets/img/default.png" id="tdR1Featured2" alt="place">
+                                                    <input type="hidden" id="testimg2" value="">
+                                                </div>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <input type="file" class="file-input" id="filetdR1Featured2" />
+                                                    <button type="submit" class="button" id="btnUpload">Upload</button>
+                                                    <textarea class="form-control" id="tdR1TestimonialText2" rows="3" placeholder="Testimonial #2"></textarea>
+                                                    <input type="text" class="form-control" id="tdR1TestimonialName2" placeholder="Name #2">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-
-                        <div>
-                            <textarea class="form-control" id="tdR2TestimonialText1" rows="3" placeholder="Testimonial #1"></textarea>
-                        
-                            <div class="d-flex flex-row gap-1">
-                                <input type="text" class="col-8 form-control" id="tdR2TestimonialName1" placeholder="Name">
+                            <!-- Testimonial -->
                             
-                                <div class="col-4 custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2TestimonialImg1">
-                                    <label class="custom-file-label" for="tdR2TestimonialImg1">Photo</label>
+                            <!-- Testimonial Box2-->
+                            <div class="row mb-5">
+                                <div class="col-6">
+                                    <form method="post" action="" enctype="multipart/form-data" id="myFormTdR1TestimonialImg3">
+                                        <div class="d-flex flex-column">
+                                            <label for="tdR1TestimonialImg3">14. Testimonial image #3</label>
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                <div class="d-flex flex-column ">
+                                                    <img class="preview" src="../assets/img/default.png" id="tdR1Featured3" alt="place">
+                                                    <input type="hidden" id="testimg3" value="">
+                                                </div>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <input type="file" class="file-input" id="filetdR1Featured3" />
+                                                    <button type="submit" class="button" id="btnUpload">Upload</button>
+                                                    <textarea class="form-control" id="tdR1TestimonialText3" rows="3" placeholder="Testimonial #3"></textarea>
+                                                    <input type="text" class="form-control" id="tdR1TestimonialName3" placeholder="Name #3">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="col-6">
+                                    <form method="post" action="" enctype="multipart/form-data" id="myFormTdR1TestimonialImg4">
+                                        <div class="d-flex flex-column">
+                                            <label for="tdR1TestimonialImg4">15. Testimonial image #4</label>
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                <div class="d-flex flex-column ">
+                                                    <img class="preview" src="../assets/img/default.png" id="tdR1Featured4" alt="place">
+                                                    <input type="hidden" id="testimg4" value="">
+                                                </div>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <input type="file" class="file-input" id="filetdR1Featured2" />
+                                                    <button type="submit" class="button" id="btnUpload">Upload</button>
+                                                    <textarea class="form-control" id="tdR1TestimonialText4" rows="3" placeholder="Testimonial #4"></textarea>
+                                                    <input type="text" class="form-control" id="tdR1TestimonialName4" placeholder="Name #4">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-                        </div>
+                            <!-- Testimonial -->
 
-                        <div>
-                            <textarea class="form-control" id="tdR2TestimonialText2" rows="3" placeholder="Testimonial #2"></textarea>
-                        
-                            <div class="d-flex flex-row gap-1">
-                                <input type="text" class="col-8 form-control" id="tdR2TestimonialName2" placeholder="Name">
+                            <label for="tdR1GGReview">16.Google Link for Review</label>
+                            <div>
+                                <input type="text" class="form-control" id="tdR1GGReview" placeholder="Google Link for Review">
+                            </div>
+
+                            <label for="tdR1DeliveryMapImg">17.Delivery Map Image</label>
+                            <div>
+                                <div class="custom-file  mb-3">
+                                    <input type="file" class="custom-file-input" id="tdR1DeliveryMapImg">
+                                    <label class="custom-file-label" for="tdR1DeliveryMapImg">Delivery Map Image</label>
+                                </div>
+                            </div>
+
                             
-                                <div class="col-4 custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2TestimonialImg2">
-                                    <label class="custom-file-label" for="tdR2TestimonialImg2">Photo</label>
+                            <label for="tdR1DeliveryRate">18.Delivery Rates with Locations</label>
+                            <div>
+                                <textarea class="form-control" id="tdR1DeliveryRate" rows="3" placeholder="Delivery Rates with Locations"></textarea>
+                            </div>
+
+                            <label for="tdR1DeliveryRate">19.Promotion Area Background Image</label>
+                            <div>
+                                <div class="custom-file  mb-3">
+                                    <input type="file" class="custom-file-input" id="tdR1PromotionBgImg">
+                                    <label class="custom-file-label" for="tdR1PromotionBgImg">Promotion Area Background Image</label>
                                 </div>
                             </div>
-                        </div>
-
-                        <div>
-                            <textarea class="form-control" id="tdR2TestimonialText3" rows="3" placeholder="Testimonial #3"></textarea>
-                        
-                            <div class="d-flex flex-row gap-1">
-                                <input type="text" class="col-8 form-control" id="tdR2TestimonialName3" placeholder="Name">
                             
-                                <div class="col-4 custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2TestimonialImg3">
-                                    <label class="custom-file-label" for="tdR2TestimonialImg3">Photo</label>
+                            <label for="tdR1HomePromotion2">20.Promotion Headline</label>
+                            <div>
+                                <input type="text" class="form-control" id="tdR1HomePromotion2" placeholder="Promotion Headline">
+                            </div>
+
+                            <label for="tdR1HomePromotion2Sub">21.Promotion Sub Headline</label>
+                            <div>
+                                <input type="text" class="form-control" id="tdR1HomePromotion2Sub" placeholder="Promotion Sub Headline">
+                            </div>
+
+                            <label for="tdR1HomePromotion2Sub">22.Carousel Images</label>
+                            <div>
+                                <div class="custom-file  mb-3">
+                                    <input type="file" class="custom-file-input" id="tdR1CarouselImg">
+                                    <label class="custom-file-label" for="tdR1CarouselImg">Carousel Images</label>
+                                </div>
+                                <div class="custom-file  mb-3">
+                                    <input type="file" class="custom-file-input" id="tdR1CarouselImg">
+                                    <label class="custom-file-label" for="tdR1CarouselImg">Carousel Images</label>
+                                </div>
+                                <div class="custom-file  mb-3">
+                                    <input type="file" class="custom-file-input" id="tdR1CarouselImg">
+                                    <label class="custom-file-label" for="tdR1CarouselImg">Carousel Images</label>
+                                </div>
+                                <div class="custom-file  mb-5">
+                                    <input type="file" class="custom-file-input" id="tdR1CarouselImg">
+                                    <label class="custom-file-label" for="tdR1CarouselImg">Carousel Images</label>
                                 </div>
                             </div>
                         </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2PromotionImg3">
-                                <label class="custom-file-label" for="tdR2PromotionImg3">Promotion Image #3 952x952 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion3" placeholder="Promotion Headline #3">
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion3Body" placeholder="Promotion Message #3">
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FooterImg1">
-                                <label class="custom-file-label" for="tdR2FooterImg1">Footer Image #1 600x600 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FooterImg2">
-                                <label class="custom-file-label" for="tdR2FooterImg2">Footer Image #2 600x600 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FooterImg3">
-                                <label class="custom-file-label" for="tdR2FooterImg3">Footer Image #3 600x600 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FooterImg4">
-                                <label class="custom-file-label" for="tdR2FooterImg4">Footer Image #4 600x600 pixels</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion4" placeholder="Promotion Headline #4">
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2HomePromotion4Body" placeholder="Promotion Message #4">
-                        </div>
-
-                        <div>
-                            <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2FooterBgImg">
-                                <label class="custom-file-label" for="tdR2FooterBgImg">Footer Background Image 2201x1068 pixels</label>
-                            </div>
-                        </div>
-
                     </div>
-                </div>
+                </div> 
+                <!-- End-Home-Tab -->
                 <div class="tab-pane fade" id="res2About" role="tabpanel" aria-labelledby="nav-about-tab">
                     <div class="row pt-3">
 
                             <div>
                                 <div class="custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2HeadAboutImg">
-                                    <label class="custom-file-label" for="tdR2HeadAboutImg">About Page Header Background Image 2201x11068 pixels</label>
+                                    <input type="file" class="custom-file-input" id="tdR1HeadAboutImg">
+                                    <label class="custom-file-label" for="tdR1HeadAboutImg">About Page Header Background Image 2201x11068 pixels</label>
                                 </div>
                             </div>
 
                             <div>
-                                <textarea class="form-control" id="tdR2AboutUSBody" rows="3" placeholder="About Us Body"></textarea>
+                                <textarea class="form-control" id="tdR1AboutUSBody" rows="3" placeholder="About Us Body"></textarea>
                             </div>
                             
                             <div class="mt-3">
-                                <input type="text" class="form-control" id="tdR2AboutPromotion1" placeholder="Promotion Headline">
+                                <input type="text" class="form-control" id="tdR1AboutPromotion1" placeholder="Promotion Headline">
                             </div>
 
                             <div>
-                                <textarea class="form-control" id="tdR2AboutPromotion1Body" rows="3" placeholder="Promotion Body"></textarea>
+                                <textarea class="form-control" id="tdR1AboutPromotion1Body" rows="3" placeholder="Promotion Body"></textarea>
                             </div>
 
                             <div>
                                 <div class="custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2AboutPromotionImg">
-                                    <label class="custom-file-label" for="tdR2AboutPromotionImg">Promotion Image Carousel 850x1275 pixels</label>
+                                    <input type="file" class="custom-file-input" id="tdR1AboutPromotionImg">
+                                    <label class="custom-file-label" for="tdR1AboutPromotionImg">Promotion Image</label>
                                 </div>
                             </div>
 
                             <div>
                                 <div class="custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2StaffImg1">
-                                    <label class="custom-file-label" for="tdR2StaffImg1">Staff Image #1 600x900 pixels</label>
+                                    <input type="file" class="custom-file-input" id="tdR1CalloutBgImg">
+                                    <label class="custom-file-label" for="tdR1CalloutBgImg">Background Image</label>
                                 </div>
                             </div>
-                            
-                            <div>
-                                <div class="custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2StaffImg2">
-                                    <label class="custom-file-label" for="tdR2StaffImg2">Staff Image #2 600x900 pixels</label>
-                                </div>
+
+                            <div class="mt-3">
+                                <input type="text" class="form-control" id="tdR1Callout1" placeholder="Callout #1">
+                            </div>
+
+                            <div class="mt-3">
+                                <input type="text" class="form-control" id="tdR1Callout2" placeholder="Callout #2">
+                            </div>
+
+                            <div class="mt-3">
+                                <input type="text" class="form-control" id="tdR1Callout3" placeholder="Callout #3">
+                            </div>
+
+                            <div class="mt-3">
+                                <input type="text" class="form-control" id="tdR1Callout4" placeholder="Callout #4">
                             </div>
 
                             <div>
                                 <div class="custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2StaffImg3">
-                                    <label class="custom-file-label" for="tdR2StaffImg3">Staff Image #3 600x900 pixels</label>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="custom-file  mb-3">
-                                    <input type="file" class="custom-file-input" id="tdR2AboutFeaturedImg">
-                                    <label class="custom-file-label" for="tdR2AboutFeaturedImg">Featured Dish Image #1</label>
+                                    <input type="file" class="custom-file-input" id="tdR1AboutFeaturedImg">
+                                    <label class="custom-file-label" for="tdR1AboutFeaturedImg">Featured Dish Image #1</label>
                                 </div>
                             </div>
 
@@ -293,41 +580,44 @@ $shopTypeID = $row["shopTypeID"];
 
                     </div>
                 </div>
+                <!-- End-About-Tab -->
                 <div class="tab-pane fade" id="res2Contact" role="tabpanel" aria-labelledby="nav-contact-tab">
                     <div class="row pt-3">
 
                         <div>
                             <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2HeadContactImg">
-                                <label class="custom-file-label" for="tdR2HeadContactImg">Contact Page Header Background Image 2268x1512 pixels</label>
+                                <input type="file" class="custom-file-input" id="tdR1HeadContactImg">
+                                <label class="custom-file-label" for="tdR1HeadContactImg">Contact Page Header Background Image 2268x1512 pixels</label>
                             </div>
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2ContactHeadSub1" placeholder="Contact Us Sub Headline #1">
-                        </div>
-
-                        <div>
-                            <input type="text" class="form-control" id="tdR2ContactHeadSub2" placeholder="Contact Us Sub Headline #2">
                         </div>
 
                         <div>
                             <div class="custom-file  mb-3">
-                                <input type="file" class="custom-file-input" id="tdR2ContactBgImg">
-                                <label class="custom-file-label" for="tdR2ContactBgImg">Contact Page Background Image 2268x1512 pixels</label>
+                                <input type="file" class="custom-file-input" id="tdR1ContactBgImg">
+                                <label class="custom-file-label" for="tdR1ContactBgImg">Contact Page Background Image 2268x1512 pixels</label>
                             </div>
                         </div>
 
                         <div>
-                            <input type="text" class="form-control" id="tdR2ContactPromotion1" placeholder="Promotion Headline">
+                            <input type="text" class="form-control" id="tdR1ContactHeadSub1" placeholder="Contact Us Sub Headline #1">
                         </div>
 
                         <div>
-                            <input type="text" class="form-control" id="tdR2ContactPromotion1sub" placeholder="Promotion Sub Headline">
+                            <input type="text" class="form-control" id="tdR1ContactHeadSub2" placeholder="Contact Us Sub Headline #2">
                         </div>
 
+                        <div>
+                            <input type="text" class="form-control" id="tdR1ContactPromotion1" placeholder="Promotion Headline">
+                        </div>
+
+                        <div>
+                            <input type="text" class="form-control" id="tdR1ContactPromotion1sub" placeholder="Promotion Sub Headline">
+                        </div>
+                        
                     </div>
+                    
                 </div>
+                <!-- End-Contact-Tab -->
             </div>
 
             <div class="row" id="changepage" style="overflow:auto;">
@@ -337,9 +627,8 @@ $shopTypeID = $row["shopTypeID"];
                 </div>
 
                 <div class="col-6" style="text-align:right;">
-
-                    <button type="button" class="btn btn-light" id="prevPageBtn" onclick="nextPrev(-1)">Back</button>
-                    <button type="button" class="btn btn-primary" id="nextPageBtn" onclick="nextPagePrev(1)">Next</button>
+                    <button class="btn btn-light" id="prevPageBtn">Back</button>
+                    <button class="btn btn-primary" id="nextPageBtn">Next</button>
                 </div>
             </div>
         </div>
