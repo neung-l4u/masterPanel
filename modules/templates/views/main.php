@@ -1,63 +1,7 @@
 <?php
 session_start();
-$menu = (!empty($_REQUEST['m'])) ? trim($_REQUEST['m']) : 'home'; //ดูว่าเลือกเมนูไหนอยู่
-switch ($menu) {
-    case 'home':
-        $title = 'Home';
-        $view = 'home.php';
-        $menu = 'home';
-        break;
-    case 'project':
-        $title = 'Project';
-        $view = 'project.php';
-        $menu = 'project';
-        break;
-    case 'profile':
-        $title = 'ProFile';
-        $view = 'profile.php';
-        $menu = 'profile';
-        break;
-    case 'detail':
-        $title = 'Project Detail';
-        $view = 'project_detail.php';
-        $menu = 'detail';
-        break;
-    case 'res1':
-        $title = 'Template Restaurant 1';
-        $view = 'res1.php';
-        $menu = 'project';
-        break;
-    case 'res2':
-        $title = 'Template Restaurant 2';
-        $view = 'res2.php';
-        $menu = 'project';
-        break;
-    case 'res3':
-        $title = 'Template Restaurant 3';
-        $view = 'res3.php';
-        $menu = 'project';
-        break;
-    case 'mas1':
-        $title = 'Template Massage 1';
-        $view = 'mas1.php';
-        $menu = 'project';
-        break;
-    case 'mas2':
-        $title = 'Template Massage 2';
-        $view = 'mas2.php';
-        $menu = 'project';
-        break;
-    case 'mas3':
-        $title = 'Template Massage 3';
-        $view = 'mas3.php';
-        $menu = 'project';
-        break;
-    default:
-        $title = 'Home';
-        $view = 'home.php';
-        $menu = 'home';
-        break;
-}
+global $title, $view;
+require_once '../assets/php/pageNavigate.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,7 +15,6 @@ switch ($menu) {
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title><?php echo $title; ?></title>
-    
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
     <link rel="stylesheet" href="../assets/css/main.css">
 
@@ -81,14 +24,13 @@ switch ($menu) {
 </head>
 <body>
     <?php include ('topNav.php');?>
-<div class="container pt-5">
-    <div class="row">
-        <div class="col">
-            <h4 class="text-secondary">Page : <?php echo $title; ?></h4>
+    <div class="container pt-5">
+        <div class="row">
+            <div class="col">
+                <h6 class="text-danger-emphasis">Current page : <?php echo $title; ?></h6>
+            </div>
         </div>
+        <?php include($view);?>
     </div>
-    <?php include($view);?>
-</div>
-
 </body>
 </html>
