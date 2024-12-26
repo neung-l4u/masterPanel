@@ -5461,6 +5461,17 @@
           },
           "Special": {
             "SetupFee": [
+              {
+                "name": "Setup Fee (No Contract)",
+                "product_id": "prod_R7hHMwGEieHHtn",
+                "price_id": "THSTF03M00O-03",
+                "currency": "thb",
+                "amount": 0,
+                "type": "setup",
+                "status": "show",
+                "ext": "",
+                "gst": false
+              }
             ]
           }
         }
