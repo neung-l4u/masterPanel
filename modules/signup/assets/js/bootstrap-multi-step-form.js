@@ -390,7 +390,7 @@ $('#formCountry').change(function() {
       break;
     case "TH":
       inputBusinessNumber.attr('required', true);
-      labelBusinessNumber.html("ABN");
+      labelBusinessNumber.html("TAX ID");
       classBusinessNumber.show();
       countryName.html("Thailand");
       selectState.show();
@@ -1243,7 +1243,7 @@ const backupPayment = (param) => {
       url = "https://buy.stripe.com/5kAdRi9rfgO71nG002";
       break;
     case "TH":
-      url = "https://buy.stripe.com/";
+      url = "https://buy.stripe.com/8wM5ogh1faEs0uc4go";
       break;
     default:
       url = "https://buy.stripe.com/bIY4kceT713SdgY7sx";
