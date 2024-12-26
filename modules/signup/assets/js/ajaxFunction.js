@@ -103,6 +103,10 @@ function getProductList(country) {
                         currencySign = "£";
                         currencySignPlace.html("£");
                         break;
+                    case "thb":
+                        currencySign = "฿";
+                        currencySignPlace.html("฿");
+                        break;
                     default:
                         currencySign = "$";
                         currencySignPlace.html("$");
@@ -164,6 +168,10 @@ function getProductList(country) {
                     case "gbp":
                         currencySign = "£";
                         currencySignPlace.html("£");
+                        break;
+                    case "thb":
+                        currencySign = "฿";
+                        currencySignPlace.html("฿");
                         break;
                     default:
                         currencySign = "$";
@@ -232,6 +240,10 @@ function getProductList(country) {
                     case "gbp":
                         currencySign = "£";
                         currencySignPlace.html("£");
+                        break;
+                    case "thb":
+                        currencySign = "฿";
+                        currencySignPlace.html("฿");
                         break;
                     default:
                         currencySign = "$";

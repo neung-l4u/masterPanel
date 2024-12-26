@@ -63,6 +63,7 @@ $currentDate = date('d/m/Y');
                         <button type="button" id="backupFormUK" class="btn btn-secondary backupButton" onclick="backupPayment('UK');" >UK</button>
                         <button type="button" id="backupFormUS" class="btn btn-secondary backupButton" onclick="backupPayment('US');" >US</button>
                         <button type="button" id="backupFormCA" class="btn btn-secondary backupButton" onclick="backupPayment('CA');" >CA</button>
+                        <button type="button" id="backupFormTH" class="btn btn-secondary backupButton" onclick="backupPayment('TH');" >TH</button>
                     </div>
 <!--                    <button type="button" id="saveForm" class="btn btn-secondary toolElements" disabled style="display: none;">Save Form Progress</button>-->
                 </div>
@@ -103,6 +104,7 @@ $currentDate = date('d/m/Y');
                                             <option value="NZ">New Zealand</option>
                                             <option value="UK">United Kingdom</option>
                                             <option value="US">United States</option>
+                                            <option value="TH">Thailand</option>
                                         </select>
                                         <input type="hidden" name="00N2v00000IyVqF" id="countryTextOnly">
                                     </div>
@@ -995,7 +997,7 @@ $currentDate = date('d/m/Y');
                                                             </span>
                                                             <small id="domainHelpAU" class="form-text">
                                                                 <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
-                                                                    Check Availability AU, NZ, UK
+                                                                    Check Availability AU, NZ, UK, TH
                                                                 </a>
                                                             </small>
                                                             <br>
