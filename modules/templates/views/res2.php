@@ -296,6 +296,7 @@ $shopTypeID = $row["shopTypeID"];
                 <div class="tab-pane fade" id="res2Contact" role="tabpanel" aria-labelledby="nav-contact-tab">
                     <div class="row pt-3">
 
+                        <!-- Contact -->
                         <div>
                             <div class="custom-file  mb-3">
                                 <input type="file" class="custom-file-input" id="tdR2HeadContactImg">
