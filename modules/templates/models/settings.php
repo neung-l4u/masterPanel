@@ -46,9 +46,10 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
         $return['result'] = 'success';
     }
 }else if ( $param['act'] == 'setEdit' ){ //อ่าน project ตามที่ส่ง projectID แค่ 1 แถว มาว่ามีรายละเอียดอะไร
-    /*$project = $db->query('SELECT * FROM `tb_project` WHERE `projectID` = ?',$param['editID'])->fetchArray();
+    $project = array();
+    /*$project = $db->query('SELECT * FROM `tb_project` WHERE `projectID` = ?',$param['editID'])->fetchArray();*/
     $row = array();
-    $row[] = $project;*/
+    $row[] = $project;
     $return['result'] = 'success';
     $return['data'] = $row;
 }else if ( $param['act'] == 'update' ) { //อัพเดท project
