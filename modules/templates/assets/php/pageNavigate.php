@@ -41,6 +41,11 @@ switch ($menu) {
         $view = 'mas3.php';
         $menu = 'project';
         break;
+    case 'settings':
+        $title = 'System Settings';
+        $view = 'settings.php';
+        $menu = 'gear';
+        break;
     default:
         $title = 'Home';
         $view = 'home.php';
