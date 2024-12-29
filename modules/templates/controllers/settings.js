@@ -12,73 +12,7 @@ let payload = {};
 
 $(function() {
     loadData();
-    loadCountry();
-    loadShopType();
 });//ready
-
-const loadCountry = () => {
-    payload = {
-        act: 'readForSelectInput',
-        token: Math.random()
-    };
-
-    const readCountry = $.ajax({
-        url: "../models/country.php",
-        method: 'POST',
-        async: false,
-        cache: false,
-        dataType: 'json',
-        data: payload
-    });
-
-    readCountry.done(function(res) {
-        let row = res.data;
-            row.forEach(item => {
-                let {id, code, name} = item;
-                let optionHTML = `<option value="${id}">${code} : ${name}</option>`;
-                inputCountry.append(optionHTML);
-            });//foreach
-        return true;
-    });
-
-    readCountry.fail(function(xhr, status, error) {
-        console.log("ajax call fail!!");
-        console.log(status + ": " + error);
-        return false;
-    });
-}//load Country
-
-const loadShopType = () => {
-    payload = {
-        act: 'readForSelectInput',
-        token: Math.random()
-    };
-
-    const readShopType = $.ajax({
-        url: "../models/shopType.php",
-        method: 'POST',
-        async: false,
-        cache: false,
-        dataType: 'json',
-        data: payload
-    });
-
-    readShopType.done(function(res) {
-        let row = res.data;
-        row.forEach(item => {
-            let {id, name} = item;
-            let optionHTML = `<option value="${id}">${id} : ${name}</option>`;
-            inputShopTypeID.append(optionHTML);
-        });//foreach
-        return true;
-    });
-
-    readShopType.fail(function(xhr, status, error) {
-        console.log("ajax call shopType fail!!");
-        console.log(status + ": " + error);
-        return false;
-    });
-}//load Country
 
 const loadData = () => {
     payload = {
@@ -87,8 +21,8 @@ const loadData = () => {
         token: Math.random()
     };
 
-    const readProject = $.ajax({
-        url: "../models/project.php",
+    const readSettings = $.ajax({
+        url: "../models/settings.php",
         method: 'POST',
         async: false,
         cache: false,
@@ -96,36 +30,26 @@ const loadData = () => {
         data: payload
     });
 
-    readProject.done(function(res) {
-        $('#projectData > tbody').empty();
+    readSettings.done(function(res) {
+        $('#settingsData > tbody').empty();
         let allData = res.data.length;
         let row = res.data;
         let i = 0;
-        const iconNext = '<img src="../assets/img/next.svg" alt="detail" title="Detail" class="action_icon">';
         const iconEdit = '<img src="../assets/img/edit.svg" alt="edit" title="Edit" class="action_icon">';
         const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
-        const iconTemplate = '<img src="../assets/img/template.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
 
         if (allData>0) {
             row.forEach(item => {
-                let {projectID : id, projectName : name, shopType, selectedTemplate, owner, countryName : country, statusID : status} = item;
-                let icon = (status===1) ? 'Draft' : 'Send';
-                let url = `main.php?m=detail&id=${id}`;
-                let temPage = (shopType==="Restaurant") ? 'res' : 'mas';
-                temPage = temPage+selectedTemplate;
-                let templateUrl = `main.php?m=${temPage}&id=${id}`;
-                $('#projectData > tbody:last-child').append(
+                let {id, email, channel, status} = item;
+                let textStatus = (status===1) ? 'On' : 'Off';
+
+                $('#settingsData > tbody:last-child').append(
                     `<tr>
                         <td>${++i}</td>
-                        <td>${shopType}</td>
-                        <td style="text-align: center;">${selectedTemplate}</td>
-                        <td>${name}</td>
-                        <td>${icon}</td>
-                        <td>${owner}</td>
-                        <td>${country}</td>
+                        <td>${email}</td>
+                        <td>${channel}</td>
+                        <td>${textStatus}</td>
                         <td class="d-flex justify-content-end gap-2">
-                            <a href="${templateUrl}">${iconTemplate}</a>
-                            <a href="${url}">${iconNext}</a>
                             <a href="#" onclick="setEdit(${id});">${iconEdit}</a>
                             <a href="#" onclick="setDel(${id});">${iconDelete}</a>
                         </td>
@@ -134,7 +58,7 @@ const loadData = () => {
             });//foreach
 
         }else {
-            $('#projectData > tbody:last-child').append(
+            $('#settingsData > tbody:last-child').append(
                 `<tr>
                     <th colspan="6">No Data</th>
                 </tr>`
@@ -143,7 +67,7 @@ const loadData = () => {
         return true;
     });
 
-    readProject.fail(function(xhr, status, error) {
+    readSettings.fail(function(xhr, status, error) {
         console.log("ajax call fail!!");
         console.log(status + ": " + error);
         return false;
@@ -163,7 +87,7 @@ const setEdit = (id) => {
         };
 
         const readProject = $.ajax({
-            url: "../models/project.php",
+            url: "../models/settings.php",
             method: 'POST',
             async: false,
             cache: false,
@@ -208,7 +132,7 @@ const setDel = (id) => {
         };
 
         const readProject = $.ajax({
-            url: "../models/project.php",
+            url: "../models/settings.php",
             method: 'POST',
             async: false,
             cache: false,
@@ -242,9 +166,9 @@ const saveForm = () => {
         token: Math.random()
     };
 
-    const saveProjectAPI =
+    const saveSettingsAPI =
         $.ajax({
-            url: "../models/project.php",
+            url: "../models/settings.php",
             method: "POST",
             async: false,
             cache: false,
@@ -252,7 +176,7 @@ const saveForm = () => {
             data: payload,
         });//ajax
 
-    saveProjectAPI.done(function (res) {
+    saveSettingsAPI.done(function (res) {
         if(res.result === "success"){
             loadData();
             modalClose();
@@ -261,7 +185,7 @@ const saveForm = () => {
         }
     });
 
-    saveProjectAPI.fail(function (xhr, status, error) {
+    saveSettingsAPI.fail(function (xhr, status, error) {
         console.log("ajax call fail!!");
         console.log(status + ": " + error);
     });
@@ -269,7 +193,7 @@ const saveForm = () => {
 }//saveForm
 
 const frmReset = () => {
-  $("#frmProject").trigger("reset");
+    $("#frmProject").trigger("reset");
     inputEditID.val('');
     inputShopTypeID.val(0);
     inputCountry.val(0);

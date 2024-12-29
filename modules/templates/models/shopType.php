@@ -15,7 +15,7 @@ $return['data'] = '';
 $return['act'] = $param['act'];
 
 if ( $param['act'] == 'readForSelectInput' ) {
-    $shopType = $db->query('SELECT `id`, `name` FROM `tb_shopType` WHERE status = 1 ORDER BY `tb_shopType`.`id`')->fetchAll();
+    $shopType = $db->query('SELECT `id`, `name` FROM `tb_shopType` WHERE status = ? ORDER BY `id`',1)->fetchAll();
     $row = array();
     foreach ($shopType as $type) {
         $row[] = $type;

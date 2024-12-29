@@ -1,9 +1,9 @@
-<link rel="stylesheet" href="../assets/css/project.css">
+<link rel="stylesheet" href="../assets/css/settings.css">
 
 <div class="row">
     <div class="col">
         <div class="d-flex justify-content-between">
-            <h4>Project</h4>
+            <h4>Settings</h4>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalForm">
                 Add new
             </button>
@@ -13,21 +13,19 @@
 
 <div class="row pt-3">
     <p>
-        <small class="text-secondary">The table below only shows projects you added, not others.</small>
+        <small class="text-secondary">The system will send notification emails to those who submit the form as usual and will send notification emails to people in the list below,<br></small>
+        <small class="text-danger">so if you are a submitter, you do not need to enter your name here. table below only shows projects you added, not others.</small>
     </p>
     <div class="col border rounded py-3">
-        <table id="projectData" class="table table-striped table-hover">
+        <table id="settingsData" class="table table-striped table-hover">
             <thead class="table-dark thead-dark">
-                <tr>
-                    <th class="col_id">#</th>
-                    <th class="col_type">Type</th>
-                    <th class="col_template">Template</th>
-                    <th class="col_name">Project Name</th>
-                    <th class="col_status">Status</th>
-                    <th class="col_owner">Owner</th>
-                    <th class="col_country">Country</th>
-                    <th class="col_action"></th>
-                </tr>
+            <tr>
+                <th class="col_id">#</th>
+                <th class="col_email">Email</th>
+                <th class="col_channel">Channel</th>
+                <th class="col_status">Status</th>
+                <th class="col_action"></th>
+            </tr>
             </thead>
             <tbody>
             </tbody>
@@ -104,4 +102,4 @@
     </div>
 </div>
 
-<script src="../controllers/project.js"></script>
+<script src="../controllers/settings.js"></script>
