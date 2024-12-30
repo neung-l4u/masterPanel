@@ -20,7 +20,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
 
-<nav aria-label="breadcrumb">
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../views/main.php?m=project">Projects</a></li>
         <li class="breadcrumb-item active projectName" aria-current="page" id="projectName"><?php echo $row['projectName']; ?></li>

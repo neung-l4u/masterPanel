@@ -26,7 +26,7 @@ const imageMap = {
 
 $('.nav-tabs').on('shown.bs.tab', (e) => {
     const [selector, src] = (imageMap[e.target.id] || '').split(',');
-    if (selector) $(selector).attr('src', src);
+    //if (selector) $(selector).attr('src', src);
 });
 
 const nextPrev = (step) => {
