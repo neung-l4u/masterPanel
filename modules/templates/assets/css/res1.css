@@ -1,0 +1,70 @@
+a {
+    text-decoration: none !important;
+}
+
+input[type="file"] {
+    border: 0px solid lightgrey;
+}
+
+/* Preview */
+form#bg1 div div div .preview, form#formRromotionArea div div .preview, form#formAboutbg1 div div .preview, form#formbgAboutBackground div div .preview, form#formbgContactHeadBackground div div .preview{
+    width: 100%;
+    max-height: 50%;
+    aspect-ratio: 10 / 3;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+}
+
+form#promotion1 div .preview {
+    width: 35%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+}
+
+form#formDish1 div div div .preview, form#formDish2 div div div .preview, form#formDish3 div div div .preview, form#formDish4 div div div .preview {
+    width: 50%;
+    max-height: 50%;
+    aspect-ratio: 4 / 4;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+}
+
+form#formTestimonial1 div .preview, form#formTestimonial2 div .preview   {
+    width: 50%;
+    max-height: 50%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+    border-radius: 50%;
+}
+
+form#formTestimonial3 div .preview, form#formTestimonial4 div .preview   {
+    width: 50%;
+    max-height: 50%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+    border-radius: 50%;
+}
+
+form#formFooter1 div div .preview, form#formFooter2 div div .preview, form#formFooter3 div div .preview, form#formFooter4 div div .preview {
+    width: 50%;
+    max-height: 50%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+}
+/* End Preview */
