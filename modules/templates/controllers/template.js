@@ -1,47 +1,41 @@
 const projectID = $("#projectID").val();
 
-function selectPage(page) {
-    let imageMap = {
-        'tab-res1Home':  '#res1Img,../assets/img/Res1Home.png',
-        'tab-res1About': '#res1Img,../assets/img/Res1About.png',
-        'tab-res1Contact': '#res1Img,../assets/img/Res1Contact.png',
-        'tab-res2Home': '#res2Img,../assets/img/Res2Home.png',
-        'tab-res2About': '#res2Img,../assets/img/Res2About.png',
-        'tab-res2Contact': '#res2Img,../assets/img/Res2Contact.png',
-        'tab-res3Home': '#res3Img,../assets/img/Res3Home.png',
-        'tab-res3About': '#res3Img,../assets/img/Res3About.png',
-        'tab-res3Contact': '#res3Img,../assets/img/Res3Contact.png',
-        'tab-mas1Home': '#mas1Img,../assets/img/Mas1Home.png',
-        'tab-mas1About': '#mas1Img,../assets/img/Mas1About.png',
-        'tab-mas1Services': '#mas1Img,../assets/img/Mas1Service.png',
-        'tab-mas1Contact': '#mas1Img,../assets/img/Mas1Contact.png',
-        'tab-mas2Home': '#mas2Img,../assets/img/Mas2Home.png',
-        'tab-mas2About': '#mas2Img,../assets/img/Mas2About.png',
-        'tab-mas2Services': '#mas2Img,../assets/img/Mas2Service.png',
-        'tab-mas2Contact': '#mas2Img,../assets/img/Mas2Contact.png',
-        'tab-mas3Home': '#mas3Img,../assets/img/Mas3Home.png',
-        'tab-mas3About': '#mas3Img,../assets/img/Mas3About.png',
-        'tab-mas3Services': '#mas3Img,../assets/img/Mas3Service.png',
-        'tab-mas3Contact': '#mas3Img,../assets/img/Mas3Contact.png'
-    };
+const imageMap = {
+    'tab-res1Home':  '#res1Img,../assets/img/Res1Home.png',
+    'tab-res1About': '#res1Img,../assets/img/Res1About.png',
+    'tab-res1Contact': '#res1Img,../assets/img/Res1Contact.png',
+    'tab-res2Home': '#res2Img,../assets/img/Res2Home.png',
+    'tab-res2About': '#res2Img,../assets/img/Res2About.png',
+    'tab-res2Contact': '#res2Img,../assets/img/Res2Contact.png',
+    'tab-res3Home': '#res3Img,../assets/img/Res3Home.png',
+    'tab-res3About': '#res3Img,../assets/img/Res3About.png',
+    'tab-res3Contact': '#res3Img,../assets/img/Res3Contact.png',
+    'tab-mas1Home': '#mas1Img,../assets/img/Mas1Home.png',
+    'tab-mas1About': '#mas1Img,../assets/img/Mas1About.png',
+    'tab-mas1Services': '#mas1Img,../assets/img/Mas1Service.png',
+    'tab-mas1Contact': '#mas1Img,../assets/img/Mas1Contact.png',
+    'tab-mas2Home': '#mas2Img,../assets/img/Mas2Home.png',
+    'tab-mas2About': '#mas2Img,../assets/img/Mas2About.png',
+    'tab-mas2Services': '#mas2Img,../assets/img/Mas2Service.png',
+    'tab-mas2Contact': '#mas2Img,../assets/img/Mas2Contact.png',
+    'tab-mas3Home': '#mas3Img,../assets/img/Mas3Home.png',
+    'tab-mas3About': '#mas3Img,../assets/img/Mas3About.png',
+    'tab-mas3Services': '#mas3Img,../assets/img/Mas3Service.png',
+    'tab-mas3Contact': '#mas3Img,../assets/img/Mas3Contact.png'
+};
 
-    let imgData = imageMap[page] || '#res1Img,../assets/img/Res1Home.png';
-    let [imgSelector, imgSrc] = imgData.split(',');
-    $(imgSelector).attr('src', imgSrc);
-}
+$('.nav-tabs').on('shown.bs.tab', (e) => {
+    const [selector, src] = (imageMap[e.target.id] || '').split(',');
+    //if (selector) $(selector).attr('src', src);
+});
 
-function nextPrev(step) {
-    let $activeTab = $('.nav-tabs .nav-link.active');
-    let $tabs = $('.nav-tabs .nav-link');
-    let currentIndex = $tabs.index($activeTab);
-    let newIndex = currentIndex + step;
-
-    if (newIndex >= 0 && newIndex < $tabs.length) {
-        $tabs.eq(newIndex).tab('show');
-    }
-}
-$('#prevPageBtn').click(function() { nextPrev(-1); });
-$('#nextPageBtn').click(function() { nextPrev(1); });
+const nextPrev = (step) => {
+    const $tabs = $('.nav-tabs .nav-link');
+    const idx = $tabs.index($('.nav-tabs .nav-link.active')) + step;
+    if ($tabs[idx]) $tabs.eq(idx).tab('show');
+};
+$('#prevPageBtn').click(() => nextPrev(-1));
+$('#nextPageBtn').click(() => nextPrev(1));
 
 const handleFormSubmit = (button) => {
     const $form = $(button).closest(".uploadForm");

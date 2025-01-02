@@ -105,6 +105,7 @@ const loadData = () => {
         const iconEdit = '<img src="../assets/img/edit.svg" alt="edit" title="Edit" class="action_icon">';
         const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
         const iconTemplate = '<img src="../assets/img/template.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
+        const iconTemplateGray = '<img src="../assets/img/template_gray.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
 
         if (allData>0) {
             row.forEach(item => {
@@ -114,6 +115,13 @@ const loadData = () => {
                 let temPage = (shopType==="Restaurant") ? 'res' : 'mas';
                 temPage = temPage+selectedTemplate;
                 let templateUrl = `main.php?m=${temPage}&id=${id}`;
+
+                const saveKey = `saveStatus_${id}`;
+                let isSaved = localStorage.getItem(saveKey); //อ่าน key ของ project ที่เลือกมา
+
+                let iconTemplateUse = (isSaved === "true") ? iconTemplate : iconTemplateGray;
+                let linkTemplate = (isSaved === "true") ? `<a href="${templateUrl}">${iconTemplateUse}</a>` : `${iconTemplateUse}`;
+
                 $('#projectData > tbody:last-child').append(
                     `<tr>
                         <td>${++i}</td>
@@ -124,7 +132,7 @@ const loadData = () => {
                         <td>${owner}</td>
                         <td>${country}</td>
                         <td class="d-flex justify-content-end gap-2">
-                            <a href="${templateUrl}">${iconTemplate}</a>
+                            ${linkTemplate}
                             <a href="${url}">${iconNext}</a>
                             <a href="#" onclick="setEdit(${id});">${iconEdit}</a>
                             <a href="#" onclick="setDel(${id});">${iconDelete}</a>

@@ -23,6 +23,8 @@ $data['logo'] = !empty($_POST['logo']) ? $_POST['logo'] : getRandomPic($data['sh
 $data['colorTheme1'] = !empty($_POST['colorTheme1']) ? $_POST['colorTheme1'] : null;
 $data['colorTheme2'] = !empty($_POST['colorTheme2']) ? $_POST['colorTheme2'] : null;
 $data['colorTheme3'] = !empty($_POST['colorTheme3']) ? $_POST['colorTheme3'] : null;
+$data['domainName'] = !empty($_POST['domainName']) ? trim($_POST['domainName']) : null;
+$data['hostingName'] = !empty($_POST['hostingName']) ? trim($_POST['hostingName']) : null;
 $data['domainHave'] = ($_POST['domainHave']=='true') ?  1 : 0;
 $data['domainProvidersID'] = !empty($_POST['domainProvidersID']) ? $_POST['domainProvidersID'] : null;
 $data['domainUser'] = !empty($_POST['domainUser']) ? trim($_POST['domainUser']) : null;
@@ -52,7 +54,7 @@ $data['token'] = !empty($_POST['token']) ? $_POST['token'] : "no token";
 
 
 if ($data['mode'] ==  "save") {
-    $select = $db->query('UPDATE `tb_project` SET `email`=?,`phone`=?,`address`=?,`openingHours`=?,`pickupAndDelivery`=?,`logo`=?,`colorTheme1`=?,`colorTheme2`=?,`colorTheme3`=?,`domainHave`=?,`domainProvidersID`=?,`domainUser`=?,`domainPass`=?,`hostingHave`=?,`hostingProvidersID`=?,`hostingUser`=?,`hostingPass`=?,`gloriaHave`=?,`orderURL`=?,`tableURL`=?,`orderOther`=?,`resOtherSystem`=?,`amelia`=?,`voucher`=?,`bookOther`=?,`masOtherSystem`=?,`needEmail`=?,`facebookURL`=?,`instagramURL`=?,`youtubeURL`=?,`tiktokURL`=?,`updateBy`=? WHERE `projectID`=?',
+    $select = $db->query('UPDATE `tb_project` SET `email`=?,`phone`=?,`address`=?,`openingHours`=?,`pickupAndDelivery`=?,`logo`=?,`colorTheme1`=?,`colorTheme2`=?,`colorTheme3`=?, `domainName`=?,`domainHave`=?,`domainProvidersID`=?,`domainUser`=?,`domainPass`=?,`hostingName`=?,`hostingHave`=?,`hostingProvidersID`=?,`hostingUser`=?,`hostingPass`=?,`gloriaHave`=?,`orderURL`=?,`tableURL`=?,`orderOther`=?,`resOtherSystem`=?,`amelia`=?,`voucher`=?,`bookOther`=?,`masOtherSystem`=?,`needEmail`=?,`facebookURL`=?,`instagramURL`=?,`youtubeURL`=?,`tiktokURL`=?,`updateBy`=? WHERE `projectID`=?',
         $data['email'],
         $data['phone'],
         $data['address'],
@@ -62,10 +64,12 @@ if ($data['mode'] ==  "save") {
         $data['colorTheme1'],
         $data['colorTheme2'],
         $data['colorTheme3'],
+        $data['domainName'],
         $data['domainHave'],
         $data['domainProvidersID'],
         $data['domainUser'],
         $data['domainPass'],
+        $data['hostingName'],
         $data['hostingHave'],
         $data['hostingProvidersID'],
         $data['hostingUser'],

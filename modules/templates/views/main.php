@@ -16,6 +16,7 @@ require_once '../assets/php/pageNavigate.php';
     <meta http-equiv="Expires" content="0">
     <title><?php echo $title; ?></title>
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
     <link rel="stylesheet" href="../assets/css/main.css">
 
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
