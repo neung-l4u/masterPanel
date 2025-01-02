@@ -10,10 +10,9 @@ $row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "
         WHERE p.projectOwner = s.sID AND p.countryID = c.id AND p.projectID = ?;', $id)->fetchArray();
 
 ?>
-    <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css" xmlns:input="http://www.w3.org/1999/html">
     <link rel="stylesheet" href="../assets/css/project_detail.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
-
+    <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css" xmlns:input="http://www.w3.org/1999/html">
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">

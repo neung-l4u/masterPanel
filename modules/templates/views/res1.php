@@ -18,6 +18,13 @@ $shopTypeID = $row["shopTypeID"];
     <link rel="stylesheet" href="../assets/css/project_detail.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
 
+   <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+           <li class="breadcrumb-item"><a href="../views/main.php?m=project">Projects</a></li>
+           <!--<li class="breadcrumb-item active projectName" aria-current="page" id="projectName"><?php echo $row['projectName']; ?></li>-->
+       </ol>
+   </nav>
+
 <!-- Template Restaurant 1 -->
 <div id="TemRes1" class="row">
     <div class="d-flex">
@@ -654,7 +661,7 @@ $shopTypeID = $row["shopTypeID"];
             tdR1DeliveryRate: $('#tdR1DeliveryRate').val(),
             tdR1HomePromotion2: $('#tdR1HomePromotion2').val(),
             tdR1HomePromotion2Sub: $('#tdR1HomePromotion2Sub').val(),
- 
+
 
         //TEMPLATE_R1_PAGE_ABOUT
             //tdR1HeadAboutImg: $('#tdR1HeadAboutImg').val(),
