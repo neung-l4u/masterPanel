@@ -470,11 +470,103 @@ $projectID = $id;
                                     <small class="text-info">Form Section—1</small>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col">
-                                    <p>About Page</p>
+
+                            <div class="border rounded p-5">
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="aboutHeaderBG">
+                                            <label for="bg1">1. About Page Header Background Image 2201x1068 px.</label>
+                                            <div class="d-flex flex-column gap-2">
+                                                <img class="preview" id="aboutHeaderBG" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputTagline" class="form-label">2. Tag Line</label>
+                                            <input type="text" class="form-control" id="inputTagline" placeholder="Business Tagline">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="row mt-5">
+                                <div class="col">
+                                    <small class="text-info">Form Section—2</small>
+                                </div>
+                            </div>
+
+                            <div class="border rounded my-3 p-5">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputHighlightSlogan" class="form-label">3. Highlight Slogan</label>
+                                            <input type="text" class="form-control" id="inputHighlightSlogan" placeholder="Highlight Slogan">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputAboutSlogan" class="form-label">3. Slogan</label>
+                                            <input type="text" class="form-control" id="inputAboutSlogan" placeholder="About Slogan">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputAboutHeadline" class="form-label">4. About Us Headline</label>
+                                            <textarea class="form-control" id="inputAboutHeadline" rows="3" placeholder="About Us Headline"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputAboutDetail" class="form-label">5. About Us Detail</label>
+                                            <textarea class="form-control" id="inputAboutDetail" rows="3" placeholder="About Us Detail"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3 border rounded p-3">
+                                <div class="col-6">
+                                    <label for="textPromotion2">6. Highlight dish</label>
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formHighlightDish">
+                                        <div class="d-flex flex-column gap-2">
+                                            <img class="preview" src="../assets/img/default.png" alt="place">
+                                            <input class="picname" type="hidden" value="">
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <input type="file" class="file-input">
+                                                    <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col">
+                                    <h6>Text</h6>
+                                    <label for="textHighlightTitle">7. Highlight Title</label>
+                                    <input type="text" class="form-control" id="textHighlightTitle" placeholder="Highlight Title">
+                                    <label for="textHighlightSubtitle" class="form-label">8. Highlight Sub</label>
+                                    <textarea class="form-control" id="textHighlightSubtitle" rows="3" placeholder="Highlight Subtitle"></textarea>
+                                    <label for="textHighlightDetail" class="form-label">9. Highlight Detail</label>
+                                    <textarea class="form-control" id="textHighlightDetail" rows="3" placeholder="Highlight Detail"></textarea>
+                                </div>
+                            </div>
+
                         </div><!--end col-6-->
                         <div class="col">
                             <div class="row">

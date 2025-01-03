@@ -56,4 +56,14 @@ form#formFooter1 div div .preview, form#formFooter2 div div .preview, form#formF
     margin: 0 auto;
     background: white;
 }
+
+img#aboutHeaderBG {
+    width: 100%;
+    max-height: 50%;
+    aspect-ratio: 10 / 3;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+}
 /* End Preview */
