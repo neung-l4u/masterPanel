@@ -9,16 +9,10 @@ $row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "
         FROM tb_project p, staffs s, Countries c 
         WHERE p.projectOwner = s.sID AND p.countryID = c.id AND p.projectID = ?;', $id)->fetchArray();
 
-// set default value
-$row['colorTheme1'] = !empty($row['colorTheme1']) ? $row['colorTheme1'] : '#000000';
-$row['colorTheme2'] = !empty($row['colorTheme2']) ? $row['colorTheme2'] : '#FFFFFF';
-$row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFFFF';
-
 ?>
-    <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css" xmlns:input="http://www.w3.org/1999/html">
     <link rel="stylesheet" href="../assets/css/project_detail.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
-
+    <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css" xmlns:input="http://www.w3.org/1999/html">
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -63,8 +57,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 
     <input type="hidden" class="form-control" id="projectOwner" value="<?php echo $row['sNickName']; ?>">
     <input type="hidden" class="form-control" id="ShopType" value="<?php echo $row['typeName']; ?>">
-    <label for="TemplateSelect"></label>
-    <select class="form-select" id="TemplateSelect" style="display: none;">
+    <select class="form-select" id="TemplateSelect" onchange="setLayout();" style="display: none;">
         <option value="1" <?php echo ($row['selectedTemplate']==1) ? "selected":""; ?>>Template 1</option>
         <option value="2" <?php echo ($row['selectedTemplate']==2) ? "selected":""; ?>>Template 2</option>
         <option value="3" <?php echo ($row['selectedTemplate']==3) ? "selected":""; ?>>Template 3</option>
@@ -98,9 +91,8 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
             <div class="row">
                 <div class="col">
                     <div class="mb-3">
-                        <label for="bsName" class="form-label">Business Name:</label>
-                        <?php echo $row['projectName']; ?> <small class="text-muted">(not allow to edit)</small>
-                        <input type="hidden" class="form-control" id="bsName" placeholder="" value="<?php echo $row['projectName']; ?>" >
+                        <label for="bsName" class="form-label">Business Name</label>
+                        <input type="text" class="form-control" id="bsName" placeholder="" value="<?php echo $row['projectName']; ?>" readonly>
                     </div>
                 </div>
             </div>
@@ -111,13 +103,13 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                         <div class="col">
                             <div class="input-group mb-3">
                                 <label for="bsEmail" class="input-group-text" id="basic-addon3">Email</label>
-                                <input type="email" class="form-control" id="bsEmail" maxlength="100" placeholder="admin@localforyou.com" value="<?php echo $row['email']; ?>">
+                                <input type="email" class="form-control" id="bsEmail" placeholder="admin@localforyou.com" value="<?php echo $row['email']; ?>">
                             </div>
                         </div>
                         <div class="col">
                                 <div class="input-group mb-3">
                                     <label for="bsPhone" class="input-group-text" id="basic-addon3">Phone</label>
-                                    <input type="tel" class="form-control" id="bsPhone" placeholder="+6112345678" maxlength="15" value="<?php echo $row['phone']; ?>">
+                                    <input type="tel" class="form-control" id="bsPhone" placeholder="+6112345678" value="<?php echo $row['phone']; ?>">
                                 </div>
                         </div>
                     </div>
@@ -142,7 +134,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                 </div>
                 <div class="col-6">
                     <div class="mb-3">
-                        <label for="bsPickup" class="form-label">Pickup And Delivery</label>
+                        <label for="bsOpen" class="form-label">Pickup And Delivery</label>
                         <textarea class="form-control" id="bsPickup" rows="7"><?php echo $row['pickupAndDelivery']; ?></textarea>
                     </div>
                 </div>
@@ -193,20 +185,6 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     </div>
     <div class="row">
         <div class="col-6">
-            <div class="mb-3">
-                <label for="domainName" class="form-label">Domain Name</label>
-                <input type="text" class="form-control" id="domainName" placeholder="domain.com" value="<?php echo $row['domainName']; ?>">
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="mb-3">
-                <label for="hostingName" class="form-label">Hosting Name</label>
-                <input type="text" class="form-control" id="hostingName" placeholder="hosting.com" value="<?php echo $row['hostingName']; ?>">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-6">
             <label for="domainHave">Domain Log-in</label>
             <div class="form-check ml-1">
                 <input class="form-check-input domainHave" type="checkbox" value="" id="domainHave" <?php echo $row['domainHave'] == 1 ? 'checked' : ''; ?>>
@@ -237,7 +215,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                             </div>
                         
                             <div class="input-group mb-3">
-                                <label for="domainPass" class="input-group-text" id="basic-addon3">Pass</label>
+                                <label for="domainPass" class="input-group-text" id="basic-addon3">Password</label>
                                 <input type="text" class="form-control domainpass" id="domainPass" aria-describedby="basic-addon3" placeholder="" value="<?php echo $row['domainPass']; ?>">
                             </div>
                         
@@ -259,8 +237,8 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                             <select id="hostingProvider" class="custom-select">
                                 <option value="0" selected>-- None --</option>
                                 <?php
-                                $hosting = $db->query('SELECT `id`, `name` FROM `HostingProviders` WHERE status=1 AND id<>11 ORDER BY `name`;')->fetchAll();
-                                foreach ($hosting as $val){
+                                $hostings = $db->query('SELECT `id`, `name` FROM `HostingProviders` WHERE status=1 AND id<>11 ORDER BY `name`;')->fetchAll();
+                                foreach ($hostings as $val){
                                     ?>
                                     <option value="<?php echo $val['id']; ?>"  <?php echo $row['hostingProvidersID'] == $val['id'] ? 'selected' : ''; ?> >
                                         <?php echo $val['name']; ?>
@@ -277,7 +255,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                 <input type="text" class="form-control hostingUser" id="hostingUser" aria-describedby="basic-addon3" placeholder="" value="<?php echo $row['hostingUser']; ?>">
                             </div>
                             <div class="input-group mb-3">
-                                <label for="hostingPass" class="input-group-text" id="basic-addon3">Pass</label>
+                                <label for="hostingPass" class="input-group-text" id="basic-addon3">Password</label>
                                 <input type="text" class="form-control hostingPass" id="hostingPass" aria-describedby="basic-addon3" placeholder="" value="<?php echo $row['hostingPass']; ?>">
                             </div>
                     </div>
@@ -402,9 +380,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
         $url .= "m=".($row['shopTypeID']==1 ? "res" : "mas").$row['selectedTemplate'];
         $url .= "&id=".$id;
         ?>
-        <small id="infoText" class="text-warning">Please save before proceeding.</small>
-<!--        <a id="nextBtn" href="--><?php //echo $url; ?><!--" class="btn btn-primary">Next</a>-->
-        <button id="nextBtn" class="btn btn-secondary" onclick="nextForm('<?php echo $url; ?>')" disabled>Next</button>
+        <a href="<?php echo $url; ?>" class="btn btn-primary">Next</a>
     </div>
 </div>
 
@@ -415,7 +391,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
 <script src="../controllers/project_detail.js"></script>
 <script>
-
+    const projectID = $("#projectID").val();
     const hiddenShopType = $("#ShopType");
     const inputName = $("#bsName");
     const inputEmail = $("#bsEmail");
@@ -428,12 +404,10 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     const selTheme2Hex = $("#theme2");
     const selTheme3Hex = $("#theme3");
     const TemplateSelect = $("#TemplateSelect");
-    const domainName = $("#domainName");
     const chkDomainHave = $("#domainHave");
     const selDomainProvider = $("#domainProvider");
     const inputDomainUser = $("#domainUser");
     const inputDomainPass = $("#domainPass");
-    const hostingName = $("#hostingName");
     const chkNeedEmail = $("#needEmail");
     const chkHostingHave = $("#hostingHave");
     const selHostingProvider = $("#hostingProvider");
@@ -453,13 +427,10 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     const inputYoutubeURL = $("#youtubeURL");
     const inputTiktokURL = $("#tiktokURL");
     const hiddenProjectOwner = $("#projectOwner");
-    const domainBox = $("#domainBox");
-    const hostingBox = $("#hostingBox");
 
 
     $(()=>{ //ready
         loadProjectData();
-        showSystem();
     }); //ready
 
     const loadProjectData = () => {
@@ -479,9 +450,9 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 
         callAjax.done(function(res) {
             console.log("loadProjectData = ",res)
-            res.domainHave === 1 ? domainBox.show() :  domainBox.hide();
-            res.hostingHave === 1 ? hostingBox.show() :  hostingBox.hide();
-            res.masOtherSystem === 1 ? inputMasOtherSystem.show() :  inputMasOtherSystem.hide();
+            res.domainHave == 1 ? $("#domainBox").show() :  $("#domainBox").hide();
+            res.hostingHave == 1 ? $("#hostingBox").show() :  $("#hostingBox").hide();
+            res.masOtherSystem == 1 ? $("#masOtherSystem").show() :  $("#masOtherSystem").hide();
             return true;
         });
 
@@ -505,8 +476,6 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
             colorTheme1: selTheme1Hex.val(),
             colorTheme2: selTheme2Hex.val(),
             colorTheme3: selTheme3Hex.val(),
-            domainName: domainName.val(),
-            hostingName: hostingName.val(),
             domainHave: !!chkDomainHave.prop("checked"),
             domainProvidersID: selDomainProvider.val(),
             domainUser: inputDomainUser.val(),
@@ -559,15 +528,4 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
         });
     });//cmdSubmit.click
 
-    const showSystem = () => {
-      const shopType = $("#ShopType").val();
-      console.log("shopType",shopType);
-      if (shopType === "Restaurant") {
-        $("#resSystem").show();
-        $("#masSystem").hide();
-      } else if (shopType === "Massage") {
-        $("#resSystem").hide();
-        $("#masSystem").show();
-      }
-    }
 </script>

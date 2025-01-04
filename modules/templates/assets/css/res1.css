@@ -7,7 +7,7 @@ input[type="file"] {
 }
 
 /* Preview */
-form#bg1 div div div .preview, form#formRromotionArea div div .preview, form#formAboutbg1 div div .preview, form#formbgAboutBackground div div .preview, form#formbgContactHeadBackground div div .preview{
+#formBGHeader div div div .preview, form#formPromotionArea div div .preview, form#formAboutbg1 div div .preview, form#formbgAboutBackground div div .preview, form#formbgContactHeadBackground div div .preview{
     width: 100%;
     max-height: 50%;
     aspect-ratio: 10 / 3;
@@ -56,6 +56,28 @@ form#formTestimonial3 div .preview, form#formTestimonial4 div .preview   {
     margin: 0 auto;
     background: white;
     border-radius: 50%;
+}
+
+form#formIntroductionImage1 div .preview, form#formIntroductionImage2 div .preview, form#formIntroductionImage3 div .preview, form#formIntroductionImage4 div .preview {
+    width: 50%;
+    max-height: 50%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+    border-radius: 50%;
+}
+
+form#formAboutPromotion div .preview {
+    width: 30%;
+    max-height: 70%;
+    aspect-ratio: 1 / 1.50;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+    /* border-radius: 50%; */
 }
 
 form#formFooter1 div div .preview, form#formFooter2 div div .preview, form#formFooter3 div div .preview, form#formFooter4 div div .preview {

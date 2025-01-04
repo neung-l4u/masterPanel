@@ -66,7 +66,7 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="bg1">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formBGHeader">
                                         <div class="d-flex flex-column mb-3">
                                             <label for="bg1">3. Header Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -312,7 +312,7 @@ $projectID = $id;
                                                                 <input type="file" class="file-input">
                                                                 <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
                                                             </div>
-                                                            <textarea class="form-control" id="textTrstimonial1" rows="3" placeholder="Detail..."></textarea>
+                                                            <textarea class="form-control" id="textareaTrstimonial1" rows="3" placeholder="Detail..."></textarea>
                                                             <div>
                                                                 <input type="text" class="form-control" id="textTrstimonial1" placeholder="Menu...">
                                                             </div>
@@ -335,7 +335,7 @@ $projectID = $id;
                                                                 <input type="file" class="file-input">
                                                                 <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
                                                             </div>
-                                                            <textarea class="form-control" id="textTrstimonial2" rows="3" placeholder="Detail..."></textarea>
+                                                            <textarea class="form-control" id="textareaTrstimonial2" rows="3" placeholder="Detail..."></textarea>
                                                             <div>
                                                                 <input type="text" class="form-control" id="textTrstimonial2" placeholder="Menu...">
                                                             </div>
@@ -360,7 +360,7 @@ $projectID = $id;
                                                                 <input type="file" class="file-input">
                                                                 <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
                                                             </div>
-                                                            <textarea class="form-control" id="textTrstimonial3" rows="3" placeholder="Detail..."></textarea>
+                                                            <textarea class="form-control" id="textareaTrstimonial3" rows="3" placeholder="Detail..."></textarea>
                                                             <div>
                                                                 <input type="text" class="form-control" id="textTrstimonial3" placeholder="Menu...">
                                                             </div>
@@ -383,7 +383,7 @@ $projectID = $id;
                                                                 <input type="file" class="file-input">
                                                                 <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
                                                             </div>
-                                                            <textarea class="form-control" id="textTrstimonial4" rows="3" placeholder="Detail..."></textarea>
+                                                            <textarea class="form-control" id="textareaTrstimonial4" rows="3" placeholder="Detail..."></textarea>
                                                             <div>
                                                                 <input type="text" class="form-control" id="textTrstimonial4" placeholder="Menu...">
                                                             </div>
@@ -467,14 +467,14 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="inputIntroduction1" class="form-label">21. Delivery Rates with Locations</label>
-                                        <textarea class="form-control" id="inputIntroduction1" rows="5" placeholder="Detail..."></textarea>
+                                        <label for="deliveryRateDetail" class="form-label">21. Delivery Rates with Locations</label>
+                                        <textarea class="form-control" id="deliveryRateDetail" rows="5" placeholder="Detail..."></textarea>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formRromotionArea">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formPromotionArea">
                                         <div class="d-flex flex-column mb-3">
                                             <label for="bg1">22. Promotion Area Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -597,8 +597,12 @@ $projectID = $id;
                                         </form>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-6 mt-3" style="text-align:left;">
+                                        <button type="button" class="btn btn-success" id="cmdHomeSubmit">Submit Home Page Information</button>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
                         <div class="col">
                             <div class="row">
@@ -795,80 +799,81 @@ $projectID = $id;
                                     <small class="text-info">Form Section—3</small>
                                 </div>
                             </div>
-                            <label for="bg1">36. Featured Dish Image</label>
-                            <div class="row mb-3 ">
-                                <div class="col-4">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg1">
-                                        <div class="d-flex flex-column">
-                                            <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                <img class="preview" src="../assets/img/default.png" alt="place">
-                                                <input class="picname" type="hidden" value="">
-                                                <div class="d-flex flex-column gap-2">
-                                                    <input type="file" class="file-input">
-                                                    <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                            <div class="col border rounded p-3">
+                                <label for="bg1">36. Featured Dish Image</label>
+                                <div class="row mb-3">
+                                    <div class="col-4">
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg1">
+                                            <div class="d-flex flex-column">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="col-4">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg2">
-                                        <div class="d-flex flex-column">
-                                            <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                <img class="preview" src="../assets/img/default.png" alt="place">
-                                                <input class="picname" type="hidden" value="">
-                                                <div class="d-flex flex-column gap-2">
-                                                    <input type="file" class="file-input">
-                                                    <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-4">
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg2">
+                                            <div class="d-flex flex-column">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="col-4">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg3">
-                                        <div class="d-flex flex-column">
-                                            <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                <img class="preview" src="../assets/img/default.png" alt="place">
-                                                <input class="picname" type="hidden" value="">
-                                                <div class="d-flex flex-column gap-2">
-                                                    <input type="file" class="file-input">
-                                                    <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-4">
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg3">
+                                            <div class="d-flex flex-column">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row mb-3 ">
-                                <div class="col-4">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg4">
-                                        <div class="d-flex flex-column">
-                                            <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                <img class="preview" src="../assets/img/default.png" alt="place">
-                                                <input class="picname" type="hidden" value="">
-                                                <div class="d-flex flex-column gap-2">
-                                                    <input type="file" class="file-input">
-                                                    <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                <div class="row mb-3 ">
+                                    <div class="col-4">
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg4">
+                                            <div class="d-flex flex-column">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="col-4">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg5">
-                                        <div class="d-flex flex-column">
-                                            <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                <img class="preview" src="../assets/img/default.png" alt="place">
-                                                <input class="picname" type="hidden" value="">
-                                                <div class="d-flex flex-column gap-2">
-                                                    <input type="file" class="file-input">
-                                                    <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-4">
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg5">
+                                            <div class="d-flex flex-column">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                </div>
+                                        </form>
+                                    </div>
                                 <div class="col-4">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg6">
                                         <div class="d-flex flex-column">
@@ -882,6 +887,12 @@ $projectID = $id;
                                             </div>
                                         </div>
                                     </form>
+                                </div>
+                            </div>    
+                                <div class="row">
+                                    <div class="col-6 mt-3" style="text-align:left;">
+                                        <button type="button" class="btn btn-success" id="cmdAboutSubmit">Submit About Page Information</button>
+                                    </div>
                                 </div>
                             </div>
         
@@ -983,9 +994,13 @@ $projectID = $id;
                                     <div class="mb-3">
                                         <label for="contactPromotionSubHeadline" class="form-label">42. Promotion Sub Headline</label>
                                         <textarea class="form-control" id="contactPromotionSubHeadline" rows="4" placeholder="Detail..."></textarea>
+
+                                        <button type="button" class="btn btn-success" id="cmdContactSubmit">Submit Contact Page Information</button>
+
                                     </div>
                                 </div>
                             </div>
+                            
                         </div><!--end col-6-->
                         <div class="col">
                             <div class="row">
@@ -1009,9 +1024,6 @@ $projectID = $id;
         </div>
     </div>
     <div class="row mb-5" id="changepage">
-        <div class="col-6" style="text-align:left;">
-            <button type="button" class="btn btn-success" id="submitBtn">save</button>
-        </div>
         <div class="col d-flex justify-content-end">
             <!-- tab menu -->
             <nav>
@@ -1031,76 +1043,183 @@ $projectID = $id;
 
 <script src="../controllers/template.js"></script>
 <script>
-    $("#cmdSubmit").click(function () {
+    $("#cmdHomeSubmit").click(function () {
         let payload = {
-            mode : "save",
-
         //TEMPLATE_R1_PAGE_HOME
-            tdSlogan: $('#tdSlogan').val(),
-            //tdR1HomeSlider1: $('#tdR1HomeSlider1').val(),
-            //tdR1HomeSlider2: $('#tdR1HomeSlider2').val(),
-            //tdR1HomeSlider3: $('#tdR1HomeSlider3').val(),
-            tdR1Delivery: $('#tdR1Delivery').val(),
-            tdR1HomePromotion1: $('#tdR1HomePromotion1').val(),
-            tdR1HomePromotion1Body: $('#tdR1HomePromotion1Body').val(),
-            //tdR1Carousel: $('#tdR1Carousel').val(),
-            //tdR1FeaturedImg: $('#tdR1FeaturedImg').val(),
-            //tdR1PromotionImg2: $('#tdR1PromotionImg2').val(),
-            tdR1HomePromotion2: $('#tdR1HomePromotion2').val(),
-            //tdR1ReviewBg: $('#tdR1ReviewBg').val(),
-            tdR1TestimonialText1: $('#tdR1TestimonialText1').val(),
-            tdR1TestimonialName1: $('#tdR1TestimonialName1').val(),
-            //tdR1TestimonialImg1: $('#tdR1TestimonialImg1').val(),
-            tdR1TestimonialText2: $('#tdR1TestimonialText1').val(),
-            tdR1TestimonialName2: $('#tdR1TestimonialName1').val(),
-            //tdR1TestimonialImg2: $('#tdR1TestimonialImg1').val(),
-            tdR1TestimonialText3: $('#tdR1TestimonialText1').val(),
-            tdR1TestimonialName3: $('#tdR1TestimonialName1').val(),
-            //tdR1TestimonialImg3: $('#tdR1TestimonialImg1').val(),
-            //tdR1PromotionImg3: $('#tdR1PromotionImg3').val(),
-            tdR1HomePromotion3: $('#tdR1HomePromotion3').val(),
-            tdR1HomePromotion3Body: $('#tdR1HomePromotion3Body').val(),
-            //tdR1FooterImg1: $('#tdR1FooterImg1').val(),
-            //tdR1FooterImg2: $('#tdR1FooterImg2').val(),
-            //tdR1FooterImg3: $('#tdR1FooterImg3').val(),
-            //tdR1FooterImg4: $('#tdR1FooterImg4').val(),
-            tdR1HomePromotion4: $('#tdR1HomePromotion4').val(),
-            tdR1HomePromotion4Body: $('#tdR1HomePromotion4Body').val(),
-            //tdR1FooterBgImg: $('#tdR1FooterBgImg').val(),
+            "A1-01-Slogan": $('#inputSlogan').val(),
+            "A1-02-Information": $('#inputIntroduction1').val(),
+            "A1-03-HeaderBackground": $('#formBGHeader .picname').val(),
+            "A1-04-IntroductionSubHeadline1": $('#tdR1IntroductionSubHeadline1').val(),
+            "A1-05-IntroductionMainHeadline": $('#tdR1IntroductionMainHeadline').val(),
+            "A1-06-IntroductionSubHeadline2": $('#tdR1IntroductionSubHeadline2').val(),
+            "A1-07-IntroductionBody": $('#tdR1IntroductionBody').val(),
+            "A1-08-01-IntroductionImage1": $('#formIntroductionImage1 .picname').val(),
+            "A1-08-02-IntroductionImage2": $('#formIntroductionImage2 .picname').val(),
+            "A1-08-03-IntroductionImage3": $('#formIntroductionImage3 .picname').val(),
+            "A1-08-04-IntroductionImage4": $('#formIntroductionImage4 .picname').val(),
+            "A2-09-DishImg1": $('#formDish1 .picname').val(),
+            "A2-09-TextDish1": $('#textFeaturedDish1').val(),
+            "A2-10-DishImg2": $('#formDish2 .picname').val(),
+            "A2-10-TextDish2": $('#textFeaturedDish2').val(),
+            "A2-11-DishImg3": $('#formDish3 .picname').val(),
+            "A2-11-TextDish3": $('#textFeaturedDish3').val(),
+            "A2-12-DishImg4": $('#formDish4 .picname').val(),
+            "A2-12-TextDish4": $('#textFeaturedDish4').val(),
+            "A2-13-TestimonialImg1": $('#formTestimonial1 .picname').val(),
+            "A2-13-TextareaTrstimonial1": $('#textareaTrstimonial1').val(),
+            "A2-13-TextTrstimonial1": $('#textTrstimonial1').val(),
+            "A2-14-TestimonialImg2": $('#formTestimonial2 .picname').val(),
+            "A2-14-TextareaTrstimonial2": $('#textareaTrstimonial2').val(),
+            "A2-14-TextTrstimonial2": $('#textTrstimonial2').val(),
+            "A2-15-TestimonialImg3": $('#formTestimonial3 .picname').val(),
+            "A2-15-TextareaTrstimonial3": $('#textareaTrstimonial3').val(),
+            "A2-15-TextTrstimonial3": $('#textTrstimonial3').val(),
+            "A2-16-TestimonialImg4": $('#formTestimonial4 .picname').val(),
+            "A2-16-TextareaTrstimonial4": $('#textareaTrstimonial4').val(),
+            "A2-16-TextTrstimonial4": $('#textTrstimonial4').val(),
+            "A2-17-GGLinkReview": $('#ggLinkReview').val(),
+            "A2-18-GGLinkWrite": $('#ggLinkWrite').val(),
+            "A3-19-DeliveryMapImage": $('#formDeliveryMap .picname').val(),
+            "A3-20-DeliveryDetail": $('#deliveryDetail').val(),
+            "A3-21-DeliveryRateDetail": $('#deliveryRateDetail').val(),
+            "A3-22-PromotionAreaImage": $('#formPromotionArea .picname').val(),
+            "A3-23-PromotionHeadline": $('#promotionHeadline').val(),
+            "A3-24-PromotionSubHeadline": $('#promotionSubHeadline').val(),
+            "A4-25-01-Carousel1": $('#formCarousel1 .picname').val(),
+            "A4-25-02-Carousel2": $('#formCarousel2 .picname').val(),
+            "A4-25-03-Carousel3": $('#formCarousel3 .picname').val(),
+            "A4-25-04-Carousel4": $('#formCarousel4 .picname').val()
+        };
 
-        //TEMPLATE_R2_PAGE_ABOUT
-            //tdR1HeadAboutImg: $('#tdR1HeadAboutImg').val(),
-            tdR1AboutUSBody: $('#tdR1AboutUSBody').val(),
-            tdR1AboutPromotion1: $('#tdR1AboutPromotion1').val(),
-            tdR1AboutPromotion1Body: $('#tdR1AboutPromotion1Body').val(),
-            //tdR1AboutPromotionImg: $('#tdR1AboutPromotionImg').val(),
-            //tdR1StaffImg1: $('#tdR1StaffImg1').val(),
-            //tdR1StaffImg2: $('#tdR1StaffImg2').val(),
-            //tdR1StaffImg3: $('#tdR1StaffImg3').val(),
-            //tdR1AboutFeaturedImg: $('#tdR1AboutFeaturedImg').val(),
+        console.log("Payload", payload);
+
+        let projectID = $('#projectID').val();
+
+        const callAjax = $.ajax({
+            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                "payload": payload,
+                "page" : "Home",
+                "projectID" : projectID
+            }
+        });
+
+        callAjax.done(function(res) {
+                console.log("return = ",res.result);
+                $("#allData").html(res.table);
+                return true;
+            });
+
+            callAjax.fail(function(xhr, status, error) {
+                console.log("ajax fail!!");
+                console.log(status + ': ' + error);
+                return false;
+            });
+
+    });
+
+    $("#cmdAboutSubmit").click(function () {
+        let payload = {
+        //TEMPLATE_R1_PAGE_ABOUT
+            "B1-26-HeaderBGImg": $('#formAboutbg1 .picname').val(),
+            "B1-27-AboutUsBody": $('#aboutBody').val(),
+
+            "B2-28-PromotionHeadline": $('#aboutPromotionHeadline').val(),
+            "B2-29-PromotionBody": $('#aboutPromotionBody').val(),
+            "B2-30-PromotionImg": $('#formAboutPromotion .picname').val(),
+            "B2-31-BGImg": $('#formbgAboutBackground .picname').val(),
+            "B2-32-Callout1": $('#aboutCallout1').val(),
+            "B2-33-Callout2": $('#aboutCallout2').val(),
+            "B2-34-Callout3": $('#aboutCallout3').val(),
+            "B2-35-Callout4": $('#aboutCallout4').val(),
+
+            "B3-36-DishImg1": $('#formAboutFeaturedDishImg1 .picname').val(),
+            "B3-36-DishImg2": $('#formAboutFeaturedDishImg2 .picname').val(),
+            "B3-36-DishImg3": $('#formAboutFeaturedDishImg3 .picname').val(),
+            "B3-36-DishImg4": $('#formAboutFeaturedDishImg4 .picname').val(),
+            "B3-36-DishImg5": $('#formAboutFeaturedDishImg5 .picname').val(),
+            "B3-36-DishImg6": $('#formAboutFeaturedDishImg6 .picname').val(),
+        };
+
+        console.log("Payload", payload);
+
+        let projectID = $('#projectID').val();
+
+        const callAjax = $.ajax({
+            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                "payload" : payload,
+                "page" : "About",
+                "projectID" : projectID
+            }
+        });
+
+        callAjax.done(function(res) {
+                console.log("return = ",res.result);
+                $("#allData").html(res.table);
+                return true;
+            });
+
+            callAjax.fail(function(xhr, status, error) {
+                console.log("ajax fail!!");
+                console.log(status + ': ' + error);
+                return false;
+            });
+
+    });
+
+    $("#cmdContactSubmit").click(function () {
+        let payload = {
+        //TEMPLATE_R1_PAGE_CONTACT        
+            "C1-37-HeaderBGImg": $('#formbgContactHeadBackground .picname').val(),
+            "C1-38-BGFormImg" : $('#formbgContactBackground .picname').val(),
+            "C1-39-UsSubHeadline1" : $('#contactSubHead1').val(),
+            "C1-40-UsSubHeadline2" : $('#contactSubHead2').val(),
+            "C1-41-PromotionHeadline" : $('#contactPromotionHeadline').val(),
+            "C1-42-PromotionSubHeadline" : $('#contactPromotionSubHeadline').val(),
             
-        //TEMPLATE_R2_PAGE_CONTACT
-            //tdR1HeadContactImg: $('#tdR1HeadContactImg').val(),
-            tdR1ContactHeadSub1: $('#tdR1ContactHeadSub1').val(),
-            tdR1ContactHeadSub2: $('#tdR1ContactHeadSub2').val(),
-            //tdR1ContactBgImg: $('#tdR1ContactBgImg').val(),
-            tdR1ContactPromotion1: $('#tdR1ContactPromotion1').val(),
-            tdR1ContactPromotion1sub: $('#tdR1ContactPromotion1sub').val(),
-            tdR1ContactHeadSub1: $('#tdR1ContactHeadSub1').val(),
-            tdR1ContactHeadSub1: $('#tdR1ContactHeadSub1').val(),
 
         };
 
         console.log("Payload", payload);
 
+        let projectID = $('#projectID').val();
+
         const callAjax = $.ajax({
-            url: "../models/ajaxRes1.php",
+            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
             method: 'POST',
             async: false,
             cache: false,
             dataType: 'json',
-            data: payload
+            data: {
+                "payload" : payload,
+                "page" : "Contact",
+                "projectID" : projectID
+            }
         });
 
+        callAjax.done(function(res) {
+                console.log("return = ",res.result);
+                $("#allData").html(res.table);
+                return true;
+            });
+
+            callAjax.fail(function(xhr, status, error) {
+                console.log("ajax fail!!");
+                console.log(status + ': ' + error);
+                return false;
+            });
+
     });
+
+
+
 </script>
