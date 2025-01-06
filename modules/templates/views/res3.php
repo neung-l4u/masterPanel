@@ -41,7 +41,7 @@ $projectID = $id;
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane show active p-3" id="res3Home" role="tabpanel" aria-labelledby="nav-home-tab">
 
-                    <div class="row mb-5"><!--Section 1-->
+                    <div class="row mb-5"><!-- Home Section 1-->
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
@@ -51,7 +51,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mt-3 d-flex flex-row gap-3 align-items-center">
-                                        <label for="bg1Hex">1. Background Color</label>
+                                        <label for="bg1Hex">1. BG Color</label>
                                         <input type="color" onchange="setHex(this.value,'bg1HexCode');"  id="bg1Hex" value="#000000">
                                         <span id="bg1HexCode" class="codeHex">#000000</span>
                                     </div>
@@ -77,7 +77,7 @@ $projectID = $id;
                                 <div class="col">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="bg1">
                                         <div class="d-flex flex-column">
-                                            <label for="bg1">4. Background Image 2201x1068 px.</label>
+                                            <label for="bg1">4. BG Image 2201x1068 px.</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
                                                     <img class="preview" src="../assets/img/default.png" alt="place">
@@ -119,7 +119,7 @@ $projectID = $id;
                         </div>
                     </div><!--end Section 1-->
 
-                    <div class="row mb-5"><!--Section 2-->
+                    <div class="row mb-5"><!-- Home Section 2-->
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
@@ -263,7 +263,7 @@ $projectID = $id;
                         </div>
                     </div><!--end Section 2-->
 
-                    <div class="row mb-5"><!--Section 3-->
+                    <div class="row mb-5"><!-- Home Section 3-->
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
@@ -359,7 +359,7 @@ $projectID = $id;
                         </div>
                     </div><!--end Section 3-->
 
-                    <div class="row mb-3"><!--Section 4-->
+                    <div class="row mb-3"><!-- Home Section 4-->
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
@@ -458,6 +458,13 @@ $projectID = $id;
                             </div>
                         </div>
                     </div><!--end Section 4-->
+
+                    <div class="row mb-5"><!-- Home BTN -->
+                        <div class="col">
+                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitHome();">Submit page Home info.</button>
+                        </div>
+                    </div>
+
                 </div><!--end tab-Home-->
 
                 <!-- fixed Structure -->
@@ -475,7 +482,7 @@ $projectID = $id;
                                 <div class="row mt-3">
                                     <div class="col">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="aboutHeaderBG">
-                                            <label for="bg1">1. About Page Header Background Image 2201x1068 px.</label>
+                                            <label for="bg1">23. About Page Header BG Image 2201x1068 px.</label>
                                             <div class="d-flex flex-column gap-2">
                                                 <img class="preview" id="aboutHeaderBG" src="../assets/img/default.png" alt="place">
                                                 <input class="picname" type="hidden" value="">
@@ -489,27 +496,46 @@ $projectID = $id;
                                         </form>
                                     </div>
                                 </div>
+
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputTagline" class="form-label">2. Tag Line</label>
+                                            <label for="inputTagline" class="form-label">24. Tag Line</label>
                                             <input type="text" class="form-control" id="inputTagline" placeholder="Business Tagline">
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="row mt-5">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—1</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res3About-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3About-1.jpg" class="img-fluid" alt="Restaurant 3 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5"><!--Section 2-->
+                        <div class="col-6">
+                            <div class="row">
                                 <div class="col">
                                     <small class="text-info">Form Section—2</small>
                                 </div>
                             </div>
-
-                            <div class="border rounded my-3 p-5">
+                            <div class="border rounded mb-3 p-5">
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputHighlightSlogan" class="form-label">3. Highlight Slogan</label>
+                                            <label for="inputHighlightSlogan" class="form-label">25. Highlight Slogan</label>
                                             <input type="text" class="form-control" id="inputHighlightSlogan" placeholder="Highlight Slogan">
                                         </div>
                                     </div>
@@ -517,7 +543,7 @@ $projectID = $id;
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputAboutSlogan" class="form-label">3. Slogan</label>
+                                            <label for="inputAboutSlogan" class="form-label">26. Slogan</label>
                                             <input type="text" class="form-control" id="inputAboutSlogan" placeholder="About Slogan">
                                         </div>
                                     </div>
@@ -525,7 +551,7 @@ $projectID = $id;
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputAboutHeadline" class="form-label">4. About Us Headline</label>
+                                            <label for="inputAboutHeadline" class="form-label">27. About Us Headline</label>
                                             <textarea class="form-control" id="inputAboutHeadline" rows="3" placeholder="About Us Headline"></textarea>
                                         </div>
                                     </div>
@@ -533,54 +559,112 @@ $projectID = $id;
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputAboutDetail" class="form-label">5. About Us Detail</label>
+                                            <label for="inputAboutDetail" class="form-label">28. About Us Detail</label>
                                             <textarea class="form-control" id="inputAboutDetail" rows="3" placeholder="About Us Detail"></textarea>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="row mb-3 border rounded p-3">
-                                <div class="col-6">
-                                    <label for="textPromotion2">6. Highlight dish</label>
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formHighlightDish">
-                                        <div class="d-flex flex-column gap-2">
-                                            <img class="preview" src="../assets/img/default.png" alt="place">
-                                            <input class="picname" type="hidden" value="">
-                                            <div class="d-flex flex-column gap-2">
-                                                <div class="d-flex flex-column gap-2">
-                                                    <input type="file" class="file-input">
-                                                    <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="col">
-                                    <h6>Text</h6>
-                                    <label for="textHighlightTitle">7. Highlight Title</label>
-                                    <input type="text" class="form-control" id="textHighlightTitle" placeholder="Highlight Title">
-                                    <label for="textHighlightSubtitle" class="form-label">8. Highlight Sub</label>
-                                    <textarea class="form-control" id="textHighlightSubtitle" rows="3" placeholder="Highlight Subtitle"></textarea>
-                                    <label for="textHighlightDetail" class="form-label">9. Highlight Detail</label>
-                                    <textarea class="form-control" id="textHighlightDetail" rows="3" placeholder="Highlight Detail"></textarea>
-                                </div>
-                            </div>
+                            </div><!--border rounded-->
 
                         </div><!--end col-6-->
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—1</small>
+                                    <small class="text-info">Example Section—2</small>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3About.png" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3About.png" class="img-fluid" alt="Restaurant 3 - Section 1">
+                                    <a href="../assets/img/Res3About-2.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3About-2.jpg" class="img-fluid" alt="Restaurant 3 - Section 2">
                                     </a>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—3</small>
+                                </div>
+                            </div>
+                            <div class="mb-3 border rounded p-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="textPromotion2">29. Highlight dish</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formHighlightDish">
+                                            <div class="d-flex flex-column gap-2">
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <h6>Text</h6>
+                                        <label for="textHighlightTitle">7. Highlight Title</label>
+                                        <input type="text" class="form-control" id="textHighlightTitle" placeholder="Highlight Title">
+                                        <label for="textHighlightSubtitle" class="form-label">8. Highlight Sub</label>
+                                        <textarea class="form-control" id="textHighlightSubtitle" rows="3" placeholder="Highlight Subtitle"></textarea>
+                                        <label for="textHighlightDetail" class="form-label">9. Highlight Detail</label>
+                                        <textarea class="form-control" id="textHighlightDetail" rows="3" placeholder="Highlight Detail"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—3</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res3About-3.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3About-3.jpg" class="img-fluid" alt="Restaurant 3 - Section 3">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—4</small>
+                                </div>
+                            </div>
+                            <div class="mb-3 border rounded p-3">
+                                multi upload here
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—4</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res3About-4.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3About-4.jpg" class="img-fluid" alt="Restaurant 3 - Section 4">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5"><!-- About BTN -->
+                        <div class="col">
+                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitAbout();">Submit page About info.</button>
                         </div>
                     </div>
 
@@ -588,25 +672,18 @@ $projectID = $id;
 
                 <div class="tab-pane p-3" id="res3Contact" role="tabpanel" aria-labelledby="nav-contact-tab">
 
-                    <div class="row mb-5"><!--Section 1-->
+                    <div class="row mb-5"><!-- Contact Section 1-->
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
                                     <small class="text-info">Form Section—1</small>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col">
-                                    <p>Contact Page</p>
-                                </div>
+                            <div class="mb-3 border rounded p-3">
+                                form will be here
                             </div>
-                            <div class="row">
-                                <div class="col">
-
-                                </div>
-                            </div>
-                        </div><!--end col-6-->
-                        <div class="col">
+                        </div>
+                        <div class="col-6">
                             <div class="row">
                                 <div class="col">
                                     <small class="text-info">Example Section—1</small>
@@ -614,22 +691,56 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3Contact.png" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3Contact.png" class="img-fluid" alt="Restaurant 3 - Section 1">
+                                    <a href="../assets/img/Res3Contact-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3Contact-1.jpg" class="img-fluid" alt="Restaurant 3 - Section 1">
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                </div><!--end tab-Contact-->
+                    <div class="row mb-5"><!-- Contact Section 2-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—2</small>
+                                </div>
+                            </div>
+                            <div class="mb-3 border rounded p-3">
+                                form will be here
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—2</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res3Contact-2.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3Contact-2.jpg" class="img-fluid" alt="Restaurant 2 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="row mb-5"><!-- Contact BTN-->
+                        <div class="col">
+                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Submit page Contact info.</button>
+                        </div>
+                    </div>
+
+
+                </div><!--end tab-Contact-->
             </div> <!-- End tab-content-->
+
         </div>
     </div>
     <div class="row mb-5" id="changepage">
         <div class="col-6" style="text-align:left;">
-            <button type="button" class="btn btn-success" id="submitBtn">save</button>
+
         </div>
         <div class="col d-flex justify-content-end">
             <!-- tab menu -->
@@ -650,6 +761,56 @@ $projectID = $id;
 
 <script src="../controllers/template.js"></script>
 <script>
+    const loginID = $("#loginID").val();
+    let page = "";
+    let payload = {};
+
+    const submitHome = () => {
+        page = "home";
+        payload = {
+            "loginID": loginID
+        }
+        console.log("submitHome");
+        console.log("Payload", payload);
+        sendEmail();
+    }//submitHome
+
+    const submitAbout = () => {
+        page = "about";
+        payload = {
+            "loginID": loginID
+        }
+        console.log("submitAbout");
+        console.log("Payload", payload);
+        sendEmail();
+    }//submitAbout
+
+    const submitContact = () => {
+        page = "contact";
+        payload = {
+            "loginID": loginID
+        }
+        console.log("submitContact");
+        console.log("Payload", payload);
+        sendEmail();
+    }//submitContact
+
+    const sendEmail = () => {
+        const callAjax = $.ajax({
+            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                payload: payload,
+                page: page,
+                projectID: projectID,
+                loginID: loginID
+            }
+        });
+    }
+
     $("#cmdSubmit").click(function () {
         let payload = {
             mode : "save",
@@ -710,16 +871,7 @@ $projectID = $id;
 
         };
 
-        console.log("Payload", payload);
 
-        const callAjax = $.ajax({
-            url: "../models/ajaxRes3.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: payload
-        });
 
     });
 </script>
