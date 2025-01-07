@@ -1,4 +1,14 @@
 const projectID = $("#projectID").val();
+const loginID = $("#loginID").val();
+
+let pages = []; //for local storage
+const ketTxt = "sendStatus";
+const key = ketTxt+projectID;
+
+const infoTextHome = $("#infoTextHome");
+const infoTextAbout = $("#infoTextAbout");
+const infoTextContact = $("#infoTextContact");
+const infoTextService = $("#infoTextService");
 
 const imageMap = {
     'tab-res1Home':  '#res1Img,../assets/img/Res1Home.png',
@@ -76,3 +86,79 @@ const handleFormSubmit = (button) => {
         alert("Please select a file.");
     }
 };
+
+function readPage(param){
+    let readStatus = localStorage.getItem(key);
+    return JSON.parse(readStatus);
+}//readPage
+
+function setPage(param){
+    let currentPage = localStorage.getItem(key);
+    let findPage = pages.includes(param);
+    if(!findPage){
+        pages.push(param);
+        let val = JSON.stringify(pages); //arr to text
+        localStorage.setItem(key,val);
+    }
+    return true;
+}//setPage
+
+function clearKey(){
+    localStorage.clear();
+    return true;
+}//clearKey
+
+function checkPage(param){
+    let currentPage = localStorage.getItem(key);
+    let currentPageArr =  JSON.parse(currentPage);
+    let findPage = false;
+
+    if (currentPageArr != null){
+        findPage = currentPageArr.includes(param);
+    }
+    return findPage;
+}//checkPage
+
+function setAllPageStatus(){
+    if(checkPage('home')){
+        infoTextHome.removeClass( "text-danger" ).addClass( "text-success" );
+        infoTextHome.empty().text("Send !!");
+    }
+
+    if(checkPage('about')){
+        infoTextAbout.removeClass( "text-danger" ).addClass( "text-success" );
+        infoTextAbout.empty().text("Send !!");
+    }
+
+    if(checkPage('contact')){
+        infoTextContact.removeClass( "text-danger" ).addClass( "text-success" );
+        infoTextContact.empty().text("Send !!");
+    }
+
+    if(checkPage('service')){
+        infoTextService.removeClass( "text-danger" ).addClass( "text-success" );
+        infoTextService.empty().text("Send !!");
+    }
+}//setAllPageStatus
+
+function sendEmail() {
+    let answer = confirm("Are you sure you want to submit this page?");
+
+    if (answer) {
+        const callAjax = $.ajax({
+            type: "POST",
+            crossDomain: true,
+            dataType: 'jsonp',
+            headers: {  'Access-Control-Allow-Origin': 'https://www.localforyou.com' },
+            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
+            data: {
+                "loginID": loginID,
+                "projectID": projectID,
+                "page": page,
+                "payload": payload
+            }
+        });
+        setPage(page);
+        setAllPageStatus();
+    }//if
+}//sendEmail

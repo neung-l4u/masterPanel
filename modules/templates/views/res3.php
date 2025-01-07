@@ -459,9 +459,10 @@ $projectID = $id;
                         </div>
                     </div><!--end Section 4-->
 
-                    <div class="row mb-5"><!-- Home BTN -->
+                    <div class="row"><!-- Home BTN -->
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitHome();">Submit page Home info.</button>
+                            <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
 
@@ -662,9 +663,10 @@ $projectID = $id;
                         </div>
                     </div>
 
-                    <div class="row mb-5"><!-- About BTN -->
+                    <div class="row"><!-- About BTN -->
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitAbout();">Submit page About info.</button>
+                            <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
 
@@ -680,7 +682,57 @@ $projectID = $id;
                                 </div>
                             </div>
                             <div class="mb-3 border rounded p-3">
-                                form will be here
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputContactHeadline" class="form-label">34. Contact Us Headline #1</label>
+                                            <input type="text" class="form-control" id="inputContactHeadline" placeholder="Headline #1">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputContactSub" class="form-label">35. Contact Us Sub Headline #1</label>
+                                            <textarea class="form-control" id="inputContactSub" rows="3" placeholder="Sub Headline #1"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 border rounded p-3">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputFormHeadline" class="form-label">36. Form Headline #2</label>
+                                            <input type="text" class="form-control" id="inputFormHeadline" placeholder="Form Headline #2">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputFormSub" class="form-label">37. Form Sub Headline #2</label>
+                                            <textarea class="form-control" id="inputFormSub" rows="3" placeholder="Form Sub Headline #2"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3 border rounded p-3">
+                                <div class="col">
+                                    <label for="textPromotion2">38. Background Image</label>
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formContactBackgroundImage">
+                                        <div class="d-flex flex-column gap-2">
+                                            <img class="preview" src="../assets/img/default.png" alt="place">
+                                            <input class="picname" type="hidden" value="">
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <input type="file" class="file-input">
+                                                    <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                         <div class="col-6">
@@ -707,7 +759,22 @@ $projectID = $id;
                                 </div>
                             </div>
                             <div class="mb-3 border rounded p-3">
-                                form will be here
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputLocationHead" class="form-label">39. Location Headline #3</label>
+                                            <input type="text" class="form-control" id="inputLocationHead" placeholder="Location Headline #2">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="inputLocationSub" class="form-label">40. Location Sub Headline #3</label>
+                                            <textarea class="form-control" id="inputLocationSub" rows="3" placeholder="Location Sub Headline #2"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-6">
@@ -726,18 +793,18 @@ $projectID = $id;
                         </div>
                     </div>
 
-                    <div class="row mb-5"><!-- Contact BTN-->
+                    <div class="row"><!-- Contact BTN-->
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Submit page Contact info.</button>
+                            <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
 
-
                 </div><!--end tab-Contact-->
-            </div> <!-- End tab-content-->
 
-        </div>
-    </div>
+            </div> <!-- End tab-content-->
+        </div><!--col-->
+    </div><!--row-->
     <div class="row mb-5" id="changepage">
         <div class="col-6" style="text-align:left;">
 
@@ -761,9 +828,12 @@ $projectID = $id;
 
 <script src="../controllers/template.js"></script>
 <script>
-    const loginID = $("#loginID").val();
-    let page = "";
-    let payload = {};
+    let page = "";// for ajax
+    let payload = {};// for ajax
+
+    $(function() {
+        setAllPageStatus(); //in template.js
+    });//ready
 
     const submitHome = () => {
         page = "home";
@@ -772,7 +842,7 @@ $projectID = $id;
         }
         console.log("submitHome");
         console.log("Payload", payload);
-        sendEmail();
+        sendEmail(); //in template.js
     }//submitHome
 
     const submitAbout = () => {
@@ -782,7 +852,7 @@ $projectID = $id;
         }
         console.log("submitAbout");
         console.log("Payload", payload);
-        sendEmail();
+        sendEmail(); //in template.js
     }//submitAbout
 
     const submitContact = () => {
@@ -792,30 +862,13 @@ $projectID = $id;
         }
         console.log("submitContact");
         console.log("Payload", payload);
-        sendEmail();
+        sendEmail(); //in template.js
     }//submitContact
 
-    const sendEmail = () => {
-        const callAjax = $.ajax({
-            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                payload: payload,
-                page: page,
-                projectID: projectID,
-                loginID: loginID
-            }
-        });
-    }
 
     $("#cmdSubmit").click(function () {
         let payload = {
-            mode : "save",
-
-        //TEMPLATE_R2_PAGE_HOME
+            //TEMPLATE_R2_PAGE_HOME
             tdSlogan: $('#tdSlogan').val(),
             //tdR2HomeSlider1: $('#tdR2HomeSlider1').val(),
             //tdR2HomeSlider2: $('#tdR2HomeSlider2').val(),
@@ -848,7 +901,7 @@ $projectID = $id;
             tdR2HomePromotion4Body: $('#tdR2HomePromotion4Body').val(),
             //tdR2FooterBgImg: $('#tdR2FooterBgImg').val(),
 
-        //TEMPLATE_R2_PAGE_ABOUT
+            //TEMPLATE_R2_PAGE_ABOUT
             //tdR2HeadAboutImg: $('#tdR2HeadAboutImg').val(),
             tdR2AboutUSBody: $('#tdR2AboutUSBody').val(),
             tdR2AboutPromotion1: $('#tdR2AboutPromotion1').val(),
@@ -858,8 +911,8 @@ $projectID = $id;
             //tdR2StaffImg2: $('#tdR2StaffImg2').val(),
             //tdR2StaffImg3: $('#tdR2StaffImg3').val(),
             //tdR2AboutFeaturedImg: $('#tdR2AboutFeaturedImg').val(),
-            
-        //TEMPLATE_R2_PAGE_CONTACT
+
+            //TEMPLATE_R2_PAGE_CONTACT
             //tdR2HeadContactImg: $('#tdR2HeadContactImg').val(),
             tdR2ContactHeadSub1: $('#tdR2ContactHeadSub1').val(),
             tdR2ContactHeadSub2: $('#tdR2ContactHeadSub2').val(),
@@ -868,10 +921,7 @@ $projectID = $id;
             tdR2ContactPromotion1sub: $('#tdR2ContactPromotion1sub').val(),
             tdR2ContactHeadSub1: $('#tdR2ContactHeadSub1').val(),
             tdR2ContactHeadSub1: $('#tdR2ContactHeadSub1').val(),
-
         };
-
-
-
     });
+
 </script>
