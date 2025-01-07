@@ -5,6 +5,9 @@ let pages = []; //for local storage
 const ketTxt = "sendStatus";
 const key = ketTxt+projectID;
 
+let page = "";// for ajax
+let payload = {};// for ajax
+
 const infoTextHome = $("#infoTextHome");
 const infoTextAbout = $("#infoTextAbout");
 const infoTextContact = $("#infoTextContact");
