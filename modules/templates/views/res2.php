@@ -1272,6 +1272,8 @@ $projectID = $id;
 <script src="../controllers/template.js"></script>
 <script>
     $(function() {
+        setAllPageStatus(); //in template.js
+        
         'use strict';
     });//ready
 
