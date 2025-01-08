@@ -79,7 +79,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="bg1">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formbg1">
                                         <div class="d-flex flex-column">
                                             <label for="bg1">4. BG Image 2201x1068 px.</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -115,8 +115,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3Home-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3Home-1.jpg" class="img-fluid" alt="Restaurant 3 - Section 1">
+                                    <a href="../assets/img/Res3/Res3-Home-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3/Res3-Home-1.jpg" class="img-fluid" alt="Restaurant 3 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -135,13 +135,13 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="col-6">
                                     <h6>promotion1 #1</h6>
                                     <label for="textTestimonial2" class="form-label">6. Opening Hours</label>
-                                    <textarea class="form-control" id="textTestimonial2" rows="3" placeholder="promotion #1"></textarea>
+                                    <textarea class="form-control" id="textTestimonial" rows="3" placeholder="promotion #1"></textarea>
                                     <label for="textFeaturedDish4">7. Promotion Message #1</label>
                                     <input type="text" class="form-control" id="textFeaturedDish4" placeholder="promotion #1">
                                 </div>
                                 <div class="col">
                                     <label for="textFeaturedDish4">8. Promotion Image #1</label>
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="promotion1">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formpromotion1">
                                         <div class="d-flex flex-column gap-2">
                                             <img class="preview" src="../assets/img/default.png" alt="place">
                                             <input class="picname" type="hidden" value="">
@@ -259,8 +259,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3Home-2.jpg" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3Home-2.jpg" class="img-fluid" alt="Restaurant 3 - Section 2">
+                                    <a href="../assets/img/Res3/Res3-Home-2.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3/Res3-Home-2.jpg" class="img-fluid" alt="Restaurant 3 - Section 2">
                                     </a>
                                 </div>
                             </div>
@@ -278,7 +278,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="col-6">
                                         <h6>13. Testimonial #1</h6>
                                         <label for="textFeaturedDish4">Name</label>
-                                        <input type="text" class="form-control" id="textFeaturedDish4" placeholder="Testimonial #1">
+                                        <input type="text" class="form-control" id="textNameTestimonial1" placeholder="Testimonial #1">
                                         <label for="textTestimonial1" class="form-label">Text</label>
                                         <textarea class="form-control" id="textTestimonial1" rows="3" placeholder="Testimonial #1"></textarea>
                                 </div>
@@ -301,7 +301,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="col-6">
                                     <h6>14. Testimonial #2</h6>
                                     <label for="textFeaturedDish4">Name</label>
-                                    <input type="text" class="form-control" id="textFeaturedDish4" placeholder="Testimonial #2">
+                                    <input type="text" class="form-control" id="textNameTestimonial2" placeholder="Testimonial #2">
                                     <label for="textTestimonial2" class="form-label">Text</label>
                                     <textarea class="form-control" id="textTestimonial2" rows="3" placeholder="Testimonial #2"></textarea>
                                 </div>
@@ -340,9 +340,9 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="col">
                                     <h6>Promotion #2</h6>
                                     <label for="textFeaturedDish4">16. Heading</label>
-                                    <input type="text" class="form-control" id="textFeaturedDish4" placeholder="Testimonial #2">
+                                    <input type="text" class="form-control" id="textpicpng" placeholder="Testimonial #2">
                                     <label for="textTestimonial2" class="form-label">17. Detail</label>
-                                    <textarea class="form-control" id="textTestimonial2" rows="3" placeholder="Testimonial #2"></textarea>
+                                    <textarea class="form-control" id="textbody" rows="3" placeholder="Testimonial #2"></textarea>
                                 </div>
                             </div>
 
@@ -355,8 +355,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3Home-3.jpg" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3Home-3.jpg" class="img-fluid" alt="Restaurant 3 - Section 3">
+                                    <a href="../assets/img/Res3/Res3-Home-3.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3/Res3-Home-3.jpg" class="img-fluid" alt="Restaurant 3 - Section 3">
                                     </a>
                                 </div>
                             </div>
@@ -455,8 +455,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3Home-4.jpg" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3Home-4.jpg" class="img-fluid" alt="Restaurant 3 - Section 4">
+                                    <a href="../assets/img/Res3/Res3-Home-4.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3/Res3-Home-4.jpg" class="img-fluid" alt="Restaurant 3 - Section 4">
                                     </a>
                                 </div>
                             </div>
@@ -486,8 +486,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             <div class="border rounded p-5">
                                 <div class="row mt-3">
                                     <div class="col">
-                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="aboutHeaderBG">
-                                            <label for="bg1">23. About Page Header BG Image 2201x1068 px.</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="fromaboutHeaderBG">
+                                            <label for="bg1">1. About Page Header BG Image 2201x1068 px.</label>
                                             <div class="d-flex flex-column gap-2">
                                                 <img class="preview" id="aboutHeaderBG" src="../assets/img/default.png" alt="place">
                                                 <input class="picname" type="hidden" value="">
@@ -505,7 +505,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputTagline" class="form-label">24. Tag Line</label>
+                                            <label for="inputTagline" class="form-label">2. Tag Line</label>
                                             <input type="text" class="form-control" id="inputTagline" placeholder="Business Tagline">
                                         </div>
                                     </div>
@@ -521,8 +521,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3About-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3About-1.jpg" class="img-fluid" alt="Restaurant 3 - Section 1">
+                                    <a href="../assets/img/Res3/Res3-About-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3/Res3-About-1.jpg" class="img-fluid" alt="Restaurant 3 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -540,7 +540,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputHighlightSlogan" class="form-label">25. Highlight Slogan</label>
+                                            <label for="inputHighlightSlogan" class="form-label">3. Highlight Slogan</label>
                                             <input type="text" class="form-control" id="inputHighlightSlogan" placeholder="Highlight Slogan">
                                         </div>
                                     </div>
@@ -548,7 +548,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputAboutSlogan" class="form-label">26. Slogan</label>
+                                            <label for="inputAboutSlogan" class="form-label">4. Slogan</label>
                                             <input type="text" class="form-control" id="inputAboutSlogan" placeholder="About Slogan">
                                         </div>
                                     </div>
@@ -556,7 +556,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputAboutHeadline" class="form-label">27. About Us Headline</label>
+                                            <label for="inputAboutHeadline" class="form-label">5. About Us Headline</label>
                                             <textarea class="form-control" id="inputAboutHeadline" rows="3" placeholder="About Us Headline"></textarea>
                                         </div>
                                     </div>
@@ -564,7 +564,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputAboutDetail" class="form-label">28. About Us Detail</label>
+                                            <label for="inputAboutDetail" class="form-label">6. About Us Detail</label>
                                             <textarea class="form-control" id="inputAboutDetail" rows="3" placeholder="About Us Detail"></textarea>
                                         </div>
                                     </div>
@@ -580,8 +580,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3About-2.jpg" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3About-2.jpg" class="img-fluid" alt="Restaurant 3 - Section 2">
+                                    <a href="../assets/img/Res3/Res3-About-2.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3/Res3-About-2.jpg" class="img-fluid" alt="Restaurant 3 - Section 2">
                                     </a>
                                 </div>
                             </div>
@@ -598,7 +598,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             <div class="mb-3 border rounded p-3">
                                 <div class="row">
                                     <div class="col-6">
-                                        <label for="textPromotion2">29. Highlight dish</label>
+                                        <label for="textPromotion2">7. Highlight dish</label>
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formHighlightDish">
                                             <div class="d-flex flex-column gap-2">
                                                 <img class="preview" src="../assets/img/default.png" alt="place">
@@ -614,11 +614,11 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                     </div>
                                     <div class="col">
                                         <h6>Text</h6>
-                                        <label for="textHighlightTitle">7. Highlight Title</label>
+                                        <label for="textHighlightTitle">8. Highlight Title</label>
                                         <input type="text" class="form-control" id="textHighlightTitle" placeholder="Highlight Title">
-                                        <label for="textHighlightSubtitle" class="form-label">8. Highlight Sub</label>
+                                        <label for="textHighlightSubtitle" class="form-label">9. Highlight Sub</label>
                                         <textarea class="form-control" id="textHighlightSubtitle" rows="3" placeholder="Highlight Subtitle"></textarea>
-                                        <label for="textHighlightDetail" class="form-label">9. Highlight Detail</label>
+                                        <label for="textHighlightDetail" class="form-label">10. Highlight Detail</label>
                                         <textarea class="form-control" id="textHighlightDetail" rows="3" placeholder="Highlight Detail"></textarea>
                                     </div>
                                 </div>
@@ -632,8 +632,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3About-3.jpg" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3About-3.jpg" class="img-fluid" alt="Restaurant 3 - Section 3">
+                                    <a href="../assets/img/Res3/Res3-About-3.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3/Res3-About-3.jpg" class="img-fluid" alt="Restaurant 3 - Section 3">
                                     </a>
                                 </div>
                             </div>
@@ -657,6 +657,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <br>
                                 <div id="select_file">
                                     <div class="form-group">
+                                    <label for="fileupload">11. Featured Dish Image</label>
                                     <input id="fileupload" type="file" name="files" accept="image/x-png, image/gif, image/jpeg" >
                                         <small id="warnMaxText" class="text-info">Limit </small>
                                         <br>
@@ -682,8 +683,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3About-4.jpg" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3About-4.jpg" class="img-fluid" alt="Restaurant 3 - Section 4">
+                                    <a href="../assets/img/Res3/Res3-About-4.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3/Res3-About-4.jpg" class="img-fluid" alt="Restaurant 3 - Section 4">
                                     </a>
                                 </div>
                             </div>
@@ -712,7 +713,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputContactHeadline" class="form-label">34. Contact Us Headline #1</label>
+                                            <label for="inputContactHeadline" class="form-label">1. Contact Us Headline #1</label>
                                             <input type="text" class="form-control" id="inputContactHeadline" placeholder="Headline #1">
                                         </div>
                                     </div>
@@ -720,7 +721,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputContactSub" class="form-label">35. Contact Us Sub Headline #1</label>
+                                            <label for="inputContactSub" class="form-label">2. Contact Us Sub Headline #1</label>
                                             <textarea class="form-control" id="inputContactSub" rows="3" placeholder="Sub Headline #1"></textarea>
                                         </div>
                                     </div>
@@ -730,7 +731,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputFormHeadline" class="form-label">36. Form Headline #2</label>
+                                            <label for="inputFormHeadline" class="form-label">3. Form Headline #2</label>
                                             <input type="text" class="form-control" id="inputFormHeadline" placeholder="Form Headline #2">
                                         </div>
                                     </div>
@@ -738,15 +739,15 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputFormSub" class="form-label">37. Form Sub Headline #2</label>
+                                            <label for="inputFormSub" class="form-label">4. Form Sub Headline #2</label>
                                             <textarea class="form-control" id="inputFormSub" rows="3" placeholder="Form Sub Headline #2"></textarea>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-3 border rounded p-3">
+                            <div class="mb-3 border rounded p-3">
                                 <div class="col">
-                                    <label for="textPromotion2">38. Background Image</label>
+                                    <label for="textPromotion2">5. Background Image</label>
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formContactBackgroundImage">
                                         <div class="d-flex flex-column gap-2">
                                             <img class="preview" src="../assets/img/default.png" alt="place">
@@ -770,8 +771,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3Contact-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3Contact-1.jpg" class="img-fluid" alt="Restaurant 3 - Section 1">
+                                    <a href="../assets/img/Res3/Res3-Contact-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3/Res3-Contact-1.jpg" class="img-fluid" alt="Restaurant 3 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -789,7 +790,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputLocationHead" class="form-label">39. Location Headline #3</label>
+                                            <label for="inputLocationHead" class="form-label">6. Location Headline #3</label>
                                             <input type="text" class="form-control" id="inputLocationHead" placeholder="Location Headline #2">
                                         </div>
                                     </div>
@@ -797,7 +798,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="inputLocationSub" class="form-label">40. Location Sub Headline #3</label>
+                                            <label for="inputLocationSub" class="form-label">7. Location Sub Headline #3</label>
                                             <textarea class="form-control" id="inputLocationSub" rows="3" placeholder="Location Sub Headline #2"></textarea>
                                         </div>
                                     </div>
@@ -812,8 +813,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res3Contact-2.jpg" target="_blank" title="click to zoom">
-                                        <img id="res3Img" src="../assets/img/Res3Contact-2.jpg" class="img-fluid" alt="Restaurant 2 - Section 1">
+                                    <a href="../assets/img/Res3/Res3-Contact-2.jpg" target="_blank" title="click to zoom">
+                                        <img id="res3Img" src="../assets/img/Res3/Res3-Contact-2.jpg" class="img-fluid" alt="Restaurant 2 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -931,7 +932,33 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
     const submitHome = () => {
         page = "home";
         payload = {
-            "loginID": loginID
+            "loginID": loginID,
+            "A1-01-color" : $('#bg1Hex').val(),
+            "A1-02-Slogan" : $('#inputSlogan').val(),
+            "A1-03-Intro" : $('#inputIntroduction1').val(),
+            "A1-04-HeadBG" : $('#formbg1 .picname').val(),
+            "A1-05-Intro" : $('#inputIntroduction2').val(),
+            "A2-06-Testimonial" : $('#textTestimonial').val(),
+            "A2-07-FeaturedDish" : $('#textFeaturedDish4').val(),
+            "A2-08-Promopic" : $('#formpromotion1 .picname').val(),
+            "A2-09-Dishpic1" : $('#formDish1 .picname').val(),
+            "A2-10-Dishpic2" : $('#formDish2 .picname').val(),
+            "A2-11-Dishpic3" : $('#formDish3 .picname').val(),
+            "A2-12-Dishpic4" : $('#formDish4 .picname').val(),
+            "A3-13-01-NameUser1" : $('#textNameTestimonial1').val(),
+            "A3-13-02-Review1" : $('#textTestimonial1').val(),
+            "A3-13-03-PicUser1" : $('#formTestimonial1 .picname').val(),
+            "A3-14-01-Name2" : $('#textNameTestimonial2').val(),
+            "A3-14-02-Review2" : $('#textTestimonial2').val(),
+            "A3-14-03-PicUser2" : $('#formTestimonial2 .picname').val(),
+            "A3-15-MenuPNG" : $('#formPromotion2 .picname').val(),
+            "A3-16-Heading" : $('#textpicpng').val(),
+            "A3-17-Body" : $('#textbody').val(),
+            "A4-18-Footer1" : $('#formFooter1 .picname').val(),
+            "A4-19-Footer2" : $('#formFooter2 .picname').val(),
+            "A4-20-Footer3" : $('#formFooter3 .picname').val(),
+            "A4-21-Footer4" : $('#formFooter4 .picname').val(),
+            "A4-22-MapURL" : $('#inputMapURL').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
@@ -940,8 +967,21 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
     const submitAbout = () => {
         page = "about";
         payload = {
-            "loginID": loginID,
-            "album": JSON.stringify(album_files)
+            "loginID" : loginID,
+            "B1-01-HeadBG" :$('#fromaboutHeaderBG .picname').val(),
+            "B1-02-Tagline" :$('#inputTagline').val(),
+
+            "B2-03-HLSlogan" :$('#inputHighlightSlogan').val(),
+            "B2-04-Slogan" :$('#inputAboutSlogan').val(),
+            "B2-05-Headline" :$('#inputAboutHeadline').val(),
+            "B2-06-Detail" :$('#inputAboutDetail').val(),
+
+            "B3-07-HLDish" :$('#formHighlightDish .picname').val(),
+            "B3-08-HLTitle" :$('#textHighlightTitle').val(),
+            "B3-09-HLSubTitle" :$('#textHighlightSubtitle').val(),
+            "B3-10-HLDetail" :$('#textHighlightDetail').val(),
+
+            "B4-11-Slogan" :JSON.stringify(album_files)
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
@@ -950,7 +990,14 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
     const submitContact = () => {
         page = "contact";
         payload = {
-            "loginID": loginID
+            "loginID": loginID,
+            "C1-01-Headline" :$('#inputContactHeadline').val(),
+            "C1-02-SubHeadline" :$('#inputContactSub').val(),
+            "C1-03-FormHeadline" :$('#inputFormHeadline').val(),
+            "C1-04-FormSub" :$('#inputFormSub').val(),
+            "C1-05-BGForm" :$('#formContactBackgroundImage .picname').val(),
+            "C2-06-LocationHead" :$('#inputLocationHead').val(),
+            "C2-07-LocationSub" :$('#inputLocationSub').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js

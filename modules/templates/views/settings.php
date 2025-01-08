@@ -39,14 +39,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modalFormLabel">Project</h1>
+                <h1 class="modal-title fs-5" id="modalFormLabel">Add User</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
-                            <label for="projectName">Project name</label>
+                            <label for="projectName">Email</label>
                             <input type="text" class="form-control" id="projectName" placeholder="HoonHay" autocomplete="off">
                         </div>
                     </div>
@@ -54,38 +54,12 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
-                            <label for="shopType">Shop type</label>
+                            <label for="shopType">Channel</label>
                             <select class="form-control" id="shopType">
-                                <option value="0" disabled>--- Select ---</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="selectedTemplate">Template</label>
-                            <?php
-                            $templates = [
-                                1 => "Template no. 1",
-                                2 => "Template no. 2",
-                                3 => "Template no. 3",
-                            ];
-                            ?>
-                            <select class="form-control" id="selectedTemplate">
-                                <?php foreach ($templates as $value => $label){ ?>
-                                    <option value="<?= htmlspecialchars($value) ?>"><?= htmlspecialchars($label) ?></option>
-                                <?php }//foreach ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="country">Country</label>
-                            <select class="form-control" id="country">
-                                <option value="0" disabled>--- Select ---</option>
+                                <option value="0">--- Select ---</option>
+                                <option value="1">To</option>
+                                <option value="2">CC</option>
+                                <option value="3">BCC</option>
                             </select>
                         </div>
                     </div>
@@ -102,4 +76,7 @@
     </div>
 </div>
 
-<script src="../controllers/settings.js"></script>
+<script src="../controllers/settings.js">
+
+
+</script>
