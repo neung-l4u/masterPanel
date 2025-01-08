@@ -52,50 +52,51 @@ $project = $db->query(
 
 $topData = "";
 
-$topData .= '<div><b>- - Project - -</b></div>';     
-$topData .= '<div><b>Project ID : </b>'. $id .'</div>';
-$topData .= '<div><b>Project Name : </b>'.$project['projectName'].'</div>';
-$topData .= '<div><b>Project Type : </b>'.$project['shopType'].' Template No. - 0';
-$topData .= '<div><b>Project Owner : </b>'.$project['PO'].'</div>';
-$topData .= '<div><b>Page : </b>'.$page.'</div>';
-$topData .= '<div><b>Country : </b>'.$project['country'].'</div>';
+
+$topData = '<div><b>- - Project - -</b></div>';
+$topData .= '<div><b>Project ID: </b>'. $id .'</div>';
+$topData .= '<div><b>Project Name: </b>'.$project['projectName'].'</div>';
+$topData .= '<div><b>Project Type: </b>'.$project['shopType'].' Template No. - 0'.$project['selectedTemplate'];
+$topData .= '<div><b>Project Owner: </b>'.$project['PO'].'</div>';
+$topData .= '<div><b>Page: </b>'.$page.'</div>';
+$topData .= '<div><b>Country: </b>'.$project['country'].'</div>';
 $topData .= '<br>- - - - - - - - - - - - - - - - - - - - - - - - - - -<br><br>';
 
 $topData .= '<div><b>- - Detail Project & Theme - -</b></div>';  
-$topData .= '<div><b>Logo : </b>'.$project['logo'].'</div>';
-$topData .= '<div><b>Color1 : </b>'.$project['colorTheme1'].'</div>';
-$topData .= '<div><b>Color2 : </b>'.$project['colorTheme2'].'</div>';
-$topData .= '<div><b>Color3 : </b>'.$project['colorTheme3'].'</div>';
+$topData .= '<div><b>Logo: </b>'.$project['logo'].'</div>';
+$topData .= '<div><b>Color1: </b>'.$project['colorTheme1'].'</div>';
+$topData .= '<div><b>Color2: </b>'.$project['colorTheme2'].'</div>';
+$topData .= '<div><b>Color3: </b>'.$project['colorTheme3'].'</div>';
 $topData .= '<br>';
-$topData .= '<div><b>Email : </b>'.$project['email'].'</div>';
-$topData .= '<div><b>Phone : </b>'.$project['phone'].'</div>';
-$topData .= '<div><b>Facebook : </b>'.$project['facebookURL'].'</div>';
-$topData .= '<div><b>IG : </b>'.$project['instagramURL'].'</div>';
-$topData .= '<div><b>Youtube : </b>'.$project['youtubeURL'].'</div>';
-$topData .= '<div><b>Tiktok : </b>'.$project['tiktokURL'].'</div>';
-$topData .= '<div><b>Localtion : </b>'.$project['address'].'</div>';
+$topData .= '<div><b>Email: </b>'.$project['email'].'</div>';
+$topData .= '<div><b>Phone: </b>'.$project['phone'].'</div>';
+$topData .= '<div><b>Facebook: </b>'.$project['facebookURL'].'</div>';
+$topData .= '<div><b>IG: </b>'.$project['instagramURL'].'</div>';
+$topData .= '<div><b>Youtube: </b>'.$project['youtubeURL'].'</div>';
+$topData .= '<div><b>Tiktok: </b>'.$project['tiktokURL'].'</div>';
+$topData .= '<div><b>Localtion: </b>'.$project['address'].'</div>';
 $topData .= '<br>';
-$topData .= '<div><b>Opening Hours : </b>'.$project['openingHours'].'</div>';
-$topData .= '<div><b>Pickup & Delivery : </b>'.$project['pickupAndDelivery'].'</div>';
+$topData .= '<div><b>Opening Hours: </b>'.$project['openingHours'].'</div>';
+$topData .= '<div><b>Pickup & Delivery: </b>'.$project['pickupAndDelivery'].'</div>';
 $topData .= '<br>';
 
 if ($project['gloriaHave'] == 1){
-    $topData .= '<div><b>System : Gloria Food </b></div>';
-    $topData .= '<div><b>Order URL : </b>'.$project['orderURL'].'</div>';
-    $topData .= '<div><b>Table URL : </b>'.$project['tableURL'].'</div>';
+    $topData .= '<div><b>System: Gloria Food </b></div>';
+    $topData .= '<div><b>Order URL: </b>'.$project['orderURL'].'</div>';
+    $topData .= '<div><b>Table URL: </b>'.$project['tableURL'].'</div>';
 }else { 
-    $topData .= '<div><b>System : Amelia </b></div>';
+    $topData .= '<div><b>System: Amelia </b></div>';
 };
 
 $topData .= '<br>- - - - - - - - - - - - - - - - - - - - - - - - - - -<br><br>';
 $topData .= '<div><b>- - Detail Domain - -</b></div>';    
-$topData .= '<div><b>Domain Name : </b>'.$project['domainName'].'</div>';
-$topData .= '<div><b>Domain Provider : </b>'.$project['domainProvider'].'</div>';
-$topData .= '<div><b>User : </b>'.$project['domainUser'].'</div>';
-$topData .= '<div><b>Password : </b>'.$project['domainPass'].'</div>';
-$topData .= '<div><b>Hosting Provider : </b>'.$project['hostingProvider'].'</div>';
-$topData .= '<div><b>User : </b>'.$project['hostingUser'].'</div>';
-$topData .= '<div><b>Password : </b>'.$project['hostingPass'].'</div>';     
+$topData .= '<div><b>Domain Name: </b>'.$project['domainName'].'</div>';
+$topData .= '<div><b>Domain Provider: </b>'.$project['domainProvider'].'</div>';
+$topData .= '<div><b>User: </b>'.$project['domainUser'].'</div>';
+$topData .= '<div><b>Password: </b>'.$project['domainPass'].'</div>';
+$topData .= '<div><b>Hosting Provider: </b>'.$project['hostingProvider'].'</div>';
+$topData .= '<div><b>User: </b>'.$project['hostingUser'].'</div>';
+$topData .= '<div><b>Password: </b>'.$project['hostingPass'].'</div>';
 
 $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'.json_encode($json, JSON_PRETTY_PRINT).'</pre></body></html>';
 
@@ -139,7 +140,7 @@ $param = array(
 $system = array(
     "emailSenderName" => "Template Submission Form",
     "emailSenderEmail" => "administrator@localforyou.com",
-    "emailSubject" => "New " . $project['shopType'] . " Website Submitted!",
+    "emailSubject" => "New " . $project['shopType'] . " Website Submitted",
     "emailAdministrator" => "neung@localforyou.com"
 );
 
