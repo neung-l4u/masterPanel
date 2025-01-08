@@ -5,7 +5,7 @@ require_once ("../assets/php/share_function.php");
 global $db, $date;
 $id=$_REQUEST['id'];
 
-$row = $db->query('SELECT *, IF(shopTypeID=1, "Restaurant", "Massage") as "typeName" FROM `tb_project` WHERE projectID = ?;',$id)->fetchArray();
+$row = $db->query('SELECT * FROM `tb_project` WHERE projectID = ?;',$id)->fetchArray();
 $projectID = $id;
 
 $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName"]).'/';
@@ -23,7 +23,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         <li class="breadcrumb-item"><a href="../views/main.php?m=project">Projects</a></li>
         <li class="breadcrumb-item projectName" aria-current="page" id="projectName"><a href="../views/main.php?m=detail&id=<?php echo $projectID; ?>"><?php echo $row['projectName']; ?></a></li>
         <li class="breadcrumb-item active" aria-current="page" id="projectTemplate">
-            <?php echo $row['typeName']; ?> <?php echo $row['selectedTemplate']; ?>
+            <?php echo ($row['shopTypeID']==1)?"Restaurant":"Massage"; ?> <?php echo $row['selectedTemplate']; ?>
             (<a class="link-primary" href="https://restaurant3.localforyou.com/" target="_blank">Preview</a>)
         </li>
     </ol>
