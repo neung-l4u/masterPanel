@@ -1,5 +1,3 @@
-const projectID = $("#projectID").val();
-
 const imageMap = {
     'tab-res1Home':  '#res1Img,../assets/img/Res1Home.png',
     'tab-res1About': '#res1Img,../assets/img/Res1About.png',

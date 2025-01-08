@@ -57,3 +57,7 @@ form#formFooter1 div div .preview, form#formFooter2 div div .preview, form#formF
     background: white;
 }
 /* End Preview */
+
+.button {
+    margin-left: 0;
+}
