@@ -134,7 +134,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             <div class="row mb-3 border rounded p-3">
                                 <div class="col-6">
                                     <h6>promotion1 #1</h6>
-                                    <label for="textTestimonial2" class="form-label">6. Opening Hours</label>
+                                    <label for="textTestimonial" class="form-label">6. Opening Hours</label>
                                     <textarea class="form-control" id="textTestimonial" rows="3" placeholder="promotion #1"></textarea>
                                     <label for="textFeaturedDish4">7. Promotion Message #1</label>
                                     <input type="text" class="form-control" id="textFeaturedDish4" placeholder="promotion #1">
@@ -277,7 +277,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             <div class="row mb-3 border rounded p-3">
                                 <div class="col-6">
                                         <h6>13. Testimonial #1</h6>
-                                        <label for="textFeaturedDish4">Name</label>
+                                        <label for="textNameTestimonial1">Name</label>
                                         <input type="text" class="form-control" id="textNameTestimonial1" placeholder="Testimonial #1">
                                         <label for="textTestimonial1" class="form-label">Text</label>
                                         <textarea class="form-control" id="textTestimonial1" rows="3" placeholder="Testimonial #1"></textarea>
@@ -300,7 +300,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             <div class="row mb-3 border rounded p-3">
                                 <div class="col-6">
                                     <h6>14. Testimonial #2</h6>
-                                    <label for="textFeaturedDish4">Name</label>
+                                    <label for="textNameTestimonial2">Name</label>
                                     <input type="text" class="form-control" id="textNameTestimonial2" placeholder="Testimonial #2">
                                     <label for="textTestimonial2" class="form-label">Text</label>
                                     <textarea class="form-control" id="textTestimonial2" rows="3" placeholder="Testimonial #2"></textarea>
@@ -339,9 +339,9 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 </div>
                                 <div class="col">
                                     <h6>Promotion #2</h6>
-                                    <label for="textFeaturedDish4">16. Heading</label>
+                                    <label for="textpicpng">16. Heading</label>
                                     <input type="text" class="form-control" id="textpicpng" placeholder="Testimonial #2">
-                                    <label for="textTestimonial2" class="form-label">17. Detail</label>
+                                    <label for="textbody" class="form-label">17. Detail</label>
                                     <textarea class="form-control" id="textbody" rows="3" placeholder="Testimonial #2"></textarea>
                                 </div>
                             </div>
@@ -880,7 +880,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             dataType: 'html',
             done: function (e, data) {
 
-                if(data['result'] == 'FAILED'){
+                if(data['result'] === 'FAILED'){
                     alert('Invalid File');
                 }else{
                     $('#uploaded_file_name').val(data['result']);
