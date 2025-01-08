@@ -7,6 +7,8 @@ $id=$_REQUEST['id'];
 
 $row = $db->query('SELECT *, IF(shopTypeID=1, "Restaurant", "Massage") as "typeName" FROM `tb_project` WHERE projectID = ?;',$id)->fetchArray();
 $projectID = $id;
+
+$folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName"]).'/';
 ?>
 
 <link rel="stylesheet" href="../assets/css/template.css">
@@ -846,6 +848,7 @@ $projectID = $id;
             <!-- end tab menu -->
             <input type="hidden" id="projectID" value="<?php echo $id; ?>">
             <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
+            <input type="hidden" id="folderPath" value="<?php echo $folderName; ?>">
         </div>
     </div>
 </div>
@@ -858,6 +861,7 @@ $projectID = $id;
 <script src="dist/assets/jquery-file-upload/js/jquery.fileupload.js"></script>
 <script>
     const max_uploads = 10;
+    const multiUploadPrefix = 'album';
     let album_files = [];
 
     $(function() {
@@ -868,7 +872,7 @@ $projectID = $id;
         'use strict';
 
         // Change this to the location of your server-side upload handler:
-        const url = 'server/upload.php';
+        const url = '../multiUpload.php?projectID=<?php echo $id; ?>&folderPath=<?php echo $folderName; ?>&prefix=' + multiUploadPrefix;
 
         $('#fileupload').fileupload({
             url: url,
@@ -879,10 +883,9 @@ $projectID = $id;
                     alert('Invalid File');
                 }else{
                     $('#uploaded_file_name').val(data['result']);
-                    $('#uploaded_images').append('<div class="uploaded_image"> <input type="text" value="'+data['result']+'" name="uploaded_image_name[]" id="uploaded_image_name" hidden> <img src="server/uploads/'+data['result']+'" /> <a href="#uploaded_images" class="img_rmv btn btn-danger"><i class="fa fa-times-circle" style="font-size:48px;color:red"></i></a> </div>');
+                    $('#uploaded_images').append('<div class="uploaded_image"> <input type="text" value="'+data['result']+'" name="uploaded_image_name[]" id="uploaded_image_name" hidden> <img src="../<?php echo $folderName; ?>'+data['result']+'" /> <a href="#uploaded_images" class="img_rmv btn btn-danger"><i class="fa fa-times-circle" style="font-size:48px;color:red"></i></a> </div>');
                     album_files.push(data['result']);
 
-                    console.log("res = "+data['result']);
                     if($('.uploaded_image').length >= max_uploads){
                         $('#select_file').hide();
                         $('#warnMaxFile').show();

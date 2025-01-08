@@ -2,6 +2,7 @@
 global $db;
 require_once "../db/db.php";
 require_once "../db/initDB.php";
+include_once "../php/share_function.php";
 
 date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
@@ -16,24 +17,12 @@ $result = array(
     "result" => 0
 );
 
+$sendMail = false;
+
 $id = $_REQUEST["projectID"];
 $loginID = $_REQUEST["loginID"];
 $json = $_REQUEST["payload"];
 $page = $_REQUEST["page"];
-//////////////////////// test data ////////////////////////////////////////
-/*
-$id = 35;
-$loginID = 15;
-$page = "home";
-$json = array(
-    "01-HeaderBgIMG" =>  "bgContactHeadBackground_35_250103111342.jpeg",
-    "02-BgIMG" =>  "bgContactBackground_35_250103423461.jpeg",
-    "03-UsSubHeadline1" =>  "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
-    "04-UsSubHeadline2" =>  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut lobortis, nunc consequat consequat lacinia, dui.",
-    "05-PromotionHeadline" =>  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam bibendum urna at.",
-    "06-PromotionSubHeadline" =>  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent congue."
-);*/
-////////////////////////// end test ////////////////////////////////////////
 
 $project = $db->query(
     '
@@ -50,8 +39,7 @@ $project = $db->query(
               pj.`projectOwner` = sf.sID AND pj.`domainProvidersID` = dp.id AND pj.`hostingProvidersID` = hp.id
     ',$id)->fetchArray();
 
-$topData = "";
-
+$folderName = "../upload/". $id . "-" . sanitizeFolderName($project["projectName"])."/";
 
 $topData = '<div><b>- - Project - -</b></div>';
 $topData .= '<div><b>Project ID: </b>'. $id .'</div>';
@@ -60,6 +48,7 @@ $topData .= '<div><b>Project Type: </b>'.$project['shopType'].' Template No. - 0
 $topData .= '<div><b>Project Owner: </b>'.$project['PO'].'</div>';
 $topData .= '<div><b>Page: </b>'.$page.'</div>';
 $topData .= '<div><b>Country: </b>'.$project['country'].'</div>';
+$topData .= '<div><b>Resources: </b>'.$folderName.'</div>';
 $topData .= '<br>- - - - - - - - - - - - - - - - - - - - - - - - - - -<br><br>';
 
 $topData .= '<div><b>- - Detail Project & Theme - -</b></div>';  
@@ -84,7 +73,7 @@ if ($project['gloriaHave'] == 1){
     $topData .= '<div><b>System: Gloria Food </b></div>';
     $topData .= '<div><b>Order URL: </b>'.$project['orderURL'].'</div>';
     $topData .= '<div><b>Table URL: </b>'.$project['tableURL'].'</div>';
-}else { 
+}else {
     $topData .= '<div><b>System: Amelia </b></div>';
 };
 
@@ -100,8 +89,12 @@ $topData .= '<div><b>Password: </b>'.$project['hostingPass'].'</div>';
 
 $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'.json_encode($json, JSON_PRETTY_PRINT).'</pre></body></html>';
 
-$loginPerson = $db->query('SELECT sEmail FROM staffs WHERE sID = ?;',$loginID)->fetchAll();
-$loginEmail = $loginPerson['sEmail'];
+$loginPerson = $db->query('SELECT * FROM staffs WHERE sID=?;',$loginID)->fetchArray();
+if($loginPerson['sEmail'] == $project['email']){
+    $sendMail = true;
+}else{
+    $sendMail = false;
+}
 
 $peoples = $db->query('SELECT * FROM TemplateSubmissionSettings WHERE status=?;',1)->fetchAll();
 $people = array("To" => array(), "Cc" => array(), "Bcc" => array());
@@ -110,16 +103,14 @@ foreach ($peoples as $row) {
     $people[$row['channel']][] =  $row['email'];
 }
 
-//if(count($people['To']) > 0){ $to = implode(', ', $people['To']); }
-if (!in_array($loginEmail, $people['To'])) {
-    $people['To'][] = $loginEmail;
-    $to = implode(', ', array_reverse($people['To']));
-}else{
-    $to = implode(', ', $people['To']);
-}
+if(count($people['To']) > 0){ $to = implode(', ', $people['To']); }
 if(count($people['Cc']) > 0){ $cc = implode(', ', $people['Cc']); }
 if(count($people['Bcc']) > 0){ $bcc = implode(',', $people['Bcc']); }
 
+
+if (!in_array($loginPerson['sEmail'], explode(', ', $to))) {
+    $to .= ($to ? ', ' : '') . $loginPerson['sEmail'];
+}
 
 $param = array(
     "To" => $to,
@@ -134,13 +125,10 @@ $param = array(
 );
 
 
-
-
-
 $system = array(
     "emailSenderName" => "Template Submission Form",
     "emailSenderEmail" => "administrator@localforyou.com",
-    "emailSubject" => "New " . $project['shopType'] . " Website Submitted",
+    "emailSubject" => "New " . $project['shopType'] . " Website Submited",
     "emailAdministrator" => "neung@localforyou.com"
 );
 
@@ -161,15 +149,23 @@ $mailHeaders = [
     'Content-Type' => 'text/html; charset=utf-8'
 ];
 
-
     $result['email'] = $param['To'];
+    $result['to'] = $param['To'];
+    $result['cc'] = $param['Cc'];
+    $result['bcc'] = $param['Bcc'];
+    $result['param'] = $param;
 
-    if (mail($system["emailAlertTo"], $system["emailSubject"], $system["emailBody"], $mailHeaders)) {
+//    if($sendMail){
+        if (mail($system["emailAlertTo"], $system["emailSubject"], $system["emailBody"], $mailHeaders)) {
+            $result['success'] = true;
+            $result['result'] = 1;
+            $result['msg'] = "Send email successful";
+
+        }
+echo json_encode($result);
+    /*}else{
         $result['success'] = true;
         $result['result'] = 1;
-        $result['msg'] = "Send email successful";
-    }
-
-echo json_encode($result);
-
-?>
+        $result['msg'] = "Pause send email";
+        echo '<pre>'.print_r($result, true).'</pre>';
+    }*/
