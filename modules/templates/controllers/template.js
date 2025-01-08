@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 const projectID = $("#projectID").val();
 const loginID = $("#loginID").val();
 
@@ -15,7 +13,6 @@ const infoTextAbout = $("#infoTextAbout");
 const infoTextContact = $("#infoTextContact");
 const infoTextService = $("#infoTextService");
 
->>>>>>> 6645aa1484507671e1589e9dbd5a86302ab576b6
 const imageMap = {
     'tab-res1Home':  '#res1Img,../assets/img/Res1Home.png',
     'tab-res1About': '#res1Img,../assets/img/Res1About.png',

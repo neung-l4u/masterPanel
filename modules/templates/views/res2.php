@@ -726,6 +726,7 @@ $projectID = $id;
                     <div class="row">
                         <div class="col-6" style="text-align:left;">
                             <button type="button" class="btn btn-success" id="submitHomeBtn">Submit Page Home Info.</button>
+                            <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
                 </div>
@@ -982,7 +983,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="formAboutFeaturedDish1">9. Featured Dish Image #1</label>
+                                        <label for="formAboutFeaturedDish1">10. Featured Dish Image #1</label>
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDish1">
                                             <div class="d-flex flex-column mb-3">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">  
@@ -999,7 +1000,7 @@ $projectID = $id;
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="formAboutFeaturedDish2">10. Featured Dish Image #2</label>
+                                        <label for="formAboutFeaturedDish2">11. Featured Dish Image #2</label>
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDish2">
                                             <div class="d-flex flex-column mb-3">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">  
@@ -1018,7 +1019,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="formAboutFeaturedDish3">11. Featured Dish Image #3</label>
+                                        <label for="formAboutFeaturedDish3">12. Featured Dish Image #3</label>
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDish3">
                                             <div class="d-flex flex-column mvzvb-3">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">  
@@ -1035,7 +1036,7 @@ $projectID = $id;
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="formAboutFeaturedDish4">12. Featured Dish Image #4</label>
+                                        <label for="formAboutFeaturedDish4">13. Featured Dish Image #4</label>
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDish4">
                                             <div class="d-flex flex-column mb-3">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">  
@@ -1054,7 +1055,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="formAboutFeaturedDish5">13. Featured Dish Image #5</label>
+                                        <label for="formAboutFeaturedDish5">14. Featured Dish Image #5</label>
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDish5">
                                             <div class="d-flex flex-column mb-3">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">  
@@ -1069,7 +1070,7 @@ $projectID = $id;
                                         </form>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="formAboutFeaturedDish6">14. Featured Dish Image #6</label>
+                                        <label for="formAboutFeaturedDish6">15. Featured Dish Image #6</label>
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDish6">
                                             <div class="d-flex flex-column mb-3">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">  
@@ -1086,7 +1087,7 @@ $projectID = $id;
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="formAboutFeaturedDish7">15. Featured Dish Image #7</label>
+                                        <label for="formAboutFeaturedDish7">16. Featured Dish Image #7</label>
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDish7">
                                             <div class="d-flex flex-column mb-3">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">  
@@ -1101,7 +1102,7 @@ $projectID = $id;
                                         </form>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="formAboutFeaturedDish8">16. Featured Dish Image #8</label>
+                                        <label for="formAboutFeaturedDish8">17. Featured Dish Image #8</label>
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDish8">
                                             <div class="d-flex flex-column mb-3">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">  
@@ -1138,6 +1139,7 @@ $projectID = $id;
                     <div class="row">
                         <div class="col-6" style="text-align:left;">
                             <button type="button" class="btn btn-success" id="submitAboutBtn">Submit Page About Info.</button>
+                            <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
                 </div>
@@ -1242,6 +1244,7 @@ $projectID = $id;
                     <div class="row">
                         <div class="col-6" style="text-align:left;">
                             <button type="button" class="btn btn-success" id="submitContactBtn">Submit Page Contact Info.</button>
+                            <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
                 </div>
@@ -1268,141 +1271,103 @@ $projectID = $id;
 
 <script src="../controllers/template.js"></script>
 <script>
-    const projectID = $('#projectID').val();
-    const loginID = $('#loginID').val();
+    $(function() {
+        'use strict';
+    });//ready
 
-    $("#submitHomeBtn").click(function () {
-        let payload = {
-            "home01_homeSlider1": $('#formHomeSliderSet1 .picname').val(),
-            "home02_homeSlider2": $('#formHomeSliderSet2 .picname').val(),
-            "home03_homeSlider3": $('#formHomeSliderSet3 .picname').val(),
-            "home04_promotionHeadline1": $('#homePromotionHeadline1').val(),
-            "home05_promotionMessage1": $('#homePromotionMessage1').val(),
-            "home06_introduceImg1": $('#formHomeIntroduceImg1 .picname').val(),
-            "introduceImg2": $('#formHomeIntroduceImg2 .picname').val(),
-            "introduceImg3": $('#formHomeIntroduceImg3 .picname').val(),
-            "home07_featuredImg1": $('#formHomeFeaturedImg1 .picname').val(),
-            "home08_featuredImg2": $('#formHomeFeaturedImg2 .picname').val(),
-            "home09_featuredImg3": $('#formHomeFeaturedImg3 .picname').val(),
-            "home10_featuredImg4": $('#formHomeFeaturedImg4 .picname').val(),
-            "home11_featuredImg5": $('#formHomeFeaturedImg5 .picname').val(),
-            "home12_featuredImg6": $('#formHomeFeaturedImg6 .picname').val(),
-            "home13_featuredImg7": $('#formHomeFeaturedImg7 .picname').val(),
-            "home14_featuredImg8": $('#formHomeFeaturedImg8 .picname').val(),
-            "home15_promotionBg1": $('#formHomePromotionBg1 .picname').val(),
-            "promotionBg2": $('#formHomePromotionBg2 .picname').val(),
-            "promotionBg3": $('#formHomePromotionBg3 .picname').val(),
-            "home16_promotionHeadline2": $('#promotionHeadline2').val(),
-            "home17_reviewsBg": $('#formHomeReviewsBg .picname').val(),
-            "home18_testimonialText1": $('#testimonialText1').val(),
-            "testimonialName1": $('#testimonialName1').val(),
-            "testimonialImg1": $('#formHomeTestimonialImg1 .picname').val(),
-            "home19_testimonialText2": $('#testimonialText2').val(),
-            "testimonialName2": $('#testimonialName2').val(),
-            "testimonialImg2": $('#formHomeTestimonialImg2 .picname').val(),
-            "home20_promotionImg2": $('#formHomePromotionImg2 .picname').val(),
-            "home21_promotionHeadline3": $('#promotionHeadline3').val(),
-            "home22_promotionMessage3": $('#promotionMessage3').val(),
-            "home23_footerImg1": $('#formFooterImg1 .picname').val(),
-            "home24_footerImg2": $('#formFooterImg2 .picname').val(),
-            "home25_footerImg3": $('#formFooterImg3 .picname').val(),
-            "home26_footerImg4": $('#formFooterImg4 .picname').val(),
-            "home27_footerBg": $('#formFooterBg .picname').val(),
-            "home28_promotionHeadline4": $('#homePromotionHeadline4').val(),
-            "home29_promotionMessage4": $('#homePromotionMessage4').val(),
-            
-            
-        };
+    const submitHome = () => {
+        page = "home";
+        payload = {
+            "loginID": loginID,
+            "A1-01-slide1": $('#formHomeSliderSet1 .picname').val(),
+            "A1-02-slide2": $('#formHomeSliderSet2 .picname').val(),
+            "A1-03-slide3": $('#formHomeSliderSet3 .picname').val(),
+            "A1-04-promoHead1": $('#homePromotionHeadline1').val(),
+            "A1-05-promoMsg1": $('#homePromotionMessage1').val(),
+            "A1-06-introImg1": $('#formHomeIntroduceImg1 .picname').val(),
+            "A1-06-introImg2": $('#formHomeIntroduceImg2 .picname').val(),
+            "A1-06-introImg3": $('#formHomeIntroduceImg3 .picname').val(),
+            "A2-07-featureImg1": $('#formHomeFeaturedImg1 .picname').val(),
+            "A2-08-featureImg2": $('#formHomeFeaturedImg2 .picname').val(),
+            "A2-09-featureImg3": $('#formHomeFeaturedImg3 .picname').val(),
+            "A2-10-featureImg4": $('#formHomeFeaturedImg4 .picname').val(),
+            "A2-11-featureImg5": $('#formHomeFeaturedImg5 .picname').val(),
+            "A2-12-featureImg6": $('#formHomeFeaturedImg6 .picname').val(),
+            "A2-13-featureImg7": $('#formHomeFeaturedImg7 .picname').val(),
+            "A2-14-featureImg8": $('#formHomeFeaturedImg8 .picname').val(),
+            "A3-15-promoBg1": $('#formHomePromotionBg1 .picname').val(),
+            "A3-15-promoBg2": $('#formHomePromotionBg2 .picname').val(),
+            "A3-15-promoBg3": $('#formHomePromotionBg3 .picname').val(),
+            "A3-16-promoHead2": $('#promotionHeadline2').val(),
+            "A3-17-reviewsBg": $('#formHomeReviewsBg .picname').val(),
+            "A3-18-tesTxt1": $('#testimonialText1').val(),
+            "A3-18-tesName1": $('#testimonialName1').val(),
+            "A3-18-tesImg1": $('#formHomeTestimonialImg1 .picname').val(),
+            "A3-19-tesTxt2": $('#testimonialText2').val(),
+            "A3-19-tesName2": $('#testimonialName2').val(),
+            "A3-19-tesImg2": $('#formHomeTestimonialImg2 .picname').val(),
+            "A4-20-promoImg2": $('#formHomePromotionImg2 .picname').val(),
+            "A4-21-promoHead3": $('#promotionHeadline3').val(),
+            "A4-22-promoMsg3": $('#promotionMessage3').val(),
+            "A4-23-footImg1": $('#formFooterImg1 .picname').val(),
+            "A4-24-footImg2": $('#formFooterImg2 .picname').val(),
+            "A4-25-footImg3": $('#formFooterImg3 .picname').val(),
+            "A4-26-footImg4": $('#formFooterImg4 .picname').val(),
+            "A4-27-footBg": $('#formFooterBg .picname').val(),
+            "A4-28-promoHead4": $('#homePromotionHeadline4').val(),
+            "A4-29-promoMsg4": $('#homePromotionMessage4').val(),
 
+            token: Math.random()
+        }
         console.log("Payload", payload);
+        sendEmail(); //in template.js
+    }//submitHome
 
-        const callAjax = $.ajax({
-            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                "payload" : payload,
-                "page" : "home",
-                "projectID" : projectID,
-                "loginID" : loginID,
-                "token": Math.random()
-            }    
-        });
-    });
-
-    $("#submitAboutBtn").click(function () {
-        let payload = {
-            "about01_HeaderImg": $('#formAboutHeaderImg .picname').val(),
-            "about02_aboutUsBody": $('#aboutUsBody').val(),
-            "about03_promotionHeadline1": $('#aboutPromotionHeadline1').val(),
-            "about04_promotionMessage1": $('#aboutPromotionMessage1').val(),
-            "about05_promotionImg1": $('#formAboutPromotionImg1 .picname').val(),
-            "promotionImg2": $('#formAboutPromotionImg2 .picname').val(),
-            "promotionImg3": $('#formAboutPromotionImg3 .picname').val(),
-            "promotionImg4": $('#formAboutPromotionImg4 .picname').val(),
-            "about06_formStaffImg1": $('#formAboutStaffImg1 .picname').val(),
-            "about07_formStaffImg2": $('#formAboutStaffImg2 .picname').val(),
-            "about08_formStaffImg3": $('#formAboutStaffImg3 .picname').val(),
-            "about09_formReviewBg": $('#formAboutReviewsBg .picname').val(),
-            "about10_featuredDish1": $('#formAboutFeaturedDish1 .picname').val(),
-            "about11_featuredDish2": $('#formAboutFeaturedDish2 .picname').val(),
-            "about12_featuredDish3": $('#formAboutFeaturedDish3 .picname').val(),
-            "about13_featuredDish4": $('#formAboutFeaturedDish4 .picname').val(),
-            "about14_featuredDish5": $('#formAboutFeaturedDish5 .picname').val(),
-            "about15_featuredDish6": $('#formAboutFeaturedDish6 .picname').val(),
-            "about16_featuredDish7": $('#formAboutFeaturedDish7 .picname').val(),
-            "about17_featuredDish8": $('#formAboutFeaturedDish8 .picname').val(),
+    const submitAbout = () => {
+        page = "about";
+        payload = {
+            "loginID": loginID,
+            "B1-01-headImg": $('#formAboutHeaderImg .picname').val(),
+            "B1-02-bodyTxt": $('#aboutUsBody').val(),
+            "B1-03-promoHead1": $('#aboutPromotionHeadline1').val(),
+            "B1-04-promoMsg1": $('#aboutPromotionMessage1').val(),
+            "B1-05-promoImg1": $('#formAboutPromotionImg1 .picname').val(),
+            "B1-05-promoImg2": $('#formAboutPromotionImg2 .picname').val(),
+            "B1-05-promoImg3": $('#formAboutPromotionImg3 .picname').val(),
+            "B1-05-promoImg4": $('#formAboutPromotionImg4 .picname').val(),
+            "B2-06-staffImg1": $('#formAboutStaffImg1 .picname').val(),
+            "B2-07-staffImg2": $('#formAboutStaffImg2 .picname').val(),
+            "B2-08-staffImg3": $('#formAboutStaffImg3 .picname').val(),
+            "B2-09-reviewBg": $('#formAboutReviewsBg .picname').val(),
+            "B3-10-dish1": $('#formAboutFeaturedDish1 .picname').val(),
+            "B3-11-dish2": $('#formAboutFeaturedDish2 .picname').val(),
+            "B3-12-dish3": $('#formAboutFeaturedDish3 .picname').val(),
+            "B3-13-dish4": $('#formAboutFeaturedDish4 .picname').val(),
+            "B3-14-dish5": $('#formAboutFeaturedDish5 .picname').val(),
+            "B3-15-dish6": $('#formAboutFeaturedDish6 .picname').val(),
+            "B3-16-Dish7": $('#formAboutFeaturedDish7 .picname').val(),
+            "B3-10-Dish8": $('#formAboutFeaturedDish8 .picname').val(),
             
             token: Math.random()
-        };
-
+        }
         console.log("Payload", payload);
+        sendEmail(); //in template.js
+    }//submitAbout
 
-        const callAjax = $.ajax({
-            //url: "../models/ajaxRes2.php",
-            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'jsonp',
-            data: {
-                "payload" : payload,
-                "page" : "about",
-                "projectID" : projectID,
-                "loginID" : loginID,
-                "token": Math.random()
-            }        
-        });
-    });
+    const submitContact = () => {
+        page = "contact";
+        payload = {
+            "loginID": loginID,
+            "C1-01-headImg": $('#formContactHeaderImg .picname').val(),
+            "C1-02-head1": $('#contactHeadline1').val(),
+            "C1-03-msg1": $('#contactMessage1').val(),
+            "C1-04-bgImg1": $('#formContactBackgroundImg1 .picname').val(),
+            "C1-05-promoHead1": $('#contactPromotionHeadline1').val(),
+            "C1-06-promoMsg1": $('#contactPromotionMessage1').val(),
 
-    $("#submitContactBtn").click(function () {
-        let payload = {
-            "contact01_HeaderImg": $('#formContactHeaderImg .picname').val(),
-            "contact02_contactHeadline1": $('#contactHeadline1').val(),
-            "contact03_contactMessage1": $('#contactMessage1').val(),
-            "contact04_backgroundImg1": $('#formContactBackgroundImg1 .picname').val(),
-            "contact05_promotionHeadline1": $('#contactPromotionHeadline1').val(),
-            "contact06_promotionMessage1": $('#contactPromotionMessage1').val(),
-        };
-
+            token: Math.random()
+        }
         console.log("Payload", payload);
-
-        const callAjax = $.ajax({
-            //url: "../models/ajaxRes2.php",
-            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'jsonp',
-            data: {
-                "payload" : payload,
-                "page" : "contact",
-                "projectID" : projectID,
-                "loginID" : loginID,
-                "token": Math.random()
-            }   
-        });
-    });
+        sendEmail(); //in template.js
+    }//submitContact
 </script>
