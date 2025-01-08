@@ -403,7 +403,6 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
         $url .= "&id=".$id;
         ?>
         <small id="infoText" class="text-warning">Please save before proceeding.</small>
-<!--        <a id="nextBtn" href="--><?php //echo $url; ?><!--" class="btn btn-primary">Next</a>-->
         <button id="nextBtn" class="btn btn-secondary" onclick="nextForm('<?php echo $url; ?>')" disabled>Next</button>
     </div>
 </div>
@@ -415,7 +414,6 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
 <script src="../controllers/project_detail.js"></script>
 <script>
-
     const hiddenShopType = $("#ShopType");
     const inputName = $("#bsName");
     const inputEmail = $("#bsEmail");
@@ -569,5 +567,5 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
         $("#resSystem").hide();
         $("#masSystem").show();
       }
-    }
+    }//showSystem
 </script>
