@@ -598,8 +598,9 @@ $projectID = $id;
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-6 mt-3" style="text-align:left;">
-                                        <button type="button" class="btn btn-success" id="cmdHomeSubmit">Submit Home Page Information</button>
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-success" id="cmdHomeSubmit" onclick="submitHome();">Submit Home Page Info.</button>
+                                        <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
                                     </div>
                                 </div>
                             </div>
@@ -635,7 +636,7 @@ $projectID = $id;
                                 <div class="col">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutbg1">
                                         <div class="d-flex flex-column mb-3">
-                                            <label for="bg1">26. About Page Header Background Image</label>
+                                            <label for="bg1">1. About Page Header Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
                                                     <img class="preview" src="../assets/img/default.png" alt="place">
@@ -655,7 +656,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="aboutBody" class="form-label">27. About Us Body</label>
+                                        <label for="aboutBody" class="form-label">2. About Us Body</label>
                                         <textarea class="form-control" id="aboutBody" rows="4" placeholder="Detail..."></textarea>
                                     </div>
                                 </div>
@@ -687,7 +688,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="aboutPromotionHeadline" class="form-label">28. Promotion Headline</label>
+                                        <label for="aboutPromotionHeadline" class="form-label">3. Promotion Headline</label>
                                         <input type="text" class="form-control" id="aboutPromotionHeadline" placeholder="Detail...">
                                     </div>
                                 </div>
@@ -695,7 +696,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="aboutPromotionBody" class="form-label">29. Promotion Body</label>
+                                        <label for="aboutPromotionBody" class="form-label">4. Promotion Body</label>
                                         <textarea class="form-control" id="aboutPromotionBody" rows="4" placeholder="Detail..."></textarea>
                                     </div>
                                 </div>
@@ -704,7 +705,7 @@ $projectID = $id;
                                 <div class="col">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutPromotion">
                                         <div class="d-flex flex-column">
-                                            <label for="textAboutPromotion">30. Promotion Image</label>
+                                            <label for="textAboutPromotion">5. Promotion Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
                                                     <img class="preview" src="../assets/img/default.png" alt="place">
@@ -725,7 +726,7 @@ $projectID = $id;
                                 <div class="col">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formbgAboutBackground">
                                         <div class="d-flex flex-column">
-                                            <label for="textbgAboutBackground">31. Background Image</label>
+                                            <label for="textbgAboutBackground">6. Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
                                                     <img class="preview" src="../assets/img/default.png" alt="place">
@@ -745,7 +746,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="aboutCallout1" class="form-label">32. Callout#1</label>
+                                        <label for="aboutCallout1" class="form-label">7. Callout#1</label>
                                         <input type="text" class="form-control" id="aboutCallout1" placeholder="Detail...">
                                     </div>
                                 </div>
@@ -753,7 +754,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="aboutCallout2" class="form-label">33. Callout#2</label>
+                                        <label for="aboutCallout2" class="form-label">8. Callout#2</label>
                                         <input type="text" class="form-control" id="aboutCallout2" placeholder="Detail...">
                                     </div>
                                 </div>
@@ -761,7 +762,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="aboutCallout3" class="form-label">34. Callout#3</label>
+                                        <label for="aboutCallout3" class="form-label">9. Callout#3</label>
                                         <input type="text" class="form-control" id="aboutCallout3" placeholder="Detail...">
                                     </div>
                                 </div>
@@ -769,7 +770,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="aboutCallout4" class="form-label">35. Callout#4</label>
+                                        <label for="aboutCallout4" class="form-label">10. Callout#4</label>
                                         <input type="text" class="form-control" id="aboutCallout4" placeholder="Detail...">
                                     </div>
                                 </div>
@@ -800,7 +801,7 @@ $projectID = $id;
                                 </div>
                             </div>
                             <div class="col border rounded p-3">
-                                <label for="bg1">36. Featured Dish Image</label>
+                                <label for="bg1">11. Featured Dish Image</label>
                                 <div class="row mb-3">
                                     <div class="col-4">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg1">
@@ -890,8 +891,10 @@ $projectID = $id;
                                 </div>
                             </div>    
                                 <div class="row">
-                                    <div class="col-6 mt-3" style="text-align:left;">
-                                        <button type="button" class="btn btn-success" id="cmdAboutSubmit">Submit About Page Information</button>
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-success" id="cmdAboutSubmit" onclick="submitAbout();">Submit About Page Info.</button>
+                                        <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
+
                                     </div>
                                 </div>
                             </div>
@@ -927,7 +930,7 @@ $projectID = $id;
                                 <div class="col">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formbgContactHeadBackground">
                                         <div class="d-flex flex-column">
-                                            <label for="formbgContactHeadBackground">37. Contact Page Header Background Image</label>
+                                            <label for="formbgContactHeadBackground">1. Contact Page Header Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
                                                     <img class="preview" src="../assets/img/default.png" alt="place">
@@ -948,7 +951,7 @@ $projectID = $id;
                                 <div class="col">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formbgContactBackground">
                                         <div class="d-flex flex-column">
-                                            <label for="formbgContactBackground">38. Contact Page Background Image</label>
+                                            <label for="formbgContactBackground">2. Contact Page Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
                                                     <img class="preview" src="../assets/img/default.png" alt="place">
@@ -968,7 +971,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="contactSubHead1" class="form-label">39. Contact Us Sub Headline #1</label>
+                                        <label for="contactSubHead1" class="form-label">3. Contact Us Sub Headline #1</label>
                                         <input type="text" class="form-control" id="contactSubHead1" placeholder="Detail...">
                                     </div>
                                 </div>
@@ -976,7 +979,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="contactSubHead2" class="form-label">40. Contact Us Sub Headline #2</label>
+                                        <label for="contactSubHead2" class="form-label">4. Contact Us Sub Headline #2</label>
                                         <textarea class="form-control" id="contactSubHead2" rows="4" placeholder="Detail..."></textarea>
                                     </div>
                                 </div>
@@ -984,7 +987,7 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="contactPromotionHeadline" class="form-label">41. Promotion Headline</label>
+                                        <label for="contactPromotionHeadline" class="form-label">5. Promotion Headline</label>
                                         <textarea class="form-control" id="contactPromotionHeadline" rows="4" placeholder="Detail..."></textarea>
                                     </div>
                                 </div>
@@ -992,10 +995,12 @@ $projectID = $id;
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="contactPromotionSubHeadline" class="form-label">42. Promotion Sub Headline</label>
+                                        <label for="contactPromotionSubHeadline" class="form-label">6. Promotion Sub Headline</label>
                                         <textarea class="form-control" id="contactPromotionSubHeadline" rows="4" placeholder="Detail..."></textarea>
 
-                                        <button type="button" class="btn btn-success" id="cmdContactSubmit">Submit Contact Page Information</button>
+                                        <button type="button" class="btn btn-success" id="cmdContactSubmit" onclick="submitContact();">Submit Contact Page Info.</button>
+                                        <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
+
 
                                     </div>
                                 </div>
@@ -1043,183 +1048,104 @@ $projectID = $id;
 
 <script src="../controllers/template.js"></script>
 <script>
-    $("#cmdHomeSubmit").click(function () {
-        let payload = {
-        //TEMPLATE_R1_PAGE_HOME
+
+$(function() {
+        setAllPageStatus(); //in template.js
+    });//ready
+
+    const submitHome = () => {
+        page = "home";
+        payload = {
+            //TEMPLATE_R1_PAGE_HOME
+            "loginID": loginID,
             "A1-01-Slogan": $('#inputSlogan').val(),
-            "A1-02-Information": $('#inputIntroduction1').val(),
-            "A1-03-HeaderBackground": $('#formBGHeader .picname').val(),
-            "A1-04-IntroductionSubHeadline1": $('#tdR1IntroductionSubHeadline1').val(),
-            "A1-05-IntroductionMainHeadline": $('#tdR1IntroductionMainHeadline').val(),
-            "A1-06-IntroductionSubHeadline2": $('#tdR1IntroductionSubHeadline2').val(),
-            "A1-07-IntroductionBody": $('#tdR1IntroductionBody').val(),
-            "A1-08-01-IntroductionImage1": $('#formIntroductionImage1 .picname').val(),
-            "A1-08-02-IntroductionImage2": $('#formIntroductionImage2 .picname').val(),
-            "A1-08-03-IntroductionImage3": $('#formIntroductionImage3 .picname').val(),
-            "A1-08-04-IntroductionImage4": $('#formIntroductionImage4 .picname').val(),
-            "A2-09-DishImg1": $('#formDish1 .picname').val(),
-            "A2-09-TextDish1": $('#textFeaturedDish1').val(),
-            "A2-10-DishImg2": $('#formDish2 .picname').val(),
-            "A2-10-TextDish2": $('#textFeaturedDish2').val(),
-            "A2-11-DishImg3": $('#formDish3 .picname').val(),
-            "A2-11-TextDish3": $('#textFeaturedDish3').val(),
-            "A2-12-DishImg4": $('#formDish4 .picname').val(),
-            "A2-12-TextDish4": $('#textFeaturedDish4').val(),
-            "A2-13-TestimonialImg1": $('#formTestimonial1 .picname').val(),
-            "A2-13-TextareaTrstimonial1": $('#textareaTrstimonial1').val(),
-            "A2-13-TextTrstimonial1": $('#textTrstimonial1').val(),
-            "A2-14-TestimonialImg2": $('#formTestimonial2 .picname').val(),
-            "A2-14-TextareaTrstimonial2": $('#textareaTrstimonial2').val(),
-            "A2-14-TextTrstimonial2": $('#textTrstimonial2').val(),
-            "A2-15-TestimonialImg3": $('#formTestimonial3 .picname').val(),
-            "A2-15-TextareaTrstimonial3": $('#textareaTrstimonial3').val(),
-            "A2-15-TextTrstimonial3": $('#textTrstimonial3').val(),
-            "A2-16-TestimonialImg4": $('#formTestimonial4 .picname').val(),
-            "A2-16-TextareaTrstimonial4": $('#textareaTrstimonial4').val(),
-            "A2-16-TextTrstimonial4": $('#textTrstimonial4').val(),
-            "A2-17-GGLinkReview": $('#ggLinkReview').val(),
-            "A2-18-GGLinkWrite": $('#ggLinkWrite').val(),
-            "A3-19-DeliveryMapImage": $('#formDeliveryMap .picname').val(),
+            "A1-02-Intro": $('#inputIntroduction1').val(),
+            "A1-03-BgHeader": $('#formBGHeader .picname').val(),
+            "A1-04-IntroSubHead1": $('#tdR1IntroductionSubHeadline1').val(),
+            "A1-05-IntroMainHead": $('#tdR1IntroductionMainHeadline').val(),
+            "A1-06-IntroSubhead2": $('#tdR1IntroductionSubHeadline2').val(),
+            "A1-07-IntroBody": $('#tdR1IntroductionBody').val(),
+            "A1-08-01-Intro1": $('#formIntroductionImage1 .picname').val(),
+            "A1-08-02-Intro2": $('#formIntroductionImage2 .picname').val(),
+            "A1-08-03-Intro3": $('#formIntroductionImage3 .picname').val(),
+            "A1-08-04-Intro4": $('#formIntroductionImage4 .picname').val(),
+            "A2-09-Dish1": $('#formDish1 .picname').val(),
+            "A2-09-DishText1": $('#textFeaturedDish1').val(),
+            "A2-10-Dish2": $('#formDish2 .picname').val(),
+            "A2-10-DishText2": $('#textFeaturedDish2').val(),
+            "A2-11-Dish3": $('#formDish3 .picname').val(),
+            "A2-11-DishText3": $('#textFeaturedDish3').val(),
+            "A2-12-Dish4": $('#formDish4 .picname').val(),
+            "A2-12-DishText4": $('#textFeaturedDish4').val(),
+            "A2-13-PicUser1": $('#formTestimonial1 .picname').val(),
+            "A2-13-Review1": $('#textareaTrstimonial1').val(),
+            "A2-13-NameUser1": $('#textTrstimonial1').val(),
+            "A2-14-PicUser2": $('#formTestimonial2 .picname').val(),
+            "A2-14-Review2": $('#textareaTrstimonial2').val(),
+            "A2-14-NameUser2": $('#textTrstimonial2').val(),
+            "A2-15-PicUser3": $('#formTestimonial3 .picname').val(),
+            "A2-15-Review": $('#textareaTrstimonial3').val(),
+            "A2-15-NameUser3": $('#textTrstimonial3').val(),
+            "A2-16-PicUser4": $('#formTestimonial4 .picname').val(),
+            "A2-16-Review4": $('#textareaTrstimonial4').val(),
+            "A2-16-NameUser4": $('#textTrstimonial4').val(),
+            "A2-17-LinkReview": $('#ggLinkReview').val(),
+            "A2-18-LinkWrite": $('#ggLinkWrite').val(),
+            "A3-19-DeliveryMapImg": $('#formDeliveryMap .picname').val(),
             "A3-20-DeliveryDetail": $('#deliveryDetail').val(),
-            "A3-21-DeliveryRateDetail": $('#deliveryRateDetail').val(),
-            "A3-22-PromotionAreaImage": $('#formPromotionArea .picname').val(),
-            "A3-23-PromotionHeadline": $('#promotionHeadline').val(),
-            "A3-24-PromotionSubHeadline": $('#promotionSubHeadline').val(),
+            "A3-21-RateDetail": $('#deliveryRateDetail').val(),
+            "A3-22-PromoImg": $('#formPromotionArea .picname').val(),
+            "A3-23-PromoHeadline": $('#promotionHeadline').val(),
+            "A3-24-PromoSunHeadline": $('#promotionSubHeadline').val(),
             "A4-25-01-Carousel1": $('#formCarousel1 .picname').val(),
             "A4-25-02-Carousel2": $('#formCarousel2 .picname').val(),
             "A4-25-03-Carousel3": $('#formCarousel3 .picname').val(),
             "A4-25-04-Carousel4": $('#formCarousel4 .picname').val()
-        };
-
+        }
         console.log("Payload", payload);
+        sendEmail(); //in template.js
+    }//submitHome
 
-        let projectID = $('#projectID').val();
-
-        const callAjax = $.ajax({
-            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                "payload": payload,
-                "page" : "Home",
-                "projectID" : projectID
-            }
-        });
-
-        callAjax.done(function(res) {
-                console.log("return = ",res.result);
-                $("#allData").html(res.table);
-                return true;
-            });
-
-            callAjax.fail(function(xhr, status, error) {
-                console.log("ajax fail!!");
-                console.log(status + ': ' + error);
-                return false;
-            });
-
-    });
-
-    $("#cmdAboutSubmit").click(function () {
-        let payload = {
-        //TEMPLATE_R1_PAGE_ABOUT
-            "B1-26-HeaderBGImg": $('#formAboutbg1 .picname').val(),
-            "B1-27-AboutUsBody": $('#aboutBody').val(),
-
-            "B2-28-PromotionHeadline": $('#aboutPromotionHeadline').val(),
-            "B2-29-PromotionBody": $('#aboutPromotionBody').val(),
-            "B2-30-PromotionImg": $('#formAboutPromotion .picname').val(),
-            "B2-31-BGImg": $('#formbgAboutBackground .picname').val(),
-            "B2-32-Callout1": $('#aboutCallout1').val(),
-            "B2-33-Callout2": $('#aboutCallout2').val(),
-            "B2-34-Callout3": $('#aboutCallout3').val(),
-            "B2-35-Callout4": $('#aboutCallout4').val(),
-
-            "B3-36-DishImg1": $('#formAboutFeaturedDishImg1 .picname').val(),
-            "B3-36-DishImg2": $('#formAboutFeaturedDishImg2 .picname').val(),
-            "B3-36-DishImg3": $('#formAboutFeaturedDishImg3 .picname').val(),
-            "B3-36-DishImg4": $('#formAboutFeaturedDishImg4 .picname').val(),
-            "B3-36-DishImg5": $('#formAboutFeaturedDishImg5 .picname').val(),
-            "B3-36-DishImg6": $('#formAboutFeaturedDishImg6 .picname').val(),
-        };
-
+    const submitAbout = () => {
+        page = "about";
+        payload = {
+            //TEMPLATE_R1_PAGE_ABOUT
+            "loginID": loginID,  
+            "B1-1-HeadBG": $('#formAboutbg1 .picname').val(),
+            "B1-2-Body": $('#aboutBody').val(),
+            "B2-3-PromoHeadline": $('#aboutPromotionHeadline').val(),
+            "B2-4-PromoBody": $('#aboutPromotionBody').val(),
+            "B2-5-Prom": $('#formAboutPromotion .picname').val(),
+            "B2-6-BGImg": $('#formbgAboutBackground .picname').val(),
+            "B2-7-Text1": $('#aboutCallout1').val(),
+            "B2-8-Text2": $('#aboutCallout2').val(),
+            "B2-9-Text3": $('#aboutCallout3').val(),
+            "B2-10-Text4": $('#aboutCallout4').val(),
+            "B3-11-Img1": $('#formAboutFeaturedDishImg1 .picname').val(),
+            "B3-11-Img2": $('#formAboutFeaturedDishImg2 .picname').val(),
+            "B3-11-Img3": $('#formAboutFeaturedDishImg3 .picname').val(),
+            "B3-11-Img4": $('#formAboutFeaturedDishImg4 .picname').val(),
+            "B3-11-Img5": $('#formAboutFeaturedDishImg5 .picname').val(),
+            "B3-11-Img6": $('#formAboutFeaturedDishImg6 .picname').val(),
+        }
         console.log("Payload", payload);
+        sendEmail(); //in template.js
+    }//submitAbout
 
-        let projectID = $('#projectID').val();
-
-        const callAjax = $.ajax({
-            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                "payload" : payload,
-                "page" : "About",
-                "projectID" : projectID
-            }
-        });
-
-        callAjax.done(function(res) {
-                console.log("return = ",res.result);
-                $("#allData").html(res.table);
-                return true;
-            });
-
-            callAjax.fail(function(xhr, status, error) {
-                console.log("ajax fail!!");
-                console.log(status + ': ' + error);
-                return false;
-            });
-
-    });
-
-    $("#cmdContactSubmit").click(function () {
-        let payload = {
-        //TEMPLATE_R1_PAGE_CONTACT        
-            "C1-37-HeaderBGImg": $('#formbgContactHeadBackground .picname').val(),
-            "C1-38-BGFormImg" : $('#formbgContactBackground .picname').val(),
-            "C1-39-UsSubHeadline1" : $('#contactSubHead1').val(),
-            "C1-40-UsSubHeadline2" : $('#contactSubHead2').val(),
-            "C1-41-PromotionHeadline" : $('#contactPromotionHeadline').val(),
-            "C1-42-PromotionSubHeadline" : $('#contactPromotionSubHeadline').val(),
-            
-
-        };
-
+    const submitContact = () => {
+        page = "contact";
+        payload = {
+            //TEMPLATE_R1_PAGE_CONTACT    
+            "loginID": loginID,    
+            "C1-1-Img": $('#formbgContactHeadBackground .picname').val(),
+            "C1-2-Img" : $('#formbgContactBackground .picname').val(),
+            "C1-3-Text" : $('#contactSubHead1').val(),
+            "C1-4-Text" : $('#contactSubHead2').val(),
+            "C1-5-Text" : $('#contactPromotionHeadline').val(),
+            "C1-6-Text" : $('#contactPromotionSubHeadline').val(),
+        }
         console.log("Payload", payload);
-
-        let projectID = $('#projectID').val();
-
-        const callAjax = $.ajax({
-            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                "payload" : payload,
-                "page" : "Contact",
-                "projectID" : projectID
-            }
-        });
-
-        callAjax.done(function(res) {
-                console.log("return = ",res.result);
-                $("#allData").html(res.table);
-                return true;
-            });
-
-            callAjax.fail(function(xhr, status, error) {
-                console.log("ajax fail!!");
-                console.log(status + ': ' + error);
-                return false;
-            });
-
-    });
-
-
+        sendEmail(); //in template.js
+    }//submitContact
 
 </script>

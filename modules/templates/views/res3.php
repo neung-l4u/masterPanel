@@ -12,6 +12,8 @@ $projectID = $id;
 <link rel="stylesheet" href="../assets/css/template.css">
 <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
 <link rel="stylesheet" href="../assets/css/res3.css">
+<link rel="stylesheet" href="dist/css/newStyle.css">
+
 <script src="../controllers/res3.js"></script>
 
 <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-5">
@@ -643,8 +645,31 @@ $projectID = $id;
                                     <small class="text-info">Form Section—4</small>
                                 </div>
                             </div>
-                            <div class="mb-3 border rounded p-3">
-                                multi upload here
+                            <div class="mb-3 border rounded p-3 multiUpload">
+                                <!-- This area will show the uploaded files -->
+                                <div class="row">
+                                    <div id="uploaded_images">
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <div id="select_file">
+                                    <div class="form-group">
+                                    <input id="fileupload" type="file" name="files" accept="image/x-png, image/gif, image/jpeg" >
+                                        <small id="warnMaxText" class="text-info">Limit </small>
+                                        <br>
+                                        <br>
+                                        <!-- The global progress bar -->
+                                        <div id="progress" class="progress">
+                                            <div class="progress-bar progress-bar-success"></div>
+                                        </div>
+                                        <!-- The container for the uploaded files -->
+                                        <div id="files" class="files"></div>
+                                        <label for="uploaded_file_name"></label>
+                                        <input type="text" name="uploaded_file_name" id="uploaded_file_name" hidden>
+                                    </div>
+                                </div>
+                                <small id="warnMaxFile" class="text-danger">You have uploaded the maximum number of files.</small>
                             </div>
                         </div>
                         <div class="col-6">
@@ -827,10 +852,78 @@ $projectID = $id;
 <!-- End Template Restaurant 3 -->
 
 <script src="../controllers/template.js"></script>
+<!-- These are the necessary files for the image uploader -->
+<script src="dist/assets/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+<script src="dist/assets/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+<script src="dist/assets/jquery-file-upload/js/jquery.fileupload.js"></script>
 <script>
+    const max_uploads = 10;
+    let album_files = [];
+
     $(function() {
         setAllPageStatus(); //in template.js
+        $('#warnMaxFile').hide();
+        $('#warnMaxText').text('You can upload up to ' + max_uploads + ' files.');
+
+        'use strict';
+
+        // Change this to the location of your server-side upload handler:
+        const url = 'server/upload.php';
+
+        $('#fileupload').fileupload({
+            url: url,
+            dataType: 'html',
+            done: function (e, data) {
+
+                if(data['result'] == 'FAILED'){
+                    alert('Invalid File');
+                }else{
+                    $('#uploaded_file_name').val(data['result']);
+                    $('#uploaded_images').append('<div class="uploaded_image"> <input type="text" value="'+data['result']+'" name="uploaded_image_name[]" id="uploaded_image_name" hidden> <img src="server/uploads/'+data['result']+'" /> <a href="#uploaded_images" class="img_rmv btn btn-danger"><i class="fa fa-times-circle" style="font-size:48px;color:red"></i></a> </div>');
+                    album_files.push(data['result']);
+
+                    console.log("res = "+data['result']);
+                    if($('.uploaded_image').length >= max_uploads){
+                        $('#select_file').hide();
+                        $('#warnMaxFile').show();
+                    }else{
+                        $('#warnMaxFile').hide();
+                        $('#select_file').show();
+                    }
+                }
+
+                $('#progress .progress-bar').css(
+                    'width',
+                    0 + '%'
+                );
+
+                $.each(data.result.files, function (index, file) {
+                    $('<p/>').text(file.name).appendTo('#files');
+                });
+
+            },
+            progressall: function (e, data) {
+                let progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css(
+                    'width',
+                    progress + '%'
+                );
+            }
+        }).prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
     });//ready
+
+    $( "#uploaded_images" ).on( "click", ".img_rmv", function() {
+        $(this).parent().remove();
+        if($('.uploaded_image').length >= max_uploads){
+            $('#select_file').hide();
+            $('#warnMaxFile').show();
+        }else{
+            $('#select_file').show();
+            $('#warnMaxFile').hide();
+        }
+    });
 
     const submitHome = () => {
         page = "home";
@@ -844,7 +937,8 @@ $projectID = $id;
     const submitAbout = () => {
         page = "about";
         payload = {
-            "loginID": loginID
+            "loginID": loginID,
+            "album": JSON.stringify(album_files)
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
