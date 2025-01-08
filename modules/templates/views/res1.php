@@ -119,7 +119,7 @@ $projectID = $id;
                             </div>
                             <label for="bg1">8. Home Page Introduction Image</label>
                             <div class="row mb-3 ">
-                                <div class="col-6">
+                                <div class="col">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formIntroductionImage1">
                                         <div class="d-flex flex-column">
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -149,7 +149,7 @@ $projectID = $id;
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formIntroductionImage3">
                                         <div class="d-flex flex-column">
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -205,7 +205,7 @@ $projectID = $id;
 
                             <div class="row mb-3 border rounded p-3">
                                 <div class="row mb-3">
-                                    <div class="col-6">
+                                    <div class="col">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formDish1">
                                             <div class="d-flex flex-column">
                                                 <label for="textFeaturedDish1">9.Featured Dish Image #1</label>
@@ -251,7 +251,7 @@ $projectID = $id;
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formDish3">
                                             <div class="d-flex flex-column">
                                                 <label for="textFeaturedDish3">11.Featured Dish Image #3</label>
@@ -538,7 +538,7 @@ $projectID = $id;
                             <div class="row mb-3 border rounded p-3">
                             <label for="bg1" class="form-label">25. Carousel Images</label>
                                 <div class="row mb-3">
-                                    <div class="col-6">
+                                    <div class="col">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formCarousel1">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -568,7 +568,7 @@ $projectID = $id;
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formCarousel3">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -803,7 +803,7 @@ $projectID = $id;
                             <div class="col border rounded p-3">
                                 <label for="bg1">11. Featured Dish Image</label>
                                 <div class="row mb-3">
-                                    <div class="col-4">
+                                    <div class="col">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg1">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -817,7 +817,7 @@ $projectID = $id;
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg2">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -831,7 +831,7 @@ $projectID = $id;
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg3">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -847,7 +847,7 @@ $projectID = $id;
                                     </div>
                                 </div>
                                 <div class="row mb-3 ">
-                                    <div class="col-4">
+                                    <div class="col">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg4">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -861,7 +861,7 @@ $projectID = $id;
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col">
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg5">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -875,7 +875,7 @@ $projectID = $id;
                                             </div>
                                         </form>
                                     </div>
-                                <div class="col-4">
+                                <div class="col">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formAboutFeaturedDishImg6">
                                         <div class="d-flex flex-column">
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -1117,16 +1117,16 @@ $(function() {
             "B2-4-PromoBody": $('#aboutPromotionBody').val(),
             "B2-5-Prom": $('#formAboutPromotion .picname').val(),
             "B2-6-BGImg": $('#formbgAboutBackground .picname').val(),
-            "B2-7-Text1": $('#aboutCallout1').val(),
-            "B2-8-Text2": $('#aboutCallout2').val(),
-            "B2-9-Text3": $('#aboutCallout3').val(),
-            "B2-10-Text4": $('#aboutCallout4').val(),
-            "B3-11-Img1": $('#formAboutFeaturedDishImg1 .picname').val(),
-            "B3-11-Img2": $('#formAboutFeaturedDishImg2 .picname').val(),
-            "B3-11-Img3": $('#formAboutFeaturedDishImg3 .picname').val(),
-            "B3-11-Img4": $('#formAboutFeaturedDishImg4 .picname').val(),
-            "B3-11-Img5": $('#formAboutFeaturedDishImg5 .picname').val(),
-            "B3-11-Img6": $('#formAboutFeaturedDishImg6 .picname').val(),
+            "B2-7-Callout1": $('#aboutCallout1').val(),
+            "B2-8-Callout2": $('#aboutCallout2').val(),
+            "B2-9-Callout3": $('#aboutCallout3').val(),
+            "B2-10-Callout4": $('#aboutCallout4').val(),
+            "B3-11-Dish1": $('#formAboutFeaturedDishImg1 .picname').val(),
+            "B3-11-Dish2": $('#formAboutFeaturedDishImg2 .picname').val(),
+            "B3-11-Dish3": $('#formAboutFeaturedDishImg3 .picname').val(),
+            "B3-11-Dish4": $('#formAboutFeaturedDishImg4 .picname').val(),
+            "B3-11-Dish5": $('#formAboutFeaturedDishImg5 .picname').val(),
+            "B3-11-Dish6": $('#formAboutFeaturedDishImg6 .picname').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
@@ -1137,12 +1137,12 @@ $(function() {
         payload = {
             //TEMPLATE_R1_PAGE_CONTACT    
             "loginID": loginID,    
-            "C1-1-Img": $('#formbgContactHeadBackground .picname').val(),
-            "C1-2-Img" : $('#formbgContactBackground .picname').val(),
-            "C1-3-Text" : $('#contactSubHead1').val(),
-            "C1-4-Text" : $('#contactSubHead2').val(),
-            "C1-5-Text" : $('#contactPromotionHeadline').val(),
-            "C1-6-Text" : $('#contactPromotionSubHeadline').val(),
+            "C1-1-HeadBG": $('#formbgContactHeadBackground .picname').val(),
+            "C1-2-FormBG" : $('#formbgContactBackground .picname').val(),
+            "C1-3-SubHead1" : $('#contactSubHead1').val(),
+            "C1-4-SubHead2" : $('#contactSubHead2').val(),
+            "C1-5-PromoHeadline" : $('#contactPromotionHeadline').val(),
+            "C1-6-PromoSubHeadline" : $('#contactPromotionSubHeadline').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js

@@ -7,7 +7,7 @@ input[type="file"] {
 }
 
 /* Preview */
-#formBGHeader div div div .preview, form#formPromotionArea div div .preview, form#formAboutbg1 div div .preview, form#formbgAboutBackground div div .preview, form#formbgContactHeadBackground div div .preview{
+#formBGHeader div div div .preview, form#formPromotionArea div div .preview, form#formAboutbg1 div div .preview, form#formbgAboutBackground div div .preview, form#formbgContactHeadBackground div div .preview, form#formbgContactBackground div div .preview{
     width: 100%;
     max-height: 50%;
     aspect-ratio: 10 / 3;
@@ -16,6 +16,18 @@ input[type="file"] {
     margin: 0 auto;
     background: white;
 }
+
+
+form#formbgContactBackground div div .preview{
+    width: 100%;
+    max-height: 50%;
+    aspect-ratio: 10 / 4.5;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+}
+
 
 form#promotion1 div .preview {
     width: 35%;
@@ -89,4 +101,18 @@ form#formFooter1 div div .preview, form#formFooter2 div div .preview, form#formF
     margin: 0 auto;
     background: white;
 }
+
+
+
+
+form#formAboutFeaturedDishImg1 div div  .preview, form#formAboutFeaturedDishImg2 div div  .preview, form#formAboutFeaturedDishImg3 div div  .preview, form#formAboutFeaturedDishImg4 div div  .preview, form#formAboutFeaturedDishImg5 div div  .preview, form#formAboutFeaturedDishImg6 div div  .preview, form#formCarousel1 div div .preview, form#formCarousel2 div div .preview, form#formCarousel3 div div .preview,form#formCarousel4 div div .preview{
+    width: 100%;
+    max-height: 50%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+}
 /* End Preview */
+
