@@ -1,8 +1,7 @@
-const modalFormEl = $('#modalForm');
-const modalForm = new bootstrap.Modal(document.getElementById('modalForm'));
-const inputProjectName = $("#projectName");
-const inputShopTypeID = $("#shopType");
-const inputCountry = $("#country");
+const modalSettingsEl = $('#modalSettings');
+const modalSettings = new bootstrap.Modal(document.getElementById('modalSettings'));
+const inputRecipient = $("#recipient");
+const inputChannel = $("#channel");
 const inputEditID = $("#editID");
 const inputAction = $("#frmAction");
 const inputLoginID = $("#loginID");
@@ -100,11 +99,9 @@ const setEdit = (id) => {
             let row = res.data;
 
             row.forEach( item => {
-                let {projectID : id, projectName : name, shopTypeID, selectedTemplate, countryID : country} = item;
-                inputProjectName.val(name);
-                inputShopTypeID.val(shopTypeID);
+                inputRecipient.val();
+                inputChannel.val();
                 $("#selectedTemplate").val(selectedTemplate);
-                inputCountry.val(country);
                 inputEditID.val(id);
                 inputAction.val('update');
             });
@@ -157,10 +154,9 @@ const setDel = (id) => {
 const saveForm = () => {
     payload = {
         act: inputAction.val(),
-        name: inputProjectName.val(),
-        shopTypeID: inputShopTypeID.val(),
+        recipient: inputRecipient.val(),
+        channel: inputChannel.val(),
         selectedTemplate: selectedTemplate.val(),
-        country: inputCountry.val(),
         editID: inputEditID.val(),
         ownerID: inputLoginID.val(),
         token: Math.random()
@@ -192,27 +188,10 @@ const saveForm = () => {
 
 }//saveForm
 
-const frmReset = () => {
-    $("#frmProject").trigger("reset");
-    inputEditID.val('');
-    inputShopTypeID.val(0);
-    inputCountry.val(0);
-    inputProjectName.val('');
-    inputAction.val('add');
-}
 const modalShow = () => {
-    modalForm.show();
+    modalSettings.show();
 }
 const modalClose = () => {
-    modalForm.hide();
+    modalSettings.hide();
     frmReset();
 }
-
-modalFormEl.on('hidden.bs.modal', function () {
-    //alert('Modal is about to be Close');
-    frmReset();
-})
-
-modalFormEl.on('show.bs.modal', function () {
-    //alert('Modal is about to be shown');
-});
