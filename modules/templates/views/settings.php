@@ -46,16 +46,16 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
-                            <label for="projectName">Email</label>
-                            <input type="text" class="form-control" id="projectName" placeholder="HoonHay" autocomplete="off">
+                            <label for="recipient">Email</label>
+                            <input type="text" class="form-control" id="recipient" placeholder="admin@localforyou.com" autocomplete="off">
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
-                            <label for="shopType">Channel</label>
-                            <select class="form-control" id="shopType">
+                            <label for="channel">Channel</label>
+                            <select class="form-control" id="channel">
                                 <option value="0">--- Select ---</option>
                                 <option value="1">To</option>
                                 <option value="2">CC</option>

@@ -1,7 +1,7 @@
 const modalFormEl = $('#modalForm');
 const modalForm = new bootstrap.Modal(document.getElementById('modalForm'));
-const inputProjectName = $("#projectName");
-const inputShopTypeID = $("#shopType");
+const inputRecipient = $("#recipient");
+const inputChannel = $("#channel");
 const inputCountry = $("#country");
 const inputEditID = $("#editID");
 const inputAction = $("#frmAction");
@@ -157,8 +157,8 @@ const setDel = (id) => {
 const saveForm = () => {
     payload = {
         act: inputAction.val(),
-        name: inputProjectName.val(),
-        shopTypeID: inputShopTypeID.val(),
+        recipient: inputRecipient.val(),
+        channel: inputChannel.val(),
         selectedTemplate: selectedTemplate.val(),
         country: inputCountry.val(),
         editID: inputEditID.val(),

@@ -10,11 +10,13 @@ $param['act'] = (!empty($_REQUEST['act'])) ? trim($_REQUEST['act']) : ''; //ใ�
 $param['name'] = (!empty($_REQUEST['name'])) ? trim($_REQUEST['name']) : ''; //ชื่อโปรเจคที่ส่งมา
 $param['shopTypeID'] = (!empty($_REQUEST['shopTypeID'])) ? trim($_REQUEST['shopTypeID']) : '';
 $param['selectedTemplate'] = (!empty($_REQUEST['selectedTemplate'])) ? trim($_REQUEST['selectedTemplate']) : null;
-$param['status'] = (!empty($_REQUEST['status'])) ? trim($_REQUEST['status']) : '1'; //1=Draft , 2=Send
+$param['status'] = (!empty($_REQUEST['status'])) ? trim($_REQUEST['status']) : '1'; //1=On , 2=Send
 $param['country'] = (!empty($_REQUEST['country'])) ? trim($_REQUEST['country']) : ''; //ตามตาราง Countries
 $param['editID'] = (!empty($_REQUEST['editID'])) ? trim($_REQUEST['editID']) : ''; //จะส่งมาเฉพาะเคส setEdit , Update
 $param['delID'] = (!empty($_REQUEST['delID'])) ? trim($_REQUEST['delID']) : ''; //จะส่งมาเฉพาะเคส del
 $param['ownerID'] = (!empty($_REQUEST['ownerID'])) ? trim($_REQUEST['ownerID']) : ''; //มาจาก session ที่ frontend อ่านมาให้
+$param['recipient'] = (!empty($_REQUEST['recipient'])) ? trim($_REQUEST['recipient']) : '';
+$param['channel'] = (!empty($_REQUEST['channel'])) ? trim($_REQUEST['channel']) : '';
 
 //สร้างตัวแปร Array ไว้ตอนส่งค่ากลับ
 $return['result'] = '';
@@ -59,8 +61,8 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
     $return['result'] = 'success';
     $return['msg'] = 'project updated';
 }else if ( $param['act'] == 'add' ) {  //เพิ่ม project
-    /*$project = $db->query('INSERT INTO `tb_project`(`projectName`, `shopTypeID`, `selectedTemplate`, `statusID`, `projectOwner`, `countryID`) VALUES (?,?,?,?,?,?)'
-        , $param['name'], $param['shopTypeID'], $param['selectedTemplate'], 1, $param['ownerID'], $param['country']);*/
+    $recipient = $db->query('INSERT INTO `TemplateSubmissionSettings`(`email`, `channel`, `status`) VALUES (?,?,?)'
+        , $param['recipient'], $param['channel'], $param['status']);
 
     $return['result'] = 'success';
     $return['msg'] = 'project created';

@@ -725,7 +725,7 @@ $projectID = $id;
 
                     <div class="row">
                         <div class="col-6" style="text-align:left;">
-                            <button type="button" class="btn btn-success" id="submitHomeBtn">Submit Page Home Info.</button>
+                            <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Submit Page Home Info.</button>
                             <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
@@ -1138,7 +1138,7 @@ $projectID = $id;
 
                     <div class="row">
                         <div class="col-6" style="text-align:left;">
-                            <button type="button" class="btn btn-success" id="submitAboutBtn">Submit Page About Info.</button>
+                            <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Submit Page About Info.</button>
                             <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
@@ -1243,7 +1243,7 @@ $projectID = $id;
 
                     <div class="row">
                         <div class="col-6" style="text-align:left;">
-                            <button type="button" class="btn btn-success" id="submitContactBtn">Submit Page Contact Info.</button>
+                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Submit Page Contact Info.</button>
                             <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
@@ -1289,6 +1289,7 @@ $projectID = $id;
             "A1-06-introImg1": $('#formHomeIntroduceImg1 .picname').val(),
             "A1-06-introImg2": $('#formHomeIntroduceImg2 .picname').val(),
             "A1-06-introImg3": $('#formHomeIntroduceImg3 .picname').val(),
+
             "A2-07-featureImg1": $('#formHomeFeaturedImg1 .picname').val(),
             "A2-08-featureImg2": $('#formHomeFeaturedImg2 .picname').val(),
             "A2-09-featureImg3": $('#formHomeFeaturedImg3 .picname').val(),
@@ -1297,6 +1298,7 @@ $projectID = $id;
             "A2-12-featureImg6": $('#formHomeFeaturedImg6 .picname').val(),
             "A2-13-featureImg7": $('#formHomeFeaturedImg7 .picname').val(),
             "A2-14-featureImg8": $('#formHomeFeaturedImg8 .picname').val(),
+
             "A3-15-promoBg1": $('#formHomePromotionBg1 .picname').val(),
             "A3-15-promoBg2": $('#formHomePromotionBg2 .picname').val(),
             "A3-15-promoBg3": $('#formHomePromotionBg3 .picname').val(),
@@ -1308,6 +1310,7 @@ $projectID = $id;
             "A3-19-tesTxt2": $('#testimonialText2').val(),
             "A3-19-tesName2": $('#testimonialName2').val(),
             "A3-19-tesImg2": $('#formHomeTestimonialImg2 .picname').val(),
+
             "A4-20-promoImg2": $('#formHomePromotionImg2 .picname').val(),
             "A4-21-promoHead3": $('#promotionHeadline3').val(),
             "A4-22-promoMsg3": $('#promotionMessage3').val(),
@@ -1337,10 +1340,12 @@ $projectID = $id;
             "B1-05-promoImg2": $('#formAboutPromotionImg2 .picname').val(),
             "B1-05-promoImg3": $('#formAboutPromotionImg3 .picname').val(),
             "B1-05-promoImg4": $('#formAboutPromotionImg4 .picname').val(),
+
             "B2-06-staffImg1": $('#formAboutStaffImg1 .picname').val(),
             "B2-07-staffImg2": $('#formAboutStaffImg2 .picname').val(),
             "B2-08-staffImg3": $('#formAboutStaffImg3 .picname').val(),
             "B2-09-reviewBg": $('#formAboutReviewsBg .picname').val(),
+            
             "B3-10-dish1": $('#formAboutFeaturedDish1 .picname').val(),
             "B3-11-dish2": $('#formAboutFeaturedDish2 .picname').val(),
             "B3-12-dish3": $('#formAboutFeaturedDish3 .picname').val(),
