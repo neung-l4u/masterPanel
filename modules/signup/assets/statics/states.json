@@ -379,5 +379,290 @@
         "text": "Wyoming"
       }
     ]
+  },
+  "TH": {
+    "label": "Thailand",
+    "state": [
+      {
+          "code": "BK",
+          "text": "Bangkok"
+      },
+      {
+          "code": "CN",
+          "text": "Chiang Mai"
+      },
+      {
+          "code": "CR",
+          "text": "Chiang Rai"
+      },
+      {
+          "code": "NT",
+          "text": "Nan"
+      },
+      {
+          "code": "LP",
+          "text": "Lampang"
+      },
+      {
+          "code": "LN",
+          "text": "Lamphun"
+      },
+      {
+          "code": "PR",
+          "text": "Phrae"
+      },
+      {
+          "code": "PL",
+          "text": "Phayao"
+      },
+      {
+          "code": "UT",
+          "text": "Uttaradit"
+      },
+      {
+          "code": "SK",
+          "text": "Sukhothai"
+      },
+      {
+          "code": "TN",
+          "text": "Tak"
+      },
+      {
+          "code": "KN",
+          "text": "Kamphaeng Phet"
+      },
+      {
+          "code": "PH",
+          "text": "Phitsanulok"
+      },
+      {
+          "code": "PI",
+          "text": "Phetchabun"
+      },
+      {
+          "code": "NS",
+          "text": "Nakhon Sawan"
+      },
+      {
+          "code": "UT",
+          "text": "Uthai Thani"
+      },
+      {
+          "code": "SA",
+          "text": "Samut Sakhon"
+      },
+      {
+          "code": "SP",
+          "text": "Samut Prakan"
+      },
+      {
+          "code": "SM",
+          "text": "Samut Songkhram"
+      },
+      {
+          "code": "PT",
+          "text": "Pathum Thani"
+      },
+      {
+          "code": "AY",
+          "text": "Ayutthaya"
+      },
+      {
+          "code": "NB",
+          "text": "Nakhon Nayok"
+      },
+      {
+          "code": "CC",
+          "text": "Chachoengsao"
+      },
+      {
+          "code": "CB",
+          "text": "Chonburi"
+      },
+      {
+          "code": "RT",
+          "text": "Rayong"
+      },
+      {
+          "code": "TH",
+          "text": "Trat"
+      },
+      {
+          "code": "CP",
+          "text": "Chanthaburi"
+      },
+      {
+          "code": "SR",
+          "text": "Saraburi"
+      },
+      {
+          "code": "LP",
+          "text": "Lopburi"
+      },
+      {
+          "code": "SP",
+          "text": "Sing Buri"
+      },
+      {
+          "code": "CA",
+          "text": "Chainat"
+      },
+      {
+          "code": "AN",
+          "text": "Ang Thong"
+      },
+      {
+          "code": "PK",
+          "text": "Prachinburi"
+      },
+      {
+          "code": "KN",
+          "text": "Kanchanaburi"
+      },
+      {
+          "code": "RA",
+          "text": "Ratchaburi"
+      },
+      {
+          "code": "PT",
+          "text": "Phetchaburi"
+      },
+      {
+          "code": "PK",
+          "text": "Prachuap Khiri Khan"
+      },
+      {
+          "code": "SU",
+          "text": "Suphan Buri"
+      },
+      {
+          "code": "NT",
+          "text": "Nakhon Pathom"
+      },
+      {
+          "code": "CL",
+          "text": "Chumphon"
+      },
+      {
+          "code": "SR",
+          "text": "Surat Thani"
+      },
+      {
+          "code": "RK",
+          "text": "Ranong"
+      },
+      {
+          "code": "PN",
+          "text": "Phang Nga"
+      },
+      {
+          "code": "PK",
+          "text": "Phuket"
+      },
+      {
+          "code": "KR",
+          "text": "Krabi"
+      },
+      {
+          "code": "TR",
+          "text": "Trang"
+      },
+      {
+          "code": "SP",
+          "text": "Satun"
+      },
+      {
+          "code": "SN",
+          "text": "Songkhla"
+      },
+      {
+          "code": "PT",
+          "text": "Pattani"
+      },
+      {
+          "code": "YS",
+          "text": "Yala"
+      },
+      {
+          "code": "NR",
+          "text": "Narathiwat"
+      },
+      {
+          "code": "BR",
+          "text": "Buriram"
+      },
+      {
+          "code": "KS",
+          "text": "Khon Kaen"
+      },
+      {
+          "code": "NS",
+          "text": "Nakhon Ratchasima"
+      },
+      {
+          "code": "SR",
+          "text": "Surin"
+      },
+      {
+          "code": "RI",
+          "text": "Roi Et"
+      },
+      {
+          "code": "MS",
+          "text": "Maha Sarakham"
+      },
+      {
+          "code": "CK",
+          "text": "Chaiyaphum"
+      },
+      {
+          "code": "UB",
+          "text": "Ubon Ratchathani"
+      },
+      {
+          "code": "SW",
+          "text": "Si Sa Ket"
+      },
+      {
+          "code": "LK",
+          "text": "Loei"
+      },
+      {
+          "code": "NN",
+          "text": "Nong Bua Lamphu"
+      },
+      {
+          "code": "NK",
+          "text": "Nong Khai"
+      },
+      {
+          "code": "UD",
+          "text": "Udon Thani"
+      },
+      {
+          "code": "SK",
+          "text": "Sakon Nakhon"
+      },
+      {
+          "code": "NK",
+          "text": "Nakhon Phanom"
+      },
+      {
+          "code": "MC",
+          "text": "Mukdahan"
+      },
+      {
+          "code": "BP",
+          "text": "Bung Kan"
+      },
+      {
+          "code": "KA",
+          "text": "Kalasin"
+      },
+      {
+          "code": "AM",
+          "text": "Amnat Charoen"
+      }
+    ]
   }
 }

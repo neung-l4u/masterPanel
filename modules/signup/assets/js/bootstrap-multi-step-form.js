@@ -388,6 +388,28 @@ $('#formCountry').change(function() {
       // domainHelpAU.show();
       // domainHelpUS.hide();
       break;
+    case "TH":
+      inputBusinessNumber.attr('required', true);
+      labelBusinessNumber.html("TTT");
+      classBusinessNumber.show();
+      countryName.html("Thailand");
+      selectState.show();
+      currency.html("THB");
+      formData.formCurrency = "THB";
+      inputCurrency.val("THB");
+      lookup.hide();
+      zipLabel.html("Zip Code")
+      textGST.html("VAT");
+      fakeNumber.html("2056847201");
+      countryTextOnly.val("Thailand");
+      methodDebit.show();
+      routing_number_div.show();
+      bsbDirectDebit_div.hide();
+      terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
+      getProductList("TH");
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
+      break;
     default:
       labelBusinessNumber.html("ABN");
       inputBusinessNumber.attr('required', true);

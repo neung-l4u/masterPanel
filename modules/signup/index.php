@@ -103,6 +103,7 @@ $currentDate = date('d/m/Y');
                                             <option value="NZ">New Zealand</option>
                                             <option value="UK">United Kingdom</option>
                                             <option value="US">United States</option>
+                                            <option value="TH">Thailand</option>
                                         </select>
                                         <input type="hidden" name="00N2v00000IyVqF" id="countryTextOnly">
                                     </div>
@@ -995,7 +996,7 @@ $currentDate = date('d/m/Y');
                                                             </span>
                                                             <small id="domainHelpAU" class="form-text">
                                                                 <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
-                                                                    Check Availability AU, NZ, UK
+                                                                    Check Availability AU, NZ, UK, TH
                                                                 </a>
                                                             </small>
                                                             <br>

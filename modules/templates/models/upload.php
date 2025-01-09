@@ -1,10 +1,22 @@
 <?php
+require_once ("../assets/db/db.php");
+require_once ("../assets/db/initDB.php");
+require_once ("../assets/php/share_function.php");
 
 if(isset($_FILES['file']['name'])){
 
     $projectID = $_POST['projectId'];
     $prefix = isset($_POST['prefixId']) ? $_POST['prefixId'] : 'Section';
 
+    if(!empty($projectID)){
+        $row = $db->query('SELECT projectName FROM `tb_project` WHERE projectID = ?;', $projectID)->fetchArray();
+        $projectName = sanitizeFolderName($row["projectName"]);
+    } else {
+        $projectName = 'Noname';
+        $projectID = 0;
+    }
+
+    
     /* Getting file name */
     $filename = $_FILES['file']['name'];
     $oldName = $filename;
@@ -23,7 +35,7 @@ if(isset($_FILES['file']['name'])){
     /* Check a file extension */
     if(in_array(strtolower($imageFileType), $valid_extensions)) {
 
-        $subfolder = "../upload/" . $projectID;
+        $subfolder = "../upload/". $projectID . "-" . $projectName;
         if (!is_dir($subfolder)) {
             mkdir($subfolder, 0777, true);
         }
@@ -32,7 +44,7 @@ if(isset($_FILES['file']['name'])){
         if(move_uploaded_file($_FILES['file']['tmp_name'],$location)){
             /* Rename file */
 
-            $currentDate = date("ymd_His");
+            $currentDate = date("ymdHis");
             $newName = $subfolder . "/" . $prefix . "_" . $projectID . "_" . $currentDate . "." . $imageExt;
             //echo "New name: ";
 

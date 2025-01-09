@@ -146,6 +146,7 @@ out
 /modules/templates/assets/db/initDB.php
 /modules/testAjax/assets/db/initDB.php
 /modules/templates/upload
+/modules/templates/views/server/uploads
 /modules/signup/assets/.DS_Store
 
 
