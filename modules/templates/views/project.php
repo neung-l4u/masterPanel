@@ -23,7 +23,7 @@
                     <th class="col_type">Type</th>
                     <th class="col_template">Template</th>
                     <th class="col_name">Project Name</th>
-                    <th class="col_status">Status</th>
+<!--                    <th class="col_status">Status</th>-->
                     <th class="col_owner">Owner</th>
                     <th class="col_country">Country</th>
                     <th class="col_action"></th>
