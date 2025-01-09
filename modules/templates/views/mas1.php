@@ -20,271 +20,449 @@ $projectID = $id;
 </nav>
 
 <!-- Template Massage 1 -->
-<div id="TemMas1">
+<div id="Temres1" class="container-fluid">
     <div class="row">
-        <div class="col-6">
+        <div class="col">
+            <!-- tab menu -->
             <nav>
                 <div class="nav nav-tabs page-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-item nav-link active" id="tab-mas1Home" data-bs-toggle="tab" data-bs-target="#mas1Home" type="button" role="tab" aria-selected="true">Home</button>
-                    <button class="nav-item nav-link" id="tab-mas1About" data-bs-toggle="tab" data-bs-target="#mas1About" type="button" role="tab" aria-selected="false">About</button>
-                    <button class="nav-item nav-link" id="tab-mas1Services" data-bs-toggle="tab" data-bs-target="#mas1Services" type="button" role="tab" aria-selected="false">Services</button>
-                    <button class="nav-item nav-link" id="tab-mas1Contact" data-bs-toggle="tab" data-bs-target="#mas1Contact" type="button" role="tab" aria-selected="false">Contact</button>
+                    <button class="nav-item nav-link active" id="tab-res1Home" data-bs-toggle="tab" data-bs-target="#res1Home" type="button" role="tab" aria-selected="true">Home</button>
+                    <button class="nav-item nav-link" id="tab-res1About" data-bs-toggle="tab" data-bs-target="#res1About" type="button" role="tab" aria-selected="false">About</button>
+                    <button class="nav-item nav-link" id="tab-res1Services" data-bs-toggle="tab" data-bs-target="#res1Services" type="button" role="tab" aria-selected="false">Service</button>
+                    <button class="nav-item nav-link" id="tab-res1Contact" data-bs-toggle="tab" data-bs-target="#res1Contact" type="button" role="tab" aria-selected="false">Contact</button>
                 </div>
             </nav>
-
+            <!-- end tab menu -->
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="mas1Home" role="tabpanel" aria-labelledby="nav-home-tab">
-                    <div class="row">
-                        <div class="col">
+                <div class="tab-pane show active p-3" id="res1Home" role="tabpanel" aria-labelledby="nav-home-tab">
 
-                            <div class="col py-3 px-3">
-                                <label for="formLogo" class="form-label">Logo</label>
-                                <form method="post" enctype="multipart/form-data" class="uploadForm" id="formLogo">
-                                    <img class="preview" src="../assets/img/default.png" alt="place">
-                                    <input class="picname" type="hidden" value="">
-                                    <div class="row">
-                                        <input type="file" class="file-input col-8" />
-                                        <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
-                                    </div>
-                                </form>
+                    <div class="row mb-5"><!--Section 1-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—1</small>
+                                </div>
                             </div>
-
-                            <label for="">2. Business Phone</label>
-                            <input type="text" class="form-control" id="" placeholder="">
-
-                            <label for="">3. Business Name</label>
-                            <input type="text" class="form-control" id="" placeholder="">
-
-                            <label for="">4. Business Slogan</label>
-                            <input type="text" class="form-control" id="" placeholder="">
-
-                            <label for="">5. Order Online URL</label>
-                            <input type="text" class="form-control" id="" placeholder="">
-
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="mas1About" role="tabpanel" aria-labelledby="nav-profile-tab">
-                    <div class="row">
-                        <div class="col">
-
-                            <label for="">1. About Page Header Background Image 2201x11068 pixels</label>
-                            <input type="file" class="form-control btn btn-default btn-file" id="">
-
-                            <label for="">2. About Us Body</label>
-                            <textarea class="form-control" id="" rows="3"></textarea>
-
-                            <label for="">3. Promotion Headline</label>
-                            <input type="text" class="form-control" id="" placeholder="">
-
-                            <label for="">4. Promotion Body</label>
-                            <textarea class="form-control" id="" rows="3"></textarea>
-
-                            <label for="">5. Promotion Image 600x900 pixels</label>
-                            <input type="file" class="form-control btn btn-default btn-file" id="">
-
-                            <label for="">6. Background Image 2268x1512 pixels</label>
-                            <input type="file" class="form-control btn btn-default btn-file" id="">
-
-                            <label for="">7. Callout #1</label>
-                            <input type="text" class="form-control homeno3" id="" placeholder="">
-
-                            <label for="">8. Callout #2</label>
-                            <input type="text" class="form-control homeno3" id="" placeholder="">
-
-                            <label for="">9. Callout #3</label>
-                            <input type="text" class="form-control homeno3" id="" placeholder="">
-
-                            <label for="">10. Callout #4</label>
-                            <input type="text" class="form-control homeno3" id="" placeholder="">
-
-                            <label for="">11. Featured Dish Image #1 900x600 pixels </label>
-                            <div class="input-group">
-                                <input type="file" class="form-control imginp btn btn-default btn-file" id="imgInp" multiple>
+                            <div class="row">
+                                <div class="col">
+                                    <h2>Home Page</h2>
+                                </div>
                             </div>
-                            <img id='img-upload-1' alt="image upload 1"/>
-                            <img id='img-upload-2' alt="image upload 2"/>
-                            <img id='img-upload-3' alt="image upload 3"/>
-                            <img id='img-upload-4' alt="image upload 4"/>
-                            <img id='img-upload-5' alt="image upload 5"/>
-                            <img id='img-upload-6' alt="image upload 6"/>
-
+                            
                         </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="mas1Services" role="tabpanel" aria-labelledby="nav-profile-tab">
-                    <div class="row">
                         <div class="col">
-
-                            <label for="">1. Services Page Header Background Image 2201x11068 pixels</label>
-                            <input type="file" class="form-control btn btn-default btn-file" id="">
-
-                            <label for="">2. About Us Body</label>
-                            <textarea class="form-control" id="" rows="3"></textarea>
-
-                            <label for="">3. Promotion Headline</label>
-                            <input type="text" class="form-control" id="" placeholder="">
-
-                            <label for="">4. Promotion Body</label>
-                            <textarea class="form-control" id="" rows="3"></textarea>
-
-                            <label for="">5. Promotion Image 600x900 pixels</label>
-                            <input type="file" class="form-control btn btn-default btn-file" id="">
-
-                            <label for="">6. Background Image 2268x1512 pixels</label>
-                            <input type="file" class="form-control btn btn-default btn-file" id="">
-
-                            <label for="">7. Callout #1</label>
-                            <input type="text" class="form-control homeno3" id="" placeholder="">
-
-                            <label for="">8. Callout #2</label>
-                            <input type="text" class="form-control homeno3" id="" placeholder="">
-
-                            <label for="">9. Callout #3</label>
-                            <input type="text" class="form-control homeno3" id="" placeholder="">
-
-                            <label for="">10. Callout #4</label>
-                            <input type="text" class="form-control homeno3" id="" placeholder="">
-
-                            <label for="">11. Featured Dish Image #1 900x600 pixels </label>
-                            <div class="input-group">
-                                <input type="file" class="form-control imginp btn btn-default btn-file" id="imgInp" multiple>
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—1</small>
+                                </div>
                             </div>
-                            <img id='img-upload-1' alt="image upload 1"/>
-                            <img id='img-upload-2' alt="image upload 2"/>
-                            <img id='img-upload-3' alt="image upload 3"/>
-                            <img id='img-upload-4' alt="image upload 4"/>
-                            <img id='img-upload-5' alt="image upload 5"/>
-                            <img id='img-upload-6' alt="image upload 6"/>
-
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="mas1Contact" role="tabpanel" aria-labelledby="contact-tab">
+                    </div><!--end Section 1-->
 
-
-                    <div class="row">
+                    <div class="row mb-5"><!--Section 2-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—2</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h2>Home Page</h2>
+                                </div>
+                            </div>
+                            
+                        </div>
                         <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—2</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end Section 2-->
 
-                            <label for="">1. Contact Page Header Background Image 2268x1512 pixels</label>
-                            <input type="file" class="form-control btn btn-default btn-file" id="">
+                    <div class="row mb-5"><!--Section 3-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—3</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h2>Home Page</h2>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—3</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end Section 3-->
 
-                            <label for="">2. Contact Page Header Background Image 2268x1512 pixels</label>
-                            <input type="file" class="form-control btn btn-default btn-file" id="">
+                    <div class="row mb-5"><!--Section 4-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—4</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h2>Home Page</h2>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—4</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end Section 4-->
 
-                            <label for="">3. Contact Us Sub Headline #1</label>
-                            <input type="text" class="form-control homeno3" id="HomeNo3" placeholder="">
+                    <div class="row mb-5"><!--Section 5-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—5</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h2>Home Page</h2>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—5</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end Section 5-->
 
-                            <label for="">3. Contact Us Sub Headline #2</label>
-                            <input type="text" class="form-control homeno3" id="HomeNo3" placeholder="">
+                    <div class="row mb-5"><!--Section 6-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—6</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h2>Home Page</h2>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—6</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end Section 6-->
+                </div><!--end tab-Home-->
 
-                            <label for="">5. Promotion Headline</label>
-                            <input type="text" class="form-control homeno3" id="HomeNo3" placeholder="">
+                <!-- fixed Structure -->
+                <div class="tab-pane p-3" id="res1About" role="tabpanel" aria-labelledby="nav-about-tab">
 
-                            <label for="">6. Promotion Sub Headline</label>
-                            <input type="text" class="form-control homeno3" id="HomeNo3" placeholder="">
+                <div class="row mb-5"><!--Section 1-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—1</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h2>About Page</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—1</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1About-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1About-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end Section 1-->
 
+                    <div class="row mb-5"><!--Section 2-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—2</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h2>About Page</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—2</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1About-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1About-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end Section 2-->
+                </div><!--end tab-Services-->
+
+                <div class="tab-pane p-3" id="res1Services" role="tabpanel" aria-labelledby="nav-services-tab">
+
+                    <div class="row mb-5"><!--Section 1-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—1</small>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <h2>Services Page</h2>
+                                </div>
+                            </div>
+                            
+                        </div><!--end col-6-->
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—1</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1Contact-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Contact-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end Section 1-->
+
+                    <div class="row mb-5"><!--Section 2-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—2</small>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <h2>Services Page</h2>
+                                </div>
+                            </div>
+                            
+                        </div><!--end col-6-->
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—2</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1Contact-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Contact-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end Section 3-->
+
+                    <div class="row mb-5"><!--Section 3-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—3</small>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <h2>Services Page</h2>
+                                </div>
+                            </div>
+                            
+                        </div><!--end col-6-->
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—3</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1Contact-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Contact-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--end Section 3-->
+
+                </div><!--end tab-Services-->
+
+                <div class="tab-pane p-3" id="res1Contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+
+                    <div class="row mb-5"><!--Section 1-->
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Form Section—1</small>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <h2>Contact Page</h2>
+                                </div>
+                            </div>
+                            
+                        </div><!--end col-6-->
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <small class="text-info">Example Section—1</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="../assets/img/Res1/new/Res1Contact-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Contact-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div><!--end tab-Contact-->
 
-            <div class="row" id="changepage" style="overflow:auto;">
-                <div class="col-6" style="text-align:left;">
-                    <button type="button" class="btn btn-success" id="submitBtn">save</button>
-                </div>
-
-                <div class="col-6" style="text-align:right;">
-                    <button class="btn btn-light" id="prevPageBtn">Back</button>
-                    <button class="btn btn-primary" id="nextPageBtn">Next</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-6">
-            <img id="mas1Img" src="../assets/img/Mas1Home.png" class="img-fluid">
+            </div> <!-- End tab-content-->
         </div>
     </div>
-
+    <div class="row mb-5" id="changepage">
+        <div class="col d-flex justify-content-end">
+            <!-- tab menu -->
+            <nav>
+                <div class="nav nav-pills d-flex justify-content-end gap-2" id="nav-tab2" role="tablist">
+                    <button onclick="changeTab('tab-res1Home');" type="button" class="btn btn-primary" id="bottomTabHome">Home</button>
+                    <button onclick="changeTab('tab-res1About');" type="button" class="btn btn-primary" id="bottomTabAbout">About</button>
+                    <button onclick="changeTab('tab-res1Services');" type="button" class="btn btn-primary" id="bottomTabServices">Services</button>
+                    <button onclick="changeTab('tab-res1Contact');" type="button" class="btn btn-primary" id="bottomTabContact">Contact</button>
+                </div>
+            </nav>
+            <!-- end tab menu -->
+            <input type="hidden" id="projectID" value="<?php echo $id; ?>">
+            <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
+        </div>
+    </div>
 </div>
 <!-- End Template Massage 1 -->
 
-
-<input type="hidden" id="projectID" value="<?php echo $id; ?>">
-<input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
-
 <script src="../controllers/template.js"></script>
 <script>
-    $("#cmdSubmit").click(function () {
-        let payload = {
-            mode : "save",
 
-        //TEMPLATE_R2_PAGE_HOME
-            tdSlogan: $('#tdSlogan').val(),
-            //tdR2HomeSlider1: $('#tdR2HomeSlider1').val(),
-            //tdR2HomeSlider2: $('#tdR2HomeSlider2').val(),
-            //tdR2HomeSlider3: $('#tdR2HomeSlider3').val(),
-            tdR2Delivery: $('#tdR2Delivery').val(),
-            tdR2HomePromotion1: $('#tdR2HomePromotion1').val(),
-            tdR2HomePromotion1Body: $('#tdR2HomePromotion1Body').val(),
-            //tdR2Carousel: $('#tdR2Carousel').val(),
-            //tdR2FeaturedImg: $('#tdR2FeaturedImg').val(),
-            //tdR2PromotionImg2: $('#tdR2PromotionImg2').val(),
-            tdR2HomePromotion2: $('#tdR2HomePromotion2').val(),
-            //tdR2ReviewBg: $('#tdR2ReviewBg').val(),
-            tdR2TestimonialText1: $('#tdR2TestimonialText1').val(),
-            tdR2TestimonialName1: $('#tdR2TestimonialName1').val(),
-            //tdR2TestimonialImg1: $('#tdR2TestimonialImg1').val(),
-            tdR2TestimonialText2: $('#tdR2TestimonialText1').val(),
-            tdR2TestimonialName2: $('#tdR2TestimonialName1').val(),
-            //tdR2TestimonialImg2: $('#tdR2TestimonialImg1').val(),
-            tdR2TestimonialText3: $('#tdR2TestimonialText1').val(),
-            tdR2TestimonialName3: $('#tdR2TestimonialName1').val(),
-            //tdR2TestimonialImg3: $('#tdR2TestimonialImg1').val(),
-            //tdR2PromotionImg3: $('#tdR2PromotionImg3').val(),
-            tdR2HomePromotion3: $('#tdR2HomePromotion3').val(),
-            tdR2HomePromotion3Body: $('#tdR2HomePromotion3Body').val(),
-            //tdR2FooterImg1: $('#tdR2FooterImg1').val(),
-            //tdR2FooterImg2: $('#tdR2FooterImg2').val(),
-            //tdR2FooterImg3: $('#tdR2FooterImg3').val(),
-            //tdR2FooterImg4: $('#tdR2FooterImg4').val(),
-            tdR2HomePromotion4: $('#tdR2HomePromotion4').val(),
-            tdR2HomePromotion4Body: $('#tdR2HomePromotion4Body').val(),
-            //tdR2FooterBgImg: $('#tdR2FooterBgImg').val(),
+$(function() {
+        setAllPageStatus(); //in template.js
+    });//ready
 
-        //TEMPLATE_R2_PAGE_ABOUT
-            //tdR2HeadAboutImg: $('#tdR2HeadAboutImg').val(),
-            tdR2AboutUSBody: $('#tdR2AboutUSBody').val(),
-            tdR2AboutPromotion1: $('#tdR2AboutPromotion1').val(),
-            tdR2AboutPromotion1Body: $('#tdR2AboutPromotion1Body').val(),
-            //tdR2AboutPromotionImg: $('#tdR2AboutPromotionImg').val(),
-            //tdR2StaffImg1: $('#tdR2StaffImg1').val(),
-            //tdR2StaffImg2: $('#tdR2StaffImg2').val(),
-            //tdR2StaffImg3: $('#tdR2StaffImg3').val(),
-            //tdR2AboutFeaturedImg: $('#tdR2AboutFeaturedImg').val(),
-            
-        //TEMPLATE_R2_PAGE_CONTACT
-            //tdR2HeadContactImg: $('#tdR2HeadContactImg').val(),
-            tdR2ContactHeadSub1: $('#tdR2ContactHeadSub1').val(),
-            tdR2ContactHeadSub2: $('#tdR2ContactHeadSub2').val(),
-            //tdR2ContactBgImg: $('#tdR2ContactBgImg').val(),
-            tdR2ContactPromotion1: $('#tdR2ContactPromotion1').val(),
-            tdR2ContactPromotion1sub: $('#tdR2ContactPromotion1sub').val(),
-            tdR2ContactHeadSub1: $('#tdR2ContactHeadSub1').val(),
-            tdR2ContactHeadSub1: $('#tdR2ContactHeadSub1').val(),
-
-        };
-
+    const submitHome = () => {
+        page = "home";
+        payload = {
+            //TEMPLATE_R1_PAGE_HOME
+            "loginID": loginID,
+        }
         console.log("Payload", payload);
+        sendEmail(); //in template.js
+    }//submitHome
 
-        const callAjax = $.ajax({
-            url: "../models/ajaxMas1.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: payload
-        });
+    const submitAbout = () => {
+        page = "about";
+        payload = {
+            //TEMPLATE_R1_PAGE_ABOUT
+            "loginID": loginID,  
+        }
+        console.log("Payload", payload);
+        sendEmail(); //in template.js
+    }//submitAbout
 
-    });
+    const submitContact = () => {
+        page = "contact";
+        payload = {
+            //TEMPLATE_R1_PAGE_CONTACT    
+            "loginID": loginID,    
+        }
+        console.log("Payload", payload);
+        sendEmail(); //in template.js
+    }//submitContact
+
 </script>
