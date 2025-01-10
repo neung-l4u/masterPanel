@@ -20,21 +20,21 @@ $projectID = $id;
 </nav>
 
 <!-- Template Massage 1 -->
-<div id="Temres1" class="container-fluid">
+<div id="Temmas1" class="container-fluid">
     <div class="row">
         <div class="col">
             <!-- tab menu -->
             <nav>
                 <div class="nav nav-tabs page-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-item nav-link active" id="tab-res1Home" data-bs-toggle="tab" data-bs-target="#res1Home" type="button" role="tab" aria-selected="true">Home</button>
-                    <button class="nav-item nav-link" id="tab-res1About" data-bs-toggle="tab" data-bs-target="#res1About" type="button" role="tab" aria-selected="false">About</button>
-                    <button class="nav-item nav-link" id="tab-res1Services" data-bs-toggle="tab" data-bs-target="#res1Services" type="button" role="tab" aria-selected="false">Service</button>
-                    <button class="nav-item nav-link" id="tab-res1Contact" data-bs-toggle="tab" data-bs-target="#res1Contact" type="button" role="tab" aria-selected="false">Contact</button>
+                    <button class="nav-item nav-link active" id="tab-mas1Home" data-bs-toggle="tab" data-bs-target="#mas1Home" type="button" role="tab" aria-selected="true">Home</button>
+                    <button class="nav-item nav-link" id="tab-mas1About" data-bs-toggle="tab" data-bs-target="#mas1About" type="button" role="tab" aria-selected="false">About</button>
+                    <button class="nav-item nav-link" id="tab-mas1Services" data-bs-toggle="tab" data-bs-target="#mas1Services" type="button" role="tab" aria-selected="false">Service</button>
+                    <button class="nav-item nav-link" id="tab-mas1Contact" data-bs-toggle="tab" data-bs-target="#mas1Contact" type="button" role="tab" aria-selected="false">Contact</button>
                 </div>
             </nav>
             <!-- end tab menu -->
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane show active p-3" id="res1Home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div class="tab-pane show active p-3" id="mas1Home" role="tabpanel" aria-labelledby="nav-home-tab">
 
                     <div class="row mb-5"><!--Section 1-->
                         <div class="col-6">
@@ -43,11 +43,36 @@ $projectID = $id;
                                     <small class="text-info">Form Section—1</small>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col">
-                                    <h2>Home Page</h2>
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomebg1">
+                                        <div class="d-flex flex-column">
+                                            <label for="bg1">1. BG Header</label>
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <input type="file" class="file-input">
+                                                            <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="homeHeaderHeadline" class="form-label">2. Header Headline</label>
+                                        <input type="text" class="form-control" id="homeHeaderHeadline" placeholder="Header Headline">
+                                    </div>
+                                </div>
+                            </div>
+                            
                             
                         </div>
                         <div class="col">
@@ -56,10 +81,11 @@ $projectID = $id;
                                     <small class="text-info">Example Section—1</small>
                                 </div>
                             </div>
+
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    <a href="../assets/img/Mas1/Mas1Home-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="mas1Img" src="../assets/img/Mas1/Mas1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -88,8 +114,8 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    <a href="../assets/img/img/Mas1/Mas1Home-2.jpg" target="_blank" title="click to zoom">
+                                        <img id="mas1Img" src="../assets/img/Mas1/Mas1Home-2.jpg" class="img-fluid" alt="Massage 1 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -118,8 +144,8 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    <a href="../assets/img/Mas1/Mas1Home-3.jpg" target="_blank" title="click to zoom">
+                                        <img id="mas1Img" src="../assets/img/Mas1/Mas1Home-3.jpg" class="img-fluid" alt="Massage 1 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -148,77 +174,17 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    <a href="../assets/img/Mas1/Mas1Home-4.jpg" target="_blank" title="click to zoom">
+                                        <img id="mas1Img" src="../assets/img/Mas1/Mas1Home-4.jpg" class="img-fluid" alt="Massage 1 - Section 1">
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div><!--end Section 4-->
-
-                    <div class="row mb-5"><!--Section 5-->
-                        <div class="col-6">
-                            <div class="row">
-                                <div class="col">
-                                    <small class="text-info">Form Section—5</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <h2>Home Page</h2>
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="col">
-                            <div class="row">
-                                <div class="col">
-                                    <small class="text-info">Example Section—5</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!--end Section 5-->
-
-                    <div class="row mb-5"><!--Section 6-->
-                        <div class="col-6">
-                            <div class="row">
-                                <div class="col">
-                                    <small class="text-info">Form Section—6</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <h2>Home Page</h2>
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="col">
-                            <div class="row">
-                                <div class="col">
-                                    <small class="text-info">Example Section—6</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1Home-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Home-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!--end Section 6-->
                 </div><!--end tab-Home-->
 
                 <!-- fixed Structure -->
-                <div class="tab-pane p-3" id="res1About" role="tabpanel" aria-labelledby="nav-about-tab">
+                <div class="tab-pane p-3" id="mas1About" role="tabpanel" aria-labelledby="nav-about-tab">
 
                 <div class="row mb-5"><!--Section 1-->
                         <div class="col-6">
@@ -241,8 +207,8 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1About-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1About-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    <a href="../assets/img/Mas1/Mas1About-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="mas1Img" src="../assets/img/Mas1/Mas1About-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -270,8 +236,8 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1About-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1About-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    <a href="../assets/img/Mas1/Mas1About-2.jpg" target="_blank" title="click to zoom">
+                                        <img id="mas1Img" src="../assets/img/Mas1/Mas1About-2.jpg" class="img-fluid" alt="Massage 1 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -279,7 +245,7 @@ $projectID = $id;
                     </div><!--end Section 2-->
                 </div><!--end tab-Services-->
 
-                <div class="tab-pane p-3" id="res1Services" role="tabpanel" aria-labelledby="nav-services-tab">
+                <div class="tab-pane p-3" id="mas1Services" role="tabpanel" aria-labelledby="nav-services-tab">
 
                     <div class="row mb-5"><!--Section 1-->
                         <div class="col-6">
@@ -303,8 +269,8 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1Contact-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Contact-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    <a href="../assets/img/Mas1/Mas1Services-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="mas1Img" src="../assets/img/Mas1/Mas1Services-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -333,47 +299,17 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1Contact-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Contact-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    <a href="../assets/img/Mas1/Mas1Services-2.jpg" target="_blank" title="click to zoom">
+                                        <img id="mas1Img" src="../assets/img/Mas1/Mas1Services-2.jpg" class="img-fluid" alt="Massage 1 - Section 1">
                                     </a>
                                 </div>
                             </div>
                         </div>
-                    </div><!--end Section 3-->
-
-                    <div class="row mb-5"><!--Section 3-->
-                        <div class="col-6">
-                            <div class="row">
-                                <div class="col">
-                                    <small class="text-info">Form Section—3</small>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <h2>Services Page</h2>
-                                </div>
-                            </div>
-                            
-                        </div><!--end col-6-->
-                        <div class="col">
-                            <div class="row">
-                                <div class="col">
-                                    <small class="text-info">Example Section—3</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1Contact-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Contact-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!--end Section 3-->
+                    </div><!--end Section 2-->
 
                 </div><!--end tab-Services-->
 
-                <div class="tab-pane p-3" id="res1Contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                <div class="tab-pane p-3" id="mas1Contact" role="tabpanel" aria-labelledby="nav-contact-tab">
 
                     <div class="row mb-5"><!--Section 1-->
                         <div class="col-6">
@@ -397,8 +333,8 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="../assets/img/Res1/new/Res1Contact-1.jpg" target="_blank" title="click to zoom">
-                                        <img id="res1Img" src="../assets/img/Res1/new/Res1Contact-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
+                                    <a href="../assets/img/Mas1/Mas1Contact-1.jpg" target="_blank" title="click to zoom">
+                                        <img id="mas1Img" src="../assets/img/Mas1/Mas1Contact-1.jpg" class="img-fluid" alt="Massage 1 - Section 1">
                                     </a>
                                 </div>
                             </div>
@@ -414,10 +350,10 @@ $projectID = $id;
             <!-- tab menu -->
             <nav>
                 <div class="nav nav-pills d-flex justify-content-end gap-2" id="nav-tab2" role="tablist">
-                    <button onclick="changeTab('tab-res1Home');" type="button" class="btn btn-primary" id="bottomTabHome">Home</button>
-                    <button onclick="changeTab('tab-res1About');" type="button" class="btn btn-primary" id="bottomTabAbout">About</button>
-                    <button onclick="changeTab('tab-res1Services');" type="button" class="btn btn-primary" id="bottomTabServices">Services</button>
-                    <button onclick="changeTab('tab-res1Contact');" type="button" class="btn btn-primary" id="bottomTabContact">Contact</button>
+                    <button onclick="changeTab('tab-mas1Home');" type="button" class="btn btn-primary" id="bottomTabHome">Home</button>
+                    <button onclick="changeTab('tab-mas1About');" type="button" class="btn btn-primary" id="bottomTabAbout">About</button>
+                    <button onclick="changeTab('tab-mas1Services');" type="button" class="btn btn-primary" id="bottomTabServices">Services</button>
+                    <button onclick="changeTab('tab-mas1Contact');" type="button" class="btn btn-primary" id="bottomTabContact">Contact</button>
                 </div>
             </nav>
             <!-- end tab menu -->
@@ -429,17 +365,109 @@ $projectID = $id;
 <!-- End Template Massage 1 -->
 
 <script src="../controllers/template.js"></script>
+<!-- These are the necessary files for the image uploader -->
+<script src="dist/assets/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+<script src="dist/assets/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+<script src="dist/assets/jquery-file-upload/js/jquery.fileupload.js"></script>
 <script>
+    const max_uploads = 10;
+    const multiUploadPrefix = 'album';
+    let album_files = [];
 
-$(function() {
+    $(function() {
         setAllPageStatus(); //in template.js
+        $('#warnMaxFile').hide();
+        $('#warnMaxText').text('You can upload up to ' + max_uploads + ' files.');
+
+        'use strict';
+
+        // Change this to the location of your server-side upload handler:
+        const url = '../multiUpload.php?projectID=<?php echo $id; ?>&folderPath=<?php echo $folderName; ?>&prefix=' + multiUploadPrefix;
+
+        $('#fileupload').fileupload({
+            url: url,
+            dataType: 'html',
+            done: function (e, data) {
+
+                if(data['result'] === 'FAILED'){
+                    alert('Invalid File');
+                }else{
+                    $('#uploaded_file_name').val(data['result']);
+                    $('#uploaded_images').append('<div class="uploaded_image"> <input type="text" value="'+data['result']+'" name="uploaded_image_name[]" id="uploaded_image_name" hidden> <img src="../<?php echo $folderName; ?>'+data['result']+'" /> <a href="#uploaded_images" class="img_rmv btn btn-danger"><i class="fa fa-times-circle" style="font-size:48px;color:red"></i></a> </div>');
+                    album_files.push(data['result']);
+
+                    if($('.uploaded_image').length >= max_uploads){
+                        $('#select_file').hide();
+                        $('#warnMaxFile').show();
+                    }else{
+                        $('#warnMaxFile').hide();
+                        $('#select_file').show();
+                    }
+                }
+
+                $('#progress .progress-bar').css(
+                    'width',
+                    0 + '%'
+                );
+
+                $.each(data.result.files, function (index, file) {
+                    $('<p/>').text(file.name).appendTo('#files');
+                });
+
+            },
+            progressall: function (e, data) {
+                let progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css(
+                    'width',
+                    progress + '%'
+                );
+            }
+        }).prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
     });//ready
+
+    $( "#uploaded_images" ).on( "click", ".img_rmv", function() {
+        $(this).parent().remove();
+        if($('.uploaded_image').length >= max_uploads){
+            $('#select_file').hide();
+            $('#warnMaxFile').show();
+        }else{
+            $('#select_file').show();
+            $('#warnMaxFile').hide();
+        }
+    });
 
     const submitHome = () => {
         page = "home";
         payload = {
-            //TEMPLATE_R1_PAGE_HOME
             "loginID": loginID,
+            "A1-01-color" : $('#bg1Hex').val(),
+            "A1-02-Slogan" : $('#inputSlogan').val(),
+            "A1-03-Intro" : $('#inputIntroduction1').val(),
+            "A1-04-HeadBG" : $('#formbg1 .picname').val(),
+            "A1-05-Intro" : $('#inputIntroduction2').val(),
+            "A2-06-Testimonial" : $('#textTestimonial').val(),
+            "A2-07-FeaturedDish" : $('#textFeaturedDish4').val(),
+            "A2-08-Promopic" : $('#formpromotion1 .picname').val(),
+            "A2-09-Dishpic1" : $('#formDish1 .picname').val(),
+            "A2-10-Dishpic2" : $('#formDish2 .picname').val(),
+            "A2-11-Dishpic3" : $('#formDish3 .picname').val(),
+            "A2-12-Dishpic4" : $('#formDish4 .picname').val(),
+            "A3-13-01-NameUser1" : $('#textNameTestimonial1').val(),
+            "A3-13-02-Review1" : $('#textTestimonial1').val(),
+            "A3-13-03-PicUser1" : $('#formTestimonial1 .picname').val(),
+            "A3-14-01-Name2" : $('#textNameTestimonial2').val(),
+            "A3-14-02-Review2" : $('#textTestimonial2').val(),
+            "A3-14-03-PicUser2" : $('#formTestimonial2 .picname').val(),
+            "A3-15-MenuPNG" : $('#formPromotion2 .picname').val(),
+            "A3-16-Heading" : $('#textpicpng').val(),
+            "A3-17-Body" : $('#textbody').val(),
+            "A4-18-Footer1" : $('#formFooter1 .picname').val(),
+            "A4-19-Footer2" : $('#formFooter2 .picname').val(),
+            "A4-20-Footer3" : $('#formFooter3 .picname').val(),
+            "A4-21-Footer4" : $('#formFooter4 .picname').val(),
+            "A4-22-MapURL" : $('#inputMapURL').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
@@ -448,8 +476,21 @@ $(function() {
     const submitAbout = () => {
         page = "about";
         payload = {
-            //TEMPLATE_R1_PAGE_ABOUT
-            "loginID": loginID,  
+            "loginID" : loginID,
+            "B1-01-HeadBG" :$('#fromaboutHeaderBG .picname').val(),
+            "B1-02-Tagline" :$('#inputTagline').val(),
+
+            "B2-03-HLSlogan" :$('#inputHighlightSlogan').val(),
+            "B2-04-Slogan" :$('#inputAboutSlogan').val(),
+            "B2-05-Headline" :$('#inputAboutHeadline').val(),
+            "B2-06-Detail" :$('#inputAboutDetail').val(),
+
+            "B3-07-HLDish" :$('#formHighlightDish .picname').val(),
+            "B3-08-HLTitle" :$('#textHighlightTitle').val(),
+            "B3-09-HLSubTitle" :$('#textHighlightSubtitle').val(),
+            "B3-10-HLDetail" :$('#textHighlightDetail').val(),
+
+            "B4-11-Slogan" :JSON.stringify(album_files)
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
@@ -458,11 +499,16 @@ $(function() {
     const submitContact = () => {
         page = "contact";
         payload = {
-            //TEMPLATE_R1_PAGE_CONTACT    
-            "loginID": loginID,    
+            "loginID": loginID,
+            "C1-01-Headline" :$('#inputContactHeadline').val(),
+            "C1-02-SubHeadline" :$('#inputContactSub').val(),
+            "C1-03-FormHeadline" :$('#inputFormHeadline').val(),
+            "C1-04-FormSub" :$('#inputFormSub').val(),
+            "C1-05-BGForm" :$('#formContactBackgroundImage .picname').val(),
+            "C2-06-LocationHead" :$('#inputLocationHead').val(),
+            "C2-07-LocationSub" :$('#inputLocationSub').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
     }//submitContact
-
 </script>
