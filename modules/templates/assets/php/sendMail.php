@@ -36,13 +36,13 @@ $project = $db->query(
                pj.`projectTimestamp`, sf.sNickName AS "PO", pj.`email`, pj.`phone`, pj.`address`, 
                pj.`openingHours`, pj.`pickupAndDelivery`, pj.`logo`, pj.`colorTheme1`, pj.`colorTheme2`, 
                pj.`colorTheme3`, pj.`domainName`, pj.`domainHave`, dp.name AS "domainProvider", pj.`domainUser`, 
-               pj.`domainPass`, pj.`hostingName`, pj.`hostingHave`, hp.name AS "hostingProvider", pj.`hostingUser`, 
+               pj.`domainPass`, pj.`hostingName`, pj.`hostingHave`, hp.name AS "HostingProvider", pj.`hostingUser`, 
                pj.`hostingPass`, pj.`gloriaHave`, pj.`orderURL`, pj.`tableURL`, pj.`orderOther`, pj.`resOtherSystem`, 
                pj.`amelia`, pj.`voucher`, pj.`bookOther`, pj.`masOtherSystem`, pj.`needEmail`, pj.`facebookURL`, 
                pj.`instagramURL`, pj.`youtubeURL`, pj.`tiktokURL` 
-        FROM `tb_project` pj , `Countries` ct , `tb_shopType` st, `staffs` sf, `domainproviders` dp, `hostingproviders` hp 
+        FROM `tb_project` pj , `Countries` ct , `tb_shopType` st, `staffs` sf, `DomainProviders` dp, `HostingProviders` hp 
         WHERE pj.`projectID` = ? AND pj.`countryID` = ct.`id` AND pj.`shopTypeID` = st.id AND 
-              pj.`projectOwner` = sf.sID AND pj.`domainProvidersID` = dp.id AND pj.`hostingProvidersID` = hp.id
+              pj.`projectOwner` = sf.sID AND pj.`DomainProvidersID` = dp.id AND pj.`HostingProvidersID` = hp.id
     ',$id)->fetchArray();
 
 $folderName = "../upload/". $id . "-" . sanitizeFolderName($project["projectName"])."/";
@@ -91,7 +91,7 @@ $topData .= '<div><b>Domain Name: </b>'.$project['domainName'].'</div>';
 $topData .= '<div><b>Domain Provider: </b>'.$project['domainProvider'].'</div>';
 $topData .= '<div><b>User: </b>'.$project['domainUser'].'</div>';
 $topData .= '<div><b>Password: </b>'.$project['domainPass'].'</div>';
-$topData .= '<div><b>Hosting Provider: </b>'.$project['hostingProvider'].'</div>';
+$topData .= '<div><b>Hosting Provider: </b>'.$project['HostingProvider'].'</div>';
 $topData .= '<div><b>User: </b>'.$project['hostingUser'].'</div>';
 $topData .= '<div><b>Password: </b>'.$project['hostingPass'].'</div>';
 
