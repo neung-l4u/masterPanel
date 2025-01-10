@@ -128,7 +128,7 @@ const loadData = () => {
                         <td>${shopType}</td>
                         <td style="text-align: center;">${selectedTemplate}</td>
                         <td>${name}</td>
-                        <td>${icon}</td>
+<!--                        <td>${icon}</td>-->
                         <td>${owner}</td>
                         <td>${country}</td>
                         <td class="d-flex justify-content-end gap-2">

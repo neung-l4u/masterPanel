@@ -7,6 +7,12 @@ include_once "../php/share_function.php";
 date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
 $timestamp = date("Y-m-d H:i:s");
+
+$startDate = $date;
+$businessDaysToAdd = 7;
+$holidays = [];
+$dueDate = addBusinessDays($startDate, $businessDaysToAdd, $holidays);
+
 $param = array();
 $to = "";
 $cc = "";
@@ -48,7 +54,9 @@ $topData .= '<div><b>Project Type: </b>'.$project['shopType'].' Template No. - 0
 $topData .= '<div><b>Project Owner: </b>'.$project['PO'].'</div>';
 $topData .= '<div><b>Page: </b>'.$page.'</div>';
 $topData .= '<div><b>Country: </b>'.$project['country'].'</div>';
+$topData .= '<br><br>';
 $topData .= '<div><b>Resources: </b>'.$folderName.'</div>';
+$topData .= '<div><b>Due Date: </b>'.$dueDate.'</div>';
 $topData .= '<br>- - - - - - - - - - - - - - - - - - - - - - - - - - -<br><br>';
 
 $topData .= '<div><b>- - Detail Project & Theme - -</b></div>';  
