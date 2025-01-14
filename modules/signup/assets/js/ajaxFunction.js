@@ -860,6 +860,9 @@ const sendMailToL4UTeam = () => {
         formMobile: $("#mobile").val(),
         formBestTime: $("#00N9s000000Nl1G").val(),
         formNote: $("#additionComment").val(),
+        formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
+        formstartProjectOther: $("#dateproject").val(),
+
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         token: Math.random()
     };
@@ -993,7 +996,11 @@ const createLogs = (stripePayload) => {
         formInitialProductOffering: $("#initialProductOffering").val(),
         formSalesAgent: $("#byAgent option:selected").text(),
         formContractPeriod: $("#ContractPeriod").val(),
-        formFirstTimePayment: $("#firstTimePayment").val()
+        formFirstTimePayment: $("#firstTimePayment").val(),
+        formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
+        formstartProjectOther: $("#dateproject").val(),
+        formstartprojectNote: $("#startprojectNote").val()
+
     };
 
     const sendLog = $.ajax({

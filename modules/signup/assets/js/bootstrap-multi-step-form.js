@@ -102,6 +102,8 @@ testMode = true;
 ///////////
 
 $(document).ready(function () {
+  
+
   stepProgress(step);
   $("#formVersion").html($("#signupFormVersion").val());
 
@@ -114,6 +116,7 @@ $(document).ready(function () {
   });
   $(".firstStepFormLoading").hide();
   $(".boxSocial").hide();
+  $("#dateproject").hide();
   $(".firstStepForm").show();
   ////
 });//ready
@@ -152,9 +155,9 @@ $(".back").on("click", function () {
 function checkAcceptAgreement() {
   const acceptAgreement = $("#acceptAgreement").is(":checked");
   const acceptTerms = $("#acceptTerms").is(":checked");
-  const acceptAutoPilotAI = $("#acceptAutoPilotAI").is(":checked");
 
-  if (acceptAgreement && acceptTerms && acceptAutoPilotAI){
+
+  if (acceptAgreement && acceptTerms){
     cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false);
   }else{
     cmdSubmit.removeClass("btn-outline-success").addClass("btn-outline-danger").prop("disabled", true);
@@ -175,6 +178,17 @@ stepProgress = function (currentStep) {
       .css("width", percent + "%")
       .html("Step" + currentStep + "/" + allStep);
 };
+
+//Show Date Cilck Start Project Date to Othrt
+function setdateProjectOther(){
+  $("#dateproject").show();
+}
+
+function setdateProjectAs(){
+  $("#dateproject").hide();
+}
+
+
 
 // DISPLAY AND HIDE "NEXT", "BACK" AND "SUBMIT" BUTTONS
 hideButtons = function (step) {
@@ -213,6 +227,8 @@ function allowOther(){
     cuisinesOther2.prop( "disabled", true );
   }
 }
+
+
 
 // enable Others Discount input box when Others checkbox is checked
 function allowOtherDiscount(){
