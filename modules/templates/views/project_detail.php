@@ -346,12 +346,18 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                     </div>
                 </div>
             </div>
+</div>
 
-        <div class="form-check">
-            <input class="form-check-input orderOther" type="checkbox" value="1" id="needEmail" <?php echo $row['needEmail'] == 1 ? 'checked' : ''; ?>>
-            <label for="needEmail">Need email inbox under shop domain name.</label>
-            <small class="text-muted">e.g., info@hoonhaymassage.co.nz</small>
+<div class="border rounded mb-4 px-5 py-3">
+    <div class="row">
+        <div class="col">
+            <div class="form-check">
+                <input class="form-check-input needEmail" type="checkbox" value="1" id="needEmail" <?php echo $row['needEmail'] == 1 ? 'checked' : ''; ?>>
+                <label for="needEmail">Need email inbox under shop domain name.</label>
+                <small class="text-muted">e.g., info@hoonhaymassage.co.nz</small><br>
+            </div>
         </div>
+    </div>
 </div>
 
 <!-- Social Media -->

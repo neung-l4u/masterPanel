@@ -41,6 +41,13 @@ $projectID = $id;
 
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane show active p-3" id="res2Home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+                    <div class="row pl-3">
+                        <div class="form-input-group form-check">
+                            <input class="form-check-input mt-2" type="checkbox" value="1" id="defaultHome">
+                            <label class="h4" for="defaultHome"><u>Use Default Template.</u></label>
+                        </div>
+                    </div>
                     
                     <div class="row mb-5"><!--Section 1-->
                         <div class="col-6">
@@ -721,8 +728,20 @@ $projectID = $id;
                                 </div>
                             </div>
                         </div>
-                    </div><!--end Section 5-->
 
+                        <div class="row mb-5"><!--Notes-->
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="notes">Notes / Additional Comments</label>
+                                        <textarea class="form-control" name="notes" id="notesHome" rows="3" placeholder="Notes / Additional Comments"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--End Notes-->
+
+                    </div><!--end Section 5-->
+                    
                     <div class="row">
                         <div class="col-6" style="text-align:left;">
                             <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Submit Page Home Info.</button>
@@ -732,6 +751,14 @@ $projectID = $id;
                 </div>
 
                 <div class="tab-pane p-3" id="res2About" role="tabpanel" aria-labelledby="nav-about-tab">
+
+                    <div class="row pl-3">
+                        <div class="form-input-group form-check">
+                            <input class="form-check-input mt-2" type="checkbox" value="1" id="defaultAbout">
+                            <label class="h4" for="defaultAbout"><u>Use Default Template.</u></label>
+                        </div>
+                    </div>
+
                     <div class="row mb-5"><!--Section 1-->
                         <div class="col-6">
                             <div class="row">
@@ -1134,6 +1161,18 @@ $projectID = $id;
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mb-5"><!--Notes-->
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="notes">Notes / Additional Comments</label>
+                                        <textarea class="form-control" name="notes" id="notesAbout" rows="3" placeholder="Notes / Additional Comments"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--End Notes-->
+
                     </div><!--end Section 2-->
 
                     <div class="row">
@@ -1145,6 +1184,14 @@ $projectID = $id;
                 </div>
 
                 <div class="tab-pane p-3" id="res2Contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+
+                    <div class="row pl-3">
+                        <div class="form-input-group form-check">
+                            <input class="form-check-input mt-2" type="checkbox" value="1" id="defaultContact">
+                            <label class="h4" for="defaultContact"><u>Use Default Template.</u></label>
+                        </div>
+                    </div>
+
                     <div class="row mb-5"><!--Section 1-->
                         <div class="col-6">
                             <div class="row">
@@ -1239,6 +1286,18 @@ $projectID = $id;
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mb-5"><!--Notes-->
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="notesContact">Notes / Additional Comments</label>
+                                        <textarea class="form-control" name="notes" id="notesContact" rows="3" placeholder="Notes / Additional Comments"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--End Notes-->
+
                     </div><!--end Section 1-->
 
                     <div class="row">
@@ -1247,6 +1306,7 @@ $projectID = $id;
                             <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -1281,6 +1341,8 @@ $projectID = $id;
         page = "home";
         payload = {
             "loginID": loginID,
+            "defaultTemplate": ($('#defaultHome').prop('checked')) ? "Yes" : "No",
+            "notes": $('#notesHome').val(),
             "A1-01-slide1": $('#formHomeSliderSet1 .picname').val(),
             "A1-02-slide2": $('#formHomeSliderSet2 .picname').val(),
             "A1-03-slide3": $('#formHomeSliderSet3 .picname').val(),
@@ -1332,6 +1394,8 @@ $projectID = $id;
         page = "about";
         payload = {
             "loginID": loginID,
+            "defaultTemplate": ($('#defaultAbout').prop('checked')) ? "Yes" : "No",
+            "notes": $('#notesAbout').val(),
             "B1-01-headImg": $('#formAboutHeaderImg .picname').val(),
             "B1-02-bodyTxt": $('#aboutUsBody').val(),
             "B1-03-promoHead1": $('#aboutPromotionHeadline1').val(),
@@ -1365,6 +1429,8 @@ $projectID = $id;
         page = "contact";
         payload = {
             "loginID": loginID,
+            "defaultTemplate": ($('#defaultContact').prop('checked')) ? "Yes" : "No",
+            "notes": $('#notesContact').val(),
             "C1-01-headImg": $('#formContactHeaderImg .picname').val(),
             "C1-02-head1": $('#contactHeadline1').val(),
             "C1-03-msg1": $('#contactMessage1').val(),

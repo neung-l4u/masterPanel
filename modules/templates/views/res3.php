@@ -45,6 +45,13 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane show active p-3" id="res3Home" role="tabpanel" aria-labelledby="nav-home-tab">
 
+                    <div class="row pl-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="defaultContact">
+                            <label class="h4" for="defaultContact"><u>Use Default Template.</u></label>
+                        </div>
+                    </div>
+
                     <div class="row mb-5"><!-- Home Section 1-->
                         <div class="col-6">
                             <div class="row">
@@ -171,8 +178,9 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                                                 <input type="file" class="file-input">
                                                                 <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
                                                             </div>
-                                                            <div>
+                                                            <div class="mt-2">
                                                                 <input type="text" class="form-control" id="textFeaturedDish1" placeholder="Featured Dish Name #1">
+                                                                <textarea class="form-control" name="notes" id="descFeaturedDish1" rows="3" placeholder="Featured Dish Description #1"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -193,8 +201,9 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                                                 <input type="file" class="file-input">
                                                                 <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
                                                             </div>
-                                                            <div>
+                                                            <div class="mt-2">
                                                                 <input type="text" class="form-control" id="textFeaturedDish2" placeholder="Featured Dish Name #2">
+                                                                <textarea class="form-control" name="notes" id="descFeaturedDish2" rows="3" placeholder="Featured Dish Description #2"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -217,8 +226,9 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                                                 <input type="file" class="file-input">
                                                                 <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
                                                             </div>
-                                                            <div>
+                                                            <div class="mt-2">
                                                                 <input type="text" class="form-control" id="textFeaturedDish3" placeholder="Featured Dish Name #3">
+                                                                <textarea class="form-control" name="notes" id="descFeaturedDish3" rows="3" placeholder="Featured Dish Description #3"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -239,8 +249,9 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                                                 <input type="file" class="file-input">
                                                                 <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
                                                             </div>
-                                                            <div>
+                                                            <div class="mt-2">
                                                                 <input type="text" class="form-control" id="textFeaturedDish4" placeholder="Featured Dish Name #4">
+                                                                <textarea class="form-control" name="notes" id="descFeaturedDish4" rows="3" placeholder="Featured Dish Description #4"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -461,11 +472,22 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mb-5"><!--Notes-->
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="notesHome">Notes / Additional Comments</label>
+                                        <textarea class="form-control" name="notes" id="notesHome" rows="3" placeholder="Notes / Additional Comments"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--End Notes-->
                     </div><!--end Section 4-->
 
                     <div class="row"><!-- Home BTN -->
                         <div class="col">
-                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitHome();">Submit page Home info.</button>
+                            <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Submit page Home info.</button>
                             <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
@@ -474,6 +496,13 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                 <!-- fixed Structure -->
                 <div class="tab-pane p-3" id="res3About" role="tabpanel" aria-labelledby="nav-about-tab">
+
+                    <div class="row pl-3">
+                        <div class="form-group form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="defaultAbout">
+                            <label class="h4" for="defaultAbout"><u>Use Default Template.</u></label>
+                        </div>
+                    </div>
 
                     <div class="row mb-5"><!--Section 1-->
                         <div class="col-6">
@@ -689,11 +718,22 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mb-5"><!--Notes-->
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="notesAbout">Notes / Additional Comments</label>
+                                        <textarea class="form-control" name="notes" id="notesAbout" rows="3" placeholder="Notes / Additional Comments"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--End Notes-->
                     </div>
 
                     <div class="row"><!-- About BTN -->
                         <div class="col">
-                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitAbout();">Submit page About info.</button>
+                            <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Submit page About info.</button>
                             <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
@@ -701,6 +741,13 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                 </div><!--end tab-About-->
 
                 <div class="tab-pane p-3" id="res3Contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+
+                    <div class="row pl-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="defaultHome">
+                            <label class="h4" for="defaultHome"><u>Use Default Template.</u></label>
+                        </div>
+                    </div>
 
                     <div class="row mb-5"><!-- Contact Section 1-->
                         <div class="col-6">
@@ -819,6 +866,17 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mb-5"><!--Notes-->
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="notesContact">Notes / Additional Comments</label>
+                                        <textarea class="form-control" name="notes" id="notesContact" rows="3" placeholder="Notes / Additional Comments"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--End Notes-->
                     </div>
 
                     <div class="row"><!-- Contact BTN-->
@@ -933,6 +991,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "home";
         payload = {
             "loginID": loginID,
+            "defaultTemplate": ($('#defaultHome').prop('checked')) ? "Yes" : "No",
+            "notes": $('#notesHome').val(),
             "A1-01-color" : $('#bg1Hex').val(),
             "A1-02-Slogan" : $('#inputSlogan').val(),
             "A1-03-Intro" : $('#inputIntroduction1').val(),
@@ -968,6 +1028,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "about";
         payload = {
             "loginID" : loginID,
+            "defaultTemplate": ($('#defaultAbout').prop('checked')) ? "Yes" : "No",
+            "notes": $('#notesAbout').val(),
             "B1-01-HeadBG" :$('#fromaboutHeaderBG .picname').val(),
             "B1-02-Tagline" :$('#inputTagline').val(),
 
@@ -991,6 +1053,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "contact";
         payload = {
             "loginID": loginID,
+            "defaultTemplate": ($('#defaultContact').prop('checked')) ? "Yes" : "No",
+            "notes": $('#notesContact').val(),
             "C1-01-Headline" :$('#inputContactHeadline').val(),
             "C1-02-SubHeadline" :$('#inputContactSub').val(),
             "C1-03-FormHeadline" :$('#inputFormHeadline').val(),

@@ -41,6 +41,13 @@ $projectID = $id;
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane show active p-3" id="res1Home" role="tabpanel" aria-labelledby="nav-home-tab">
 
+                    <div class="row pl-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="defaultHome">
+                            <label class="h4" for="defaultHome"><u>Use Default Template.</u></label>
+                        </div>
+                    </div>
+
                     <div class="row mb-5"><!--Section 1-->
                         <div class="col-6">
                             <div class="row">
@@ -597,12 +604,6 @@ $projectID = $id;
                                         </form>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="mt-3">
-                                        <button type="button" class="btn btn-success" id="cmdHomeSubmit" onclick="submitHome();">Submit Home Page Info.</button>
-                                        <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="col">
@@ -619,13 +620,39 @@ $projectID = $id;
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mb-5"><!--Notes-->
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="notes">Notes / Additional Comments</label>
+                                        <textarea class="form-control" name="notes" id="notesHome" rows="3" placeholder="Notes / Additional Comments"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--End Notes-->
+
                     </div><!--end Section 4-->
+
+                    <div class="row">
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-success" id="cmdHomeSubmit" onclick="submitHome();">Submit Home Page Info.</button>
+                            <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                        </div>
+                    </div>
                 </div><!--end tab-Home-->
 
                 <!-- fixed Structure -->
                 <div class="tab-pane p-3" id="res1About" role="tabpanel" aria-labelledby="nav-about-tab">
 
-                <div class="row mb-5"><!--Section 1-->
+                    <div class="row pl-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="defaultAbout">
+                            <label class="h4" for="defaultAbout"><u>Use Default Template.</u></label>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5"><!--Section 1-->
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
@@ -890,13 +917,6 @@ $projectID = $id;
                                     </form>
                                 </div>
                             </div>    
-                                <div class="row">
-                                    <div class="mt-3">
-                                        <button type="button" class="btn btn-success" id="cmdAboutSubmit" onclick="submitAbout();">Submit About Page Info.</button>
-                                        <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
-
-                                    </div>
-                                </div>
                             </div>
         
                         </div>
@@ -914,12 +934,39 @@ $projectID = $id;
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mt-3 mb-5"><!--Notes-->
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="notesAbout">Notes / Additional Comments</label>
+                                        <textarea class="form-control" name="notes" id="notesAbout" rows="3" placeholder="Notes / Additional Comments"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--End Notes-->
+
                     </div><!--end Section 3-->
+
+                    <div class="row">
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-success" id="cmdAboutSubmit" onclick="submitAbout();">Submit About Page Info.</button>
+                            <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
+
+                        </div>
+                    </div>
                 </div><!--end tab-About-->
 
                 <div class="tab-pane p-3" id="res1Contact" role="tabpanel" aria-labelledby="nav-contact-tab">
 
-                    <div class="row mb-5"><!--Section 1-->
+                    <div class="row pl-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="defaultContact">
+                            <label class="h4" for="defaultContact"><u>Use Default Template.</u></label>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3"><!--Section 1-->
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
@@ -997,11 +1044,6 @@ $projectID = $id;
                                     <div class="mb-3">
                                         <label for="contactPromotionSubHeadline" class="form-label">6. Promotion Sub Headline</label>
                                         <textarea class="form-control" id="contactPromotionSubHeadline" rows="4" placeholder="Detail..."></textarea>
-
-                                        <button type="button" class="btn btn-success" id="cmdContactSubmit" onclick="submitContact();">Submit Contact Page Info.</button>
-                                        <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
-
-
                                     </div>
                                 </div>
                             </div>
@@ -1020,6 +1062,25 @@ $projectID = $id;
                                     </a>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5"><!--Notes-->
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="notesAbout">Notes / Additional Comments</label>
+                                    <textarea class="form-control" name="notes" id="notesAbout" rows="3" placeholder="Notes / Additional Comments"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--End Notes-->
+                    </div><!--end Section 4-->
+
+                    <div class="row">
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-success" id="cmdContactSubmit" onclick="submitContact();">Submit Contact Page Info.</button>
+                            <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
 
@@ -1058,6 +1119,8 @@ $(function() {
         payload = {
             //TEMPLATE_R1_PAGE_HOME
             "loginID": loginID,
+            "defaultTemplate": ($('#defaultHome').prop('checked')) ? "Yes" : "No",
+            "notes": $('#notesHome').val(),
             "A1-01-Slogan": $('#inputSlogan').val(),
             "A1-02-Intro": $('#inputIntroduction1').val(),
             "A1-03-BgHeader": $('#formBGHeader .picname').val(),
@@ -1111,6 +1174,8 @@ $(function() {
         payload = {
             //TEMPLATE_R1_PAGE_ABOUT
             "loginID": loginID,  
+            "defaultTemplate": ($('#defaultAbout').prop('checked')) ? "Yes" : "No",
+            "notes": $('#notesAbout').val(),
             "B1-1-HeadBG": $('#formAboutbg1 .picname').val(),
             "B1-2-Body": $('#aboutBody').val(),
             "B2-3-PromoHeadline": $('#aboutPromotionHeadline').val(),
@@ -1137,6 +1202,8 @@ $(function() {
         payload = {
             //TEMPLATE_R1_PAGE_CONTACT    
             "loginID": loginID,    
+            "defaultTemplate": ($('#defaultContact').prop('checked')) ? "Yes" : "No",
+            "notes": $('#notesContact').val(),
             "C1-1-HeadBG": $('#formbgContactHeadBackground .picname').val(),
             "C1-2-FormBG" : $('#formbgContactBackground .picname').val(),
             "C1-3-SubHead1" : $('#contactSubHead1').val(),

@@ -66,6 +66,7 @@ $(".resOtherSystem").hide();
 $(".masOtherSystem").hide();
 $("#masSystem").hide();
 $("#resSystem").hide();
+$(".emailbox").hide();
 
 function toggleBox(checkbox, box) {
     $(checkbox).on("change", function () {
@@ -82,6 +83,7 @@ toggleBox(".hostingHave", ".hostingbox");
 toggleBox(".gloriahave", ".gloriabox");
 toggleBox(".orderOther", ".resOtherSystem");
 toggleBox(".bookOther", ".masOtherSystem");
+toggleBox(".needEmail", ".emailbox");
 
 const setHex = (param,box) => { //for set text in span follow color picker
     const theme1Hex = $("#theme1Hex");
