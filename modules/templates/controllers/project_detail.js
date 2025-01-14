@@ -67,6 +67,8 @@ $(".masOtherSystem").hide();
 $("#masSystem").hide();
 $("#resSystem").hide();
 
+
+
 function toggleBox(checkbox, box) {
     $(checkbox).on("change", function () {
         if ($(this).is(":checked")) { 
@@ -75,7 +77,12 @@ function toggleBox(checkbox, box) {
             $(box).hide(200);
         }
     });
+    
 }
+
+
+
+
 
 toggleBox(".domainHave", ".domainbox");
 toggleBox(".hostingHave", ".hostingbox");
@@ -136,3 +143,12 @@ const handleFormSubmit = (button) => {
         alert("Please select a file.");
     }
 };
+
+function chShowtextPickup(){
+
+    $("#bsPickup").show();
+
+    
+    
+ 
+}

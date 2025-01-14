@@ -142,7 +142,8 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                 </div>
                 <div class="col-6">
                     <div class="mb-3">
-                        <label for="bsPickup" class="form-label">Pickup And Delivery</label>
+                        <input class="form-check-input" type="checkbox" id="chPickup" name="chPickup" value="1" onclick="chShowtextPickup();">
+                        <label for="bsPickup" class="form-label">Set Default time</label>
                         <textarea class="form-control" id="bsPickup" rows="7"><?php echo $row['pickupAndDelivery']; ?></textarea>
                     </div>
                 </div>
@@ -200,7 +201,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
         </div>
         <div class="col-6">
             <div class="mb-3">
-                <label for="hostingName" class="form-label">Hosting Name</label>
+                <label for="hostingName" class="form-label">Web Hosting Name</label>
                 <input type="text" class="form-control" id="hostingName" placeholder="hosting.com" value="<?php echo $row['hostingName']; ?>">
             </div>
         </div>
@@ -299,6 +300,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
         <!-- Restaurant System -->
             <div id="resSystem" class="form-check">
                 <div>
+                    <input class="form-check-input" type="checkbox" value="" id="noSystem">
+                    <label for="noSystem">None</label>
+                </div>
+            
+                <div>
                     <input class="form-check-input gloriahave" type="checkbox" value="" id="gloriaHave" <?php echo $row['gloriaHave'] == 1 ? 'checked' : ''; ?>>
                     <label for="gloriaHave">Gloria Food</label>
                 </div>
@@ -322,11 +328,16 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                         <input type="text" class="form-control" id="resOtherSystem" placeholder="System Name" value="<?php echo $row['resOtherSystem']; ?>">
                     </div>
                 </div>
+
             </div>
 
         <!-- Massage System -->
 
             <div id="masSystem" class="form-check">
+                <div>
+                    <input class="form-check-input" type="checkbox" value="" id="noSystem" >
+                    <label for="noSystem">None</label>
+                </div>
                 <div>
                     <input class="form-check-input amelia" type="checkbox" value="" id="amelia" <?php echo $row['amelia'] == 1 ? 'checked' : ''; ?>>
                     <label for="amelia">Amelia</label>
@@ -458,6 +469,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     $(()=>{ //ready
         loadProjectData();
         showSystem();
+        $("#bsPickup").hide();
     }); //ready
 
     const loadProjectData = () => {
