@@ -165,20 +165,59 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                 </div>
             </div>
             <div class="mt-3 border rounded py-3 pl-3">
-                <div class="mt-3 d-flex flex-row gap-3 align-items-center">
-                    <label for="theme1">Color Theme #1</label>
-                    <input type="color" onchange="setHex(this.value,1);" id="theme1" value="<?php echo $row['colorTheme1']; ?>">
-                    <span id="theme1Hex" class="codeHex"><?php echo $row['colorTheme1']; ?></span>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="mt-3 d-flex flex-row gap-3 align-items-center">
+                            <label for="theme1">Color Theme #1</label>
+                            <input type="color" onchange="setHex(this.value,1);" id="theme1" value="<?php echo $row['colorTheme1']; ?>">
+                            <span id="theme1Hex" class="codeHex"><?php echo $row['colorTheme1']; ?></span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mt-3 pr-3 d-flex flex-row gap-3 align-items-center">
+                            <select class="form-select" id="theme1Select">
+                                <option selected disabled value="<?php echo $row['colorTheme1']; ?>">None</option>
+                                <option value="#theme1Gold">Gold</option>
+                                <option value="#theme1Silver">Silver</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-3 d-flex flex-row gap-3 align-items-center">
-                    <label for="theme2">Color Theme #2</label>
-                    <input type="color" onchange="setHex(this.value,2);" id="theme2" value="<?php echo $row['colorTheme2']; ?>">
-                    <span id="theme2Hex" class="codeHex"><?php echo $row['colorTheme2']; ?></span>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="mt-3 d-flex flex-row gap-3 align-items-center">
+                            <label for="theme2">Color Theme #2</label>
+                            <input type="color" onchange="setHex(this.value,2);" id="theme2" value="<?php echo $row['colorTheme2']; ?>">
+                            <span id="theme2Hex" class="codeHex"><?php echo $row['colorTheme2']; ?></span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mt-3 pr-3 d-flex flex-row gap-3 align-items-center">
+                            <select class="form-select" id="theme1Select">
+                                <option selected disabled value="<?php echo $row['colorTheme1']; ?>">None</option>
+                                <option value="#theme2Gold">Gold</option>
+                                <option value="#theme2Silver">Silver</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-3 d-flex flex-row gap-3 align-items-center">
-                    <label for="theme3">Color Theme #3</label>
-                    <input type="color" onchange="setHex(this.value,3);"  id="theme3" value="<?php echo $row['colorTheme3']; ?>">
-                    <span id="theme3Hex" class="codeHex"><?php echo $row['colorTheme3']; ?></span>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="mt-3 d-flex flex-row gap-3 align-items-center">
+                            <label for="theme3">Color Theme #3</label>
+                            <input type="color" onchange="setHex(this.value,3);"  id="theme3" value="<?php echo $row['colorTheme3']; ?>">
+                            <span id="theme3Hex" class="codeHex"><?php echo $row['colorTheme3']; ?></span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mt-3 pr-3 d-flex flex-row gap-3 align-items-center">
+                            <select class="form-select" id="theme1Select">
+                                <option selected disabled value="<?php echo $row['colorTheme1']; ?>">None</option>
+                                <option value="#theme3Gold">Gold</option>
+                                <option value="#themeSilver">Silver</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
