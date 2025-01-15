@@ -154,9 +154,9 @@ const checkBoxt = $("#chPickup");
 const statusCheckbox = checkBoxt.prop("checked");
 
     if (statusCheckbox === true ){
-    $("#bsPickup").show();
+    $("#deli-form").show();
     }else{
-        $("#bsPickup").hide();
+        $("#deli-form").hide();
     }
 
 }

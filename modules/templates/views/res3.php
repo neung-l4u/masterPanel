@@ -915,6 +915,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
     $(function() {
         setAllPageStatus(); //in template.js
+        /////////
         $('#warnMaxFile').hide();
         $('#warnMaxText').text('You can upload up to ' + max_uploads + ' files.');
 
@@ -963,6 +964,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             }
         }).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
+            ////////
 
     });//ready
 
