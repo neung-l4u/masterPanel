@@ -142,9 +142,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                 </div>
                 <div class="col-6">
                     <div class="mb-3">
-                        <input class="form-check-input" type="checkbox" id="chPickup" name="chPickup" value="1" onclick="chShowtextPickup();">
+                        <input class="form-check-input" type="checkbox" id="chPickup" name="chPickup" onchange="chShowtextPickup();">
                         <label for="bsPickup" class="form-label">Set Default time</label>
+                        <div class="bsPickup">
                         <textarea class="form-control" id="bsPickup" rows="7"><?php echo $row['pickupAndDelivery']; ?></textarea>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -296,7 +298,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
             <h5 class="text-secondary">Require Systems.</h5>
         </div>
     </div>
-
+                                    
         <!-- Restaurant System -->
             <div id="resSystem" class="form-check">
                 <div>
@@ -334,10 +336,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
         <!-- Massage System -->
 
             <div id="masSystem" class="form-check">
-                <div>
-                    <input class="form-check-input" type="checkbox" value="" id="noSystem" >
-                    <label for="noSystem">None</label>
-                </div>
+                
                 <div>
                     <input class="form-check-input amelia" type="checkbox" value="" id="amelia" <?php echo $row['amelia'] == 1 ? 'checked' : ''; ?>>
                     <label for="amelia">Amelia</label>
@@ -470,6 +469,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     const hiddenProjectOwner = $("#projectOwner");
     const domainBox = $("#domainBox");
     const hostingBox = $("#hostingBox");
+ 
 
 
     $(()=>{ //ready

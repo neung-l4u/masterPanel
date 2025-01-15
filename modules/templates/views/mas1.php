@@ -64,11 +64,93 @@ $projectID = $id;
                                     </form>
                                 </div>
                             </div>
+
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
                                         <label for="homeHeaderHeadline" class="form-label">2. Header Headline</label>
                                         <input type="text" class="form-control" id="homeHeaderHeadline" placeholder="Header Headline">
+                                    </div>
+                                </div>
+                            </div>
+                            <label for="homeFeature1" class="form-label">3. Feature Box #1</label>
+                            <div class="col">
+                                <div class="row border rounded p-2">
+                                    <div class="col mt-2">
+                                        <div class="">
+                                            <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomeFeature1">
+                                            <div class="d-flex flex-column gap-2 mb-2">
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col mt-2">
+                                        <div class="">
+                                            <input type="text" class="form-control" id="homeNameFeature1" placeholder="Services #1">
+                                            <textarea class="form-control" name="notes" id="homeDetailFeature1" rows="8" placeholder="Services #1 Detail"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <label for="homeFeature1" class="form-label mt-3">4. Feature Box #2</label>
+                            <div class="col">
+                                <div class="row border rounded p-2">
+                                    <div class="col mt-2">
+                                        <div class="">
+                                            <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomeFeature2">
+                                            <div class="d-flex flex-column gap-2 mb-2">
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col mt-2">
+                                        <div class="">
+                                            <input type="text" class="form-control" id="homeNameFeature2" placeholder="Services #2">
+                                            <textarea class="form-control" name="notes" id="homeDetailFeature2" rows="8" placeholder="Services #2 Detail"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <label for="homeFeature1" class="form-label  mt-3">5. Feature Box #3</label>
+                            <div class="col">
+                                <div class="row border rounded p-2">
+                                    <div class="col mt-2">
+                                        <div class="">
+                                            <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomeFeature3">
+                                            <div class="d-flex flex-column gap-2 mb-2">
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col mt-2">
+                                        <div class="">
+                                            <input type="text" class="form-control" id="homeNameFeature3" placeholder="Services #1">
+                                            <textarea class="form-control" name="notes" id="homeDetailFeature3" rows="8" placeholder="Services #3 Detail"></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -101,7 +183,50 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <h2>Home Page</h2>
+                                    <div class="mb-3">
+                                        <label for="homeWelcomeMessage" class="form-label">6. Welcome Message</label>
+                                        <textarea class="form-control" id="homeHeaderHeadline" placeholder="Welcome Message" row="4"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formwelcomeimg1">
+                                        <div class="d-flex flex-column">
+                                            <label for="formwelcomeimg1">7. Welcome Image #1</label>
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <input type="file" class="file-input">
+                                                            <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formwelcomeimg2">
+                                        <div class="d-flex flex-column">
+                                            <label for="formwelcomeimg2">8. Welcome Image #2</label>
+                                            <div class="d-flex flex-column gap-2 p-2 border rounded">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <input type="file" class="file-input">
+                                                            <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                             
@@ -131,7 +256,109 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <h2>Home Page</h2>
+                                    <div class="mb-3">
+                                        <label for="homeTestimonialsMessage" class="form-label">9. Testimonials Message</label>
+                                        <textarea class="form-control" id="homeTestimonialsMessage" placeholder="Welcome Message" row="4"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <label for="homeTestimonial1" class="form-label">10. Testimonial #1</label>
+                            <div class="col">
+                                <div class="row border rounded p-2">
+                                <div class="col mt-2">
+                                        <div class="">
+                                            <label for="">Name</label>
+                                            <input type="text" class="form-control" id="homeTestimonialName1" placeholder="User #1">
+                                            <label for="">Text</label>
+                                            <textarea class="form-control" name="notes" id="homeTestimonialText1" rows="5" placeholder="Review #1 Detail"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col mt-2">
+                                        <div class="">
+                                            <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomeTestimonial1">
+                                            <div class="d-flex flex-column gap-2 mb-2">
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <label for="homeTestimonial2" class="form-label mt-3">11. Testimonial #2</label>
+                            <div class="col">
+                                <div class="row border rounded p-2">
+                                <div class="col mt-2">
+                                        <div class="">
+                                            <label for="">Name</label>
+                                            <input type="text" class="form-control" id="homeTestimonialName2" placeholder="User #2">
+                                            <label for="">Text</label>
+                                            <textarea class="form-control" name="notes" id="homeTestimonialText2" rows="5" placeholder="Review #2 Detail"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col mt-2">
+                                        <div class="">
+                                            <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomeTestimonial2">
+                                            <div class="d-flex flex-column gap-2 mb-2">
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <label for="homeTestimonial3" class="form-label mt-3">12. Testimonial #3</label>
+                            <div class="col">
+                                <div class="row border rounded p-2">
+                                <div class="col mt-2">
+                                        <div class="">
+                                            <label for="">Name</label>
+                                            <input type="text" class="form-control" id="homeTestimonialName3" placeholder="User #3">
+                                            <label for="">Text</label>
+                                            <textarea class="form-control" name="notes" id="homeTestimonialText3" rows="5" placeholder="Review #3 Detail"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col mt-2">
+                                        <div class="">
+                                            <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomeTestimonial3">
+                                            <div class="d-flex flex-column gap-2 mb-2">
+                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <input class="picname" type="hidden" value="">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <input type="file" class="file-input">
+                                                        <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="homeGoogleReview" class="form-label">13. Link Google Review</label>
+                                        <input type="text" id="homeGoogleReview" class="form-control" placeholder="https://g.co/kgs/LMNCXeu">
+                                    </div>
                                 </div>
                             </div>
                             
@@ -150,6 +377,8 @@ $projectID = $id;
                                 </div>
                             </div>
                         </div>
+
+                            
                     </div><!--end Section 3-->
 
                     <div class="row mb-5"><!--Section 4-->
@@ -161,7 +390,41 @@ $projectID = $id;
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <h2>Home Page</h2>
+                                    <div class="mb-3">
+                                        <label for="homeTeamHeadline" class="form-label">14. Our Team Headline</label>
+                                        <input type="text" id="homeTeamHeadline" class="form-control" placeholder="Name Team">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="homeOurTeamMessage" class="form-label">15. Our Team Message</label>
+                                        <textarea class="form-control" id="homeOurTeamMessage" placeholder="Detail Team" row="4"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <div class="row"></div>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomebg1">
+                                            <div class="d-flex flex-column">
+                                                <label for="bg1">16. Our Team Images</label>
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <img class="preview" src="../assets/img/default.png" alt="place">
+                                                        <input class="picname" type="hidden" value="">
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <div class="d-flex flex-column gap-2">
+                                                                <input type="file" class="file-input">
+                                                                <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+
                                 </div>
                             </div>
                             
