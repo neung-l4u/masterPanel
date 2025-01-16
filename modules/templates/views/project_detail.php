@@ -15,6 +15,8 @@ $row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "
 
 $opening = array();
 $opening = explode('__',$row['openingHours']);
+$delivery = array();
+$delivery = explode('__',$row['pickupAndDelivery']);
 
 // set default value
 $row['colorTheme1'] = !empty($row['colorTheme1']) ? $row['colorTheme1'] : '#000000';
@@ -262,11 +264,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 
                                     <div class="mb-3 row align-items-center" data-day="sunday">
                                         <div class="col-1">
-                                            <input type="checkbox" class="form-check-input day-toggle" id="sunday-deli-chk">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="sunday-deli-chk" <?php echo !empty($delivery[0]) ? 'checked' : '' ; ?>>
                                             <label for="sunday-deli-chk" class="form-check-label">Sun</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control deli-input opening" id="sunday-deli" placeholder="e.g., 08:00-17:00">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="sunday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[0] : '' ; ?>" <?php echo !empty($delivery[0]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="sunday-deli"><?php echo $icon;?></span>
@@ -275,11 +277,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 
                                     <div class="mb-3 row align-items-center" data-day="monday">
                                         <div class="col-1">
-                                            <input type="checkbox" class="form-check-input day-toggle" id="monday-deli-chk">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="monday-deli-chk" <?php echo !empty($delivery[1]) ? 'checked' : '' ; ?>>
                                             <label for="monday-deli-chk" class="form-check-label">Mon</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control deli-input opening" id="monday-deli" placeholder="e.g., 08:00-17:00">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="monday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[1] : '' ; ?>" <?php echo !empty($delivery[1]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="monday-deli"><?php echo $icon;?></span>
@@ -288,11 +290,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 
                                     <div class="mb-3 row align-items-center" data-day="tuesday">
                                         <div class="col-1">
-                                            <input type="checkbox" class="form-check-input day-toggle" id="tuesday-deli-chk">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="tuesday-deli-chk" <?php echo !empty($delivery[2]) ? 'checked' : '' ; ?>>
                                             <label for="tuesday-deli-chk" class="form-check-label">Tue</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control deli-input opening" id="tuesday-deli" placeholder="e.g., 08:00-17:00">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="tuesday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[2] : '' ; ?>" <?php echo !empty($delivery[2]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="tuesday-deli"><?php echo $icon;?></span>
@@ -301,11 +303,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 
                                     <div class="mb-3 row align-items-center" data-day="wednesday">
                                         <div class="col-1">
-                                            <input type="checkbox" class="form-check-input day-toggle" id="wednesday-deli-chk">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="wednesday-deli-chk" <?php echo !empty($delivery[3]) ? 'checked' : '' ; ?>>
                                             <label for="wednesday-deli-chk" class="form-check-label">Wed</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control deli-input opening" id="wednesday-deli" placeholder="e.g., 08:00-17:00">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="wednesday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[3] : '' ; ?>" <?php echo !empty($delivery[3]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="wednesday-deli"><?php echo $icon;?></span>
@@ -314,11 +316,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 
                                     <div class="mb-3 row align-items-center" data-day="thursday">
                                         <div class="col-1">
-                                            <input type="checkbox" class="form-check-input day-toggle" id="thursday-deli-chk">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="thursday-deli-chk" <?php echo !empty($delivery[4]) ? 'checked' : '' ; ?>>
                                             <label for="thursday-deli-chk" class="form-check-label">Thu</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control deli-input opening" id="thursday-deli" placeholder="e.g., 08:00-17:00">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="thursday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[4] : '' ; ?>" <?php echo !empty($delivery[4]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="thursday-deli"><?php echo $icon;?></span>
@@ -327,11 +329,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 
                                     <div class="mb-3 row align-items-center" data-day="friday">
                                         <div class="col-1">
-                                            <input type="checkbox" class="form-check-input day-toggle" id="friday-deli-chk">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="friday-deli-chk" <?php echo !empty($delivery[5]) ? 'checked' : '' ; ?>>
                                             <label for="friday-deli-chk" class="form-check-label">Fri</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control deli-input opening" id="friday-deli" placeholder="e.g., 08:00-17:00">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="friday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[5] : '' ; ?>" <?php echo !empty($delivery[5]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="friday-deli"><?php echo $icon;?></span>
@@ -340,11 +342,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                     
                                     <div class="mb-3 row align-items-center" data-day="saturday">
                                         <div class="col-1">
-                                            <input type="checkbox" class="form-check-input day-toggle" id="saturday-deli-chk">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="saturday-deli-chk" <?php echo !empty($delivery[6]) ? 'checked' : '' ; ?>>
                                             <label for="saturday-deli-chk" class="form-check-label">Sat</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control deli-input opening" id="saturday-deli" placeholder="e.g., 08:00-17:00">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="saturday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[6] : '' ; ?>" <?php echo !empty($delivery[6]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="saturday-deli"><?php echo $icon;?></span>
