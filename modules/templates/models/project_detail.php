@@ -17,8 +17,6 @@ $data['projectName'] = !empty($_POST['projectName']) ? trim($_POST['projectName'
 $data['email'] = !empty($_POST['email']) ? trim($_POST['email']) : null;
 $data['phone'] = !empty($_POST['phone']) ? trim($_POST['phone']) : null;
 $data['address'] = !empty($_POST['address']) ? trim($_POST['address']) : null;
-$data['openingHours'] = !empty($_POST['openingHours']) ? trim($_POST['openingHours']) : null;
-$data['pickupAndDelivery'] = !empty($_POST['pickupAndDelivery']) ? trim($_POST['pickupAndDelivery']) : null;
 $data['logo'] = !empty($_POST['logo']) ? $_POST['logo'] : getRandomPic($data['shopType'],'logo');
 $data['colorTheme1'] = !empty($_POST['colorTheme1']) ? $_POST['colorTheme1'] : null;
 $data['colorTheme2'] = !empty($_POST['colorTheme2']) ? $_POST['colorTheme2'] : null;
@@ -51,7 +49,26 @@ $data['projectOwner'] = !empty($_POST['projectOwner']) ? $_POST['projectOwner'] 
 $data['TemplateSelect'] = !empty($_POST['TemplateSelect']) ? $_POST['TemplateSelect'] : "0";
 $data['token'] = !empty($_POST['token']) ? $_POST['token'] : "no token";
 
+$opening = array();
+$opening['sunOpen'] = !empty($_POST['sunOpen']) ? $_POST['sunOpen'] : null;
+$opening['monOpen'] = !empty($_POST['monOpen']) ? $_POST['monOpen'] : null;
+$opening['tueOpen'] = !empty($_POST['tueOpen']) ? $_POST['tueOpen'] : null;
+$opening['wedOpen'] = !empty($_POST['wedOpen']) ? $_POST['wedOpen'] : null;
+$opening['thuOpen'] = !empty($_POST['thuOpen']) ? $_POST['thuOpen'] : null;
+$opening['friOpen'] = !empty($_POST['friOpen']) ? $_POST['friOpen'] : null;
+$opening['satOpen'] = !empty($_POST['satOpen']) ? $_POST['satOpen'] : null;
 
+$delivery = array();
+$delivery['sunDeli'] = !empty($_POST['sunDeli']) ? $_POST['sunDeli'] : null;
+$delivery['monDeli'] = !empty($_POST['monDeli']) ? $_POST['monDeli'] : null;
+$delivery['tueDeli'] = !empty($_POST['tueDeli']) ? $_POST['tueDeli'] : null;
+$delivery['wedDeli'] = !empty($_POST['wedDeli']) ? $_POST['wedDeli'] : null;
+$delivery['thuDeli'] = !empty($_POST['thuDeli']) ? $_POST['thuDeli'] : null;
+$delivery['friDeli'] = !empty($_POST['friDeli']) ? $_POST['friDeli'] : null;
+$delivery['satDeli'] = !empty($_POST['satDeli']) ? $_POST['satDeli'] : null;
+
+$data['openingHours'] = implode('__',$opening);
+$data['delivery'] = implode('__',$delivery);
 
 if ($data['mode'] ==  "save") {
     $select = $db->query('UPDATE `tb_project` SET `email`=?,`phone`=?,`address`=?,`openingHours`=?,`pickupAndDelivery`=?,`logo`=?,`colorTheme1`=?,`colorTheme2`=?,`colorTheme3`=?, `domainName`=?,`domainHave`=?,`domainProvidersID`=?,`domainUser`=?,`domainPass`=?,`hostingName`=?,`hostingHave`=?,`hostingProvidersID`=?,`hostingUser`=?,`hostingPass`=?,`gloriaHave`=?,`orderURL`=?,`tableURL`=?,`orderOther`=?,`resOtherSystem`=?,`amelia`=?,`voucher`=?,`bookOther`=?,`masOtherSystem`=?,`needEmail`=?,`facebookURL`=?,`instagramURL`=?,`youtubeURL`=?,`tiktokURL`=?,`updateBy`=? WHERE `projectID`=?',
@@ -59,7 +76,7 @@ if ($data['mode'] ==  "save") {
         $data['phone'],
         $data['address'],
         $data['openingHours'],
-        $data['pickupAndDelivery'],
+        $data['delivery'],
         $data['logo'],
         $data['colorTheme1'],
         $data['colorTheme2'],
