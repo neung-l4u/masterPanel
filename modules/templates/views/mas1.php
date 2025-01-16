@@ -355,7 +355,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                     </div>
                                     <div class="col mt-2">
                                         <div class="">
-                                            <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomeTestimonialiimg3">
+                                            <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomeTestimonialimg3">
                                             <div class="d-flex flex-column gap-2 mb-2">
                                                 <img class="preview" src="../assets/img/default.png" alt="place">
                                                 <input class="picname" type="hidden" value="">
@@ -995,9 +995,9 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                     <textarea class="form-control" id="delailServices9" rows="6" placeholder="Detail Services #1"></textarea>
                                 </div>
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="services10">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomeTestmg3">
                                         <div class="d-flex flex-column mb-4">
-                                            <label for="services10">12. Services #10</label>
+                                            <label for="formhomeTestmg3">12. Services #10</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
                                                     <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
@@ -1235,32 +1235,43 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "home";
         payload = {
             "loginID": loginID,
-            "A1-01-color" : $('#bg1Hex').val(),
-            "A1-02-Slogan" : $('#inputSlogan').val(),
-            "A1-03-Intro" : $('#inputIntroduction1').val(),
-            "A1-04-HeadBG" : $('#formbg1 .picname').val(),
-            "A1-05-Intro" : $('#inputIntroduction2').val(),
-            "A2-06-Testimonial" : $('#textTestimonial').val(),
-            "A2-07-FeaturedDish" : $('#textFeaturedDish4').val(),
-            "A2-08-Promopic" : $('#formpromotion1 .picname').val(),
-            "A2-09-Dishpic1" : $('#formDish1 .picname').val(),
-            "A2-10-Dishpic2" : $('#formDish2 .picname').val(),
-            "A2-11-Dishpic3" : $('#formDish3 .picname').val(),
-            "A2-12-Dishpic4" : $('#formDish4 .picname').val(),
-            "A3-13-01-NameUser1" : $('#textNameTestimonial1').val(),
-            "A3-13-02-Review1" : $('#textTestimonial1').val(),
-            "A3-13-03-PicUser1" : $('#formTestimonial1 .picname').val(),
-            "A3-14-01-Name2" : $('#textNameTestimonial2').val(),
-            "A3-14-02-Review2" : $('#textTestimonial2').val(),
-            "A3-14-03-PicUser2" : $('#formTestimonial2 .picname').val(),
-            "A3-15-MenuPNG" : $('#formPromotion2 .picname').val(),
-            "A3-16-Heading" : $('#textpicpng').val(),
-            "A3-17-Body" : $('#textbody').val(),
-            "A4-18-Footer1" : $('#formFooter1 .picname').val(),
-            "A4-19-Footer2" : $('#formFooter2 .picname').val(),
-            "A4-20-Footer3" : $('#formFooter3 .picname').val(),
-            "A4-21-Footer4" : $('#formFooter4 .picname').val(),
-            "A4-22-MapURL" : $('#inputMapURL').val(),
+            "A1-00-Default" : $('#defaultHome').val(),       
+            "A1-01-HeadBG" : $('#formhomebg1 .picname').val(),
+            "A1-02-HeadHline" : $('#homeHeaderHeadline').val(),
+            "A1-03-01-Feature" : $('#formhomeFeature1 .picname').val(),
+            "A1-03-02-ServiceName" : $('#homeNameFeature1').val(),
+            "A1-03-03-ServiceDetail" : $('#homeDetailFeature1').val(),
+            "A1-04-01-Feature" : $('#formhomeFeature2 .picname').val(),
+            "A1-04-02-ServiceName" : $('#homeNameFeature2').val(),
+            "A1-04-03-ServiceDetail" : $('#homeDetailFeature2').val(),
+            "A1-05-01-Feature" : $('#formhomeFeature3 .picname').val(),
+            "A1-05-02-ServiceName" : $('#homeNameFeature3').val(),
+            "A1-05-03-ServiceDetail" : $('#homeDetailFeature3').val(),
+            "A2-06-WelcomeMessage" : $('#homeWelcomeMessage').val(),
+            "A2-07-WelcomeImg1" : $('#formwelcomeimg1 .picname').val(),
+            "A2-08-WelcomeImg2" : $('#formwelcomeimg2 .picname').val(),
+            "A3-09-TestimonialsMessage" : $('#homeTestimonialsMessage').val(),
+            "A3-10-01-TestimonialsName1" : $('#homeTestimonialName1').val(),
+            "A3-10-02-TestimonialsText1" : $('#homeTestimonialText1').val(),
+            "A3-10-03-TestimonialsImg1" : $('#formhomeTestimonialimg1 .picname').val(),
+            "A3-11-01-TestimonialsName2" : $('#homeTestimonialName2').val(),
+            "A3-11-02-TestimonialsText2" : $('#homeTestimonialText2').val(),
+            "A3-11-03-TestimonialsImg2" : $('#formhomeTestimonialimg2 .picname').val(),
+            "A3-12-01-TestimonialsName3" : $('#homeTestimonialName3').val(),
+            "A3-12-02-TestimonialsText3" : $('#homeTestimonialText3').val(),
+            "A3-12-03-TestimonialsImg3" : $('#formhomeTestimonialimg3 .picname').val(),
+            "A3-13-LinkGoogleReview" : $('#homeGoogleReview').val(),
+            "A4-14-OurTeamHeadline" : $('#homeTeamHeadline').val(),
+            "A4-15-OurTeamHeadMessage" : $('#homeOurTeamMessage').val(),
+            "A4-16-01-OurTeamImg1" : $('#formTeamImages1 .picname').val(),
+            "A4-16-02-OurTeamImg2" : $('#formTeamImages2 .picname').val(),
+            "A4-16-03-OurTeamImg3" : $('#formTeamImages3 .picname').val(),
+            "A4-16-04-OurTeamImg4" : $('#formTeamImages4 .picname').val(),
+            "A4-17-AppointmentMessage" : $('#homeAppointmentMessage').val(),
+            "A4-18-PromotionHeadline" : $('#homePromotionHeadline').val(),  
+            "A4-19-PromotionMessage" : $('#homePromotionMessage').val(),  
+            "HomeNote" : $('#notesHome').val()
+
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
