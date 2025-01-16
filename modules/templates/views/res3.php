@@ -141,13 +141,11 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             <div class="row mb-3 border rounded p-3">
                                 <div class="col-6">
                                     <h6>promotion1 #1</h6>
-                                    <label for="textTestimonial" class="form-label">6. Opening Hours</label>
-                                    <textarea class="form-control" id="textTestimonial" rows="3" placeholder="promotion #1"></textarea>
-                                    <label for="textFeaturedDish4">7. Promotion Message #1</label>
-                                    <input type="text" class="form-control" id="textFeaturedDish4" placeholder="promotion #1">
+                                    <label for="textFeaturedDish4">6. Promotion Message #1</label>
+                                    <textarea type="text" class="form-control" id="textFeaturedDish4" row="4" placeholder="promotion #1"></textarea>
                                 </div>
                                 <div class="col">
-                                    <label for="textFeaturedDish4">8. Promotion Image #1</label>
+                                    <label for="textFeaturedDish4">7. Promotion Image #1</label>
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formpromotion1">
                                         <div class="d-flex flex-column gap-2">
                                             <img class="preview" src="../assets/img/default.png" alt="place">
@@ -445,14 +443,6 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                                 </div>
                                             </div>
                                         </form>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label for="inputMapURL" class="form-label">22. MapURL</label>
-                                            <textarea class="form-control" id="inputMapURL" rows="3" placeholder="Map URL"></textarea>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1000,27 +990,25 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "A1-03-Intro" : $('#inputIntroduction1').val(),
             "A1-04-HeadBG" : $('#formbg1 .picname').val(),
             "A1-05-Intro" : $('#inputIntroduction2').val(),
-            "A2-06-Testimonial" : $('#textTestimonial').val(),
-            "A2-07-FeaturedDish" : $('#textFeaturedDish4').val(),
-            "A2-08-Promopic" : $('#formpromotion1 .picname').val(),
-            "A2-09-Dishpic1" : $('#formDish1 .picname').val(),
-            "A2-10-Dishpic2" : $('#formDish2 .picname').val(),
-            "A2-11-Dishpic3" : $('#formDish3 .picname').val(),
-            "A2-12-Dishpic4" : $('#formDish4 .picname').val(),
-            "A3-13-01-NameUser1" : $('#textNameTestimonial1').val(),
-            "A3-13-02-Review1" : $('#textTestimonial1').val(),
-            "A3-13-03-PicUser1" : $('#formTestimonial1 .picname').val(),
-            "A3-14-01-Name2" : $('#textNameTestimonial2').val(),
-            "A3-14-02-Review2" : $('#textTestimonial2').val(),
-            "A3-14-03-PicUser2" : $('#formTestimonial2 .picname').val(),
-            "A3-15-MenuPNG" : $('#formPromotion2 .picname').val(),
-            "A3-16-Heading" : $('#textpicpng').val(),
-            "A3-17-Body" : $('#textbody').val(),
-            "A4-18-Footer1" : $('#formFooter1 .picname').val(),
-            "A4-19-Footer2" : $('#formFooter2 .picname').val(),
-            "A4-20-Footer3" : $('#formFooter3 .picname').val(),
-            "A4-21-Footer4" : $('#formFooter4 .picname').val(),
-            "A4-22-MapURL" : $('#inputMapURL').val(),
+            "A2-06-FeaturedDish" : $('#textFeaturedDish4').val(),
+            "A2-07-Promopic" : $('#formpromotion1 .picname').val(),
+            "A2-08-Dishpic1" : $('#formDish1 .picname').val(),
+            "A2-09-Dishpic2" : $('#formDish2 .picname').val(),
+            "A2-10-Dishpic3" : $('#formDish3 .picname').val(),
+            "A2-11-Dishpic4" : $('#formDish4 .picname').val(),
+            "A3-12-01-NameUser1" : $('#textNameTestimonial1').val(),
+            "A3-12-02-Review1" : $('#textTestimonial1').val(),
+            "A3-12-03-PicUser1" : $('#formTestimonial1 .picname').val(),
+            "A3-13-01-Name2" : $('#textNameTestimonial2').val(),
+            "A3-13-02-Review2" : $('#textTestimonial2').val(),
+            "A3-13-03-PicUser2" : $('#formTestimonial2 .picname').val(),
+            "A3-14-MenuPNG" : $('#formPromotion2 .picname').val(),
+            "A3-15-Heading" : $('#textpicpng').val(),
+            "A3-16-Body" : $('#textbody').val(),
+            "A4-17-Footer1" : $('#formFooter1 .picname').val(),
+            "A4-18-Footer2" : $('#formFooter2 .picname').val(),
+            "A4-19-Footer3" : $('#formFooter3 .picname').val(),
+            "A4-20-Footer4" : $('#formFooter4 .picname').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js

@@ -146,3 +146,13 @@ input[type="color"]::-webkit-color-swatch {
 .codeHex{
     color: #cccccc;
 }
+
+.time-input {
+    display: none;
+}
+.copy-link {
+    margin-left: 10px;
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+}

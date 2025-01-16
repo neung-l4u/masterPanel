@@ -89,6 +89,7 @@ toggleBox(".domainHave", ".domainbox");
 toggleBox(".hostingHave", ".hostingbox");
 toggleBox(".gloriahave", ".gloriabox");
 toggleBox(".orderOther", ".resOtherSystem");
+toggleBox(".chPickup", ".bsPickup");
 toggleBox(".bookOther", ".masOtherSystem");
 toggleBox(".needEmail", ".emailbox");
 
@@ -148,9 +149,17 @@ const handleFormSubmit = (button) => {
 
 function chShowtextPickup(){
 
-    $("#bsPickup").show();
+const checkBoxt = $("#chPickup");
 
-    
-    
- 
+const statusCheckbox = checkBoxt.prop("checked");
+
+    if (statusCheckbox === true ){
+    $("#deli-form").show();
+    }else{
+        $("#deli-form").hide();
+    }
+
 }
+
+
+
