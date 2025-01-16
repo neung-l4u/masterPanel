@@ -57,7 +57,7 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="shopType">Shop type</label>
-                            <select class="form-control" id="shopType">
+                            <select class="form-control" id="shopType" onchange="updateTemplates()">
                                 <option value="0" disabled>--- Select ---</option>
                             </select>
                         </div>

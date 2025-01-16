@@ -66,32 +66,23 @@ $(".resOtherSystem").hide();
 $(".masOtherSystem").hide();
 $("#masSystem").hide();
 $("#resSystem").hide();
-$(".emailbox").hide();
+$(".bsPickup").hide();
+//$(".opening").hide();
 
-
-
-function toggleBox(checkbox, box) {
-    $(checkbox).on("change", function () {
-        if ($(this).is(":checked")) { 
-            $(box).show(300);
-        } else {
-            $(box).hide(200);
-        }
-    });
-    
-}
-
-
-
-
-
+//toggleBox("CHECKBOX", "DIV");
 toggleBox(".domainHave", ".domainbox");
 toggleBox(".hostingHave", ".hostingbox");
 toggleBox(".gloriahave", ".gloriabox");
 toggleBox(".orderOther", ".resOtherSystem");
-toggleBox(".chPickup", ".bsPickup");
 toggleBox(".bookOther", ".masOtherSystem");
-toggleBox(".needEmail", ".emailbox");
+toggleBox(".chPickup", ".bsPickup");
+
+function toggleBox(checkbox, box) {
+    $(checkbox).change(function(){
+        $(box).toggle(300);
+    });
+}
+
 
 const setHex = (param,box) => { //for set text in span follow color picker
     const theme1Hex = $("#theme1Hex");
@@ -147,19 +138,14 @@ const handleFormSubmit = (button) => {
     }
 };
 
-function chShowtextPickup(){
+$('.day-toggle').change(function () {
+    const targetId = $(this).attr('id').replace('-open-chk', '-open').replace('-deli-chk', '-deli');
+    $(`#${targetId}`).toggle($(this).is(':checked'));
+});
 
-const checkBoxt = $("#chPickup");
-
-const statusCheckbox = checkBoxt.prop("checked");
-
-    if (statusCheckbox === true ){
-    $("#deli-form").show();
-    }else{
-        $("#deli-form").hide();
+$('.copy-link').click(function () {
+    const value = $(`#${$(this).data('copy-from')}`).val();
+    if (value) {
+        $(this).closest('.days-list').find('.time-input:visible, .deli-input:visible').not(`#${$(this).data('copy-from')}`).val(value);
     }
-
-}
-
-
-
+});

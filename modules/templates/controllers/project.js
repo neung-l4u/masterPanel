@@ -300,3 +300,23 @@ modalFormEl.on('hidden.bs.modal', function () {
 modalFormEl.on('show.bs.modal', function () {
     //alert('Modal is about to be shown');
 });
+
+function updateTemplates() {
+    const inputShopTypeID = $("#shopType").val();
+
+    selectedTemplate.empty();
+
+    if (inputShopTypeID === "2") {
+        $("<option>", { value: "1", text: "Template no. 1" }).appendTo(selectedTemplate);
+    } else if (inputShopTypeID === "1") {
+        const templates = {
+            1: "Template no. 1",
+            2: "Template no. 2",
+            3: "Template no. 3"
+        };
+
+        $.each(templates, function (value, label) {
+            $("<option>", { value: value, text: label }).appendTo(selectedTemplate);
+        });
+    }
+}

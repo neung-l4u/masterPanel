@@ -1063,7 +1063,7 @@ $projectID = $id;
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div><!--end Section 1-->
 
                     <div class="row mb-5"><!--Notes-->
                         <div class="col">
@@ -1075,7 +1075,6 @@ $projectID = $id;
                             </div>
                         </div>
                     </div><!--End Notes-->
-                    </div><!--end Section 4-->
 
                     <div class="row">
                         <div class="mt-3">

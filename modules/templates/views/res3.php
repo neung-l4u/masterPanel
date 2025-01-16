@@ -47,8 +47,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row pl-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="1" id="defaultContact">
-                            <label class="h4" for="defaultContact"><u>Use Default Template.</u></label>
+                            <input class="form-check-input" type="checkbox" value="1" id="defaultHome">
+                            <label class="h4" for="defaultHome"><u>Use Default Template.</u></label>
                         </div>
                     </div>
 
@@ -488,7 +488,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                 <div class="tab-pane p-3" id="res3About" role="tabpanel" aria-labelledby="nav-about-tab">
 
                     <div class="row pl-3">
-                        <div class="form-group form-check">
+                        <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="1" id="defaultAbout">
                             <label class="h4" for="defaultAbout"><u>Use Default Template.</u></label>
                         </div>
@@ -734,8 +734,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row pl-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="1" id="defaultHome">
-                            <label class="h4" for="defaultHome"><u>Use Default Template.</u></label>
+                            <input class="form-check-input" type="checkbox" value="1" id="defaultContact">
+                            <label class="h4" for="defaultContact"><u>Use Default Template.</u></label>
                         </div>
                     </div>
 

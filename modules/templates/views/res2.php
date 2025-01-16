@@ -454,7 +454,7 @@ $projectID = $id;
                                     </div>
                                 </div>
                             </div>
-                            <div class="row border rounded">
+                            <div class="row border rounded px-2 py-3 mb-3">
                                 <div class="col-6">
                                     <div class="row">
                                         <div class="col">
@@ -491,29 +491,42 @@ $projectID = $id;
                                     </div>
                                 </div>
                             </div>
-
-                            <label for="testimonialText2">19. Testimonial #2</label>
-                            <div>
-                                <textarea class="form-control" id="testimonialText2" rows="3" placeholder="Testimonial Text 2"></textarea>
-                            </div>
-                            <div>
-                                <label for="testimonialName2">Name:</label>
-                                <input type="text" class="form-control" id="testimonialName2" placeholder="Testimonial Name 2">
-                            </div>
-                            <div>
-                                <label for="formHomeTestimonialImg2">Testimonial Image</label>
-                                <form method="post" enctype="multipart/form-data" class="uploadForm" id="formHomeTestimonialImg2">
-                                    <div class="d-flex flex-column mb-3">
-                                        <div class="d-flex flex-column gap-2 p-2 border rounded">  
-                                            <img class="preview" src="../assets/img/default.png" alt="place">
-                                            <input class="picname" type="hidden" value="">
-                                            <div class="d-flex flex-row gap-2">
-                                                <input type="file" class="file-input col-8" />
-                                                <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                            <div class="row border rounded px-2 py-3 ">
+                                <div class="col-6">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label for="testimonialText1">19. Testimonial #2</label>
+                                                <textarea class="form-control" id="testimonialText2" rows="3" placeholder="Testimonial Text 1"></textarea>
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label for="testimonialName2">Name:</label>
+                                                <input type="text" class="form-control" id="testimonialName2" placeholder="Testimonial Name 1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="formHomeTestimonialImg1">Testimonial Image</label>
+                                        <form method="post" enctype="multipart/form-data" class="uploadForm" id="formHomeTestimonialImg2">
+                                            <div class="d-flex flex-column mb-3">
+                                                <div class="d-flex flex-column gap-2 p-2 border rounded">  
+                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <input class="picname" type="hidden" value="">
+                                                    <div class="d-flex flex-row gap-2">
+                                                        <input type="file" class="file-input col-8" />
+                                                    </div>
+                                                    <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         

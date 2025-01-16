@@ -13,6 +13,11 @@ $row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "
         FROM tb_project p, staffs s, Countries c 
         WHERE p.projectOwner = s.sID AND p.countryID = c.id AND p.projectID = ?;', $id)->fetchArray();
 
+$opening = array();
+$opening = explode('__',$row['openingHours']);
+$delivery = array();
+$delivery = explode('__',$row['pickupAndDelivery']);
+
 // set default value
 $row['colorTheme1'] = !empty($row['colorTheme1']) ? $row['colorTheme1'] : '#000000';
 $row['colorTheme2'] = !empty($row['colorTheme2']) ? $row['colorTheme2'] : '#FFFFFF';
@@ -141,199 +146,218 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                 <div class="col">
                     <div class="mb-3">
                         <label for="bsOpen" class="form-label"><small>Opening hours </small></label>
-                        <div>
-                        <form id="open-form" class="bg-light p-4 rounded shadow">
-                            <div class="mb-3 row align-items-center">
-                                <div class="col-auto">
-                                    <input type="checkbox" class="form-check-input day-checkbox" data-day="sunday" id="sunday-checkbox">
-                                    <label for="sunday-checkbox" class="form-check-label">Sun</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="opening form-control time-input" id="sunday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                </div>
-                                <div class="col-auto">
-                                    <span class="copy-link" data-copy-from="sunday-time"><?php echo $icon;?></span>
-                                </div>
-                            </div>
-                            <div class="mb-3 row align-items-center">
-                                <div class="col-auto">
-                                    <input type="checkbox" class="form-check-input day-checkbox" data-day="monday" id="monday-checkbox">
-                                    <label for="monday-checkbox" class="form-check-label">Mon</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="opening form-control time-input" id="monday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                </div>
-                                <div class="col-auto">
-                                    <span class="copy-link" data-copy-from="monday-time"><?php echo $icon;?></span>
-                                </div>
-                            </div>
-                            <div class="mb-3 row align-items-center">
-                                <div class="col-auto">
-                                    <input type="checkbox" class="form-check-input day-checkbox" data-day="tuesday" id="tuesday-checkbox">
-                                    <label for="tuesday-checkbox" class="form-check-label">Tue</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="opening form-control time-input" id="tuesday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                </div>
-                                <div class="col-auto">
-                                    <span class="copy-link" data-copy-from="tuesday-time"><?php echo $icon;?></span>
-                                </div>
-                            </div>
-                            <div class="mb-3 row align-items-center">
-                                <div class="col-auto">
-                                    <input type="checkbox" class="form-check-input day-checkbox" data-day="wednesday" id="wednesday-checkbox">
-                                    <label for="wednesday-checkbox" class="form-check-label">Wed</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="opening form-control time-input" id="wednesday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                </div>
-                                <div class="col-auto">
-                                    <span class="copy-link" data-copy-from="wednesday-time"><?php echo $icon;?></span>
 
+                            <form id="open-form" class="bg-light rounded shadow px-4 py-3">
+                                <div class="mb-3 px-3">
+                                    <div class="days-list">
+                                    
+                                        <div class="mb-3 row align-items-center" data-day="sunday">
+                                            <div class="col-1">
+                                           
+                                                <input type="checkbox" class="form-check-input day-toggle" id="sunday-open-chk" <?php echo !empty($opening[0]) ? 'checked' : '' ; ?>>
+                                                <label for="sunday-open-chk" class="form-check-label">Sun</label>
+                                            </div>
+                                            <div class="col">
+                                           
+                                                <input type="text" class="mb-0 form-control time-input opening" id="sunday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[0] : '' ; ?>" <?php echo !empty($opening[0]) ? '' : 'style="display: none;"' ; ?>>
+                                            </div>
+                                            <div class="col-1">
+                                                <span class="copy-link" data-copy-from="sunday-open"><?php echo $icon;?></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 row align-items-center" data-day="monday">
+                                            <div class="col-1">
+                                                <input type="checkbox" class="form-check-input day-toggle" id="monday-open-chk" <?php echo !empty($opening[1]) ? 'checked' : '' ; ?>>
+                                                <label for="monday-open-chk" class="form-check-label">Mon</label>
+                                            </div>
+                                            <div class="col">
+                                                <input type="text" class="mb-0 form-control time-input hide opening" id="monday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[1] : '' ; ?>" <?php echo !empty($opening[1]) ? '' : 'style="display: none;"' ; ?>>
+                                            </div>
+                                            <div class="col-1">
+                                                <span class="copy-link" data-copy-from="monday-open"><?php echo $icon;?></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 row align-items-center" data-day="tuesday">
+                                            <div class="col-1">
+                                                <input type="checkbox" class="form-check-input day-toggle" id="tuesday-open-chk" <?php echo !empty($opening[2]) ? 'checked' : '' ; ?>>
+                                                <label for="tuesday-open-chk" class="form-check-label">Tue</label>
+                                            </div>
+                                            <div class="col">
+                                                <input type="text" class="mb-0 form-control time-input opening" id="tuesday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[2] : '' ; ?>" <?php echo !empty($opening[2]) ? '' : 'style="display: none;"' ; ?>>
+                                            </div>
+                                            <div class="col-1">
+                                                <span class="copy-link" data-copy-from="tuesday-open"><?php echo $icon;?></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 row align-items-center" data-day="wednesday">
+                                            <div class="col-1">
+                                                <input type="checkbox" class="form-check-input day-toggle" id="wednesday-open-chk" <?php echo !empty($opening[3]) ? 'checked' : '' ; ?>>
+                                                <label for="wednesday-open-chk" class="form-check-label">Wed</label>
+                                            </div>
+                                            <div class="col">
+                                                <input type="text" class="mb-0 form-control time-input opening" id="wednesday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[3] : '' ; ?>" <?php echo !empty($opening[3]) ? '' : 'style="display: none;"' ; ?>>
+                                            </div>
+                                            <div class="col-1">
+                                                <span class="copy-link" data-copy-from="wednesday-open"><?php echo $icon;?></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 row align-items-center" data-day="thursday">
+                                            <div class="col-1">
+                                                <input type="checkbox" class="form-check-input day-toggle" id="thursday-open-chk" <?php echo !empty($opening[4]) ? 'checked' : '' ; ?>>
+                                                <label for="thursday-open-chk" class="form-check-label">Thu</label>
+                                            </div>
+                                            <div class="col">
+                                                <input type="text" class="mb-0 form-control time-input opening" id="thursday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[4] : '' ; ?>" <?php echo !empty($opening[4]) ? '' : 'style="display: none;"' ; ?>>
+                                            </div>
+                                            <div class="col-1">
+                                                <span class="copy-link" data-copy-from="thursday-open"><?php echo $icon;?></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 row align-items-center" data-day="friday">
+                                            <div class="col-1">
+                                                <input type="checkbox" class="form-check-input day-toggle" id="friday-open-chk" <?php echo !empty($opening[5]) ? 'checked' : '' ; ?>>
+                                                <label for="friday-open-chk" class="form-check-label">Fri</label>
+                                            </div>
+                                            <div class="col">
+                                                <input type="text" class="mb-0 form-control time-input opening" id="friday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[5] : '' ; ?>" <?php echo !empty($opening[5]) ? '' : 'style="display: none;"' ; ?>>
+                                            </div>
+                                            <div class="col-1">
+                                                <span class="copy-link" data-copy-from="friday-open"><?php echo $icon;?></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 row align-items-center" data-day="saturday">
+                                            <div class="col-1">
+                                                <input type="checkbox" class="form-check-input day-toggle" id="saturday-open-chk" <?php echo !empty($opening[6]) ? 'checked' : '' ; ?>>
+                                                <label for="saturday-open-chk" class="form-check-label">Sat</label>
+                                            </div>
+                                            <div class="col">
+                                                <input type="text" class="mb-0 form-control time-input opening" id="saturday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[6] : '' ; ?>" <?php echo !empty($opening[6]) ? '' : 'style="display: none;"' ; ?>>
+                                            </div>
+                                            <div class="col-1">
+                                                <span class="copy-link" data-copy-from="saturday-open"><?php echo $icon;?></span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Repeat similar blocks for other days with respective IDs -->
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="mb-3 row align-items-center">
-                                <div class="col-auto">
-                                    <input type="checkbox" class="form-check-input day-checkbox" data-day="thursday" id="thursday-checkbox">
-                                    <label for="thursday-checkbox" class="form-check-label">Thu</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="opening form-control time-input" id="thursday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                </div>
-                                <div class="col-auto">
-                                    <span class="copy-link" data-copy-from="thursday-time"><?php echo $icon;?></span>
-                                </div>
-                            </div>
-                            <div class="mb-3 row align-items-center">
-                                <div class="col-auto">
-                                    <input type="checkbox" class="form-check-input day-checkbox" data-day="friday" id="friday-checkbox">
-                                    <label for="friday-checkbox" class="form-check-label">Fri</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="opening form-control time-input" id="friday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                </div>
-                                <div class="col-auto">
-                                    <span class="copy-link" data-copy-from="friday-time"><?php echo $icon;?></span>
-                                </div>
-                            </div>
-                            <div class="mb-3 row align-items-center">
-                                <div class="col-auto">
-                                    <input type="checkbox" class="form-check-input day-checkbox" data-day="saturday" id="saturday-checkbox">
-                                    <label for="saturday-checkbox" class="form-check-label">Sat</label>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="opening form-control time-input" id="saturday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                </div>
-                                <div class="col-auto">
-                                    <span class="copy-link" data-copy-from="saturday-time"><?php echo $icon;?></span>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Save</button>
-                        </form>
-                        </div>
+                            </form>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
+                    <div class="mb-3">
+                        <input class="form-check-input chPickup" type="checkbox" id="chPickup" name="chPickup">
+                        <label for="chPickup" class="form-label"><small>Delivery time does not match Opening hours.</small></label>
 
-                        <div class="mb-3">
-                            <input class="form-check-input" type="checkbox" id="chPickup" name="chPickup" onchange="chShowtextPickup();">
-                            <label for="bsPickup" class="form-label"><small>Delivery time does not match Opening hours.</small></label>
-                            <div class="bsPickup">
-                            <div>
-                            <form id="deli-form" class="bg-light p-4 rounded shadow">
-                                <div class="mb-3 row align-items-center">
-                                    <div class="col-auto">
-                                        <input type="checkbox" class="form-check-input day-checkbox" data-day="sunday" id="sunday-checkbox">
-                                        <label for="sunday-checkbox" class="form-check-label">Sun</label>
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" class="opening form-control time-input" id="sunday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="copy-link" data-copy-from="sunday-time"><?php echo $icon;?></span>
-                                    </div>
-                                </div>
-                                <div class="mb-3 row align-items-center">
-                                    <div class="col-auto">
-                                        <input type="checkbox" class="form-check-input day-checkbox" data-day="monday" id="monday-checkbox">
-                                        <label for="monday-checkbox" class="form-check-label">Mon</label>
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" class="opening form-control time-input" id="monday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="copy-link" data-copy-from="monday-time"><?php echo $icon;?></span>
-                                    </div>
-                                </div>
-                                <div class="mb-3 row align-items-center">
-                                    <div class="col-auto">
-                                        <input type="checkbox" class="form-check-input day-checkbox" data-day="tuesday" id="tuesday-checkbox">
-                                        <label for="tuesday-checkbox" class="form-check-label">Tue</label>
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" class="opening form-control time-input" id="tuesday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="copy-link" data-copy-from="tuesday-time"><?php echo $icon;?></span>
-                                    </div>
-                                </div>
-                                <div class="mb-3 row align-items-center">
-                                    <div class="col-auto">
-                                        <input type="checkbox" class="form-check-input day-checkbox" data-day="wednesday" id="wednesday-checkbox">
-                                        <label for="wednesday-checkbox" class="form-check-label">Wed</label>
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" class="opening form-control time-input" id="wednesday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="copy-link" data-copy-from="wednesday-time"><?php echo $icon;?></span>
+                        <form id="deli-form" class="bg-light rounded shadow px-4 py-3 bsPickup">
+                            <div class="mb-3 px-3">
+                                <div class="days-list">
 
+
+                                    <div class="mb-3 row align-items-center" data-day="sunday">
+                                        <div class="col-1">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="sunday-deli-chk" <?php echo !empty($delivery[0]) ? 'checked' : '' ; ?>>
+                                            <label for="sunday-deli-chk" class="form-check-label">Sun</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="sunday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[0] : '' ; ?>" <?php echo !empty($delivery[0]) ? '' : 'style="display: none;"' ; ?>>
+                                        </div>
+                                        <div class="col-1">
+                                            <span class="copy-link" data-copy-from="sunday-deli"><?php echo $icon;?></span>
+                                        </div>
                                     </div>
+
+                                    <div class="mb-3 row align-items-center" data-day="monday">
+                                        <div class="col-1">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="monday-deli-chk" <?php echo !empty($delivery[1]) ? 'checked' : '' ; ?>>
+                                            <label for="monday-deli-chk" class="form-check-label">Mon</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="monday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[1] : '' ; ?>" <?php echo !empty($delivery[1]) ? '' : 'style="display: none;"' ; ?>>
+                                        </div>
+                                        <div class="col-1">
+                                            <span class="copy-link" data-copy-from="monday-deli"><?php echo $icon;?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row align-items-center" data-day="tuesday">
+                                        <div class="col-1">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="tuesday-deli-chk" <?php echo !empty($delivery[2]) ? 'checked' : '' ; ?>>
+                                            <label for="tuesday-deli-chk" class="form-check-label">Tue</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="tuesday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[2] : '' ; ?>" <?php echo !empty($delivery[2]) ? '' : 'style="display: none;"' ; ?>>
+                                        </div>
+                                        <div class="col-1">
+                                            <span class="copy-link" data-copy-from="tuesday-deli"><?php echo $icon;?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row align-items-center" data-day="wednesday">
+                                        <div class="col-1">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="wednesday-deli-chk" <?php echo !empty($delivery[3]) ? 'checked' : '' ; ?>>
+                                            <label for="wednesday-deli-chk" class="form-check-label">Wed</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="wednesday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[3] : '' ; ?>" <?php echo !empty($delivery[3]) ? '' : 'style="display: none;"' ; ?>>
+                                        </div>
+                                        <div class="col-1">
+                                            <span class="copy-link" data-copy-from="wednesday-deli"><?php echo $icon;?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row align-items-center" data-day="thursday">
+                                        <div class="col-1">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="thursday-deli-chk" <?php echo !empty($delivery[4]) ? 'checked' : '' ; ?>>
+                                            <label for="thursday-deli-chk" class="form-check-label">Thu</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="thursday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[4] : '' ; ?>" <?php echo !empty($delivery[4]) ? '' : 'style="display: none;"' ; ?>>
+                                        </div>
+                                        <div class="col-1">
+                                            <span class="copy-link" data-copy-from="thursday-deli"><?php echo $icon;?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row align-items-center" data-day="friday">
+                                        <div class="col-1">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="friday-deli-chk" <?php echo !empty($delivery[5]) ? 'checked' : '' ; ?>>
+                                            <label for="friday-deli-chk" class="form-check-label">Fri</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="friday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[5] : '' ; ?>" <?php echo !empty($delivery[5]) ? '' : 'style="display: none;"' ; ?>>
+                                        </div>
+                                        <div class="col-1">
+                                            <span class="copy-link" data-copy-from="friday-deli"><?php echo $icon;?></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3 row align-items-center" data-day="saturday">
+                                        <div class="col-1">
+                                            <input type="checkbox" class="form-check-input day-toggle" id="saturday-deli-chk" <?php echo !empty($delivery[6]) ? 'checked' : '' ; ?>>
+                                            <label for="saturday-deli-chk" class="form-check-label">Sat</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="mb-0 form-control deli-input opening" id="saturday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[6] : '' ; ?>" <?php echo !empty($delivery[6]) ? '' : 'style="display: none;"' ; ?>>
+                                        </div>
+                                        <div class="col-1">
+                                            <span class="copy-link" data-copy-from="saturday-deli"><?php echo $icon;?></span>
+                                        </div>
+                                    </div>
+                                    
                                 </div>
-                                <div class="mb-3 row align-items-center">
-                                    <div class="col-auto">
-                                        <input type="checkbox" class="form-check-input day-checkbox" data-day="thursday" id="thursday-checkbox">
-                                        <label for="thursday-checkbox" class="form-check-label">Thu</label>
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" class="opening form-control time-input" id="thursday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="copy-link" data-copy-from="thursday-time"><?php echo $icon;?></span>
-                                    </div>
-                                </div>
-                                <div class="mb-3 row align-items-center">
-                                    <div class="col-auto">
-                                        <input type="checkbox" class="form-check-input day-checkbox" data-day="friday" id="friday-checkbox">
-                                        <label for="friday-checkbox" class="form-check-label">Fri</label>
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" class="opening form-control time-input" id="friday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="copy-link" data-copy-from="friday-time"><?php echo $icon;?></span>
-                                    </div>
-                                </div>
-                                <div class="mb-3 row align-items-center">
-                                    <div class="col-auto">
-                                        <input type="checkbox" class="form-check-input day-checkbox" data-day="saturday" id="saturday-checkbox">
-                                        <label for="saturday-checkbox" class="form-check-label">Sat</label>
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" class="opening form-control time-input" id="saturday-time" placeholder="Opening hours (e.g., 08:00-17:00)">
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="copy-link" data-copy-from="saturday-time"><?php echo $icon;?></span>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">Save</button>
-                            </form>
                             </div>
-                            </div>
-                        </div>
-
+                        </form>
+                            
+                    </div>
                 </div>
             </div>
         </div>
@@ -353,20 +377,59 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                 </div>
             </div>
             <div class="mt-3 border rounded py-3 pl-3">
-                <div class="mt-3 d-flex flex-row gap-3 align-items-center">
-                    <label for="theme1">Color Theme #1</label>
-                    <input type="color" onchange="setHex(this.value,1);" id="theme1" value="<?php echo $row['colorTheme1']; ?>">
-                    <span id="theme1Hex" class="codeHex"><?php echo $row['colorTheme1']; ?></span>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="mt-3 d-flex flex-row gap-3 align-items-center">
+                            <label for="theme1">Color Theme #1</label>
+                            <input type="color" onchange="setHex(this.value,1);" id="theme1" value="<?php echo $row['colorTheme1']; ?>">
+                            <span id="theme1Hex" class="codeHex"><?php echo $row['colorTheme1']; ?></span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mt-3 pr-3 d-flex flex-row gap-3 align-items-center">
+                            <select class="form-select" id="theme1Select">
+                                <option selected value="<?php echo $row['colorTheme1']; ?>">None</option>
+                                <option value="#theme1Gold">Gold</option>
+                                <option value="#theme1Silver">Silver</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-3 d-flex flex-row gap-3 align-items-center">
-                    <label for="theme2">Color Theme #2</label>
-                    <input type="color" onchange="setHex(this.value,2);" id="theme2" value="<?php echo $row['colorTheme2']; ?>">
-                    <span id="theme2Hex" class="codeHex"><?php echo $row['colorTheme2']; ?></span>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="mt-3 d-flex flex-row gap-3 align-items-center">
+                            <label for="theme2">Color Theme #2</label>
+                            <input type="color" onchange="setHex(this.value,2);" id="theme2" value="<?php echo $row['colorTheme2']; ?>">
+                            <span id="theme2Hex" class="codeHex"><?php echo $row['colorTheme2']; ?></span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mt-3 pr-3 d-flex flex-row gap-3 align-items-center">
+                            <select class="form-select" id="theme1Select">
+                                <option selected value="<?php echo $row['colorTheme1']; ?>">None</option>
+                                <option value="#theme2Gold">Gold</option>
+                                <option value="#theme2Silver">Silver</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-3 d-flex flex-row gap-3 align-items-center">
-                    <label for="theme3">Color Theme #3</label>
-                    <input type="color" onchange="setHex(this.value,3);"  id="theme3" value="<?php echo $row['colorTheme3']; ?>">
-                    <span id="theme3Hex" class="codeHex"><?php echo $row['colorTheme3']; ?></span>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="mt-3 d-flex flex-row gap-3 align-items-center">
+                            <label for="theme3">Color Theme #3</label>
+                            <input type="color" onchange="setHex(this.value,3);"  id="theme3" value="<?php echo $row['colorTheme3']; ?>">
+                            <span id="theme3Hex" class="codeHex"><?php echo $row['colorTheme3']; ?></span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mt-3 pr-3 d-flex flex-row gap-3 align-items-center">
+                            <select class="form-select" id="theme1Select">
+                                <option selected value="<?php echo $row['colorTheme1']; ?>">None</option>
+                                <option value="#theme3Gold">Gold</option>
+                                <option value="#themeSilver">Silver</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -616,57 +679,26 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
 <script src="../controllers/project_detail.js"></script>
 <script>
-    $(document).ready(function () {
-            $('#open-form div div .day-checkbox').change(function () {
-                const day = $(this).data('day');
-                if ($(this).is(':checked')) {
-                    $(`#${day}-time`).show();
-                } else {
-                    $(`#${day}-time`).hide().val('');
-                }
-            });
-
-            $('#open-form div div .copy-link').click(function () {
-                const fromId = $(this).data('copy-from');
-                const valueToCopy = $(`#${fromId}`).val();
-                if (valueToCopy) {
-                    $('.time-input').each(function () {
-                        if ($(this).is(':visible') && this.id !== fromId) {
-                            $(this).val(valueToCopy);
-                        }
-                    });
-                }
-            });
-
-            $('#deli-form div div .day-checkbox').change(function () {
-                const day = $(this).data('day');
-                if ($(this).is(':checked')) {
-                    $(`#deli-form div div #${day}-time`).show();
-                } else {
-                    $(`#deli-form div div #${day}-time`).hide().val('');
-                }
-            });
-
-            $('#deli-form div div .copy-link').click(function () {
-                const fromId = $(this).data('copy-from');
-                const valueToCopy = $(`#${fromId}`).val();
-                if (valueToCopy) {
-                    $('#deli-form div div .time-input').each(function () {
-                        if ($(this).is(':visible') && this.id !== fromId) {
-                            $(this).val(valueToCopy);
-                        }
-                    });
-                }
-            });
-        });
-
     const hiddenShopType = $("#ShopType");
     const inputName = $("#bsName");
     const inputEmail = $("#bsEmail");
     const inputPhone = $("#bsPhone");
     const inputAddress = $("#bsAddress");
     const inputOpen = $("#bsOpen");
-    const inputPickup = $("#bsPickup");
+    const inputSunOpen = $("#sunday-open");
+    const inputMonOpen = $("#monday-open");
+    const inputTueOpen = $("#tuesday-open");
+    const inputWedOpen = $("#wednesday-open");
+    const inputThuOpen = $("#thursday-open");
+    const inputFriOpen = $("#friday-open");
+    const inputSatOpen = $("#saturday-open");
+    const inputSunDeli = $("#sunday-deli");
+    const inputMonDeli = $("#monday-deli");
+    const inputTueDeli = $("#tuesday-deli");
+    const inputWedDeli = $("#wednesday-deli");
+    const inputThuDeli = $("#thursday-deli");
+    const inputFriDeli = $("#friday-deli");
+    const inputSatDeli = $("#saturday-deli");
     const hiddenPicLogo = $("#picNameLogo");
     const selTheme1Hex = $("#theme1");
     const selTheme2Hex = $("#theme2");
@@ -701,14 +733,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     const hostingBox = $("#hostingBox");
  
 
-
     $(()=>{ //ready
         loadProjectData();
         showSystem();
-        $("#deli-form").hide();
-        $(".opening").hide();
-
     }); //ready
+
 
     const loadProjectData = () => {
         let payload = {
@@ -730,6 +759,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
             res.domainHave === 1 ? domainBox.show() :  domainBox.hide();
             res.hostingHave === 1 ? hostingBox.show() :  hostingBox.hide();
             res.masOtherSystem === 1 ? inputMasOtherSystem.show() :  inputMasOtherSystem.hide();
+
             return true;
         });
 
@@ -747,8 +777,20 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
             email: inputEmail.val(),
             phone: inputPhone.val(),
             address: inputAddress.val(),
-            openingHours: inputOpen.val(),
-            pickupAndDelivery: inputPickup.val(),
+            sunOpen: inputSunOpen.val(),
+            monOpen: inputMonOpen.val(),
+            tueOpen: inputTueOpen.val(),
+            wedOpen: inputWedOpen.val(),
+            thuOpen: inputThuOpen.val(),
+            friOpen: inputFriOpen.val(),
+            satOpen: inputSatOpen.val(),
+            sunDeli: inputSunDeli.val(),
+            monDeli: inputMonDeli.val(),
+            tueDeli: inputTueDeli.val(),
+            wedDeli: inputWedDeli.val(),
+            thuDeli: inputThuDeli.val(),
+            friDeli: inputFriDeli.val(),
+            satDeli: inputSatDeli.val(),
             logo: hiddenPicLogo.val(),
             colorTheme1: selTheme1Hex.val(),
             colorTheme2: selTheme2Hex.val(),
