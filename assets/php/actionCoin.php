@@ -15,6 +15,7 @@ $myName = $users['sName'];
 $myNickName = $users['sNickName'];
 
 $date["today"] = date("d/m/Y H:i:s", strtotime("now"));
+$reverseDate = date("Y-m-d H:i:s", strtotime("now"));
 
 
 $params["act"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
@@ -278,9 +279,12 @@ if ($params ["act"] == "load"){
         ];
 
         $moneyValue = $params["input"]*50;
-        $message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin. 
-        
-        <br><br> <strong>request date:</strong> '.$date["today"];
+
+        $message = $myNickName." Spend ".$params["input"]." L4U coin to ".$reason.
+        //$message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin for. '.$moneyValue.' Baht. '.
+    
+        '<br><br> Cointoken : CEX'.$reverseDate.$params["input"].
+        '<br><strong>request date:</strong> '.$date["today"];
 
         $result['email'] = $data['email'];
         $result['payload'] = $data;
