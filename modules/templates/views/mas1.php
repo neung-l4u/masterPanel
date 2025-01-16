@@ -50,7 +50,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                 <div class="row pl-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="1" id="defaultHome">
+                            <input class="form-check-input" type="checkbox" value="Use Default Template." id="defaultHome">
                             <label class="h4" for="defaultHome"><u>Use Default Template.</u></label>
                         </div>
                     </div>
@@ -563,7 +563,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                 <div class="row pl-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="1" id="defaultAbout">
+                            <input class="form-check-input" type="checkbox" value="Use Default Template." id="defaultAbout">
                             <label class="h4" for="defaultAbout"><u>Use Default Template.</u></label>
                         </div>
                     </div>
@@ -716,7 +716,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         </div>
                     </div><!--End Notes-->
                     <div class="col">
-                        <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitServices();">Submit page Services info.</button>
+                        <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitAbout();">Submit page Services info.</button>
                         <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
                     </div>
                 </div><!--end tab-About-->
@@ -725,7 +725,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                 <div class="row pl-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="1" id="defaultContact">
+                            <input class="form-check-input" type="checkbox" value="Use Default Template." id="defaultService">
                             <label class="h4" for="defaultContact"><u>Use Default Template.</u></label>
                         </div>
                     </div>
@@ -789,7 +789,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row gap-2 mb-2">
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="services1">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formservices1">
                                         <div class="d-flex flex-column mb-4">
                                             <label for="services1">3. Services #1</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -811,7 +811,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                     <textarea class="form-control" id="delailServices1" rows="6" placeholder="Detail Services #1"></textarea>
                                 </div>
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="services2">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formservices2">
                                         <div class="d-flex flex-column mb-4">
                                             <label for="services2">4. Services #2</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -835,7 +835,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row gap-2 mb-2">
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="services3">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formservices3">
                                         <div class="d-flex flex-column mb-4">
                                             <label for="services2">5. Services #3</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -857,7 +857,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                     <textarea class="form-control" id="delailServices3" rows="6" placeholder="Detail Services #1"></textarea>
                                 </div>
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="services4">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formservices4">
                                         <div class="d-flex flex-column mb-4">
                                             <label for="services4">6. Services #4</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -881,7 +881,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row gap-2 mb-2">
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="services5">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formservices5">
                                         <div class="d-flex flex-column mb-4">
                                             <label for="services5">7. Services #5</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -903,7 +903,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                     <textarea class="form-control" id="delailServices5" rows="6" placeholder="Detail Services #1"></textarea>
                                 </div>
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="services6">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formservices6">
                                         <div class="d-flex flex-column mb-4">
                                             <label for="services6">8. Services #6</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -927,7 +927,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row gap-2 mb-2">
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="services7">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formservices7">
                                         <div class="d-flex flex-column mb-4">
                                             <label for="services6">9. Services #7</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -949,7 +949,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                     <textarea class="form-control" id="delailServices7" rows="6" placeholder="Detail Services #1"></textarea>
                                 </div>
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="services8">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formservices8">
                                         <div class="d-flex flex-column mb-4">
                                             <label for="services8">10. Services #8</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -973,7 +973,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                             </div>
                             <div class="row gap-2 mb-2">
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="services9">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formservices9">
                                         <div class="d-flex flex-column mb-4">
                                             <label for="services9">11. Services #9</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -995,7 +995,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                     <textarea class="form-control" id="delailServices9" rows="6" placeholder="Detail Services #1"></textarea>
                                 </div>
                                 <div class="col border rounded p-3">
-                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formhomeTestmg3">
+                                    <form method="post" enctype="multipart/form-data" class="uploadForm" id="formservice10">
                                         <div class="d-flex flex-column mb-4">
                                             <label for="formhomeTestmg3">12. Services #10</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
@@ -1063,7 +1063,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                 
                 <div class="row pl-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="1" id="defaultContact">
+                            <input class="form-check-input" type="checkbox" value="Use Default Template." id="defaultContact">
                             <label class="h4" for="defaultContact"><u>Use Default Template.</u></label>
                         </div>
                     </div>
@@ -1235,7 +1235,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "home";
         payload = {
             "loginID": loginID,
-            "A1-00-Default" : $('#defaultHome').val(),       
+            "A0-00-Default" : $('#defaultHome').val(),       
             "A1-01-HeadBG" : $('#formhomebg1 .picname').val(),
             "A1-02-HeadHline" : $('#homeHeaderHeadline').val(),
             "A1-03-01-Feature" : $('#formhomeFeature1 .picname').val(),
@@ -1281,36 +1281,101 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "about";
         payload = {
             "loginID" : loginID,
-            "B1-01-HeadBG" :$('#fromaboutHeaderBG .picname').val(),
-            "B1-02-Tagline" :$('#inputTagline').val(),
+            "B0-00-Default" : $('#defaultAbout').val(),    
+            "B1-01-HeadBG" :$('#formaboutbg1 .picname').val(),
+            "B1-02-OurStoryMessage" :$('#aboutOurstoryMessage').val(),
+            "B1-03-OurStoryImg" :$('#formOurStory .picname').val(),
+            "B1-04-MessageBusinees" :$('#aboutMessagefromBusiness').val(),
+            "B1-05-DishImage" :$('#aboutMessagefromBusiness').val(),
 
-            "B2-03-HLSlogan" :$('#inputHighlightSlogan').val(),
-            "B2-04-Slogan" :$('#inputAboutSlogan').val(),
-            "B2-05-Headline" :$('#inputAboutHeadline').val(),
-            "B2-06-Detail" :$('#inputAboutDetail').val(),
 
-            "B3-07-HLDish" :$('#formHighlightDish .picname').val(),
-            "B3-08-HLTitle" :$('#textHighlightTitle').val(),
-            "B3-09-HLSubTitle" :$('#textHighlightSubtitle').val(),
-            "B3-10-HLDetail" :$('#textHighlightDetail').val(),
-
-            "B4-11-Slogan" :JSON.stringify(album_files)
+            "B1-01-HLSlogan" :$('#inputHighlightSlogan').val(),
+            "B1-02-Slogan" :$('#inputAboutSlogan').val(),
+            "B1-03-Headline" :$('#inputAboutHeadline').val(),
+            "B1-04-Detail" :$('#inputAboutDetail').val(),
+            "B2-05-FeaturedDish" :JSON.stringify(album_files),
+            "AboutNote" :$('#notesAbout').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
     }//submitAbout
 
+    
+    const submitServices = () => {
+        page = "contact";
+        payload = {
+            "loginID": loginID,
+            "C0-00-Default" : $('#defaultService').val(),
+            "C1-01-HeadBG" : $('#fromservicesHeaderBG .picname').val(), 
+            "C1-02-ServicesMessage" : $('#inputServicesMessage').val(), 
+
+            "C2-03-01-ServicesImg1" : $('#formservices1 .picname').val(), 
+            "C2-03-02-ServicesName1" : $('#nameServices1').val(), 
+            "C2-03-03-ServicesPrice1" : $('#priceServices1').val(), 
+            "C2-03-04-ServicesDetail1" : $('#delailServices1').val(), 
+
+            "C2-04-01-ServicesImg2" : $('#formservices2 .picname').val(), 
+            "C2-04-02-ServicesName2" : $('#nameServices2').val(), 
+            "C2-04-03-ServicesPrice2" : $('#priceServices2').val(), 
+            "C2-04-04-ServicesDetail2" : $('#delailServices2').val(), 
+
+            "C2-05-01-ServicesImg3" : $('#formservices3 .picname').val(), 
+            "C2-05-02-ServicesName3" : $('#nameServices3').val(), 
+            "C2-05-03-ServicesPrice3" : $('#priceServices3').val(), 
+            "C2-05-04-ServicesDetail3" : $('#delailServices3').val(), 
+
+            "C2-06-01-ServicesImg4" : $('#formservices4 .picname').val(), 
+            "C2-06-02-ServicesName4" : $('#nameServices4').val(), 
+            "C2-06-03-ServicesPrice4" : $('#priceServices4').val(), 
+            "C2-06-04-ServicesDetail4" : $('#delailServices4').val(), 
+
+            "C2-07-01-ServicesImg5" : $('#formservices5 .picname').val(), 
+            "C2-07-02-ServicesName5" : $('#nameServices5').val(), 
+            "C2-07-03-ServicesPrice5" : $('#priceServices5').val(), 
+            "C2-07-04-ServicesDetail5" : $('#delailServices5').val(), 
+
+            "C2-08-01-ServicesImg5" : $('#formservices6 .picname').val(), 
+            "C2-08-02-ServicesName5" : $('#nameServices6').val(), 
+            "C2-08-03-ServicesPrice5" : $('#priceServices6').val(), 
+            "C2-08-04-ServicesDetail5" : $('#delailServices6').val(), 
+
+            "C2-09-01-ServicesImg6" : $('#formservices7 .picname').val(), 
+            "C2-09-02-ServicesName6" : $('#nameServices7').val(), 
+            "C2-09-03-ServicesPrice6" : $('#priceServices7').val(), 
+            "C2-09-04-ServicesDetail6" : $('#delailServices7').val(), 
+
+            "C2-10-01-ServicesImg7" : $('#formservices8 .picname').val(), 
+            "C2-10-02-ServicesName7" : $('#nameServices8').val(), 
+            "C2-10-03-ServicesPrice7" : $('#priceServices8').val(), 
+            "C2-10-04-ServicesDetail7" : $('#delailServices8').val(), 
+
+            "C2-11-01-ServicesImg8" : $('#formservices9 .picname').val(), 
+            "C2-11-02-ServicesName8" : $('#nameServices9').val(), 
+            "C2-11-03-ServicesPrice8" : $('#priceServices9').val(), 
+            "C2-11-04-ServicesDetail8" : $('#delailServices9').val(), 
+
+            "C2-12-01-ServicesImg9" : $('#formservices10 .picname').val(), 
+            "C2-12-02-ServicesName9" : $('#nameServices10').val(), 
+            "C2-12-03-ServicesPrice9" : $('#priceServices10').val(), 
+            "C2-12-04-ServicesDetail9" : $('#delailServices10').val(), 
+
+            "C2-13-OurPackagesDetail" :$('#inputPackagesDetail').val(),
+            "ServicesNote" :$('#notesServices').val(),
+
+        }
+        console.log("Payload", payload);
+        sendEmail(); //in template.js
+    }//submitContact
+    
     const submitContact = () => {
         page = "contact";
         payload = {
             "loginID": loginID,
-            "C1-01-Headline" :$('#inputContactHeadline').val(),
-            "C1-02-SubHeadline" :$('#inputContactSub').val(),
-            "C1-03-FormHeadline" :$('#inputFormHeadline').val(),
-            "C1-04-FormSub" :$('#inputFormSub').val(),
-            "C1-05-BGForm" :$('#formContactBackgroundImage .picname').val(),
-            "C2-06-LocationHead" :$('#inputLocationHead').val(),
-            "C2-07-LocationSub" :$('#inputLocationSub').val(),
+            "D0-00-Default" : $('#defaultContact').val(),
+            "D1-01-HeadBG" : $('#fromcontactHeaderBG .picname').val(), 
+            "D1-02-ContactUsMessage" : $('#inputContactUsMessage').val(), 
+            "ContactNote" :$('#notesContact').val(),
+
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
