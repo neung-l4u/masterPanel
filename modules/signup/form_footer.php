@@ -13,9 +13,12 @@
                 </a>
             </div>
             <div style="font-size:0.8rem;">
+            <a href="https://report.localforyou.com/modules/policy/index.php" target="_blank" style="font-size:0.8rem;">Website Privacy Policy</a>
+            &nbsp; | &nbsp;
                 <a href="https://localforyou.com/terms-and-conditions-txt/" target="_blank" style="font-size:0.8rem;">Terms of Service</a>
                 &nbsp; | &nbsp;
                 <a href="https://localforyou.com/privacy-policy-txt/" target="_blank" style="font-size:0.8rem;">Privacy Policy</a>
+                
             </div>
         </div>
     </div>

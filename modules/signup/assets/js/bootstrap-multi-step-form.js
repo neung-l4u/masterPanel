@@ -102,6 +102,8 @@ testMode = true;
 ///////////
 
 $(document).ready(function () {
+
+
   stepProgress(step);
   $("#formVersion").html($("#signupFormVersion").val());
 
@@ -114,6 +116,7 @@ $(document).ready(function () {
   });
   $(".firstStepFormLoading").hide();
   $(".boxSocial").hide();
+  $("#dateproject").hide();
   $(".firstStepForm").show();
   ////
 });//ready
@@ -153,6 +156,7 @@ function checkAcceptAgreement() {
   const acceptAgreement = $("#acceptAgreement").is(":checked");
   const acceptTerms = $("#acceptTerms").is(":checked");
 
+
   if (acceptAgreement && acceptTerms){
     cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false);
   }else{
@@ -174,6 +178,17 @@ stepProgress = function (currentStep) {
       .css("width", percent + "%")
       .html("Step" + currentStep + "/" + allStep);
 };
+
+//Show Date Cilck Start Project Date to Othrt
+function setdateProjectOther(){
+  $("#dateproject").show();
+}
+
+function setdateProjectAs(){
+  $("#dateproject").hide();
+}
+
+
 
 // DISPLAY AND HIDE "NEXT", "BACK" AND "SUBMIT" BUTTONS
 hideButtons = function (step) {
@@ -212,6 +227,8 @@ function allowOther(){
     cuisinesOther2.prop( "disabled", true );
   }
 }
+
+
 
 // enable Others Discount input box when Others checkbox is checked
 function allowOtherDiscount(){
@@ -384,6 +401,28 @@ $('#formCountry').change(function() {
       routing_number_div.show();
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
+      getProductList("US");
+      // domainHelpAU.show();
+      // domainHelpUS.hide();
+      break;
+    case "TH":
+      inputBusinessNumber.attr('required', true);
+      labelBusinessNumber.html("TAX ID");
+      classBusinessNumber.show();
+      countryName.html("Thailand");
+      selectState.show();
+      currency.html("THB");
+      formData.formCurrency = "THB";
+      inputCurrency.val("THB");
+      lookup.hide();
+      zipLabel.html("Zip Code")
+      textGST.html("VAT");
+      fakeNumber.html("0895117447");
+      countryTextOnly.val("Thailand");
+      methodDebit.show();
+      routing_number_div.show();
+      bsbDirectDebit_div.hide();
+      terms_permission.html('I Give Permission to Manaexito T/as "Local Eats Co., Ltd" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("US");
       // domainHelpAU.show();
       // domainHelpUS.hide();
@@ -1197,6 +1236,9 @@ function setBusinessNumber(){
       case "CA":
         newNumber = "DBD:" + myArray[0];
         break;
+      case "TH":
+        newNumber = "ABN:" + myArray[0];
+        break;
       default:
         newNumber = "ABN:" + myArray[0];
         break;
@@ -1238,6 +1280,9 @@ const backupPayment = (param) => {
       break;
     case "CA":
       url = "https://buy.stripe.com/5kAdRi9rfgO71nG002";
+      break;
+    case "TH":
+      url = "https://buy.stripe.com/8wM5ogh1faEs0uc4go";
       break;
     default:
       url = "https://buy.stripe.com/bIY4kceT713SdgY7sx";

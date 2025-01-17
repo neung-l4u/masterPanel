@@ -1,10 +1,10 @@
 <?php
 global $db;
-include '../db/db.php';
-include "../db/initDB.php";
+//include '../db/db.php';
+//include "../db/initDB.php";
 
 $mode = $_POST['mode'];
-$shop_name = $_POST['shop_nameGGGG'];
+$shop_name = $_POST['shop_name'];
 $shop_type = $_POST['shop_type'];
 $template = $_POST['template'];
 $po_name = $_POST['po_name'];
@@ -18,15 +18,11 @@ if ($mode == "save"){
         ,$shop_type, $template, $po_name, $shop_name, $address
     );
 
-    $params['result'] = "Save to Database by Bas";
+    $params['result'] = "Save to Database";
 }else if ($mode == "update") {
-
+    $act = "update";//not use
 }else if ($mode == "read") {
-
+    $act = "read";//not use
 }
 
 
-
-//$params['name'] = 'L4U = '.$shop_name;
-
-echo json_encode($params);

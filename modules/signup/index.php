@@ -7,6 +7,7 @@ $testMode = !empty($_GET['testMode']) ? $_GET['testMode'] : false;
 include("assets/function/testMode.php");
 $invoiceMode = !empty($_GET['invoice']) ? $_GET['invoice'] : true;
 $currentDate = date('d/m/Y');
+$dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
 ?>
 <!doctype html>
 <html lang="en">
@@ -63,8 +64,8 @@ $currentDate = date('d/m/Y');
                         <button type="button" id="backupFormUK" class="btn btn-secondary backupButton" onclick="backupPayment('UK');" >UK</button>
                         <button type="button" id="backupFormUS" class="btn btn-secondary backupButton" onclick="backupPayment('US');" >US</button>
                         <button type="button" id="backupFormCA" class="btn btn-secondary backupButton" onclick="backupPayment('CA');" >CA</button>
+                        <button type="button" id="backupFormTH" class="btn btn-secondary backupButton" onclick="backupPayment('TH');" >TH</button>
                     </div>
-<!--                    <button type="button" id="saveForm" class="btn btn-secondary toolElements" disabled style="display: none;">Save Form Progress</button>-->
                 </div>
             </div>
             <button type="button" class="btnOpen" onclick="toggleLeftNav();" style="position: fixed; bottom: 50px; right: 30px;"><i class="fa-solid fa-note-sticky"></i></button>
@@ -267,6 +268,48 @@ $currentDate = date('d/m/Y');
                                             </small>
                                         </div>
                                     </div>
+                                    
+                                    
+                                    <div class="form-group row pt-2">
+                                        <label class="col-2 text-end control-label col-form-label">
+                                        Start Project Date 
+                                        </label>
+                                        <div class="row col pt-2">
+                                            <span class="col">
+                                                <label class="form-check-label mx-1" for="startProjectAs">
+                                                 <input type="radio" id="startProjectAs" class="form-check-input" name="startProject" value="As soon possible." onclick="setdateProjectAs();" checked> As soon possible.
+                                                </label>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-2 text-end control-label col-form-label">
+                                        </label>
+                                        <div class="row col-5">
+                                            <span class="col">
+                                                <label class="form-check-label mx-1" for="startProjectOther">
+                                                     <input type="radio" id="startProjectOther" class="form-check-input" name="startProject" value="" id="startProjectOther" onclick="setdateProjectOther();"> Other.
+                                                    <input type="date" id="dateproject" value="<?php echo $dateProject;?>">
+                                                </label>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row pt-2">
+                                        <label for="startprojectNote" class="col-2 text-end control-label col-form-label">
+                                            Start Project Note
+                                        </label>
+                                        <div class="col-8">
+                                            <textarea
+                                                    class="form-control w-100"
+                                                    id="startprojectNote"
+                                                    rows="3"
+                                                    name="startprojectNote"
+                                                    placeholder="Any other information About Start Project Date."
+                                            ></textarea> 
+                                        </div>
+                                    </div>
+
                                     <hr class="row mt-4">
                                     <div class="text-center pt-4">
                                         <h5 class="card-title font-weight-bold pb-2">Business</h5>
@@ -281,7 +324,7 @@ $currentDate = date('d/m/Y');
                                                     class="form-control"
                                                     name="00N2v00000IyVqB"
                                                     onchange="setRestaurantName(this.value);"
-                                                    placeholder="Chaba Thai Bistro"
+                                                    placeholder="Authentic Thai Bistro"
                                                     autocomplete="off"
                                                     value="<?php echo $test["shop"]; ?>"
                                             />
@@ -661,7 +704,7 @@ $currentDate = date('d/m/Y');
                                                     <input type="hidden" id="passwordBooking" class="form-control"
                                                            name="00N9s000000VUem" value="Localbooking" maxlength="100">
                                                     <small id="BookpasswordHelp" class="form-text text-muted">
-                                                        This is a temporary default password , you can change it later.
+                                                        This is a temporary default password, you can change it later.
                                                     </small>
                                                 </div>
                                             </div>
@@ -702,7 +745,7 @@ $currentDate = date('d/m/Y');
                                                     <input type="text" id="passwordShoppingCart" class="form-control"
                                                            name="passwordShoppingCart" value="Localeats" disabled>
                                                     <small id="passwordHelp" class="form-text text-muted">
-                                                        This is a temporary default password , you can change it later.
+                                                        This is a temporary default password, you can change it later.
                                                     </small>
                                                 </div>
                                             </div>
@@ -1157,6 +1200,35 @@ $currentDate = date('d/m/Y');
                                                    disabled onkeyup="copyToFirstOnlineOrderDiscount(this.value);" >
                                         </div>
                                     </div>
+                                    
+                                    <div class="form-group row pt-2">
+                                        <label class="col control-label col-form-label">
+                                            I acknowledge
+                                            and agree
+                                            that AI-powered marketing will be applied as part of the package
+                                            <b class="red">*</b>
+                                        </label>
+                                       
+                                    </div>
+                                    <div class="row col pt-2">
+                                            <span class="col-3 gx-1">
+                                                <input type="radio" id="yesAI" class="form-check-input"
+                                                       name="acknowledgeAI" value="yesAI" onclick="allowOtherDiscount();" checked>
+                                                <label class="form-check-label mx-1" for="yesAI">
+                                                    yes
+                                                </label>
+                                            </span>
+                                            <span class="col gx-1">
+                                                <input type="radio" id="noAI" class="form-check-input"
+                                                       name="acknowledgeAI" value="noAI" onclick="allowOtherDiscount();"
+                                                       >
+                                                <label class="form-check-label mx-1" for="yesAI">
+                                                    no
+                                                </label>
+                                            </span>
+                                        </div>
+
+
                                 </div>
                             </div>
                             <!-- Step 4-->
@@ -1652,7 +1724,7 @@ $currentDate = date('d/m/Y');
                                                     withdraw monthly payments as agreed from this Credit Card.
                                                 </li>
                                                 <li class="fw-bold">I understand that no contract period applies and I can
-                                                    cancel at anytime (3 Days Notice required).
+                                                    cancel at anytime (3-day Notice required).
                                                 </li>
                                             </ol>
                                             <div class="form-check">
@@ -1707,7 +1779,6 @@ $currentDate = date('d/m/Y');
                                                         <option value="Honey Tummaput">Honey Tummaput</option>
                                                         <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
                                                         <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
-                                                        <!--<option value="Steve Fazakerley">Steve Fazakerley</option>-->
                                                         <option value="Other">Other</option>
                                                     </select>
                                                 </div>
