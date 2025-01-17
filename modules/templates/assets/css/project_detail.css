@@ -105,9 +105,8 @@ input.invalid {
 
 /* Preview */
 .preview {
-    width: 50%;
+    width: 150px;
     max-height: 50%;
-    aspect-ratio: 1 / 1;
     object-fit: cover;
     border: 1px solid lightgrey;
     margin: 0 auto;
@@ -126,4 +125,24 @@ input.invalid {
 h6{
     font-weight: bold;
     font-size: 1.4rem;
+}
+
+input::placeholder, textarea::placeholder, .custom-file-label {
+    color: #dddddd !important;
+}
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    padding: 3px !important;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+}
+.codeHex{
+    color: #cccccc;
 }

@@ -39,12 +39,13 @@ if ($params ["action"] == "loadUpdate"){
     $params["inputAccessLink"] = !empty($_REQUEST['inputAccessLink']) ? $_REQUEST['inputAccessLink'] : "invalid Link";
     $params["inputUserName"] = !empty($_REQUEST['inputUserName']) ? $_REQUEST['inputUserName'] : "invalid Username";
     $params["inputPassword"] = !empty($_REQUEST['inputPassword']) ? $_REQUEST['inputPassword'] : "invalid Password";
+    $params["inputSharePW"] = !empty($_REQUEST['inputSharePW']) ? $_REQUEST['inputSharePW'] : "0";
     $params["inputNote"] = !empty($_REQUEST['inputNote']) ? $_REQUEST['inputNote'] : "";
     $params["by"] = $_SESSION['id'];
 
     if($params ["formAction"]=='add'){
         $insert = $db->query('INSERT INTO `passwordmanager`
-                                (`pwName`, `pwLink`, `pwUser`, `pwPass`, `pwType`, `pwTeam`, `pwLevel`, `pwNote`, `pwCreateBy`) 
+                                (`pwName`, `pwLink`, `pwUser`, `pwPass`, `pwType`, `pwTeam`, `pwLevel`, `pwNote`, `pwShare`, `pwCreateBy`) 
                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);'
             ,$params["inputpwName"],
             $params["inputAccessLink"],
@@ -54,6 +55,7 @@ if ($params ["action"] == "loadUpdate"){
             $params["inputTeam"],
             $params["inputLevel"],
             $params["inputNote"],
+            $params["inputSharePW"],
             $params["by"]
         );
 
@@ -62,7 +64,7 @@ if ($params ["action"] == "loadUpdate"){
 
     }elseif($params ["formAction"]=='edit'){
         $update = $db->query('UPDATE `passwordmanager` SET 
-                                `pwName`= ?, `pwLink` = ?, `pwUser` =?, `pwPass` = ?, `pwType` = ?, `pwTeam`= ?, `pwLevel`= ?, `pwNote`= ?, `pwUpdateBy`= ?, pwUpdateAt = NOW() 
+                                `pwName`= ?, `pwLink` = ?, `pwUser` =?, `pwPass` = ?, `pwType` = ?, `pwTeam`= ?, `pwLevel`= ?, `pwNote`= ?, `pwShare` = ?, `pwUpdateBy`= ?, pwUpdateAt = NOW() 
                                 WHERE id = ? ;'
             ,$params["inputpwName"],
             $params["inputAccessLink"],
@@ -72,6 +74,7 @@ if ($params ["action"] == "loadUpdate"){
             $params["inputTeam"],
             $params["inputLevel"],
             $params["inputNote"],
+            $params["inputSharePW"],
             $params["by"],
             $params ["editID"]
         );

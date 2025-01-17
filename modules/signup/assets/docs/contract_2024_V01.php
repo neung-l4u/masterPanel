@@ -53,6 +53,16 @@ switch ($_REQUEST["Country"]){
         $companyNumber = "35-2789835";
         $companyABN = "EIN";
         break;
+    case "TH":
+        $data["Country"] = "Thailand";
+        $contractTitle = "Marketing Service Agreement - Local Eats Co., Ltd";
+        $contractSubTitle = "in Thailand, by and between:";
+        $abn = "Company Registration Number";
+        $companyName = "Local Eats Co., Ltd";
+        $companyAddress = "216/61, Bond Street Road, Pak Kret, Nonthaburi 11120, Thailand";
+        $companyNumber = "0105551234567";
+        $companyABN = "Company Registration Number";
+        break;        
     default :
         $contractTitle = "Marketing Service Agreement - Local For You Pty Ltd";
         $contractSubTitle = "in Australia, by and between:";

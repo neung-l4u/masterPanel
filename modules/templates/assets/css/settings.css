@@ -1,0 +1,37 @@
+.action_icon{
+    height: 1.8em;
+}
+
+.status_icon{
+    height: 2.2em;
+}
+
+.col_id{
+    width: 5%;
+}
+
+.col_email{
+    width: 60%;
+}
+
+.col_channel{
+    width: 10%;
+}
+
+.col_status{
+    width: 10%;
+}
+
+.col_action{
+    width: 15%;
+    text-align: end;
+}
+
+::placeholder {
+    color: #cccccc !important;
+    opacity: 1; /* Firefox */
+}
+
+::-ms-input-placeholder { /* Edge 12-18 */
+    color: red;
+}

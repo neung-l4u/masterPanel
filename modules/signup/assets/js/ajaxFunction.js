@@ -103,6 +103,10 @@ function getProductList(country) {
                         currencySign = "£";
                         currencySignPlace.html("£");
                         break;
+                    case "thb":
+                        currencySign = "฿";
+                        currencySignPlace.html("฿");
+                        break;
                     default:
                         currencySign = "$";
                         currencySignPlace.html("$");
@@ -164,6 +168,10 @@ function getProductList(country) {
                     case "gbp":
                         currencySign = "£";
                         currencySignPlace.html("£");
+                        break;
+                    case "thb":
+                        currencySign = "฿";
+                        currencySignPlace.html("฿");
                         break;
                     default:
                         currencySign = "$";
@@ -232,6 +240,10 @@ function getProductList(country) {
                     case "gbp":
                         currencySign = "£";
                         currencySignPlace.html("£");
+                        break;
+                    case "thb":
+                        currencySign = "฿";
+                        currencySignPlace.html("฿");
                         break;
                     default:
                         currencySign = "$";
@@ -684,9 +696,9 @@ function requestToPay() {
         "ip_address": myIP.val(),
         "user_agent": agent.val(),
         "payment_method": paymentMethod,
-        "restaurant_name": restaurant_name.val(),
-        "customer_name": creditFullName.val().toUpperCase(),
-        "customer_email": customerEmail.toLowerCase(),
+        "restaurant_name": restaurant_name.val().trim(),
+        "customer_name": creditFullName.val().trim().toUpperCase(),
+        "customer_email": customerEmail.trim().toLowerCase(),
         "products": cloneCart,
         "tax_rate_id": settings.Payment_Detail.tax_rate_id,
         "coupon": {
@@ -707,6 +719,8 @@ function requestToPay() {
     console.log("stripePayload = ",stripePayload);
 
     modalRespondAction('open','success');
+
+    //เทสส่งอีเมล sendMailToL4UTeam();
 
     if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe
         const reqPay = $.ajax({
@@ -780,6 +794,7 @@ const sendMail = () => {
         "mode" : "confirm",
         "shopName" : $("#00N2v00000IyVqB").val(),
         "fullName" : formData.owner.firstName+" "+formData.owner.lastName,
+        "acceptAutoPilotAI" : $("#acceptAutoPilotAI").val(),
         "email" : $("#email").val()
     }
 
@@ -840,11 +855,15 @@ const sendMailToL4UTeam = () => {
         formShopName: $("#00N2v00000IyVqB").val(),
         formCountry: $("#formCountry option:selected").text(),
         formState: $("#state option:selected").text(),
-        formFullName: $("#first_name").val() + " " + $("#last_name").val(),
+        formFullName: $("#first_name").val().trim() + " " + $("#last_name").val().trim(),
         formEmail: $("#email").val(),
         formMobile: $("#mobile").val(),
         formBestTime: $("#00N9s000000Nl1G").val(),
         formNote: $("#additionComment").val(),
+        formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
+        formstartProjectOther: $("#dateproject").val(),
+        formstartprojectNote: $("#startprojectNote").val(),
+        acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         token: Math.random()
     };
 
@@ -897,45 +916,45 @@ const createLogs = (stripePayload) => {
     let tempData = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
-        FirstName: formData.owner.firstName,
-        LastName: formData.owner.lastName,
+        FirstName: formData.owner.firstName.trim(),
+        LastName: formData.owner.lastName.trim(),
         Mobile: $("#ownerMobile").val(),
-        Email: $("#email").val(),
+        Email: $("#email").val().trim().toLowerCase(),
         BestTimeToContact: $("#00N9s000000Nl1G").val(),
-        ShopName: $("#00N2v00000IyVqB").val(),
+        ShopName: $("#00N2v00000IyVqB").val().trim(),
         ABN: $("#00N9s000000QPWu").val(),
-        TradingName: $("#company").val(),
+        TradingName: $("#company").val().trim(),
         ShopNumber: $("#shopPhoneFormatted").val(),
-        Website: $("#webURL").val(),
+        Website: $("#webURL").val().trim(),
         Language: $(".supportLanguage:checked").val(),
         ShopNumber2: $("#physicalShopNumber").val(),
         Address1: $("#streetAddress1").val(),
         Address2: $("#streetAddress2").val(),
-        City: $("#city").val(),
+        City: $("#city").val().trim(),
         State: $("#state").val(),
-        PostelCode: $("#zip").val(),
+        PostelCode: $("#zip").val().trim(),
         CountryText: $(".countryName").text(),
         ShipNumber: $("#shipNumber").val(),
         ShippingAddress: $("#shipAddress1").val(),
         Cuisine: txtCuisine,
         OtherCuisine: $("#cuisineOther").val(),
         MainProduct: $("input[name='product']:checked").val(),
-        LoginEmail: $("#emailShoppingCart").val(),
+        LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
         Service: txtServices,
         Delivery: $("input[name='00N9s000000QPvX']:checked").val(),
         TableNumber: $("#tableNumber").val(),
         TableSize: $("#sizeOption").val(),
         Payment: txtPayment,
-        Facebook: $("#box_Facebook").val(),
-        TikTok: $("#box_TikTok").val(),
-        Instagram: $("#box_Instagram").val(),
-        Yelp: $("#box_Yelp").val(),
-        WebsiteURL: $("#websiteDomainName").val(),
+        Facebook: $("#box_Facebook").val().trim(),
+        TikTok: $("#box_TikTok").val().trim(),
+        Instagram: $("#box_Instagram").val().trim(),
+        Yelp: $("#box_Yelp").val().trim(),
+        WebsiteURL: $("#websiteDomainName").val().trim(),
         NewDomain: $("input:checkbox[name='00N2v00000IyVq2']:checked").val(),
         KeepWebsite: $("input:checkbox[name='00N2v00000IyVq1']:checked").val(),
-        OwnDomain: $("#newDomain").val(),
-        domainUser: domainUser.val(),
-        domainPass: domainPass.val(),
+        OwnDomain: $("#newDomain").val().trim(),
+        domainUser: domainUser.val().trim(),
+        domainPass: domainPass.val().trim(),
         domainComment: domainComment.val(),
         domainRegister: domainRegister.val(),
         Flyer: $("input:checkbox[name='00N9s000000QQaH']:checked").val(),
@@ -961,11 +980,12 @@ const createLogs = (stripePayload) => {
         ExpDate: $("#creditExpireDate").val(),
         CVV: $("#creditCCV").val(),
         CardName: $("#creditFullName").val(),
-        EmailDirectDebit: $("#emailDirectDebit").val(),
+        EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
         BSB: $("#bsbDirectDebit").val(),
-        EmailInvoice: $("#emailInvoiceOther").val(),
+        EmailInvoice: $("#emailInvoiceOther").val().trim().toLowerCase(),
         Routing_number: $("#routingDirectDebit").val(),
         AccountNumber: $("#acnDirectDebit").val(),
+        acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         AdditionNote: $("#additionComment").val(),
         ShopAgent: $("#byAgent").val(),
         ReferredByPerson: $("#byPerson").val(),
@@ -976,7 +996,11 @@ const createLogs = (stripePayload) => {
         formInitialProductOffering: $("#initialProductOffering").val(),
         formSalesAgent: $("#byAgent option:selected").text(),
         formContractPeriod: $("#ContractPeriod").val(),
-        formFirstTimePayment: $("#firstTimePayment").val()
+        formFirstTimePayment: $("#firstTimePayment").val(),
+        formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
+        formstartProjectOther: $("#dateproject").val(),
+        formstartprojectNote: $("#startprojectNote").val(),
+
     };
 
     const sendLog = $.ajax({

@@ -4,7 +4,7 @@ const settings = {
     card: "https://payments.localforyou.com/api/payment",
     invoice: "https://payments.localforyou.com/api/invoice",
   },
-  url_getProductList: "assets/API/B-Price-2412131250-updateNewProduct_fix.json",
+  url_getProductList: "assets/API/B-Price-2501150754-updatethai.json",
   url_getPrice: "assets/API/price.php",
   url_getStates: "assets/statics/states.json",
   url_authentication: "assets/API/authentication.php",
@@ -34,6 +34,10 @@ const settings = {
       "Massage": "4% + 30 cent"
     },
     US: {
+      "Restaurant": "2.9% + 30 cent",
+      "Massage": "4% + 30 cent"
+    },
+    TH: {
       "Restaurant": "2.9% + 30 cent",
       "Massage": "4% + 30 cent"
     }

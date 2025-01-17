@@ -1,0 +1,96 @@
+/* Style Button */
+.btn-primary {
+    justify-content: center;
+}
+
+.container {
+    position: relative;
+}
+
+/* Style the form */
+.container-box {
+    background-color: #ffffff;
+    padding: 40px;
+    min-width: 300px;
+}
+
+/* Style the input fields */
+input {
+    font-size: 17px;
+    font-family: Raleway;
+    border: 1px solid #aaaaaa;
+}
+
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+    background-color: #ffdddd;
+}
+
+/* Hide all steps by default: */
+
+.form-control {
+    margin: 0 0 20px 0;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #ced4da;
+}
+
+.form-group {
+    padding: 30px;
+}
+
+.input-group {
+    margin-bottom: 30px;
+}
+
+.col {
+    word-wrap: break-word;
+}
+
+/* Preview */
+.preview {
+    width: 150px;
+    max-height: 50%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 1px solid lightgrey;
+    margin: 0 auto;
+    background: white;
+}
+
+/* Button */
+.button {
+    border: 0px;
+    background-color: deepskyblue;
+    color: white;
+    padding: 5px 15px;
+    margin-left: 10px;
+}
+
+h6{
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+input::placeholder, textarea::placeholder, .custom-file-label {
+    color: #dddddd !important;
+}
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    padding: 3px !important;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+}
+.codeHex{
+    color: #cccccc;
+}
