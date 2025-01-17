@@ -15,7 +15,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 <link rel="stylesheet" href="../assets/css/template.css">
 <link rel="stylesheet" href="../assets/css/template.css">
 <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
-<link rel="stylesheet" href="../assets/css/res3.css">
+<link rel="stylesheet" href="../assets/css/mas1.css">
 <link rel="stylesheet" href="dist/css/newStyle.css">
 
 <script src="../controllers/res3.js"></script>
@@ -69,7 +69,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="bg1">1. Home Page Header BG Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="homeHeaderBG" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -579,10 +579,10 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                 <div class="col">
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formaboutbg1">
                                         <div class="d-flex flex-column">
-                                            <label for="bg1">1. About Page Header BG Image</label>
+                                            <label for="formaboutbg1">1. About Page Header BG Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="aboutHeaderBG" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -742,7 +742,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="fromservicesHeaderBG">
                                         <label for="fromservicesHeaderBG">1. Services Page Header BG Image</label>
                                         <div class="d-flex flex-column gap-2">
-                                            <img class="preview" id="aboutHeaderBG" src="../assets/img/default.png" alt="place">
+                                            <img class="preview" id="servicesHeaderBG" src="../assets/img/default.png" alt="place">
                                             <input class="picname" type="hidden" value="">
                                             <div class="d-flex flex-column gap-2">
                                                 <div class="d-flex flex-column gap-2">
@@ -794,7 +794,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="services1">3. Services #1</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="services1" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -816,7 +816,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="services2">4. Services #2</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="services2" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -840,7 +840,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="services2">5. Services #3</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="services3" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -862,7 +862,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="services4">6. Services #4</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="services4" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -886,7 +886,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="services5">7. Services #5</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="services5" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -908,7 +908,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="services6">8. Services #6</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="services6" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -932,7 +932,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="services6">9. Services #7</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="services7" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -954,7 +954,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="services8">10. Services #8</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="services8" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -978,7 +978,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="services9">11. Services #9</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="services9" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -1000,7 +1000,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                                             <label for="formhomeTestmg3">12. Services #10</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" id="homeBGimg" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="services10" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -1163,7 +1163,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 <script src="dist/assets/jquery-file-upload/js/jquery.iframe-transport.js"></script>
 <script src="dist/assets/jquery-file-upload/js/jquery.fileupload.js"></script>
 <script>
-    const max_uploads = 10;
+    const max_uploads = 20;
     const multiUploadPrefix = 'album';
     let album_files = [];
 

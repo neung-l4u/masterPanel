@@ -38,7 +38,7 @@ form#promotion1 div .preview {
     background: white;
 }
 
-form#formDish1 div div div .preview, form#formDish2 div div div .preview, form#formDish3 div div div .preview, form#formDish4 div div div .preview {
+form#formDish1 div div div .preview, form#formDish2 div div div .preview, form#formDish3 div div div .preview, form#formDish4 div div div .preview, img#uploaded_file_name {
     width: 50%;
     max-height: 50%;
     aspect-ratio: 4 / 4;
