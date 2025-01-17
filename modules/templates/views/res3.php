@@ -45,10 +45,10 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane show active p-3" id="res3Home" role="tabpanel" aria-labelledby="nav-home-tab">
 
-                    <div class="row pl-3">
+                    <div class="row pl-3 my-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="1" id="defaultHome">
-                            <label class="h4" for="defaultHome"><u>Use Default Template.</u></label>
+                            <label for="defaultHome"><u>Use Default Template.</u></label>
                         </div>
                     </div>
 
@@ -56,7 +56,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Form Section—1</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Form Section—1</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -117,7 +117,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—1</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Example Section—1</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -134,7 +134,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Form Section—2</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Form Section—2</h5>
                                 </div>
                             </div>
 
@@ -263,7 +263,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—2</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Example Section—2</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -280,7 +280,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Form Section—3</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Form Section—3</h5>
                                 </div>
                             </div>
                             <div class="row mb-3 border rounded p-3">
@@ -359,7 +359,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—3</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Example Section—3</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -376,7 +376,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Form Section—4</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Form Section—4</h5>
                                 </div>
                             </div>
 
@@ -451,7 +451,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—4</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Example Section—4</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -487,10 +487,10 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                 <!-- fixed Structure -->
                 <div class="tab-pane p-3" id="res3About" role="tabpanel" aria-labelledby="nav-about-tab">
 
-                    <div class="row pl-3">
+                    <div class="row pl-3 my-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="1" id="defaultAbout">
-                            <label class="h4" for="defaultAbout"><u>Use Default Template.</u></label>
+                            <label for="defaultAbout"><u>Use Default Template.</u></label>
                         </div>
                     </div>
 
@@ -498,7 +498,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Form Section—1</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Form Section—1</h5>
                                 </div>
                             </div>
 
@@ -535,7 +535,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—1</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Example Section—1</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -552,7 +552,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Form Section—2</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Form Section—2</h5>
                                 </div>
                             </div>
                             <div class="border rounded mb-3 p-5">
@@ -594,7 +594,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—2</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Example Section—2</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -611,7 +611,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Form Section—3</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Form Section—3</h5>
                                 </div>
                             </div>
                             <div class="mb-3 border rounded p-3">
@@ -646,7 +646,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—3</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Example Section—3</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -663,7 +663,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Form Section—4</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Form Section—4</h5>
                                 </div>
                             </div>
                             <div class="mb-3 border rounded p-3 multiUpload">
@@ -697,7 +697,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—4</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Example Section—4</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -732,10 +732,10 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                 <div class="tab-pane p-3" id="res3Contact" role="tabpanel" aria-labelledby="nav-contact-tab">
 
-                    <div class="row pl-3">
+                    <div class="row pl-3 my-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="1" id="defaultContact">
-                            <label class="h4" for="defaultContact"><u>Use Default Template.</u></label>
+                            <label for="defaultContact"><u>Use Default Template.</u></label>
                         </div>
                     </div>
 
@@ -743,7 +743,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Form Section—1</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Form Section—1</h5>
                                 </div>
                             </div>
                             <div class="mb-3 border rounded p-3">
@@ -803,7 +803,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—1</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Example Section—1</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -820,7 +820,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Form Section—2</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Form Section—2</h5>
                                 </div>
                             </div>
                             <div class="mb-3 border rounded p-3">
@@ -845,7 +845,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         <div class="col-6">
                             <div class="row">
                                 <div class="col">
-                                    <small class="text-info">Example Section—2</small>
+                                    <h5 class="text-decoration-underline text-black font-weight-bold">Example Section—2</h5>
                                 </div>
                             </div>
                             <div class="row">
