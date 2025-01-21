@@ -1323,8 +1323,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "home";
         payload = {
             "loginID": loginID,
+            "page" : "Home",
             "defaultTemplate": ($('#defaultHome').prop('checked')) ? "Yes" : "No",
-            "notes": $('#notesHome').val(),
             "A1-01-slide1": $('#formHomeSliderSet1 .picname').val(),
             "A1-02-slide2": $('#formHomeSliderSet2 .picname').val(),
             "A1-03-slide3": $('#formHomeSliderSet3 .picname').val(),
@@ -1365,6 +1365,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "A4-27-footBg": $('#formFooterBg .picname').val(),
             "A4-28-promoHead4": $('#homePromotionHeadline4').val(),
             "A4-29-promoMsg4": $('#homePromotionMessage4').val(),
+            "notes": $('#notesHome').val(),
 
             token: Math.random()
         }
@@ -1376,8 +1377,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "about";
         payload = {
             "loginID": loginID,
+            "page" : "About",
             "defaultTemplate": ($('#defaultAbout').prop('checked')) ? "Yes" : "No",
-            "notes": $('#notesAbout').val(),
             "B1-01-headImg": $('#formAboutHeaderImg .picname').val(),
             "B1-02-bodyTxt": $('#aboutUsBody').val(),
             "B1-03-promoHead1": $('#aboutPromotionHeadline1').val(),
@@ -1393,7 +1394,9 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "B2-09-reviewBg": $('#formAboutReviewsBg .picname').val(),
             
             "B3-10-dishimg": JSON.stringify(album_files),
-            
+            "notes": $('#notesAbout').val(),
+
+
             token: Math.random()
         }
         console.log("Payload", payload);
@@ -1404,14 +1407,15 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "contact";
         payload = {
             "loginID": loginID,
+            "page" : "Contact",
             "defaultTemplate": ($('#defaultContact').prop('checked')) ? "Yes" : "No",
-            "notes": $('#notesContact').val(),
             "C1-01-headImg": $('#formContactHeaderImg .picname').val(),
             "C1-02-head1": $('#contactHeadline1').val(),
             "C1-03-msg1": $('#contactMessage1').val(),
             "C1-04-bgImg1": $('#formContactBackgroundImg1 .picname').val(),
             "C1-05-promoHead1": $('#contactPromotionHeadline1').val(),
             "C1-06-promoMsg1": $('#contactPromotionMessage1').val(),
+            "notes": $('#notesContact').val(),
 
             token: Math.random()
         }

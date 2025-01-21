@@ -983,8 +983,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "home";
         payload = {
             "loginID": loginID,
+            "page" : "Home",
             "defaultTemplate": ($('#defaultHome').prop('checked')) ? "Yes" : "No",
-            "notes": $('#notesHome').val(),
             "A1-01-color" : $('#bg1Hex').val(),
             "A1-02-Slogan" : $('#inputSlogan').val(),
             "A1-03-Intro" : $('#inputIntroduction1').val(),
@@ -1009,6 +1009,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "A4-18-Footer2" : $('#formFooter2 .picname').val(),
             "A4-19-Footer3" : $('#formFooter3 .picname').val(),
             "A4-20-Footer4" : $('#formFooter4 .picname').val(),
+            "notes": $('#notesHome').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
@@ -1018,8 +1019,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "about";
         payload = {
             "loginID" : loginID,
+            "page" : "About",
             "defaultTemplate": ($('#defaultAbout').prop('checked')) ? "Yes" : "No",
-            "notes": $('#notesAbout').val(),
             "B1-01-HeadBG" :$('#fromaboutHeaderBG .picname').val(),
             "B1-02-Tagline" :$('#inputTagline').val(),
 
@@ -1033,7 +1034,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "B3-09-HLSubTitle" :$('#textHighlightSubtitle').val(),
             "B3-10-HLDetail" :$('#textHighlightDetail').val(),
 
-            "B4-11-Slogan" :JSON.stringify(album_files)
+            "B4-11-Slogan" :JSON.stringify(album_files),
+            "notes": $('#notesAbout').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js
@@ -1043,8 +1045,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "contact";
         payload = {
             "loginID": loginID,
+            "page" : "Contact",
             "defaultTemplate": ($('#defaultContact').prop('checked')) ? "Yes" : "No",
-            "notes": $('#notesContact').val(),
             "C1-01-Headline" :$('#inputContactHeadline').val(),
             "C1-02-SubHeadline" :$('#inputContactSub').val(),
             "C1-03-FormHeadline" :$('#inputFormHeadline').val(),
@@ -1052,6 +1054,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "C1-05-BGForm" :$('#formContactBackgroundImage .picname').val(),
             "C2-06-LocationHead" :$('#inputLocationHead').val(),
             "C2-07-LocationSub" :$('#inputLocationSub').val(),
+            "notes": $('#notesContact').val(),
         }
         console.log("Payload", payload);
         sendEmail(); //in template.js

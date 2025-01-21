@@ -1,5 +1,5 @@
 <?php
-global $db;
+global $db, $topData;
 require_once "../db/db.php";
 require_once "../db/initDB.php";
 include_once "../php/share_function.php";
@@ -47,12 +47,14 @@ $project = $db->query(
 
 $folderName = "../upload/". $id . "-" . sanitizeFolderName($project["projectName"])."/";
 
+
+
 $topData = '<div><b>- - Project - -</b></div>';
+$topData .= '<div><h2>Page: '.$page.'</h2></div>';
 $topData .= '<div><b>Project ID: </b>'. $id .'</div>';
 $topData .= '<div><b>Project Name: </b>'.$project['projectName'].'</div>';
 $topData .= '<div><b>Project Type: </b>'.$project['shopType'].' Template No. - 0'.$project['selectedTemplate'];
 $topData .= '<div><b>Project Owner: </b>'.$project['PO'].'</div>';
-$topData .= '<div><b>Page: </b>'.$page.'</div>';
 $topData .= '<div><b>Country: </b>'.$project['country'].'</div>';
 $topData .= '<br><br>';
 $topData .= '<div><b>Resources: </b>'.$folderName.'</div>';
@@ -67,10 +69,21 @@ $topData .= '<div><b>Color3: </b>'.$project['colorTheme3'].'</div>';
 $topData .= '<br>';
 $topData .= '<div><b>Email: </b>'.$project['email'].'</div>';
 $topData .= '<div><b>Phone: </b>'.$project['phone'].'</div>';
-$topData .= '<div><b>Facebook: </b>'.$project['facebookURL'].'</div>';
-$topData .= '<div><b>IG: </b>'.$project['instagramURL'].'</div>';
-$topData .= '<div><b>Youtube: </b>'.$project['youtubeURL'].'</div>';
-$topData .= '<div><b>Tiktok: </b>'.$project['tiktokURL'].'</div>';
+
+
+if ($project['facebookURL'] != ""){
+    $socialmedic .= '<div><b>Facebook: </b>'.$project['facebookURL'].'</div>';
+}
+if ($project['instagramURL'] != ""){
+    $socialmedic .= '<div><b>Instagram: </b>'.$project['instagramURL'].'</div>';
+}
+if ($project['youtubeURL'] != ""){
+    $socialmedic .= '<div><b>Youtube: </b>'.$project['youtubeURL'].'</div>';
+}
+if ($project['tiktokURL'] != ""){
+    $socialmedic .= '<div><b>Tiktok: </b>'.$project['tiktokURL'].'</div>';
+}
+
 $topData .= '<div><b>Localtion: </b>'.$project['address'].'</div>';
 $topData .= '<br>';
 $topData .= '<div><b>Opening Hours: </b>'.$project['openingHours'].'</div>';
@@ -81,9 +94,11 @@ if ($project['gloriaHave'] == 1){
     $topData .= '<div><b>System: Gloria Food </b></div>';
     $topData .= '<div><b>Order URL: </b>'.$project['orderURL'].'</div>';
     $topData .= '<div><b>Table URL: </b>'.$project['tableURL'].'</div>';
-}else {
+}
+
+if ($project['amelia'] == 1){
     $topData .= '<div><b>System: Amelia </b></div>';
-};
+}
 
 $topData .= '<br>- - - - - - - - - - - - - - - - - - - - - - - - - - -<br><br>';
 $topData .= '<div><b>- - Detail Domain - -</b></div>';    

@@ -1130,6 +1130,7 @@ $(function() {
         payload = {
             //TEMPLATE_R1_PAGE_HOME
             "loginID": loginID,
+            "page" : "Home",
             "defaultTemplate": ($('#defaultHome').prop('checked')) ? "Yes" : "No",
             "notes": $('#notesHome').val(),
             "A1-01-Slogan": $('#inputSlogan').val(),
@@ -1184,7 +1185,8 @@ $(function() {
         page = "about";
         payload = {
             //TEMPLATE_R1_PAGE_ABOUT
-            "loginID": loginID,  
+            "loginID": loginID,
+            "page" : "About",
             "defaultTemplate": ($('#defaultAbout').prop('checked')) ? "Yes" : "No",
             "notes": $('#notesAbout').val(),
             "B1-1-HeadBG": $('#formAboutbg1 .picname').val(),
@@ -1207,7 +1209,8 @@ $(function() {
         page = "contact";
         payload = {
             //TEMPLATE_R1_PAGE_CONTACT    
-            "loginID": loginID,    
+            "loginID": loginID,
+            "page" : "Contact",
             "defaultTemplate": ($('#defaultContact').prop('checked')) ? "Yes" : "No",
             "notes": $('#notesContact').val(),
             "C1-1-HeadBG": $('#formbgContactHeadBackground .picname').val(),

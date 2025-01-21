@@ -1235,6 +1235,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "home";
         payload = {
             "loginID": loginID,
+            "page" : "Home",
             "defaultTemplate": ($('#defaultHome').prop('checked')) ? "Yes" : "No",    
             "A1-01-HeadBG" : $('#formhomebg1 .picname').val(),
             "A1-02-HeadHline" : $('#homeHeaderHeadline').val(),
@@ -1281,6 +1282,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "about";
         payload = {
             "loginID" : loginID,
+            "page" : "About",
             "defaultTemplate": ($('#defaultAbout').prop('checked')) ? "Yes" : "No",  
             "B1-01-HeadBG" :$('#formaboutbg1 .picname').val(),
             "B1-02-OurStoryMessage" :$('#aboutOurstoryMessage').val(),
@@ -1298,6 +1300,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "Services";
         payload = {
             "loginID": loginID,
+            "page": "Services",
             "defaultTemplate": ($('#defaultService').prop('checked')) ? "Yes" : "No",
             "C1-01-HeadBG" : $('#fromservicesHeaderBG .picname').val(), 
             "C1-02-ServicesMessage" : $('#inputServicesMessage').val(), 
@@ -1364,6 +1367,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
         page = "contact";
         payload = {
             "loginID": loginID,
+            "page" : "Contact",
             "defaultTemplate": ($('#defaultContact').prop('checked')) ? "Yes" : "No",
             "D1-01-HeadBG" : $('#fromcontactHeaderBG .picname').val(), 
             "D1-02-ContactUsMessage" : $('#inputContactUsMessage').val(), 
