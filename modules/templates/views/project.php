@@ -23,7 +23,7 @@
                     <th class="col_type">Type</th>
                     <th class="col_template">Template</th>
                     <th class="col_name">Project Name</th>
-                    <th class="col_status">Status</th>
+<!--                    <th class="col_status">Status</th>-->
                     <th class="col_owner">Owner</th>
                     <th class="col_country">Country</th>
                     <th class="col_action"></th>
@@ -57,7 +57,7 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="shopType">Shop type</label>
-                            <select class="form-control" id="shopType">
+                            <select class="form-control" id="shopType" onchange="updateTemplates()">
                                 <option value="0" disabled>--- Select ---</option>
                             </select>
                         </div>

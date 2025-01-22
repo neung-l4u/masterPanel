@@ -60,6 +60,42 @@ function sanitizeFolderName($name): string
     return trim($sanitized);
 }
 
+/*
+----- function getRandomPic ------
+parameters
+    $startDate = start date in format yyyy-mm-dd
+    $businessDays = how many business day you want to add
+    $holidays = [] //array of holiday string
 
+  example 1:
+    $startDate = '2025-01-05';
+    $businessDaysToAdd = 7;
+    $holidays = ['2025-01-13'];
+
+    $result = addBusinessDays($startDate, $businessDaysToAdd, $holidays);
+    echo "Due date = next 7 business day is ".$result;
+    // Outputs: Due date = next 7 business day is 2025-01-21
+*/
+function addBusinessDays($startDate, $businessDays, $holidays = []): string
+{
+    $currentDate = new DateTime($startDate);
+
+    // Start counting from the next day
+    $currentDate->modify('+1 day');
+
+    $daysAdded = 0;
+
+    while ($daysAdded < $businessDays) {
+        $weekday = $currentDate->format('N'); // 1 (Monday) to 7 (Sunday)
+
+        // Check if the day is not a weekend and not a holiday
+        if ($weekday < 6 && !in_array($currentDate->format('Y-m-d'), $holidays)) {
+            $daysAdded++;
+        }
+
+        $currentDate->modify('+1 day'); // Move to the next day
+    }
+    return $currentDate->format('Y-m-d');
+}//addBusinessDays
 
 ?>
