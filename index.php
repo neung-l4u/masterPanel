@@ -88,7 +88,7 @@
     </section>
 </main>
 <footer class="credit">
-    Version 1.3.0 : 29/01/2024<br>
+    Version 1.2.2 : 24/01/2025<br>
     © 2023 Localforyou.com Online Ordering & Marketing FOR THAI RESTAURANTS
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
