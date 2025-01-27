@@ -1044,7 +1044,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                             </small>
                                                             <br>
                                                             <small id="domainHelpUS" class="form-text">
-                                                                <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
+                                                                <a href="https://www.secureserver.net/?plid=596413" target="_blank" tabindex="-1" class="text-decoration-none">
                                                                     Check Availability US, CA
                                                                 </a>
                                                             </small>
