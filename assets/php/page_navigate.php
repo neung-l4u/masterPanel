@@ -102,6 +102,13 @@ switch ($menuPage){
         $datatable["show"] = "false";
         $datatable["src"] = "";
         break;
+    case "websiteTemplate":
+        $showPage = "websiteTemplate.php";
+        $activeMenu["lv1"] = "websiteTemplate";
+        $activeMenu["lv2"] = "websiteTemplate";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataWebsiteTemplate.php";
+        break;
     case "myProfile":
         $showPage = "myProfile.php";
         $activeMenu["lv1"] = "myProfile";
