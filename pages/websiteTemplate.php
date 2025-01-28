@@ -1,5 +1,7 @@
 <?php
 global $db, $date;
+$userLevel = $_SESSION['level'];
+$teamID = $_SESSION['teamID'];
 ?>
 
 <!-- Content Header (Page header) -->
@@ -31,9 +33,11 @@ global $db, $date;
                 <div class="card">
                     <div class="card-header d-flex justify-content-end">
                         <!-- Button trigger modal -->
+                        <?php if($userLevel<=3){ ?>
                         <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
                             <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
                         </button>
+                        <?php } ?>
 
                         <!-- Modal -->
 
@@ -45,9 +49,10 @@ global $db, $date;
                                 <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:20%">#</th>
-                                        <th style="width:15%">Template</th>
-                                        <th style="width:15%">Link</th>
+                                        <th style="width:5%">#</th>
+                                        <th style="width:10%">Template</th>
+                                        <th style="width:15%">Link WebsiteTemple L4U</th>
+                                        <th style="width:20%">Link Example Website</th>
                                         <th style="width:10%"></th>
                                     </tr>
                                     </thead>
@@ -75,49 +80,33 @@ global $db, $date;
 
                         <div class="d-flex flex-column">
 
-                            <div class="row mb-5">
+                            <div class="row mb-3">
                                 <div class="col">
                                     <div class="form-group row">
-                                        <label for="templateWebsite" class="col-2 col-form-label">Tempate</label>
+                                        <label for="templateWebsite" class="col-2 col-form-label">Template</label>
                                         <div class="col">
                                             <select id="templateWebsite" class="custom-select">
-                                                <option value="#" selected>- - - Select - - -</option>
-                                                <option value="'Restaurant',1">Restaurant 1</option>
-                                                <option value="'Restaurant',2">Restaurant 2</option>
-                                                <option value="'Restaurant',3">Restaurant 3</option>
-                                                <option value="'Massage',1" >Massage 1</option>
+                                                <?php
+                                                $temp = $db->query('SELECT `id`, `template` FROM `WebsiteTemplate` ORDER BY `id`;')->fetchAll();
+                                                foreach ($temp as $row){
+                                                    ?>
+                                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['template']; ?></option>
+                                                <?php }//foreach ?>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group mb-3">
-                                <label for="link">Link</label>
-                                <input type="text" class="form-control" id="link" placeholder="Eg. https://www.example.com">
-                            </div>
-
-                            <div class="form-group mb-5">
-                                <label for="inputNickName">Nick Name</label>
-                                <input type="text" class="form-control" id="inputNickName" maxlength="50" placeholder="Enter Staff Nick Name">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="inputEmail">Email</label>
-                                <input type="email" class="form-control" id="inputEmail" placeholder="Enter Staff Email">
-                                <small id="emailHelp" class="form-text text-muted">e.g. mail@localforyou.com.</small>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="inputPhone">Phone</label>
-                                <input type="tel" class="form-control" id="inputPhone" placeholder="Enter Staff Phone">
-                                <small id="phoneHelp" class="form-text text-muted">e.g. 0891234567</small>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="inputPassword">Password <small id="passwordNotAllow" class="text-danger" style="display: none;">Not allow to edit encrypted data.</small></label>
-                                <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="Localeats#2023">
-                                <small id="passwordHelp" class="form-text text-muted">Default password is Localeats#2023.</small>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group row">
+                                        <label for="linkwebsite" class="col-2 col-form-label">Link Website</label>
+                                        <div class="col">
+                                            <input type="text" class="form-control" id="linkwebsite" placeholder="Eg. https://www.example.com">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <input type="hidden" name="editID" id="editID" value="">
@@ -138,45 +127,15 @@ global $db, $date;
 <!-- /.content -->
 
 <script>
-    const setStatus = (id, status) => {
-        const flagStatus = !status ? 1 : 0;
-        const reqAjax = $.ajax({
-            url: "assets/php/actionStaffs.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: {
-                act: "setStatus",
-                id: id,
-                status: flagStatus
-            },
-        });
-
-        reqAjax.done(function (res) {
-            reloadTable();
-        });
-
-        reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
-            console.log(status + ": " + error);
-        });
-    }// const
 
     const setEdit = (id) => {
-        const inputName = $("#inputName");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const passwordNotAllow = $("#passwordNotAllow");
-        const inputLevel = $("#inputLevel");
-        const statusOn = $("#statusOn");
-        const statusOff = $("#statusOff");
+        const templateWebsite = $("#templateWebsite");
+        const linkwebsite = $("#linkwebsite");
         const editID = $("#editID");
         const formAction = $("#formAction");
 
         const reqAjax = $.ajax({
-            url: "assets/php/actionStaffs.php",
+            url: "assets/php/actionWebsiteTemplate.php",
             method: "POST",
             async: false,
             cache: false,
@@ -184,24 +143,15 @@ global $db, $date;
             data: {
                 act: "loadUpdate",
                 id: id,
+                editID : editID.val(),
+
             },
         });
 
         reqAjax.done(function (res) {
             console.log(res);
-            inputName.val(res.name);
-            inputEmail.val(res.email);
-            inputPhone.val(res.phone);
-            inputPassword.val("Encrypted : " + res.password).attr('disabled', 'disabled');
-            passwordNotAllow.show();
-            inputLevel.val(res.level);
-            if(res.status === 1) {
-                statusOff.prop('checked', false);
-                statusOn.prop('checked', true);
-            }else{
-                statusOn.prop('checked', false);
-                statusOff.prop('checked', true);
-            }
+            templateWebsite.val(res.templateWebsite);
+            linkwebsite.val(res.linkwebsite);
             editID.val(res.id);
             formAction.val("edit");
             modalFormAction("open");
@@ -214,30 +164,21 @@ global $db, $date;
     }// const
 
     const formSave = () => {
-        const inputName = $("#inputName");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const inputLevel = $("#inputLevel");
+        const templateWebsite = $("#templateWebsite");
+        const linkwebsite = $("#linkwebsite");
         const editID = $("#editID");
         const formAction = $("#formAction");
 
-        let statusValue = $("input[name='inputStatus']:checked").val();
-
         const reqAjax = $.ajax({
-            url: "assets/php/actionStaffs.php",
+            url: "assets/php/actionWebsiteTemplate.php",
             method: "POST",
             async: false,
             cache: false,
             dataType: "json",
             data: {
                 act: "save",
-                inputName : inputName.val(),
-                inputEmail : inputEmail.val(),
-                inputPhone : inputPhone.val(),
-                inputPassword : inputPassword.val(),
-                inputLevel : inputLevel.val(),
-                inputStatus : statusValue,
+                templateWebsite : templateWebsite.val(),
+                linkwebsite : linkwebsite.val(),
                 editID : editID.val(),
                 formAction : formAction.val()
             },
@@ -258,29 +199,51 @@ global $db, $date;
         });
     }// const
 
-    
 
+    const setDel = (id) => {
+        const confirmDelete = confirm("Are you sure you want to delete this entry? This action cannot be undone.");
+        if (!confirmDelete) {
+            return;
+        }
+
+        const reqAjax = $.ajax({
+            url: "assets/php/actionWebsiteTemplate.php",
+            method: "POST",
+            async: false,
+            cache: false,
+            dataType: "json",
+            data: {
+                act: "setDelete",
+                id: id,
+            },
+        });
+
+
+
+        reqAjax.done(function (res) {
+            console.log(res);
+            if (res.success) {
+                reloadTable();
+            } else {
+                alert("Failed to delete the entry. Please try again.");
+            }
+        });
+
+        reqAjax.fail(function (xhr, status, error) {
+            console.log("ajax request fail!!");
+            console.log(status + ": " + error);
+        });
+    };// const
 
     const resetForm = () => {
-        const inputName = $("#inputName");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const inputLevel = $("#inputLevel");
-        const statusOn = $("#statusOn");
-        const statusOff = $("#statusOff");
+        const  templateWebsite = $("#templateWebsite");
+        const linkwebsite = $("#linkwebsite");
         const editID = $("#editID");
         const formAction = $("#formAction");
-        const passwordNotAllow = $("#passwordNotAllow");
 
-        inputName.val('');
-        inputEmail.val('');
-        inputPhone.val('');
-        inputPassword.val('Localeats#2023').removeAttr('disabled');
-        passwordNotAllow.hide();
-        inputLevel.val('3');
-        statusOn.prop('checked', true);
-        statusOff.prop('checked', false);
+
+        templateWebsite.val('1');
+        linkwebsite.val('');
         editID.val('');
         formAction.val('add');
     }// const
