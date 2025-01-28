@@ -3,6 +3,13 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/modules" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/mini/logs" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/signup/logs" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/templates/upload" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/templates/views/server/uploads" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/voucher/assets/AiFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/pages/examples" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
     </content>
     <orderEntry type="inheritedJdk" />
