@@ -1,7 +1,7 @@
 # SignUpForm Version 3.0
 Major change for update User Interface and Structure
 
-## [3.0.0] - 2025-01-XX
+## [3.0.0] - 2025-XX-XX
 ### Added
 - Add more icons.
 
