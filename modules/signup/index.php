@@ -277,7 +277,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         <div class="row col pt-2">
                                             <span class="col">
                                                 <label class="form-check-label mx-1" for="startProjectAs">
-                                                 <input type="radio" id="startProjectAs" class="form-check-input" name="startProject" value="As soon possible." onclick="setdateProjectAs();" checked> As soon possible.
+                                                 <input type="radio" id="startProjectAs" class="form-check-input" name="startProject" value="As soon as possible." onclick="setdateProjectAs();" checked> As soon as possible.
                                                 </label>
                                             </span>
                                         </div>
@@ -1222,7 +1222,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 <input type="radio" id="noAI" class="form-check-input"
                                                        name="acknowledgeAI" value="noAI" onclick="allowOtherDiscount();"
                                                        >
-                                                <label class="form-check-label mx-1" for="yesAI">
+                                                <label class="form-check-label mx-1" for="noAI">
                                                     no
                                                 </label>
                                             </span>
