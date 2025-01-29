@@ -239,6 +239,17 @@ const setDel = (id) => {
 }//setDel
 
 const saveForm = () => {
+    const pname = inputProjectName.val();
+    const countPname = pname.trim().length;
+
+    if (countPname < 1) {
+        $('label[for="projectName"]').css('color', 'red');
+        inputProjectName.css('border-color', 'red');
+        inputProjectName.css('box-shadow', '0 0 0 .2rem rgb(255 0 0 / 25%)');
+        inputProjectName.focus();
+        return;
+    }
+
     payload = {
         act: inputAction.val(),
         name: inputProjectName.val(),
@@ -279,9 +290,12 @@ const saveForm = () => {
 const frmReset = () => {
   $("#frmProject").trigger("reset");
     inputEditID.val('');
-    inputShopTypeID.val(0);
-    inputCountry.val(0);
+    inputShopTypeID.val(1);
+    inputCountry.val(1);
     inputProjectName.val('');
+    inputProjectName.css('border-color', '');
+    inputProjectName.css('box-shadow', '');
+    $('label[for="projectName"]').css('color', '');
     inputAction.val('add');
 }
 const modalShow = () => {
