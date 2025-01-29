@@ -147,7 +147,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                     <div class="mb-3">
                         <label for="bsOpen" class="form-label"><small>Opening hours</small></label>
 
-                            <form id="open-form" class="bg-light rounded shadow px-4 py-3">
+                            <form id="open-form" class="border rounded px-4 py-3">
                                 <div class="mb-3 px-3">
                                     <div class="days-list">
                                     
@@ -257,7 +257,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                         <input class="form-check-input chPickup" type="checkbox" id="chPickup" name="chPickup">
                         <label for="chPickup" class="form-label"><small>Delivery time does not match Opening hours.</small></label>
 
-                        <form id="deli-form" class="bg-light rounded shadow px-4 py-3 bsPickup">
+                        <form id="deli-form" class="border rounded px-4 py-3 bsPickup">
                             <div class="mb-3 px-3">
                                 <div class="days-list">
 
