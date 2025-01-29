@@ -48,7 +48,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
-                            <label for="projectName">Project name</label>
+                            <label for="projectName">Project name <span style="color:red;"> *</span></label>
                             <input type="text" class="form-control" id="projectName" placeholder="HoonHay" autocomplete="off">
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
-                            <label for="shopType">Shop type</label>
+                            <label for="shopType">Shop type<span style="color:red;"> *</span></label>
                             <select class="form-control" id="shopType" onchange="updateTemplates()">
                                 <option value="0" disabled>--- Select ---</option>
                             </select>

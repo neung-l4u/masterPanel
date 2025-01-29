@@ -119,13 +119,13 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                     <div class="row">
                         <div class="col">
                             <div class="input-group mb-3">
-                                <label for="bsEmail" class="input-group-text" id="basic-addon3">Email</label>
+                                <label for="bsEmail" class="input-group-text" id="basic-addon3">Email<span style="color:red; margin-left: 5px"> *</span></label>
                                 <input type="email" class="form-control" id="bsEmail" maxlength="100" placeholder="admin@localforyou.com" value="<?php echo $row['email']; ?>">
                             </div>
                         </div>
                         <div class="col">
                                 <div class="input-group mb-3">
-                                    <label for="bsPhone" class="input-group-text" id="basic-addon3">Phone</label>
+                                    <label for="bsPhone" class="input-group-text" id="basic-addon3">Phone<span style="color:red; margin-left: 5px"> *</span></label>
                                     <input type="tel" class="form-control" id="bsPhone" placeholder="+6112345678" maxlength="15" value="<?php echo $row['phone']; ?>">
                                 </div>
                         </div>
@@ -136,7 +136,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
             <div class="row">
                 <div class="col">
                     <div class="mb-3">
-                        <label for="bsAddress" class="form-label">Address</label>
+                        <label for="bsAddress" class="form-label">Address<span style="color:red; margin-left: 5px"> *</span></label>
                         <textarea class="form-control" id="bsAddress" rows="3" ><?php echo $row['address']; ?></textarea>
                     </div>
                 </div>
@@ -145,7 +145,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
             <div class="row">
                 <div class="col">
                     <div class="mb-3">
-                        <label for="bsOpen" class="form-label"><small>Opening hours </small></label>
+                        <label for="bsOpen" class="form-label"><small>Opening hours</small></label>
 
                             <form id="open-form" class="bg-light rounded shadow px-4 py-3">
                                 <div class="mb-3 px-3">
@@ -363,15 +363,21 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
         </div>
 
         <div class="col-5">
-            <div class="row">
+            <div class="mt-3 border rounded py-3 pl-3">
                 <div class="col py-3 px-3">
                     <label for="formLogo" class="form-label">Logo</label>
                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formLogo">
-                        <img class="preview" src="../assets/img/default.png" alt="place">
-                        <input class="picname" type="hidden" value="">
                         <div class="row">
-                            <input type="file" class="file-input col-8" />
-                            <button type="button" class="button col" onclick="handleFormSubmit(this)">Upload</button>
+                            <div class="d-flex flex-column col-6 gap-2">
+                                <img style="aspect-ratio: 1/1;" class="preview" src="../assets/img/default.png" alt="place">
+                                <input class="picname" type="hidden" value="">
+                            </div>
+                            <div class="d-flex flex-column col-6 gap-2 justify-content-end">
+                                <div class="d-flex flex-column gap-2">
+                                    <input type="file" class="file-input">
+                                    <button type="button" class="button" onclick="handleFormSubmit(this)">Upload</button>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
