@@ -50,26 +50,26 @@ $return['act'] = $param['act'];
     <?php
     }elseif ( $param['act'] == 'read' ) {
         $users = $db->query('SELECT * FROM `testJson`')->fetchAll();
-        $row = array();
+        $row = array(); ?>
+
+    <div class="card" style="width: 25rem;">
+        <ul class="list-group list-group-flush">
+
+        <?php
         foreach ($users as $user) {
             $valueObject = json_decode($user['data']);
             $valueArray = json_decode($user['data'], true); ?>
-            <div class="card mb-3" style="width: 18rem;">
-                <div class="card-body">
-                    <h5 class="card-title"><?php echo $valueObject->position; ?></h5>
-                    <p class="card-text">
-                        <?php
-                            echo $valueObject->firstname;
-                            echo ' ';
-                            echo $valueArray["lastname"];
-                        ?>
-                    </p>
-                </div>
-            </div>
-    <?php
-        }//foreach
-    }//else
-    ?>
+
+            <li class="list-group-item">
+                <?php
+                echo '<b>'.$valueObject->position.'</b> : ';
+                echo $valueObject->firstname . ' ' . $valueArray["lastname"];
+                ?>
+            </li>
+    <?php }//foreach ?>
+        </ul>
+    </div>
+    <?php }//else ?>
 </div>
 </body>
 </html>
