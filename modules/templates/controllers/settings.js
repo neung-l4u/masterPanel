@@ -188,6 +188,13 @@ const saveForm = () => {
 
 }//saveForm
 
+const frmReset = () => {
+    $("#frmSettings").trigger("reset");
+    inputEditID.val('');
+    inputRecipient.val('');
+    inputChannel.val(0);
+    inputAction.val('add');
+}
 const modalShow = () => {
     modalSettings.show();
 }
@@ -195,3 +202,12 @@ const modalClose = () => {
     modalSettings.hide();
     frmReset();
 }
+
+modalSettingsEl.on('hidden.bs.modal', function () {
+    //alert('Modal is about to be Close');
+    frmReset();
+})
+
+modalSettingsEl.on('show.bs.modal', function () {
+    //alert('Modal is about to be shown');
+});

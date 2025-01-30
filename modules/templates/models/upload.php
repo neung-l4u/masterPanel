@@ -29,7 +29,7 @@ if(isset($_FILES['file']['name'])){
     $imageFileType = strtolower($imageExt);
 
     /* Valid extensions */
-    $valid_extensions = array("jpg","jpeg","png","svg");
+    $valid_extensions = array("jpg","jpeg","png","svg","webp","heic");
 
     $response = 0;
     /* Check a file extension */

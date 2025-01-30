@@ -287,15 +287,17 @@ $teamIDHardcode = array(
                                         <label id="coinReasonLabel" for="activityID">Activity type</label>
                                         <select id="activityID" class="form-control">
                                             <?php
-                                            $allActivities = $db->query('SELECT * FROM `CoinActivities` WHERE `aId` NOT LIKE ? ORDER BY `aName`;', 10)->fetchAll();
+                                            //sprintf("%02d", $number);
+                                            $allActivities = $db->query('SELECT * FROM `CoinActivities` WHERE `aId` NOT IN (10,11,12,13) ORDER BY `aName`;')->fetchAll();
                                             $i = 1;
                                             foreach ($allActivities as $row) {
                                                 ?>
-                                                <option value="<?php echo $row['aID']; ?>"><?php echo $i . ' : ' . $row['aName']; ?></option>
+                                                <option value="<?php echo $row['aID']; ?>"><?php echo sprintf("%02d",$i) . ' : ' . $row['aName']; ?></option>
                                                 <?php
                                                 $i++;
                                             }//foreach
                                             ?>
+                                            <option value="11"><?php echo sprintf("%02d",$i) . ' : '; ?>Other</option>
                                         </select>
                                         <small id="CoinActivitiesHelp" class="form-text text-muted">If you need
                                             additional types, please tell Nueng.</small>

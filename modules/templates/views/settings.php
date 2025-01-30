@@ -4,7 +4,7 @@
     <div class="col">
         <div class="d-flex justify-content-between">
             <h4>Settings</h4>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalForm">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSettings">
                 Add new
             </button>
         </div>
@@ -35,11 +35,11 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="modalSettings" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
+<div class="modal fade" id="modalSettings" tabindex="-1" aria-labelledby="modalSettingsLabel" aria-hidden="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modalFormLabel">Add User</h1>
+                <h1 class="modal-title fs-5" id="modalSettingsLabel">Add User</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
