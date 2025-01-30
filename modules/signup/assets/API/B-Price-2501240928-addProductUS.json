@@ -3626,18 +3626,7 @@
                     "amount": 0,
                     "type": "pos",
                     "status": "show",
-                    "ext": "",
-                    "gst": false
-                  },
-                  {
-                    "name": "Yelpboost Pro",
-                    "product_id": "prod_Rdu8c3SJeACqjL",
-                    "price_id": "price_1QkcKUI6vmxJT6OmlG2vAYzz",
-                    "currency": "usd",
-                    "amount": 9900,
-                    "type": "yelp",
-                    "status": "show",
-                    "ext": "",
+                    "ext": "/Month",
                     "gst": false
                   },
                   {
@@ -4145,6 +4134,39 @@
               {
                 "period": "all",
                 "items": [
+                  {
+                    "name": "Yelpboost Pro - No Contract",
+                    "product_id": "prod_RgAQFe0UbRBr4l",
+                    "price_id": "price_1Qmo5GI6vmxJT6Om5NdojfjN",
+                    "currency": "usd",
+                    "amount": 14900,
+                    "type": "yelp",
+                    "status": "show",
+                    "ext": "",
+                    "gst": false
+                  },
+                  {
+                    "name": "Yelpboost Pro - 3 Months",
+                    "product_id": "prod_RgASjd5n49LJri",
+                    "price_id": "price_1Qmo7jI6vmxJT6OmRRfbwycc",
+                    "currency": "usd",
+                    "amount": 11900,
+                    "type": "yelp",
+                    "status": "show",
+                    "ext": "",
+                    "gst": false
+                  },
+                  {
+                    "name": "Yelpboost Pro - 12 Months",
+                    "product_id": "prod_RgAV1IUgn7wrnt",
+                    "price_id": "price_1QmoAOI6vmxJT6OmeVQ3tWcz",
+                    "currency": "usd",
+                    "amount": 9900,
+                    "type": "yelp",
+                    "status": "show",
+                    "ext": "",
+                    "gst": false
+                  },
                   {
                     "name": "Website Makeover/ Build template customize",
                     "product_id": "prod_R885jWmsabvVwU",
