@@ -9,6 +9,7 @@ const settings = {
   url_getStates: "assets/statics/states.json",
   url_authentication: "assets/API/authentication.php",
   url_logs: "assets/function/logs.php",
+  url_saveToDB: "assets/function/saveToDB.php",
   Payment_Module: {
     CreditCard: true,
     DirectDebit: true,
