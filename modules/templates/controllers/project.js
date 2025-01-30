@@ -101,11 +101,11 @@ const loadData = () => {
         let allData = res.data.length;
         let row = res.data;
         let i = 0;
-        const iconNext = '<img src="../assets/img/next.svg" alt="detail" title="Detail" class="action_icon">';
+        const iconNext = '<img src="../assets/img/next.svg" alt="detail" title="Basic Detail" class="action_icon">';
         const iconEdit = '<img src="../assets/img/edit.svg" alt="edit" title="Edit" class="action_icon">';
         const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
-        const iconTemplate = '<img src="../assets/img/template.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
-        const iconTemplateGray = '<img src="../assets/img/template_gray.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
+        const iconTemplate = '<img src="../assets/img/template.svg" alt="Designer" title="Designer" class="action_icon">';
+        const iconTemplateGray = '<img src="../assets/img/template_gray.svg" alt="Designer" title="Designer" class="action_icon">';
 
         if (allData>0) {
             row.forEach(item => {
