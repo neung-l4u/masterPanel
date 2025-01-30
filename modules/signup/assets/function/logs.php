@@ -3,7 +3,8 @@ date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
 $timestamp = date("Y-m-d H:i:s");
 $fileName = 'Logs#'.$date.'.txt';
-$filePath = '../../logs/'.$fileName;
+$folderPath = '../../logs/';
+$filePath = $folderPath . $fileName;
 
 $result["result"] = "";
 $result["msg"] = "";
@@ -17,6 +18,10 @@ $message .= json_encode($json, JSON_PRETTY_PRINT);
 $message .= "
 
 ----- END -----";
+
+if (!is_dir($folderPath)) {
+    mkdir($folderPath);
+}
 
 if (file_put_contents($filePath,  PHP_EOL . $message,FILE_APPEND) !== false) {
     $result["result"] = "success";
