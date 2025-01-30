@@ -6,8 +6,6 @@ include "../db/initDB.php";
 date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
 $timestamp = date("Y-m-d H:i:s");
-$fileName = 'Logs#'.$date.'.txt';
-$filePath = '../../logs/'.$fileName;
 
 $result["result"] = "";
 $result["msg"] = "";
@@ -23,6 +21,6 @@ $logsToDB =  $db->query('INSERT INTO `logssignup`(`data`, `countryCode`, `status
     , $dbJson, $country, $status, $timestamp, $_SESSION['id'] );
 
 $result["result"] = "success";
-$result["msg"] = "Save to DB success!";
+$result["msg"] = "Save to DB successfully!";
 
 echo json_encode($result);
