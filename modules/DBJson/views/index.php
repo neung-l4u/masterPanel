@@ -17,17 +17,10 @@ $return['act'] = $param['act'];
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta http-equiv="content-type" content="no-cache">
-    <meta http-equiv="refresh" content="no-cache">
-    <meta http-equiv="refresh" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Test DB Json</title>
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
-
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
 </head>
@@ -53,8 +46,10 @@ $return['act'] = $param['act'];
         $row = array(); ?>
 
     <div class="card" style="width: 25rem;">
+        <div class="card-header">
+            Team
+        </div>
         <ul class="list-group list-group-flush">
-
         <?php
         foreach ($users as $user) {
             $valueObject = json_decode($user['data']);
