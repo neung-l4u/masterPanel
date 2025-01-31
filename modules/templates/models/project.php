@@ -48,8 +48,9 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
     $return['data'] = $row;
 }else if ( $param['act'] == 'del' ){ //ลบ project ตามที่ส่ง projectID มา
     if (!empty($param['delID'])) {
-        $project = $db->query('DELETE FROM `tb_project` WHERE `projectID` = ?'
-            ,$param['delID']);
+        $project = $db->query('UPDATE tb_project SET `deleteAt` = NOW(), `deleteBy` = ?  WHERE `projectID` = ?'
+            , $myID, $param['delID']);
+
         $return['result'] = 'success';
     }
 }else if ( $param['act'] == 'setEdit' ){ //อ่าน project ตามที่ส่ง projectID แค่ 1 แถว มาว่ามีรายละเอียดอะไร
