@@ -71,5 +71,7 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
 
     $return['result'] = 'success';
     $return['msg'] = 'project created';
+}else if ( $param['act'] == 'checkPage'){
+    $project = $db->query('SELECT `id`, `projectID`, `home`, `about`, `services` , `contact` FROM `templatepagedetails` WHERE `projectID` = ?',$param['editID'])->fetchArray();
 }
 echo json_encode($return);  //ข้อความตอบกลับให้ ajax หลังทำงานตามเคสด้านบนเสร็จ
