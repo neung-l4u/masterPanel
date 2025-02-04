@@ -101,6 +101,8 @@ const loadData = () => {
         let allData = res.data.length;
         let row = res.data;
         let i = 0;
+        const iconSendMail = '<img src="../assets/img/sendMail.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
+        const iconSendMailGray = '<img src="../assets/img/sendMailGray.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
         const iconNext = '<img src="../assets/img/next.svg" alt="detail" title="Detail" class="action_icon">';
         const iconEdit = '<img src="../assets/img/edit.svg" alt="edit" title="Edit" class="action_icon">';
         const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
@@ -118,20 +120,21 @@ const loadData = () => {
 
                 const saveKey = `saveStatus_${id}`;
                 let isSaved = localStorage.getItem(saveKey); //อ่าน key ของ project ที่เลือกมา
-
+                let iconSendMailReady = (isSaved === "true") ? iconSendMail : iconSendMailGray;
+                let iconSendMailUse = (isSaved === "true") ? `<a href="#" onclick="checkPage();">${iconSendMailReady}</a>` : `${iconSendMailGray}`;
                 let iconTemplateUse = (isSaved === "true") ? iconTemplate : iconTemplateGray;
                 let linkTemplate = (isSaved === "true") ? `<a href="${templateUrl}">${iconTemplateUse}</a>` : `${iconTemplateUse}`;
 
                 $('#projectData > tbody:last-child').append(
                     `<tr>
                         <td>${++i}</td>
-                        <td>${shopType}</td>
-                        <td style="text-align: center;">${selectedTemplate}</td>
-                        <td>${name}</td>
-<!--                        <td>${icon}</td>-->
-                        <td>${owner}</td>
                         <td>${country}</td>
+                        <td style="text-align: center;">${shopType} ${selectedTemplate}</td>
+                        <td>${name}</td>
+                        <td>${icon}</td>
+                        <!--<td>${owner}</td>-->
                         <td class="d-flex justify-content-end gap-2">
+                            <a href="#" onclick="checkPage();">${iconSendMailUse}</a>
                             ${linkTemplate}
                             <a href="${url}">${iconNext}</a>
                             <a href="#" onclick="setEdit(${id});">${iconEdit}</a>
@@ -158,6 +161,8 @@ const loadData = () => {
     });
 
 }//load data
+
+
 
 const setEdit = (id) => {
     console.log('Edit ID = ',id);
@@ -332,5 +337,21 @@ function updateTemplates() {
         $.each(templates, function (value, label) {
             $("<option>", { value: value, text: label }).appendTo(selectedTemplate);
         });
+    }
+}
+
+function checkPage() {
+    alert('test test');
+
+    const sendNow = () => {
+        payload = {
+            //TEMPLATE_R1_PAGE_HOME
+            "project": loginID,
+
+
+
+        }
+        console.log("Payload", payload);
+
     }
 }
