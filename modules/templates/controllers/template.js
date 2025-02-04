@@ -144,16 +144,15 @@ function setAllPageStatus(){
     }
 }//setAllPageStatus
 
-function sendEmail() {
-    let answer = confirm("Are you sure you want to submit this page?");
+function saveToDB() {
+    let answer = confirm("Are you sure you want to save this page?");
 
     if (answer) {
         const callAjax = $.ajax({
             type: "POST",
             crossDomain: true,
-            dataType: 'jsonp',
-            headers: {  'Access-Control-Allow-Origin': 'https://www.localforyou.com' },
-            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
+            dataType: 'json',
+            url: "../models/ajaxTemplate.php",
             data: {
                 "loginID": loginID,
                 "projectID": projectID,
@@ -164,4 +163,4 @@ function sendEmail() {
         setPage(page);
         setAllPageStatus();
     }//if
-}//sendEmail
+}//saveToDB

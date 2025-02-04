@@ -639,7 +639,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row">
                         <div class="mt-3">
-                            <button type="button" class="btn btn-success" id="cmdHomeSubmit" onclick="submitHome();">Submit Home Page Info.</button>
+                            <button type="button" class="btn btn-success" id="cmdHomeSubmit" onclick="submitHome();">Save Home Page Info.</button>
                             <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
@@ -892,7 +892,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row">
                         <div class="mt-3">
-                            <button type="button" class="btn btn-success" id="cmdAboutSubmit" onclick="submitAbout();">Submit About Page Info.</button>
+                            <button type="button" class="btn btn-success" id="cmdAboutSubmit" onclick="submitAbout();">Save About Page Info.</button>
                             <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
 
                         </div>
@@ -1020,7 +1020,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row">
                         <div class="mt-3">
-                            <button type="button" class="btn btn-success" id="cmdContactSubmit" onclick="submitContact();">Submit Contact Page Info.</button>
+                            <button type="button" class="btn btn-success" id="cmdContactSubmit" onclick="submitContact();">Save Contact Page Info.</button>
                             <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
@@ -1178,7 +1178,7 @@ $(function() {
             "A4-25-04-Carousel4": $('#formCarousel4 .picname').val()
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitHome
 
     const submitAbout = () => {
@@ -1202,7 +1202,7 @@ $(function() {
             "B2-11-FeaturedDishImg" :JSON.stringify(album_files),
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitAbout
 
     const submitContact = () => {
@@ -1221,7 +1221,7 @@ $(function() {
             "C1-6-PromoSubHeadline" : $('#contactPromotionSubHeadline').val(),
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitContact
 
 </script>

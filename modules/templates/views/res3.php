@@ -477,7 +477,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row"><!-- Home BTN -->
                         <div class="col">
-                            <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Submit page Home info.</button>
+                            <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Save Home Page info.</button>
                             <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
@@ -723,7 +723,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row"><!-- About BTN -->
                         <div class="col">
-                            <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Submit page About info.</button>
+                            <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Save About Page info.</button>
                             <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
@@ -871,7 +871,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row"><!-- Contact BTN-->
                         <div class="col">
-                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Submit page Contact info.</button>
+                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Save Contact Page info.</button>
                             <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
                         </div>
                     </div>
@@ -1012,7 +1012,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "notes": $('#notesHome').val(),
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitHome
 
     const submitAbout = () => {
@@ -1038,7 +1038,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "notes": $('#notesAbout').val(),
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitAbout
 
     const submitContact = () => {
@@ -1057,6 +1057,6 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "notes": $('#notesContact').val(),
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitContact
 </script>
