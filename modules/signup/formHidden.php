@@ -1,5 +1,5 @@
 <div class="hiddenForm none">
-    <input type="hidden" id="signupFormVersion" name="00N9s000000VWbf" value="2.9.3 Thai" />
+    <input type="hidden" id="signupFormVersion" name="00N9s000000VWbf" value="2.9.4 UK+Promotion" />
     
     <input type="hidden" id="firstTimePayment" name="00N2u000000mNZ5">
     <input type="hidden" id="customerStripeEmail" class="Customer Stripe Email" name="00N9s000000PDD3" value="">
