@@ -19,16 +19,20 @@
 }
 
 .col_name{
-    width: 35%;
+    width: 25%;
+}
+
+.col_page{
+    width: 15%;
 }
 
 .col_status{
     width: 5%;
 }
 
-.col_owner{
+/* .col_owner{
     width: 10%;
-}
+} */
 
 .col_country{
     width: 10%;

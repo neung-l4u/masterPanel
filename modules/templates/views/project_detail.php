@@ -673,7 +673,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
         $url .= "m=".($row['shopTypeID']==1 ? "res" : "mas").$row['selectedTemplate'];
         $url .= "&id=".$id;
         ?>
-        <small id="infoText" class="text-warning">Please save before proceeding.</small>
+        <small id="infoText" class="text-warning"><?php echo $row['saveFlag']; ?></small>
         <button id="nextBtn" class="btn btn-secondary" onclick="nextForm('<?php echo $url; ?>')" disabled>Next</button>
     </div>
 </div>

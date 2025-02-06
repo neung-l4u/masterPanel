@@ -8,6 +8,8 @@ const inputAction = $("#frmAction");
 const inputLoginID = $("#loginID");
 const selectedTemplate = $("#selectedTemplate");
 
+$callback = 'callback';
+
 let payload = {};
 
 $(function() {
@@ -101,40 +103,79 @@ const loadData = () => {
         let allData = res.data.length;
         let row = res.data;
         let i = 0;
-        const iconSendMail = '<img src="../assets/img/sendMail.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
-        const iconSendMailGray = '<img src="../assets/img/sendMailGray.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
+        const iconSendMailDraft = '<img src="../assets/img/sendMailGray.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
+        const iconSendMailReady = '<img src="../assets/img/sendMail.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
+        const iconSendMailSend = '<img src="../assets/img/sendMailGreen.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
+        const iconPageGray = '<img src="../assets/img/page_gray.svg" alt="Unsubmit page" class="action_icon page_icon">';
+        const iconPageGreen = '<img src="../assets/img/page_green.svg" alt="Submit page" class="action_icon page_icon">';
         const iconNext = '<img src="../assets/img/next.svg" alt="detail" title="Detail" class="action_icon">';
         const iconEdit = '<img src="../assets/img/edit.svg" alt="edit" title="Edit" class="action_icon">';
         const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
         const iconTemplate = '<img src="../assets/img/template.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
         const iconTemplateGray = '<img src="../assets/img/template_gray.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
 
-        if (allData>0) {
+        if (allData > 0) {
             row.forEach(item => {
-                let {projectID : id, projectName : name, shopType, selectedTemplate, owner, countryName : country, statusID : status} = item;
-                let icon = (status===1) ? 'Draft' : 'Send';
+                let { saveFlag, projectID: id, projectName: name, shopType, selectedTemplate, owner, countryName: country, statusID: status, homePage, aboutPage, servicesPage, contactPage } = item;
+                let statusText = (status === 1) ? 'Draft' : 'Send';
                 let url = `main.php?m=detail&id=${id}`;
-                let temPage = (shopType==="Restaurant") ? 'res' : 'mas';
-                temPage = temPage+selectedTemplate;
+                let temPage = (shopType === "Restaurant") ? 'res' : 'mas';
+                temPage = temPage + selectedTemplate;
                 let templateUrl = `main.php?m=${temPage}&id=${id}`;
 
-                const saveKey = `saveStatus_${id}`;
-                let isSaved = localStorage.getItem(saveKey); //อ่าน key ของ project ที่เลือกมา
-                let iconSendMailReady = (isSaved === "true") ? iconSendMail : iconSendMailGray;
-                let iconSendMailUse = (isSaved === "true") ? `<a href="#" onclick="checkPage();">${iconSendMailReady}</a>` : `${iconSendMailGray}`;
-                let iconTemplateUse = (isSaved === "true") ? iconTemplate : iconTemplateGray;
-                let linkTemplate = (isSaved === "true") ? `<a href="${templateUrl}">${iconTemplateUse}</a>` : `${iconTemplateUse}`;
+                let iconTemplateUse = (saveFlag === 1) ? iconTemplate : iconTemplateGray;
+                let linkTemplate = (saveFlag === 1) ? `<a href="${templateUrl}">${iconTemplateUse}</a>` : `${iconTemplateUse}`;
+
+                let iconPage;
+                if (shopType === 'Restaurant') {
+                    let iconPageHome = (homePage === null) ? `<span title="Home">${iconPageGray}</span>` : `<span title="Home">${iconPageGreen}</span>`;
+                    let iconPageAbout = (aboutPage === null) ? `<span title="About">${iconPageGray}</span>` : `<span title="About">${iconPageGreen}</span>`;
+                    let iconPageContact = (contactPage === null) ? `<span title="Contact">${iconPageGray}</span>` : `<span title="Contact">${iconPageGreen}</span>`;
+                    iconPage = `${iconPageHome} ${iconPageAbout} ${iconPageContact}`;
+                } else if (shopType === 'Massage') {
+                    let iconPageHome = (homePage === null) ? `<span title="Home">${iconPageGray}</span>` : `<span title="Home">${iconPageGreen}</span>`;
+                    let iconPageAbout = (aboutPage === null) ? `<span title="About">${iconPageGray}</span>` : `<span title="About">${iconPageGreen}</span>`;
+                    let iconPageServices = (servicesPage === null) ? `<span title="Services">${iconPageGray}</span>` : `<span title="Services">${iconPageGreen}</span>`;
+                    let iconPageContact = (contactPage === null) ? `<span title="Contact">${iconPageGray}</span>` : `<span title="Contact">${iconPageGreen}</span>`;
+                    iconPage = `${iconPageHome} ${iconPageAbout} ${iconPageServices} ${iconPageContact}`;
+                }
+
+                let iconSendMail;
+                if (shopType === 'Restaurant') {
+                    if (homePage !== null && aboutPage !== null && contactPage !== null) 
+                        {
+                        iconSendMail = `<a href="#" onclick="sendProject(${id});">${iconSendMailReady}</a>`;
+                        if (status === 1) {
+                            statusText = "Ready";
+                        }
+                    } else {
+                        iconSendMail = `<a>${iconSendMailDraft}</a>`;
+                    }
+                } else if (shopType === 'Massage') {
+                    if (homePage !== null && aboutPage !== null && contactPage !== null && servicesPage !== null) {
+                        iconSendMail = `<a href="#" onclick="sendProject(${id});">${iconSendMailReady}</a>`;
+                        if (status === 1) {
+                            statusText = "Ready";
+                        }
+                    } else {
+                        iconSendMail = `<a>${iconSendMailDraft}</a>`;
+                    }
+                }
+
+                if (status === 2) {
+                    iconSendMail = `<a>${iconSendMailSend}</a>`;
+                }
 
                 $('#projectData > tbody:last-child').append(
                     `<tr>
                         <td>${++i}</td>
-                        <td>${country}</td>
-                        <td style="text-align: center;">${shopType} ${selectedTemplate}</td>
-                        <td>${name}</td>
-                        <td>${icon}</td>
+                        <td>${shopType} ${selectedTemplate}</td>
+                        <td>${country} : ${name}</td>
+                        <td>${iconPage}</td>
+                        <td>${statusText}</td>
                         <!--<td>${owner}</td>-->
                         <td class="d-flex justify-content-end gap-2">
-                            <a href="#" onclick="checkPage();">${iconSendMailUse}</a>
+                            ${iconSendMail}
                             ${linkTemplate}
                             <a href="${url}">${iconNext}</a>
                             <a href="#" onclick="setEdit(${id});">${iconEdit}</a>
@@ -340,18 +381,37 @@ function updateTemplates() {
     }
 }
 
-function checkPage() {
-    alert('test test');
+function sendProject(id) {
+    let answer = confirm("Are you sure you want to submit this project?");
 
-    const sendNow = () => {
-        payload = {
-            //TEMPLATE_R1_PAGE_HOME
-            "project": loginID,
+    if (answer) {
+        const callAjax = $.ajax({
+            type: "GET",
+            crossDomain: true,
+            dataType: 'jsonp',
+            jsonpCallback: "l4uCallback",
+            headers: {  'Access-Control-Allow-Origin': 'https://report.localforyou.com' },
+            url: "https://report.localforyou.com/modules/templates/assets/php/sendProject.php",
+            data: {
+                "loginID": inputLoginID.val(),
+                "projectID": id
+            }
+        });
+        // callAjax.done(function (res) {
+        //     console.log(res);
+            
+        //     if(res.result === 1){
+        //         alert('Reload page');
+        //         //location.reload();
+        //     }
+        // });
+        // callAjax.fail(function (xhr, status, error) {
+        //     console.log("ajax request fail!!");
+        //     console.log(status + ": " + error);
+        // });
+    }//if
+}//sendEmail
 
-
-
-        }
-        console.log("Payload", payload);
-
-    }
+function l4uCallback(response) {
+    console.log("Template Submittion Response:", response);
 }
