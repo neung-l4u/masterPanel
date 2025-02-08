@@ -13,6 +13,7 @@ $data['adminEmail'] = "admin@localforyou.com";
 $data['l4uStaff'] = "bas@localforyou.com";  //อีเมล์ผู้ดูแลระบบ
 $data['l4uSuperAdmin'] = "neung@localforyou.com";  //อีเมล์ผู้ดูแลระบบ
 
+
 /// default result value ///
 $result['result'] = 0;
 $result['msg'] = "";

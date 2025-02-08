@@ -101,11 +101,11 @@ const loadData = () => {
         let allData = res.data.length;
         let row = res.data;
         let i = 0;
-        const iconNext = '<img src="../assets/img/next.svg" alt="detail" title="Detail" class="action_icon">';
+        const iconNext = '<img src="../assets/img/next.svg" alt="detail" title="Basic Detail" class="action_icon">';
         const iconEdit = '<img src="../assets/img/edit.svg" alt="edit" title="Edit" class="action_icon">';
         const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
-        const iconTemplate = '<img src="../assets/img/template.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
-        const iconTemplateGray = '<img src="../assets/img/template_gray.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
+        const iconTemplate = '<img src="../assets/img/template.svg" alt="Designer" title="Designer" class="action_icon">';
+        const iconTemplateGray = '<img src="../assets/img/template_gray.svg" alt="Designer" title="Designer" class="action_icon">';
 
         if (allData>0) {
             row.forEach(item => {
@@ -239,6 +239,17 @@ const setDel = (id) => {
 }//setDel
 
 const saveForm = () => {
+    const pname = inputProjectName.val();
+    const countPname = pname.trim().length;
+
+    if (countPname < 1) {
+        $('label[for="projectName"]').css('color', 'red');
+        inputProjectName.css('border-color', 'red');
+        inputProjectName.css('box-shadow', '0 0 0 .2rem rgb(255 0 0 / 25%)');
+        inputProjectName.focus();
+        return;
+    }
+
     payload = {
         act: inputAction.val(),
         name: inputProjectName.val(),
@@ -279,9 +290,12 @@ const saveForm = () => {
 const frmReset = () => {
   $("#frmProject").trigger("reset");
     inputEditID.val('');
-    inputShopTypeID.val(0);
-    inputCountry.val(0);
+    inputShopTypeID.val(1);
+    inputCountry.val(1);
     inputProjectName.val('');
+    inputProjectName.css('border-color', '');
+    inputProjectName.css('box-shadow', '');
+    $('label[for="projectName"]').css('color', '');
     inputAction.val('add');
 }
 const modalShow = () => {

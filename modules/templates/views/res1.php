@@ -47,7 +47,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                     <div class="row pl-3 my-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="1" id="defaultHome">
-                            <label><u>Use Default Template.</u></label>
+                            <label for="defaultHome"><u>Use Default Template.</u></label>
                         </div>
                     </div>
 
@@ -904,7 +904,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                     <div class="row pl-3 my-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="1" id="defaultContact">
-                            <label><u>Use Default Template.</u></label>
+                            <label for="defaultContact"><u>Use Default Template.</u></label>
                         </div>
                     </div>
 

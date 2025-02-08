@@ -602,7 +602,7 @@ function requestToPay() {
     }
 
     let addOnDiscountCode = {};
-    let materialDiscountCode = (formCountry==="US" || formCountry==="CA") ? "" : "suhgy7Fb";
+    let materialDiscountCode = (formCountry==="US" || formCountry==="CA" || formCountry==="TH") ? "" : "suhgy7Fb";
     let freewebDiscountCode = "Freeweb";
 
     let applyAddonCode = "";
@@ -710,6 +710,7 @@ function requestToPay() {
         "routing_number": routingDirectDebit,
         "account_number": account_number
     };
+    saveToDB(stripePayload);
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -887,6 +888,147 @@ const sendMailToL4UTeam = () => {
         return false;
     });
 }//sendMail
+
+const saveToDB = (stripePayload) => {
+    let cuisineSelected = [];
+
+    $("input:checkbox[name='00N2v00000IyVpy']:checked").each(function(){
+        cuisineSelected.push($(this).val());
+    });
+    let txtCuisine = cuisineSelected.join();
+
+    let yourArray = [];
+    $("input:checkbox[name='00N9s000000QPvX']:checked").each(function(){
+        yourArray.push($(this).val());
+    });
+    let txtServices = yourArray.join();
+
+    yourArray = [];
+    $("input:checkbox[name='00N2v00000IyVq8']:checked").each(function(){
+        yourArray.push($(this).val());
+    });
+    let txtPayment = yourArray.join();
+
+    let domainUser = $("#ref_Domain_U");
+    let domainPass = $("#ref_Domain_P");
+    let domainComment = $("#ref_Domain_Comments");
+    let domainRegister = $("#ref_Domain_Name_Registered");
+    let Country = formData.formCountry;
+
+    let payload = {
+        Country: formData.formCountry,
+        CustomerType: formData.formType,
+        FirstName: formData.owner.firstName.trim(),
+        LastName: formData.owner.lastName.trim(),
+        Mobile: $("#ownerMobile").val(),
+        Email: $("#email").val().trim().toLowerCase(),
+        BestTimeToContact: $("#00N9s000000Nl1G").val(),
+        ShopName: $("#00N2v00000IyVqB").val().trim(),
+        ABN: $("#00N9s000000QPWu").val(),
+        TradingName: $("#company").val().trim(),
+        ShopNumber: $("#shopPhoneFormatted").val(),
+        Website: $("#webURL").val().trim(),
+        Language: $(".supportLanguage:checked").val(),
+        ShopNumber2: $("#physicalShopNumber").val(),
+        Address1: $("#streetAddress1").val(),
+        Address2: $("#streetAddress2").val(),
+        City: $("#city").val().trim(),
+        State: $("#state").val(),
+        PostelCode: $("#zip").val().trim(),
+        CountryText: $(".countryName").text(),
+        ShipNumber: $("#shipNumber").val(),
+        ShippingAddress: $("#shipAddress1").val(),
+        Cuisine: txtCuisine,
+        OtherCuisine: $("#cuisineOther").val(),
+        MainProduct: $("input[name='product']:checked").val(),
+        LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
+        Service: txtServices,
+        Delivery: $("input[name='00N9s000000QPvX']:checked").val(),
+        TableNumber: $("#tableNumber").val(),
+        TableSize: $("#sizeOption").val(),
+        Payment: txtPayment,
+        Facebook: $("#box_Facebook").val().trim(),
+        TikTok: $("#box_TikTok").val().trim(),
+        Instagram: $("#box_Instagram").val().trim(),
+        Yelp: $("#box_Yelp").val().trim(),
+        WebsiteURL: $("#websiteDomainName").val().trim(),
+        NewDomain: $("input:checkbox[name='00N2v00000IyVq2']:checked").val(),
+        KeepWebsite: $("input:checkbox[name='00N2v00000IyVq1']:checked").val(),
+        OwnDomain: $("#newDomain").val().trim(),
+        domainUser: domainUser.val().trim(),
+        domainPass: domainPass.val().trim(),
+        domainComment: domainComment.val(),
+        domainRegister: domainRegister.val(),
+        Flyer: $("input:checkbox[name='00N9s000000QQaH']:checked").val(),
+        FridgeMagnet: $("input:checkbox[name='00N9s000000QQav']:checked").val(),
+        AddOn1: $("input:checkbox[name='00N9s000000QgTt']:checked").val(),
+        AddOn2: $("input:checkbox[name='00N9s000000QQcI']:checked").val(),
+        AddOn3: $("input:checkbox[name='00N9s000000QgU3']:checked").val(),
+        AddOn4: $("input:checkbox[name='00N9s000000QgU8']:checked").val(),
+        AddOn5: $("input:checkbox[name='00N9s000000QQbP']:checked").val(),
+        AddOn6: $("input:checkbox[name='00N9s000000Qn1j']:checked").val(),
+        AddOn7: $("input:checkbox[name='00N9s000000Qn1t']:checked").val(),
+        OrderDiscount: $("input[name='00N2v00000IyVpz']:checked").val(),
+        OtherDiscount: $("#discountOther").val(),
+        mainDiscountCode: $("#couponCode").val(),
+        addonDiscountCode: $("#couponCode2").val(),
+        usageMainDiscountCode: JSON.stringify($("#usageMainDiscountCode").val()),
+        usageAddonDiscountCode: JSON.stringify($("#usageAddonDiscountCode").val()),
+        SubTotal: $("#subTotal").val(),
+        GST: $("#GST").val(),
+        Total: $("#grandTotal").val(),
+        PaymentMethod: $("#paymentMethod").val(),
+        CardNumber: $("#creditCardNumber").val(),
+        ExpDate: $("#creditExpireDate").val(),
+        CVV: $("#creditCCV").val(),
+        CardName: $("#creditFullName").val(),
+        EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
+        BSB: $("#bsbDirectDebit").val(),
+        EmailInvoice: $("#emailInvoiceOther").val().trim().toLowerCase(),
+        Routing_number: $("#routingDirectDebit").val(),
+        AccountNumber: $("#acnDirectDebit").val(),
+        acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
+        AdditionNote: $("#additionComment").val(),
+        ShopAgent: $("#byAgent").val(),
+        ReferredByPerson: $("#byPerson").val(),
+        formRefPartner: $("#byPartner").val(),
+        ReferredByShop: $("#byRestaurant").val(),
+        CustomerStripeID: $("#customerStripeID").val(),
+        formProduct: $("#currentlyPackage option:selected").text(),
+        formInitialProductOffering: $("#initialProductOffering").val(),
+        formSalesAgent: $("#byAgent option:selected").text(),
+        formContractPeriod: $("#ContractPeriod").val(),
+        formFirstTimePayment: $("#firstTimePayment").val(),
+        formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
+        formstartProjectOther: $("#dateproject").val(),
+        formstartprojectNote: $("#startprojectNote").val(),
+
+    };
+
+    const saveToDB = $.ajax({
+        url: settings.url_saveToDB,
+        method: 'POST',
+        async: false,
+        cache: false,
+        dataType: 'json',
+        data: {
+            "payload" : payload,
+            "country" : Country
+        }
+    });
+
+    saveToDB.done(function(res) {
+        console.log(res);
+        return true;
+    });
+
+    saveToDB.fail(function(xhr, status, error) {
+        console.log("Save to DB fail!!");
+        console.log(status + ': ' + error);
+        return false;
+    });
+}
+
 
 const createLogs = (stripePayload) => {
     let cuisineSelected = [];

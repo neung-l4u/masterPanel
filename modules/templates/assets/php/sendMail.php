@@ -119,7 +119,7 @@ $topData .= '<div><b>Hosting Provider: </b>'.$project['HostingProvider'].'</div>
 $topData .= '<div><b>User: </b>'.$project['hostingUser'].'</div>';
 $topData .= '<div><b>Password: </b>'.$project['hostingPass'].'</div>';
 
-$message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'.json_encode($json, JSON_PRETTY_PRINT).'</pre></body></html>';
+$message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'. stripslashes(json_encode($json, JSON_PRETTY_PRINT)) .'</pre></body></html>';
 
 $loginPerson = $db->query('SELECT * FROM staffs WHERE sID=?;',$loginID)->fetchArray();
 if($loginPerson['sEmail'] == $project['email']){
@@ -182,10 +182,10 @@ $mailHeaders = [
 ];
 
     $result['email'] = $param['To'];
-    $result['to'] = $param['To'];
-    $result['cc'] = $param['Cc'];
-    $result['bcc'] = $param['Bcc'];
-    $result['param'] = $param;
+    //$result['to'] = $param['To'];
+    //$result['cc'] = $param['Cc'];
+    //$result['bcc'] = $param['Bcc'];
+    //$result['param'] = $param;
 
 //    if($sendMail){
         if (mail($system["emailAlertTo"], $system["emailSubject"], $system["emailBody"], $mailHeaders)) {

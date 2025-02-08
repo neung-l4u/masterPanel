@@ -1634,7 +1634,7 @@ function trimSpace(param, place) {
 function checkDomain(param) {
   const domainName = param;
   const baseUrlAU = 'https://localforyoudomains.com/domain-names/search/?domain=';
-  const baseUrlUS = 'https://localforyoudomains.com/domain-names/search/?domain=';
+  const baseUrlUS = 'https://www.secureserver.net/products/domain-registration/find?plid=596413&domainToCheck=';
   //const baseUrlUS = 'https://www.godaddy.com/th-th/domainsearch/find?domainToCheck=';
 
   $('#domainHelpAU').find('a').attr('href', baseUrlAU + domainName);
