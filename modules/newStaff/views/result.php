@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $company_email = strtolower($nickname_en) . "@localforyou.com";
     $password = "Localeats#" . date("Y");
+}
     ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -34,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Welcome to Local For You! Your employee account has been successfully created. Below, you’ll find the
             details
             you need to access our systems:</p>
-
     </div>
     <br><br>
     <div class='container mt-4'>
@@ -125,7 +125,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     createTable("Coin System", [
         ["URL", "https://report.localforyou.com/"]
     ]);
-}
 ?>
 </div>
     <br><br>
