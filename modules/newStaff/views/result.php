@@ -23,10 +23,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Employee Account Result</title>
-        <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
+<!--        <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">-->
+        <style>
+            table, td, th {
+                border: 1px solid;
+            }
+
+            table {
+                width: 45%;
+                border-collapse: collapse;
+                margin-bottom: 2rem;
+            }
+
+            div, td, th{
+                max-width:100%;
+                white-space:nowrap;
+            }
+
+            th{
+                text-align: left;
+                width:50px;
+                background-color: #0361D1;
+                color: white;
+                padding: 5px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            caption{
+                text-align: left;
+                margin-bottom: 5px;
+            }
+
+            th,td{
+                padding-left: 10px;
+            }
+        </style>
     </head>
     <body>
-    <div class='container mt-4'>
+    <div>
         <h3>Employee Account Creation Details</h3>
         <h6>Subject:</h6>
         <p>Local For You | Employee Account Creation Details For <?php echo $nickname_en; ?></p>
@@ -37,9 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             you need to access our systems:</p>
     </div>
     <br><br>
-    <div class='container mt-4'>
+    <div>
     <h4>Employee Details</h4>
-    <table class='table table-striped table-bordered' style='width: 1000px; margin-left: auto; margin-right: auto;'>
+    <table>
         <tr>
             <td>
                 <b>Employee ID: </b>
@@ -61,8 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </td>
         </tr>
     </table> <br>
-    <table class='table table-striped table-bordered mb-5'
-           style='width: 1000px; margin-left: auto; margin-right: auto;'>
+    <table>
         <tr>
             <th>Name TH</th>
             <td><?php echo $nickname_th . ' ' . $fullName_th; ?></td>
@@ -128,19 +162,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 </div>
     <br><br>
-    <script src="../assets/js/jquery-3.7.1.min.js"></script>
-    <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
+    <!--<script src="../assets/js/jquery-3.7.1.min.js"></script>
+    <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>-->
 </body>
 </html>
 <?php
 function createTable($caption, $rows): void
 {
-    echo "<div style='width: 1000px; margin-left: auto; margin-right: auto;'>";
-    echo "<h5 class='mt-5'>$caption</h5>";
-    echo "<table class='table table-striped table-bordered'";
+    echo "<div>";
+
+    echo "<table>";
+    echo "<caption>$caption</caption>";
     foreach ($rows as $row) {
         echo "<tr>";
-        echo "<th style='width: 200px;'>{$row[0]}</th>";
+        echo "<th>{$row[0]}</th>";
         echo "<td>{$row[1]}</td>";
         echo "</tr>";
     }
