@@ -29,7 +29,7 @@ $data['domainProvidersID'] = !empty($_POST['domainProvidersID']) ? $_POST['domai
 $data['domainUser'] = !empty($_POST['domainUser']) ? trim($_POST['domainUser']) : null;
 $data['domainPass'] = !empty($_POST['domainPass']) ? trim($_POST['domainPass']) : null;
 $data['hostingHave'] = ($_POST['hostingHave']=='true') ?  1 : 0;
-$data['hostingProvidersID'] = ($_POST['hostingProvidersID']=='true') ?  1 : 0;
+$data['hostingProvidersID'] = !empty($_POST['hostingProvidersID']) ? $_POST['hostingProvidersID'] : null;
 $data['hostingUser'] = !empty($_POST['hostingUser']) ? trim($_POST['hostingUser']) : null;
 $data['hostingPass'] = !empty($_POST['hostingPass']) ? trim($_POST['hostingPass']) : null;
 $data['gloriaHave'] = ($_POST['gloriaHave']=='true') ? 1 : 0;

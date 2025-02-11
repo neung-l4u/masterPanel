@@ -125,22 +125,22 @@ function checkPage(param){
 function setAllPageStatus(){
     if(checkPage('home')){
         infoTextHome.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextHome.empty().text("Send !!");
+        infoTextHome.empty().text("Saved !!");
     }
 
     if(checkPage('about')){
         infoTextAbout.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextAbout.empty().text("Send !!");
+        infoTextAbout.empty().text("Saved !!");
     }
 
     if(checkPage('contact')){
         infoTextContact.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextContact.empty().text("Send !!");
+        infoTextContact.empty().text("Saved !!");
     }
 
     if(checkPage('service')){
         infoTextService.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextService.empty().text("Send !!");
+        infoTextService.empty().text("Saved !!");
     }
 }//setAllPageStatus
 

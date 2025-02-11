@@ -9,6 +9,8 @@ $row = $db->query('SELECT * FROM `tb_project` WHERE projectID = ?;',$id)->fetchA
 $projectID = $id;
 
 $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName"]).'/';
+
+$row = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', $id)->fetchArray();
 ?>
 
 
@@ -554,7 +556,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                     </div><!--End Notes-->
                     <div class="col">
                         <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Save page Home info.</button>
-                        <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                        <small id="infoTextHome" class="text-danger ml-3"><?php if ($row["home"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
                     </div>
                 </div><!--end tab-Home-->
 
@@ -716,8 +718,8 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                         </div>
                     </div><!--End Notes-->
                     <div class="col">
-                        <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitAbout();">Save page Services info.</button>
-                        <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                        <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Save page Services info.</button>
+                        <small id="infoTextAbout" class="text-danger ml-3"><?php if ($row["about"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
                     </div>
                 </div><!--end tab-About-->
 
@@ -1055,7 +1057,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                     </div><!--End Notes-->
                     <div class="col">
                         <button type="button" class="btn btn-success" id="submitServiceBtn" onclick="submitServices();">Save page Services info.</button>
-                        <small id="infoTextService" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                        <small id="infoTextService" class="text-danger ml-3"><?php if ($row["services"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
                     </div>
                 </div><!--end tab-Services-->
 
@@ -1132,7 +1134,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                     </div><!--End Notes-->
                     <div class="col">
                         <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Save page Contact info.</button>
-                        <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                        <small id="infoTextContact" class="text-danger ml-3"><?php if ($row["contact"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
                     </div>
             </div> <!-- End tab-content-->
         </div>

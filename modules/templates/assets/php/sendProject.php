@@ -52,6 +52,26 @@ $project = $db->query(
               pj.`projectOwner` = sf.sID AND pj.`DomainProvidersID` = dp.id AND pj.`HostingProvidersID` = hp.id
     ',$id)->fetchArray();
 
+$openingHours = explode("__", $project["openingHours"]);
+$openingSunday = "Sunday : " . (($openingHours[6] !== "") ? $openingHours[6] : "-");
+$openingMonday = "Monday : " . (($openingHours[0] !== "") ? $openingHours[0] : "-");
+$openingTuesday = "Tuesday : " . (($openingHours[1] !== "") ? $openingHours[1] : "-");
+$openingWednesday = "Wednesday : " . (($openingHours[2] !== "") ? $openingHours[2] : "-");
+$openingThursday = "Thursday : " . (($openingHours[3] !== "") ? $openingHours[3] : "-");
+$openingFriday = "Friday : " . (($openingHours[4] !== "") ? $openingHours[4] : "-");
+$openingSaturday = "Saturday : " . (($openingHours[5] !== "") ? $openingHours[5] : "-");
+$openingHours = $openingSunday.'<br>'.$openingMonday.'<br>'.$openingTuesday.'<br>'.$openingWednesday.'<br>'.$openingThursday.'<br>'.$openingFriday.'<br>'.$openingSaturday;
+
+$pickupAndDelivery = explode("__", $project["pickupAndDelivery"]);
+$pickupSunday = "Sunday : " . (($pickupAndDelivery[6] !== "") ? $pickupAndDelivery[6] : "-");
+$pickupMonday = "Monday : " . (($pickupAndDelivery[0] !== "") ? $pickupAndDelivery[0] : "-");
+$pickupTuesday = "Tuesday : " . (($pickupAndDelivery[1] !== "") ? $pickupAndDelivery[1] : "-");
+$pickupWednesday = "Wednesday : " . (($pickupAndDelivery[2] !== "") ? $pickupAndDelivery[2] : "-");
+$pickupThursday = "Thursday : " . (($pickupAndDelivery[3] !== "") ? $pickupAndDelivery[3] : "-");
+$pickupFriday = "Friday : " . (($pickupAndDelivery[4] !== "") ? $pickupAndDelivery[4] : "-");
+$pickupSaturday = "Saturday : " . (($pickupAndDelivery[5] !== "") ? $pickupAndDelivery[5] : "-");
+$pickupAndDelivery = $pickupSunday.'<br>'.$pickupMonday.'<br>'.$pickupTuesday.'<br>'.$pickupWednesday.'<br>'.$pickupThursday.'<br>'.$pickupFriday.'<br>'.$pickupSaturday;
+
 $pageDetails = $db->query(
     'SELECT `home`, `about`, `services`, `contact`
         FROM `templatepagedetails`
@@ -100,8 +120,10 @@ $topData .= '<tbody>';
 $topData .= '<tr><td style="width: 150px; font-weight: bold; background-color: #f8f9fa;">Email</td><td>'.$project['email'].'</td></tr>';
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Phone</td><td>'.$project['phone'].'</td></tr>';
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Location</td><td>'.$project['address'].'</td></tr>';
-$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Opening Hours</td><td>'.$project['openingHours'].'</td></tr>';
-$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Pickup & Delivery</td><td>'.$project['pickupAndDelivery'].'</td></tr>';
+
+
+$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Opening Hours</td><td>'.$openingHours.'</td></tr>';
+$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Pickup & Delivery</td><td>'.$pickupAndDelivery.'</td></tr>';
 $topData .= '</tbody>';
 $topData .= '</table><br>';
 

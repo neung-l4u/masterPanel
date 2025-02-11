@@ -13,9 +13,28 @@ $callback = 'callback';
 let payload = {};
 
 $(function() {
-    loadData();
+    //loadData();
     loadCountry();
     loadShopType();
+
+    $('#projectData').DataTable( {
+        pagingType: 'full_numbers',
+        ajax: {
+            url: '../models/tableProject.php',
+            dataSrc: 'data'
+        },
+        "pageLength": 8,
+        lengthMenu: [
+            [8, 25, 50, -1],
+            ['Fit', 25, 50, 'All']
+        ],columnDefs: [
+            {
+                targets: -1,
+                className: 'dt-body-right'
+            }
+        ]
+    } );
+
 });//ready
 
 const loadCountry = () => {
@@ -116,7 +135,7 @@ const loadData = () => {
 
         if (allData > 0) {
             row.forEach(item => {
-                let { saveFlag, projectID: id, projectName: name, shopType, selectedTemplate, owner, countryName: country, statusID: status, homePage, aboutPage, servicesPage, contactPage } = item;
+                let { saveFlag, projectID: id, projectName: name, shopType, selectedTemplate, owner, countryName: country, countryCode, statusID: status, homePage, aboutPage, servicesPage, contactPage } = item;
                 let statusText = (status === 1) ? 'Draft' : 'Send';
                 let url = `main.php?m=detail&id=${id}`;
                 let temPage = (shopType === "Restaurant") ? 'res' : 'mas';
@@ -161,16 +180,13 @@ const loadData = () => {
                         iconSendMail = `<a>${iconSendMailDraft}</a>`;
                     }
                 }
-
-                if (status === 2) {
-                    iconSendMail = `<a>${iconSendMailSend}</a>`;
-                }
+                if (status === 2) { iconSendMail = `<a>${iconSendMailSend}</a>`; }
 
                 $('#projectData > tbody:last-child').append(
                     `<tr>
                         <td>${++i}</td>
                         <td>${shopType} ${selectedTemplate}</td>
-                        <td>${country} : ${name}</td>
+                        <td>${countryCode} : ${name}</td>
                         <td>${iconPage}</td>
                         <td>${statusText}</td>
                         <!--<td>${owner}</td>-->
@@ -272,7 +288,8 @@ const setDel = (id) => {
 
         readProject.done(function(res) {
             console.log(res);
-            loadData();
+            $('#projectData').DataTable().ajax.reload();
+            //loadData();
             return true;
         });
 
@@ -319,7 +336,8 @@ const saveForm = () => {
 
     saveProjectAPI.done(function (res) {
         if(res.result === "success"){
-            loadData();
+            $('#projectData').DataTable().ajax.reload();
+            //loadData();
             modalClose();
         }else if(res.result === "fail"){
             alert('fail');
@@ -397,21 +415,10 @@ function sendProject(id) {
                 "projectID": id
             }
         });
-        // callAjax.done(function (res) {
-        //     console.log(res);
-            
-        //     if(res.result === 1){
-        //         alert('Reload page');
-        //         //location.reload();
-        //     }
-        // });
-        // callAjax.fail(function (xhr, status, error) {
-        //     console.log("ajax request fail!!");
-        //     console.log(status + ": " + error);
-        // });
     }//if
 }//sendEmail
 
 function l4uCallback(response) {
+    $('#projectData').DataTable().ajax.reload();
     console.log("Template Submittion Response:", response);
 }

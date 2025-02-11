@@ -6,6 +6,10 @@
     height: 2.2em;
 }
 
+.dt-type-numeric{
+    text-align: center !important;
+}
+
 .col_id{
     width: 5%;
 }

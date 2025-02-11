@@ -737,7 +737,22 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     const hiddenProjectOwner = $("#projectOwner");
     const domainBox = $("#domainBox");
     const hostingBox = $("#hostingBox");
- 
+
+    $("#sunday-open-chk").on("change", () => inputSunOpen.val($("#sunday-open-chk").prop("checked") ? inputSunOpen.val() : ""));
+    $("#monday-open-chk").on("change", () => inputMonOpen.val($("#monday-open-chk").prop("checked") ? inputMonOpen.val() : ""));
+    $("#tuesday-open-chk").on("change", () => inputTueOpen.val($("#tuesday-open-chk").prop("checked") ? inputTueOpen.val() : ""));
+    $("#wednesday-open-chk").on("change", () => inputWedOpen.val($("#wednesday-open-chk").prop("checked") ? inputWedOpen.val() : ""));
+    $("#thursday-open-chk").on("change", () => inputThuOpen.val($("#thursday-open-chk").prop("checked") ? inputThuOpen.val() : ""));
+    $("#friday-open-chk").on("change", () => inputFriOpen.val($("#friday-open-chk").prop("checked") ? inputFriOpen.val() : ""));
+    $("#saturday-open-chk").on("change", () => inputSatOpen.val($("#saturday-open-chk").prop("checked") ? inputSatOpen.val() : ""));
+
+    $("#sunday-deli-chk").on("change", () => inputSunDeli.val($("#sunday-deli-chk").prop("checked") ? inputSunDeli.val() : ""));
+    $("#monday-deli-chk").on("change", () => inputMonDeli.val($("#monday-deli-chk").prop("checked") ? inputMonDeli.val() : ""));
+    $("#tuesday-deli-chk").on("change", () => inputTueDeli.val($("#tuesday-deli-chk").prop("checked") ? inputTueDeli.val() : ""));
+    $("#wednesday-deli-chk").on("change", () => inputWedDeli.val($("#wednesday-deli-chk").prop("checked") ? inputWedDeli.val() : ""));
+    $("#thursday-deli-chk").on("change", () => inputThuDeli.val($("#thursday-deli-chk").prop("checked") ? inputThuDeli.val() : ""));
+    $("#friday-deli-chk").on("change", () => inputFriDeli.val($("#friday-deli-chk").prop("checked") ? inputFriDeli.val() : ""));
+    $("#saturday-deli-chk").on("change", () => inputSatDeli.val($("#saturday-deli-chk").prop("checked") ? inputSatDeli.val() : ""));
 
     $(()=>{ //ready
         loadProjectData();

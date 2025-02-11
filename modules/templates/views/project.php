@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="../assets/css/project.css">
+<link rel="stylesheet" href="../assets/css/datatables-bs5.min.css">
 
 
 <div class="row">
@@ -105,3 +106,4 @@
 </div>
 
 <script src="../controllers/project.js"></script>
+<script src="../assets/js/datatables-bs5.min.js"></script>

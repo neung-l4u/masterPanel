@@ -9,6 +9,8 @@ $row = $db->query('SELECT * FROM `tb_project` WHERE projectID = ?;',$id)->fetchA
 $projectID = $id;
 
 $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName"]).'/';
+
+$row = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', $id)->fetchArray();
 ?>
 
 <link rel="stylesheet" href="../assets/css/template.css">
@@ -640,7 +642,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                     <div class="row">
                         <div class="mt-3">
                             <button type="button" class="btn btn-success" id="cmdHomeSubmit" onclick="submitHome();">Save Home Page Info.</button>
-                            <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                            <small id="infoTextHome" class="text-danger ml-3"><?php if ($row["home"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
                         </div>
                     </div>
                 </div><!--end tab-Home-->
@@ -893,7 +895,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                     <div class="row">
                         <div class="mt-3">
                             <button type="button" class="btn btn-success" id="cmdAboutSubmit" onclick="submitAbout();">Save About Page Info.</button>
-                            <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                            <small id="infoTextAbout" class="text-danger ml-3"><?php if ($row["about"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
 
                         </div>
                     </div>
@@ -1021,7 +1023,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                     <div class="row">
                         <div class="mt-3">
                             <button type="button" class="btn btn-success" id="cmdContactSubmit" onclick="submitContact();">Save Contact Page Info.</button>
-                            <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                            <small id="infoTextContact" class="text-danger ml-3"><?php if ($row["contact"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
                         </div>
                     </div>
 
