@@ -480,7 +480,8 @@ $row = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', 
                     <div class="row"><!-- Home BTN -->
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Save Home Page info.</button>
-                            <small id="infoTextHome" class="text-danger ml-3"><?php if ($row["home"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
+                            <small id="infoTextHome" <?php if ($row["home"] == null) { echo "class='text-danger ml-3'"; } else { echo "class='text-success ml-3'"; } ?>>
+                                <?php if ($row["home"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
                         </div>
                     </div>
 
@@ -726,7 +727,8 @@ $row = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', 
                     <div class="row"><!-- About BTN -->
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Save About Page info.</button>
-                            <small id="infoTextAbout" class="text-danger ml-3"><?php if ($row["about"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
+                            <small id="infoTextAbout" <?php if ($row["about"] == null) { echo "class='text-danger ml-3'"; } else { echo "class='text-success ml-3'"; } ?>>
+                                <?php if ($row["about"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
                         </div>
                     </div>
 
@@ -874,7 +876,8 @@ $row = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', 
                     <div class="row"><!-- Contact BTN-->
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Save Contact Page info.</button>
-                            <small id="infoTextContact" class="text-danger ml-3"><?php if ($row["contact"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
+                            <small id="infoTextContact" <?php if ($row["contact"] == null) { echo "class='text-danger ml-3'"; } else { echo "class='text-success ml-3'"; } ?>>
+                                <?php if ($row["contact"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
                         </div>
                     </div>
 
