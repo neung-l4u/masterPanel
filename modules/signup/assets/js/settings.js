@@ -4,7 +4,7 @@ const settings = {
     card: "https://payments.localforyou.com/api/payment",
     invoice: "https://payments.localforyou.com/api/invoice",
   },
-  url_getProductList: "assets/API/B-Price-2501240928-addProductUS.json",
+  url_getProductList: "assets/API/B-Price-2502060824-trueProductUKandAddNewProductPromotion.json",
   url_getPrice: "assets/API/price.php",
   url_getStates: "assets/statics/states.json",
   url_authentication: "assets/API/authentication.php",
@@ -154,16 +154,8 @@ const settings = {
       },
       UK: {
         "1TRIAL": {
-          code: "140Demo1",
-          discount: "0",
-        },
-        "SPECIAL": {
-          code: "299Demo1",
-          discount: "0",
-        },
-        "FREEWEB": {
-          code: "FreeWeb1",
-          discount: "0",
+          code: "068Demo1",
+          discount: "6800",
         }
       },
       US: {

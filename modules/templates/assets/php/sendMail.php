@@ -182,10 +182,10 @@ $mailHeaders = [
 ];
 
     $result['email'] = $param['To'];
-    $result['to'] = $param['To'];
-    $result['cc'] = $param['Cc'];
-    $result['bcc'] = $param['Bcc'];
-    $result['param'] = $param;
+    //$result['to'] = $param['To'];
+    //$result['cc'] = $param['Cc'];
+    //$result['bcc'] = $param['Bcc'];
+    //$result['param'] = $param;
 
 //    if($sendMail){
         if (mail($system["emailAlertTo"], $system["emailSubject"], $system["emailBody"], $mailHeaders)) {

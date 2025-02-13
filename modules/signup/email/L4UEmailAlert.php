@@ -47,8 +47,8 @@ $param = array(
 
 // test data
 /*$param = array(
-    "formDate" => "29/08/2024",
-    "leadSource" => "Test Sign Up Form",
+    "formDate" => "05/02/2025",
+    "leadSource" => "Sign Up Form",
     "formVersion" => "2.7.1",
     "formProduct" => "Pro Online Ordering Systems",
     "formSalesAgent" => "Sorasak Thanomsap",
@@ -68,13 +68,16 @@ $param = array(
     "formWebHosting" => "Do not need",
     "formInfluencer" => "Do not need",
     "formCustomerType" => "Thai Restaurants &amp; Takeaways",
-    "formShopName" => "Neung Test Shop",
+    "formShopName" => "Bas Test Shop",
     "formCountry" => "Australia",
     "formState" => "VI : Victoria",
     "formFullName" => "Neung Test Shop AU",
-    "formEmail" => "neung@localforyou.com",
+    "formEmail" => "bas@localforyou.com",
     "formMobile" => "0891234567",
     "formBestTime" => "All day All night",
+    "formstartProjectAs" => "Do not need",
+    "formstartProjectOther" => "Do not need",
+    "formstartprojectNote" => "Do not need",
     "acceptAutoPilotAI" => true,
     "formNote" => "This is test data",
     "mode" => "alert",
@@ -104,7 +107,7 @@ if (str_contains($param["formProduct"], 'Solo')){
 
 $mailHeaders = [
     'From' => 'SignUp Form <noreply@localforyou.com>',
-    'Cc' => 'sales@localforyou.com',
+    'Cc' => 'sales@localforyou.com, stevew@localforyou.com',
     'Bcc' => 'bas@localforyou.com, neung@localforyou.com',
     'Reply-To' => 'neung@localforyou.com',
     'X-Sender' => 'LocalForYou <neung@localforyou.com>',

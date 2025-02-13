@@ -602,7 +602,7 @@ function requestToPay() {
     }
 
     let addOnDiscountCode = {};
-    let materialDiscountCode = (formCountry==="US" || formCountry==="CA") ? "" : "suhgy7Fb";
+    let materialDiscountCode = (formCountry==="US" || formCountry==="CA" || formCountry==="TH") ? "" : "suhgy7Fb";
     let freewebDiscountCode = "Freeweb";
 
     let applyAddonCode = "";
