@@ -90,6 +90,24 @@ const handleFormSubmit = (button) => {
     }
 };
 
+function saveToDB() {
+    const callAjax = $.ajax({
+        type: "POST",
+        crossDomain: true,
+        dataType: 'json',
+        url: "../models/ajaxTemplate.php",
+        data: {
+            "loginID": loginID,
+            "projectID": projectID,
+            "page": page,
+            "payload": payload
+        }
+    });
+    callAjax.done(function (res) {
+        saveStatus(page, 1);
+    });
+}//saveToDB
+
 
 function saveStatus(page, status) {
     let infoTextHome = $("#infoTextHome");
@@ -97,38 +115,40 @@ function saveStatus(page, status) {
     let infoTextContact = $("#infoTextContact");
     let infoTextServices = $("#infoTextServices");
 
+    let statusText = (status === 1) ? "Saved !!" : "Not Saved";
+
     switch (page) {
         case "home":
-            infoTextHome.text(status);
+            infoTextHome.text(statusText);
+            if (status === 1) {
+                infoTextHome.removeClass("text-danger").addClass("text-success");
+            } else {
+                infoTextHome.removeClass("text-success").addClass("text-danger");
+            }
             break;
         case "about":
-            infoTextAbout.text(status);
+            infoTextAbout.text(statusText);
+            if (status === 1) {
+                infoTextAbout.removeClass("text-danger").addClass("text-success");
+            } else {
+                infoTextAbout.removeClass("text-success").addClass("text-danger");
+            }
             break;
         case "contact":
-            infoTextContact.text(status);
+            infoTextContact.text(statusText);
+            if (status === 1) {
+                infoTextContact.removeClass("text-danger").addClass("text-success");
+            } else {
+                infoTextContact.removeClass("text-success").addClass("text-danger");
+            }
             break;
         case "services":
-            infoTextServices.text(status);
+            infoTextServices.text(statusText);
+            if (status === 1) {
+                infoTextServices.removeClass("text-danger").addClass("text-success");
+            } else {
+                infoTextServices.removeClass("text-success").addClass("text-danger");
+            }
             break;
     }
 }
-
-function saveToDB() {
-    let answer = confirm("Are you sure you want to save this page?");
-
-    if (answer) {
-        const callAjax = $.ajax({
-            type: "POST",
-            crossDomain: true,
-            dataType: 'json',
-            url: "../models/ajaxTemplate.php",
-            data: {
-                "loginID": loginID,
-                "projectID": projectID,
-                "page": page,
-                "payload": payload
-            }
-        });
-        saveStatus();
-    }//if
-}//saveToDB

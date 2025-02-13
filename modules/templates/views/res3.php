@@ -481,7 +481,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Save Home Page info.</button>
                             <?php if ($pageDetail["home"] == null) {  ?>
-                                <small class="text-danger ml-3"3>
+                                <small id="infoTextHome" class="text-danger ml-3"3>
                                     This page has never had a design template submitted.
                                 </small>
                             <?php }else{ ?>
@@ -735,7 +735,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Save About Page info.</button>
                             <?php if ($pageDetail["about"] == null) {  ?>
-                                <small class="text-danger ml-3"3>
+                                <small id="infoTextAbout" class="text-danger ml-3"3>
                                     This page has never had a design template submitted.
                                 </small>
                             <?php }else{ ?>
@@ -891,7 +891,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Save Contact Page info.</button>
                             <?php if ($pageDetail["contact"] == null) {  ?>
-                                <small class="text-danger ml-3"3>
+                                <small id="infoTextContact" class="text-danger ml-3"3>
                                     This page has never had a design template submitted.
                                 </small>
                             <?php }else{ ?>
