@@ -10,7 +10,7 @@ $projectID = $id;
 
 $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName"]).'/';
 
-$row = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', $id)->fetchArray();
+$pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', $id)->fetchArray();
 ?>
 
 <link rel="stylesheet" href="../assets/css/template.css">
@@ -480,8 +480,15 @@ $row = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', 
                     <div class="row"><!-- Home BTN -->
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Save Home Page info.</button>
-                            <small id="infoTextHome" <?php if ($row["home"] == null) { echo "class='text-danger ml-3'"; } else { echo "class='text-success ml-3'"; } ?>>
-                                <?php if ($row["home"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
+                            <?php if ($pageDetail["home"] == null) {  ?>
+                                <small class="text-danger ml-3"3>
+                                    This page has never had a design template submitted.
+                                </small>
+                            <?php }else{ ?>
+                                <small id="infoTextHome" class="text-success ml-3"3>
+                                    Saved.
+                                </small>
+                            <?php } ?>
                         </div>
                     </div>
 
@@ -727,8 +734,15 @@ $row = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', 
                     <div class="row"><!-- About BTN -->
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Save About Page info.</button>
-                            <small id="infoTextAbout" <?php if ($row["about"] == null) { echo "class='text-danger ml-3'"; } else { echo "class='text-success ml-3'"; } ?>>
-                                <?php if ($row["about"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
+                            <?php if ($pageDetail["about"] == null) {  ?>
+                                <small class="text-danger ml-3"3>
+                                    This page has never had a design template submitted.
+                                </small>
+                            <?php }else{ ?>
+                                <small id="infoTextAbout" class="text-success ml-3"3>
+                                    Saved.
+                                </small>
+                            <?php } ?>
                         </div>
                     </div>
 
@@ -876,8 +890,15 @@ $row = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', 
                     <div class="row"><!-- Contact BTN-->
                         <div class="col">
                             <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Save Contact Page info.</button>
-                            <small id="infoTextContact" <?php if ($row["contact"] == null) { echo "class='text-danger ml-3'"; } else { echo "class='text-success ml-3'"; } ?>>
-                                <?php if ($row["contact"] == null) { echo "This page has never had a design template submitted."; } else { echo "Saved."; } ?></small>
+                            <?php if ($pageDetail["contact"] == null) {  ?>
+                                <small class="text-danger ml-3"3>
+                                    This page has never had a design template submitted.
+                                </small>
+                            <?php }else{ ?>
+                                <small id="infoTextContact" class="text-success ml-3"3>
+                                    Saved.
+                                </small>
+                            <?php } ?>
                         </div>
                     </div>
 

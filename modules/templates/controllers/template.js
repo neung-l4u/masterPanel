@@ -90,59 +90,28 @@ const handleFormSubmit = (button) => {
     }
 };
 
-function readPage(param){
-    let readStatus = localStorage.getItem(key);
-    return JSON.parse(readStatus);
-}//readPage
 
-function setPage(param){
-    let currentPage = localStorage.getItem(key);
-    let findPage = pages.includes(param);
-    if(!findPage){
-        pages.push(param);
-        let val = JSON.stringify(pages); //arr to text
-        localStorage.setItem(key,val);
+function saveStatus(page, status) {
+    let infoTextHome = $("#infoTextHome");
+    let infoTextAbout = $("#infoTextAbout");
+    let infoTextContact = $("#infoTextContact");
+    let infoTextServices = $("#infoTextServices");
+
+    switch (page) {
+        case "home":
+            infoTextHome.text(status);
+            break;
+        case "about":
+            infoTextAbout.text(status);
+            break;
+        case "contact":
+            infoTextContact.text(status);
+            break;
+        case "services":
+            infoTextServices.text(status);
+            break;
     }
-    return true;
-}//setPage
-
-function clearKey(){
-    localStorage.clear();
-    return true;
-}//clearKey
-
-function checkPage(param){
-    let currentPage = localStorage.getItem(key);
-    let currentPageArr =  JSON.parse(currentPage);
-    let findPage = false;
-
-    if (currentPageArr != null){
-        findPage = currentPageArr.includes(param);
-    }
-    return findPage;
-}//checkPage
-
-function setAllPageStatus(){
-    if(checkPage('home')){
-        infoTextHome.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextHome.empty().text("Saved !!");
-    }
-
-    if(checkPage('about')){
-        infoTextAbout.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextAbout.empty().text("Saved !!");
-    }
-
-    if(checkPage('contact')){
-        infoTextContact.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextContact.empty().text("Saved !!");
-    }
-
-    if(checkPage('service')){
-        infoTextService.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextService.empty().text("Saved !!");
-    }
-}//setAllPageStatus
+}
 
 function saveToDB() {
     let answer = confirm("Are you sure you want to save this page?");
@@ -160,7 +129,6 @@ function saveToDB() {
                 "payload": payload
             }
         });
-        setPage(page);
-        setAllPageStatus();
+        saveStatus();
     }//if
 }//saveToDB
