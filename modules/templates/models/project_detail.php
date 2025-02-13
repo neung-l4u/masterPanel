@@ -14,6 +14,7 @@ $data['projectID'] = !empty($_POST['projectID']) ? $_POST['projectID'] : null;
 $data['shopType'] = !empty($_POST['shopType']) ? $_POST['shopType'] : null; //restaurant, massage
 $data['mode'] = !empty($_POST['mode']) ? $_POST['mode'] : "";
 $data['projectName'] = !empty($_POST['projectName']) ? trim($_POST['projectName']) : "No name";
+
 $data['email'] = !empty($_POST['email']) ? trim($_POST['email']) : null;
 $data['phone'] = !empty($_POST['phone']) ? trim($_POST['phone']) : null;
 $data['address'] = !empty($_POST['address']) ? trim($_POST['address']) : null;
@@ -28,7 +29,7 @@ $data['domainProvidersID'] = !empty($_POST['domainProvidersID']) ? $_POST['domai
 $data['domainUser'] = !empty($_POST['domainUser']) ? trim($_POST['domainUser']) : null;
 $data['domainPass'] = !empty($_POST['domainPass']) ? trim($_POST['domainPass']) : null;
 $data['hostingHave'] = ($_POST['hostingHave']=='true') ?  1 : 0;
-$data['hostingProvidersID'] = ($_POST['hostingProvidersID']=='true') ?  1 : 0;
+$data['hostingProvidersID'] = !empty($_POST['hostingProvidersID']) ? $_POST['hostingProvidersID'] : null;
 $data['hostingUser'] = !empty($_POST['hostingUser']) ? trim($_POST['hostingUser']) : null;
 $data['hostingPass'] = !empty($_POST['hostingPass']) ? trim($_POST['hostingPass']) : null;
 $data['gloriaHave'] = ($_POST['gloriaHave']=='true') ? 1 : 0;
@@ -71,7 +72,8 @@ $data['openingHours'] = implode('__',$opening);
 $data['delivery'] = implode('__',$delivery);
 
 if ($data['mode'] ==  "save") {
-    $select = $db->query('UPDATE `tb_project` SET `email`=?,`phone`=?,`address`=?,`openingHours`=?,`pickupAndDelivery`=?,`logo`=?,`colorTheme1`=?,`colorTheme2`=?,`colorTheme3`=?, `domainName`=?,`domainHave`=?,`domainProvidersID`=?,`domainUser`=?,`domainPass`=?,`hostingName`=?,`hostingHave`=?,`hostingProvidersID`=?,`hostingUser`=?,`hostingPass`=?,`gloriaHave`=?,`orderURL`=?,`tableURL`=?,`orderOther`=?,`resOtherSystem`=?,`amelia`=?,`voucher`=?,`bookOther`=?,`masOtherSystem`=?,`needEmail`=?,`facebookURL`=?,`instagramURL`=?,`youtubeURL`=?,`tiktokURL`=?,`updateBy`=? WHERE `projectID`=?',
+    $select = $db->query('UPDATE `tb_project` SET `saveFlag`=?,`email`=?,`phone`=?,`address`=?,`openingHours`=?,`pickupAndDelivery`=?,`logo`=?,`colorTheme1`=?,`colorTheme2`=?,`colorTheme3`=?, `domainName`=?,`domainHave`=?,`domainProvidersID`=?,`domainUser`=?,`domainPass`=?,`hostingName`=?,`hostingHave`=?,`hostingProvidersID`=?,`hostingUser`=?,`hostingPass`=?,`gloriaHave`=?,`orderURL`=?,`tableURL`=?,`orderOther`=?,`resOtherSystem`=?,`amelia`=?,`voucher`=?,`bookOther`=?,`masOtherSystem`=?,`needEmail`=?,`facebookURL`=?,`instagramURL`=?,`youtubeURL`=?,`tiktokURL`=?,`updateBy`=? WHERE `projectID`=?',
+        1,
         $data['email'],
         $data['phone'],
         $data['address'],

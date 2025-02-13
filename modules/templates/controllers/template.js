@@ -90,78 +90,65 @@ const handleFormSubmit = (button) => {
     }
 };
 
-function readPage(param){
-    let readStatus = localStorage.getItem(key);
-    return JSON.parse(readStatus);
-}//readPage
+function saveToDB() {
+    const callAjax = $.ajax({
+        type: "POST",
+        crossDomain: true,
+        dataType: 'json',
+        url: "../models/ajaxTemplate.php",
+        data: {
+            "loginID": loginID,
+            "projectID": projectID,
+            "page": page,
+            "payload": payload
+        }
+    });
+    callAjax.done(function (res) {
+        saveStatus(page, 1);
+    });
+}//saveToDB
 
-function setPage(param){
-    let currentPage = localStorage.getItem(key);
-    let findPage = pages.includes(param);
-    if(!findPage){
-        pages.push(param);
-        let val = JSON.stringify(pages); //arr to text
-        localStorage.setItem(key,val);
-    }
-    return true;
-}//setPage
 
-function clearKey(){
-    localStorage.clear();
-    return true;
-}//clearKey
+function saveStatus(page, status) {
+    let infoTextHome = $("#infoTextHome");
+    let infoTextAbout = $("#infoTextAbout");
+    let infoTextContact = $("#infoTextContact");
+    let infoTextServices = $("#infoTextServices");
 
-function checkPage(param){
-    let currentPage = localStorage.getItem(key);
-    let currentPageArr =  JSON.parse(currentPage);
-    let findPage = false;
+    let statusText = (status === 1) ? "Saved !!" : "Not Saved";
 
-    if (currentPageArr != null){
-        findPage = currentPageArr.includes(param);
-    }
-    return findPage;
-}//checkPage
-
-function setAllPageStatus(){
-    if(checkPage('home')){
-        infoTextHome.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextHome.empty().text("Send !!");
-    }
-
-    if(checkPage('about')){
-        infoTextAbout.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextAbout.empty().text("Send !!");
-    }
-
-    if(checkPage('contact')){
-        infoTextContact.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextContact.empty().text("Send !!");
-    }
-
-    if(checkPage('service')){
-        infoTextService.removeClass( "text-danger" ).addClass( "text-success" );
-        infoTextService.empty().text("Send !!");
-    }
-}//setAllPageStatus
-
-function sendEmail() {
-    let answer = confirm("Are you sure you want to submit this page?");
-
-    if (answer) {
-        const callAjax = $.ajax({
-            type: "POST",
-            crossDomain: true,
-            dataType: 'jsonp',
-            headers: {  'Access-Control-Allow-Origin': 'https://www.localforyou.com' },
-            url: "https://report.localforyou.com/modules/templates/assets/php/sendMail.php",
-            data: {
-                "loginID": loginID,
-                "projectID": projectID,
-                "page": page,
-                "payload": payload
+    switch (page) {
+        case "home":
+            infoTextHome.text(statusText);
+            if (status === 1) {
+                infoTextHome.removeClass("text-danger").addClass("text-success");
+            } else {
+                infoTextHome.removeClass("text-success").addClass("text-danger");
             }
-        });
-        setPage(page);
-        setAllPageStatus();
-    }//if
-}//sendEmail
+            break;
+        case "about":
+            infoTextAbout.text(statusText);
+            if (status === 1) {
+                infoTextAbout.removeClass("text-danger").addClass("text-success");
+            } else {
+                infoTextAbout.removeClass("text-success").addClass("text-danger");
+            }
+            break;
+        case "contact":
+            infoTextContact.text(statusText);
+            if (status === 1) {
+                infoTextContact.removeClass("text-danger").addClass("text-success");
+            } else {
+                infoTextContact.removeClass("text-success").addClass("text-danger");
+            }
+            break;
+        case "services":
+            infoTextServices.text(statusText);
+            if (status === 1) {
+                infoTextServices.removeClass("text-danger").addClass("text-success");
+            } else {
+                infoTextServices.removeClass("text-success").addClass("text-danger");
+            }
+            break;
+    }
+}

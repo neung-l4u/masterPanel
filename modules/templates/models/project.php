@@ -28,14 +28,17 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
     $return['data'] = '';
     $return['act'] = $param['act'];
 }else if ( $param['act'] == 'read' ) { //อ่าน project ทั้งหมดของ user นี้
-    $projects = $db->query('SELECT pj.projectID, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, s.sNickName AS "owner", c.name AS "countryName" ,pj.projectTimestamp 
-                            FROM `tb_project` pj, `staffs` s ,`Countries` c , `tb_shopType` t
-                            WHERE pj.projectOwner = s.sID 
-                              AND pj.countryID = c.id 
-                              AND pj.shopTypeID = t.id 
-                              AND pj.projectOwner = ?
-                              AND pj.deleteAt IS NULL'
-        , $param['ownerID'])->fetchAll();
+    $projects = $db->query('SELECT pj.saveFlag, pj.projectID, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, s.sNickName AS "owner", c.name AS "countryName", c.code AS "countryCode", pj.projectTimestamp, 
+                                   pd.home AS "homePage", pd.about AS "aboutPage", pd.services AS "servicesPage", pd.contact AS "contactPage"
+                            FROM `tb_project` pj 
+                            LEFT JOIN `templatepagedetails` pd ON pj.projectID = pd.projectID 
+                            LEFT JOIN `Countries` c ON pj.countryID = c.id
+                            LEFT JOIN `staffs` s ON pj.projectOwner = s.sID
+                            LEFT JOIN `tb_shopType` t ON pj.shopTypeID = t.id
+                            WHERE pj.projectOwner = ?
+                            AND pj.deleteAt IS NULL;'
+        ,$param['ownerID'])->fetchAll();
+    
     $row = array();
     $i = 0;
     foreach ($projects as $project) {
@@ -46,11 +49,12 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
     $return['result'] = 'success';
     $return['msg'] = count($row).' projects found';
     $return['data'] = $row;
+
 }else if ( $param['act'] == 'del' ){ //ลบ project ตามที่ส่ง projectID มา
     if (!empty($param['delID'])) {
         $project = $db->query('UPDATE tb_project SET `deleteAt` = NOW(), `deleteBy` = ?  WHERE `projectID` = ?'
-            , $myID, $param['delID']);
-
+            , $param['ownerID'], $param['delID']);
+        
         $return['result'] = 'success';
     }
 }else if ( $param['act'] == 'setEdit' ){ //อ่าน project ตามที่ส่ง projectID แค่ 1 แถว มาว่ามีรายละเอียดอะไร
@@ -65,11 +69,12 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
 
     $return['result'] = 'success';
     $return['msg'] = 'project updated';
-}else if ( $param['act'] == 'add' ) {  //เพิ่ม project
+}else if ( $param['act'] == 'add' ) {  //เพิ่ม projectg
     $project = $db->query('INSERT INTO `tb_project`(`projectName`, `shopTypeID`, `selectedTemplate`, `statusID`, `projectOwner`, `countryID`) VALUES (?,?,?,?,?,?)'
         , $param['name'], $param['shopTypeID'], $param['selectedTemplate'], 1, $param['ownerID'], $param['country']);
 
     $return['result'] = 'success';
     $return['msg'] = 'project created';
 }
+
 echo json_encode($return);  //ข้อความตอบกลับให้ ajax หลังทำงานตามเคสด้านบนเสร็จ
