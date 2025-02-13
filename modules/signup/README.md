@@ -1,6 +1,19 @@
+# SignUpForm Version 2.9.5
+Hot Fix for Add Product
+## [2.9.5] - 2025-02-13
+
+
+### Added
+- Add USD Yelp Ad Spend $50, $100, $200, $300, $500
+- Add Google Review Respond in UK
+
+### update
+- Footer Version
+
 # SignUpForm Version 2.9.4
 Minor  change for update date
 ## [2.9.4] - 2025-02-06
+
 
 
 ### Added
