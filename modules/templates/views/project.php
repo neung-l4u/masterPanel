@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="../assets/css/project.css">
+<link rel="stylesheet" href="../assets/css/datatables-bs5.min.css">
+
 
 <div class="row">
     <div class="col">
@@ -20,12 +22,11 @@
             <thead class="table-dark thead-dark">
                 <tr>
                     <th class="col_id">#</th>
-                    <th class="col_type">Type</th>
-                    <th class="col_template">Template</th>
+                    <th class="col_type">Template</th>
                     <th class="col_name">Project Name</th>
-<!--                    <th class="col_status">Status</th>-->
-                    <th class="col_owner">Owner</th>
-                    <th class="col_country">Country</th>
+                    <th class="col_page">Page</th>
+                    <th class="col_status">Status</th>
+<!--                    <th class="col_owner">Owner</th>-->
                     <th class="col_action"></th>
                 </tr>
             </thead>
@@ -105,3 +106,4 @@
 </div>
 
 <script src="../controllers/project.js"></script>
+<script src="../assets/js/datatables-bs5.min.js"></script>

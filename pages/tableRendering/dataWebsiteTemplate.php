@@ -4,13 +4,13 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$result = $db->query('SELECT wtd.`id`, wt.`template`, wt.`link`, wtd.`wpLinkCM` FROM `WebsiteTemplateDetail` wtd, `WebsiteTemplate` wt WHERE wtd.wpDeleteAt IS NULL AND wtd.wpTemplate = wt.id;')->fetchAll();
+$result = $db->query('SELECT wtd.`id`, wt.`template`, wt.`link` , wtd.`wpShopName`, wtd.`wpLinkCM` FROM `WebsiteTemplateDetail` wtd, `WebsiteTemplate` wt WHERE wtd.wpDeleteAt IS NULL AND wtd.wpTemplate = wt.id;')->fetchAll();
 
 $data = array("data"=> array());
 
 foreach ($result as $row) {
-    $row["link"] = (empty($row["link"])) ? "-" : '<a href="' . $row["link"] . '" target="_blank">'.$row["link"].'</a>';
-    $row["wpLinkCM"] = (empty($row["wpLinkCM"])) ? "-" : '<a href="' . $row["wpLinkCM"] . '" target="_blank">'.$row["wpLinkCM"].'</a>';
+    $row["link"] = (empty($row["link"])) ? "-" : '<a href="' . $row["link"] . '" target="_blank">'.$row["template"].'</a>';
+    $row["wpLinkCM"] = (empty($row["wpLinkCM"])) ? "-" : '<a href="' . $row["wpLinkCM"] . '" target="_blank">'.$row["wpShopName"].'</a>';
 
     //$btn["status"] = ($row["sStatus"]) ? $on : $off;
     $btn["status"] = ($row["sStatus"] == 1) ? $on : $off;
@@ -19,7 +19,6 @@ foreach ($result as $row) {
 
     $data["data"][] = array(
         $row["id"],
-        $row["template"],
         $row["link"],
         $row["wpLinkCM"],
         $btn["edit"] . " " .$btn["del"]
