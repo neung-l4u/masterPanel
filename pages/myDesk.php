@@ -23,6 +23,10 @@ $loginID = $_SESSION['id'];
             cursor: help !important;
             text-decoration: none !important;
         }
+
+        .linkBTN{
+            font-size: 0.8rem !important;
+        }
     </style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -49,7 +53,7 @@ $loginID = $_SESSION['id'];
     <div class="container-fluid">
 
         <div class="row">
-            <div class="col-12 col-sm-6 col-md-3">
+            <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-warning elevation-1">L4U</span>
                     <!--<i class="fas fa-thumbs-up"></i>-->
@@ -66,7 +70,7 @@ $loginID = $_SESSION['id'];
             <!-- fix for small devices only -->
             <div class="clearfix hidden-md-up"></div>
 
-            <div class="col-12 col-sm-6 col-md-3">
+            <div class="col-3 col-sm-3 col-md-3">
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-primary elevation-1">CEO</span>
                     <div class="info-box-content">
@@ -79,32 +83,36 @@ $loginID = $_SESSION['id'];
             </div>
             <!-- /.col -->
 
-            <div class="col-12 col-sm-6">
-                <div class="info-box mb-3">
+            <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                <div class="info-box">
                     <div class="card-body p-0">
-                        <ul class="users-list ">
-                            <li>
-                                <a href="javascript:" class="btn btn-outline-primary" data-toggle="modal" data-target="#formModalExchangeCash">Exchange for cash</a>
-                            </li>
-                            <li>
-                                <a href="javascript:" class="btn btn-outline-primary" data-toggle="modal" data-target="#formModalConvertCoin">Coin type convert</a>
-                            </li>
-                            <li>
-                                <a href="javascript:" class="btn btn-outline-primary" data-toggle="modal" data-target="#formModalTransferCoin">Transfer Coin</a>
-                            </li>
-                            <li>
-                                <a href="javascript:" class="btn btn-outline-primary" data-toggle="modal" data-target="#formModalRedeemGiftCard">Redeem Gift Card</a>
-                            </li>
-                        </ul>
-                        <!-- /.users-list -->
+                        <div class="d-flex flex-row flex-wrap justify-content-center">
+
+                                <div class="col-3">
+                                    <a href="javascript:" class="btn btn-outline-primary w-100" data-toggle="modal" data-target="#formModalExchangeCash">
+                                        Exchange for cash
+                                    </a>
+                                </div>
+                                <div class="col-3">
+                                    <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalConvertCoin">
+                                        Coin type convert
+                                    </a>
+                                </div>
+                                <div class="col-3">
+                                    <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalTransferCoin">
+                                        Transfer Coin
+                                    </a>
+                                </div>
+                                <div class="col-3">
+                                    <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalRedeemGiftCard">
+                                        Redeem Gift Card
+                                    </a>
+                                </div>
+
+                        </div>
                     </div>
-                    <!-- /.card-body -->
                 </div>
-                <!-- /.info-box -->
             </div>
-            <!-- /.col -->
-        </div>
-        <!-- /.row -->
 
         <div class="row">
             <div class="col-md-6">
@@ -133,7 +141,7 @@ $loginID = $_SESSION['id'];
                         </div>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-row flex-wrap justify-content-center align-items-center" style="height: 400px; overflow-y: auto; overflow-x: hidden; padding: 0 10px;"">
                         <!-- Conversations are loaded here -->
                         <div class="direct-chat-messages">
                             <!-- Message. Default to the left -->
@@ -265,24 +273,26 @@ $loginID = $_SESSION['id'];
                         </div>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body d-flex flex-row flex-wrap justify-content-around ">
+                    <div class="card-body d-flex flex-row flex-wrap justify-content-center align-items-center pt-2" style="height: 449px; overflow-y: auto; overflow-x: hidden; padding: 0 10px;">
                         <?php
                         foreach ($spendLogs as $row){ ?>
-                            <div class="col-xl-4 col-lg-12 col-sm-12 col-md-12">
+                            <div class="col-xl-4 col-lg-4 col-sm-4 col-md-4">
                                 <div class="d-flex flex-r info-box">
-                                    <img class="info-box-icon bg-info elevation-1 mr-2" width="150px" height="80px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
+                                    <div class="col-xl-12 col-lg-12 col-sm-12 col-md-12 d-flex flex-column flex-wrap justify-content-center align-items-center">
+                                        <img class="info-box-icon bg-info elevation-1" width="150px" height="80px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
 
-                                    <div class="info-box-content">
-                                            <span class="img-rounded">
+                                        <div class="info-box-content">
+                                            <span class="img-rounded" style="font-size: 0.7em; text-align: center;">
                                                 <abbr title="<?php echo $row['rcTitle']; ?>">
                                                     <?php echo $row['rcTitle']; ?>
                                                 </abbr>
                                             </span>
-                                        <span class="info-box-number">
-                                                <?php echo $row['rcSpend']; ?> L4U
+                                            <span class="info-box-number" style="font-size: 0.8em; text-align: center;">
+                                                    <?php echo $row['rcSpend']; ?> L4U
                                             </span>
+                                        </div>
+                                        <!-- /.contacts-list-info -->
                                     </div>
-                                    <!-- /.contacts-list-info -->
                                 </div>
                             </div>
                         <?php }//foreach
