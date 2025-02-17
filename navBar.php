@@ -7,32 +7,16 @@ $userLevel = $_SESSION['level'];
         <li class="nav-item">
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
-
-        <?php if($_SESSION['level']<=3){ ?>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="main.php?p=coin" class="nav-link">L4U Coin</a>
-        </li>
-        <?php } ?>
-        <?php if($_SESSION['level']>=4){ ?>
-            <?php
-            // TODO: เปลี่ยน Monday form เป็น  internal form
-            ?>
             <li class="nav-item d-none d-sm-inline-block">
                 <a href="https://forms.monday.com/forms/da9ca9feccd4e43b4d264a3b45ba38ed?r=apse2" target="_blank" class="nav-link">Coin Request</a>
             </li>
-        <?php } ?>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="modules/signup/index.php" target="_blank" class="nav-link">Sign up form</a>
+            <a href="https://app.respond.io/user/login" target="_blank" class="nav-link">Respond.io</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="https://app.trainual.com/local-for-you/users/sign_in" target="_blank" class="nav-link">Trainual</a>
         </li>
 
-        <?php //if($_SESSION['level']<=2){ ?>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="main.php?p=l4uPassword" class="nav-link">L4U Password</a>
-        </li>
-        <?php //} ?>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="modules/cancellation/views/index.php?token=123" class="nav-link">Unsubscribe Form</a>
-        </li>
     </ul>
 
     <!-- Right navbar links -->
@@ -135,7 +119,7 @@ $userLevel = $_SESSION['level'];
             <!--<a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="far fa-bell"></i>
                 <span class="badge badge-warning navbar-badge">15</span>
-            </a>
+            </a>-->
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <span class="dropdown-header">15 Notifications</span>
                 <div class="dropdown-divider"></div>
@@ -166,7 +150,7 @@ $userLevel = $_SESSION['level'];
             <a class="nav-link" data-widget="refresh" href="#" role="button" onclick="location.reload();">
                 <i class="fas fa-rotate-right"></i>
             </a>
-        </li>-->
+        </li>
         <!--<li class="nav-item"> //เปิด sidebar
             <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
                 <i class="fas fa-th-large"></i>

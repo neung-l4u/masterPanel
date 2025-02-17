@@ -4,8 +4,6 @@ const saveButton = document.getElementById("cmdSubmit");
 const nextButton = document.getElementById("nextBtn");
 const infoText = document.getElementById("infoText");
 
-const isSaved = localStorage.getItem(saveKey); //อ่าน key ของ project ที่เลือกมา
-
 const btnNextStatus = (status) => { //ไว้เปิด|ปิด ปุ่ม Next
     if(status === true){ // ปลดล็อกปุ่ม Next
         nextButton.classList.remove("btn-secondary"); // ลบคลาส btn-secondary
@@ -21,18 +19,18 @@ const btnNextStatus = (status) => { //ไว้เปิด|ปิด ปุ่�
 }//btnStatus
 
 
-if (isSaved === "true") {
+if (infoText.textContent === "1") {
     // ถ้าเคย Save แล้ว: ปลดล็อก Next และแก้ข้อความแจ้งเตือน
     btnNextStatus(true);
     $("#infoText").removeClass("text-warning").addClass("text-success").empty();
     infoText.textContent = "You have already saved. You can proceed.";
+} else {
+    // ถ้ายังไม่ Save: ปิด Next และแก้ข้อความแจ้งเตือน
+    infoText.textContent = "Please save before proceeding.";
 }
 
 
 saveButton.addEventListener("click", () => { // เมื่อกดปุ่ม Save
-    // บันทึกสถานะว่า Save เรียบร้อย
-    localStorage.setItem(saveKey, "true");
-
     btnNextStatus(true);
     // อัปเดตข้อความแจ้งเตือน
     $("#infoText").removeClass("text-warning").addClass("text-success").text("Save completed! You can now click Next.");

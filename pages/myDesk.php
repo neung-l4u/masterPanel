@@ -220,7 +220,7 @@ $loginID = $_SESSION['id'];
                         <h3 class="card-title">Coin Action</h3>
 
                         <div class="card-tools">
-                            <span class="badge badge-warning">2 new features</span>
+<!--                            <span class="badge badge-warning">2 new features</span>-->
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fas fa-minus"></i>
                             </button>
@@ -247,14 +247,14 @@ $loginID = $_SESSION['id'];
                             </li>
                             <li>
                             <a href="javascript:" class="btn btn-app bg-gradient-pink" data-toggle="modal" data-target="#formModalTransferCoin">
-                                    <span class="badge bg-warning">New</span>
+<!--                                    <span class="badge bg-warning">New</span>-->
                                     <i class="fas fa-arrow-right"></i> Transfer
                                 </a>
                                 <a href="javascript:" class="btn btn-outline-primary" data-toggle="modal" data-target="#formModalTransferCoin">Transfer Coin</a>
                             </li>
                             <li>
                                 <a href="javascript:" class="btn btn-app bg-gradient-pink" data-toggle="modal" data-target="#formModalRedeemGiftCard">
-                                    <span class="badge bg-warning">New</span>
+<!--                                    <span class="badge bg-warning">New</span>-->
                                     <i class="fas fa-gift"></i> Gift Card
                                 </a>
                                 <a href="javascript:" class="btn btn-outline-primary" data-toggle="modal" data-target="#formModalRedeemGiftCard">Redeem Gift Card</a>
@@ -309,7 +309,7 @@ $loginID = $_SESSION['id'];
                             foreach ($spendLogs as $row){ ?>
                             <div class="col-xl-4 col-lg-12 col-sm-12 col-md-12">
                                 <div class="d-flex flex-r info-box">
-                                        <img class="info-box-icon bg-info elevation-1 mr-2" width="150" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
+                                        <img class="info-box-icon bg-info elevation-1 mr-2" width="150px" height="80px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
 
                                         <div class="info-box-content">
                                             <span class="img-rounded">

@@ -5,10 +5,12 @@ require_once ("../assets/php/share_function.php");
 global $db, $date;
 $id=$_REQUEST['id'];
 
-$row = $db->query('SELECT * FROM `tb_project` WHERE projectID = ?;',$id)->fetchArray();
+$row = $db->query('SELECT * FROM `tb_project` WHERE `projectID` = ?;',$id)->fetchArray();
 $projectID = $id;
 
 $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName"]).'/';
+
+$pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', $id)->fetchArray();
 ?>
 
 <link rel="stylesheet" href="../assets/css/template.css">
@@ -760,8 +762,16 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
                     
                     <div class="row">
                         <div class="col-6" style="text-align:left;">
-                            <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Submit Page Home Info.</button>
-                            <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                            <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Save Home Page Info.</button>
+                            <?php if ($pageDetail["home"] == null) {  ?>
+                                <small id="infoTextHome" class="text-danger ml-3"3>
+                                    This page has never had a design template submitted.
+                                </small>
+                            <?php }else{ ?>
+                                <small id="infoTextHome" class="text-success ml-3"3>
+                                    Saved.
+                                </small>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
@@ -1088,8 +1098,16 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row">
                         <div class="col-6" style="text-align:left;">
-                            <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Submit Page About Info.</button>
-                            <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                            <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Save About Page Info.</button>
+                            <?php if ($pageDetail["about"] == null) {  ?>
+                                <small id="infoTextAbout" class="text-danger ml-3"3>
+                                    This page has never had a design template submitted.
+                                </small>
+                            <?php }else{ ?>
+                                <small id="infoTextAbout" class="text-success ml-3"3>
+                                    Saved.
+                                </small>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
@@ -1213,8 +1231,16 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row">
                         <div class="col-6" style="text-align:left;">
-                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Submit Page Contact Info.</button>
-                            <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Save Contact Page Info.</button>
+                            <?php if ($pageDetail["contact"] == null) {  ?>
+                                <small id="infoTextContact" class="text-danger ml-3"3>
+                                    This page has never had a design template submitted.
+                                </small>
+                            <?php }else{ ?>
+                                <small id="infoTextContact" class="text-success ml-3"3>
+                                    Saved.
+                                </small>
+                            <?php } ?>
                         </div>
                     </div>
 
@@ -1366,11 +1392,10 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "A4-28-promoHead4": $('#homePromotionHeadline4').val(),
             "A4-29-promoMsg4": $('#homePromotionMessage4').val(),
             "notes": $('#notesHome').val(),
-
-            token: Math.random()
+            "token": Math.random()
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitHome
 
     const submitAbout = () => {
@@ -1396,11 +1421,10 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "B3-10-dishimg": JSON.stringify(album_files),
             "notes": $('#notesAbout').val(),
 
-
             token: Math.random()
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitAbout
 
     const submitContact = () => {
@@ -1420,6 +1444,6 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             token: Math.random()
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitContact
 </script>

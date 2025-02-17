@@ -9,6 +9,8 @@ $row = $db->query('SELECT * FROM `tb_project` WHERE projectID = ?;',$id)->fetchA
 $projectID = $id;
 
 $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName"]).'/';
+
+$pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', $id)->fetchArray();
 ?>
 
 <link rel="stylesheet" href="../assets/css/template.css">
@@ -477,8 +479,16 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row"><!-- Home BTN -->
                         <div class="col">
-                            <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Submit page Home info.</button>
-                            <small id="infoTextHome" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                            <button type="button" class="btn btn-success" id="submitHomeBtn" onclick="submitHome();">Save Home Page info.</button>
+                            <?php if ($pageDetail["home"] == null) {  ?>
+                                <small id="infoTextHome" class="text-danger ml-3"3>
+                                    This page has never had a design template submitted.
+                                </small>
+                            <?php }else{ ?>
+                                <small id="infoTextHome" class="text-success ml-3"3>
+                                    Saved.
+                                </small>
+                            <?php } ?>
                         </div>
                     </div>
 
@@ -723,8 +733,16 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row"><!-- About BTN -->
                         <div class="col">
-                            <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Submit page About info.</button>
-                            <small id="infoTextAbout" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                            <button type="button" class="btn btn-success" id="submitAboutBtn" onclick="submitAbout();">Save About Page info.</button>
+                            <?php if ($pageDetail["about"] == null) {  ?>
+                                <small id="infoTextAbout" class="text-danger ml-3"3>
+                                    This page has never had a design template submitted.
+                                </small>
+                            <?php }else{ ?>
+                                <small id="infoTextAbout" class="text-success ml-3"3>
+                                    Saved.
+                                </small>
+                            <?php } ?>
                         </div>
                     </div>
 
@@ -871,8 +889,16 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
                     <div class="row"><!-- Contact BTN-->
                         <div class="col">
-                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Submit page Contact info.</button>
-                            <small id="infoTextContact" class="text-danger ml-3">This page has never had a design template submitted.</small>
+                            <button type="button" class="btn btn-success" id="submitContactBtn" onclick="submitContact();">Save Contact Page info.</button>
+                            <?php if ($pageDetail["contact"] == null) {  ?>
+                                <small id="infoTextContact" class="text-danger ml-3"3>
+                                    This page has never had a design template submitted.
+                                </small>
+                            <?php }else{ ?>
+                                <small id="infoTextContact" class="text-success ml-3"3>
+                                    Saved.
+                                </small>
+                            <?php } ?>
                         </div>
                     </div>
 
@@ -1012,7 +1038,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "notes": $('#notesHome').val(),
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitHome
 
     const submitAbout = () => {
@@ -1038,7 +1064,7 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "notes": $('#notesAbout').val(),
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitAbout
 
     const submitContact = () => {
@@ -1057,6 +1083,6 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
             "notes": $('#notesContact').val(),
         }
         console.log("Payload", payload);
-        sendEmail(); //in template.js
+        saveToDB(); //in template.js
     }//submitContact
 </script>
