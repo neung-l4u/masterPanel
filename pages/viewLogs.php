@@ -40,17 +40,21 @@ $password = "Localeats#".date("Y");
                                 <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:15%">Date</th>
-                                        <th style="width:10%">Country</th>
-                                        <th style="width:70%">Data</th>
+                                        <th style="width:15%">Date time</th>
+                                        <th style="width:15%">Country</th>
+                                        <th style="width:40%">Shopname</th>
+                                        <th style="width:20%">Logs Signup</th>
+                                        <!-- <th style="width:10%">Logs Stripe</th> -->
                                         <th style="width:10%">Status</th>
                                     </tr>
                                     </thead>
                                     <tfoot class="thead-dark">
                                     <tr>
-                                        <th>Date</th>
+                                        <th>Date time</th>
                                         <th>Country</th>
-                                        <th>Data</th>
+                                        <th>Shopname</th>
+                                        <th>Logs Signup</th>
+                                        <!-- <th>Logs Stripe</th> -->
                                         <th>Status</th>
                                     </tr>
                                     </tfoot>
@@ -65,270 +69,40 @@ $password = "Localeats#".date("Y");
 
 
         <!-- Modal -->
-        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel">
+        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         
-                    </div>
-                    <div class="modal-body">
+                    </div> <!-- modal-header -->
 
-                    </div>
+                    <div class="modal-body">
+                        <h1>View Logs</h1>
+                        <pre id="jsonText">jsonData</pre>
+                    </div> <!-- modal-body -->
+
                     <div class="modal-footer">
-                    
-                    </div>
-                </div>
-            </div>
-        </div>
+                        
+                    </div> <!-- modal-footer -->
+                </div> <!-- modal-content -->
+            </div> <!-- modal-dialog -->
+        </div> <!-- modal -->
 
     </div><!-- /.container-fluid -->
 </div>
 <!-- /.content -->
 
 <script>
-    const setStatus = (id, status) => {
-        const flagStatus = !status ? 1 : 0;
-        const reqAjax = $.ajax({
-            url: "assets/php/actionStaffs.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: {
-                act: "setStatus",
-                id: id,
-                status: flagStatus
-            },
-        });
-
-        reqAjax.done(function (res) {
-            reloadTable();
-        });
-
-        reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
-            console.log(status + ": " + error);
-        });
-    }// const
-
-    const setEdit = (id) => {
-        const inputName = $("#inputName");
-        const inputTname = $("#inputTname");
-        const inputNickName = $("#inputNickName");
-        const inputStartDate = $("#inputStartDate");
-        const inputEmployeeNumber = $("#inputEmployeeNumber");
-        const inputAddress = $("#inputAddress");
-        const inputBirthday = $("#inputBirthday");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const passwordNotAllow = $("#passwordNotAllow");
-        const inputLevel = $("#inputLevel");
-        const inputReligion = $("#inputReligion");
-        const inputTeam = $("#inputTeam");
-        const statusOn = $("#statusOn");
-        const statusOff = $("#statusOff");
-        const editID = $("#editID");
-        const formAction = $("#formAction");
-        const reqAjax = $.ajax({
-            url: "assets/php/actionStaffs.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: {
-                act: "loadUpdate",
-                id: id,
-            },
-        });
-
+    function viewJson(data) {
+        let jsonData = data;
         
-        reqAjax.done(function (res) {
-            console.log(res);
-            inputName.val(res.name);
-            inputTname.val(res.tname);
-            inputNickName.val(res.nickname);
-            inputBirthday.val(res.birthday);
-            inputStartDate.val(res.startdate);
-            inputEmployeeNumber.val(res.employeenumber);
-            inputAddress.val(res.address);
-            inputEmail.val(res.email);
-            inputPhone.val(res.phone);
-            inputPassword.val("Encrypted : " + res.password).attr('disabled', 'disabled');
-            passwordNotAllow.show();
-            inputLevel.val(res.level);
-            inputReligion.val(res.religion)
-            inputTeam.val(res.team)
-            if(res.status === 1) {
-                statusOff.prop('checked', false);
-                statusOn.prop('checked', true);
-            }else{
-                statusOn.prop('checked', false);
-                statusOff.prop('checked', true);
-            }
-            editID.val(res.id);
-            formAction.val("edit");
-            modalFormAction("open");
-        });
-
-        reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
-            console.log(status + ": " + error);
-        })
-    }// const
-
-    const formSave = () => {
-        const inputName = $("#inputName");
-        const inputTname = $("#inputTname");
-        const inputNickName = $("#inputNickName");
-        const inputBirthday = $("#inputBirthday");
-        const inputStartDate = $("#inputStartDate");
-        const inputEmployeeNumber = $("#inputEmployeeNumber");
-        const inputAddress = $("#inputAddress");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const inputReligion = $("#inputReligion");
-        const inputTeam = $("#inputTeam");
-        const inputLevel = $("#inputLevel");
-        const editID = $("#editID");
-        const formAction = $("#formAction");
-
-        let statusValue = $("input[name='inputStatus']:checked").val();
-
-        let payload = {
-                act: "save",
-                inputName : inputName.val(),
-                inputTname : inputTname.val(),
-                inputNickName : inputNickName.val(),
-                inputBirthday : inputBirthday.val(),
-                inputStartDate : inputStartDate.val(),
-                inputEmployeeNumber : inputEmployeeNumber.val(),
-                inputAddress : inputAddress.val(),
-                inputEmail : inputEmail.val(),
-                inputPhone : inputPhone.val(),
-                inputPassword : inputPassword.val(),
-                inputReligion : inputReligion.val(),
-                inputTeam : inputTeam.val(),
-                inputLevel : inputLevel.val(),
-                inputStatus : statusValue,
-                editID : editID.val(),
-                formAction : formAction.val()
-            };
-
-            console.log("payload=",payload);
-            
-        const reqAjax = $.ajax({
-            url: "assets/php/actionStaffs.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: payload
-        });
-            
-        reqAjax.done(function (res) {
-            modalFormAction("close");
-            console.log(res);
-            reloadTable();
-            resetForm();
-            $("#formModal").modal('hide');
-        });
-
-        reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
-            console.log(status + ": " + error);
-        });
-        
-    }// const
-
+        $('#formModal').modal('show');
+        $('#jsonText').html(JSON.stringify(jsonData, undefined, 2));
+    }
 
     const resetForm = () => {
-        const inputName = $("#inputName");
-        const inputTname = $("#inputTname");
-        const inputNickName = $("#inputNickName");
-        const inputBirthday = $("#inputBirthday");
-        const inputStartDate = $("#inputStartDate");
-        const inputEmployeeNumber = $("#inputEmployeeNumber");
-        const inputAddress = $("#inputAddress");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const inputReligion = $("#inputReligion");
-        const inputTeam = $("#inputTeam");
-        const inputLevel = $("#inputLevel");
-        const statusOn = $("#statusOn");
-        const statusOff = $("#statusOff");
-        const editID = $("#editID");
-        const formAction = $("#formAction");
-        const passwordNotAllow = $("#passwordNotAllow");
-
-        const date = new Date();
-
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-        let currentDate = `${year}-${month}-${day}`;
-
-        inputName.val('');
-        inputTname.val('');
-        inputNickName.val('');
-        inputBirthday.val('');
-        inputStartDate.val(currentDate);
-        inputEmployeeNumber.val('');
-        inputAddress.val('');
-        inputEmail.val('');
-        inputPhone.val('');
-        inputPassword.val('Localeats#2024').removeAttr('disabled');
-        passwordNotAllow.hide();
-        inputLevel.val('4');
-        inputReligion.val('1');
-        inputTeam.val('0');
-        statusOn.prop('checked', true);
-        statusOff.prop('checked', false);
-        editID.val('');
-        formAction.val('add');
+        console.log('resetForm');
     }// const
 
-    const setDel = (delID) => {
-        //alert ("Delete"+delID);
-
-        let answer = confirm ("Are you sure to delete this Staff?");
-
-        console.log (answer);
-        if (answer === true){
-            let payload = {
-                act: "setDelete",
-                id : delID
-            };
-
-            console.log("payload=",payload);
-
-            const reqAjax = $.ajax({
-                url: "assets/php/actionStaffs.php",
-                method: "POST",
-                async: false,
-                cache: false,
-                dataType: "json",
-                data: payload
-            });
-                
-            reqAjax.done(function (res) {
-                modalFormAction("close");
-                console.log(res);
-                reloadTable();
-                resetForm();
-                $("#formModal").modal('hide');
-            });
-
-            reqAjax.fail(function (xhr, status, error) {
-                console.log("ajax request fail!!");
-                console.log(status + ": " + error);
-            });
-
-        }//if
-
-
-    }//setDel
-
 </script>
+

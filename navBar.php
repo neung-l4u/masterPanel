@@ -38,7 +38,17 @@ $userLevel = $_SESSION['level'];
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="main.php?p=viewLogs" class="nav-link">Logs</a>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Tools
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="main.php?p=viewLogs">Signup Form</a>
+                    <a class="dropdown-item" href="#">Stripe</a>
+                    <a class="dropdown-item" href="#">Coins</a>
+                    <a class="dropdown-item" href="#">Template</a>
+                </div>
+            </div>
         </li>
         <!-- Navbar Search -->
         <li class="nav-item">
