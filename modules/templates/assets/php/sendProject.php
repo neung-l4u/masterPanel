@@ -233,8 +233,8 @@ $param = array(
 $system = array(
     "emailSenderName" => "Template Submission Form",
     "emailSenderEmail" => "administrator@localforyou.com",
-    //"emailSubject" => "New " . $project['shopType'] . " Website Submited",
-    "emailSubject" => "Test Send Project",
+    "emailSubject" => "New " . $project['shopType'] . " Website Submited",
+    //"emailSubject" => "Test Send Project",
     "emailAdministrator" => "neung@localforyou.com"
 );
 
