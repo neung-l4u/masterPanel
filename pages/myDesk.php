@@ -7,8 +7,10 @@ $loginID = $_SESSION['id'];
 
 ?>
 
+
 <!-- ChartJS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         .iconRewardAction{
             height: 90px !important;
@@ -21,6 +23,10 @@ $loginID = $_SESSION['id'];
             border-bottom: none !important;
             cursor: help !important;
             text-decoration: none !important;
+        }
+
+        .linkBTN{
+            font-size: 0.8rem !important;
         }
     </style>
 <!-- Content Header (Page header) -->
@@ -48,7 +54,7 @@ $loginID = $_SESSION['id'];
     <div class="container-fluid">
 
         <div class="row">
-            <div class="col-12 col-sm-6 col-md-3">
+            <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-warning elevation-1">L4U</span>
                     <!--<i class="fas fa-thumbs-up"></i>-->
@@ -65,7 +71,7 @@ $loginID = $_SESSION['id'];
             <!-- fix for small devices only -->
             <div class="clearfix hidden-md-up"></div>
 
-            <div class="col-12 col-sm-6 col-md-3">
+            <div class="col-3 col-sm-3 col-md-3">
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-primary elevation-1">CEO</span>
                     <div class="info-box-content">
@@ -77,14 +83,44 @@ $loginID = $_SESSION['id'];
                 <!-- /.info-box -->
             </div>
             <!-- /.col -->
-        </div>
-        <!-- /.row -->
+
+            <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                <div class="info-box align-items-center">
+                    <div class="card-body p-0 ">
+
+                            <div class="d-flex flex-row flex-wrap justify-content-center">
+
+                                    <div class="col-3">
+                                        <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalExchangeCash">
+                                            <i class="fas fa-money-bill"></i> Cash
+                                        </a>
+                                    </div>
+                                    <div class="col-3">
+                                        <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalConvertCoin">
+                                            <i class="fas fa-coins"></i> Convert
+                                        </a>
+                                    </div>
+                                    <div class="col-3">
+                                        <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalTransferCoin">
+                                            <i class="fas fa-arrow-right"></i> Transfer
+                                        </a>
+                                    </div>
+                                    <div class="col-3">
+                                        <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalRedeemGiftCard">
+                                            <i class="fas fa-gift"></i> Gift Card
+                                        </a>
+                                    </div>
+
+                            </div>
+                    </div>
+                </div>
+            </div>
 
         <div class="row">
             <div class="col-md-6">
                 <!-- DIRECT CHAT -->
                 <div class="card direct-chat direct-chat-warning">
-                    <div class="card-header">
+                    <div class="card-header" >
                         <h3 class="card-title">History of receiving coins (Last 30 days)</h3>
                         <?php
                         $logs = $db->query('SELECT CL.`id`, CT.`name` AS "coin", CL.`ownerID`, CL.`amount`, ST.`sNickName` AS "nick",ST.`sName` AS "from", ST.`sPic` AS "pic", CL.`reason`, CL.`giveOn`, CL.`lastUpdate`, CL.`activityID`  
@@ -107,7 +143,7 @@ $loginID = $_SESSION['id'];
                         </div>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body">
+                    <div class="card-body" style="height: 60vh; overflow-y: auto; overflow-x: hidden; padding: 0 10px;">
                         <!-- Conversations are loaded here -->
                         <div class="direct-chat-messages">
                             <!-- Message. Default to the left -->
@@ -116,17 +152,17 @@ $loginID = $_SESSION['id'];
                                 foreach ($logs as $row){
                                     $params['logs'][] = $row['amount'].' '.$row['coin'].' By '.$row['from'].' - '.showDate($row['giveOn']).' # '.$row['reason'];
                                     ?>
-                                <div class="direct-chat-msg">
-                                    <div class="direct-chat-infos clearfix">
-                                        <span class="direct-chat-name float-left">By : <?php echo showName($row['nick'],$row['from']); ?></span>
-                                        <span class="direct-chat-timestamp float-right"><?php echo showDate($row['giveOn']); ?></span>
+                                    <div class="direct-chat-msg">
+                                        <div class="direct-chat-infos clearfix">
+                                            <span class="direct-chat-name float-left">By : <?php echo showName($row['nick'],$row['from']); ?></span>
+                                            <span class="direct-chat-timestamp float-right"><?php echo showDate($row['giveOn']); ?></span>
+                                        </div>
+                                        <img class="direct-chat-img" src="dist/img/crews/<?php echo $row['pic']; ?>" alt="giving coin user">
+                                        <div class="direct-chat-text">
+                                            <span class="text-success font-weight-bold"><?php echo $row['amount'].' '.$row['coin']; ?></span>:::  <?php echo $row['reason']; ?>
+                                        </div>
                                     </div>
-                                    <img class="direct-chat-img" src="dist/img/crews/<?php echo $row['pic']; ?>" alt="giving coin user">
-                                    <div class="direct-chat-text">
-                                        <span class="text-success font-weight-bold"><?php echo $row['amount'].' '.$row['coin']; ?></span>:::  <?php echo $row['reason']; ?>
-                                    </div>
-                                </div>
-                                <?php
+                                    <?php
                                 }//foreach
                             }else{ ?>
                                 <div class="direct-chat-msg">
@@ -151,9 +187,9 @@ $loginID = $_SESSION['id'];
                                                                ORDER BY SL.`spendOn` DESC'
                                     ,$loginID, 1)->fetchAll();
                                 if (count($spendLogs)>=1){
-                                $i=1;
-                                foreach ($spendLogs as $row){ ?>
-                                    <li>
+                                    $i=1;
+                                    foreach ($spendLogs as $row){ ?>
+                                        <li>
                                             <img class="contacts-list-img" src="dist/img/icons/128/icon-Cash-128.png" alt="User Avatar">
 
                                             <div class="contacts-list-info">
@@ -164,8 +200,8 @@ $loginID = $_SESSION['id'];
                                                 <span class="contacts-list-msg"><?php echo $row['amount']; ?> <?php echo $row['coin']; ?> Coins - <?php echo $row['reason']; ?>.</span>
                                             </div>
                                             <!-- /.contacts-list-info -->
-                                    </li>
-                                <?php }}else{ echo '<li>Nodata</li>'; } ?>
+                                        </li>
+                                    <?php }}else{ echo '<li>Nodata</li>'; } ?>
 
 
                                 <li>
@@ -215,121 +251,60 @@ $loginID = $_SESSION['id'];
 
             <div class="col-md-6">
                 <!-- USERS LIST -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Coin Action</h3>
-
-                        <div class="card-tools">
-<!--                            <span class="badge badge-warning">2 new features</span>-->
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body p-0">
-                        <ul class="users-list ">
-                            <li>
-                                <a href="javascript:" class="btn btn-app bg-gradient-pink" data-toggle="modal" data-target="#formModalExchangeCash">
-                                    <!-- <span class="badge bg-warning">New</span> -->
-                                    <i class="fas fa-money-bill"></i> Cash
-                                </a>
-                                <a href="javascript:" class="btn btn-outline-primary" data-toggle="modal" data-target="#formModalExchangeCash">Exchange for cash</a>
-                            </li>
-                            <li>
-                                <a href="javascript:" class="btn btn-app bg-gradient-pink" data-toggle="modal" data-target="#formModalConvertCoin">
-                                    <i class="fas fa-coins"></i> Convert
-                                </a>
-                                <a href="javascript:" class="btn btn-outline-primary" data-toggle="modal" data-target="#formModalConvertCoin">Coin type convert</a>
-                            </li>
-                            <li>
-                            <a href="javascript:" class="btn btn-app bg-gradient-pink" data-toggle="modal" data-target="#formModalTransferCoin">
-<!--                                    <span class="badge bg-warning">New</span>-->
-                                    <i class="fas fa-arrow-right"></i> Transfer
-                                </a>
-                                <a href="javascript:" class="btn btn-outline-primary" data-toggle="modal" data-target="#formModalTransferCoin">Transfer Coin</a>
-                            </li>
-                            <li>
-                                <a href="javascript:" class="btn btn-app bg-gradient-pink" data-toggle="modal" data-target="#formModalRedeemGiftCard">
-<!--                                    <span class="badge bg-warning">New</span>-->
-                                    <i class="fas fa-gift"></i> Gift Card
-                                </a>
-                                <a href="javascript:" class="btn btn-outline-primary" data-toggle="modal" data-target="#formModalRedeemGiftCard">Redeem Gift Card</a>
-                            </li>
-                        </ul>
-                        <!-- /.users-list -->
-                    </div>
-                    <!-- /.card-body -->
-                    <div class="card-footer d-flex justify-content-around">
-                        
-                        
-                        
-                        
-                    </div>
-                    <!-- /.card-footer -->
-                </div>
-                <!--/.card -->
-            </div>
-            <!-- /.col -->
-        </div>
-        <!-- /.row -->
-
-        <div class="row">
-            <div class="col-lg-6 col-md-12 col-sm-12">
-                <!-- USERS LIST -->
-                <div class="card">
+                <div class="card gift-list gift-list-warning">
                     <div class="card-header">
                         <h3 class="card-title">Gift list</h3>
                         <?php
-                            $spendLogs = $db->query('SELECT `rcTitle`,`rcReward`,`rcSpend`,`rcPic`
+                        $spendLogs = $db->query('SELECT `rcTitle`,`rcReward`,`rcSpend`,`rcPic`
                             FROM `rewardcategories`  
                             WHERE `rcStatus` = ? AND `rtID` <> ?
                             ORDER BY `rcTitle` ASC;'
                             ,1 ,1)->fetchAll();
 
-                            $i=1;
+                        $i=1;
                         ?>
 
                         <div class="card-tools">
-                            <span class="badge badge-warning"><?php echo count($spendLogs); ?> news</span>
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <span class="badge badge-warning"><?php echo count($spendLogs); ?> items</span>
+                            <!--<button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fas fa-minus"></i>
-                            </button>
+                            </button>-->
                             <button type="button" class="btn btn-tool" data-card-widget="remove">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
+
+
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body d-flex flex-row flex-wrap justify-content-around ">
+                    <div class="card-body d-flex flex-row flex-wrap justify-content-center align-items-center" style="height: 65vh; overflow-y: auto; overflow-x: hidden; padding: 0 10px;">
                         <?php
-                            foreach ($spendLogs as $row){ ?>
-                            <div class="col-xl-4 col-lg-12 col-sm-12 col-md-12">
+                        foreach ($spendLogs as $row){ ?>
+                            <div class="col-xl-4 col-lg-4 col-sm-4 col-md-4">
                                 <div class="d-flex flex-r info-box">
-                                        <img class="info-box-icon bg-info elevation-1 mr-2" width="150px" height="80px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
+                                    <div class="col-xl-12 col-lg-12 col-sm-12 col-md-12 d-flex flex-column flex-wrap justify-content-center align-items-center">
+                                        <img class="info-box-icon bg-info elevation-1" width="150px" height="80px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
 
                                         <div class="info-box-content">
-                                            <span class="img-rounded">
+                                            <span class="img-rounded" style="font-size: 0.7em; text-align: center;">
                                                 <abbr title="<?php echo $row['rcTitle']; ?>">
                                                     <?php echo $row['rcTitle']; ?>
                                                 </abbr>
                                             </span>
-                                            <span class="info-box-number">
-                                                <?php echo $row['rcSpend']; ?> L4U
+                                            <span class="info-box-number" style="font-size: 0.8em; text-align: center;">
+                                                    <?php echo $row['rcSpend']; ?> L4U
                                             </span>
                                         </div>
                                         <!-- /.contacts-list-info -->
+                                    </div>
                                 </div>
                             </div>
-                            <?php }//foreach 
+                        <?php }//foreach
                         ?>
                     </div>
                     <!-- /.card-body -->
 
-                    
+
 
                 </div>
                 <!--/.card -->
@@ -337,6 +312,7 @@ $loginID = $_SESSION['id'];
             <!-- /.col -->
         </div>
         <!-- /.row -->
+
     </div><!-- /.container-fluid -->
     <!-- Modal -->
     <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
