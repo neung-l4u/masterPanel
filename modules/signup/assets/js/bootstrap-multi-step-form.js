@@ -1444,7 +1444,7 @@ const genLinkPDF = () => {
   let registrationNumber = $("#00N9s000000QPWu").val();
   let Country = $("#formCountry").val();
 
-  url = "https://signup.localforyou.com/assets/docs/contract_2024_V02.php?customerFullName=" + customerFullName + "&ShopName=" + ShopName + "&contractPeriod=" + contractPeriod + "&registrationNumber=" + registrationNumber + "&Country=" + Country + "&State=" + State;
+  url = "https://report.localforyou.com/modules/signup/assets/docs/contract_2024_V02.php?customerFullName=" + customerFullName + "&ShopName=" + ShopName + "&contractPeriod=" + contractPeriod + "&registrationNumber=" + registrationNumber + "&Country=" + Country + "&State=" + State;
   agreementGenerated.val(url);
 }
 

@@ -44,7 +44,7 @@ $password = "Localeats#".date("Y");
                                         <th style="width:15%">Country</th>
                                         <th style="width:40%">Shopname</th>
                                         <th style="width:20%">Logs Signup</th>
-                                        <!-- <th style="width:10%">Logs Stripe</th> -->
+                                        <th style="width:10%">Logs Stripe</th>
                                         <th style="width:10%">Status</th>
                                     </tr>
                                     </thead>
@@ -54,7 +54,7 @@ $password = "Localeats#".date("Y");
                                         <th>Country</th>
                                         <th>Shopname</th>
                                         <th>Logs Signup</th>
-                                        <!-- <th>Logs Stripe</th> -->
+                                        <th>Logs Stripe</th>
                                         <th>Status</th>
                                     </tr>
                                     </tfoot>
