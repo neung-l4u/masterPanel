@@ -268,13 +268,11 @@ $loginID = $_SESSION['id'];
                             <span class="badge badge-warning"><?php echo count($spendLogs); ?> items</span>
                             <!--<button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fas fa-minus"></i>
-                            </button>-->
+                            </button>X
                             <button type="button" class="btn btn-tool" data-card-widget="remove">
                                 <i class="fas fa-times"></i>
-                            </button>
+                            </button>-->
                         </div>
-
-
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body d-flex flex-row flex-wrap justify-content-center align-items-center" style="height: 65vh; overflow-y: auto; overflow-x: hidden; padding: 0 10px;">
@@ -303,9 +301,6 @@ $loginID = $_SESSION['id'];
                         ?>
                     </div>
                     <!-- /.card-body -->
-
-
-
                 </div>
                 <!--/.card -->
             </div>
@@ -824,6 +819,7 @@ $loginID = $_SESSION['id'];
     </div> <!-- modal -->
 </div>
 <!-- /.content -->
+</div>
 
 <script>
     const setToToday = () => {
