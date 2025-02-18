@@ -41,8 +41,8 @@
                     "code": "1TrialMass"
                 },
                 "US": {
-                    "discount": 9600,
-                    "code": "1TrialMass"
+                    "discount": 4800,
+                    "code": "1TrialRest"
                 },
                 "CA": {
                     "discount": 9600,
