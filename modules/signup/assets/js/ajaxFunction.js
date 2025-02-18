@@ -780,7 +780,7 @@ function requestToPay() {
             $(done).appendTo(".paymentResult");
             $(cusID).appendTo(".paymentResult");
             genLinkPDF();
-            sendMailToL4UTeam();
+            //sendMailToL4UTeam();
             modalRespondAction('open', 'success');
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
@@ -857,7 +857,7 @@ const sendMailToL4UTeam = () => {
         formCountry: $("#formCountry option:selected").text(),
         formState: $("#state option:selected").text(),
         formFullName: $("#first_name").val().trim() + " " + $("#last_name").val().trim(),
-        formEmail: $("#email").val(),
+        formEmail: $("#email").val().toLowerCase(),
         formMobile: $("#mobile").val(),
         formBestTime: $("#00N9s000000Nl1G").val(),
         formNote: $("#additionComment").val(),
@@ -957,7 +957,7 @@ const saveToDB = (stripePayload) => {
         OwnDomain: $("#newDomain").val().trim(),
         domainUser: domainUser.val().trim(),
         domainPass: domainPass.val().trim(),
-        domainComment: domainComment.val(),
+        domainComment: domainComment.val().trim(),
         domainRegister: domainRegister.val(),
         Flyer: $("input:checkbox[name='00N9s000000QQaH']:checked").val(),
         FridgeMagnet: $("input:checkbox[name='00N9s000000QQav']:checked").val(),
@@ -988,11 +988,11 @@ const saveToDB = (stripePayload) => {
         Routing_number: $("#routingDirectDebit").val(),
         AccountNumber: $("#acnDirectDebit").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
-        AdditionNote: $("#additionComment").val(),
+        AdditionNote: $("#additionComment").val().trim(),
         ShopAgent: $("#byAgent").val(),
-        ReferredByPerson: $("#byPerson").val(),
+        ReferredByPerson: $("#byPerson").val().trim(),
         formRefPartner: $("#byPartner").val(),
-        ReferredByShop: $("#byRestaurant").val(),
+        ReferredByShop: $("#byRestaurant").val().trim(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
         formInitialProductOffering: $("#initialProductOffering").val(),
@@ -1001,8 +1001,7 @@ const saveToDB = (stripePayload) => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
-        formstartprojectNote: $("#startprojectNote").val(),
-
+        formstartprojectNote: $("#startprojectNote").val().trim()
     };
 
     const saveToDB = $.ajax({
@@ -1012,6 +1011,7 @@ const saveToDB = (stripePayload) => {
         cache: false,
         dataType: 'json',
         data: {
+            "stripePayload" : stripePayload,
             "payload" : payload,
             "country" : Country
         }
@@ -1097,7 +1097,7 @@ const createLogs = (stripePayload) => {
         OwnDomain: $("#newDomain").val().trim(),
         domainUser: domainUser.val().trim(),
         domainPass: domainPass.val().trim(),
-        domainComment: domainComment.val(),
+        domainComment: domainComment.val().trim(),
         domainRegister: domainRegister.val(),
         Flyer: $("input:checkbox[name='00N9s000000QQaH']:checked").val(),
         FridgeMagnet: $("input:checkbox[name='00N9s000000QQav']:checked").val(),
@@ -1128,11 +1128,11 @@ const createLogs = (stripePayload) => {
         Routing_number: $("#routingDirectDebit").val(),
         AccountNumber: $("#acnDirectDebit").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
-        AdditionNote: $("#additionComment").val(),
+        AdditionNote: $("#additionComment").val().trim(),
         ShopAgent: $("#byAgent").val(),
-        ReferredByPerson: $("#byPerson").val(),
+        ReferredByPerson: $("#byPerson").val().trim(),
         formRefPartner: $("#byPartner").val(),
-        ReferredByShop: $("#byRestaurant").val(),
+        ReferredByShop: $("#byRestaurant").val().trim(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
         formInitialProductOffering: $("#initialProductOffering").val(),
@@ -1141,8 +1141,7 @@ const createLogs = (stripePayload) => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
-        formstartprojectNote: $("#startprojectNote").val(),
-
+        formstartprojectNote: $("#startprojectNote").val().trim()
     };
 
     const sendLog = $.ajax({

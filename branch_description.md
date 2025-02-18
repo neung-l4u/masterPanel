@@ -1,3 +1,6 @@
+250217 mark/feature/logsStripeDB
+>save logs ของ stripe ลง database
+
 250215 bas/fix/emailAlert
 >จัดการอีเมลที่ไม่แจ้งเตือนในไฟล์ชื่อ L4UEmailAlert.php
 

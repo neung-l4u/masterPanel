@@ -4,7 +4,7 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$result = $db->query('SELECT l.id, l.data, l.countryCode, l.createAt, s.status FROM logssignup l, logsstatus s WHERE l.status = s.id ORDER BY l.createAt DESC')->fetchAll();
+$result = $db->query('SELECT l.id, l.data, l.dataStripe, l.countryCode, l.createAt, s.status FROM logssignup l, logsstatus s WHERE l.status = s.id ORDER BY l.createAt DESC')->fetchAll();
 
 $data = array("data"=> array());
 
@@ -43,14 +43,14 @@ foreach ($result as $row) {
     $shopname = $json["ShopName"];
     
     $signupLogsBtn = '<button type="button" class="btn btn-primary" onclick="viewJson('.htmlspecialchars($row["data"]).');">View</button>';
-    //$stripeLogsBtn = '<button type="button" class="btn btn-primary" onclick="viewJson('.htmlspecialchars($row["data"]).');">View</button>';
+    $stripeLogsBtn = '<button type="button" class="btn btn-primary" onclick="viewJson('.htmlspecialchars($row["dataStripe"]).');">View</button>';
 
     $data["data"][] = array(
         $date,
         $country,
         $shopname,
         $signupLogsBtn,
-        //$stripeLogsBtn,
+        $stripeLogsBtn,
         $row["status"]
     );
 }
