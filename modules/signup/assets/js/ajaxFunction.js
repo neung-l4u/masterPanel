@@ -780,7 +780,7 @@ function requestToPay() {
             $(done).appendTo(".paymentResult");
             $(cusID).appendTo(".paymentResult");
             genLinkPDF();
-            //sendMailToL4UTeam();
+            sendMailToL4UTeam();
             modalRespondAction('open', 'success');
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
@@ -827,6 +827,20 @@ const sendMailToL4UTeam = () => {
     let yyyy = today.getFullYear();
 
     today = dd + '/' + mm + '/' + yyyy;
+
+    ////////if checked on a submitted form will send test mail to IT only/////
+    const CheckedBoxTestmail = $("#CheckedBoxTestmail");
+    let CheckedBoxTestmailValue = 2;
+
+    if ($(CheckedBoxTestmail).prop('checked')) {
+        CheckedBoxTestmailValue = $(CheckedBoxTestmail).val();
+    } else {
+        CheckedBoxTestmailValue = 0;
+    };
+
+    ///////////////////////////////
+
+    //formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
     let payload = {
         mode : "alert",
         formDate: today,
@@ -834,6 +848,7 @@ const sendMailToL4UTeam = () => {
         formVersion: $("#signupFormVersion").val(),
         formMessage: 'Hi, Team <br>There are new sign-up customers coming in now. Below are brief details. You can check full information on CRM.',
         formProduct: $("#currentlyPackage option:selected").text(),
+        MainProduct: $("input[name='product']:checked").val(),
         formInitialProductOffering: $("#initialProductOffering").val(),
         formSalesAgent: $("#byAgent option:selected").text(),
         formContractPeriod: $("#ContractPeriod").val(),
@@ -855,7 +870,7 @@ const sendMailToL4UTeam = () => {
         formCustomerType: $("#formType option:selected").text(),
         formShopName: $("#00N2v00000IyVqB").val(),
         formCountry: $("#formCountry option:selected").text(),
-        formState: $("#state option:selected").text(),
+        ShippingAddress: $("#shipAddress1").val(),
         formFullName: $("#first_name").val().trim() + " " + $("#last_name").val().trim(),
         formEmail: $("#email").val().toLowerCase(),
         formMobile: $("#mobile").val(),
@@ -865,6 +880,7 @@ const sendMailToL4UTeam = () => {
         formstartProjectOther: $("#dateproject").val(),
         formstartprojectNote: $("#startprojectNote").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
+        testMail: CheckedBoxTestmailValue,
         token: Math.random()
     };
 
@@ -930,7 +946,7 @@ const saveToDB = (stripePayload) => {
         Website: $("#webURL").val().trim(),
         Language: $(".supportLanguage:checked").val(),
         ShopNumber2: $("#physicalShopNumber").val(),
-        Address1: $("#streetAddress1").val(),
+        Address1: $("#streetAddress1").val().trim(),
         Address2: $("#streetAddress2").val(),
         City: $("#city").val().trim(),
         State: $("#state").val(),
@@ -1070,7 +1086,7 @@ const createLogs = (stripePayload) => {
         Website: $("#webURL").val().trim(),
         Language: $(".supportLanguage:checked").val(),
         ShopNumber2: $("#physicalShopNumber").val(),
-        Address1: $("#streetAddress1").val(),
+        Address1: $("#streetAddress1").val().trim(),
         Address2: $("#streetAddress2").val(),
         City: $("#city").val().trim(),
         State: $("#state").val(),
