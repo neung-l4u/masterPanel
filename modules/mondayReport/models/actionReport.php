@@ -27,7 +27,7 @@ foreach ($reports as $row) {
     $data["data"][] = array(
         $i,
         $row["name"],
-        $row["total"]
+        number_format($row["total"])
     );
 
     $i++;
