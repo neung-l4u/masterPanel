@@ -1,3 +1,6 @@
+250219 mark/hotfix/stateEmail
+>เปลี่ยน section ในอีเมล จาก state เป็น street address
+
 250217 mark/feature/logsStripeDB
 >save logs ของ stripe ลง database
 
