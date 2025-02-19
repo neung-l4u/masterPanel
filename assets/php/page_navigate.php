@@ -126,4 +126,11 @@ switch ($menuPage){
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataPassword.php";
         break;
+    case "viewLogs":
+        $showPage = "viewLogs.php";
+        $activeMenu["lv1"] = "";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/viewLogs.php";
+        break;
 }
