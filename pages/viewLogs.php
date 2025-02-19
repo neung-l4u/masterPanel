@@ -3,7 +3,13 @@ global $db, $date;
 
 $password = "Localeats#".date("Y");
 ?>
+<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
 
+<style>
+    .clickable {
+        cursor: pointer;
+    }
+</style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="container-fluid">
@@ -36,28 +42,20 @@ $password = "Localeats#".date("Y");
                     </div>
                     <div class="card-body">
                         <div class="card">
-                            <div class="card-body table-responsive p-4" style="height: 620px;">
-                                <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
-                                    <thead class="thead-dark">
+                            <div class="card-body table-responsive p-4" style="height: 630px;">
+                                <table id="signupTable" class="table table-borderless table-striped table-hover"
+                                       style="width:100%">
+                                    <thead class="thead">
                                     <tr>
                                         <th style="width:15%">Date time</th>
                                         <th style="width:15%">Country</th>
                                         <th style="width:40%">Shopname</th>
-                                        <th style="width:20%">Logs Signup</th>
-                                        <th style="width:10%">Logs Stripe</th>
+                                        <th style="width:10%">SignupLogs</th>
+                                        <th style="width:10%">StripeJson</th>
+                                        <th style="width:10%">Contract</th>
                                         <th style="width:10%">Status</th>
                                     </tr>
                                     </thead>
-                                    <tfoot class="thead-dark">
-                                    <tr>
-                                        <th>Date time</th>
-                                        <th>Country</th>
-                                        <th>Shopname</th>
-                                        <th>Logs Signup</th>
-                                        <th>Logs Stripe</th>
-                                        <th>Status</th>
-                                    </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                             <!-- /.card-body -->
@@ -70,14 +68,13 @@ $password = "Localeats#".date("Y");
 
         <!-- Modal -->
         <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        
+                        <h3>View Logs</h3>
                     </div> <!-- modal-header -->
 
                     <div class="modal-body">
-                        <h1>View Logs</h1>
                         <pre id="jsonText">jsonData</pre>
                     </div> <!-- modal-body -->
 
@@ -92,7 +89,26 @@ $password = "Localeats#".date("Y");
 </div>
 <!-- /.content -->
 
+<script src="plugins/jquery/jquery.min.js"></script>
+<script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
 <script>
+    let signupTable = $('#signupTable').DataTable( {
+        pagingType: 'full_numbers',
+        ajax: {
+            url: 'pages/tableRendering/viewLogs.php',
+            dataSrc: 'data'
+        },
+        "pageLength": 8,
+        order: [[0, 'desc']],
+        lengthMenu: [
+            [8, 25, 50, -1],
+            ['Fit', 25, 50, 'All']
+        ],columnDefs: [
+            { targets: [6], className: 'dt-right' },
+            { targets: [0], className: 'dt-left' }
+        ]
+    } );
+
     function viewJson(data) {
         let jsonData = data;
         
