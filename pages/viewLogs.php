@@ -9,6 +9,9 @@ $password = "Localeats#".date("Y");
     .clickable {
         cursor: pointer;
     }
+    .thead-dark {
+        background-color: #212529;
+    }
 </style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -45,7 +48,7 @@ $password = "Localeats#".date("Y");
                             <div class="card-body table-responsive p-4" style="height: 630px;">
                                 <table id="signupTable" class="table table-borderless table-striped table-hover"
                                        style="width:100%">
-                                    <thead class="thead">
+                                    <thead class="thead-dark">
                                     <tr>
                                         <th style="width:15%">Date time</th>
                                         <th style="width:15%">Country</th>
@@ -104,8 +107,9 @@ $password = "Localeats#".date("Y");
             [8, 25, 50, -1],
             ['Fit', 25, 50, 'All']
         ],columnDefs: [
-            { targets: [6], className: 'dt-right' },
-            { targets: [0], className: 'dt-left' }
+            { targets: [0], className: 'dt-left' },
+            { targets: [3, 4, 5], className: 'dt-center' },
+            { targets: [6], className: 'dt-right' }
         ]
     } );
 
