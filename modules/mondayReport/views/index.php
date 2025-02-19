@@ -87,7 +87,7 @@ $stat = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo 
                 <div class="col-6">
                     <h6 class="card-subtitle mb-4 text-muted">My Report</h6>
                     <div>
-                        <img src="../../../assets/img/crews/<?php echo $person['pic'];?>" class="avatar" alt="me">
+                        <img src="https://report.localforyou.com/dist/img/crews/<?php echo $person['pic'];?>" class="avatar" alt="me">
                     </div>
                     <div><b>Reporter by: </b> <?php echo $person['name']; ?></div>
                     <div><b>Team: </b> <?php echo firstOnly($person['team']); ?></div>
