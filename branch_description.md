@@ -1,3 +1,6 @@
+250219 mark/feature/viewsLogs
+>สร้างหน้าสำหรับดู signup logs, stripe logs, contract
+
 250217 mark/feature/logsStripeDB
 >save logs ของ stripe ลง database
 
