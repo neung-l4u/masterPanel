@@ -11,9 +11,6 @@ $return['msg'] = '';
 $return['data'] = '';
 $return['act'] = $param['act'];
 
-$id = $_GET['id'];
-
-
 $person = $db->query('SELECT st.sNickName AS "name", te.name AS "team", st.sPic AS "pic"
     FROM staffs st 
     LEFT JOIN Team te on st.teamID = te.id 
@@ -67,7 +64,7 @@ $stat = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo 
                     <p>
                         <small>
                             The IT team is collecting statistics to fix Monday.com slow loading problem for everyone. <br>
-                            <span class="text-danger">Whenever you notice that Monday.com is slower than 30 seconds,</span><br>
+                            <span class="text-danger">Whenever you notice that Monday.com is slower than 1 minute,</span><br>
                             please click the report button once.
                         </small>
                     </p>
@@ -115,11 +112,8 @@ $stat = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo 
     <?php }//else ?>
 </div>
 
-<input type="hidden" id="loginID" value="<?php echo $id; ?>">
-
 <script src="../assets/js/datatables-bs5.min.js"></script>
 <script>
-    let loginID = $('#loginID').val();
     const text_alert = $('.text-alert');
     const counterNum = $('#counterNum');
 
@@ -150,7 +144,6 @@ $stat = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo 
             url: '../models/actionReport.php',
             type: 'POST',
             data: {
-                loginID: loginID,
                 act: 'add'
             }
         });
