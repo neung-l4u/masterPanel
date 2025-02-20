@@ -1,3 +1,6 @@
+250220 mark/feature/contractDB
+>save link Contract ลง database, เพิ่ม modules generateAgreement, update policy เป็น v1.3.0
+
 250219 mark/feature/viewsLogs
 >สร้างหน้าสำหรับดู signup logs, stripe logs, contract
 

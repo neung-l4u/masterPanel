@@ -53,7 +53,7 @@ $password = "Localeats#".date("Y");
                                         <th style="width:15%">Date time</th>
                                         <th style="width:15%">Country</th>
                                         <th style="width:40%">Shopname</th>
-                                        <th style="width:10%">SignupLogs</th>
+                                        <th style="width:10%">SignupJson</th>
                                         <th style="width:10%">StripeJson</th>
                                         <th style="width:10%">Contract</th>
                                         <th style="width:10%">Status</th>
@@ -68,17 +68,32 @@ $password = "Localeats#".date("Y");
             </div><!-- /.col-md-12 -->
         </div><!-- /.row -->
 
+        <div id="alert" style="
+            display: block;
+            right: 20px;
+            bottom: 30px;
+            position: fixed;
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1;
+            box-shadow: 0 4px 4px 0 rgb(191 191 191 / 20%);
+            ">
+            Text Copied
+        </div>
 
         <!-- Modal -->
         <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header d-flex align-items-center">
                         <h3>View Logs</h3>
+                        <button onclick="copyText();" style="color: #bbb; border: none; background: none;"><i class="far fa-copy" style="font-size: 25px;"></i></button>
                     </div> <!-- modal-header -->
 
                     <div class="modal-body">
-                        <pre id="jsonText">jsonData</pre>
+                        <pre id="jsonText" class="json">jsonData</pre>
                     </div> <!-- modal-body -->
 
                     <div class="modal-footer">
@@ -98,7 +113,7 @@ $password = "Localeats#".date("Y");
     let signupTable = $('#signupTable').DataTable( {
         pagingType: 'full_numbers',
         ajax: {
-            url: 'pages/tableRendering/viewLogs.php',
+            url: 'pages/tableRendering/dataViewLogs.php',
             dataSrc: 'data'
         },
         "pageLength": 8,
@@ -124,5 +139,17 @@ $password = "Localeats#".date("Y");
         console.log('resetForm');
     }// const
 
+    function showCopy() {
+        $("#alert").fadeIn(500);
+        setTimeout(function () {
+            $("#alert").fadeOut();
+        }, 1000);
+    }
+
+    function copyText() {
+        const copyText = document.querySelector("pre#jsonText");
+        navigator.clipboard.writeText(copyText.textContent)
+        showCopy();
+    }
 </script>
 
