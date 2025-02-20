@@ -110,7 +110,7 @@ $sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
                             <small class="clickAble" onclick="reloadPage();"><b>reload</b></small>
                             <img class="clickAble" onclick="reloadPage();" src="../assets/images/reload.png" alt="reload">
                         </div>
-                        <div class="border rounded">
+                        <div class="border rounded" id="divStat">
                             <table class="table table-hover table-borderless">
                                 <tr>
                                     <th style="width: 120px;">Summary All</th>
@@ -160,8 +160,10 @@ $sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
 <script>
     const text_alert = $('.text-alert');
     const counterNum = $('#counterNum');
+    const divStat = $('#divStat');
 
     setInterval(reloadTable, 1000);
+    setInterval(reloadStat, 5000);
 
     let reportTable = $('#reportData').DataTable({
         pagingType: 'full_numbers',
@@ -181,6 +183,10 @@ $sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
 
     function reloadTable() {
         reportTable.ajax.reload();
+    }
+
+    function reloadPage(){
+        location.reload();
     }
 
     function sendReport() {
@@ -210,6 +216,7 @@ $sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
     function reloadCount() {
         const readAjax = $.ajax({
             url: '../models/getCount.php',
+            dataType: "html",
             type: 'POST',
             data: {}
         });
@@ -223,17 +230,32 @@ $sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
             console.log(status + ": " + error);
             return false;
         });
-    }//sendReport
+    }//reloadCount
 
+    function reloadStat() {
+        const readAjax = $.ajax({
+            url: '../models/getStat.php',
+            dataType: "html",
+            type: 'POST',
+            data: {}
+        });
+
+        readAjax.done(function (response) {
+            //counterNum.text(response);
+            divStat.html(response);
+        });
+
+        readAjax.fail(function (xhr, status, error) {
+            console.log("ajax reloadStat fail!!");
+            console.log(status + ": " + error);
+            return false;
+        });
+    }//reloadStat
 
 
     $(() => {
         $('.text-alert').hide();
     });//ready
-
-    const reloadPage = () => {
-        location.reload();
-    }
 </script>
 
 </body>
