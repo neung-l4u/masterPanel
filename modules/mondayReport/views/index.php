@@ -24,7 +24,7 @@ $stat['count'] = !empty($stat['count']) ? number_format($stat['count']) : 0;
 $sumAll = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo')->fetchArray();
 $sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY DATE(whenTime) DESC LIMIT 0,10;')->fetchAll();
 $topDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY count DESC LIMIT 0,1;')->fetchArray();
-$lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY count ASC LIMIT 0,1;')->fetchArray();
+$lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY count LIMIT 0,1;')->fetchArray();
 ?>
 <!doctype html>
 <html lang="en">
@@ -161,7 +161,7 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
                         <tr>
                             <th style="width:5%;">Top</th>
                             <th>Name</th>
-                            <th>Total</th>
+                            <th class="dt-right">Total</th>
                         </tr>
                         </thead>
                         <tbody>
