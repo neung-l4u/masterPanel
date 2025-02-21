@@ -827,6 +827,20 @@ const sendMailToL4UTeam = () => {
     let yyyy = today.getFullYear();
 
     today = dd + '/' + mm + '/' + yyyy;
+
+    ////////if checked on a submitted form will send test mail to IT only/////
+    const CheckedBoxTestmail = $("#CheckedBoxTestmail");
+    let CheckedBoxTestmailValue = 2;
+
+    if ($(CheckedBoxTestmail).prop('checked')) {
+        CheckedBoxTestmailValue = $(CheckedBoxTestmail).val();
+    } else {
+        CheckedBoxTestmailValue = 0;
+    };
+
+    ///////////////////////////////
+
+    //formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
     let payload = {
         mode : "alert",
         formDate: today,
@@ -834,6 +848,7 @@ const sendMailToL4UTeam = () => {
         formVersion: $("#signupFormVersion").val(),
         formMessage: 'Hi, Team <br>There are new sign-up customers coming in now. Below are brief details. You can check full information on CRM.',
         formProduct: $("#currentlyPackage option:selected").text(),
+        MainProduct: $("input[name='product']:checked").val(),
         formInitialProductOffering: $("#initialProductOffering").val(),
         formSalesAgent: $("#byAgent option:selected").text(),
         formContractPeriod: $("#ContractPeriod").val(),
@@ -855,9 +870,9 @@ const sendMailToL4UTeam = () => {
         formCustomerType: $("#formType option:selected").text(),
         formShopName: $("#00N2v00000IyVqB").val(),
         formCountry: $("#formCountry option:selected").text(),
-        formState: $("#state option:selected").text(),
+        ShippingAddress: $("#shipAddress1").val(),
         formFullName: $("#first_name").val().trim() + " " + $("#last_name").val().trim(),
-        formEmail: $("#email").val(),
+        formEmail: $("#email").val().toLowerCase(),
         formMobile: $("#mobile").val(),
         formBestTime: $("#00N9s000000Nl1G").val(),
         formNote: $("#additionComment").val(),
@@ -865,6 +880,7 @@ const sendMailToL4UTeam = () => {
         formstartProjectOther: $("#dateproject").val(),
         formstartprojectNote: $("#startprojectNote").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
+        testMail: CheckedBoxTestmailValue,
         token: Math.random()
     };
 
@@ -930,7 +946,7 @@ const saveToDB = (stripePayload) => {
         Website: $("#webURL").val().trim(),
         Language: $(".supportLanguage:checked").val(),
         ShopNumber2: $("#physicalShopNumber").val(),
-        Address1: $("#streetAddress1").val(),
+        Address1: $("#streetAddress1").val().trim(),
         Address2: $("#streetAddress2").val(),
         City: $("#city").val().trim(),
         State: $("#state").val(),
@@ -957,7 +973,7 @@ const saveToDB = (stripePayload) => {
         OwnDomain: $("#newDomain").val().trim(),
         domainUser: domainUser.val().trim(),
         domainPass: domainPass.val().trim(),
-        domainComment: domainComment.val(),
+        domainComment: domainComment.val().trim(),
         domainRegister: domainRegister.val(),
         Flyer: $("input:checkbox[name='00N9s000000QQaH']:checked").val(),
         FridgeMagnet: $("input:checkbox[name='00N9s000000QQav']:checked").val(),
@@ -988,11 +1004,11 @@ const saveToDB = (stripePayload) => {
         Routing_number: $("#routingDirectDebit").val(),
         AccountNumber: $("#acnDirectDebit").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
-        AdditionNote: $("#additionComment").val(),
+        AdditionNote: $("#additionComment").val().trim(),
         ShopAgent: $("#byAgent").val(),
-        ReferredByPerson: $("#byPerson").val(),
+        ReferredByPerson: $("#byPerson").val().trim(),
         formRefPartner: $("#byPartner").val(),
-        ReferredByShop: $("#byRestaurant").val(),
+        ReferredByShop: $("#byRestaurant").val().trim(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
         formInitialProductOffering: $("#initialProductOffering").val(),
@@ -1001,8 +1017,7 @@ const saveToDB = (stripePayload) => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
-        formstartprojectNote: $("#startprojectNote").val(),
-
+        formstartprojectNote: $("#startprojectNote").val().trim()
     };
 
     const saveToDB = $.ajax({
@@ -1012,6 +1027,7 @@ const saveToDB = (stripePayload) => {
         cache: false,
         dataType: 'json',
         data: {
+            "stripePayload" : stripePayload,
             "payload" : payload,
             "country" : Country
         }
@@ -1070,7 +1086,7 @@ const createLogs = (stripePayload) => {
         Website: $("#webURL").val().trim(),
         Language: $(".supportLanguage:checked").val(),
         ShopNumber2: $("#physicalShopNumber").val(),
-        Address1: $("#streetAddress1").val(),
+        Address1: $("#streetAddress1").val().trim(),
         Address2: $("#streetAddress2").val(),
         City: $("#city").val().trim(),
         State: $("#state").val(),
@@ -1097,7 +1113,7 @@ const createLogs = (stripePayload) => {
         OwnDomain: $("#newDomain").val().trim(),
         domainUser: domainUser.val().trim(),
         domainPass: domainPass.val().trim(),
-        domainComment: domainComment.val(),
+        domainComment: domainComment.val().trim(),
         domainRegister: domainRegister.val(),
         Flyer: $("input:checkbox[name='00N9s000000QQaH']:checked").val(),
         FridgeMagnet: $("input:checkbox[name='00N9s000000QQav']:checked").val(),
@@ -1128,11 +1144,11 @@ const createLogs = (stripePayload) => {
         Routing_number: $("#routingDirectDebit").val(),
         AccountNumber: $("#acnDirectDebit").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
-        AdditionNote: $("#additionComment").val(),
+        AdditionNote: $("#additionComment").val().trim(),
         ShopAgent: $("#byAgent").val(),
-        ReferredByPerson: $("#byPerson").val(),
+        ReferredByPerson: $("#byPerson").val().trim(),
         formRefPartner: $("#byPartner").val(),
-        ReferredByShop: $("#byRestaurant").val(),
+        ReferredByShop: $("#byRestaurant").val().trim(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
         formInitialProductOffering: $("#initialProductOffering").val(),
@@ -1141,8 +1157,7 @@ const createLogs = (stripePayload) => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
-        formstartprojectNote: $("#startprojectNote").val(),
-
+        formstartprojectNote: $("#startprojectNote").val().trim()
     };
 
     const sendLog = $.ajax({

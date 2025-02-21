@@ -8,19 +8,19 @@
                 },
                 "NZ": {
                     "discount": 19800,
-                    "code": "1TrialRest"
+                    "code": "1TrialRestNZ"
                 },
                 "UK": {
                     "discount": 6800,
                     "code": "068Demo1"
                 },
                 "US": {
-                    "discount": 9600,
+                    "discount": 4800,
                     "code": "1TrialRest"
                 },
                 "CA": {
                     "discount": 9600,
-                    "code": "1TrialRest"
+                    "code": "1TrialRestCA"
                 },
                 "TH": {
                     "discount": 0,
@@ -41,8 +41,8 @@
                     "code": "1TrialMass"
                 },
                 "US": {
-                    "discount": 9600,
-                    "code": "1TrialMass"
+                    "discount": 4800,
+                    "code": "1TrialRest"
                 },
                 "CA": {
                     "discount": 9600,

@@ -10,7 +10,9 @@ $data = array("data"=> array());
 
 foreach ($result as $row) {
     $row["link"] = (empty($row["link"])) ? "-" : '<a href="' . $row["link"] . '" target="_blank">'.$row["template"].'</a>';
-    $row["wpLinkCM"] = (empty($row["wpLinkCM"])) ? "-" : '<a href="' . $row["wpLinkCM"] . '" target="_blank">'.$row["wpShopName"].'</a>';
+    $row["wpCM"] = (empty($row["wpLinkCM"])) ? "-" : '<a href="' . $row["wpLinkCM"] . '" target="_blank">'.$row["wpShopName"].'</a>';
+
+    $btn["golink"] = '<a href="'.$row["wpLinkCM"].'" target="_blank"><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" class="mr-3" height="1.2em" version="1.1" viewBox="0 0 100 99.7"><path d="M80,47.3c-2.4,0-4.4,2-4.4,4.4v37.1H11.2V24.4h37.1c2.4,0,4.4-2,4.4-4.4s-2-4.4-4.4-4.4H6.9c-2.4,0-4.4,2-4.4,4.4v73.1c0,2.4,2,4.4,4.4,4.4h73.1c2.4,0,4.4-2,4.4-4.4v-41.5c0-2.4-2-4.3-4.4-4.3Z" fill="#dc3545"/><path d="M93.1,2.5h-26.3c-2.4,0-4.4,2-4.4,4.4s2,4.4,4.4,4.4h15.8l-45,45c-1.7,1.7-1.7,4.5,0,6.2s2,1.3,3.1,1.3,2.2-.4,3.1-1.3l45-45v15.8c0,2.4,2,4.4,4.4,4.4s4.4-2,4.4-4.4V6.9c-.1-2.4-2.1-4.4-4.5-4.4Z" fill="#dc3545"/></a>' ;
 
     //$btn["status"] = ($row["sStatus"]) ? $on : $off;
     $btn["status"] = ($row["sStatus"] == 1) ? $on : $off;
@@ -20,7 +22,7 @@ foreach ($result as $row) {
     $data["data"][] = array(
         $row["id"],
         $row["link"],
-        $row["wpLinkCM"],
+        $btn["golink"].$row["wpCM"],
         $btn["edit"] . " " .$btn["del"]
     );
 }

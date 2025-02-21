@@ -10,17 +10,20 @@ $timestamp = date("Y-m-d H:i:s");
 $result["result"] = "";
 $result["msg"] = "";
 
-$json = $_REQUEST["payload"];
-$country = $_REQUEST["country"];
+$dataLogs = !empty($_REQUEST["payload"]) ? $_REQUEST["payload"] : null;
+$dataStripe = !empty($_REQUEST["stripePayload"]) ? $_REQUEST["stripePayload"] : null;
+$country = !empty($_REQUEST["country"]) ? $_REQUEST["country"] : null;
 
-$status = $result["result"] == "success"? 1 : 2;
-$dbJson = json_encode($json);
-$_SESSION['id'] = "60";
+$dataLogs = json_encode($dataLogs);
+$dataStripe = json_encode($dataStripe);
+$status = 1;
+$signupBy = !empty($_SESSION['id']) ? $_SESSION['id'] : 0;
 
-$logsToDB =  $db->query('INSERT INTO `logssignup`(`data`, `countryCode`, `status`, `createAt`, `createBy`) VALUES (?,?,?,?,?)'
-    , $dbJson, $country, $status, $timestamp, $_SESSION['id'] );
+$logsToDB =  $db->query('INSERT INTO `logssignup`(`data`, `dataStripe`, `countryCode`, `status`, `createAt`, `createBy`) VALUES (?,?,?,?,?)'
+    , $dataLogs, $dataStripe, $country, $status, $timestamp, $signupBy );
 
 $result["result"] = "success";
+
 $result["msg"] = "Save to DB successfully!";
 
 echo json_encode($result);
