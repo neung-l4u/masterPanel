@@ -11,7 +11,7 @@ $return['result'] = '';
 $return['msg'] = '';
 
 $sumAll = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo')->fetchArray();
-$sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY DATE(whenTime) DESC;')->fetchAll();
+$sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY DATE(whenTime) DESC LIMIT 0,10;')->fetchAll();
 
 ?>
 <table class="table table-hover table-borderless">
@@ -24,7 +24,7 @@ $sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
 
     <tr>
         <td colspan="2" style="text-align: left; padding-left: 1rem;">
-            <b>Date:</b>
+            <b>Date: </b><small class="text-muted">(Last 10 days)</small>
             <ul class="list-group">
                 <?php foreach ($sumDate as $row){ ?>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
