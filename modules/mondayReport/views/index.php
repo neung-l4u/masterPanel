@@ -102,7 +102,7 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
                             <span><b>Reporter: </b> <?php echo showName($person['nick'],$person['name']); ?></span>
                             <span><b>Team: </b> <?php echo firstOnly($person['team']); ?></span>
                             <span>
-                                <b>Total: </b> <span id="counterNum"><?php echo number_format($stat['count']); ?></span>
+                                <b>The total I reported: </b> <span id="counterNum"><?php echo number_format($stat['count']); ?></span>
                             </span>
                         </div>
                     </div>
