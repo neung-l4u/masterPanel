@@ -836,7 +836,12 @@ const sendMailToL4UTeam = () => {
         CheckedBoxTestmailValue = $(CheckedBoxTestmail).val();
     } else {
         CheckedBoxTestmailValue = 0;
-    };
+    }
+
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
 
     ///////////////////////////////
 
@@ -850,7 +855,7 @@ const sendMailToL4UTeam = () => {
         formProduct: $("#currentlyPackage option:selected").text(),
         MainProduct: $("input[name='product']:checked").val(),
         formInitialProductOffering: $("#initialProductOffering").val(),
-        formSalesAgent: $("#byAgent option:selected").text(),
+        formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
         formRefPerson: $("#byPerson").val(),
         formRefPartner: $("#byPartner").val(),
@@ -931,6 +936,11 @@ const saveToDB = (stripePayload) => {
     let domainRegister = $("#ref_Domain_Name_Registered");
     let Country = formData.formCountry;
 
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
+
     let payload = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
@@ -1005,14 +1015,14 @@ const saveToDB = (stripePayload) => {
         AccountNumber: $("#acnDirectDebit").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         AdditionNote: $("#additionComment").val().trim(),
-        ShopAgent: $("#byAgent").val(),
+        ShopAgent: shopAgent,
         ReferredByPerson: $("#byPerson").val().trim(),
         formRefPartner: $("#byPartner").val(),
         ReferredByShop: $("#byRestaurant").val().trim(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
         formInitialProductOffering: $("#initialProductOffering").val(),
-        formSalesAgent: $("#byAgent option:selected").text(),
+        formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
@@ -1070,6 +1080,11 @@ const createLogs = (stripePayload) => {
     let domainPass = $("#ref_Domain_P");
     let domainComment = $("#ref_Domain_Comments");
     let domainRegister = $("#ref_Domain_Name_Registered");
+
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
 
     let tempData = {
         Country: formData.formCountry,
@@ -1145,14 +1160,14 @@ const createLogs = (stripePayload) => {
         AccountNumber: $("#acnDirectDebit").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         AdditionNote: $("#additionComment").val().trim(),
-        ShopAgent: $("#byAgent").val(),
+        ShopAgent: shopAgent,
         ReferredByPerson: $("#byPerson").val().trim(),
         formRefPartner: $("#byPartner").val(),
         ReferredByShop: $("#byRestaurant").val().trim(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
         formInitialProductOffering: $("#initialProductOffering").val(),
-        formSalesAgent: $("#byAgent option:selected").text(),
+        formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
