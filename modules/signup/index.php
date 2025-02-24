@@ -1761,92 +1761,93 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 </small>
                                             </div>
                                         </div>
-                                        <div id="agreementBottom"
-                                            class="box1 p-4 shadow-sm w-100 d-flex justify-content-evenly">
+                                        <div id="agreementBottom" class="box1 p-4 shadow-sm w-100">
                                             <div class="row">
-                                                <div>
-                                                    <label for="byAgent" class="form-label">
-                                                        <i class="fa-solid fa-person"></i> &nbsp; Sales Agent
-                                                    </label>
-                                                    <div class="col" style="width: 100%; display: flex; gap: 5px; align-items: center;">
-                                                        <select class="form-select" name="00N2u000000mNZG" id="byAgent" style="width: 100%;">
-                                                            <option value="">--None--</option>
-                                                            <option value="Boom Piyakorn">Boom Piyakorn</option>
-                                                            <option value="Ball Anirut">Ball Anirut</option>
-                                                            <option value="Bim Sujitar">Bim Sujitar</option>
-                                                            <option value="Eve Arriya">Eve Arriya</option>
-                                                            <option value="Faye Thitiporn">Faye Thitiporn</option>
-                                                            <option value="Fern Paweena">Fern Paweena</option>
-                                                            <option value="Gun Orana">Gun Orana</option>
-                                                            <option value="Honey Tummaput">Honey Tummaput</option>
-                                                            <option value="Lani Kunlanit">Lani Kunlanit</option>
-                                                            <option value="Nan Chompunuch">Nan Chompunuch</option>
-                                                            <option value="Naya Sanewong">Naya Sanewong</option>
-                                                            <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
-                                                            <option value="Prae Phimmada">Prae Phimmada</option>
-                                                            <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
-                                                            <option value="Pume Thanut">Pume Thanut</option>
-                                                            <option value="Other">Other</option>
-                                                        </select>
+                                                <div class="col d-flex justify-content-between flex-wrap align-items-start">
+                                                    <div class="w-50 px-2">
+                                                        <label for="byAgent" class="form-label">
+                                                            <i class="fa-solid fa-person"></i> &nbsp; Sales Agent
+                                                        </label>
+                                                        <div class="col d-flex justify-content-between">
+                                                            <select class="form-select" name="00N2u000000mNZG" id="byAgent" style="min-width: 50%">
+                                                                <option value="">--None--</option>
+                                                                <option value="Boom Piyakorn">Boom Piyakorn</option>
+                                                                <option value="Ball Anirut">Ball Anirut</option>
+                                                                <option value="Bim Sujitar">Bim Sujitar</option>
+                                                                <option value="Eve Arriya">Eve Arriya</option>
+                                                                <option value="Faye Thitiporn">Faye Thitiporn</option>
+                                                                <option value="Fern Paweena">Fern Paweena</option>
+                                                                <option value="Gun Orana">Gun Orana</option>
+                                                                <option value="Honey Tummaput">Honey Tummaput</option>
+                                                                <option value="Lani Kunlanit">Lani Kunlanit</option>
+                                                                <option value="Nan Chompunuch">Nan Chompunuch</option>
+                                                                <option value="Naya Sanewong">Naya Sanewong</option>
+                                                                <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
+                                                                <option value="Prae Phimmada">Prae Phimmada</option>
+                                                                <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
+                                                                <option value="Pume Thanut">Pume Thanut</option>
+                                                                <option value="Other">Other</option>
+                                                            </select>
+                                                            <input
+                                                                    class="form-control mb-3"
+                                                                    id="otherAgent"
+                                                                    maxlength="200"
+                                                                    name="otherAgent"
+                                                                    type="text"
+                                                                    autocomplete="off"
+                                                                    placeholder="Enter Other Name"
+                                                                    style="display: none; width: 48%;"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="w-50 px-2">
+                                                        <label for="byPerson" class="form-label">
+                                                            <i class="fa-solid fa-person"></i> &nbsp;
+                                                            Referred by (Person)
+                                                        </label>
                                                         <input
-                                                                class="form-control mb-3"
-                                                                id="otherAgent"
-                                                                maxlength="200"
-                                                                name="otherAgent"
+                                                                class="form-control"
+                                                                id="byPerson"
+                                                                maxlength="100"
+                                                                name="00N2v00000IyVq9"
                                                                 type="text"
                                                                 autocomplete="off"
-                                                                placeholder="Enter Other Name"
-                                                                style="display: none; width: 40%;"
+                                                                placeholder="Jane Doe"
+                                                                value="<?php echo $test["person"]; ?>"
                                                         />
                                                     </div>
-                                                </div>
 
-                                                <div>
-                                                    <label for="byPerson" class="form-label">
-                                                        <i class="fa-solid fa-person"></i> &nbsp;
-                                                        Referred by (Person)
-                                                    </label>
-                                                    <input
-                                                            class="form-control"
-                                                            id="byPerson"
-                                                            maxlength="100"
-                                                            name="00N2v00000IyVq9"
-                                                            type="text"
-                                                            autocomplete="off"
-                                                            placeholder="Jane Doe"
-                                                            value="<?php echo $test["person"]; ?>"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div>
-                                                    <label for="byPartner" class="form-label">
-                                                        <i class="fa-solid fa-handshake"></i> &nbsp;
-                                                        Referred Partner (JV)
-                                                    </label>
-                                                    <select class="form-select" name="byPartner" id="byPartner">
-                                                        <option value="">--None--</option>
-                                                        <option value="Smile Pos">Smile Pos</option>
-                                                        <option value="Wawio">Wawio</option>
-                                                        <option value="Jean">Jean</option>
-                                                        <option value="Other">Other</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label for="byRestaurant" class="form-label">
-                                                        <i class="fa-solid fa-house-user"></i> &nbsp;
-                                                        Referred by (Shop)
-                                                    </label>
-                                                    <input
-                                                            class="form-control"
-                                                            id="byRestaurant"
-                                                            maxlength="200"
-                                                            name="00N2v00000IyVqA"
-                                                            type="text"
-                                                            autocomplete="off"
-                                                            placeholder="The Thai Bistro"
-                                                            value="<?php echo $test["refShop"]; ?>"
-                                                    />
+                                                    <div class="w-50 px-2">
+                                                        <label for="byPartner" class="form-label">
+                                                            <i class="fa-solid fa-handshake"></i> &nbsp;
+                                                            Referred Partner (JV)
+                                                        </label>
+                                                        <select class="form-select" name="byPartner" id="byPartner">
+                                                            <option value="">--None--</option>
+                                                            <option value="Smile Pos">Smile Pos</option>
+                                                            <option value="Wawio">Wawio</option>
+                                                            <option value="Jean">Jean</option>
+                                                            <option value="Other">Other</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="w-50 px-2">
+                                                        <label for="byRestaurant" class="form-label">
+                                                            <i class="fa-solid fa-house-user"></i> &nbsp;
+                                                            Referred by (Shop)
+                                                        </label>
+                                                        <input
+                                                                class="form-control"
+                                                                id="byRestaurant"
+                                                                maxlength="200"
+                                                                name="00N2v00000IyVqA"
+                                                                type="text"
+                                                                autocomplete="off"
+                                                                placeholder="The Thai Bistro"
+                                                                value="<?php echo $test["refShop"]; ?>"
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

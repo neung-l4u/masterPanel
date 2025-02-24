@@ -838,9 +838,10 @@ const sendMailToL4UTeam = () => {
         CheckedBoxTestmailValue = 0;
     }
 
-    let shopAgent = $("#byAgent").val();
+    let shopAgent = $("#byAgent").val() || "";
     if (shopAgent === "Other") {
-        shopAgent = "Other : " + $("#otherAgent").val();
+        let otherAgentValue = $("#otherAgent").val().trim();
+        shopAgent = otherAgentValue ? `Other : ${otherAgentValue}` : "Other";
     }
 
     ///////////////////////////////
@@ -890,7 +891,7 @@ const sendMailToL4UTeam = () => {
     };
 
     const sendL4UMail = $.ajax({
-        url: "https://report.localforyou.com/modules/signup/email/L4UEmailAlert.php",
+        url: "email/L4UEmailAlert.php",
         method: 'POST',
         async: false,
         cache: false,
@@ -936,10 +937,10 @@ const saveToDB = (stripePayload) => {
     let domainRegister = $("#ref_Domain_Name_Registered");
     let Country = formData.formCountry;
 
-    let shopAgent = $("#byAgent").val();
+    let shopAgent = $("#byAgent").val() || "";
     if (shopAgent === "Other") {
-        let otherAgentVal = $("#otherAgent").val().trim();
-        shopAgent = otherAgentVal ? `Other : ${otherAgentVal}` : "Other";
+        let otherAgentValue = $("#otherAgent").val().trim();
+        shopAgent = otherAgentValue ? `Other : ${otherAgentValue}` : "Other";
     }
 
     let payload = {
@@ -1082,9 +1083,10 @@ const createLogs = (stripePayload) => {
     let domainComment = $("#ref_Domain_Comments");
     let domainRegister = $("#ref_Domain_Name_Registered");
 
-    let shopAgent = $("#byAgent").val();
+    let shopAgent = $("#byAgent").val() || "";
     if (shopAgent === "Other") {
-        shopAgent = "Other : " + $("#otherAgent").val();
+        let otherAgentValue = $("#otherAgent").val().trim();
+        shopAgent = otherAgentValue ? `Other : ${otherAgentValue}` : "Other";
     }
 
     let tempData = {
