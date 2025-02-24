@@ -710,8 +710,10 @@ function requestToPay() {
         "routing_number": routingDirectDebit,
         "account_number": account_number
     };
-    saveToDB(stripePayload);
-    createLogs(stripePayload);
+
+    //TEST XXX
+    /*saveToDB(stripePayload);
+    createLogs(stripePayload);*/
     clonePayload = stripePayload;
 
     setTimeout(function (){
@@ -722,8 +724,9 @@ function requestToPay() {
     modalRespondAction('open','success');
 
     //เทสส่งอีเมล sendMailToL4UTeam();
+    CheckedBoxMakeChargeValue = false; // TEST XXX
 
-    if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe
+    /*if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe TEST XXX
         const reqPay = $.ajax({
             url: paymentURL,
             method: 'POST',
@@ -783,7 +786,7 @@ function requestToPay() {
             sendMailToL4UTeam();
             modalRespondAction('open', 'success');
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
-    }
+    }*/
 
     return res.message;
 
@@ -836,7 +839,12 @@ const sendMailToL4UTeam = () => {
         CheckedBoxTestmailValue = $(CheckedBoxTestmail).val();
     } else {
         CheckedBoxTestmailValue = 0;
-    };
+    }
+
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
 
     ///////////////////////////////
 
@@ -850,7 +858,7 @@ const sendMailToL4UTeam = () => {
         formProduct: $("#currentlyPackage option:selected").text(),
         MainProduct: $("input[name='product']:checked").val(),
         formInitialProductOffering: $("#initialProductOffering").val(),
-        formSalesAgent: $("#byAgent option:selected").text(),
+        formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
         formRefPerson: $("#byPerson").val(),
         formRefPartner: $("#byPartner").val(),
@@ -884,7 +892,7 @@ const sendMailToL4UTeam = () => {
         token: Math.random()
     };
 
-    const sendL4UMail = $.ajax({
+    const ajaxSendL4UMail = $.ajax({
         url: "email/L4UEmailAlert.php",
         method: 'POST',
         async: false,
@@ -893,12 +901,12 @@ const sendMailToL4UTeam = () => {
         data: payload
     });
 
-    sendL4UMail.done(function(res) {
+    ajaxSendL4UMail.done(function(res) {
         console.log(res);
         return true;
     });
 
-    sendL4UMail.fail(function(xhr, status, error) {
+    ajaxSendL4UMail.fail(function(xhr, status, error) {
         console.log("ajax Send L4U Mail alert fail!!");
         console.log(status + ': ' + error);
         return false;
@@ -930,6 +938,11 @@ const saveToDB = (stripePayload) => {
     let domainComment = $("#ref_Domain_Comments");
     let domainRegister = $("#ref_Domain_Name_Registered");
     let Country = formData.formCountry;
+
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
 
     let payload = {
         Country: formData.formCountry,
@@ -1005,14 +1018,14 @@ const saveToDB = (stripePayload) => {
         AccountNumber: $("#acnDirectDebit").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         AdditionNote: $("#additionComment").val().trim(),
-        ShopAgent: $("#byAgent").val(),
+        ShopAgent: shopAgent,
         ReferredByPerson: $("#byPerson").val().trim(),
         formRefPartner: $("#byPartner").val(),
         ReferredByShop: $("#byRestaurant").val().trim(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
         formInitialProductOffering: $("#initialProductOffering").val(),
-        formSalesAgent: $("#byAgent option:selected").text(),
+        formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
@@ -1020,7 +1033,7 @@ const saveToDB = (stripePayload) => {
         formstartprojectNote: $("#startprojectNote").val().trim()
     };
 
-    const saveToDB = $.ajax({
+    const ajaxSaveToDB = $.ajax({
         url: settings.url_saveToDB,
         method: 'POST',
         async: false,
@@ -1033,12 +1046,12 @@ const saveToDB = (stripePayload) => {
         }
     });
 
-    saveToDB.done(function(res) {
+    ajaxSaveToDB.done(function(res) {
         console.log(res);
         return true;
     });
 
-    saveToDB.fail(function(xhr, status, error) {
+    ajaxSaveToDB.fail(function(xhr, status, error) {
         console.log("Save to DB fail!!");
         console.log(status + ': ' + error);
         return false;
@@ -1070,6 +1083,11 @@ const createLogs = (stripePayload) => {
     let domainPass = $("#ref_Domain_P");
     let domainComment = $("#ref_Domain_Comments");
     let domainRegister = $("#ref_Domain_Name_Registered");
+
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
 
     let tempData = {
         Country: formData.formCountry,
@@ -1145,14 +1163,14 @@ const createLogs = (stripePayload) => {
         AccountNumber: $("#acnDirectDebit").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         AdditionNote: $("#additionComment").val().trim(),
-        ShopAgent: $("#byAgent").val(),
+        ShopAgent: shopAgent,
         ReferredByPerson: $("#byPerson").val().trim(),
         formRefPartner: $("#byPartner").val(),
         ReferredByShop: $("#byRestaurant").val().trim(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
         formInitialProductOffering: $("#initialProductOffering").val(),
-        formSalesAgent: $("#byAgent option:selected").text(),
+        formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
@@ -1160,7 +1178,7 @@ const createLogs = (stripePayload) => {
         formstartprojectNote: $("#startprojectNote").val().trim()
     };
 
-    const sendLog = $.ajax({
+    const ajaxSendLog = $.ajax({
         url: settings.url_logs,
         method: 'POST',
         async: false,
@@ -1171,12 +1189,12 @@ const createLogs = (stripePayload) => {
         }
     });
 
-    sendLog.done(function(res) {
+    ajaxSendLog.done(function(res) {
         console.log(res);
         return true;
     });
 
-    sendLog.fail(function(xhr, status, error) {
+    ajaxSendLog.fail(function(xhr, status, error) {
         console.log("ajax Log file fail!!");
         console.log(status + ': ' + error);
         return false;
