@@ -840,7 +840,7 @@ const sendMailToL4UTeam = () => {
 
     let shopAgent = $("#byAgent").val();
     if (shopAgent === "Other") {
-        shopAgent = $("#otherAgent").val();
+        shopAgent = "Other : " + $("#otherAgent").val();
     }
 
     ///////////////////////////////
@@ -890,7 +890,7 @@ const sendMailToL4UTeam = () => {
     };
 
     const sendL4UMail = $.ajax({
-        url: "email/L4UEmailAlert.php",
+        url: "https://report.localforyou.com/modules/signup/email/L4UEmailAlert.php",
         method: 'POST',
         async: false,
         cache: false,
@@ -938,7 +938,8 @@ const saveToDB = (stripePayload) => {
 
     let shopAgent = $("#byAgent").val();
     if (shopAgent === "Other") {
-        shopAgent = $("#otherAgent").val();
+        let otherAgentVal = $("#otherAgent").val().trim();
+        shopAgent = otherAgentVal ? `Other : ${otherAgentVal}` : "Other";
     }
 
     let payload = {
@@ -1083,7 +1084,7 @@ const createLogs = (stripePayload) => {
 
     let shopAgent = $("#byAgent").val();
     if (shopAgent === "Other") {
-        shopAgent = $("#otherAgent").val();
+        shopAgent = "Other : " + $("#otherAgent").val();
     }
 
     let tempData = {
