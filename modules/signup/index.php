@@ -1766,22 +1766,41 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             <div class="row">
                                                 <div>
                                                     <label for="byAgent" class="form-label">
-                                                        <i class="fa-solid fa-person"></i> &nbsp;
-                                                        Sales Agent
+                                                        <i class="fa-solid fa-person"></i> &nbsp; Sales Agent
                                                     </label>
-                                                    <select class="form-select" name="00N2u000000mNZG" id="byAgent">
-                                                        <option value="">--None--</option>
-                                                        <option value="Boom Piyakorn">Boom Piyakorn</option>
-                                                        <option value="Ball Anirut">Ball Anirut</option>
-                                                        <option value="Eve Arriya">Eve Arriya</option>
-                                                        <option value="Faye Thitiporn">Faye Thitiporn</option>
-                                                        <option value="Fern Paweena">Fern Paweena</option>
-                                                        <option value="Honey Tummaput">Honey Tummaput</option>
-                                                        <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
-                                                        <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
-                                                        <option value="Other">Other</option>
-                                                    </select>
+                                                    <div class="col" style="width: 100%; display: flex; gap: 5px; align-items: center;">
+                                                        <select class="form-select" name="00N2u000000mNZG" id="byAgent" style="width: 100%;">
+                                                            <option value="">--None--</option>
+                                                            <option value="Boom Piyakorn">Boom Piyakorn</option>
+                                                            <option value="Ball Anirut">Ball Anirut</option>
+                                                            <option value="Bim Sujitar">Bim Sujitar</option>
+                                                            <option value="Eve Arriya">Eve Arriya</option>
+                                                            <option value="Faye Thitiporn">Faye Thitiporn</option>
+                                                            <option value="Fern Paweena">Fern Paweena</option>
+                                                            <option value="Gun Orana">Gun Orana</option>
+                                                            <option value="Honey Tummaput">Honey Tummaput</option>
+                                                            <option value="Lani Kunlanit">Lani Kunlanit</option>
+                                                            <option value="Nan Chompunuch">Nan Chompunuch</option>
+                                                            <option value="Naya Sanewong">Naya Sanewong</option>
+                                                            <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
+                                                            <option value="Prae Phimmada">Prae Phimmada</option>
+                                                            <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
+                                                            <option value="Pume Thanut">Pume Thanut</option>
+                                                            <option value="Other">Other</option>
+                                                        </select>
+                                                        <input
+                                                                class="form-control mb-3"
+                                                                id="otherAgent"
+                                                                maxlength="200"
+                                                                name="otherAgent"
+                                                                type="text"
+                                                                autocomplete="off"
+                                                                placeholder="Enter Other Name"
+                                                                style="display: none; width: 40%;"
+                                                        />
+                                                    </div>
                                                 </div>
+
                                                 <div>
                                                     <label for="byPerson" class="form-label">
                                                         <i class="fa-solid fa-person"></i> &nbsp;
