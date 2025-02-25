@@ -890,7 +890,7 @@ const sendMailToL4UTeam = () => {
         token: Math.random()
     };
 
-    const sendL4UMail = $.ajax({
+    const ajaxSendL4UMail = $.ajax({
         url: "email/L4UEmailAlert.php",
         method: 'POST',
         async: false,
@@ -899,12 +899,12 @@ const sendMailToL4UTeam = () => {
         data: payload
     });
 
-    sendL4UMail.done(function(res) {
+    ajaxSendL4UMail.done(function(res) {
         console.log(res);
         return true;
     });
 
-    sendL4UMail.fail(function(xhr, status, error) {
+    ajaxSendL4UMail.fail(function(xhr, status, error) {
         console.log("ajax Send L4U Mail alert fail!!");
         console.log(status + ': ' + error);
         return false;
@@ -1032,7 +1032,7 @@ const saveToDB = (stripePayload) => {
         formstartprojectNote: $("#startprojectNote").val().trim()
     };
 
-    const saveToDB = $.ajax({
+    const ajaxSaveToDB = $.ajax({
         url: settings.url_saveToDB,
         method: 'POST',
         async: false,
@@ -1045,12 +1045,12 @@ const saveToDB = (stripePayload) => {
         }
     });
 
-    saveToDB.done(function(res) {
+    ajaxSaveToDB.done(function(res) {
         console.log(res);
         return true;
     });
 
-    saveToDB.fail(function(xhr, status, error) {
+    ajaxSaveToDB.fail(function(xhr, status, error) {
         console.log("Save to DB fail!!");
         console.log(status + ': ' + error);
         return false;
@@ -1178,7 +1178,7 @@ const createLogs = (stripePayload) => {
         formstartprojectNote: $("#startprojectNote").val().trim()
     };
 
-    const sendLog = $.ajax({
+    const ajaxSendLog = $.ajax({
         url: settings.url_logs,
         method: 'POST',
         async: false,
@@ -1189,12 +1189,12 @@ const createLogs = (stripePayload) => {
         }
     });
 
-    sendLog.done(function(res) {
+    ajaxSendLog.done(function(res) {
         console.log(res);
         return true;
     });
 
-    sendLog.fail(function(xhr, status, error) {
+    ajaxSendLog.fail(function(xhr, status, error) {
         console.log("ajax Log file fail!!");
         console.log(status + ': ' + error);
         return false;
