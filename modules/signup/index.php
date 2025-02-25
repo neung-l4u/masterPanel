@@ -1774,7 +1774,6 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <option value="Boom Piyakorn">Boom Piyakorn</option>
                                                                 <option value="Ball Anirut">Ball Anirut</option>
                                                                 <option value="Bim Sujitar">Bim Sujitar</option>
-                                                                <option value="Eve Arriya">Eve Arriya</option>
                                                                 <option value="Faye Thitiporn">Faye Thitiporn</option>
                                                                 <option value="Fern Paweena">Fern Paweena</option>
                                                                 <option value="Gun Orana">Gun Orana</option>
