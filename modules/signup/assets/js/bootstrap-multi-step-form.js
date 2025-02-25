@@ -1640,3 +1640,13 @@ function checkDomain(param) {
   $('#domainHelpAU').find('a').attr('href', baseUrlAU + domainName);
   $('#domainHelpUS').find('a').attr('href', baseUrlUS + domainName);
 }//checkDomain
+
+$("#byAgent").change(function(){
+  if ($(this).val() === "Other") {
+    $("#byAgent").css("width", "35%");
+    $("#otherAgent").fadeIn().css("display", "inline-block");
+  } else {
+    $("#byAgent").css("width", "100%");
+    $("#otherAgent").fadeOut();
+  }
+});
