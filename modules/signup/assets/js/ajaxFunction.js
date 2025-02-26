@@ -587,18 +587,18 @@ function requestToPay() {
 
     let codeDiscount = {};
 
-    if (typeof Payment_Coupon_Obj !== "undefined") { //check this coupon code is exist in a setting list
+    if (typeof Payment_Coupon_Obj !== "undefined" && Payment_Coupon_Obj !== null) { // check if Payment_Coupon_Obj exists
         console.log("เจอส่วนลดแล้ว");
-        let pid = "";
-            pid = cloneCart["subscription"][0]; //read main product ID
-        let cid = "";
-            cid = Payment_Coupon_Obj.code; //read stripe coupon code
-        codeDiscount = { [pid] : cid } ; //set the main coupon code
-    }else{
-        let pid = "";
-        pid = cloneCart["subscription"][0]; //read main product ID
-        let cid = "";
-        codeDiscount = { [pid] : cid } ; //set the main coupon code
+
+        let pid = cloneCart["subscription"][0]; // read main product ID
+        let cid = Payment_Coupon_Obj.code ?? ""; // use empty string if null or undefined
+
+        codeDiscount = { [pid]: cid }; // set the main coupon code
+    } else {
+        let pid = cloneCart["subscription"][0]; // read main product ID
+        let cid = ""; // force empty string if Payment_Coupon_Obj is undefined or null
+
+        codeDiscount = { [pid]: cid }; // set the main coupon code
     }
 
     let addOnDiscountCode = {};
@@ -710,6 +710,7 @@ function requestToPay() {
         "routing_number": routingDirectDebit,
         "account_number": account_number
     };
+
     saveToDB(stripePayload);
     createLogs(stripePayload);
     clonePayload = stripePayload;
@@ -720,8 +721,6 @@ function requestToPay() {
     console.log("stripePayload = ",stripePayload);
 
     modalRespondAction('open','success');
-
-    //เทสส่งอีเมล sendMailToL4UTeam();
 
     if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe
         const reqPay = $.ajax({
@@ -780,7 +779,7 @@ function requestToPay() {
             $(done).appendTo(".paymentResult");
             $(cusID).appendTo(".paymentResult");
             genLinkPDF();
-            //sendMailToL4UTeam();
+            sendMailToL4UTeam();
             modalRespondAction('open', 'success');
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
@@ -799,7 +798,7 @@ const sendMail = () => {
         "email" : $("#email").val()
     }
 
-    const sendLog = $.ajax({
+    const ajaxSendLog = $.ajax({
         url: "email/sendMail.php",
         method: 'POST',
         async: false,
@@ -808,12 +807,12 @@ const sendMail = () => {
         data: sendMailPayload
     });
 
-    sendLog.done(function(res) {
+    ajaxSendLog.done(function(res) {
         console.log(res);
         return true;
     });
 
-    sendLog.fail(function(xhr, status, error) {
+    ajaxSendLog.fail(function(xhr, status, error) {
         console.log("ajax Send Mail fail!!");
         console.log(status + ': ' + error);
         return false;
@@ -827,6 +826,25 @@ const sendMailToL4UTeam = () => {
     let yyyy = today.getFullYear();
 
     today = dd + '/' + mm + '/' + yyyy;
+
+    ////////if checked on a submitted form will send test mail to IT only/////
+    const CheckedBoxTestmail = $("#CheckedBoxTestmail");
+    let CheckedBoxTestmailValue = 2;
+
+    if ($(CheckedBoxTestmail).prop('checked')) {
+        CheckedBoxTestmailValue = $(CheckedBoxTestmail).val();
+    } else {
+        CheckedBoxTestmailValue = 0;
+    }
+
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
+
+    ///////////////////////////////
+
+    //formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
     let payload = {
         mode : "alert",
         formDate: today,
@@ -834,8 +852,9 @@ const sendMailToL4UTeam = () => {
         formVersion: $("#signupFormVersion").val(),
         formMessage: 'Hi, Team <br>There are new sign-up customers coming in now. Below are brief details. You can check full information on CRM.',
         formProduct: $("#currentlyPackage option:selected").text(),
+        MainProduct: $("input[name='product']:checked").val(),
         formInitialProductOffering: $("#initialProductOffering").val(),
-        formSalesAgent: $("#byAgent option:selected").text(),
+        formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
         formRefPerson: $("#byPerson").val(),
         formRefPartner: $("#byPartner").val(),
@@ -855,7 +874,7 @@ const sendMailToL4UTeam = () => {
         formCustomerType: $("#formType option:selected").text(),
         formShopName: $("#00N2v00000IyVqB").val(),
         formCountry: $("#formCountry option:selected").text(),
-        formState: $("#state option:selected").text(),
+        ShippingAddress: $("#shipAddress1").val(),
         formFullName: $("#first_name").val().trim() + " " + $("#last_name").val().trim(),
         formEmail: $("#email").val().toLowerCase(),
         formMobile: $("#mobile").val(),
@@ -865,10 +884,11 @@ const sendMailToL4UTeam = () => {
         formstartProjectOther: $("#dateproject").val(),
         formstartprojectNote: $("#startprojectNote").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
+        testMail: CheckedBoxTestmailValue,
         token: Math.random()
     };
 
-    const sendL4UMail = $.ajax({
+    const ajaxSendL4UMail = $.ajax({
         url: "email/L4UEmailAlert.php",
         method: 'POST',
         async: false,
@@ -877,12 +897,12 @@ const sendMailToL4UTeam = () => {
         data: payload
     });
 
-    sendL4UMail.done(function(res) {
+    ajaxSendL4UMail.done(function(res) {
         console.log(res);
         return true;
     });
 
-    sendL4UMail.fail(function(xhr, status, error) {
+    ajaxSendL4UMail.fail(function(xhr, status, error) {
         console.log("ajax Send L4U Mail alert fail!!");
         console.log(status + ': ' + error);
         return false;
@@ -890,6 +910,10 @@ const sendMailToL4UTeam = () => {
 }//sendMail
 
 const saveToDB = (stripePayload) => {
+    genLinkPDF();
+    const agreementGenerated = $("#agreementGenerated");
+    let contractURL = agreementGenerated.val();
+
     let cuisineSelected = [];
 
     $("input:checkbox[name='00N2v00000IyVpy']:checked").each(function(){
@@ -915,6 +939,11 @@ const saveToDB = (stripePayload) => {
     let domainRegister = $("#ref_Domain_Name_Registered");
     let Country = formData.formCountry;
 
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
+
     let payload = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
@@ -930,7 +959,7 @@ const saveToDB = (stripePayload) => {
         Website: $("#webURL").val().trim(),
         Language: $(".supportLanguage:checked").val(),
         ShopNumber2: $("#physicalShopNumber").val(),
-        Address1: $("#streetAddress1").val(),
+        Address1: $("#streetAddress1").val().trim(),
         Address2: $("#streetAddress2").val(),
         City: $("#city").val().trim(),
         State: $("#state").val(),
@@ -989,14 +1018,14 @@ const saveToDB = (stripePayload) => {
         AccountNumber: $("#acnDirectDebit").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         AdditionNote: $("#additionComment").val().trim(),
-        ShopAgent: $("#byAgent").val(),
+        ShopAgent: shopAgent,
         ReferredByPerson: $("#byPerson").val().trim(),
         formRefPartner: $("#byPartner").val(),
         ReferredByShop: $("#byRestaurant").val().trim(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
         formInitialProductOffering: $("#initialProductOffering").val(),
-        formSalesAgent: $("#byAgent option:selected").text(),
+        formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
@@ -1004,7 +1033,7 @@ const saveToDB = (stripePayload) => {
         formstartprojectNote: $("#startprojectNote").val().trim()
     };
 
-    const saveToDB = $.ajax({
+    const ajaxSaveToDB = $.ajax({
         url: settings.url_saveToDB,
         method: 'POST',
         async: false,
@@ -1013,16 +1042,17 @@ const saveToDB = (stripePayload) => {
         data: {
             "stripePayload" : stripePayload,
             "payload" : payload,
-            "country" : Country
+            "country" : Country,
+            "contractURL" : contractURL
         }
     });
 
-    saveToDB.done(function(res) {
+    ajaxSaveToDB.done(function(res) {
         console.log(res);
         return true;
     });
 
-    saveToDB.fail(function(xhr, status, error) {
+    ajaxSaveToDB.fail(function(xhr, status, error) {
         console.log("Save to DB fail!!");
         console.log(status + ': ' + error);
         return false;
@@ -1055,6 +1085,11 @@ const createLogs = (stripePayload) => {
     let domainComment = $("#ref_Domain_Comments");
     let domainRegister = $("#ref_Domain_Name_Registered");
 
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
+
     let tempData = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
@@ -1070,7 +1105,7 @@ const createLogs = (stripePayload) => {
         Website: $("#webURL").val().trim(),
         Language: $(".supportLanguage:checked").val(),
         ShopNumber2: $("#physicalShopNumber").val(),
-        Address1: $("#streetAddress1").val(),
+        Address1: $("#streetAddress1").val().trim(),
         Address2: $("#streetAddress2").val(),
         City: $("#city").val().trim(),
         State: $("#state").val(),
@@ -1129,14 +1164,14 @@ const createLogs = (stripePayload) => {
         AccountNumber: $("#acnDirectDebit").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         AdditionNote: $("#additionComment").val().trim(),
-        ShopAgent: $("#byAgent").val(),
+        ShopAgent: shopAgent,
         ReferredByPerson: $("#byPerson").val().trim(),
         formRefPartner: $("#byPartner").val(),
         ReferredByShop: $("#byRestaurant").val().trim(),
         CustomerStripeID: $("#customerStripeID").val(),
         formProduct: $("#currentlyPackage option:selected").text(),
         formInitialProductOffering: $("#initialProductOffering").val(),
-        formSalesAgent: $("#byAgent option:selected").text(),
+        formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
@@ -1144,7 +1179,7 @@ const createLogs = (stripePayload) => {
         formstartprojectNote: $("#startprojectNote").val().trim()
     };
 
-    const sendLog = $.ajax({
+    const ajaxSendLog = $.ajax({
         url: settings.url_logs,
         method: 'POST',
         async: false,
@@ -1155,12 +1190,12 @@ const createLogs = (stripePayload) => {
         }
     });
 
-    sendLog.done(function(res) {
+    ajaxSendLog.done(function(res) {
         console.log(res);
         return true;
     });
 
-    sendLog.fail(function(xhr, status, error) {
+    ajaxSendLog.fail(function(xhr, status, error) {
         console.log("ajax Log file fail!!");
         console.log(status + ': ' + error);
         return false;
@@ -1195,7 +1230,7 @@ const setPeriodSelectBox = (month) => {
   }
 }//setPeriodSelectBox
 
-const readForm = () => {
+/*const readForm = () => {
     cancelFrm.country = `${$("#formCountry").val()}`;
     cancelFrm.countryText = `${$("#formCountry option:selected").text()}`;
     cancelFrm.shopName = `${$("#shopName").val()}`;
@@ -1210,7 +1245,7 @@ const readForm = () => {
     console.log(cancelFrm);
 
     sendMail();
-}
+}*/
 
 const submitToCRM = () => {
     const first_name = $("#first_name");
@@ -1221,9 +1256,9 @@ const submitToCRM = () => {
     first_name.val(cap_first_name);
     last_name.val(cap_last_name);
     //ถ้า Product ที่เลือกเป็นตัวที่บังคับเป็น 1 ปอนด์ให้แก้ราคาเป็น 1 ปอนด์
-    if(clonePayload.products.subscription[0]==="UK1TRIAL"){
+    /*if(clonePayload.products.subscription[0]==="UK1TRIAL"){
         $("#firstTimePayment").val("GBP 1.00");
-    }
+    }*/
 
     applicationForm.submit();
 }

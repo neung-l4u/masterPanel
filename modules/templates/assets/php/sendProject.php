@@ -78,18 +78,20 @@ $pageDetails = $db->query(
         WHERE projectID = ?', $id
 )->fetchArray();
 
-$json = $project['shopType'] == "Restaurant" 
-    ? [
-        'home' => json_decode($pageDetails['home'], true),
-        'about' => json_decode($pageDetails['about'], true),
-        'contact' => json_decode($pageDetails['contact'], true),
-      ]
-    : [
-        'home' => json_decode($pageDetails['home'], true),
-        'about' => json_decode($pageDetails['about'], true),
-        'contact' => json_decode($pageDetails['contact'], true),
-        'services' => json_decode($pageDetails['services'], true),
-      ];
+// $json = $project['shopType'] == "Restaurant" 
+//     ? [
+//         'home' => json_decode($pageDetails['home'], true),
+//         'about' => json_decode($pageDetails['about'], true),
+//         'contact' => json_decode($pageDetails['contact'], true),
+//       ]
+//     : [
+//         'home' => json_decode($pageDetails['home'], true),
+//         'about' => json_decode($pageDetails['about'], true),
+//         'contact' => json_decode($pageDetails['contact'], true),
+//         'services' => json_decode($pageDetails['services'], true),
+//       ];
+$json = "";
+
 
 $folderName = "../upload/". $id . "-" . sanitizeFolderName($project["projectName"])."/";
 
@@ -192,7 +194,8 @@ $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Usern
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Password</td><td>'.$project['hostingPass'].'</td></tr>';
 $topData .= '</table><br>';
 
-$message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'. stripslashes(json_encode($json, JSON_PRETTY_PRINT)) .'</pre></body></html>';
+// $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'. stripslashes(json_encode($json, JSON_PRETTY_PRINT)) .'</pre></body></html>';
+$message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>Please Get json data form DB</pre></body></html>';
 
 $loginPerson = $db->query('SELECT * FROM staffs WHERE sID=?;',$loginID)->fetchArray();
 if($loginPerson['sEmail'] == $project['email']){

@@ -1,4 +1,5 @@
 <?php
+session_start();
 global $db;
 
 //เรียกใช้งาน object
@@ -35,7 +36,7 @@ foreach ($reports as $row) {
 
 
 if ($param['act'] == 'add') {
-    $reports = $db->query('INSERT INTO `mondayslowreportlogs`(`staffID`) VALUES (?)', $param['loginID']);
+    $reports = $db->query('INSERT INTO `mondayslowreportlogs`(`staffID`) VALUES (?)', $_SESSION['id']);
 }
 
 $return['result'] = 'add report success';
