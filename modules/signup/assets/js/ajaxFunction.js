@@ -587,18 +587,18 @@ function requestToPay() {
 
     let codeDiscount = {};
 
-    if (typeof Payment_Coupon_Obj !== "undefined") { //check this coupon code is exist in a setting list
+    if (typeof Payment_Coupon_Obj !== "undefined" && Payment_Coupon_Obj !== null) { // check if Payment_Coupon_Obj exists
         console.log("เจอส่วนลดแล้ว");
-        let pid = "";
-            pid = cloneCart["subscription"][0]; //read main product ID
-        let cid = "";
-            cid = Payment_Coupon_Obj.code; //read stripe coupon code
-        codeDiscount = { [pid] : cid } ; //set the main coupon code
-    }else{
-        let pid = "";
-        pid = cloneCart["subscription"][0]; //read main product ID
-        let cid = "";
-        codeDiscount = { [pid] : cid } ; //set the main coupon code
+
+        let pid = cloneCart["subscription"][0]; // read main product ID
+        let cid = Payment_Coupon_Obj.code ?? ""; // use empty string if null or undefined
+
+        codeDiscount = { [pid]: cid }; // set the main coupon code
+    } else {
+        let pid = cloneCart["subscription"][0]; // read main product ID
+        let cid = ""; // force empty string if Payment_Coupon_Obj is undefined or null
+
+        codeDiscount = { [pid]: cid }; // set the main coupon code
     }
 
     let addOnDiscountCode = {};
@@ -710,6 +710,7 @@ function requestToPay() {
         "routing_number": routingDirectDebit,
         "account_number": account_number
     };
+
     saveToDB(stripePayload);
     createLogs(stripePayload);
     clonePayload = stripePayload;
@@ -720,8 +721,6 @@ function requestToPay() {
     console.log("stripePayload = ",stripePayload);
 
     modalRespondAction('open','success');
-
-    //เทสส่งอีเมล sendMailToL4UTeam();
 
     if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe
         const reqPay = $.ajax({
@@ -799,7 +798,7 @@ const sendMail = () => {
         "email" : $("#email").val()
     }
 
-    const sendLog = $.ajax({
+    const ajaxSendLog = $.ajax({
         url: "email/sendMail.php",
         method: 'POST',
         async: false,
@@ -808,12 +807,12 @@ const sendMail = () => {
         data: sendMailPayload
     });
 
-    sendLog.done(function(res) {
+    ajaxSendLog.done(function(res) {
         console.log(res);
         return true;
     });
 
-    sendLog.fail(function(xhr, status, error) {
+    ajaxSendLog.fail(function(xhr, status, error) {
         console.log("ajax Send Mail fail!!");
         console.log(status + ': ' + error);
         return false;
@@ -912,6 +911,10 @@ const sendMailToL4UTeam = () => {
 }//sendMail
 
 const saveToDB = (stripePayload) => {
+    genLinkPDF();
+    const agreementGenerated = $("#agreementGenerated");
+    let contractURL = agreementGenerated.val();
+
     let cuisineSelected = [];
 
     $("input:checkbox[name='00N2v00000IyVpy']:checked").each(function(){
@@ -1041,7 +1044,8 @@ const saveToDB = (stripePayload) => {
         data: {
             "stripePayload" : stripePayload,
             "payload" : payload,
-            "country" : Country
+            "country" : Country,
+            "contractURL" : contractURL
         }
     });
 
@@ -1083,10 +1087,9 @@ const createLogs = (stripePayload) => {
     let domainComment = $("#ref_Domain_Comments");
     let domainRegister = $("#ref_Domain_Name_Registered");
 
-    let shopAgent = $("#byAgent").val() || "";
+    let shopAgent = $("#byAgent").val();
     if (shopAgent === "Other") {
-        let otherAgentValue = $("#otherAgent").val().trim();
-        shopAgent = otherAgentValue ? `Other : ${otherAgentValue}` : "Other";
+        shopAgent = $("#otherAgent").val();
     }
 
     let tempData = {
@@ -1229,7 +1232,7 @@ const setPeriodSelectBox = (month) => {
   }
 }//setPeriodSelectBox
 
-const readForm = () => {
+/*const readForm = () => {
     cancelFrm.country = `${$("#formCountry").val()}`;
     cancelFrm.countryText = `${$("#formCountry option:selected").text()}`;
     cancelFrm.shopName = `${$("#shopName").val()}`;
@@ -1244,7 +1247,7 @@ const readForm = () => {
     console.log(cancelFrm);
 
     sendMail();
-}
+}*/
 
 const submitToCRM = () => {
     const first_name = $("#first_name");
@@ -1255,9 +1258,9 @@ const submitToCRM = () => {
     first_name.val(cap_first_name);
     last_name.val(cap_last_name);
     //ถ้า Product ที่เลือกเป็นตัวที่บังคับเป็น 1 ปอนด์ให้แก้ราคาเป็น 1 ปอนด์
-    if(clonePayload.products.subscription[0]==="UK1TRIAL"){
+    /*if(clonePayload.products.subscription[0]==="UK1TRIAL"){
         $("#firstTimePayment").val("GBP 1.00");
-    }
+    }*/
 
     applicationForm.submit();
 }

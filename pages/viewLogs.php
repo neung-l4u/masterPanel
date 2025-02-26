@@ -3,7 +3,16 @@ global $db, $date;
 
 $password = "Localeats#".date("Y");
 ?>
+<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
 
+<style>
+    .clickable {
+        cursor: pointer;
+    }
+    .thead-dark {
+        background-color: #212529;
+    }
+</style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="container-fluid">
@@ -36,28 +45,20 @@ $password = "Localeats#".date("Y");
                     </div>
                     <div class="card-body">
                         <div class="card">
-                            <div class="card-body table-responsive p-4" style="height: 620px;">
-                                <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
+                            <div class="card-body table-responsive p-4" style="height: 630px;">
+                                <table id="signupTable" class="table table-borderless table-striped table-hover"
+                                       style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
                                         <th style="width:15%">Date time</th>
                                         <th style="width:15%">Country</th>
                                         <th style="width:40%">Shopname</th>
-                                        <th style="width:20%">Logs Signup</th>
-                                        <th style="width:10%">Logs Stripe</th>
+                                        <th style="width:10%">SignupJson</th>
+                                        <th style="width:10%">StripeJson</th>
+                                        <th style="width:10%">Contract</th>
                                         <th style="width:10%">Status</th>
                                     </tr>
                                     </thead>
-                                    <tfoot class="thead-dark">
-                                    <tr>
-                                        <th>Date time</th>
-                                        <th>Country</th>
-                                        <th>Shopname</th>
-                                        <th>Logs Signup</th>
-                                        <th>Logs Stripe</th>
-                                        <th>Status</th>
-                                    </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                             <!-- /.card-body -->
@@ -67,18 +68,32 @@ $password = "Localeats#".date("Y");
             </div><!-- /.col-md-12 -->
         </div><!-- /.row -->
 
+        <div id="alert" style="
+            display: block;
+            right: 20px;
+            bottom: 30px;
+            position: fixed;
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1;
+            box-shadow: 0 4px 4px 0 rgb(191 191 191 / 20%);
+            ">
+            Text Copied
+        </div>
 
         <!-- Modal -->
         <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        
+                    <div class="modal-header d-flex align-items-center">
+                        <h3>View Logs</h3>
+                        <button onclick="copyText();" style="color: #bbb; border: none; background: none;"><i class="far fa-copy" style="font-size: 25px;"></i></button>
                     </div> <!-- modal-header -->
 
                     <div class="modal-body">
-                        <h1>View Logs</h1>
-                        <pre id="jsonText">jsonData</pre>
+                        <pre id="jsonText" class="json">jsonData</pre>
                     </div> <!-- modal-body -->
 
                     <div class="modal-footer">
@@ -92,7 +107,27 @@ $password = "Localeats#".date("Y");
 </div>
 <!-- /.content -->
 
+<script src="plugins/jquery/jquery.min.js"></script>
+<script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
 <script>
+    let signupTable = $('#signupTable').DataTable( {
+        pagingType: 'full_numbers',
+        ajax: {
+            url: 'pages/tableRendering/dataViewLogs.php',
+            dataSrc: 'data'
+        },
+        "pageLength": 8,
+        order: [[0, 'desc']],
+        lengthMenu: [
+            [8, 25, 50, -1],
+            ['Fit', 25, 50, 'All']
+        ],columnDefs: [
+            { targets: [0], className: 'dt-left' },
+            { targets: [3, 4, 5], className: 'dt-center' },
+            { targets: [6], className: 'dt-right' }
+        ]
+    } );
+
     function viewJson(data) {
         let jsonData = data;
         
@@ -104,5 +139,17 @@ $password = "Localeats#".date("Y");
         console.log('resetForm');
     }// const
 
+    function showCopy() {
+        $("#alert").fadeIn(500);
+        setTimeout(function () {
+            $("#alert").fadeOut();
+        }, 1000);
+    }
+
+    function copyText() {
+        const copyText = document.querySelector("pre#jsonText");
+        navigator.clipboard.writeText(copyText.textContent)
+        showCopy();
+    }
 </script>
 
