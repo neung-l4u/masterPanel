@@ -1456,12 +1456,12 @@ const genPDF = () => {
 }
 
 const showPolicy = () => {
-  let url = "https://signup.localforyou.com/policy/";
+  let url = "https://report.localforyou.com/modules/policy/";
   window.open(url, '_blank').focus();
 }
 
 const showFormGenAgreement = () => {
-  let url = "https://signup.localforyou.com/generateAgreement/";
+  let url = "https://report.localforyou.com/modules/generateAgreement/";
   window.open(url, '_blank').focus();
 }
 

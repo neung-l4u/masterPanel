@@ -910,6 +910,10 @@ const sendMailToL4UTeam = () => {
 }//sendMail
 
 const saveToDB = (stripePayload) => {
+    genLinkPDF();
+    const agreementGenerated = $("#agreementGenerated");
+    let contractURL = agreementGenerated.val();
+
     let cuisineSelected = [];
 
     $("input:checkbox[name='00N2v00000IyVpy']:checked").each(function(){
@@ -1038,7 +1042,8 @@ const saveToDB = (stripePayload) => {
         data: {
             "stripePayload" : stripePayload,
             "payload" : payload,
-            "country" : Country
+            "country" : Country,
+            "contractURL" : contractURL
         }
     });
 
