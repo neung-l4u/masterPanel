@@ -4,11 +4,20 @@
 >250219 mark/hotfix/stateEmail **[MERGED]**
 >- เปลี่ยน section ในอีเมล จาก state เป็น street address
 
->- 250217 Neung/fix/signupProduct
->แก้ปัญหาเรื่องบางครั้งตัดเงินไม่ได้
+>250220 mark/feature/contractDB **[MERGED]**
+>- save link Contract ลง database, เพิ่ม modules generateAgreement, update policy เป็น v1.3.0
 
-250215 bas/fix/emailAlert **[MERGED]**
->จัดการอีเมลที่ไม่แจ้งเตือนในไฟล์ชื่อ L4UEmailAlert.php
+>250219 mark/feature/viewsLogs **[MERGED]**
+>- สร้างหน้าสำหรับดู signup logs, stripe logs, contract
+
+>250217 mark/feature/logsStripeDB **[MERGED]**
+>- save logs ของ stripe ลง database
+
+>250217 Neung/fix/signupProduct **[MERGED]**
+>- แก้ปัญหาเรื่องบางครั้งตัดเงินไม่ได้
+
+>250215 bas/fix/emailAlert **[MERGED]**
+>- จัดการอีเมลที่ไม่แจ้งเตือนในไฟล์ชื่อ L4UEmailAlert.php
 
 >250217 mark/feature/logsStripeDB **[MERGED]**
 >- save logs ของ stripe ลง database
