@@ -13,14 +13,16 @@ $result["msg"] = "";
 $dataLogs = !empty($_REQUEST["payload"]) ? $_REQUEST["payload"] : null;
 $dataStripe = !empty($_REQUEST["stripePayload"]) ? $_REQUEST["stripePayload"] : null;
 $country = !empty($_REQUEST["country"]) ? $_REQUEST["country"] : null;
+$contractURL = !empty($_REQUEST["contractURL"]) ? $_REQUEST["contractURL"] : null;
 
 $dataLogs = json_encode($dataLogs);
 $dataStripe = json_encode($dataStripe);
 $status = 1;
 $signupBy = !empty($_SESSION['id']) ? $_SESSION['id'] : 0;
 
-$logsToDB =  $db->query('INSERT INTO `logssignup`(`data`, `dataStripe`, `countryCode`, `status`, `createAt`, `createBy`) VALUES (?,?,?,?,?)'
-    , $dataLogs, $dataStripe, $country, $status, $timestamp, $signupBy );
+$logsToDB =  $db->query('INSERT INTO `logssignup`(`dataLogs`, `dataStripe`, `dataContract`, `countryCode`, `status`, `createAt`, `createBy`) VALUES (?,?,?,?,?,?,?)'
+    , $dataLogs, $dataStripe, $contractURL, $country, $status, $timestamp, $signupBy );
+
 
 $result["result"] = "success";
 
