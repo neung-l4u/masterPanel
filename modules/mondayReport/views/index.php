@@ -4,6 +4,8 @@ global $db;
 
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
+require_once '../assets/PHP/shareFunction.php';
+
 $param['act'] = 'read';
 $startCountDate = '2025-02-19';
 
@@ -47,6 +49,15 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
         .clickAble{
             cursor: pointer;
             height: 1rem;
+        }
+        .underPicBlock{
+            display: inline-block;
+            width: 110px;
+        }
+        .dayBlock{
+            display: inline-block;
+            width: 110px;
+            border: 1px solid black;
         }
     </style>
 </head>
@@ -111,17 +122,17 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
                     <div class="mt-3">
                         <div class="d-flex justify-content-between">
                             <small>
-                                <b>Start counting date: </b> <?php echo formatDate($startCountDate); ?>
+                                <b class="underPicBlock">Start counting: </b> <?php echo formatDate($startCountDate); ?>
                             </small>
                         </div>
                         <div class="d-flex justify-content-between">
                             <small>
-                                <b>Most Reported Date: </b> <?php echo formatDate($topDate['day']).' = '.number_format($topDate['count']); ?> times.
+                                <b class="underPicBlock">Most reported: </b> <?php echo formatDate($topDate['day']).' = '.number_format($topDate['count']); ?> times.
                             </small>
                         </div>
                         <div class="d-flex justify-content-between">
                             <small>
-                                <b>Least reported date: </b> <?php echo formatDate($lowDate['day']).' = '.number_format($lowDate['count']); ?> times.
+                                <b class="underPicBlock">Least reported: </b> <?php echo formatDate($lowDate['day']).' = '.number_format($lowDate['count']); ?> times.
                             </small>
                             <div class="d-flex justify-content-end align-items-baseline gap-1 mb-3 pr-3">
                                 <small class="clickAble" onclick="reloadPage();"><b>reload</b></small>
@@ -133,7 +144,7 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
                                 <tr>
                                     <th style="width: 120px;">Summary All</th>
                                     <td style="text-align: right; padding-right: 1rem;">
-                                        <?php echo number_format($sumAll['count']); ?>
+                                        <?php echo number_format($sumAll['count']); ?> times.
                                     </td>
                                 </tr>
 
@@ -278,21 +289,3 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
 
 </body>
 </html>
-<?php
-function firstOnly($string): string
-{
-    $temp = explode(" ", $string);
-    return $temp[0];
-}
-
-function formatDate($date): string
-{
-    $temp = explode("-", $date);
-    return $temp[2]."/".$temp[1]."/".$temp[0];
-}
-
-function showName($nick, $fullName): string{
-    $temp = explode(" ", $fullName);
-    return $nick.'.'.$temp[0];
-}//showName
-?>

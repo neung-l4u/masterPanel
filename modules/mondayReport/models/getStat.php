@@ -5,7 +5,7 @@ global $db;
 //เรียกใช้งาน object
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
-
+require_once '../assets/PHP/shareFunction.php';
 
 $return['result'] = '';
 $return['msg'] = '';
@@ -18,7 +18,7 @@ $sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
     <tr>
         <th style="width: 120px;">Summary All</th>
         <td style="text-align: right; padding-right: 1rem;">
-            <?php echo number_format($sumAll['count']); ?>
+            <?php echo number_format($sumAll['count']); ?>  times.
         </td>
     </tr>
 
@@ -36,16 +36,3 @@ $sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
         </td>
     </tr>
 </table>
-<?php
-function firstOnly($string): string
-{
-    $temp = explode(" ", $string);
-    return $temp[0];
-}
-
-function formatDate($date): string
-{
-    $temp = explode("-", $date);
-    return $temp[2]."/".$temp[1]."/".$temp[0];
-}
-?>
