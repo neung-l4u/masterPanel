@@ -19,7 +19,7 @@ $mail_from = 'Admin Local For You <'.$admin_email.'>';
 $mail_to = $email;
 $mail_cc = '';
 $mail_bcc = 'neung@localforyou.com';
-$mail_reply = 'bas@localforyou.com';
+$mail_reply = 'bas@localforyou.com'.'neung@localforyou.com'.'mark@localforyou.com';
 
 $subject = "Cancellation request - ".$shopName;
 
