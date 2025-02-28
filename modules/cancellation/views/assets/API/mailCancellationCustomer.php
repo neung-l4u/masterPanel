@@ -19,9 +19,23 @@ $mail_from = 'Admin Local For You <'.$admin_email.'>';
 $mail_to = $email;
 $mail_cc = '';
 $mail_bcc = 'neung@localforyou.com';
-$mail_reply = 'admin@localforyou.com';
+$mail_reply = 'bas@localforyou.com';
 
 $subject = "Cancellation request - ".$shopName;
+
+/*$headers = [
+    'From' => $mail_from,
+    'To' => $mail_to,
+    'Cc' => $mail_cc,
+    'Bcc' => $mail_bcc,
+    'Reply-To' => $mail_reply,
+    'X-Sender' => 'Admin L4U <admin@localforyou.com>',
+    'X-Mailer' => 'PHP/' . phpversion(),
+    'X-Priority' => '1',
+    'Return-Path' => 'neung@localforyou.com', //for error
+    'MIME-Version' => '1.0',
+    'Content-Type' => 'text/html; charset=utf-8'
+];*/
 
 $headers = [
     'From' => $mail_from,
@@ -29,7 +43,7 @@ $headers = [
     'Cc' => $mail_cc,
     'Bcc' => $mail_bcc,
     'Reply-To' => $mail_reply,
-    'X-Sender' => 'Admin L4U <admin@localforyou.com>',
+    'X-Sender' => 'Admin L4U <bas@localforyou.com>',
     'X-Mailer' => 'PHP/' . phpversion(),
     'X-Priority' => '1',
     'Return-Path' => 'neung@localforyou.com', //for error
