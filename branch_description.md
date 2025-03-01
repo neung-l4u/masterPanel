@@ -1,3 +1,12 @@
+>250301 bas/add/posInfo
+>- เพิ่มช่อง POS ใน signup form, Log File และใน Email
+
+>250223 bas/feature/formEmail
+>- ทำฟอร์มสำหรับ summit emailerror
+
+>250216 bas/fix/cancellation
+>- รีเช็คฟอร์ม
+
 >250219 Neung/fix/mondayReport **[MERGED]**
 >- เพิ่มการแสดงผล Stat ในแบบต่างๆ
 
