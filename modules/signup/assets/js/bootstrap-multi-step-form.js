@@ -118,6 +118,8 @@ $(document).ready(function () {
   $(".boxSocial").hide();
   $("#dateproject").hide();
   $(".firstStepForm").show();
+  $("#datePOSBox").hide();
+  $("#posBoxDate").hide();
   ////
 });//ready
 
@@ -188,6 +190,15 @@ function setdateProjectAs(){
   $("#dateproject").hide();
 }
 
+function yesPosPro(){
+  $("#posBoxDate").fadeIn(300);
+  $("#noPOSProvider").prop("checked", false);
+}
+
+function noPosPro(){
+  $("#posBoxDate").fadeOut(300);
+  $("#yesPOSProvider").prop("checked", false);
+}
 
 
 // DISPLAY AND HIDE "NEXT", "BACK" AND "SUBMIT" BUTTONS
@@ -1650,3 +1661,12 @@ $("#byAgent").change(function(){
     $("#otherAgent").fadeOut();
   }
 });
+
+
+$("#posSystem").change(function(){
+  if ($(this).val() === "other") {
+    $("#datePOSBox").fadeIn(300);
+  }else{
+    $("#datePOSBox").fadeOut(300);
+  }
+})

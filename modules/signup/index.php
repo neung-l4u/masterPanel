@@ -962,6 +962,85 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
 
                                     <hr class="row mt-4">
                                     <div class="text-center">
+                                        <h5 class="card-title font-weight-bold">POS</h5>
+                                    </div>
+                                    <div class="form-group row pt-4">
+                                        <div class="col-6">
+                                            <label for="posSystem">Which POS are you using?</label>
+                                            <div class="col d-flex justify-content-between">
+                                                <select class="form-select" name="posSystem" id="posSystem" style="min-width: 50%">
+                                                    <option value="none">None</option>
+                                                    <option value="square">Square</option>
+                                                    <option value="toast">Toast</option>
+                                                    <option value="ncr">NCR</option>
+                                                    <option value="lightspeed">Lightspeed</option>
+                                                    <option value="clover">Clover</option>
+                                                    <option value="lavu">Lavu</option>
+                                                    <option value="limetray">Limetray</option>
+                                                    <option value="posbistro">POSbistro</option>
+                                                    <option value="mad_mobile">Mad Mobile</option>
+                                                    <option value="wacko">Wacko</option>
+                                                    <option value="smile">Smile</option>
+                                                    <option value="other">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-6" id="datePOSBox">
+                                            <label for="posOtherDate">
+                                                <span>Other POS</span>
+                                            </label>
+                                            <input
+                                                    type="text"
+                                                    id="posOtherDate"
+                                                    class="form-control"
+                                                    name="posOtherDate"
+                                                    placeholder="e.g. Ocha, Panda"
+                                            />
+                                            </div>    
+                                        </div>
+                                
+                                    <div class="form-group row pt-2">
+                                        <label class="col control-label col-form-label">
+                                            Do you have a contract with a POS provider?
+                                            <b class="red">*</b>
+                                        </label>
+                                       
+                                    </div>
+                                    <div class="row col pt-2">
+                                        <span class="col-3 gx-1">
+                                            <input type="radio" id="yesPOSProvider" class="form-check-input"
+                                                    name="yesPOSProvider" value="yesPOSProvider" >
+                                            <label class="form-check-label mx-1" for="yesPOSProvider" onclick="yesPosPro();">
+                                                yes
+                                            </label>
+                                        </span>
+                                        <span class="col gx-1">
+                                            <input type="radio" id="noPOSProvider" class="form-check-input"
+                                                    name="noPOSProvider" value="No" onclick="noPosPro();" checked>
+                                            <label class="form-check-label mx-1" for="noPOSProvider">
+                                                no
+                                            </label>
+                                        </span>
+                                    </div>
+
+                                    <div class="posContractEnd" id="posBoxDate">
+                                        <div class="form-group row pt-2">
+                                            <label class="col control-label col-form-label" for="endDatePOS">
+                                                Contract end date if on contract with POS provider Not sure.
+                                            </label>
+                                        </div>
+
+                                        <div class="row col pt-2">
+                                            <input type="text" class="form-control" id="endDatePOS" name="endDatePOS" placeholder="Not sure.">
+                                        </div>
+                                        <small class="text-muted d-flex mb-5">e.g. Dec 2025, in 3 months, I can’t remember, etc.</small>
+                                    </div>
+
+
+
+                                    <hr class="row mt-4">
+                                    <div class="text-center">
                                         <h5 class="card-title font-weight-bold">Social Networks</h5>
                                     </div>
                                     <div class="form-group row pt-4 mb-3">
@@ -1213,7 +1292,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                     <div class="row col pt-2">
                                             <span class="col-3 gx-1">
                                                 <input type="radio" id="yesAI" class="form-check-input"
-                                                       name="acknowledgeAI" value="yesAI" onclick="allowOtherDiscount();" checked>
+                                                       name="acknowledgeAI" value="yesAI" checked>
                                                 <label class="form-check-label mx-1" for="yesAI">
                                                     yes
                                                 </label>

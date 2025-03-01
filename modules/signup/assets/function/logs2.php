@@ -8,6 +8,8 @@ $filePath = '../../logs/'.$fileName;
 $result["result"] = "";
 $result["msg"] = "";
 
+
+
 $Country = !empty($_REQUEST["Country"])?$_REQUEST["Country"]:"-";
 $CustomerType = !empty($_REQUEST["CustomerType"])?$_REQUEST["CustomerType"]:"-";
 $FirstName = !empty($_REQUEST["FirstName"])?$_REQUEST["FirstName"]:"-";
@@ -79,6 +81,42 @@ $ShopAgent = !empty($_REQUEST["ShopAgent"])?$_REQUEST["ShopAgent"]:"-";
 $ReferredByPerson = !empty($_REQUEST["ReferredByPerson"])?$_REQUEST["ReferredByPerson"]:"-";
 $ReferredByShop = !empty($_REQUEST["ReferredByShop"])?$_REQUEST["ReferredByShop"]:"-";
 $CustomerStripeID = !empty($_REQUEST["CustomerStripeID"])?$_REQUEST["CustomerStripeID"]:"-";
+$formstartProjectAs = !empty($_REQUEST["formstartProjectAs"]) ? $_REQUEST["formstartProjectAs"] : false;
+$formstartProjectOther = !empty($_REQUEST["formstartProjectOther"]) ? $_REQUEST["formstartProjectOther"] : "-";
+$formstartprojectNote = !empty($_REQUEST["formstartprojectNote"]) ? $_REQUEST["formstartprojectNote"] : "-";
+$formPOSUsing = !empty($_REQUEST["formPOSUsing"]) ? $_REQUEST["formPOSUsing"] : "-";
+$formPOSUsingOther = !empty($_REQUEST["formPOSUsingOther"]) ? $_REQUEST["formPOSUsingOther"] : "-";
+$formNoPOSProvider = !empty($_REQUEST["formNoPOSProvider"]) ? $_REQUEST["formNoPOSProvider"] : false;
+$formYesPOSProvider = !empty($_REQUEST["formYesPOSProvider"]) ? $_REQUEST["formYesPOSProvider"] : "-";
+
+$noPOS = $formNoPOSProvider;
+$yesPOS = $formYesPOSProvider;
+$posProvider = "";
+
+if ($noPOS = false){
+    echo "-";
+}
+
+if (!empty($noPOS)) {
+    $posProvider = $noPOS;
+}else if (!empty($yesPOS)) {
+    $posProvider = $yesPOS;
+}else{
+    $posProvider = "-";
+}//POS
+
+$startDate = $formstartProjectAs;
+$otherDate = $formstartProjectOther;
+$dateStart = "";
+
+if (!empty($startDate)) {
+    $dateStart = $startDate;
+}else if (!empty($otherDate)) {
+    $dateStart = $otherDate;
+}else{
+    $dateStart = "-";
+}
+
 
 
 $message = "----- $fileName -> $timestamp -----
@@ -169,6 +207,11 @@ ReferredByShop: $ReferredByShop|
 CustomerStripeID: $CustomerStripeID|
 Use Main Discount Code: $usageMainDiscountCode|
 Use Addon Discount Code: $usageAddonDiscountCode|
+
+POS Brand : $formPOSUsing|
+End contract : $posProvider|
+
+Start Project Date: $dateStart|
 ----- END -----
 
 

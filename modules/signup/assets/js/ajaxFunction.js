@@ -883,6 +883,10 @@ const sendMailToL4UTeam = () => {
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
         formstartprojectNote: $("#startprojectNote").val(),
+        formPOSUsing: $("#posSystem").val(),
+        formPOSUsingOther: $("#posOtherDate").val(),
+        formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
+        formYesPOSProvider: $("#endDatePOS").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         testMail: CheckedBoxTestmailValue,
         token: Math.random()
@@ -1030,7 +1034,11 @@ const saveToDB = (stripePayload) => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
-        formstartprojectNote: $("#startprojectNote").val().trim()
+        formstartprojectNote: $("#startprojectNote").val().trim(),
+        formPOSUsing: $("#posSystem").val(),
+        formPOSUsingOther: $("#posOtherDate").val(),
+        formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
+        formYesPOSProvider: $("#endDatePOS").val(),
     };
 
     const ajaxSaveToDB = $.ajax({
@@ -1176,7 +1184,11 @@ const createLogs = (stripePayload) => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
-        formstartprojectNote: $("#startprojectNote").val().trim()
+        formstartprojectNote: $("#startprojectNote").val().trim(),
+        formPOSUsing: $("#posSystem").val(),
+        formPOSUsingOther: $("#posOtherDate").val(),
+        formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
+        formYesPOSProvider: $("#endDatePOS").val(),
     };
 
     const ajaxSendLog = $.ajax({
