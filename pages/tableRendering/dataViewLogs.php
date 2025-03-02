@@ -6,6 +6,8 @@ include "../../assets/db/initDB.php";
 
 $result = $db->query('SELECT l.id, l.dataLogs, l.dataStripe, l.dataContract, l.countryCode, l.createAt, s.status FROM logssignup l, logsstatus s WHERE l.status = s.id ORDER BY l.createAt DESC')->fetchAll();
 
+//$project = $db->query('');
+
 $data = array("data"=> array());
 
 foreach ($result as $row) {
