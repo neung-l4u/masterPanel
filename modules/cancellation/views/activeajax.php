@@ -4,6 +4,8 @@
  include 'assets/db/db.php';
  include "assets/db/initDB.php";
 
+$date = date('Y-m-d H:i:s');
+
 $mode = $_POST['mode'];
 $country = $_POST['country'];
 $city = $_POST['city'];
@@ -26,9 +28,9 @@ if (empty($other)){
 }
 if ($mode == "save"){
     $insert = $db->query('INSERT INTO `Cancellation`
-                            (`county`, `city`, `shopname`, `trading`, `address`, `state`, `zip`, `firstname`, `lastname`, `mobile`, `email`, `other`, `reason`, `lastdate`, `feedback`) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
-        ,$country, $city, $shopname, $tradingname, $address, $state, $zip, $firstname, $lastname, $mobile, $email, $other, $reason, $lastdate, $feedback
+                            (`county`, `city`, `shopname`, `trading`, `address`, `state`, `zip`, `firstname`, `lastname`, `mobile`, `email`, `other`, `reason`, `lastdate`, `feedback`,`timestamp`) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
+        ,$country, $city, $shopname, $tradingname, $address, $state, $zip, $firstname, $lastname, $mobile, $email, $other, $reason, $lastdate, $feedback, $date
     );
 
     $params['result'] = "Save to Database by Bas";

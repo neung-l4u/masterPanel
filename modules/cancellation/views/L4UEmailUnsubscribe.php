@@ -9,10 +9,10 @@ $data['fullName'] = !empty($_REQUEST['fullName']) ? $_REQUEST['fullName'] : null
 $data['email'] = !empty($_REQUEST['email']) ? $_REQUEST['email'] : null; //customer email
 
 // $data['adminEmail'] = "admin@localforyou.com";
-$data['adminEmail'] = "bas@localforyou.com";
+$data['adminEmail'] = "mark@localforyou.com";
 $data['l4uStaff'] = "bas@localforyou.com";  //อีเมล์ผู้ดูแลระบบ
-// $data['l4uSuperAdmin'] = "neung@localforyou.com";  //อีเมล์ผู้ดูแลระบบ
-$data['l4uSuperAdmin'] = "bas@localforyou.com";
+$data['l4uSuperAdmin'] = "neung@localforyou.com";  //อีเมล์ผู้ดูแลระบบ
+
 
 /// default result value ///
 $result['result'] = 0;
@@ -40,7 +40,7 @@ if(!empty($data['email'])) {
 
     $headers = [
         'From' => 'Local For You <'.$data['adminEmail'].'>',
-        'Cc' => '',
+        'Cc' => $data['l4uSuperAdmin'].','.$data['adminEmail'],
         'Bcc' => $data['l4uStaff'],
         'Reply-To' => $data['adminEmail'],
         'X-Sender' => 'Local For You <'.$data['adminEmail'].'>',
