@@ -40,7 +40,7 @@ if(!empty($data['email'])) {
 
     $headers = [
         'From' => 'Local For You <'.$data['adminEmail'].'>',
-        'Cc' => $data['l4uSuperAdmin'].','.$data['adminEmail'],
+        'Cc' => $data['l4uSuperAdmin'].','.$data['adminEmail'].','.$data['l4uStaff'],
         'Bcc' => $data['l4uStaff'],
         'Reply-To' => $data['adminEmail'],
         'X-Sender' => 'Local For You <'.$data['adminEmail'].'>',
