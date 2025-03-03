@@ -82,7 +82,7 @@ function toggleBox(checkbox, box) {
     });
 }
 
-$("input[name$='inputOpening'], input[name$='inputDelivery']").change(function() {
+$("input[name$='inputOpeningChk'], input[name$='inputDeliveryChk']").change(function() {
     const checkVal = $(this).val();
 
     if (checkVal === "openChkBox") {

@@ -13,8 +13,13 @@ $row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "
         FROM tb_project p, staffs s, Countries c 
         WHERE p.projectOwner = s.sID AND p.countryID = c.id AND p.projectID = ?;', $id)->fetchArray();
 
-$opening = array();
-$opening = explode('__',$row['openingHours']);
+if (!empty($row['openingCustom']==0)) {
+    $opening = array();
+    $opening = explode('__',$row['openingHours']);
+} else {
+    $opening = $row['openingHours'];
+}
+
 $delivery = array();
 $delivery = explode('__',$row['pickupAndDelivery']);
 
@@ -150,26 +155,24 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                         </div>
                         <div class="col text-right">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inputOpening" id="7dayOpenChk" value="openChkDay" checked>
+                                <input class="form-check-input" type="radio" name="inputOpeningChk" id="7dayOpenChk" value="openChkDay" checked>
                                 <label class="form-check-label" for="7dayOpenChk"><small>7 day</small></label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inputOpening" id="customOpenChk" value="openChkBox">
+                                <input class="form-check-input" type="radio" name="inputOpeningChk" id="customOpenChk" value="openChkBox">
                                 <label class="form-check-label" for="customOpenChk"><small>Custom</small></label>
                             </div>
                         </div>
                     </div>
                     <div id="openingBox">
-                        <textarea class="form-control" id="openingCustom" rows="3"></textarea>
+                        <textarea class="form-control" id="openingCustom" rows="3"><?php echo $opening; ?></textarea>
                     </div>
                     <div id="openingForm">
                         <form id="open-form" class="border rounded px-4 py-3">
                             <div class="mb-3 px-3">
                                 <div class="days-list">
-
                                     <div class="mb-3 row align-items-center" data-day="sunday">
                                         <div class="col-1">
-
                                             <input type="checkbox" class="form-check-input day-toggle" id="sunday-open-chk" <?php echo !empty($opening[0]) ? 'checked' : '' ; ?>>
                                             <label for="sunday-open-chk" class="form-check-label">Sun</label>
                                         </div>
@@ -188,7 +191,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                             <label for="monday-open-chk" class="form-check-label">Mon</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control time-input hide opening" id="monday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[1] : '' ; ?>" <?php echo !empty($opening[1]) ? '' : 'style="display: none;"' ; ?>>
+                                            <input type="text" class="mb-0 form-control time-input hide opening" id="monday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[1]) ? $opening[1] : '' ; ?>" <?php echo !empty($opening[1]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="monday-open"><?php echo $icon;?></span>
@@ -201,7 +204,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                             <label for="tuesday-open-chk" class="form-check-label">Tue</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control time-input opening" id="tuesday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[2] : '' ; ?>" <?php echo !empty($opening[2]) ? '' : 'style="display: none;"' ; ?>>
+                                            <input type="text" class="mb-0 form-control time-input opening" id="tuesday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[2]) ? $opening[2] : '' ; ?>" <?php echo !empty($opening[2]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="tuesday-open"><?php echo $icon;?></span>
@@ -214,7 +217,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                             <label for="wednesday-open-chk" class="form-check-label">Wed</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control time-input opening" id="wednesday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[3] : '' ; ?>" <?php echo !empty($opening[3]) ? '' : 'style="display: none;"' ; ?>>
+                                            <input type="text" class="mb-0 form-control time-input opening" id="wednesday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[3]) ? $opening[3] : '' ; ?>" <?php echo !empty($opening[3]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="wednesday-open"><?php echo $icon;?></span>
@@ -227,7 +230,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                             <label for="thursday-open-chk" class="form-check-label">Thu</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control time-input opening" id="thursday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[4] : '' ; ?>" <?php echo !empty($opening[4]) ? '' : 'style="display: none;"' ; ?>>
+                                            <input type="text" class="mb-0 form-control time-input opening" id="thursday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[4]) ? $opening[4] : '' ; ?>" <?php echo !empty($opening[4]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="thursday-open"><?php echo $icon;?></span>
@@ -240,7 +243,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                             <label for="friday-open-chk" class="form-check-label">Fri</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control time-input opening" id="friday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[5] : '' ; ?>" <?php echo !empty($opening[5]) ? '' : 'style="display: none;"' ; ?>>
+                                            <input type="text" class="mb-0 form-control time-input opening" id="friday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[5]) ? $opening[5] : '' ; ?>" <?php echo !empty($opening[5]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="friday-open"><?php echo $icon;?></span>
@@ -253,7 +256,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                             <label for="saturday-open-chk" class="form-check-label">Sat</label>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="mb-0 form-control time-input opening" id="saturday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[0]) ? $opening[6] : '' ; ?>" <?php echo !empty($opening[6]) ? '' : 'style="display: none;"' ; ?>>
+                                            <input type="text" class="mb-0 form-control time-input opening" id="saturday-open" placeholder="Opening hours (e.g., 08:00-17:00)" value="<?php echo !empty($opening[6]) ? $opening[6] : '' ; ?>" <?php echo !empty($opening[6]) ? '' : 'style="display: none;"' ; ?>>
                                         </div>
                                         <div class="col-1">
                                             <span class="copy-link" data-copy-from="saturday-open"><?php echo $icon;?></span>
@@ -276,11 +279,11 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                         </div>
                         <div class="col text-right">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inputDelivery" id="7dayDeliChk" value="deliChkDay" disabled>
+                                <input class="form-check-input" type="radio" name="inputDeliveryChk" id="7dayDeliChk" value="deliChkDay" disabled>
                                 <label class="form-check-label" for="7dayDeliChk"><small>7 day</small></label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inputDelivery" id="customDeliChk" value="deliChkBox" disabled>
+                                <input class="form-check-input" type="radio" name="inputDeliveryChk" id="customDeliChk" value="deliChkBox" disabled>
                                 <label class="form-check-label" for="customDeliChk"><small>Custom</small></label>
                             </div>
                         </div>
@@ -313,7 +316,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                                 <label for="monday-deli-chk" class="form-check-label">Mon</label>
                                             </div>
                                             <div class="col">
-                                                <input type="text" class="mb-0 form-control deli-input opening" id="monday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[1] : '' ; ?>" <?php echo !empty($delivery[1]) ? '' : 'style="display: none;"' ; ?>>
+                                                <input type="text" class="mb-0 form-control deli-input opening" id="monday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[1]) ? $delivery[1] : '' ; ?>" <?php echo !empty($delivery[1]) ? '' : 'style="display: none;"' ; ?>>
                                             </div>
                                             <div class="col-1">
                                                 <span class="copy-link" data-copy-from="monday-deli"><?php echo $icon;?></span>
@@ -326,7 +329,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                                 <label for="tuesday-deli-chk" class="form-check-label">Tue</label>
                                             </div>
                                             <div class="col">
-                                                <input type="text" class="mb-0 form-control deli-input opening" id="tuesday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[2] : '' ; ?>" <?php echo !empty($delivery[2]) ? '' : 'style="display: none;"' ; ?>>
+                                                <input type="text" class="mb-0 form-control deli-input opening" id="tuesday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[2]) ? $delivery[2] : '' ; ?>" <?php echo !empty($delivery[2]) ? '' : 'style="display: none;"' ; ?>>
                                             </div>
                                             <div class="col-1">
                                                 <span class="copy-link" data-copy-from="tuesday-deli"><?php echo $icon;?></span>
@@ -339,7 +342,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                                 <label for="wednesday-deli-chk" class="form-check-label">Wed</label>
                                             </div>
                                             <div class="col">
-                                                <input type="text" class="mb-0 form-control deli-input opening" id="wednesday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[3] : '' ; ?>" <?php echo !empty($delivery[3]) ? '' : 'style="display: none;"' ; ?>>
+                                                <input type="text" class="mb-0 form-control deli-input opening" id="wednesday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[3]) ? $delivery[3] : '' ; ?>" <?php echo !empty($delivery[3]) ? '' : 'style="display: none;"' ; ?>>
                                             </div>
                                             <div class="col-1">
                                                 <span class="copy-link" data-copy-from="wednesday-deli"><?php echo $icon;?></span>
@@ -352,7 +355,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                                 <label for="thursday-deli-chk" class="form-check-label">Thu</label>
                                             </div>
                                             <div class="col">
-                                                <input type="text" class="mb-0 form-control deli-input opening" id="thursday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[4] : '' ; ?>" <?php echo !empty($delivery[4]) ? '' : 'style="display: none;"' ; ?>>
+                                                <input type="text" class="mb-0 form-control deli-input opening" id="thursday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[4]) ? $delivery[4] : '' ; ?>" <?php echo !empty($delivery[4]) ? '' : 'style="display: none;"' ; ?>>
                                             </div>
                                             <div class="col-1">
                                                 <span class="copy-link" data-copy-from="thursday-deli"><?php echo $icon;?></span>
@@ -365,7 +368,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                                 <label for="friday-deli-chk" class="form-check-label">Fri</label>
                                             </div>
                                             <div class="col">
-                                                <input type="text" class="mb-0 form-control deli-input opening" id="friday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[5] : '' ; ?>" <?php echo !empty($delivery[5]) ? '' : 'style="display: none;"' ; ?>>
+                                                <input type="text" class="mb-0 form-control deli-input opening" id="friday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[5]) ? $delivery[5] : '' ; ?>" <?php echo !empty($delivery[5]) ? '' : 'style="display: none;"' ; ?>>
                                             </div>
                                             <div class="col-1">
                                                 <span class="copy-link" data-copy-from="friday-deli"><?php echo $icon;?></span>
@@ -378,7 +381,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
                                                 <label for="saturday-deli-chk" class="form-check-label">Sat</label>
                                             </div>
                                             <div class="col">
-                                                <input type="text" class="mb-0 form-control deli-input opening" id="saturday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[0]) ? $delivery[6] : '' ; ?>" <?php echo !empty($delivery[6]) ? '' : 'style="display: none;"' ; ?>>
+                                                <input type="text" class="mb-0 form-control deli-input opening" id="saturday-deli" placeholder="e.g., 08:00-17:00" value="<?php echo !empty($delivery[6]) ? $delivery[6] : '' ; ?>" <?php echo !empty($delivery[6]) ? '' : 'style="display: none;"' ; ?>>
                                             </div>
                                             <div class="col-1">
                                                 <span class="copy-link" data-copy-from="saturday-deli"><?php echo $icon;?></span>
@@ -723,6 +726,8 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     const inputPhone = $("#bsPhone");
     const inputAddress = $("#bsAddress");
     //const inputOpen = $("#bsOpen");
+    const dayOpenChk = $("#7dayOpenChk");
+    const customOpenChk = $("#customOpenChk");
     const inputSunOpen = $("#sunday-open");
     const inputMonOpen = $("#monday-open");
     const inputTueOpen = $("#tuesday-open");
@@ -731,6 +736,8 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     const inputFriOpen = $("#friday-open");
     const inputSatOpen = $("#saturday-open");
     const inputOpenCus = $("#openingCustom")
+    const dayDeliChk = $("#7dayDeliChk");
+    const customDeliChk = $("#customDeliChk");
     const inputSunDeli = $("#sunday-deli");
     const inputMonDeli = $("#monday-deli");
     const inputTueDeli = $("#tuesday-deli");
@@ -772,29 +779,10 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
     const domainBox = $("#domainBox");
     const hostingBox = $("#hostingBox");
 
-    if ("#7dayOpenChk") {
-        $("#sunday-open-chk").on("change", () => inputSunOpen.val($("#sunday-open-chk").prop("checked") ? inputSunOpen.val() : ""));
-        $("#monday-open-chk").on("change", () => inputMonOpen.val($("#monday-open-chk").prop("checked") ? inputMonOpen.val() : ""));
-        $("#tuesday-open-chk").on("change", () => inputTueOpen.val($("#tuesday-open-chk").prop("checked") ? inputTueOpen.val() : ""));
-        $("#wednesday-open-chk").on("change", () => inputWedOpen.val($("#wednesday-open-chk").prop("checked") ? inputWedOpen.val() : ""));
-        $("#thursday-open-chk").on("change", () => inputThuOpen.val($("#thursday-open-chk").prop("checked") ? inputThuOpen.val() : ""));
-        $("#friday-open-chk").on("change", () => inputFriOpen.val($("#friday-open-chk").prop("checked") ? inputFriOpen.val() : ""));
-        $("#saturday-open-chk").on("change", () => inputSatOpen.val($("#saturday-open-chk").prop("checked") ? inputSatOpen.val() : ""));
-    }
-
-    $("#sunday-deli-chk").on("change", () => inputSunDeli.val($("#sunday-deli-chk").prop("checked") ? inputSunDeli.val() : ""));
-    $("#monday-deli-chk").on("change", () => inputMonDeli.val($("#monday-deli-chk").prop("checked") ? inputMonDeli.val() : ""));
-    $("#tuesday-deli-chk").on("change", () => inputTueDeli.val($("#tuesday-deli-chk").prop("checked") ? inputTueDeli.val() : ""));
-    $("#wednesday-deli-chk").on("change", () => inputWedDeli.val($("#wednesday-deli-chk").prop("checked") ? inputWedDeli.val() : ""));
-    $("#thursday-deli-chk").on("change", () => inputThuDeli.val($("#thursday-deli-chk").prop("checked") ? inputThuDeli.val() : ""));
-    $("#friday-deli-chk").on("change", () => inputFriDeli.val($("#friday-deli-chk").prop("checked") ? inputFriDeli.val() : ""));
-    $("#saturday-deli-chk").on("change", () => inputSatDeli.val($("#saturday-deli-chk").prop("checked") ? inputSatDeli.val() : ""));
-
     $(()=>{ //ready
         loadProjectData();
         showSystem();
     }); //ready
-
 
     const loadProjectData = () => {
         let payload = {
@@ -834,9 +822,26 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
             email: inputEmail.val(),
             phone: inputPhone.val(),
             address: inputAddress.val(),
-
-
-
+            dayOpenChk: dayOpenChk.prop("checked"),
+            customOpenChk: customOpenChk.prop("checked"),
+            sunOpen: inputSunOpen.val(),
+            monOpen: inputMonOpen.val(),
+            tueOpen: inputTueOpen.val(),
+            wedOpen: inputWedOpen.val(),
+            thuOpen: inputThuOpen.val(),
+            friOpen: inputFriOpen.val(),
+            satOpen: inputSatOpen.val(),
+            cusOpen: inputOpenCus.val(),
+            dayDeliChk: dayDeliChk.prop("checked"),
+            customDeliChk: customDeliChk.prop("checked"),
+            sunDeli: inputSunDeli.val(),
+            monDeli: inputMonDeli.val(),
+            tueDeli: inputTueDeli.val(),
+            wedDeli: inputWedDeli.val(),
+            thuDeli: inputThuDeli.val(),
+            friDeli: inputFriDeli.val(),
+            satDeli: inputSatDeli.val(),
+            cusDeli: inputDeliCus.val(),
             logo: hiddenPicLogo.val(),
             colorTheme1: selTheme1Hex.val(),
             colorTheme2: selTheme2Hex.val(),
