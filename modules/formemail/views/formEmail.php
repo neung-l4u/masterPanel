@@ -24,14 +24,14 @@ $today = date("Y-m-d");
                 <div class="col-4 d-flex align-items-start justify-content-start">
                     <b>Mode: </b>
                     <div class="form-check form-check-inline ml-3">
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                        <label class="form-check-label" for="flexRadioDefault1">
+                        <input class="form-check-input" type="radio" name="emailMode" id="emailModeProd" value="prod">
+                        <label class="form-check-label" for="emailModeProd">
                             Production
                         </label>
                     </div>
                     <div class="form-check form-check-inline ml-3">
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                        <label class="form-check-label" for="flexRadioDefault2">
+                        <input class="form-check-input" type="radio" name="emailMode" id="emailModeDev" value="test" checked>
+                        <label class="form-check-label" for="emailModeDev">
                             Test
                         </label>
                     </div>
@@ -284,7 +284,7 @@ $today = date("Y-m-d");
         </div>
         <div class="row">
             <div class="col text-right">
-                <button type="submit" class="btn btn-primary mb-2">Submit</button>
+                <button type="button" id="cmdSubmit" class="btn btn-primary mb-2">Submit</button>
             </div>
         </div>
     </form>
@@ -292,5 +292,13 @@ $today = date("Y-m-d");
 
 <script src="../assets/js/jquery3.5.1.min.js"></script>
 <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
+    <script>
+        let payload = {};
+        let emailMode = $("input[name='emailMode']:checked").val();
+
+        $('#cmdSubmit').on('click', function () {
+
+        }
+    </script>
 </body>
 </html>
