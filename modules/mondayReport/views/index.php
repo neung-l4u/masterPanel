@@ -4,6 +4,8 @@ global $db;
 
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
+require_once '../assets/PHP/shareFunction.php';
+
 $param['act'] = 'read';
 $startCountDate = '2025-02-19';
 
@@ -47,6 +49,15 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
         .clickAble{
             cursor: pointer;
             height: 1rem;
+        }
+        .underPicBlock{
+            display: inline-block;
+            width: 110px;
+        }
+        .dayBlock{
+            display: inline-block;
+            width: 110px;
+            border: 1px solid black;
         }
     </style>
 </head>
@@ -111,17 +122,17 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
                     <div class="mt-3">
                         <div class="d-flex justify-content-between">
                             <small>
-                                <b>Start counting date: </b> <?php echo formatDate($startCountDate); ?>
+                                <b class="underPicBlock">Start counting: </b> <?php echo formatDate($startCountDate).' ('.timeAgoInDays($startCountDate).')'; ?>
                             </small>
                         </div>
                         <div class="d-flex justify-content-between">
                             <small>
-                                <b>Most Reported Date: </b> <?php echo formatDate($topDate['day']).' = '.number_format($topDate['count']); ?> times.
+                                <b class="underPicBlock">Most reported: </b> <?php echo formatDate($topDate['day']).' = '.number_format($topDate['count']); ?> times.
                             </small>
                         </div>
                         <div class="d-flex justify-content-between">
                             <small>
-                                <b>Least reported date: </b> <?php echo formatDate($lowDate['day']).' = '.number_format($lowDate['count']); ?> times.
+                                <b class="underPicBlock">Least reported: </b> <?php echo formatDate($lowDate['day']).' = '.number_format($lowDate['count']); ?> times.
                             </small>
                             <div class="d-flex justify-content-end align-items-baseline gap-1 mb-3 pr-3">
                                 <small class="clickAble" onclick="reloadPage();"><b>reload</b></small>
@@ -133,7 +144,7 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
                                 <tr>
                                     <th style="width: 120px;">Summary All</th>
                                     <td style="text-align: right; padding-right: 1rem;">
-                                        <?php echo number_format($sumAll['count']); ?>
+                                        <?php echo number_format($sumAll['count']); ?> times.
                                     </td>
                                 </tr>
 
@@ -143,7 +154,10 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
                                             <ul class="list-group">
                                             <?php foreach ($sumDate as $row){ ?>
                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                    <?php echo formatDate($row['day']); ?>
+                                                   <div>
+                                                       <a href="viewDateDetail.php?date=<?php echo $row['day']; ?>" target="_blank"><svg height="1rem" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="#0d6efd" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/></svg></a>
+                                                       <?php echo formatDate($row['day']); ?>
+                                                   </div>
                                                     <span class="badge bg-primary rounded-pill"><?php echo number_format($row['count']); ?></span>
                                                 </li>
                                             <?php } ?>
@@ -278,21 +292,3 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
 
 </body>
 </html>
-<?php
-function firstOnly($string): string
-{
-    $temp = explode(" ", $string);
-    return $temp[0];
-}
-
-function formatDate($date): string
-{
-    $temp = explode("-", $date);
-    return $temp[2]."/".$temp[1]."/".$temp[0];
-}
-
-function showName($nick, $fullName): string{
-    $temp = explode(" ", $fullName);
-    return $nick.'.'.$temp[0];
-}//showName
-?>
