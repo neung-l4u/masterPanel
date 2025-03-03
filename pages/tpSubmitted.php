@@ -1,7 +1,5 @@
 <?php
 global $db, $date;
-
-$password = "Localeats#".date("Y");
 ?>
 <link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
 
@@ -46,17 +44,15 @@ $password = "Localeats#".date("Y");
                     <div class="card-body">
                         <div class="card">
                             <div class="card-body table-responsive p-4" style="height: 630px;">
-                                <table id="signupTable" class="table table-borderless table-striped table-hover"
+                                <table id="TpSubmissionTable" class="table table-borderless table-striped table-hover"
                                        style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:15%">Date time</th>
-                                        <th style="width:15%">Country</th>
-                                        <th style="width:45%">Shopname</th>
-                                        <th style="width:5%">SignupJson</th>
-                                        <th style="width:5%">StripeJson</th>
-                                        <th style="width:5%">Contract</th>
-                                        <th style="width:5%">Status</th>
+                                        <th style="width: 10%;">Due Date</th>
+                                        <th style="width: 10%;">Template</th>
+                                        <th style="width: 50%;">Project Name</th>
+                                        <th style="width: 10%;">Details</th>
+                                        <th style="width: 10%;">PO</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -68,28 +64,12 @@ $password = "Localeats#".date("Y");
             </div><!-- /.col-md-12 -->
         </div><!-- /.row -->
 
-        <div id="alert" style="
-            display: block;
-            right: 20px;
-            bottom: 30px;
-            position: fixed;
-            background-color: #007bff;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            z-index: 1;
-            box-shadow: 0 4px 4px 0 rgb(191 191 191 / 20%);
-            ">
-            Text Copied
-        </div>
-
         <!-- Modal -->
         <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
                     <div class="modal-header d-flex align-items-center">
                         <h3>View Logs</h3>
-                        <button onclick="copyText();" style="color: #bbb; border: none; background: none;"><i class="far fa-copy" style="font-size: 25px;"></i></button>
                     </div> <!-- modal-header -->
 
                     <div class="modal-body">
@@ -97,7 +77,7 @@ $password = "Localeats#".date("Y");
                     </div> <!-- modal-body -->
 
                     <div class="modal-footer">
-                        
+
                     </div> <!-- modal-footer -->
                 </div> <!-- modal-content -->
             </div> <!-- modal-dialog -->
@@ -110,10 +90,10 @@ $password = "Localeats#".date("Y");
 <script src="plugins/jquery/jquery.min.js"></script>
 <script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
 <script>
-    let signupTable = $('#signupTable').DataTable( {
+    let signupTable = $('#TpSubmissionTable').DataTable( {
         pagingType: 'full_numbers',
         ajax: {
-            url: 'pages/tableRendering/dataViewLogs.php',
+            url: 'pages/tableRendering/dataTpSubmitted.php',
             dataSrc: 'data'
         },
         "pageLength": 8,
@@ -123,14 +103,14 @@ $password = "Localeats#".date("Y");
             ['Fit', 25, 50, 'All']
         ],columnDefs: [
             { targets: [0], className: 'dt-left' },
-            { targets: [3, 4, 5], className: 'dt-center' },
-            { targets: [6], className: 'dt-right' }
+            { targets: [3], className: 'dt-center' },
+            { targets: [4], className: 'dt-right' }
         ]
     } );
 
     function viewJson(data) {
         let jsonData = data;
-        
+
         $('#formModal').modal('show');
         $('#jsonText').html(JSON.stringify(jsonData, undefined, 2));
     }
@@ -138,18 +118,5 @@ $password = "Localeats#".date("Y");
     const resetForm = () => {
         console.log('resetForm');
     }// const
-
-    function showCopy() {
-        $("#alert").fadeIn(500);
-        setTimeout(function () {
-            $("#alert").fadeOut();
-        }, 1000);
-    }
-
-    function copyText() {
-        const copyText = document.querySelector("pre#jsonText");
-        navigator.clipboard.writeText(copyText.textContent)
-        showCopy();
-    }
 </script>
 

@@ -133,4 +133,11 @@ switch ($menuPage){
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/viewLogs.php";
         break;
+    case "tpSubmitted":
+        $showPage = "tpSubmitted.php";
+        $activeMenu["lv1"] = "";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "true";
+        $datatable["src"] = "";
+        break;
 }
