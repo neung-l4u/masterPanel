@@ -82,6 +82,30 @@ function toggleBox(checkbox, box) {
     });
 }
 
+$("input[name$='inputOpeningChk'], input[name$='inputDeliveryChk']").change(function() {
+    const checkVal = $(this).val();
+
+    if (checkVal === "openChkBox") {
+        $("#openingBox").toggle(300);
+        $("#openingForm").hide();
+    } else if (checkVal === "openChkDay") {
+        $("#openingBox").hide();
+        $("#openingForm").toggle(300);
+    } else if (checkVal === "deliChkBox") {
+        $("#deliveryBox").toggle(300);
+        $("#deliveryForm").hide();
+    } else if (checkVal === "deliChkDay") {
+        $("#deliveryBox").hide();
+        $("#deliveryForm").toggle(300);
+    }
+});
+
+$('#chkPickup').on('change', function () {
+    let isChecked = $('#chkPickup').is(':checked');
+    $("#7dayDeliChk, #customDeliChk").prop("disabled", !isChecked);
+    $("#7dayDeliChk").prop("checked", isChecked);
+    $("#deliveryBox").hide();
+});
 $("input[name$='inputOpening'], input[name$='inputDelivery']").change(function() {
     const checkVal = $(this).val();
 
