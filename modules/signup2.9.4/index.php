@@ -481,7 +481,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 name="street"
                                                 rows="4"
                                                 onkeyup="setShipAddress();"
-                                                onblur="setShipAddress();"
+                                                onblur="this.value = sanitizeInput(this.value); setShipAddress();"
                                                 placeholder="11/200 Golden Village"
                                         ><?php echo $test["address"]; ?></textarea>
                                         </div>
@@ -1118,13 +1118,12 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                             </span>
                                                             <small id="domainHelpAU" class="form-text">
                                                                 <a href="https://audomains.localforyou.com/" target="_blank" tabindex="-1" class="text-decoration-none">
-                                                                    Check Availability AU, NZ, UK, TH
+                                                                    Check Availability
                                                                 </a>
                                                             </small>
-                                                            <br>
                                                             <small id="domainHelpUS" class="form-text">
                                                                 <a href="https://usadomains.localforyou.com/" target="_blank" tabindex="-1" class="text-decoration-none">
-                                                                    Check Availability US, CA
+                                                                    Check Availability
                                                                 </a>
                                                             </small>
                                                         </div>
@@ -1853,7 +1852,6 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <option value="Boom Piyakorn">Boom Piyakorn</option>
                                                                 <option value="Ball Anirut">Ball Anirut</option>
                                                                 <option value="Bim Sujitar">Bim Sujitar</option>
-                                                                <option value="Faye Thitiporn">Faye Thitiporn</option>
                                                                 <option value="Fern Paweena">Fern Paweena</option>
                                                                 <option value="Gun Orana">Gun Orana</option>
                                                                 <option value="Honey Tummaput">Honey Tummaput</option>
@@ -1861,9 +1859,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <option value="Nan Chompunuch">Nan Chompunuch</option>
                                                                 <option value="Naya Sanewong">Naya Sanewong</option>
                                                                 <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
-                                                                <option value="Prae Phimmada">Prae Phimmada</option>
                                                                 <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
-                                                                <option value="Pume Thanut">Pume Thanut</option>
                                                                 <option value="Other">Other</option>
                                                             </select>
                                                             <input

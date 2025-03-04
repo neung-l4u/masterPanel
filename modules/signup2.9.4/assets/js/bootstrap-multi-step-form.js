@@ -324,8 +324,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.show();
       routing_number_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.show();
+      domainHelpUS.hide();
       break;
     case "NZ":
       labelBusinessNumber.html("NZBN");
@@ -347,8 +347,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       methodDebit.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.show();
+      domainHelpUS.hide();
       break;
     case "UK":
       inputBusinessNumber.attr('required', true);
@@ -369,8 +369,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("UK");
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.show();
+      domainHelpUS.hide();
       break;
     case "CA":
       inputBusinessNumber.attr('required', true);
@@ -391,8 +391,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("CA");
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.hide();
+      domainHelpUS.show();
       break;
     case "US":
       inputBusinessNumber.attr('required', true);
@@ -413,8 +413,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("US");
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.hide();
+      domainHelpUS.show();
       break;
     case "TH":
       inputBusinessNumber.attr('required', true);
@@ -435,8 +435,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local Eats Co., Ltd" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("US");
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.show();
+      domainHelpUS.hide();
       break;
     case "TH":
       inputBusinessNumber.attr('required', true);
@@ -677,6 +677,10 @@ function setShipAddress(){
 
   let shipAddress = [streetAddress1, city, state, zip, country].filter(Boolean).join(" ,");
   shipAddress1.val(shipAddress);
+}
+
+function sanitizeInput(input) {
+  return input.replace(/[ \r\n\t\f\v]+/g, ' ').trim(); // Replace multiple spaces/newlines with a single space
 }
 
 const fillFacebook = () => {
