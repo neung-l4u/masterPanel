@@ -341,25 +341,25 @@ function getProductList(country) {
                 }
 
                 const boxName = {
-                    'A6 Flyers x 1,000 pcs' : '00N9s000000QQaH',
-                    'A6 Flyers x 2,000 pcs' : '00N9s000000QQaH',
-                    'A6 Flyers x 5,000 pcs' : '00N9s000000QQaH',
-                    'A6 Flyers x 10,000 pcs' : '00N9s000000QQaH',
-                    'Flyers A6 (US 5` x 7`) x 1,000' : '00N9s000000QQaH',
-                    'Flyers A6 (US 5` x 7`) x 2,000' : '00N9s000000QQaH',
-                    'Flyers A6 (US 5` x 7`) x 5,000' : '00N9s000000QQaH',
-                    'Flyers A6 (US 5` x 7`) x 10,000' : '00N9s000000QQaH',
-                    'Fridge Magnet x 500' : '00N9s000000QQav',
-                    'Fridge Magnet x 1,000' : '00N9s000000QQav',
-                    'Fridge Magnet x 2,000' : '00N9s000000QQav',
-                    'Fridge Magnet x 4,000' : '00N9s000000QQav',
-                    'Adv Promo' : '00N9s000000QgTt',
-                    'Social Media Management' : '00N9s000000QQcI',
-                    'Influencer Package' : '00N9s000000QgU3',
-                    'Dine-in Dual Online Ordering System' : '00N9s000000QgU8',
-                    'Menu / Massage Pricing Design' : '00N9s000000QQbP',
-                    'Website Makeover / Build' : '00N9s000000Qn1j',
-                    'Website Hosting + Email included' : '00N9s000000Qn1t'
+                    'A6 Flyers x 1,000 pcs' : 'addonFlyers',
+                    'A6 Flyers x 2,000 pcs' : 'addonFlyers',
+                    'A6 Flyers x 5,000 pcs' : 'addonFlyers',
+                    'A6 Flyers x 10,000 pcs' : 'addonFlyers',
+                    'Flyers A6 (US 5` x 7`) x 1,000' : 'addonFlyers',
+                    'Flyers A6 (US 5` x 7`) x 2,000' : 'addonFlyers',
+                    'Flyers A6 (US 5` x 7`) x 5,000' : 'addonFlyers',
+                    'Flyers A6 (US 5` x 7`) x 10,000' : 'addonFlyers',
+                    'Fridge Magnet x 500' : 'addonFridgeMagnet',
+                    'Fridge Magnet x 1,000' : 'addonFridgeMagnet',
+                    'Fridge Magnet x 2,000' : 'addonFridgeMagnet',
+                    'Fridge Magnet x 4,000' : 'addonFridgeMagnet',
+                    'Adv Promo' : 'addonAdvPromo',
+                    'Social Media Management' : 'addonSocialMedia',
+                    'Influencer Package' : 'addonInfluencer',
+                    'Dine-in Dual Online Ordering System' : 'addonDineInDual',
+                    'Menu / Massage Pricing Design' : 'addonPricingDesign',
+                    'Website Makeover / Build' : 'addonWebsiteMakeover',
+                    'Website Hosting + Email included' : 'addonWebsiteHosting'
                 }
 
                 // ถ้าเป็น Website Hosting ให้ใส่ class ไว้ จะเอาไว้เลือก Auto จาก package อื่น
@@ -523,7 +523,7 @@ function requestToPay() {
     const agent = $("#agent")
     const creditFullName = $("#creditFullName");
     const shopOwnerEmail = $("#email");
-    const restaurant_name = $("#00N2v00000IyVqB");
+    const restaurant_name = $("#shopName");
     const creditCardNumber = $("#creditCardNumber");
     const creditExpireDate = $("#creditExpireDate").val();
     const creditCCV = $("#creditCCV");
@@ -792,14 +792,14 @@ const sendMail = () => {
 
     let sendMailPayload = {
         "mode" : "confirm",
-        "shopName" : $("#00N2v00000IyVqB").val(),
+        "shopName" : $("#shopName").val(),
         "fullName" : formData.owner.firstName+" "+formData.owner.lastName,
         "acceptAutoPilotAI" : $("#acceptAutoPilotAI").val(),
         "email" : $("#email").val()
     }
 
     const ajaxSendLog = $.ajax({
-        url: "email/sendMail.php",
+        url: "https://report.localforyou.com/modules/signup2.9.4/email/sendMail.php",
         method: 'POST',
         async: false,
         cache: false,
@@ -872,13 +872,13 @@ const sendMailToL4UTeam = () => {
         formWebHosting: $("#initAddOnWebHosting").val(),
         formInfluencer: $("#initAddOnInfluencer").val(),
         formCustomerType: $("#formType option:selected").text(),
-        formShopName: $("#00N2v00000IyVqB").val(),
+        formShopName: $("#shopName").val(),
         formCountry: $("#formCountry option:selected").text(),
         ShippingAddress: $("#shipAddress1").val(),
         formFullName: $("#first_name").val().trim() + " " + $("#last_name").val().trim(),
         formEmail: $("#email").val().toLowerCase(),
         formMobile: $("#mobile").val(),
-        formBestTime: $("#00N9s000000Nl1G").val(),
+        formBestTime: $("#bestTimeContact").val(),
         formNote: $("#additionComment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
@@ -893,7 +893,7 @@ const sendMailToL4UTeam = () => {
     };
 
     const ajaxSendL4UMail = $.ajax({
-        url: "email/L4UEmailAlert.php",
+        url: "https://report.localforyou.com/modules/signup2.9.4/email/L4UEmailAlert.php",
         method: 'POST',
         async: false,
         cache: false,
@@ -920,19 +920,19 @@ const saveToDB = (stripePayload) => {
 
     let cuisineSelected = [];
 
-    $("input:checkbox[name='00N2v00000IyVpy']:checked").each(function(){
+    $("input:checkbox[name='cuisinesOther']:checked").each(function(){
         cuisineSelected.push($(this).val());
     });
     let txtCuisine = cuisineSelected.join();
 
     let yourArray = [];
-    $("input:checkbox[name='00N9s000000QPvX']:checked").each(function(){
+    $("input:checkbox[name='serviceCheck']:checked").each(function(){
         yourArray.push($(this).val());
     });
     let txtServices = yourArray.join();
 
     yourArray = [];
-    $("input:checkbox[name='00N2v00000IyVq8']:checked").each(function(){
+    $("input:checkbox[name='payCheck']:checked").each(function(){
         yourArray.push($(this).val());
     });
     let txtPayment = yourArray.join();
@@ -955,9 +955,9 @@ const saveToDB = (stripePayload) => {
         LastName: formData.owner.lastName.trim(),
         Mobile: $("#ownerMobile").val(),
         Email: $("#email").val().trim().toLowerCase(),
-        BestTimeToContact: $("#00N9s000000Nl1G").val(),
-        ShopName: $("#00N2v00000IyVqB").val().trim(),
-        ABN: $("#00N9s000000QPWu").val(),
+        BestTimeToContact: $("#bestTimeContact").val(),
+        ShopName: $("#shopName").val().trim(),
+        ABN: $("#businessNumber").val(),
         TradingName: $("#company").val().trim(),
         ShopNumber: $("#shopPhoneFormatted").val(),
         Website: $("#webURL").val().trim(),
@@ -976,7 +976,7 @@ const saveToDB = (stripePayload) => {
         MainProduct: $("input[name='product']:checked").val(),
         LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
         Service: txtServices,
-        Delivery: $("input[name='00N9s000000QPvX']:checked").val(),
+        Delivery: $("input[name='serviceCheck']:checked").val(),
         TableNumber: $("#tableNumber").val(),
         TableSize: $("#sizeOption").val(),
         Payment: txtPayment,
@@ -985,23 +985,23 @@ const saveToDB = (stripePayload) => {
         Instagram: $("#box_Instagram").val().trim(),
         Yelp: $("#box_Yelp").val().trim(),
         WebsiteURL: $("#websiteDomainName").val().trim(),
-        NewDomain: $("input:checkbox[name='00N2v00000IyVq2']:checked").val(),
-        KeepWebsite: $("input:checkbox[name='00N2v00000IyVq1']:checked").val(),
+        NewDomain: $("input:checkbox[name='keepWebsite']:checked").val(),
+        KeepWebsite: $("input:checkbox[name='ownDomain']:checked").val(),
         OwnDomain: $("#newDomain").val().trim(),
         domainUser: domainUser.val().trim(),
         domainPass: domainPass.val().trim(),
         domainComment: domainComment.val().trim(),
         domainRegister: domainRegister.val(),
-        Flyer: $("input:checkbox[name='00N9s000000QQaH']:checked").val(),
-        FridgeMagnet: $("input:checkbox[name='00N9s000000QQav']:checked").val(),
-        AddOn1: $("input:checkbox[name='00N9s000000QgTt']:checked").val(),
-        AddOn2: $("input:checkbox[name='00N9s000000QQcI']:checked").val(),
-        AddOn3: $("input:checkbox[name='00N9s000000QgU3']:checked").val(),
-        AddOn4: $("input:checkbox[name='00N9s000000QgU8']:checked").val(),
-        AddOn5: $("input:checkbox[name='00N9s000000QQbP']:checked").val(),
-        AddOn6: $("input:checkbox[name='00N9s000000Qn1j']:checked").val(),
-        AddOn7: $("input:checkbox[name='00N9s000000Qn1t']:checked").val(),
-        OrderDiscount: $("input[name='00N2v00000IyVpz']:checked").val(),
+        Flyer: $("input:checkbox[name='addonFlyers']:checked").val(),
+        FridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
+        AddOn1: $("input:checkbox[name='addonAdvPromo']:checked").val(),
+        AddOn2: $("input:checkbox[name='addonSocialMedia']:checked").val(),
+        AddOn3: $("input:checkbox[name='addonInfluencer']:checked").val(),
+        AddOn4: $("input:checkbox[name='addonDineInDual']:checked").val(),
+        AddOn5: $("input:checkbox[name='addonPricingDesign']:checked").val(),
+        AddOn6: $("input:checkbox[name='addonWebsiteMakeover']:checked").val(),
+        AddOn7: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
+        OrderDiscount: $("input[name='discount']:checked").val(),
         OtherDiscount: $("#discountOther").val(),
         mainDiscountCode: $("#couponCode").val(),
         addonDiscountCode: $("#couponCode2").val(),
@@ -1071,19 +1071,19 @@ const saveToDB = (stripePayload) => {
 const createLogs = (stripePayload) => {
     let cuisineSelected = [];
 
-    $("input:checkbox[name='00N2v00000IyVpy']:checked").each(function(){
+    $("input:checkbox[name='cuisinesOther']:checked").each(function(){
         cuisineSelected.push($(this).val());
     });
     let txtCuisine = cuisineSelected.join();
 
     let yourArray = [];
-    $("input:checkbox[name='00N9s000000QPvX']:checked").each(function(){
+    $("input:checkbox[name='serviceCheck']:checked").each(function(){
         yourArray.push($(this).val());
     });
     let txtServices = yourArray.join();
 
     yourArray = [];
-    $("input:checkbox[name='00N2v00000IyVq8']:checked").each(function(){
+    $("input:checkbox[name='payCheck']:checked").each(function(){
         yourArray.push($(this).val());
     });
     let txtPayment = yourArray.join();
@@ -1105,9 +1105,9 @@ const createLogs = (stripePayload) => {
         LastName: formData.owner.lastName.trim(),
         Mobile: $("#ownerMobile").val(),
         Email: $("#email").val().trim().toLowerCase(),
-        BestTimeToContact: $("#00N9s000000Nl1G").val(),
-        ShopName: $("#00N2v00000IyVqB").val().trim(),
-        ABN: $("#00N9s000000QPWu").val(),
+        BestTimeToContact: $("#bestTimeContact").val(),
+        ShopName: $("#shopName").val().trim(),
+        ABN: $("#businessNumber").val(),
         TradingName: $("#company").val().trim(),
         ShopNumber: $("#shopPhoneFormatted").val(),
         Website: $("#webURL").val().trim(),
@@ -1126,7 +1126,7 @@ const createLogs = (stripePayload) => {
         MainProduct: $("input[name='product']:checked").val(),
         LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
         Service: txtServices,
-        Delivery: $("input[name='00N9s000000QPvX']:checked").val(),
+        Delivery: $("input[name='serviceCheck']:checked").val(),
         TableNumber: $("#tableNumber").val(),
         TableSize: $("#sizeOption").val(),
         Payment: txtPayment,
@@ -1135,23 +1135,23 @@ const createLogs = (stripePayload) => {
         Instagram: $("#box_Instagram").val().trim(),
         Yelp: $("#box_Yelp").val().trim(),
         WebsiteURL: $("#websiteDomainName").val().trim(),
-        NewDomain: $("input:checkbox[name='00N2v00000IyVq2']:checked").val(),
-        KeepWebsite: $("input:checkbox[name='00N2v00000IyVq1']:checked").val(),
+        NewDomain: $("input:checkbox[name='keepWebsite']:checked").val(),
+        KeepWebsite: $("input:checkbox[name='ownDomain']:checked").val(),
         OwnDomain: $("#newDomain").val().trim(),
         domainUser: domainUser.val().trim(),
         domainPass: domainPass.val().trim(),
         domainComment: domainComment.val().trim(),
         domainRegister: domainRegister.val(),
-        Flyer: $("input:checkbox[name='00N9s000000QQaH']:checked").val(),
-        FridgeMagnet: $("input:checkbox[name='00N9s000000QQav']:checked").val(),
-        AddOn1: $("input:checkbox[name='00N9s000000QgTt']:checked").val(),
-        AddOn2: $("input:checkbox[name='00N9s000000QQcI']:checked").val(),
-        AddOn3: $("input:checkbox[name='00N9s000000QgU3']:checked").val(),
-        AddOn4: $("input:checkbox[name='00N9s000000QgU8']:checked").val(),
-        AddOn5: $("input:checkbox[name='00N9s000000QQbP']:checked").val(),
-        AddOn6: $("input:checkbox[name='00N9s000000Qn1j']:checked").val(),
-        AddOn7: $("input:checkbox[name='00N9s000000Qn1t']:checked").val(),
-        OrderDiscount: $("input[name='00N2v00000IyVpz']:checked").val(),
+        Flyer: $("input:checkbox[name='addonFlyers']:checked").val(),
+        FridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
+        AddOn1: $("input:checkbox[name='addonAdvPromo']:checked").val(),
+        AddOn2: $("input:checkbox[name='addonSocialMedia']:checked").val(),
+        AddOn3: $("input:checkbox[name='addonInfluencer']:checked").val(),
+        AddOn4: $("input:checkbox[name='addonDineInDual']:checked").val(),
+        AddOn5: $("input:checkbox[name='addonPricingDesign']:checked").val(),
+        AddOn6: $("input:checkbox[name='addonWebsiteMakeover']:checked").val(),
+        AddOn7: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
+        OrderDiscount: $("input[name='discount']:checked").val(),
         OtherDiscount: $("#discountOther").val(),
         mainDiscountCode: $("#couponCode").val(),
         addonDiscountCode: $("#couponCode2").val(),

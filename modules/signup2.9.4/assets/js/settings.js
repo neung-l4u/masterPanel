@@ -48,19 +48,19 @@ const settings = {
       show: true,
       name: "Facebook",
       icon: "<i class='fa-brands fa-facebook'></i>",
-      boxName: "00N2v00000IyVq6",
+      boxName: "socialFacebook",
     },
     {
       show: true,
       name: "Instagram",
       icon: "<i class='fa-brands fa-instagram'></i>",
-      boxName: "00N9s000000Qp8x",
+      boxName: "socialInstagram",
     },
     {
       show: false,
       name: "YouTube",
       icon: "<i class='fa-brands fa-youtube'></i>",
-      boxName: "00N9s000000Qp97",
+      boxName: "socialYouTube",
     },
     {
       show: false,
@@ -78,7 +78,7 @@ const settings = {
       show: true,
       name: "TikTok",
       icon: "<i class='fa-brands fa-tiktok'></i>",
-      boxName: "00N9s000000Qoxu",
+      boxName: "socialTikTok",
     },
     {
       show: false,
@@ -96,7 +96,7 @@ const settings = {
       show: false,
       name: "Twitter",
       icon: "<i class='fa-brands fa-twitter'></i>",
-      boxName: "00N9s000000Qp92",
+      boxName: "socialTwitter",
     },
     {
       show: false,
@@ -108,7 +108,7 @@ const settings = {
       show: true,
       name: "Yelp",
       icon: "<i class='fa-brands fa-yelp'></i>",
-      boxName: "00N9s000000Qoxz",
+      boxName: "socialYelp",
     },
   ],
   Payment_Detail: {
