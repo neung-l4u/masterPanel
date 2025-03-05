@@ -47,6 +47,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     <option value="US">United States</option>
                                     <option value="UK">United Kingdom</option>
                                     <option value="CA">Canada</option>
+                                    <option value="TH">Thailand</option>
                                 </select>
                             </div>
 
@@ -405,8 +406,6 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
         "StageName": "Cancellation requested"
     }
 
-    const API_URL = "https://localforyou.my.salesforce.com/services/data/v57.0/sobjects/:"+SOBJECT_API_NAME+"/:"+RECORD_ID;
-
     function formatMobile(param,place) {
         let mobileFormatted = $("."+place);
         const shopNumber = $(".shopNumber");
@@ -467,7 +466,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                 break;
             case "TH":
                 countryName.html("Thailand");
-                selectState.hide();
+                selectState.show();
                 zipLabel.html("รหัสไปรษณีย์");
                 countryTextOnly.html("Thailand");
                 break;
@@ -475,7 +474,19 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                 countryName.html("United States");
                 selectState.show();
                 zipLabel.html("Zip Code");
-                countryTextOnly.html("USA");
+                countryTextOnly.html("United States");
+                break;
+            case "UK":
+                countryName.html("United Kingdom");
+                selectState.hide();
+                zipLabel.html("Zip Code");
+                countryTextOnly.html("United Kingdom");
+                break;
+            case "CA":
+                countryName.html("Canada");
+                selectState.show();
+                zipLabel.html("Zip Code");
+                countryTextOnly.html("Canada");
                 break;
             default:
                 countryName.html("please select country");
@@ -583,6 +594,127 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                     { "code": "WY", "text": "Wyoming" }
                 ]
             },
+            {
+                country: "CA",
+                label: "Canada",
+                state:[
+                    {
+                        "code": "ON",
+                        "text": "Ontario"
+                    },
+                    {
+                        "code": "QC",
+                        "text": "Quebec"
+                    },
+                    {
+                        "code": "NS",
+                        "text": "Nova Scotia"
+                    },
+                    {
+                        "code": "NB",
+                        "text": "New Brunswick"
+                    },
+                    {
+                        "code": "MB",
+                        "text": "Manitoba"
+                    },
+                    {
+                        "code": "BC",
+                        "text": "British Columbia"
+                    },
+                    {
+                        "code": "PE",
+                        "text": "Prince Edward Island"
+                    },
+                    {
+                        "code": "SK",
+                        "text": "Saskatchewan"
+                    },
+                    {
+                        "code": "AB",
+                        "text": "Alberta"
+                    },
+                    {
+                        "code": "NL",
+                        "text": "Newfoundland and Labrador "
+                    }
+                ]
+            },
+            {
+                country: "TH",
+                label: "Thailand",
+                state:[
+                    { "code": "ACR", "text": "Amnat Charoen" },
+                    { "code": "ATG", "text": "Ang Thong" },
+                    { "code": "AYA", "text": "Phra Nakhon Si Ayutthaya" },
+                    { "code": "BKK", "text": "Bangkok" },
+                    { "code": "BKN", "text": "Bueng Kan" },
+                    { "code": "BRM", "text": "Buri Ram" },
+                    { "code": "CBI", "text": "Chonburi" },
+                    { "code": "CCO", "text": "Chachoengsao" },
+                    { "code": "CMI", "text": "Chiang Mai" },
+                    { "code": "CNT", "text": "Chai Nat" },
+                    { "code": "CPM", "text": "Chaiyaphum" },
+                    { "code": "CPN", "text": "Chumphon" },
+                    { "code": "CRI", "text": "Chiang Rai" },
+                    { "code": "CTI", "text": "Chanthaburi" },
+                    { "code": "KKN", "text": "Khon Kaen" },
+                    { "code": "KPT", "text": "Kamphaeng Phet" },
+                    { "code": "KRI", "text": "Kanchanaburi" },
+                    { "code": "KSN", "text": "Kalasin" },
+                    { "code": "LEI", "text": "Loei" },
+                    { "code": "LPG", "text": "Lampang" },
+                    { "code": "LPN", "text": "Lamphun" },
+                    { "code": "LRI", "text": "Lopburi" },
+                    { "code": "MDH", "text": "Mukdahan" },
+                    { "code": "MKM", "text": "Maha Sarakham" },
+                    { "code": "MSN", "text": "Mae Hong Son" },
+                    { "code": "NAN", "text": "Nan" },
+                    { "code": "NBP", "text": "Nong Bua Lamphu" },
+                    { "code": "NBI", "text": "Nonthaburi" },
+                    { "code": "NKI", "text": "Nong Khai" },
+                    { "code": "NMA", "text": "Nakhon Ratchasima" },
+                    { "code": "NPM", "text": "Nakhon Phanom" },
+                    { "code": "NPT", "text": "Nakhon Pathom" },
+                    { "code": "NSN", "text": "Nakhon Sawan" },
+                    { "code": "NST", "text": "Nakhon Si Thammarat" },
+                    { "code": "NYK", "text": "Nakhon Nayok" },
+                    { "code": "NWT", "text": "Narathiwat" },
+                    { "code": "PBI", "text": "Phetchaburi" },
+                    { "code": "PCT", "text": "Phichit" },
+                    { "code": "PKN", "text": "Prachuap Khiri Khan" },
+                    { "code": "PKT", "text": "Phuket" },
+                    { "code": "PLG", "text": "Phatthalung" },
+                    { "code": "PLK", "text": "Phitsanulok" },
+                    { "code": "PNB", "text": "Phetchabun" },
+                    { "code": "PNA", "text": "Phang Nga" },
+                    { "code": "PRE", "text": "Phrae" },
+                    { "code": "PTE", "text": "Pathum Thani" },
+                    { "code": "PYO", "text": "Phayao" },
+                    { "code": "RBR", "text": "Ratchaburi" },
+                    { "code": "RET", "text": "Roi Et" },
+                    { "code": "RNG", "text": "Ranong" },
+                    { "code": "RYG", "text": "Rayong" },
+                    { "code": "SKA", "text": "Songkhla" },
+                    { "code": "SKM", "text": "Samut Songkhram" },
+                    { "code": "SKN", "text": "Samut Sakhon" },
+                    { "code": "SKW", "text": "Sa Kaeo" },
+                    { "code": "SNI", "text": "Surat Thani" },
+                    { "code": "SNK", "text": "Sakon Nakhon" },
+                    { "code": "SRI", "text": "Saraburi" },
+                    { "code": "SPB", "text": "Suphan Buri" },
+                    { "code": "SPK", "text": "Samut Prakan" },
+                    { "code": "SSK", "text": "Si Sa Ket" },
+                    { "code": "STI", "text": "Sukhothai" },
+                    { "code": "STN", "text": "Satun" },
+                    { "code": "UDN", "text": "Udon Thani" },
+                    { "code": "UBN", "text": "Ubon Ratchathani" },
+                    { "code": "UTI", "text": "Uthai Thani" },
+                    { "code": "UTT", "text": "Uttaradit" },
+                    { "code": "YST", "text": "Yasothon" },
+                    { "code": "YLA", "text": "Yala" }
+                ]
+            }
         ];
         optionState.empty().show();
 
@@ -598,10 +730,17 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                 });
                 break;
             case "TH":
-                optionState.hide();
+                jQuery.each( options[4].state, function( i, val ) {
+                    optionState.append("<option value='"+val.code+"'>"+val.text+"</option>");
+                });
                 break;
             case "US":
                 jQuery.each( options[2].state, function( i, val ) {
+                    optionState.append("<option value='"+val.code+"'>"+val.text+"</option>");
+                });
+                break;
+            case "CA":
+                jQuery.each( options[3].state, function( i, val ) {
                     optionState.append("<option value='"+val.code+"'>"+val.text+"</option>");
                 });
                 break;
@@ -660,36 +799,6 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
 
     function delay(time) {
         return new Promise(resolve => setTimeout(resolve, time));
-    }
-
-    const oAuth = () => {
-        const getOAuth = $.ajax({
-            url: "https://localforyou.my.salesforce.com/services/oauth2/token?grant_type=client_credentials&client_id=3MVG9G9pzCUSkzZuxWI.zWH9FgvjPDKkWrBOxWh5KtJQKnMX3LrAPEsTpClHAlkV15euErMsy0EJLWAp7.BSm&client_secret=7D553F68BCE69395399A28E0966971D2EE16C75A0C36F5E6A41BEAE128C7F547",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {}
-        });
-
-        getOAuth.done(function(res) {
-            console.log("oAuth complete!!");
-            SfOAut.access_token = res.access_token;
-            SfOAut.id = res.id;
-            SfOAut.instance_url = res.instance_url;
-            SfOAut.issued_at = res.issued_at;
-            SfOAut.scope = res.scope;
-            SfOAut.signature = res.signature;
-            SfOAut.token_type = res.token_type;
-            console.log(SfOAut);
-            return true;
-        });
-
-        getOAuth.fail(function(xhr, status, error) {
-            console.log("oAuth fail!!");
-            console.log(status + ': ' + error);
-            return false;
-        });
     }
 
     const sendMailToL4UTeam = () => {
