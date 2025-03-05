@@ -100,9 +100,9 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="formCustomerType">Customer Type</label>
-                        <select id="formCustomerType" class="form-control">
+                        <select id="formCustomerType" class="form-control" name="formCustomerType">
                             <option value="Thai Massage">Thai Massage</option>
-                            <option value="Credit Card">Thai Restaurant & Take aways</option>
+                            <option value="Thai Restaurant & Take aways">Thai Restaurant & Take aways</option>
                         </select>
                     </div>
                 </div>
@@ -123,14 +123,14 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="formCounty">Country</label>
-                        <select id="formCounty" class="form-control">
+                        <select id="formCounty" class="form-control" name="formCounty">
                             <option value="">Please select Country</option>
-                            <option value="AU">Australia</option>
-                            <option value="CA">Canada</option>
-                            <option value="NZ">New Zealand</option>
-                            <option value="UK">United Kingdom</option>
-                            <option value="US">United States</option>
-                            <option value="TH">Thailand</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Canada">Canada</option>
+                            <option value="New Zealand">New Zealand</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="United States">United States</option>
+                            <option value="Thailand">Thailand</option>
                         </select>
                     </div>
                 </div>
@@ -164,7 +164,7 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="formContractPeriod">Contract Period</label>
-                        <select id="formContractPeriod" class="form-control">
+                        <select id="formContractPeriod" class="form-control" name="formContractPeriod">
                             <option value="No Contract">No Contract</option>
                             <option value="3 Months">3 Months</option>
                             <option value="6 Months">6 Months</option>
@@ -186,7 +186,7 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="formCoupon">Coupon</label>
-                        <select id="formCoupon" class="form-control">
+                        <select id="formCoupon" class="form-control" name="formCoupon">
                             <option value="-">No Coupon</option>
                             <option value="1TRIAL">1TRIAL</option>
                             <option value="FREEWEB">FREEWEB</option>
@@ -199,7 +199,7 @@ $today = date("Y-m-d");
                 <div class="col-3">
                     <div class="form-group">
                         <label for="formPaymentMethod">Payment Method</label>
-                        <select id="formPaymentMethod" class="form-control">
+                        <select id="formPaymentMethod" class="form-control" name="formPaymentMethod">
                             <option value="Invoice">Invoice</option>
                             <option value="Credit Card">Credit Card</option>
                         </select>
@@ -236,7 +236,7 @@ $today = date("Y-m-d");
                 <div class="col-6">
                     <div class="form-group">
                         <label for="formSales">Sales</label>
-                        <select id="formSales" class="form-control">
+                        <select id="formSales"  name="formSales" class="form-control">
                             <option value="">--None--</option>
                             <option value="Boom Piyakorn">Boom Piyakorn</option>
                             <option value="Ball Anirut">Ball Anirut</option>
@@ -340,6 +340,16 @@ $today = date("Y-m-d");
                         <input type="text" class="form-control" id="formInfluencer" name="formInfluencer" value="Do not need">
                     </div>
                 </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="formWebHosting">formWebsiteMakeOver</label>
+                        <input type="text" class="form-control" id="formWebsiteMakeOver" name="formWebsiteMakeOver" value="Do not need">
+                    </div>
+                </div>
+                
             </div>
         </div>
         <div class="row">
