@@ -120,6 +120,20 @@ $today = date("Y-m-d");
                         <textarea class="form-control" id="formAddress" name="formAddress" rows="3"></textarea>
                     </div>
                 </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="formCounty">Country</label>
+                        <select id="formCounty" class="form-control">
+                            <option value="">Please select Country</option>
+                            <option value="AU">Australia</option>
+                            <option value="CA">Canada</option>
+                            <option value="NZ">New Zealand</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="US">United States</option>
+                            <option value="TH">Thailand</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col">
@@ -192,7 +206,11 @@ $today = date("Y-m-d");
                     </div>
                 </div>
             </div>
+        </div>
 
+
+        <h5>Reference</h5>
+        <div class="border rounded p-3 mb-5">
             <div class="row mb-3">
                 <div class="col">
                     <div class="form-group">
@@ -215,9 +233,51 @@ $today = date("Y-m-d");
                         <input type="text" class="form-control" id="formRefPartner" name="formRefPartner">
                     </div>
                 </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="formSales">Sales</label>
+                        <select id="formSales" class="form-control">
+                            <option value="">--None--</option>
+                            <option value="Boom Piyakorn">Boom Piyakorn</option>
+                            <option value="Ball Anirut">Ball Anirut</option>
+                            <option value="Bim Sujitar">Bim Sujitar</option>
+                            <option value="Fern Paweena">Fern Paweena</option>
+                            <option value="Gun Orana">Gun Orana</option>
+                            <option value="Honey Tummaput">Honey Tummaput</option>
+                            <option value="Lani Kunlanit">Lani Kunlanit</option>
+                            <option value="Nan Chompunuch">Nan Chompunuch</option>
+                            <option value="Naya Sanewong">Naya Sanewong</option>
+                            <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
+                            <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
+                            <option value="Pume Thanut">Pume Thanut</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
 
             </div>
         </div>
+
+
+        <h5>POS</h5>
+        <div class="border rounded p-3 mb-5">
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="formPOSBrand">POS Brand</label>
+                        <input type="text" class="form-control" id="formPOSBrand" name="formPOSBrand">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="formEndContract">End Contract</label>
+                        <input type="text" class="form-control" id="formEndContract" name="formEndContract">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
 
 
         <h5>Add-Ons</h5>
@@ -323,7 +383,31 @@ $today = date("Y-m-d");
 
             // แสดง payload ใน console
             console.log(payload);
+
+            let ans = confirm("send to webhook?");
+
+            if(ans){
+            callWebhook();
+            }else{ console.log("no no no"); }
+        
         });
+
+
+        function callWebhook() {
+            console.log("we call webhook");
+            const callAjax = $.ajax({
+                type: "POST",
+                crossDomain: true,
+                dataType: 'json',
+                url: "https://hook.us1.make.com/k9whqkcullcjrh6o4owyuiofjopmpmtv",
+                data: payload
+            });
+            callAjax.done(function (res) {
+                console.log("error");
+            });
+        }//saveToDB
+
+
     </script>
 </body>
 </html>
