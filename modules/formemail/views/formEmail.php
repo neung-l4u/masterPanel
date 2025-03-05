@@ -10,7 +10,7 @@ $today = date("Y-m-d");
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
 </head>
 <body>
-<div class="container p-3 my-5 bg-dark text-white">
+<div class="container p-3 my-5">
     <form action="https://hook.us1.make.com/k9whqkcullcjrh6o4owyuiofjopmpmtv" method="POST">
         <div class="row mb-3">
             <div class="col">
@@ -294,11 +294,36 @@ $today = date("Y-m-d");
 <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
     <script>
         let payload = {};
-        let emailMode = $("input[name='emailMode']:checked").val();
 
         $('#cmdSubmit').on('click', function () {
+            // อ่านค่าจาก input, select, textarea ทั้งหมดในฟอร์ม
+            $('form').find('input, select, textarea').each(function () {
+                let name = $(this).attr('name');
+                let value = $(this).val();
 
-        }
+                // ตรวจสอบว่ามี name ไหม (ป้องกันค่า undefined)
+                if (name) {
+                    // เช็คว่าเป็น radio และถูกเลือกหรือไม่
+                    if ($(this).is(':radio')) {
+                        if ($(this).is(':checked')) {
+                            payload[name] = value;
+                        }
+                    }
+                    // เช็คว่าเป็น checkbox หรือไม่
+                    else if ($(this).is(':checkbox')) {
+                        payload[name] = $(this).is(':checked');
+                    }
+                    // ค่าอื่นๆ (text, select, textarea)
+                    else {
+                        payload[name] = value;
+                    }
+                }
+            });
+
+
+            // แสดง payload ใน console
+            console.log(payload);
+        });
     </script>
 </body>
 </html>
