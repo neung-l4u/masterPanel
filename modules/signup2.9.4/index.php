@@ -288,7 +288,12 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         <div class="row col-5">
                                             <span class="col">
                                                 <label class="form-check-label mx-1" for="startProjectOther">
-                                                     <input type="radio" id="startProjectOther" class="form-check-input" name="startProject" value="" id="startProjectOther" onclick="setdateProjectOther();"> Other.
+                                                     <input type="radio"
+                                                            id="startProjectOther"
+                                                            class="form-check-input"
+                                                            name="startProject"
+                                                            value=""
+                                                            onclick="setdateProjectOther();"> Other.
                                                     <input type="date" id="dateproject" value="<?php echo $dateProject;?>">
                                                 </label>
                                             </span>
