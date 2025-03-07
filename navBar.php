@@ -40,7 +40,7 @@ $myID = $_SESSION['id'];
                     <a class="dropdown-item" href="main.php?p=viewLogs">Signup Form</a>
                     <a class="dropdown-item" href="#">Stripe</a>
                     <a class="dropdown-item" href="#">Coins</a>
-                    <a class="dropdown-item" href="#">Template</a>
+                    <a class="dropdown-item" href="main.php?p=tpSubmitted">Template</a>
                 </div>
             </div>
         </li>

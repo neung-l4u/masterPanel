@@ -837,9 +837,10 @@ const sendMailToL4UTeam = () => {
         CheckedBoxTestmailValue = 0;
     }
 
-    let shopAgent = $("#byAgent").val();
+    let shopAgent = $("#byAgent").val() || "";
     if (shopAgent === "Other") {
-        shopAgent = $("#otherAgent").val();
+        let otherAgentValue = $("#otherAgent").val().trim();
+        shopAgent = otherAgentValue ? `Other : ${otherAgentValue}` : "Other";
     }
 
     ///////////////////////////////
@@ -883,6 +884,10 @@ const sendMailToL4UTeam = () => {
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
         formstartprojectNote: $("#startprojectNote").val(),
+        formPOSUsing: $("#posSystem").val(),
+        formPOSUsingOther: $("#posOtherDate").val(),
+        formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
+        formYesPOSProvider: $("#endDatePOS").val(),
         acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
         testMail: CheckedBoxTestmailValue,
         token: Math.random()
@@ -939,9 +944,10 @@ const saveToDB = (stripePayload) => {
     let domainRegister = $("#ref_Domain_Name_Registered");
     let Country = formData.formCountry;
 
-    let shopAgent = $("#byAgent").val();
+    let shopAgent = $("#byAgent").val() || "";
     if (shopAgent === "Other") {
-        shopAgent = $("#otherAgent").val();
+        let otherAgentValue = $("#otherAgent").val().trim();
+        shopAgent = otherAgentValue ? `Other : ${otherAgentValue}` : "Other";
     }
 
     let payload = {
@@ -1030,7 +1036,11 @@ const saveToDB = (stripePayload) => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
-        formstartprojectNote: $("#startprojectNote").val().trim()
+        formstartprojectNote: $("#startprojectNote").val().trim(),
+        formPOSUsing: $("#posSystem").val(),
+        formPOSUsingOther: $("#posOtherDate").val(),
+        formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
+        formYesPOSProvider: $("#endDatePOS").val(),
     };
 
     const ajaxSaveToDB = $.ajax({
@@ -1176,7 +1186,11 @@ const createLogs = (stripePayload) => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
         formstartProjectOther: $("#dateproject").val(),
-        formstartprojectNote: $("#startprojectNote").val().trim()
+        formstartprojectNote: $("#startprojectNote").val().trim(),
+        formPOSUsing: $("#posSystem").val(),
+        formPOSUsingOther: $("#posOtherDate").val(),
+        formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
+        formYesPOSProvider: $("#endDatePOS").val(),
     };
 
     const ajaxSendLog = $.ajax({

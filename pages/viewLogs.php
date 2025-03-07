@@ -52,11 +52,11 @@ $password = "Localeats#".date("Y");
                                     <tr>
                                         <th style="width:15%">Date time</th>
                                         <th style="width:15%">Country</th>
-                                        <th style="width:40%">Shopname</th>
-                                        <th style="width:10%">SignupJson</th>
-                                        <th style="width:10%">StripeJson</th>
-                                        <th style="width:10%">Contract</th>
-                                        <th style="width:10%">Status</th>
+                                        <th style="width:45%">Shopname</th>
+                                        <th style="width:5%">SignupJson</th>
+                                        <th style="width:5%">StripeJson</th>
+                                        <th style="width:5%">Contract</th>
+                                        <th style="width:5%">Status</th>
                                     </tr>
                                     </thead>
                                 </table>

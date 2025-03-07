@@ -9,10 +9,11 @@ $data['fullName'] = !empty($_REQUEST['fullName']) ? $_REQUEST['fullName'] : null
 $data['email'] = !empty($_REQUEST['email']) ? $_REQUEST['email'] : null; //customer email
 
 // $data['adminEmail'] = "admin@localforyou.com";
-$data['adminEmail'] = "bas@localforyou.com";
+$data['adminEmail'] = "noreply@localforyou.com";
 $data['l4uStaff'] = "bas@localforyou.com";  //อีเมล์ผู้ดูแลระบบ
-// $data['l4uSuperAdmin'] = "neung@localforyou.com";  //อีเมล์ผู้ดูแลระบบ
-$data['l4uSuperAdmin'] = "bas@localforyou.com";
+$date['l4uDev'] = "mark@localforyou.com"; //อีเมล์ผู้ดูแลระบบ
+$data['l4uSuperAdmin'] = "neung@localforyou.com";  //อีเมล์ผู้ดูแลระบบ
+
 
 /// default result value ///
 $result['result'] = 0;
@@ -36,11 +37,11 @@ $result['mode'] = $data['mode'];
 ///// end test data ////
 
 if(!empty($data['email'])) {
-    $data['subject'] = "Local For You : Unsubscribe Form";
+    $data['subject'] = "L4U : Unsubscribe Request";
 
     $headers = [
         'From' => 'Local For You <'.$data['adminEmail'].'>',
-        'Cc' => '',
+        'Cc' => $data['l4uSuperAdmin'].','.$date['l4uDev'].','.$data['l4uStaff'],
         'Bcc' => $data['l4uStaff'],
         'Reply-To' => $data['adminEmail'],
         'X-Sender' => 'Local For You <'.$data['adminEmail'].'>',

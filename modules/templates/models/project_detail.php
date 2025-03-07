@@ -50,34 +50,61 @@ $data['projectOwner'] = !empty($_POST['projectOwner']) ? $_POST['projectOwner'] 
 $data['TemplateSelect'] = !empty($_POST['TemplateSelect']) ? $_POST['TemplateSelect'] : "0";
 $data['token'] = !empty($_POST['token']) ? $_POST['token'] : "no token";
 
-$opening = array();
-$opening['sunOpen'] = !empty($_POST['sunOpen']) ? $_POST['sunOpen'] : null;
-$opening['monOpen'] = !empty($_POST['monOpen']) ? $_POST['monOpen'] : null;
-$opening['tueOpen'] = !empty($_POST['tueOpen']) ? $_POST['tueOpen'] : null;
-$opening['wedOpen'] = !empty($_POST['wedOpen']) ? $_POST['wedOpen'] : null;
-$opening['thuOpen'] = !empty($_POST['thuOpen']) ? $_POST['thuOpen'] : null;
-$opening['friOpen'] = !empty($_POST['friOpen']) ? $_POST['friOpen'] : null;
-$opening['satOpen'] = !empty($_POST['satOpen']) ? $_POST['satOpen'] : null;
+if (!empty($_POST['dayOpenChk']) && $_POST['dayOpenChk'] === 'true') {
+    $opening = [
+        'sunOpen' => !empty($_POST['sunOpen']) ? $_POST['sunOpen'] : null,
+        'monOpen' => !empty($_POST['monOpen']) ? $_POST['monOpen'] : null,
+        'tueOpen' => !empty($_POST['tueOpen']) ? $_POST['tueOpen'] : null,
+        'wedOpen' => !empty($_POST['wedOpen']) ? $_POST['wedOpen'] : null,
+        'thuOpen' => !empty($_POST['thuOpen']) ? $_POST['thuOpen'] : null,
+        'friOpen' => !empty($_POST['friOpen']) ? $_POST['friOpen'] : null,
+        'satOpen' => !empty($_POST['satOpen']) ? $_POST['satOpen'] : null
+    ];
+    $data['openingHours'] = implode('__',$opening);
+    $data['openingCustom'] = "0";
+}
 
-$delivery = array();
-$delivery['sunDeli'] = !empty($_POST['sunDeli']) ? $_POST['sunDeli'] : null;
-$delivery['monDeli'] = !empty($_POST['monDeli']) ? $_POST['monDeli'] : null;
-$delivery['tueDeli'] = !empty($_POST['tueDeli']) ? $_POST['tueDeli'] : null;
-$delivery['wedDeli'] = !empty($_POST['wedDeli']) ? $_POST['wedDeli'] : null;
-$delivery['thuDeli'] = !empty($_POST['thuDeli']) ? $_POST['thuDeli'] : null;
-$delivery['friDeli'] = !empty($_POST['friDeli']) ? $_POST['friDeli'] : null;
-$delivery['satDeli'] = !empty($_POST['satDeli']) ? $_POST['satDeli'] : null;
+if (!empty($_POST['customOpenChk']) && $_POST['customOpenChk'] === 'true') {
+    $data['openingHours'] = !empty($_POST['cusOpen']) ? trim($_POST['cusOpen']) : null;
+    $data['openingCustom'] = "1";
+}
 
-$data['openingHours'] = implode('__',$opening);
-$data['delivery'] = implode('__',$delivery);
+if (!empty($_POST['dayDeliChk']) && $_POST['dayDeliChk'] === 'true') {
+    $delivery = [
+        'sunDeli' => !empty($_POST['sunDeli']) ? $_POST['sunDeli'] : null,
+        'monDeli' => !empty($_POST['monDeli']) ? $_POST['monDeli'] : null,
+        'tueDeli' => !empty($_POST['tueDeli']) ? $_POST['tueDeli'] : null,
+        'wedDeli' => !empty($_POST['wedDeli']) ? $_POST['wedDeli'] : null,
+        'thuDeli' => !empty($_POST['thuDeli']) ? $_POST['thuDeli'] : null,
+        'friDeli' => !empty($_POST['friDeli']) ? $_POST['friDeli'] : null,
+        'satDeli' => !empty($_POST['satDeli']) ? $_POST['satDeli'] : null
+    ];
+    $data['delivery'] = implode('__',$delivery);
+    $data['deliveryCustom'] = "0";
+}
+
+if (!empty($_POST['customDeliChk']) && $_POST['customDeliChk'] === 'true') {
+    $data['delivery'] = !empty($_POST['cusDeli']) ? trim($_POST['cusDeli']) : null;
+    $data['deliveryCustom'] = "1";
+}
 
 if ($data['mode'] ==  "save") {
-    $select = $db->query('UPDATE `tb_project` SET `saveFlag`=?,`email`=?,`phone`=?,`address`=?,`openingHours`=?,`pickupAndDelivery`=?,`logo`=?,`colorTheme1`=?,`colorTheme2`=?,`colorTheme3`=?, `domainName`=?,`domainHave`=?,`domainProvidersID`=?,`domainUser`=?,`domainPass`=?,`hostingName`=?,`hostingHave`=?,`hostingProvidersID`=?,`hostingUser`=?,`hostingPass`=?,`gloriaHave`=?,`orderURL`=?,`tableURL`=?,`orderOther`=?,`resOtherSystem`=?,`amelia`=?,`voucher`=?,`bookOther`=?,`masOtherSystem`=?,`needEmail`=?,`facebookURL`=?,`instagramURL`=?,`youtubeURL`=?,`tiktokURL`=?,`updateBy`=? WHERE `projectID`=?',
+    $select = $db->query('UPDATE `tb_project` SET 
+        `saveFlag`=?, `email`=?, `phone`=?, `address`=?, `openingCustom`=?, `openingHours`=?, 
+        `deliveryCustom`=?, `pickupAndDelivery`=?, `logo`=?, `colorTheme1`=?, `colorTheme2`=?, 
+        `colorTheme3`=?, `domainName`=?, `domainHave`=?, `domainProvidersID`=?, `domainUser`=?, 
+        `domainPass`=?, `hostingName`=?, `hostingHave`=?, `hostingProvidersID`=?, `hostingUser`=?, 
+        `hostingPass`=?, `gloriaHave`=?, `orderURL`=?, `tableURL`=?, `orderOther`=?, `resOtherSystem`=?, 
+        `amelia`=?, `voucher`=?, `bookOther`=?, `masOtherSystem`=?, `needEmail`=?, `facebookURL`=?, 
+        `instagramURL`=?, `youtubeURL`=?, `tiktokURL`=?, `updateBy`=? 
+        WHERE `projectID`=?',
         1,
         $data['email'],
         $data['phone'],
         $data['address'],
+        $data['openingCustom'],
         $data['openingHours'],
+        $data['deliveryCustom'],
         $data['delivery'],
         $data['logo'],
         $data['colorTheme1'],
@@ -126,4 +153,5 @@ if ($data['mode'] ==  "save") {
     $params['result'] = "found ".count($select)." data";
     $params['data'] = $data;
 }
+
 echo json_encode($params); 
