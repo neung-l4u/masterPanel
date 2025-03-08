@@ -1,10 +1,13 @@
->250301 bas/add/posInfo
+>250220 bas/feature/formEmail
+>- ทำ form สำหรับ ยิง mail ที่ไม่มา
+
+>250219 mark/hotfix/stateEmail **[MERGED]**
+>- เปลี่ยน section ในอีเมล จาก state เป็น street address
+
+>250301 bas/add/posInfo  **[MERGED]**
 >- เพิ่มช่อง POS ใน signup form, Log File และใน Email
 
->250223 bas/feature/formEmail
->- ทำฟอร์มสำหรับ summit emailerror
-
->250216 bas/fix/cancellation
+>250216 bas/fix/cancellation  **[MERGED]**
 >- รีเช็คฟอร์ม
 
 >250219 Neung/fix/mondayReport **[MERGED]**

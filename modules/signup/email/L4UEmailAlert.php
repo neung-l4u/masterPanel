@@ -3,10 +3,9 @@ $result = array(
     "success" => false,
     "msg" => "Send email fail!!",
     "result" => 0,
-//    "case" => "No Case"
+
 );
 
-//formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
 
 $param = array(
     "formDate" => !empty($_REQUEST["formDate"]) ? $_REQUEST["formDate"] : "-",
@@ -147,8 +146,8 @@ if ( (str_contains($param["MainProduct"], 'Solo')) or (str_contains($param["Main
 if(empty($param['testMail'])) {
     $mailHeaders = [
         'From' => 'SignUp Form <noreply@localforyou.com>',
-        'Cc' => 'sales@localforyou.com, stevew@localforyou.com',
-        'Bcc' => 'bas@localforyou.com, neung@localforyou.com, mark@localforyou.com',
+        'Cc' => 'sales@localforyou.com, stevew@localforyou.com, bas@localforyou.com, mark@localforyou.com',
+        'Bcc' => ' neung@localforyou.com',
         'Reply-To' => 'neung@localforyou.com',
         'X-Sender' => 'LocalForYou <neung@localforyou.com>',
         'X-Mailer' => 'PHP/' . phpversion(),
