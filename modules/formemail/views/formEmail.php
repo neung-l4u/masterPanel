@@ -11,7 +11,7 @@ $today = date("Y-m-d");
 </head>
 <body>
 <div class="container p-3 my-5">
-    <form action="https://hook.us1.make.com/k9whqkcullcjrh6o4owyuiofjopmpmtv" method="POST">
+    <form action="#" method="POST">
         <div class="row mb-3">
             <div class="col">
                 <h3>Signup Form Email</h3>
@@ -47,7 +47,7 @@ $today = date("Y-m-d");
                     </div>
                 </div>
                 <div class="col-4">
-                    <input type="text" class="form-control" id="formVersion" name="formVersion" value="2.9.5 UK+Promotion">
+                    <input type="text" class="form-control" id="formVersion" name="formVersion" value="2.10 UK+Promotion">
                 </div>
                 <div class="col-4">
                     <input type="text" class="form-control" id="leadSource" name="leadSource" value="Sign Up Form">
@@ -125,12 +125,12 @@ $today = date("Y-m-d");
                         <label for="formCounty">Country</label>
                         <select id="formCounty" class="form-control" name="formCounty">
                             <option value="">Please select Country</option>
-                            <option value="Australia">Australia</option>
-                            <option value="Canada">Canada</option>
-                            <option value="New Zealand">New Zealand</option>
-                            <option value="United Kingdom">United Kingdom</option>
-                            <option value="United States">United States</option>
-                            <option value="Thailand">Thailand</option>
+                            <option value="AU">Australia</option>
+                            <option value="CA">Canada</option>
+                            <option value="NZ">New Zealand</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="US">United States</option>
+                            <option value="TH">Thailand</option>
                         </select>
                     </div>
                 </div>
@@ -249,7 +249,6 @@ $today = date("Y-m-d");
                             <option value="Naya Sanewong">Naya Sanewong</option>
                             <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
                             <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
-                            <option value="Pume Thanut">Pume Thanut</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
@@ -409,7 +408,7 @@ $today = date("Y-m-d");
                 type: "POST",
                 crossDomain: true,
                 dataType: 'json',
-                url: "https://hook.us1.make.com/k9whqkcullcjrh6o4owyuiofjopmpmtv",
+                url: "https://hook.us1.make.com/hq8utfr6poa1sl1nie4fq8taplke1orz",
                 data: payload
             });
             callAjax.done(function (res) {
