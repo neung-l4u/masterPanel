@@ -60,20 +60,20 @@ $today = date("Y-m-d");
             <div class="row mb-3">
                 <div class="col">
                     <label for="formFullName" class="control-label">Full Name</label>
-                    <input type="text" class="form-control" id="formFullName" name="formFullName">
+                    <input type="text" class="form-control" id="formFullName" name="formFullName" value="-">
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
                     <div class="form-group">
                         <label for="formEmail">Email</label>
-                        <input type="text" class="form-control" id="formEmail" name="formEmail">
+                        <input type="text" class="form-control" id="formEmail" name="formEmail" value="-">
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
                         <label for="formMobile">Mobile</label>
-                        <input type="text" class="form-control" id="formMobile" name="formMobile">
+                        <input type="text" class="form-control" id="formMobile" name="formMobile" value="-">
                     </div>
                 </div>
             </div>
@@ -81,14 +81,14 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="formBestTime">BestTime</label>
-                        <input type="text" class="form-control" id="formBestTime" name="formBestTime">
+                        <input type="text" class="form-control" id="formBestTime" name="formBestTime" value="-">
                     </div>
                 </div>
 
                 <div class="col">
                     <div class="form-group">
                         <label for="formNote">Note</label>
-                        <textarea class="form-control" id="formNote" name="formNote" row="3"></textarea>
+                        <textarea class="form-control" id="formNote" name="formNote" row="3" value="-"></textarea>
                     </div>
                 </div>
             </div>
@@ -109,7 +109,7 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="formShopName">Shop Name</label>
-                        <input type="text" class="form-control" id="formShopName" name="formShopName">
+                        <input type="text" class="form-control" id="formShopName" name="formShopName" value="-">
                     </div>
                 </div>
             </div>
@@ -117,20 +117,20 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="formAddress">Address</label>
-                        <textarea class="form-control" id="formAddress" name="formAddress" rows="3"></textarea>
+                        <textarea class="form-control" id="formAddress" name="formAddress" rows="3" value="-"></textarea>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
                         <label for="formCounty">Country</label>
-                        <select id="formCounty" class="form-control" name="formCounty">
-                            <option value="">Please select Country</option>
-                            <option value="AU">Australia</option>
-                            <option value="CA">Canada</option>
-                            <option value="NZ">New Zealand</option>
-                            <option value="UK">United Kingdom</option>
-                            <option value="US">United States</option>
-                            <option value="TH">Thailand</option>
+                        <select id="formCounty" class="form-control" name="00N2v00000IyVqF">
+                            <option value="-">Please select Country</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Canada">Canada</option>
+                            <option value="New Zealand">New Zealand</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="United States">United States</option>
+                            <option value="Thailand">Thailand</option>
                         </select>
                     </div>
                 </div>
@@ -139,14 +139,15 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="dateStart">dateStart</label>
-                        <input type="date" class="form-control" id="dateStart" name="dateStart">
+
+                        <input type="date" class="form-control" id="dateStart" name="dateStart" placeholder="dd/mm/yyyy" value="<?php echo $today; ?>" >
                     </div>
                 </div>
 
                 <div class="col">
                     <div class="form-group">
                         <label for="formstartprojectNote">Start Project Note</label>
-                        <textarea class="form-control" id="formstartprojectNote" name="formstartprojectNote" row="3"></textarea>
+                        <textarea class="form-control" id="formstartprojectNote" name="formstartprojectNote" row="3" value="-"></textarea>
                     </div>
                 </div>
             </div>
@@ -158,7 +159,7 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="MainProduct">Main Product</label>
-                        <input type="text" class="form-control" id="MainProduct" name="MainProduct">
+                        <input type="text" class="form-control" id="MainProduct" name="MainProduct" value="-">
                     </div>
                 </div>
                 <div class="col">
@@ -179,7 +180,7 @@ $today = date("Y-m-d");
                     <div class="form-group">
                         <label for="formFirstTimePayment">First Time Payment</label>
                         <input type="text" class="form-control" id="formFirstTimePayment"
-                               name="formFirstTimePayment" placeholder="199.00 AUD">
+                               name="formFirstTimePayment" placeholder="199.00 AUD" value="-">
                     </div>
                 </div>
 
@@ -215,13 +216,13 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="formRefPerson">RefPerson</label>
-                        <input type="text" class="form-control" id="formRefPerson" name="formRefPerson">
+                        <input type="text" class="form-control" id="formRefPerson" name="formRefPerson" value="-">
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
                         <label for="formRefShop">RefShop</label>
-                        <input type="text" class="form-control" id="formRefShop" name="formRefShop">
+                        <input type="text" class="form-control" id="formRefShop" name="formRefShop" value="-">
                     </div>
                 </div>
             </div>
@@ -230,7 +231,7 @@ $today = date("Y-m-d");
                 <div class="col-6">
                     <div class="form-group">
                         <label for="formRefPartner">RefPartner</label>
-                        <input type="text" class="form-control" id="formRefPartner" name="formRefPartner">
+                        <input type="text" class="form-control" id="formRefPartner" name="formRefPartner" value="-">
                     </div>
                 </div>
                 <div class="col-6">
@@ -264,13 +265,13 @@ $today = date("Y-m-d");
                 <div class="col">
                     <div class="form-group">
                         <label for="formPOSBrand">POS Brand</label>
-                        <input type="text" class="form-control" id="formPOSBrand" name="formPOSBrand">
+                        <input type="text" class="form-control" id="formPOSBrand" name="formPOSBrand" value="-">
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
                         <label for="formEndContract">End Contract</label>
-                        <input type="text" class="form-control" id="formEndContract" name="formEndContract">
+                        <input type="text" class="form-control" id="formEndContract" name="formEndContract" value="-">
                     </div>
                 </div>
             </div>
