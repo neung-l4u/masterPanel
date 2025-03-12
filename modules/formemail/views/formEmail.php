@@ -394,6 +394,9 @@ $today = date("Y-m-d");
             // แสดง payload ใน console
             console.log(payload);
 
+            ///////////
+
+
             let ans = confirm("send to webhook?");
 
             if(ans){
@@ -404,6 +407,7 @@ $today = date("Y-m-d");
 
 
         function callWebhook() {
+
             console.log("we call webhook");
             const callAjax = $.ajax({
                 type: "POST",
@@ -411,9 +415,10 @@ $today = date("Y-m-d");
                 dataType: 'json',
                 url: "https://hook.us1.make.com/hq8utfr6poa1sl1nie4fq8taplke1orz",
                 data: payload
+
             });
             callAjax.done(function (res) {
-                console.log("error");
+                console.log("done");
             });
         }//saveToDB
 

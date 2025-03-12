@@ -40,7 +40,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                 <label for="formCountry">
                                     <span>Country <b class="red">*</b> </span>
                                 </label>
-                                <select id="formCountry" class="form-select">
+                                <select id="formCountry" class="form-select" name="country">
                                     <option selected value="">Please select Country</option>
                                     <option value="AU">Australia</option>
                                     <option value="NZ">New Zealand</option>
@@ -60,6 +60,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     <input
                                         type="text"
                                         id="shopName"
+                                        name="shopName"
                                         class="form-control"
                                         placeholder="Chaba Thai Bistro"
                                         autocomplete="off"
@@ -73,6 +74,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     <input
                                         type="text"
                                         id="company"
+                                        name="tradingName"
                                         class="form-control"
                                         placeholder="Thai Culture Group Inc."
                                         autocomplete="off"
@@ -90,13 +92,14 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                             </div>
 
                             <div class="pt-2">
-                                <label for="streetAddress1" class="control-label">
+                                <label for="streetAddress" class="control-label">
                                     Street Address
                                 </label>
                                 <div>
                                 <textarea
                                     class="form-control"
-                                    id="streetAddress1"
+                                    id="streetAddress"
+                                    name="streetAddress"
                                     rows="2"
                                     placeholder="11/200 Golden Village"
                                 ></textarea>
@@ -109,6 +112,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     <input
                                         type="text"
                                         id="city"
+                                        name="city"
                                         class="form-control"
                                         autocomplete="off"
                                         placeholder="Good city"
@@ -128,8 +132,9 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                 <label for="zip" class="control-label zipLabel">Zip Code</label>
                                 <div>
                                     <input
-                                        type="number"
+                                        type="text"
                                         id="zip"
+                                        name="zip"
                                         class="form-control"
                                         placeholder="3000"
                                         maxlength="6"
@@ -156,6 +161,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     <input
                                         type="text"
                                         id="first_name"
+                                        name="first_name"
                                         class="form-control"
                                         autocomplete="off"
                                         required
@@ -171,6 +177,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     <input
                                         type="text"
                                         id="last_name"
+                                        name="last_name"
                                         class="form-control"
                                         autocomplete="off"
                                         placeholder="Doe"
@@ -192,6 +199,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                             type="tel"
                                             class="form-control"
                                             id="mobile"
+                                            name="mobile"
                                             maxlength="12"
                                             onkeyup="formatMobile(this.value,'mobileFormatted');"
                                             oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');"
@@ -204,7 +212,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     </small><br>
                                     <small class="form-text text-primary mobileFormatted">Formatted number will show
                                         here.</small>
-                                    <input type="hidden" id="ownerMobile" class="mobileFormatted">
+                                    <input type="hidden" id="ownerMobile" name="ownerMobile" class="mobileFormatted">
                                 </div>
                             </div>
 
@@ -218,6 +226,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                         type="email"
                                         class="form-control mainEmail text-lowercase"
                                         id="email"
+                                        name="email"
                                         maxlength="80"
                                         autocomplete="off"
                                         placeholder="mail@localforyou.com"
@@ -242,7 +251,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                         What is the Main Reason you wish to cancel?
                                         <b class="red">*</b>
                                     </label>
-                                    <select id="formReason" class="form-select" onchange="superbas()">
+                                    <select id="formReason" class="form-select" name="reason" onchange="superbas()">
                                         <option selected value=""> --- Please select your reason --- </option>
                                         <option value="Closing down the Business">Closing down the Business</option>
                                         <option value="Changing Business Owner">Changing Business Owner</option>
@@ -264,6 +273,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     <textarea
                                     class="form-control w-100"
                                     id="boxother"
+                                    name="other"
                                     rows="3"
                                     placeholder="-- Comment --"
                                 ></textarea>
@@ -276,7 +286,8 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     </label>
 
                                     <div class="date" id="datepicker">
-                                        <input type="date" class="form-control" id="lastDate">
+                                        <input type="date" class="form-control" id="lastDate" name="lastDate">
+                                        <input type="hidden" id="mode" value="save" name="mode">
                                     </div>
 
                                     <small class="form-text text-muted">
@@ -327,6 +338,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                                 <textarea
                                                     class="form-control w-100"
                                                     id="additionComment"
+                                                    name="note"
                                                     rows="3"
                                                     placeholder="Any other information you would like us to know."
                                                 ></textarea>
@@ -350,17 +362,16 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                 <button 
                                     type="button" 
                                     class="btn btn-success" 
-                                    id="cancelBtn" 
-                                    onclick="allAction()"
+                                    id="cancelBtn"
                                     >
-                                    
                                     Confirm
                                 </button>
                             </div>
                         <div>
                             <!--blank space-->
-                            <input type="hidden" id="myIP">
-                            <input type="hidden" id="agent">
+                            <input type="hidden" id="myIP" name="myIP">
+                            <input type="hidden" id="agent" name="agent">
+
                         </div>
                     </div>
                 </div>
@@ -370,7 +381,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
     </div>
 </main>
 <footer class="credit">
-    Author: Neung - Distributed By:
+    Author: IT Team - Distributed By:
     <a
         title="Awesome Online Shopping Cart Application"
         href="https://www.localforyou.com"
@@ -379,21 +390,17 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
         Local For You
     </a>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+<script src="assets/js/jquery.3.6.0.min.js"></script>
+<script src="assets/js/bootstrap5.0.2.bundle.min.js"></script>
 <script src="assets/js/global_data.js"></script>
 <script src="assets/js/date_format.js"></script>
-<script src="assets/js/getUserAgent.js"></script>
-<script src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
-<script src="https://unpkg.com/@popperjs/core@2.11.5/dist/umd/popper.min.js"></script>
+<script src="assets/js/popper.2.11.5.min.js"></script>
 <script>
-
     $( document ).ready(function() {
         $("#other").hide()
         $("#loadingAjax").hide()
-    });
+    });//ready
+
 
     const cancelFrm = {};
     const SfOAut = {};
@@ -421,25 +428,6 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
         }else {
             mobileFormatted.html("Formatted number will show here.");
         }
-    }
-
-    const readForm = () => {
-        cancelFrm.country = `${$("#formCountry").val()}`;
-        cancelFrm.countryText = `${$("#formCountry option:selected").text()}`;
-        cancelFrm.shopName = `${$("#shopName").val()}`;
-        cancelFrm.tradingName = `${$("#company").val()}`;
-        cancelFrm.address = `${$("#streetAddress1").val()}, ${$("#city").val()}, ${$("#state option:selected").text()} ${$("#zip").val()} ${cancelFrm.countryText}`;
-        cancelFrm.fullName = `${$("#first_name").val()} ${$("#last_name").val()}`;
-        cancelFrm.mobile = `${$("#ownerMobile").val()}`;
-        cancelFrm.email = `${$("#email").val()}`;
-        cancelFrm.reason = `${$("#formReason option:selected").text()}`;
-        cancelFrm.lastDate = `${$("#lastDate").val()}`;
-        cancelFrm.comment = `${$("#additionComment").val()}`;
-        console.log(cancelFrm);
-
-        sendMail();
-        sendMailCustomer();
-
     }
 
     $('#formCountry').change(function() {
@@ -749,179 +737,215 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
         }
     }
 
-    const sendMail = () => {
-        const loadingAjax = $("#loadingAjax");
-        loadingAjax.html("<img alt='Loading' src='assets/img/loading.gif'>");
-
-        const reqSend = $.ajax({
-            url: "assets/API/mailCancellation.php",
-            method: 'POST',
-            async: true,
-            dataType: 'json',
-            crossDomain: true,
-            data: {
-                "frm": cancelFrm
-            }
-        });
-
-        reqSend.done(function(res) {
-            loadingAjax.html('<i class="fa-solid fa-check text-success"></i> Done');
-            delay(1000).then(() => location.replace('https://signup.localforyou.com/thankyou_submit.php'));
-        });
-
-        reqSend.fail(function(xhr, status, error) {
-            console.log("ajax send mail fail!!");
-            loadingAjax.html('<i class="fa-solid fa-xmark text-danger"></i> Send email fail!!');
-            console.log(status + ': ' + error);
-        });
-    }
-
-    const sendMailCustomer = () => {
-        const reqSendCust = $.ajax({
-            url: "assets/API/mailCancellationCustomer.php",
-            method: 'POST',
-            async: true,
-            dataType: 'json',
-            crossDomain: true,
-            data: {
-                "frm": cancelFrm
-            }
-        });
-
-        reqSendCust.done(function(res) {
-            return true;
-        });
-
-        reqSendCust.fail(function(xhr, status, error) {
-            return false;
-        });
-    }
-
     function delay(time) {
         return new Promise(resolve => setTimeout(resolve, time));
     }
 
-    const sendMailToL4UTeam = () => {
-        let today = new Date();
-        let dd = String(today.getDate()).padStart(2, '0');
-        let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        let yyyy = today.getFullYear();
-
-        today = dd + '/' + mm + '/' + yyyy;
-        let payload = {
-            mode : "alert",
-            formDate: today,
-            leadSource: 'Signup Form',
-            formVersion: $("#signupFormVersion").val(),
-            formMessage: 'Hi, Team <br>There are new sign-up customers coming in now. Below are brief details. You can check full information on CRM.',
-            formProduct: $("#currentlyPackage option:selected").text(),
-            formInitialProductOffering: $("#initialProductOffering").val(),
-            formSalesAgent: $("#byAgent option:selected").text(),
-            formContractPeriod: $("#ContractPeriod").val(),
-            formRefPerson: $("#byPerson").val(),
-            formCoupon: $("#couponCode").val(),
-            formRefShop: $("#byRestaurant").val(),
-            formFirstTimePayment: $("#firstTimePayment").val(),
-            formPaymentMethod: $("#paymentMethod").val(),
-            formFlyer: $("#initAddOnPrintedFlyers").val(),
-            formDineIn: $("#initAddOnDineInSystem").val(),
-            formMagnet: $("#initAddOnFridgeMagnet").val(),
-            formSocialMedia: $("#initAddOnSocialMediaPosts").val(),
-            formMenuDesign: $("#initAddOnDigitalMenuDesign").val(),
-            formWebsiteMakeOver: $("#initAddOnWebsiteMakeOver").val(),
-            formADVPromo: $("#initAddOnAdvPromo").val(),
-            formWebHosting: $("#initAddOnWebHosting").val(),
-            formInfluencer: $("#initAddOnInfluencer").val(),
-            formCustomerType: $("#formType option:selected").text(),
-            formShopName: $("#00N2v00000IyVqB").val(),
-            formCountry: $("#formCountry option:selected").text(),
-            formState: $("#state option:selected").text(),
-            formFullName: $("#first_name").val() + " " + $("#last_name").val(),
-            formEmail: $("#email").val(),
-            formMobile: $("#mobile").val(),
-            formBestTime: $("#00N9s000000Nl1G").val(),
-            formNote: $("#additionComment").val(),
-
-            //recipientEmail: $("#recipientEmail").val(),
-
-            token: Math.random()
-        };
-        //
-        console.log('payload = ',payload);
-
-        const sendL4UMail = $.ajax({
-            url: "L4UEmailAlert.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: payload
-        });
-
-        sendL4UMail.done(function(res) {
-            console.log(res);
-            //alert("Send email successful");
-            return true;
-        });
-
-        sendL4UMail.fail(function(xhr, status, error) {
-            console.log("ajax Send L4U Mail alert fail!!");
-            console.log(status + ': ' + error);
-            //alert("Send L4U Mail alert fail!!");
-            return false;
-        });
-    }//sendMail
 
     function superbas(){
-
         let boxother = $("#formReason").val();
-
         // alert (boxother);
         if(boxother === "other"){
-
             $("#other").show();
-
-
         }else{
-
             $("#other").hide();
-            // alert ("mark");
         }
-    }
+    }//Other Box
 
-    function saveToDB(){
-                let payload = 
-            {
-                mode : "save",
-                country: $("#formCountry").val(),
-                city: $("#city").val(),
-                shopname: $("#shopName").val(),
-                tradingname: $("#company").val(),
-                address: $("#streetAddress1").val(),
-                state: $("#state").val(),
-                zip: $("#zip").val(),
-                firstname: $("#first_name").val(),
-                lastname: $("#last_name").val(),
-                mobile: $("#mobile").val(),
-                email: $("#email").val(),
-                reason: $("#formReason").val(),
-                other: $("#boxother").val(),
-                lastdate: $("#lastDate").val(),
-                feedback: $("#additionComment").val(),
-        };
+    // function saveToDB(){
+    //             let payload =
+    //         {
+    //             mode : "save",
+    //             country : $("#formCountry").val(),
+    //             city : $("#city").val(),
+    //             shopName : $("#shopName").val(),
+    //             tradingName : $("#company").val(),
+    //             address : $("#streetAddress").val(),
+    //             state : $("#state").val(),
+    //             zip : $("#zip").val(),
+    //             firstName : $("#first_name").val(),
+    //             lastName : $("#last_name").val(),
+    //             mobile : $("#ownerMobile").val(),
+    //             email : $("#email").val(),
+    //             reason : $("#formReason").val(),
+    //             other : $("#boxother").val(),
+    //             lastDate : $("#lastDate").val(),
+    //             feedback : $("#additionComment").val()
+    //     };
+    //
+    //
+    //     const ajaxSaveDB = $.ajax({
+    //         url: "activeAjax.php",
+    //         method: 'POST',
+    //         async: false,
+    //         cache: false,
+    //         dataType: 'json',
+    //         data: payload
+    //     });
+    //
+    //     ajaxSaveDB.done(function(res) {
+    //         console.log(res);
+    //         // alert("Send Data To Database successful");
+    //         return true;
+    //     });
+    //
+    //     ajaxSaveDB.fail(function(xhr, status, error) {
+    //         console.log("ajax Send Date to Database fail!!");
+    //         console.log(status + ': ' + error);
+    //         // alert("Send Data To Database fail!!");
+    //         return false;
+    //     });
+    //
+    //     console.log('payload = ',payload);
+    //
+    //  }//saveToDB
 
-        const ajaxSaveDB = $.ajax({
-            url: "activeajax.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: payload
+    // function mailsend(){
+    //
+    //     // alert ("mailsend call");
+    //     let payload =
+    //         {
+    //             mode : "send",
+    //             shopName: $("#shopName").val(),
+    //             email: $("#email").val(),
+    //             county: $("#formCountry").val(),
+    //             tradingName: $("#company").val(),
+    //             streetAddress: $("#streetAddress").val(),
+    //             city: $("#city").val(),
+    //             state: $("#state").val(),
+    //             zip: $("#zip").val(),
+    //             firstName: $("#first_name").val(),
+    //             lastName: $("#last_name").val(),
+    //             mobile: $("#mobile").val(),
+    //             reason: $("#formReason").val(),
+    //             other: $("#boxother").val(),
+    //             lastdate: $("#lastDate").val(),
+    //             feedback: $("#additionComment").val(),
+    //     };
+    //
+    //     const sendMail = $.ajax({
+    //         url: "L4UTestEmailunsub.php",
+    //         method: 'POST',
+    //         async: false,
+    //         cache: false,
+    //         dataType: 'json',
+    //         data: payload
+    //     });
+    //
+    //
+    //     sendMail.done(function(res) {
+    //         console.log(res);
+    //         // alert("Send email successful");
+    //         return true;
+    //     });
+    //
+    //     sendMail.fail(function(xhr, status, error) {
+    //         console.log("ajax Send Date to Database fail!!");
+    //         console.log(status + ': ' + error);
+    //         // alert("Submit Successful");
+    //         return false;
+    //     });
+    //
+    //     console.log('payload = ',payload);
+    // }//mailsend
+
+    let payload = {};
+
+    $('#cancelBtn').on('click', function () {
+
+        // อ่านค่าจาก input, select, textarea ทั้งหมดในฟอร์ม
+        $('form').find('input, select, textarea').each(function () {
+            let name = $(this).attr('name');
+            let value = $(this).val();
+
+            // ตรวจสอบว่ามี name ไหม (ป้องกันค่า undefined)
+            if (name) {
+                // เช็คว่าเป็น radio และถูกเลือกหรือไม่
+                if ($(this).is(':radio')) {
+                    if ($(this).is(':checked')) {
+                        payload[name] = value;
+                    }
+                }
+                // เช็คว่าเป็น checkbox หรือไม่
+                else if ($(this).is(':checkbox')) {
+                    payload[name] = $(this).is(':checked');
+                }
+                // ค่าอื่นๆ (text, select, textarea)
+                else {
+                    payload[name] = value;
+                }
+            }
+
         });
 
 
+        // แสดง payload ใน console
+        console.log(payload);
+
+
+
+        let ans = confirm("Are you sure??");
+
+        if (payload.country === "AU"){
+            payload.country = "Australia";
+        }else if (payload.country === "NZ"){
+            payload.country = "New Zealand";
+        }else if (payload.country === "TH"){
+            payload.country = "Thailand";
+        }else if (payload.country === "US"){
+            payload.country = "United States";
+        }else if (payload.country === "CA"){
+            payload.country = "Canada";
+        }else if (payload.country === "UK"){
+            payload.country = "United Kingdom";
+        }else{
+            payload.country = "Please select country";
+        }
+
+        if(ans){
+            callWebhook();
+        }else{ console.log("no no no"); }
+
+    });
+
+
+    function callWebhook() {
+
+        console.log("we call webhook");
+        const callAjax = $.ajax({
+            type: "POST",
+            crossDomain: true,
+            dataType: 'json',
+            url: "https://hook.us1.make.com/a3or9ct3u3m84lqckivl1rt7891ky1h2",
+            data: payload
+
+        });
+        callAjax.done(function (res) {
+
+            $("#loadingAjax").fadeIn(100);
+            reSubmit();
+            alert("Send Successful");
+
+        });
+        callAjax.fail(function(xhr, status, error) {
+            console.log("ajax webhook fail!!");
+            console.log(status + ': ' + error);
+            alert("Send fail!!");
+
+        });
+
+        const ajaxSaveDB = $.ajax({
+                url: "activeAjax.php",
+                method: 'POST',
+                async: false,
+                cache: false,
+                dataType: 'json',
+                data: payload,
+            }
+        );
+
         ajaxSaveDB.done(function(res) {
-            console.log(res);
+            console.log(payload);
             // alert("Send Data To Database successful");
             return true;
         });
@@ -933,56 +957,15 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
             return false;
         });
 
-        console.log('payload = ',payload);
-
-     }//saveToDB
-
-     function mailsend(){
-
-        // alert ("mailsend call");
-        let payload = 
-            {
-                mode : "send",
-                shopName: $("#shopName").val(),
-                fullName: $("#first_name","#last_name").val(),
-                email: $("#email").val(),
-        };
-
-        const sendMail = $.ajax({
-            url: "L4UEmailUnsubscribe.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: payload
-        });
 
 
-        sendMail.done(function(res) {
-            console.log(res);
-            // alert("Send email successful");
-            return true;
-        });
 
-        sendMail.fail(function(xhr, status, error) {
-            console.log("ajax Send Date to Database fail!!");
-            console.log(status + ': ' + error);
-            // alert("Submit Successful");
-            return false;
-        });
+    }//Call Webhook
 
-        console.log('payload = ',payload);
-    }//mailsend
 
-    function allAction(){
-        saveToDB();
-        mailsend();
-        $("#loadingAjax").fadeIn(300);
-        setTimeout(reSubmit, 3000);
-               
-    }
     function reSubmit(){
-        //alert ("chagne Page")
+
+        // alert ("Done")
         location.replace("https://localforyou.com/")
     }
 
