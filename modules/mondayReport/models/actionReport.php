@@ -36,7 +36,15 @@ foreach ($reports as $row) {
 
 
 if ($param['act'] == 'add') {
-    $reports = $db->query('INSERT INTO `mondayslowreportlogs`(`staffID`) VALUES (?)', $_SESSION['id']);
+    if (empty($_SESSION['id'])) {
+        echo json_encode([
+            'status' => 'sessionExp',
+            'message' => 'Login ID is required',
+        ]);
+        exit;
+    } else {
+        $reports = $db->query('INSERT INTO `mondayslowreportlogs`(`staffID`) VALUES (?)', $_SESSION['id']);
+    }
 }
 
 $return['result'] = 'add report success';
