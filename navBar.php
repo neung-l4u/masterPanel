@@ -42,6 +42,7 @@ $myID = $_SESSION['id'];
                     <a class="dropdown-item" href="#">Coins</a>
                     <a class="dropdown-item" href="https://report.localforyou.com/modules/formemail" target="_blank">Email Signup</a>
                     <a class="dropdown-item" href="main.php?p=tpSubmitted">Template</a>
+                    <a class="dropdown-item" href="main.php?p=tpSubmitted">Unsub Unsubscribe</a>
                 </div>
             </div>
         </li>

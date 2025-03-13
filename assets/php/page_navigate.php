@@ -140,4 +140,10 @@ switch ($menuPage){
         $datatable["show"] = "true";
         $datatable["src"] = "";
         break;
+    case "unSubmitted.php":
+        $showPage = "viewLogs.php";
+        $activeMenu["lv1"] = "";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/unSubmitted.php";
 }
