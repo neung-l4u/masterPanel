@@ -78,18 +78,20 @@ $pageDetails = $db->query(
         WHERE projectID = ?', $id
 )->fetchArray();
 
-$json = $project['shopType'] == "Restaurant" 
-    ? [
-        'home' => json_decode($pageDetails['home'], true),
-        'about' => json_decode($pageDetails['about'], true),
-        'contact' => json_decode($pageDetails['contact'], true),
-      ]
-    : [
-        'home' => json_decode($pageDetails['home'], true),
-        'about' => json_decode($pageDetails['about'], true),
-        'contact' => json_decode($pageDetails['contact'], true),
-        'services' => json_decode($pageDetails['services'], true),
-      ];
+// $json = $project['shopType'] == "Restaurant" 
+//     ? [
+//         'home' => json_decode($pageDetails['home'], true),
+//         'about' => json_decode($pageDetails['about'], true),
+//         'contact' => json_decode($pageDetails['contact'], true),
+//       ]
+//     : [
+//         'home' => json_decode($pageDetails['home'], true),
+//         'about' => json_decode($pageDetails['about'], true),
+//         'contact' => json_decode($pageDetails['contact'], true),
+//         'services' => json_decode($pageDetails['services'], true),
+//       ];
+$json = "";
+
 
 $folderName = "../upload/". $id . "-" . sanitizeFolderName($project["projectName"])."/";
 
@@ -192,7 +194,8 @@ $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Usern
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Password</td><td>'.$project['hostingPass'].'</td></tr>';
 $topData .= '</table><br>';
 
-$message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'. stripslashes(json_encode($json, JSON_PRETTY_PRINT)) .'</pre></body></html>';
+// $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'. stripslashes(json_encode($json, JSON_PRETTY_PRINT)) .'</pre></body></html>';
+$message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>Please Get json data form DB</pre></body></html>';
 
 $loginPerson = $db->query('SELECT * FROM staffs WHERE sID=?;',$loginID)->fetchArray();
 if($loginPerson['sEmail'] == $project['email']){
@@ -212,14 +215,27 @@ if(count($people['To']) > 0){ $to = implode(', ', $people['To']); }
 if(count($people['Cc']) > 0){ $cc = implode(', ', $people['Cc']); }
 if(count($people['Bcc']) > 0){ $bcc = implode(',', $people['Bcc']); }
 
-
 if (!in_array($loginPerson['sEmail'], explode(', ', $to))) {
     $to .= ($to ? ', ' : '') . $loginPerson['sEmail'];
 }
 
-$param = array(
+$CS = $db->query('SELECT `sEmail` FROM staffs WHERE teamID = ? AND `sStatus` <> ?;', 1, 0)->fetchAll();
+$CSemail = array_column($CS, 'sEmail');
+
+$AM = $db->query('SELECT `sEmail` FROM staffs WHERE teamID IN(?) AND `sStatus` <> ?;' , "2,8,10,11", 0)->fetchAll();
+$AMemail = array_column($AM, 'sEmail');
+
+if (in_array($loginPerson['sEmail'], $CSemail)){
+    $recipient = "admin@localforyou.com";
+} elseif (in_array($loginPerson['sEmail'], $AMemail)) {
+    $recipient = "promotion@localforyou.com";
+} else {
+    $recipient = "";
+}
+
+$param = [
     "To" => $to,
-    "Cc" => $cc,
+    "Cc" => $cc . ',' . $recipient,
     "Bcc" => $bcc,
     "Subject" => "New Template Submission",
     "Message" => $message,
@@ -227,14 +243,14 @@ $param = array(
     "Date" => $date,
     "Status" => 1,
     "Type" => "TemplateSubmission"
-);
+];
 
 
 $system = array(
     "emailSenderName" => "Template Submission Form",
     "emailSenderEmail" => "administrator@localforyou.com",
-    //"emailSubject" => "New " . $project['shopType'] . " Website Submited",
-    "emailSubject" => "Test Send Project",
+    "emailSubject" => "New " . $project['shopType'] . " Website Submited",
+    //"emailSubject" => "Test Send Project",
     "emailAdministrator" => "neung@localforyou.com"
 );
 
@@ -255,28 +271,28 @@ $mailHeaders = [
     'Content-Type' => 'text/html; charset=utf-8'
 ];
 
-    //$result['email'] = $param['To'];
-    //$result['to'] = $param['To'];
-    //$result['cc'] = $param['Cc'];
-    //$result['bcc'] = $param['Bcc'];
-    //$result['param'] = $param;
+//$result['email'] = $param['To'];
+//$result['to'] = $param['To'];
+//$result['cc'] = $param['Cc'];
+//$result['bcc'] = $param['Bcc'];
+//$result['param'] = $param;
 
 //    if($sendMail){
-        if (mail($system["emailAlertTo"], $system["emailSubject"], $system["emailBody"], $mailHeaders)) {
-            $result['success'] = true;
-            $result['result'] = 1;
-            $result['msg'] = "Send email successful";
+if (mail($system["emailAlertTo"], $system["emailSubject"], $system["emailBody"], $mailHeaders)) {
+    $result['success'] = true;
+    $result['result'] = 1;
+    $result['msg'] = "Send email successful";
 
-            $upStatus = $db->query('UPDATE tb_project SET `statusID` = 2 WHERE `projectID` = ?', $id);
-        }
+    $upStatus = $db->query('UPDATE tb_project SET `statusID` = 2 WHERE `projectID` = ?', $id);
+}
 
 $json_response = json_encode($result);
 echo 'l4uCallback(' . $json_response . ');';
 
 //echo json_encode($result);
-    /*}else{
-        $result['success'] = true;
-        $result['result'] = 1;
-        $result['msg'] = "Pause send email";
-        echo '<pre>'.print_r($result, true).'</pre>';
-    }*/
+/*}else{
+    $result['success'] = true;
+    $result['result'] = 1;
+    $result['msg'] = "Pause send email";
+    echo '<pre>'.print_r($result, true).'</pre>';
+}*/

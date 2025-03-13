@@ -962,6 +962,85 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
 
                                     <hr class="row mt-4">
                                     <div class="text-center">
+                                        <h5 class="card-title font-weight-bold">POS</h5>
+                                    </div>
+                                    <div class="form-group row pt-4">
+                                        <div class="col-6">
+                                            <label for="posSystem">Which POS are you using?</label>
+                                            <div class="col d-flex justify-content-between">
+                                                <select class="form-select" name="posSystem" id="posSystem" style="min-width: 50%">
+                                                    <option value="none">None</option>
+                                                    <option value="square">Square</option>
+                                                    <option value="toast">Toast</option>
+                                                    <option value="ncr">NCR</option>
+                                                    <option value="lightspeed">Lightspeed</option>
+                                                    <option value="clover">Clover</option>
+                                                    <option value="lavu">Lavu</option>
+                                                    <option value="limetray">Limetray</option>
+                                                    <option value="posbistro">POSbistro</option>
+                                                    <option value="mad_mobile">Mad Mobile</option>
+                                                    <option value="wacko">Wacko</option>
+                                                    <option value="smile">Smile</option>
+                                                    <option value="other">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-6" id="datePOSBox">
+                                            <label for="posOtherDate">
+                                                <span>Other POS</span>
+                                            </label>
+                                            <input
+                                                    type="text"
+                                                    id="posOtherDate"
+                                                    class="form-control"
+                                                    name="posOtherDate"
+                                                    placeholder="e.g. Ocha, Panda"
+                                            />
+                                            </div>    
+                                        </div>
+                                
+                                    <div class="form-group row pt-2">
+                                        <label class="col control-label col-form-label">
+                                            Do you have a contract with a POS provider?
+                                            <b class="red">*</b>
+                                        </label>
+                                       
+                                    </div>
+                                    <div class="row col pt-2">
+                                        <span class="col-3 gx-1">
+                                            <input type="radio" id="yesPOSProvider" class="form-check-input"
+                                                    name="yesPOSProvider" value="yesPOSProvider" >
+                                            <label class="form-check-label mx-1" for="yesPOSProvider" onclick="yesPosPro();">
+                                                yes
+                                            </label>
+                                        </span>
+                                        <span class="col gx-1">
+                                            <input type="radio" id="noPOSProvider" class="form-check-input"
+                                                    name="noPOSProvider" value="No" onclick="noPosPro();" checked>
+                                            <label class="form-check-label mx-1" for="noPOSProvider">
+                                                no
+                                            </label>
+                                        </span>
+                                    </div>
+
+                                    <div class="posContractEnd" id="posBoxDate">
+                                        <div class="form-group row pt-2">
+                                            <label class="col control-label col-form-label" for="endDatePOS">
+                                                Contract end date if on contract with POS provider Not sure.
+                                            </label>
+                                        </div>
+
+                                        <div class="row col pt-2">
+                                            <input type="text" class="form-control" id="endDatePOS" name="endDatePOS" placeholder="Not sure.">
+                                        </div>
+                                        <small class="text-muted d-flex mb-5">e.g. Dec 2025, in 3 months, I can’t remember, etc.</small>
+                                    </div>
+
+
+
+                                    <hr class="row mt-4">
+                                    <div class="text-center">
                                         <h5 class="card-title font-weight-bold">Social Networks</h5>
                                     </div>
                                     <div class="form-group row pt-4 mb-3">
@@ -1213,7 +1292,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                     <div class="row col pt-2">
                                             <span class="col-3 gx-1">
                                                 <input type="radio" id="yesAI" class="form-check-input"
-                                                       name="acknowledgeAI" value="yesAI" onclick="allowOtherDiscount();" checked>
+                                                       name="acknowledgeAI" value="yesAI" checked>
                                                 <label class="form-check-label mx-1" for="yesAI">
                                                     yes
                                                 </label>
@@ -1761,73 +1840,92 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 </small>
                                             </div>
                                         </div>
-                                        <div id="agreementBottom"
-                                            class="box1 p-4 shadow-sm w-100 d-flex justify-content-evenly">
+                                        <div id="agreementBottom" class="box1 p-4 shadow-sm w-100">
                                             <div class="row">
-                                                <div>
-                                                    <label for="byAgent" class="form-label">
-                                                        <i class="fa-solid fa-person"></i> &nbsp;
-                                                        Sales Agent
-                                                    </label>
-                                                    <select class="form-select" name="00N2u000000mNZG" id="byAgent">
-                                                        <option value="">--None--</option>
-                                                        <option value="Boom Piyakorn">Boom Piyakorn</option>
-                                                        <option value="Ball Anirut">Ball Anirut</option>
-                                                        <option value="Eve Arriya">Eve Arriya</option>
-                                                        <option value="Faye Thitiporn">Faye Thitiporn</option>
-                                                        <option value="Fern Paweena">Fern Paweena</option>
-                                                        <option value="Honey Tummaput">Honey Tummaput</option>
-                                                        <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
-                                                        <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
-                                                        <option value="Other">Other</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label for="byPerson" class="form-label">
-                                                        <i class="fa-solid fa-person"></i> &nbsp;
-                                                        Referred by (Person)
-                                                    </label>
-                                                    <input
-                                                            class="form-control"
-                                                            id="byPerson"
-                                                            maxlength="100"
-                                                            name="00N2v00000IyVq9"
-                                                            type="text"
-                                                            autocomplete="off"
-                                                            placeholder="Jane Doe"
-                                                            value="<?php echo $test["person"]; ?>"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div>
-                                                    <label for="byPartner" class="form-label">
-                                                        <i class="fa-solid fa-handshake"></i> &nbsp;
-                                                        Referred Partner (JV)
-                                                    </label>
-                                                    <select class="form-select" name="byPartner" id="byPartner">
-                                                        <option value="">--None--</option>
-                                                        <option value="Smile Pos">Smile Pos</option>
-                                                        <option value="Wawio">Wawio</option>
-                                                        <option value="Jean">Jean</option>
-                                                        <option value="Other">Other</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label for="byRestaurant" class="form-label">
-                                                        <i class="fa-solid fa-house-user"></i> &nbsp;
-                                                        Referred by (Shop)
-                                                    </label>
-                                                    <input
-                                                            class="form-control"
-                                                            id="byRestaurant"
-                                                            maxlength="200"
-                                                            name="00N2v00000IyVqA"
-                                                            type="text"
-                                                            autocomplete="off"
-                                                            placeholder="The Thai Bistro"
-                                                            value="<?php echo $test["refShop"]; ?>"
-                                                    />
+                                                <div class="col d-flex justify-content-between flex-wrap align-items-start">
+                                                    <div class="w-50 px-2">
+                                                        <label for="byAgent" class="form-label">
+                                                            <i class="fa-solid fa-person"></i> &nbsp; Sales Agent
+                                                        </label>
+                                                        <div class="col d-flex justify-content-between">
+                                                            <select class="form-select" name="00N2u000000mNZG" id="byAgent" style="min-width: 50%">
+                                                                <option value="">--None--</option>
+                                                                <option value="Boom Piyakorn">Boom Piyakorn</option>
+                                                                <option value="Ball Anirut">Ball Anirut</option>
+                                                                <option value="Bim Sujitar">Bim Sujitar</option>
+                                                                <option value="Faye Thitiporn">Faye Thitiporn</option>
+                                                                <option value="Fern Paweena">Fern Paweena</option>
+                                                                <option value="Gun Orana">Gun Orana</option>
+                                                                <option value="Honey Tummaput">Honey Tummaput</option>
+                                                                <option value="Lani Kunlanit">Lani Kunlanit</option>
+                                                                <option value="Nan Chompunuch">Nan Chompunuch</option>
+                                                                <option value="Naya Sanewong">Naya Sanewong</option>
+                                                                <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
+                                                                <option value="Prae Phimmada">Prae Phimmada</option>
+                                                                <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
+                                                                <option value="Pume Thanut">Pume Thanut</option>
+                                                                <option value="Other">Other</option>
+                                                            </select>
+                                                            <input
+                                                                    class="form-control mb-3"
+                                                                    id="otherAgent"
+                                                                    maxlength="200"
+                                                                    name="otherAgent"
+                                                                    type="text"
+                                                                    autocomplete="off"
+                                                                    placeholder="Enter Other Name"
+                                                                    style="display: none; width: 48%;"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="w-50 px-2">
+                                                        <label for="byPerson" class="form-label">
+                                                            <i class="fa-solid fa-person"></i> &nbsp;
+                                                            Referred by (Person)
+                                                        </label>
+                                                        <input
+                                                                class="form-control"
+                                                                id="byPerson"
+                                                                maxlength="100"
+                                                                name="00N2v00000IyVq9"
+                                                                type="text"
+                                                                autocomplete="off"
+                                                                placeholder="Jane Doe"
+                                                                value="<?php echo $test["person"]; ?>"
+                                                        />
+                                                    </div>
+
+                                                    <div class="w-50 px-2">
+                                                        <label for="byPartner" class="form-label">
+                                                            <i class="fa-solid fa-handshake"></i> &nbsp;
+                                                            Referred Partner (JV)
+                                                        </label>
+                                                        <select class="form-select" name="byPartner" id="byPartner">
+                                                            <option value="">--None--</option>
+                                                            <option value="Smile Pos">Smile Pos</option>
+                                                            <option value="Wawio">Wawio</option>
+                                                            <option value="Jean">Jean</option>
+                                                            <option value="Other">Other</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="w-50 px-2">
+                                                        <label for="byRestaurant" class="form-label">
+                                                            <i class="fa-solid fa-house-user"></i> &nbsp;
+                                                            Referred by (Shop)
+                                                        </label>
+                                                        <input
+                                                                class="form-control"
+                                                                id="byRestaurant"
+                                                                maxlength="200"
+                                                                name="00N2v00000IyVqA"
+                                                                type="text"
+                                                                autocomplete="off"
+                                                                placeholder="The Thai Bistro"
+                                                                value="<?php echo $test["refShop"]; ?>"
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

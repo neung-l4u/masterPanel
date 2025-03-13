@@ -149,6 +149,9 @@ out
 /modules/templates/views/server/uploads
 /modules/signup/assets/.DS_Store
 /modules/DBJson/assets/db/initDB.php
+/modules/mondayReport/assets/db/initDB.php
+/modules/formemail/assets/db/initDB.php
+
 
 .DS_Store
 

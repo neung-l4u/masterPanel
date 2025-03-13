@@ -118,6 +118,8 @@ $(document).ready(function () {
   $(".boxSocial").hide();
   $("#dateproject").hide();
   $(".firstStepForm").show();
+  $("#datePOSBox").hide();
+  $("#posBoxDate").hide();
   ////
 });//ready
 
@@ -188,6 +190,15 @@ function setdateProjectAs(){
   $("#dateproject").hide();
 }
 
+function yesPosPro(){
+  $("#posBoxDate").fadeIn(300);
+  $("#noPOSProvider").prop("checked", false);
+}
+
+function noPosPro(){
+  $("#posBoxDate").fadeOut(300);
+  $("#yesPOSProvider").prop("checked", false);
+}
 
 
 // DISPLAY AND HIDE "NEXT", "BACK" AND "SUBMIT" BUTTONS
@@ -1444,7 +1455,7 @@ const genLinkPDF = () => {
   let registrationNumber = $("#00N9s000000QPWu").val();
   let Country = $("#formCountry").val();
 
-  url = "https://signup.localforyou.com/assets/docs/contract_2024_V02.php?customerFullName=" + customerFullName + "&ShopName=" + ShopName + "&contractPeriod=" + contractPeriod + "&registrationNumber=" + registrationNumber + "&Country=" + Country + "&State=" + State;
+  url = "https://report.localforyou.com/modules/signup/assets/docs/contract_2024_V02.php?customerFullName=" + customerFullName + "&ShopName=" + ShopName + "&contractPeriod=" + contractPeriod + "&registrationNumber=" + registrationNumber + "&Country=" + Country + "&State=" + State;
   agreementGenerated.val(url);
 }
 
@@ -1456,12 +1467,12 @@ const genPDF = () => {
 }
 
 const showPolicy = () => {
-  let url = "https://signup.localforyou.com/policy/";
+  let url = "https://report.localforyou.com/modules/policy/";
   window.open(url, '_blank').focus();
 }
 
 const showFormGenAgreement = () => {
-  let url = "https://signup.localforyou.com/generateAgreement/";
+  let url = "https://report.localforyou.com/modules/generateAgreement/";
   window.open(url, '_blank').focus();
 }
 
@@ -1640,3 +1651,22 @@ function checkDomain(param) {
   $('#domainHelpAU').find('a').attr('href', baseUrlAU + domainName);
   $('#domainHelpUS').find('a').attr('href', baseUrlUS + domainName);
 }//checkDomain
+
+$("#byAgent").change(function(){
+  if ($(this).val() === "Other") {
+    $("#byAgent").css("width", "35%");
+    $("#otherAgent").fadeIn().css("display", "inline-block");
+  } else {
+    $("#byAgent").css("width", "100%");
+    $("#otherAgent").fadeOut();
+  }
+});
+
+
+$("#posSystem").change(function(){
+  if ($(this).val() === "other") {
+    $("#datePOSBox").fadeIn(300);
+  }else{
+    $("#datePOSBox").fadeOut(300);
+  }
+})
