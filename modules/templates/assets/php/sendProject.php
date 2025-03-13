@@ -215,14 +215,27 @@ if(count($people['To']) > 0){ $to = implode(', ', $people['To']); }
 if(count($people['Cc']) > 0){ $cc = implode(', ', $people['Cc']); }
 if(count($people['Bcc']) > 0){ $bcc = implode(',', $people['Bcc']); }
 
-
 if (!in_array($loginPerson['sEmail'], explode(', ', $to))) {
     $to .= ($to ? ', ' : '') . $loginPerson['sEmail'];
 }
 
-$param = array(
+$CS = $db->query('SELECT `sEmail` FROM staffs WHERE teamID = ? AND `sStatus` <> ?;', 1, 0)->fetchAll();
+$CSemail = array_column($CS, 'sEmail');
+
+$AM = $db->query('SELECT `sEmail` FROM staffs WHERE teamID IN(?) AND `sStatus` <> ?;' , "2,8,10,11", 0)->fetchAll();
+$AMemail = array_column($AM, 'sEmail');
+
+if (in_array($loginPerson['sEmail'], $CSemail)){
+    $recipient = "admin@localforyou.com";
+} elseif (in_array($loginPerson['sEmail'], $AMemail)) {
+    $recipient = "promotion@localforyou.com";
+} else {
+    $recipient = "";
+}
+
+$param = [
     "To" => $to,
-    "Cc" => $cc,
+    "Cc" => $cc . ',' . $recipient,
     "Bcc" => $bcc,
     "Subject" => "New Template Submission",
     "Message" => $message,
@@ -230,7 +243,7 @@ $param = array(
     "Date" => $date,
     "Status" => 1,
     "Type" => "TemplateSubmission"
-);
+];
 
 
 $system = array(
@@ -258,28 +271,28 @@ $mailHeaders = [
     'Content-Type' => 'text/html; charset=utf-8'
 ];
 
-    //$result['email'] = $param['To'];
-    //$result['to'] = $param['To'];
-    //$result['cc'] = $param['Cc'];
-    //$result['bcc'] = $param['Bcc'];
-    //$result['param'] = $param;
+//$result['email'] = $param['To'];
+//$result['to'] = $param['To'];
+//$result['cc'] = $param['Cc'];
+//$result['bcc'] = $param['Bcc'];
+//$result['param'] = $param;
 
 //    if($sendMail){
-        if (mail($system["emailAlertTo"], $system["emailSubject"], $system["emailBody"], $mailHeaders)) {
-            $result['success'] = true;
-            $result['result'] = 1;
-            $result['msg'] = "Send email successful";
+if (mail($system["emailAlertTo"], $system["emailSubject"], $system["emailBody"], $mailHeaders)) {
+    $result['success'] = true;
+    $result['result'] = 1;
+    $result['msg'] = "Send email successful";
 
-            $upStatus = $db->query('UPDATE tb_project SET `statusID` = 2 WHERE `projectID` = ?', $id);
-        }
+    $upStatus = $db->query('UPDATE tb_project SET `statusID` = 2 WHERE `projectID` = ?', $id);
+}
 
 $json_response = json_encode($result);
 echo 'l4uCallback(' . $json_response . ');';
 
 //echo json_encode($result);
-    /*}else{
-        $result['success'] = true;
-        $result['result'] = 1;
-        $result['msg'] = "Pause send email";
-        echo '<pre>'.print_r($result, true).'</pre>';
-    }*/
+/*}else{
+    $result['success'] = true;
+    $result['result'] = 1;
+    $result['msg'] = "Pause send email";
+    echo '<pre>'.print_r($result, true).'</pre>';
+}*/
