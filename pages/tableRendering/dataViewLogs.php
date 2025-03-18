@@ -39,10 +39,6 @@ foreach ($result as $row) {
             break;
     }
 
-    if (empty($row["dataLogs"])) {
-
-    }
-
     $json = json_decode($row["dataLogs"], true);
     $jsonText = json_encode($json, JSON_PRETTY_PRINT);
 
