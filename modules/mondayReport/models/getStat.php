@@ -10,8 +10,8 @@ require_once '../assets/PHP/shareFunction.php';
 $return['result'] = '';
 $return['msg'] = '';
 
-$sumAll = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo')->fetchArray();
-$sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY DATE(whenTime) DESC LIMIT 0,11;')->fetchAll();
+$sumAll = $db->query('SELECT COUNT(DISTINCT mo.id) AS count FROM mondayslowreportlogs mo;')->fetchArray();
+$sumDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FROM mondayslowreportlogs mo GROUP BY DATE(mo.whenTime) ORDER BY day DESC LIMIT 10;')->fetchAll();
 
 ?>
 <table class="table table-hover table-borderless">

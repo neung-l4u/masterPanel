@@ -11,6 +11,14 @@
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css'>
     <link rel='stylesheet' href="assets/css/login_form.css">
     <script src="https://kit.fontawesome.com/9c38e6ba4e.js" crossorigin="anonymous"></script>
+    <style>
+        #linkViewPassword{
+            text-decoration: none;
+        }
+        #formUser, #formPassword{
+            font-size: 0.8em;
+        }
+    </style>
 </head>
 <body>
 <main>
@@ -28,8 +36,8 @@
                                 <div class="card-body p-4 p-lg-5 text-black">
                                     <form>
                                         <div class="d-flex align-items-center mb-3 pb-1">
-                                            <img src="assets/img/logo-login.png" alt="logo"/>
-                                            <span class="h2 fw-light mb-0">L4U Master Panel</span>
+                                            <img src="assets/img/logo-login2.png" alt="logo"/>
+                                            <span class="h3 fw-light mb-0">L4U Master Panel</span>
                                         </div>
                                         <h5 class="fw-normal mb-3 pb-3 text-uppercase" style="letter-spacing: 1px;">
                                             Please Sign In
@@ -40,18 +48,31 @@
                                                    class="form-control form-control-lg"
                                                    placeholder="mail@localforyou.com | 0891234567"
                                                    autocomplete="off"
-                                                   value="<?php echo isset($_COOKIE['user'])?$_COOKIE['user']:''; ?>"
+                                                   value="<?php echo $_COOKIE['user'] ?? ''; ?>"
                                             />
                                         </div>
                                         <div class="form-outline mb-2">
+                                            <label class="form-label" for="formPassword">Password</label>
+                                            <div class="input-group mb-3">
+                                                <input type="password" id="formPassword"
+                                                       class="form-control form-control-lg"
+                                                       placeholder="your password here"
+                                                       autocomplete="off"
+                                                       value="<?php echo $_COOKIE['pass'] ?? ''; ?>">
+                                                <span class="input-group-text" id="basic-addon2">
+                                                    <a href="#" id="linkViewPassword" onclick="showPass()">show</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <!--<div class="form-outline mb-2">
                                             <label class="form-label" for="formPassword">Password</label>
                                             <input type="password" id="formPassword"
                                                    class="form-control form-control-lg"
                                                    placeholder="your password here"
                                                    autocomplete="off"
-                                                   value="<?php echo isset($_COOKIE['pass'])?$_COOKIE['pass']:''; ?>"
+                                                   value="<?php /*echo $_COOKIE['pass'] ?? ''; */?>"
                                             />
-                                        </div>
+                                        </div>-->
                                         <div class="form-outline mb-5 d-flex justify-content-between gap-2">
                                             <div class="small">
                                                 <input class="form-check-input" type="checkbox" value="true"
@@ -89,7 +110,7 @@
 </main>
 <footer class="credit">
     Version 1.2.2 (24.01.2025)<br>
-    © 2017 Localforyou.com Online Ordering & Marketing FOR THAI RESTAURANTS
+    © 2017 Localforyou.com #1 Marketing Agency for Thai Restaurant & Thai Massage
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -102,5 +123,11 @@
 <script src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
 <script src="https://unpkg.com/@popperjs/core@2.11.5/dist/umd/popper.min.js"></script>
 <script src="assets/js/authentication.js"></script>
+<script>
+    function showPass() {
+        let input = $("#formPassword");
+        input.attr('type') === 'password' ? input.attr('type', 'text') : input.attr('type', 'password');
+    }
+</script>
 </body>
 </html>
