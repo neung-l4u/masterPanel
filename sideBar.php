@@ -8,7 +8,7 @@ include ('assets/api/checkSession.php');
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="main.php" class="brand-link">
-        <img src="assets/img/logo-login.png" alt="L4U Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <img src="assets/img/logo-login2.png" alt="L4U Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">Master Panel</span>
     </a>
 
