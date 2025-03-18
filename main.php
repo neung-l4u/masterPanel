@@ -36,7 +36,6 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
     <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap4.min.css">
   <!-- datepicker styles -->
     <link rel="stylesheet" href="assets/css/jquery-ui-v1.13.2.css">
-    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">-->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" media="screen" />
 </head>
 <body class="hold-transition sidebar-mini">
@@ -49,11 +48,8 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
   <!-- Main Sidebar Container -->
   <?php include "sideBar.php"; ?>
 
-    <?php //include("modalRespond.php"); ?>
-
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-
       <?php include("modalRespond.php"); ?>
       <?php include("modalConfirm.php"); ?>
       <?php include "pages/".$showPage; ?>
@@ -77,16 +73,11 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
 
 <!-- REQUIRED SCRIPTS -->
 
-<!-- jQuery -->
 <script src="plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
 <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
-<!-- Datatable -->
 <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
-<!-- datepicker styles -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>
 
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
