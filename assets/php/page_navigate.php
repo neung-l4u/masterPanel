@@ -140,4 +140,18 @@ switch ($menuPage){
         $datatable["show"] = "true";
         $datatable["src"] = "";
         break;
+    case "tools":
+        $showPage = "tools.php";
+        $activeMenu["lv1"] = "";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "true";
+        $datatable["src"] = "";
+        break;
+    case "unsub":
+        $showPage = "unSubmitted.php";
+        $activeMenu["lv1"] = "";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "true";
+        $datatable["src"] = "";
+        break;
 }

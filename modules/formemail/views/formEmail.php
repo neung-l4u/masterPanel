@@ -203,6 +203,7 @@ $today = date("Y-m-d");
                         <select id="formPaymentMethod" class="form-control" name="formPaymentMethod">
                             <option value="Invoice">Invoice</option>
                             <option value="Credit Card">Credit Card</option>
+                            <option value="Direct Debit">Direct Debit</option>
                         </select>
                     </div>
                 </div>
