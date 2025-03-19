@@ -15,7 +15,7 @@ global $db, $date;
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="main.php">My Desk</a></li>
+                    <li class="breadcrumb-item"><a href="main.php">Home</a></li>
                     <li class="breadcrumb-item active">Tools</li>
                 </ol>
             </div><!-- /.col -->
@@ -40,7 +40,7 @@ global $db, $date;
                     <div class="row">
                         <div class="col">
                             <div class="card-body">
-                                <h4 class="card-header"><b>Check Logs</b></h4>
+                                <h4 class="card-header">Check Logs</h4>
                                 <table class="table table-bordered table-striped table-hover" id="datatable" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
@@ -78,7 +78,7 @@ global $db, $date;
                         </div><!--End Table Check Logs-->
                         <div class="col">
                             <div class="card-body">
-                                <h4 class="card-header"><b>Action</b></h4>
+                                <h4 class="card-header">Action</h4>
                                 <table id="datatable" class="table table-bordered table-striped table-hover " style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>

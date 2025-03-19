@@ -2,7 +2,7 @@
 global $db;
 session_start();
 include '../../assets/db/db.php';
-include "../../assets/db/initDB_server.php";
+include "../../assets/db/initDB.php";
 
 
 $params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "No Action";
@@ -11,8 +11,6 @@ $params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "9999";
  $row = $db->query('SELECT * FROM `Cancellation` WHERE id = ?;',$params ["id"])->fetchArray();
 
 ?>
-
-
 
     <table class="table table-striped">
         <tbody>
@@ -33,7 +31,7 @@ $params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "9999";
                 <td><?php echo $row["email"];?></td>
             </tr>
             <tr>
-                <th scope="row">Moblile</th>
+                <th scope="row">Mobile</th>
                 <td><?php echo $row["mobile"];?></td>
             </tr>
             <tr>
