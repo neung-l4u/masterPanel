@@ -7,24 +7,44 @@ include "../../assets/db/initDB_example.php";
 $result = $db->query('SELECT `id`, `county`, `city`, `shopname`, `trading`, `address`, `state`, `zip`, `firstname`, `lastname`, `mobile`, `email`, `other`, `reason`, `lastdate`, `feedback`, `timestamp` FROM Cancellation')->fetchAll();
 
 $data = array("data"=> array());
+foreach ($result as $row) {
+    $county = $row["county"];
+    $city = $row["city"];
+    $shopname = $row["shopname"];
+    $trading = $row["trading"];
+    $address = $row["address"];
+    $state = $row["state"];
+    $zip = $row["zip"];
+    $firstname = $row["firstname"];
+    $lastname = $row["lastname"];
+    $mobile = $row["mobile"];
+    $email = $row["email"];
+    $other = $row["other"];
+    $reason = $row["reason"];
+    $lastdate = $row["lastdate"];
+    $feedback = $row["feedback"];
+    $timestamp = $row["timestamp"];
+    $dataLogs = $row["dataLogs"];
+    $id = $row["id"];
 
-    $fullName = $row["firstname"]." ".$row["lastname"];
-    $address = $row["address"].", ".$row["city"].", ".$row["state"].", ".$row["zip"].", ".$row["country"];
-    $infoData = $row["trading"].", ".$fullName.", ".$row["mobile"].", ".$row["email"];
 
-    $contact = json_decode($fullName.$address.$infoData);
-    $text = json_encode($contact, JSON_PRETTY_PRINT);
-    $jsonText = str_replace("\\/", "/", $text);
 
-    $contractLogsBtn = '<svg class="clickable" onclick="viewJson('.htmlspecialchars($jsonText).');" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="20" height="20"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>';
+    //$age = array("Peter"=>$email, "Ben"=>$, "Joe"=>43);
+
+    //$contact = json_encode($age);
+
+    //$contactBtn = '<svg class="clickable" onclick="viewJson('.htmlspecialchars($contact).');" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="20" height="20"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>';
+    $contactBtn = '<svg class="clickable" onclick="viewJson('.$id.');" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="20" height="20"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>';
 
 
     $data["data"][] = array(
         $row["timestamp"],
         $row["county"],
         $row["shopname"],
-        $row["other"].$row["reason"],
+        $row["other"] . $row["reason"],
         $row["lastdate"],
-        $contractLogsBtn
+        $contactBtn
     );
-}//
+}
+
+echo json_encode($data);

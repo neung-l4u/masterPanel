@@ -27,49 +27,105 @@ global $db, $date;
 <!-- Main content -->
 <div class="content">
     <div class="container-fluid">
-
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-end">
                         <!-- Button trigger modal -->
-                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formServicesModal">
                             <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
                         </button>
-
                         <!-- Modal -->
-
-
                     </div>
-                    <div class="card-body">
-                        <div class="card">
-                            <div class="card-body table-responsive p-4" style="height: 620px;">
-                                <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card-body">
+                                <h4 class="card-header"><b>Check Logs</b></h4>
+                                <table class="table table-bordered table-striped table-hover" id="datatable" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:15%">Name</th>
-                                        <th style="width:10%">Link</th>
-                                        <th style="width:20%">Detail</th>
-                                        <th style="width:5%">Status</th>
-                                        <th style="width:10%"></th>
+                                        <th scope="col" style="width: 5%;">#</th>
+                                        <th scope="col">Services</th>
+                                        <th scope="col" style="width: 68%;">Description</th>
                                     </tr>
                                     </thead>
+                                    <tbody>
+
+                                    <?php
+                                    $result = $db->query('SELECT `id`, `name`, `link`, `detail`, `status`, `type`, `createBy`, `createAt`, `updateBy`, `updateAt`, `deleteBy`, `deleteAt`  FROM `tools` WHERE `status` = 1 AND `type` = "logs"')->fetchAll();
+
+                                    $data = array("data"=> array());
+                                    if (count($result)>0){
+                                        $num = 1;
+                                        foreach ($result as $row) {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $num++; ?></td>
+                                                <td><a href="<?php echo $row["link"];?>"><?php echo $row["name"];?></a></td>
+                                                <td><?php echo $row["detail"];?> </td>
+                                            </tr>
+                                        <?php  }//end foreach
+                                    }else{ ?>
+
+                                        <tr>
+                                            <td class="text-center" colspan="3">ไม่มี</td>
+                                        </tr>
+
+                                    <?php }//end else ?>
+                                    </tbody>
                                 </table>
                             </div>
-                            <!-- /.card-body -->
-                        </div>
-                    </div>
-                </div>
-            </div><!-- /.col-md-12 -->
+                        </div><!--End Table Check Logs-->
+                        <div class="col">
+                            <div class="card-body">
+                                <h4 class="card-header"><b>Action</b></h4>
+                                <table id="datatable" class="table table-bordered table-striped table-hover " style="width:100%">
+                                    <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col" style="width: 5%;">#</th>
+                                        <th scope="col">Services</th>
+                                        <th scope="col" style="width: 68%;">Description</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    <?php
+                                    $result = $db->query('SELECT `id`, `name`, `link`, `detail`, `status`, `type`, `createBy`, `createAt`, `updateBy`, `updateAt`, `deleteBy`, `deleteAt`  FROM `tools` WHERE `status` = 1 AND `type` = "action"')->fetchAll();
+
+                                    $data = array("data"=> array());
+                                    if (count($result)>0){
+                                        $numb = 1;
+                                        foreach ($result as $row) {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $numb++;?></td>
+                                                <td><a href="<?php echo $row["link"];?>"><?php echo $row["name"];?></a></td>
+                                                <td><?php echo $row["detail"];?> </td>
+                                            </tr>
+                                        <?php  }//end foreach
+                                    }else{ ?>
+
+                                        <tr>
+                                            <td class="text-center" colspan="2">-- Null --</td>
+                                        </tr>
+
+                                    <?php }//end else ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><!--End Table Action-->
+                    </div><!-- /.row 2 table-->
+
+                </div><!-- /.card-->
+            </div><!-- /.col-->
         </div><!-- /.row -->
 
 
-        <!-- Modal -->
-        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel">
+        <div class="modal fade" id="formServicesModal" tabindex="-1" aria-labelledby="formModalLabel">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="formModalLabel">Form Staff</h5>
+                        <h5 class="modal-title" id="formModalLabel">Add Services</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span>&times;</span>
                         </button>
@@ -77,9 +133,52 @@ global $db, $date;
                     <div class="modal-body">
 
                         <div class="d-flex flex-column">
+                            <div class="row mb-2">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label for="inputType" class="form-label">Type</label>
+                                        <select id="inputType" class="custom-select">
+                                            <option value="" selected>-- Please Selete --</option>
+                                            <option value="logs">Logs</option>
+                                            <option value="action">Action</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="form-group">
+                                        <label for="inputServices" class="form-label">Services</label>
+                                        <input type="text" class="form-control col" id="inputServices" placeholder="e.g. System Check Logs">
+                                    </div>
+                                </div>
 
-                            <div class="form-group row">
-                                <label class="col-2 col-form-label">Status</label>
+                            </div>
+                            <!-- Services and Type-->
+
+
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputDescription">Description</label>
+                                        <textarea class="form-control" id="inputDescription" row="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputLink">Link</label>
+                                        <input type="text" class="form-control" id="inputLink">
+                                        <small id="emailHelp" class="form-text text-muted">e.g. main.php?p=xxx or https://report.localforyou.com/modules/formemail </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                            <div class="form-group">
+                                <label class="col-form-label">Status</label>
                                 <div class="col">
                                     <div class="form-group d-flex">
                                         <div class="custom-control custom-radio mr-5">
@@ -93,151 +192,6 @@ global $db, $date;
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group row">
-                                        <label for="inputLevel" class="col-2 col-form-label">Level</label>
-                                        <div class="col">
-                                            <select id="inputLevel" class="custom-select">
-                                                <option value="1">Super Admin</option>
-                                                <option value="2">Admin</option>
-                                                <option value="3">Manager</option>
-                                                <option value="4" selected>User</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group row">
-                                        <label for="inputTeam" class="col-2 col-form-label">Team</label>
-                                        <div class="col">
-                                            <select id="inputTeam" class="custom-select">
-                                                <option value="0" selected>-- None --</option>
-                                                <?php
-                                                $teams = $db->query('SELECT `id`, `name`, `fullName` FROM `Team` ORDER BY `idx`;')->fetchAll();
-                                                foreach ($teams as $row){
-                                                    ?>
-                                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['name'].' : '.$row['fullName']; ?></option>
-                                                <?php }//foreach ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Level and Team-->
-
-
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <div class="form-group mb-3 row">
-                                        <label class="col-3 col-form-label" for="inputStartDate">StartDate</label>
-                                        <input type="date" class="form-control col" id="inputStartDate" placeholder="dd-mm-yyyy">
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group mb-3 row">
-                                        <label class="col-3 col-form-label" for="inputEmployeeNumber">Emp No.</label>
-                                        <input type="text" class="form-control col" id="inputEmployeeNumber" maxlength="6" placeholder="e.g. LOC061">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- StartDate and Emp No.-->
-
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputName">Full Name</label>
-                                        <input type="text" class="form-control" id="inputName" maxlength="255" placeholder="e.g. Peeraphat Malimongkhon">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputTname">Thai Name</label>
-                                        <input type="text" class="form-control" id="inputTname" maxlength="255" placeholder="e.g. พีรภัทร มะลิมงคล">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputNickName">Nick Name</label>
-                                        <input type="text" class="form-control" id="inputNickName" maxlength="50" placeholder="Enter Staff Nick Name">
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputBirthday">Birthday</label>
-                                        <input type="date" class="form-control" id="inputBirthday" placeholder="dd-mm-yyyy">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputAddress">Address</label>
-                                        <textarea id="inputAddress" class="form-control" placeholder="Enter Address" rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-5">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputReligion" class="col-2 col-form-label">Religion</label>
-                                        <select id="inputReligion" class="custom-select">
-                                            <option value="1" selected>-- ไม่ระบุ --</option>
-                                            <?php
-                                            $teams = $db->query('SELECT `rID`, `rThane` AS "thai" FROM `Religion` WHERE rID <> 1 ORDER BY `rThane`;')->fetchAll();
-                                            foreach ($teams as $row){
-                                                ?>
-                                                <option value="<?php echo $row['rID']; ?>"><?php echo $row['thai']; ?></option>
-                                            <?php }//foreach ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputEmail">Email</label>
-                                        <input type="email" class="form-control" id="inputEmail" placeholder="Enter Staff Email">
-                                        <small id="emailHelp" class="form-text text-muted">e.g. mail@localforyou.com.</small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputPhone">Phone</label>
-                                        <input type="tel" class="form-control" id="inputPhone" placeholder="Enter Staff Phone" maxlength="10">
-                                        <small id="phoneHelp" class="form-text text-muted">e.g. 0891234567</small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputPassword">Password <small id="passwordNotAllow" class="text-danger" style="display: none;">Not allow to edit encrypted data.</small></label>
-                                        <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="<?php echo $password;?>">
-                                        <small id="passwordHelp" class="form-text text-muted">Default password is <?php echo $password;?>.</small>
-                                    </div>
-                                </div>
                             </div>
 
                             <input type="hidden" name="editID" id="editID" value="">
@@ -252,12 +206,11 @@ global $db, $date;
                 </div>
             </div>
         </div>
-
     </div><!-- /.container-fluid -->
-</div>
-<!-- /.content -->
-
+</div> <!-- /.contact-->
+<script src="plugins/jquery/jquery.min.js"></script>
 <script>
+
     const setStatus = (id, status) => {
         const flagStatus = !status ? 1 : 0;
         const reqAjax = $.ajax({
@@ -283,21 +236,12 @@ global $db, $date;
         });
     }// const
 
+
     const setEdit = (id) => {
-        const inputName = $("#inputName");
-        const inputTname = $("#inputTname");
-        const inputNickName = $("#inputNickName");
-        const inputStartDate = $("#inputStartDate");
-        const inputEmployeeNumber = $("#inputEmployeeNumber");
-        const inputAddress = $("#inputAddress");
-        const inputBirthday = $("#inputBirthday");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const passwordNotAllow = $("#passwordNotAllow");
-        const inputLevel = $("#inputLevel");
-        const inputReligion = $("#inputReligion");
-        const inputTeam = $("#inputTeam");
+        const inputType = $("#inputType");
+        const inputServices = $("#inputServices");
+        const inputDescription = $("#inputDescription");
+        const inputLink = $("#inputLink");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
         const editID = $("#editID");
@@ -317,20 +261,10 @@ global $db, $date;
 
         reqAjax.done(function (res) {
             console.log(res);
-            inputName.val(res.name);
-            inputTname.val(res.tname);
-            inputNickName.val(res.nickname);
-            inputBirthday.val(res.birthday);
-            inputStartDate.val(res.startdate);
-            inputEmployeeNumber.val(res.employeenumber);
-            inputAddress.val(res.address);
-            inputEmail.val(res.email);
-            inputPhone.val(res.phone);
-            inputPassword.val("Encrypted : " + res.password).attr('disabled', 'disabled');
-            passwordNotAllow.show();
-            inputLevel.val(res.level);
-            inputReligion.val(res.religion)
-            inputTeam.val(res.team)
+            inputType.val(res.type);
+            inputServices.val(res.services);
+            inputDescription.val(res.description);
+            inputLink.val(res.link);
             if(res.status === 1) {
                 statusOff.prop('checked', false);
                 statusOn.prop('checked', true);
@@ -340,7 +274,7 @@ global $db, $date;
             }
             editID.val(res.id);
             formAction.val("edit");
-            modalFormAction("open");
+
         });
 
         reqAjax.fail(function (xhr, status, error) {
@@ -350,39 +284,20 @@ global $db, $date;
     }// const
 
     const formSave = () => {
-        const inputName = $("#inputName");
-        const inputTname = $("#inputTname");
-        const inputNickName = $("#inputNickName");
-        const inputBirthday = $("#inputBirthday");
-        const inputStartDate = $("#inputStartDate");
-        const inputEmployeeNumber = $("#inputEmployeeNumber");
-        const inputAddress = $("#inputAddress");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const inputReligion = $("#inputReligion");
-        const inputTeam = $("#inputTeam");
-        const inputLevel = $("#inputLevel");
+        const inputType = $("#inputType");
+        const inputServices = $("#inputServices");
+        const inputDescription = $("#inputDescription");
+        const inputLink = $("#inputLink");
         const editID = $("#editID");
         const formAction = $("#formAction");
-
         let statusValue = $("input[name='inputStatus']:checked").val();
 
         let payload = {
             act: "save",
-            inputName : inputName.val(),
-            inputTname : inputTname.val(),
-            inputNickName : inputNickName.val(),
-            inputBirthday : inputBirthday.val(),
-            inputStartDate : inputStartDate.val(),
-            inputEmployeeNumber : inputEmployeeNumber.val(),
-            inputAddress : inputAddress.val(),
-            inputEmail : inputEmail.val(),
-            inputPhone : inputPhone.val(),
-            inputPassword : inputPassword.val(),
-            inputReligion : inputReligion.val(),
-            inputTeam : inputTeam.val(),
-            inputLevel : inputLevel.val(),
+            inputType : inputType.val(),
+            inputServices : inputServices.val(),
+            inputDescription : inputDescription.val(),
+            inputLink : inputLink.val(),
             inputStatus : statusValue,
             editID : editID.val(),
             formAction : formAction.val()
@@ -400,11 +315,10 @@ global $db, $date;
         });
 
         reqAjax.done(function (res) {
-            modalFormAction("close");
             console.log(res);
             reloadTable();
             resetForm();
-            $("#formModal").modal('hide');
+            $("#formServicesModal").modal('hide');
         });
 
         reqAjax.fail(function (xhr, status, error) {
@@ -414,48 +328,25 @@ global $db, $date;
 
     }// const
 
+    function reloadTable() {
+        location.reload();
+    }
 
     const resetForm = () => {
-        const inputName = $("#inputName");
-        const inputTname = $("#inputTname");
-        const inputNickName = $("#inputNickName");
-        const inputBirthday = $("#inputBirthday");
-        const inputStartDate = $("#inputStartDate");
-        const inputEmployeeNumber = $("#inputEmployeeNumber");
-        const inputAddress = $("#inputAddress");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const inputReligion = $("#inputReligion");
-        const inputTeam = $("#inputTeam");
-        const inputLevel = $("#inputLevel");
+        const inputType = $("#inputType");
+        const inputServices = $("#inputServices");
+        const inputDescription = $("#inputDescription");
+        const inputLink = $("#inputLink");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
         const editID = $("#editID");
         const formAction = $("#formAction");
-        const passwordNotAllow = $("#passwordNotAllow");
 
-        const date = new Date();
 
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-        let currentDate = `${year}-${month}-${day}`;
-
-        inputName.val('');
-        inputTname.val('');
-        inputNickName.val('');
-        inputBirthday.val('');
-        inputStartDate.val(currentDate);
-        inputEmployeeNumber.val('');
-        inputAddress.val('');
-        inputEmail.val('');
-        inputPhone.val('');
-        inputPassword.val('Localeats#2024').removeAttr('disabled');
-        passwordNotAllow.hide();
-        inputLevel.val('4');
-        inputReligion.val('1');
-        inputTeam.val('0');
+        inputType.val('');
+        inputServices.val('');
+        inputDescription.val('');
+        inputLink.val('');
         statusOn.prop('checked', true);
         statusOff.prop('checked', false);
         editID.val('');
@@ -486,11 +377,11 @@ global $db, $date;
             });
 
             reqAjax.done(function (res) {
-                modalFormAction("close");
+
                 console.log(res);
                 reloadTable();
                 resetForm();
-                $("#formModal").modal('hide');
+                $("#formServicesModal").modal('hide');
             });
 
             reqAjax.fail(function (xhr, status, error) {
@@ -502,5 +393,6 @@ global $db, $date;
 
 
     }//setDel
+
 
 </script>

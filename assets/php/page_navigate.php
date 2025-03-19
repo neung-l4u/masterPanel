@@ -145,13 +145,13 @@ switch ($menuPage){
         $activeMenu["lv1"] = "";
         $activeMenu["lv2"] = "";
         $datatable["show"] = "true";
-        $datatable["src"] = "pages/tableRendering/dataTools.php";
+        $datatable["src"] = "";
         break;
     case "unsub":
         $showPage = "unSubmitted.php";
         $activeMenu["lv1"] = "";
         $activeMenu["lv2"] = "";
         $datatable["show"] = "true";
-        $datatable["src"] = "pages/tableRendering/dataUnsubmitted.php";
+        $datatable["src"] = "";
         break;
 }

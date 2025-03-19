@@ -2,7 +2,7 @@
 global $db;
 session_start();
 include '../../assets/db/db.php';
-include "../../assets/db/initDB_example.php";
+include "../../assets/db/initDB_server.php";
 
 $result = $db->query('SELECT `id`, `name`, `link`, `detail`, `status`, `createBy`, `createAt`, `updateBy`, `updateAt`, `deleteBy`, `deleteAt` FROM `tools` WHERE deleteAt IS NULL')->fetchAll();
 

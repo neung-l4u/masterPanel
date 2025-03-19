@@ -2,41 +2,45 @@
 global $db;
 session_start();
 include '../../assets/db/db.php';
-include "../../assets/db/initDB_example.php";
-$myID = $_SESSION['id'];
-
-$salt = "L4U";
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "";
-$params["editID"] = !empty($_REQUEST['editID']) ? $_REQUEST['editID'] : "";
+include "../../assets/db/initDB_server.php";
 
 
-if ($params ["action"] == "loadUpdate"){
+$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "No Action";
+$params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "9999";
 
-    $row = $db->query('SELECT * FROM `Cancellation`')->fetchArray();
-    $params["county"] = $row["county"];
-    $params["city"] = $row["city"];
-    $params["shopname"] = $row["shopname"];
-    $params["trading"] = $row["trading"];
-    $params["address"] = $row["address"];
-    $params["state"] = $row["state"];
-    $params["zip"] = $row["zip"];
-    $params["firstname"] = $row["firstname"];
-    $params["lastname"] = $row["lastname"];
-    $params["mobile"] = $row["mobile"];
-    $params["email"] = $row["email"];
-    $params["other"] = $row["other"];
-    $params["reason"] = $row["reason"];
-    $params["lastdate"] = $row["latedate"];
-    $params["feedback"] = $row["feedback"];
-    $params["timestamp"] = $row["timestamp"];
+ $row = $db->query('SELECT * FROM `Cancellation` WHERE id = ?;',$params ["id"])->fetchArray();
+
+?>
 
 
-}
 
-function dateHumantoSql($databd){//dd/mm/yyyy
-    $arr = explode("-",$databd);
-    $Human = $arr[2]."-".$arr[1]."-".$arr[0];
+    <table class="table table-striped">
+        <tbody>
+            <tr>
+                <th scope="row">Shop Name</th>
+                <td><?php echo $row["shopname"];?></td>
+            </tr>
+            <tr>
+                <th scope="row">Address</th>
+                <td><?php echo $row["address"].", ".$row["city"].", ".$row["state"].", ".$row["zip"].", ".$row["county"];?></td>
+            </tr>
+            <tr>
+                <th scope="row">Name</th>
+                <td><?php echo $row["firstname"]." ".$row["lastdate"];?></td>
+            </tr>
+            <tr>
+                <th scope="row">Email</th>
+                <td><?php echo $row["email"];?></td>
+            </tr>
+            <tr>
+                <th scope="row">Moblile</th>
+                <td><?php echo $row["mobile"];?></td>
+            </tr>
+            <tr>
+                <th scope="row">FeedBack</th>
+                <td><?php echo $row["feedback"];?></td>
+            </tr>
+        </tbody>
+    </table>
 
-    return ($Human);//output yyyy-mm-dd
-};
+

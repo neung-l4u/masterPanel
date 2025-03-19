@@ -3,7 +3,7 @@ global $db, $date;
 
 $password = "Localeats#".date("Y");
 ?>
-<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
+<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs4.min.css">
 
 <style>
     .clickable {
