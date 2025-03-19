@@ -38,7 +38,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                 </div>
                                 <div class="form-group">
                                     <label for="formCountry">
-                                        <span>Country <b class="red">*</b> </span>
+                                        <span>Country <b class="red">*</b> </span><small class="text-danger" id="smallCountry">Please Select County.</small>
                                     </label>
                                     <select id="formCountry" class="form-select" name="country">
                                         <option selected value="">Please select Country</option>
@@ -49,6 +49,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                         <option value="CA">Canada</option>
                                         <option value="TH">Thailand</option>
                                     </select>
+
                                 </div>
 
                                 <div class="form-group pt-2">
@@ -56,6 +57,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                         Shop name
                                         <b class="red">*</b>
                                     </label>
+                                    <small class="text-danger" id="smallShopName">Please check the message.</small>
                                     <div>
                                         <input
                                                 type="text"
@@ -250,6 +252,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                         <label for="formReason">
                                             What is the Main Reason you wish to cancel?
                                             <b class="red">*</b>
+                                            <small class="text-danger" id="smallReason">Please Select One.</small>
                                         </label>
                                         <select id="formReason" class="form-select" name="reason" onchange="superbas()">
                                             <option selected value=""> --- Please select your reason --- </option>
@@ -269,7 +272,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                     <label for="additionComment" class="form-label">
                                         <i class="fa-solid fa-note-sticky"></i>&nbsp;
                                         Other
-                                    </label>
+                                    </label><small class="text-danger" id="smallOther">Please check the message.</small>
                                     <textarea
                                             class="form-control w-100"
                                             id="boxother"
@@ -282,7 +285,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                 <div class="mt-3">
                                     <div class="col d-flex flex-column">
                                         <label for="lastDate">
-                                            Last Date you want the system Live? <b class="red">*</b>
+                                            Last Date you want the system Live? <b class="red">*</b><small class="text-danger" id="smallDate">Please Please select a date.</small>
                                         </label>
 
                                         <div class="date" id="datepicker">
@@ -399,7 +402,22 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
     $( document ).ready(function() {
         $("#other").hide()
         $("#loadingAjax").hide()
+        $("#smallCountry").hide()
+        $("#smallShopName").hide()
+        $("#smallReason").hide()
+        $("#smallDate").hide()
+        $("#smallOther").hide()
     });//ready
+
+    function validateForm(){
+        let country = $("#formCountry").val();
+        let shopName = $("#shopName").val();
+        let reason = $("#formReason").val();
+        let lastDate = $("#lastDate").val();
+        let other = $("#boxother").val();
+
+        if
+    }
 
 
     const cancelFrm = {};
@@ -412,6 +430,9 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
         "Completed_By__c": "Admin",
         "StageName": "Cancellation requested"
     }
+
+
+
 
     function formatMobile(param,place) {
         let mobileFormatted = $("."+place);
@@ -751,103 +772,6 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
             $("#other").hide();
         }
     }//Other Box
-
-    // function saveToDB(){
-    //             let payload =
-    //         {
-    //             mode : "save",
-    //             country : $("#formCountry").val(),
-    //             city : $("#city").val(),
-    //             shopName : $("#shopName").val(),
-    //             tradingName : $("#company").val(),
-    //             address : $("#streetAddress").val(),
-    //             state : $("#state").val(),
-    //             zip : $("#zip").val(),
-    //             firstName : $("#first_name").val(),
-    //             lastName : $("#last_name").val(),
-    //             mobile : $("#ownerMobile").val(),
-    //             email : $("#email").val(),
-    //             reason : $("#formReason").val(),
-    //             other : $("#boxother").val(),
-    //             lastDate : $("#lastDate").val(),
-    //             feedback : $("#additionComment").val()
-    //     };
-    //
-    //
-    //     const ajaxSaveDB = $.ajax({
-    //         url: "activeAjax.php",
-    //         method: 'POST',
-    //         async: false,
-    //         cache: false,
-    //         dataType: 'json',
-    //         data: payload
-    //     });
-    //
-    //     ajaxSaveDB.done(function(res) {
-    //         console.log(res);
-    //         // alert("Send Data To Database successful");
-    //         return true;
-    //     });
-    //
-    //     ajaxSaveDB.fail(function(xhr, status, error) {
-    //         console.log("ajax Send Date to Database fail!!");
-    //         console.log(status + ': ' + error);
-    //         // alert("Send Data To Database fail!!");
-    //         return false;
-    //     });
-    //
-    //     console.log('payload = ',payload);
-    //
-    //  }//saveToDB
-
-    // function mailsend(){
-    //
-    //     // alert ("mailsend call");
-    //     let payload =
-    //         {
-    //             mode : "send",
-    //             shopName: $("#shopName").val(),
-    //             email: $("#email").val(),
-    //             county: $("#formCountry").val(),
-    //             tradingName: $("#company").val(),
-    //             streetAddress: $("#streetAddress").val(),
-    //             city: $("#city").val(),
-    //             state: $("#state").val(),
-    //             zip: $("#zip").val(),
-    //             firstName: $("#first_name").val(),
-    //             lastName: $("#last_name").val(),
-    //             mobile: $("#mobile").val(),
-    //             reason: $("#formReason").val(),
-    //             other: $("#boxother").val(),
-    //             lastdate: $("#lastDate").val(),
-    //             feedback: $("#additionComment").val(),
-    //     };
-    //
-    //     const sendMail = $.ajax({
-    //         url: "L4UTestEmailunsub.php",
-    //         method: 'POST',
-    //         async: false,
-    //         cache: false,
-    //         dataType: 'json',
-    //         data: payload
-    //     });
-    //
-    //
-    //     sendMail.done(function(res) {
-    //         console.log(res);
-    //         // alert("Send email successful");
-    //         return true;
-    //     });
-    //
-    //     sendMail.fail(function(xhr, status, error) {
-    //         console.log("ajax Send Date to Database fail!!");
-    //         console.log(status + ': ' + error);
-    //         // alert("Submit Successful");
-    //         return false;
-    //     });
-    //
-    //     console.log('payload = ',payload);
-    // }//mailsend
 
     let payload = {};
 
