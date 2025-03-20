@@ -94,14 +94,14 @@ $currentDate = date('d/m/Y');
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="00N2v00000IyVqB" class="font-weight-bold">Shop Name <span class="text-danger">*</span></label>
-                                <input id="00N2v00000IyVqB" class="form-control" placeholder="your shop name" name="00N2v00000IyVqB" type="text" />
+                                <label for="shopName" class="font-weight-bold">Shop Name <span class="text-danger">*</span></label>
+                                <input id="shopName" class="form-control" placeholder="your shop name" name="shopName" type="text" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label for="00N9s000000QRyY" class="font-weight-bold">Shop Type <span class="text-danger">*</span> </label>
-                                <select id="00N9s000000QRyY" class="form-control" name="00N9s000000QRyY" title="Customer_Type">
+                                <label for="shopType" class="font-weight-bold">Shop Type <span class="text-danger">*</span> </label>
+                                <select id="shopType" class="form-control" name="shopType" title="Customer_Type">
                                     <option value="Thai Restaurants &amp; Takeaways">Thai Restaurants &amp; Takeaways</option>
                                     <option value="Thai Massage">Thai Massage</option>
                                     <option value="Restaurants &amp; Takeaways">Restaurants &amp; Takeaways</option>
@@ -122,15 +122,15 @@ $currentDate = date('d/m/Y');
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <lable for="00NMq000000R4sL" class="font-weight-bold">City</lable>
-                                <input id="00NMq000000R4sL" class="form-control" name="00NMq000000R4sL" placeholder="Queenland" type="text">
+                                <lable for="city" class="font-weight-bold">City</lable>
+                                <input id="city" class="form-control" name="city" placeholder="Queenland" type="text">
                             </div>
                         </div>
 
                         <div class="col">
                             <div class="form-group">
                                 <label for="country" class="font-weight-bold">Country</label>
-                                <select id="country" class="form-control" name="00N2v00000IyVqF" onchange="setMoney();">
+                                <select id="country" class="form-control" name="country" onchange="setMoney();">
                                     <option value="Australia">Australia</option>
                                     <option value="New Zealand">New Zealand</option>
                                     <option value="USA">United States</option>
