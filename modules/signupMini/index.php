@@ -200,6 +200,26 @@ $currentDate = date('d/m/Y');
         </form>
     </div>
 <script>
+    //https://hook.us1.make.com/47ue45ij7fhm7sol8rldp6dxpag2ldjl
+    let data = {
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "mobile": "",
+        "contactTime": "",
+        "trading": "",
+        "shopName": "",
+        "shopType": "",
+        "url": "",
+        "city": "",
+        "country": "",
+        "currency": "",
+        "interest": "",
+        "comment": "",
+        "RestaurantMarketingAgent": "",
+        "SignupFormVersion": ""
+    };
+
     function setMoney() {
         let country = $("#country").val();
         let currencyBox = $("#currency");
