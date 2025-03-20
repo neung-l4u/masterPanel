@@ -18,17 +18,7 @@ $currentDate = date('d/m/Y');
 
 <body>
     <div class="container">
-        <form class="p-5" action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8" method="POST">
-             <!--<input type="hidden" name="debug" value="1">
-             <input type="hidden" name="debugEmail" value="neung@localforyou.com">-->
-
-            <input type="hidden" name="oid" value="00D2v0000012UyV">
-            <input type="hidden" name="retURL" value="https://localforyou.com/thank-you/">
-            <input type="hidden" name="lead_source" value="Website - Free Demo">
-            <input type="hidden" name="recordType" value="012Mq000000iNgr">
-            <input type="hidden" name="00N2u000000mQgE" value="New">
-            <input type="hidden" name="title" value="Lead form Website L4U 2024">
-            <input type="hidden" name="00N2v00000JvZge" id="00N2v00000JvZge" value="<?php echo $currentDate; ?>">
+        <form class="p-5" action="#" method="POST">
 
             <div class="card">
                 <div class="card-header">
@@ -86,8 +76,8 @@ $currentDate = date('d/m/Y');
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="00N9s000000Nl1G" class="font-weight-bold">Contact Time</label>
-                                <input id="00N9s000000Nl1G" class="form-control" name="00N9s000000Nl1G" placeholder="10:00am" type="text">
+                                <label for="contactTime" class="font-weight-bold">Contact Time</label>
+                                <input id="contactTime" class="form-control" name="00N9s000000Nl1G" placeholder="10:00am" type="text">
                             </div>
                         </div>
                     </div>
@@ -95,8 +85,8 @@ $currentDate = date('d/m/Y');
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="company" class="font-weight-bold">Company</label>
-                                <input type="text" id="company" class="form-control" name="company">
+                                <label for="trading" class="font-weight-bold">Trading name</label>
+                                <input type="text" id="trading" class="form-control" name="trading">
                             </div>
                         </div>
                     </div>
@@ -170,8 +160,8 @@ $currentDate = date('d/m/Y');
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <lable for="00NMq000000R4yn" class="font-weight-bold">Interesting in</lable>
-                                <select multiple id="00NMq000000R4yn" class="form-control" name="00NMq000000R4yn" title="Lead Interesting in">
+                                <lable for="interest" class="font-weight-bold">Interesting in</lable>
+                                <select multiple id="interest" class="form-control" name="interest" title="Lead Interesting in">
                                     <option value="Not specified" selected>-- Not specified --</option>
                                     <option value="Online Ordering System">• Online Ordering System</option>
                                     <option value="Booking System">• Booking System</option>
@@ -189,8 +179,8 @@ $currentDate = date('d/m/Y');
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <lable for="00N2v00000IyVpq" class="font-weight-bold">Comments</lable>
-                                <textarea id="00N2v00000IyVpq" class="form-control" name="00N2v00000IyVpq" rows="3" type="text" wrap="soft"></textarea>
+                                <lable for="comment" class="font-weight-bold">Comments</lable>
+                                <textarea id="comment" class="form-control" name="comment" rows="3" type="text" wrap="soft"></textarea>
                             </div>
                         </div>
                     </div>
@@ -202,8 +192,8 @@ $currentDate = date('d/m/Y');
                         </div>
                     </div>
 
-                    <input type="hidden" id="RestaurantMarketingAgent" name="00N2u000000mNZG" value="Other">
-                    <input type="hidden" id="SignupFormVersion" name="00N9s000000VWbf" value="L4U Website 1.0" />
+                    <input type="hidden" id="RestaurantMarketingAgent" name="agent" value="Other">
+                    <input type="hidden" id="SignupFormVersion" name="version" value="L4U Website 1.0" />
 
                 </div>
             </div>
