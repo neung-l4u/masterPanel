@@ -3,7 +3,7 @@ global $db, $date;
 
 $password = "Localeats#".date("Y");
 ?>
-<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
+<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs4.min.css">
 
 <style>
     .clickable {
@@ -19,8 +19,8 @@ $password = "Localeats#".date("Y");
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h3 class="m-0">
-                    <svg class="nav-icon mr-3" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512"><path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3zM609.3 512H471.4c5.4-9.4 8.6-20.3 8.6-32v-8c0-60.7-27.1-115.2-69.8-151.8c2.4-.1 4.7-.2 7.1-.2h61.4C567.8 320 640 392.2 640 481.3c0 17-13.8 30.7-30.7 30.7zM432 256c-31 0-59-12.6-79.3-32.9C372.4 196.5 384 163.6 384 128c0-26.8-6.6-52.1-18.3-74.3C384.3 40.1 407.2 32 432 32c61.9 0 112 50.1 112 112s-50.1 112-112 112z" fill="#000000" /></svg>
-                    Logs
+                    <svg class="nav-icon mr-3" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V285.7l-86.8 86.8c-10.3 10.3-17.5 23.1-21 37.2l-18.7 74.9c-2.3 9.2-1.8 18.8 1.3 27.5H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128zM549.8 235.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-29.4 29.4-71-71 29.4-29.4c15.6-15.6 40.9-15.6 56.6 0zM311.9 417L441.1 287.8l71 71L382.9 487.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z" fill="#000000" /></svg>
+                    SignUp Form Logs
                 </h3>
             </div><!-- /.col -->
             <div class="col-sm-6">
@@ -50,11 +50,11 @@ $password = "Localeats#".date("Y");
                                        style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:15%">Date time</th>
-                                        <th style="width:15%">Country</th>
-                                        <th style="width:45%">Shopname</th>
-                                        <th style="width:5%">SignupJson</th>
-                                        <th style="width:5%">StripeJson</th>
+                                        <th style="width:11%">Timestamp</th>
+                                        <th style="width:10%">Country</th>
+                                        <th style="width:49%">Shop name</th>
+                                        <th style="width:5%">Signup</th>
+                                        <th style="width:5%">Stripe</th>
                                         <th style="width:5%">Contract</th>
                                         <th style="width:5%">Status</th>
                                     </tr>
@@ -88,7 +88,7 @@ $password = "Localeats#".date("Y");
             <div class="modal-dialog modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
                     <div class="modal-header d-flex align-items-center">
-                        <h3>View Logs</h3>
+                        <h4><span class="logType font-weight-light">View</span>: <span class="shopName text-primary"></span></h4>
                         <button onclick="copyText();" style="color: #bbb; border: none; background: none;"><i class="far fa-copy" style="font-size: 25px;"></i></button>
                     </div> <!-- modal-header -->
 
@@ -110,6 +110,8 @@ $password = "Localeats#".date("Y");
 <script src="plugins/jquery/jquery.min.js"></script>
 <script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
 <script>
+    let shopName = $(".shopName");
+    let logType = $(".logType");
     let signupTable = $('#signupTable').DataTable( {
         pagingType: 'full_numbers',
         ajax: {
@@ -123,13 +125,16 @@ $password = "Localeats#".date("Y");
             ['Fit', 25, 50, 'All']
         ],columnDefs: [
             { targets: [0], className: 'dt-left' },
-            { targets: [3, 4, 5], className: 'dt-center' },
-            { targets: [6], className: 'dt-right' }
+            { targets: [3, 4, 5], className: 'dt-center', "orderable": "false" },
+            { targets: [6], className: 'dt-right' , "orderable": "false"}
         ]
     } );
 
     function viewJson(data) {
         let jsonData = data;
+        console.log("data", data.shopName);
+        if(data !== undefined){ shopName.text(data.ShopName); logType.text("Signup");}
+        if(data.restaurant_name !== undefined){ shopName.text(data.restaurant_name); logType.text("Stripe");}
         
         $('#formModal').modal('show');
         $('#jsonText').html(JSON.stringify(jsonData, undefined, 2));
@@ -137,6 +142,7 @@ $password = "Localeats#".date("Y");
 
     const resetForm = () => {
         console.log('resetForm');
+        shopName.text('');
     }// const
 
     function showCopy() {

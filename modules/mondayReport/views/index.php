@@ -23,10 +23,13 @@ $person = $db->query('SELECT st.sNickName AS "nick", st.sName AS "name", te.name
 $stat = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo WHERE mo.staffID = ? GROUP BY mo.staffID;',$_SESSION['id'])->fetchArray();
 $stat['count'] = !empty($stat['count']) ? number_format($stat['count']) : 0;
 
-$sumAll = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo')->fetchArray();
-$sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY DATE(whenTime) DESC LIMIT 0,10;')->fetchAll();
-$topDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY count DESC LIMIT 0,1;')->fetchArray();
-$lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY count LIMIT 0,1;')->fetchArray();
+//$sumAll = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo')->fetchArray();
+$sumAll = $db->query('SELECT COUNT(DISTINCT mo.id) AS count FROM mondayslowreportlogs mo;')->fetchArray();
+
+//$sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY DATE(whenTime) DESC LIMIT 0,10;')->fetchAll();
+$sumDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FROM mondayslowreportlogs mo GROUP BY DATE(mo.whenTime) ORDER BY day DESC LIMIT 10;')->fetchAll();
+$topDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FROM mondayslowreportlogs mo GROUP BY DATE(mo.whenTime) ORDER BY count DESC LIMIT 1;')->fetchArray();
+$lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FROM mondayslowreportlogs mo GROUP BY DATE(mo.whenTime) ORDER BY count ASC LIMIT 1;')->fetchArray();
 ?>
 <!doctype html>
 <html lang="en">
@@ -112,9 +115,9 @@ $lowDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FR
                             <div style="width: 100%" class="d-flex flex-column pl-3">
                                 <span><b>Reporter: </b> <?php echo showName($person['nick'],$person['name']); ?></span>
                                 <span><b>Team: </b> <?php echo firstOnly($person['team']); ?></span>
-                                <span>
-                                <b>The total I reported: </b> <span id="counterNum"><?php echo number_format($stat['count']); ?></span>
-                            </span>
+                                <span><b>The total I reported: </b> <span id="counterNum"><?php echo number_format($stat['count']); ?></span> times.</span>
+                                <span><a href="calendar.php" target="_blank">
+                                        <svg  height="1.3rem"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#0d6efd" d="M128 0c17.7 0 32 14.3 32 32l0 32 128 0 0-32c0-17.7 14.3-32 32-32s32 14.3 32 32l0 32 48 0c26.5 0 48 21.5 48 48l0 48L0 160l0-48C0 85.5 21.5 64 48 64l48 0 0-32c0-17.7 14.3-32 32-32zM0 192l448 0 0 272c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 192zm64 80l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm128 0l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM64 400l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zm112 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16z"/></svg></a></span>
                             </div>
                         </div>
 

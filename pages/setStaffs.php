@@ -16,7 +16,7 @@ $password = "Localeats#".date("Y");
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="main.php">My Desk</a></li>
+                    <li class="breadcrumb-item"><a href="main.php">Home</a></li>
                     <li class="breadcrumb-item"><a href="#">Settings</a></li>
                     <li class="breadcrumb-item active">Staffs</li>
                 </ol>
@@ -295,6 +295,10 @@ $password = "Localeats#".date("Y");
             console.log(status + ": " + error);
         });
     }// const
+
+    function reloadTable() {
+
+    }
 
     const setEdit = (id) => {
         const inputName = $("#inputName");

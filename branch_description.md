@@ -1,3 +1,7 @@
+
+>250320 mark/feature/signupMini
+>- ทำ form Signup Mini ยิงเข้า make.com > Leads Monday
+
 >250220 bas/feature/formEmail
 >- ทำ form สำหรับ ยิง mail ที่ไม่มา
 
