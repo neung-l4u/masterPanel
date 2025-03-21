@@ -1,4 +1,7 @@
 <?php
+
+use cancellation\assets\db\db;
+
 date_default_timezone_set("Asia/Bangkok");
 error_reporting(E_ERROR | E_PARSE);
 
