@@ -25,14 +25,38 @@ $data['feedback'] = !empty($_REQUEST['feedback']) ? $_REQUEST['feedback'] : null
 $params['result'] = "Default Text";
 $params['timestamp'] = date("Y-m-d H:i:s");
 
-if ($data['mode'] == "save"){
-    $insert = $db->query('INSERT INTO `Cancellation`
-                            (`county`, `city`, `shopname`, `trading`, `address`, `state`, `zip`, `firstname`, `lastname`, `mobile`, `email`, `other`, `reason`, `lastdate`, `feedback`) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
-        ,$data['country'] ,$data['city'], $data['shopName'], $data['tradingName'], $data['streetAddress'], $data['state'], $data['zip'], $data['first_name'], $data['last_name'], $data['mobile'], $data['email'], $data['other'], $data['reason'], $data['lastDate'], $data['feedback']
-    );
+$countryMap = [
+    "Australia" => "AU",
+    "New Zealand" => "NZ",
+    "Thailand" => "TH",
+    "United States" => "US",
+    "Canada" => "CA",
+    "United Kingdom" => "UK"
+];
 
-    $params['result'] = "Save to Database by Bas";
+if (!empty($data['country']) && isset($countryMap[$data['country']])) {
+    $data['country'] = $countryMap[$data['country']];
+} else {
+    $data['country'] = null; // หรือ default ค่า fallback
+}
+
+
+
+if ($data['mode'] == "save"){
+
+    try {
+        $insert = $db->query(
+            'INSERT INTO `Cancellation` (`county`, `city`, `shopname`, `trading`, `address`, `state`, `zip`, `firstname`, `lastname`, `mobile`, `email`, `other`, `reason`, `lastdate`, `feedback`) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            $data['country'], $data['city'], $data['shopName'], $data['tradingName'], $data['streetAddress'], $data['state'], $data['zip'], $data['first_name'], $data['last_name'], $data['mobile'], $data['email'], $data['other'], $data['reason'], $data['lastDate'], $data['feedback']
+        );
+
+        $params['result'] = "Save to Database by Bas";
+    } catch (Exception $e) {
+        http_response_code(500);
+        $params['result'] = "DB Error: " . $e->getMessage(); // สำหรับ dev log
+    }
+
 }
 
 echo json_encode($params);
