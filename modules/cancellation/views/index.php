@@ -12,7 +12,7 @@ $testMode = ($token == "test") ? 1 : 0;
 
 <header class="intro">
     <div class="d-flex align-items-center justify-content-center">
-        <img src="assets/img/newL4U-logo-100x100.png" alt="L4U Logo">
+        <img src="../assets/img/newL4U-logo-100x100.png" alt="L4U Logo">
         <div class="d-flex flex-column">
             <h1>Local For You Services</h1>
             <p>Online Unsubscribe Form.</p>
@@ -405,12 +405,12 @@ $testMode = ($token == "test") ? 1 : 0;
         Local For You
     </a>
 </footer>
-<script src="assets/js/jquery.3.6.0.min.js"></script>
-<script src="assets/js/bootstrap5.0.2.bundle.min.js"></script>
-<script src="assets/js/global_data.js"></script>
-<script src="assets/js/date_format.js"></script>
-<script src="assets/js/popper.2.11.5.min.js"></script>
-<script src="assets/js/unsubData.js"></script>
+<script src="../assets/js/jquery.3.6.0.min.js"></script>
+<script src="../assets/js/bootstrap5.0.2.bundle.min.js"></script>
+<script src="../assets/js/global_data.js"></script>
+<script src="../assets/js/date_format.js"></script>
+<script src="../assets/js/popper.2.11.5.min.js"></script>
+<script src="../assets/js/unsubData.js"></script>
 <script>
     let payload = {};
 
@@ -427,9 +427,6 @@ $testMode = ($token == "test") ? 1 : 0;
         let country = $("#formCountry").val();
         let shopName = $("#shopName").val();
         let lastDate = $("#lastDate").val();
-
-
-
 
         if (country === ""){
             $("#smallCountry").show();
@@ -508,14 +505,8 @@ $testMode = ($token == "test") ? 1 : 0;
                     alert("Send fail!!");
 
                 });
-
-
-
         }
     }
-
-
-
 
     function saveDB(){
         const ajaxSaveDB = $.ajax({
