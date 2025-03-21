@@ -1,5 +1,6 @@
 <?php
-$token = !empty($_GET['token']) ? $_GET['token'] : '';
+$token = !empty($_REQUEST['token']) ? strtolower(trim($_REQUEST['token'])): '';
+$testMode = ($token == "test") ? 1 : 0;
 ?>
 <!doctype html>
 <html lang="en">
@@ -20,12 +21,19 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
 </header>
 
 <main style="min-height: 60vh">
+    <?php if ($testMode){
+        echo "<div><h1 class='text-danger'>Test Mode On</h1></div>";
+    }
+
+
+    ?>
     <div class="container d-flex justify-content-center align-content-center">
         <?php
         if (empty($_GET['token'])){ ?>
             <i class="fa-solid fa-circle-exclamation text-danger"></i>
             <span class="text-danger py-5">Please contact the Local For You staff to submit a request to cancel your membership.</span>
         <?php }else{ ?>
+
             <div>
                 <form id="myForm" action="#" method="POST">
                     <div class="card mt-3">
@@ -254,10 +262,9 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                         <label for="formReason">
                                             What is the Main Reason you wish to cancel?
                                             <b class="red">*</b>
-                                            <small class="text-danger" id="smallReason">Please Select One.</small>
                                         </label>
                                         <select id="formReason" class="form-select" name="reason" onchange="superbas()">
-                                            <option selected value="0"> --- Please select your reason --- </option>
+                                            <option selected value=""> --- Please select your reason --- </option>
                                             <option value="Closing down the Business">Closing down the Business</option>
                                             <option value="Changing Business Owner">Changing Business Owner</option>
                                             <option value="Not getting enough orders">Not getting enough orders</option>
@@ -288,7 +295,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                                 <div class="mt-3">
                                     <div class="col d-flex flex-column">
                                         <label for="lastDate">
-                                            Last Date you want the system Live? <b class="red">*</b><small class="text-danger" id="smallDate">Please Please select a date.</small>
+                                            Last Date you want the system Live? <b class="red">*</b><small class="text-danger" id="smallDate">Please select a date.</small>
                                         </label>
 
                                         <div class="date" id="datepicker">
@@ -376,6 +383,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                             </div>
                             <div>
                                 <!--blank space-->
+                                <input type="hidden" id="testMode" name="testMode" value="<?php echo $testMode; ?>">
                                 <input type="hidden" id="myIP" name="myIP">
                                 <input type="hidden" id="agent" name="agent">
 
@@ -411,7 +419,6 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
         $("#loadingAjax").hide()
         $("#smallCountry").hide()
         $("#smallShopName").hide()
-        $("#smallReason").hide()
         $("#smallDate").hide()
         $("#smallOther").hide()
     });//ready
@@ -419,9 +426,10 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
     function validateForm(){
         let country = $("#formCountry").val();
         let shopName = $("#shopName").val();
-        let reason = $("#formReason").val();
         let lastDate = $("#lastDate").val();
-        let other = $("#boxother").val();
+
+
+
 
         if (country === ""){
             $("#smallCountry").show();
@@ -430,45 +438,35 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
             $("#smallCountry").hide();
             $("#smallShopName").show();
             $("#shopName").focus();
-        }else if (reason === ""){
+        }else if (lastDate === ""){
             $("#smallShopName").hide();
-            $("#smallReason").show();
-            $("#formReason").focus();
-        }else if (reason === "other" && other.length < 1 ){
-            $("#smallReason").hide();
-            $("#smallOther").show();
-            $("#boxother").focus();
-        }else if (lastDate === "0000-00-00"){
-            $("#smallReason").hide();
             $("#smallDate").show();
             $("#lastDate").focus();
         }else{
-            $('#cancelBtn').on('click', function () {
-                $("#loadingAjax").fadeIn(100);
-                // อ่านค่าจาก input, select, textarea ทั้งหมดในฟอร์ม
-                $('form').find('input, select, textarea').each(function () {
-                    let name = $(this).attr('name');
-                    let value = $(this).val();
+            $("#loadingAjax").fadeIn(100);
+            // อ่านค่าจาก input, select, textarea ทั้งหมดในฟอร์ม
+            $('form').find('input, select, textarea').each(function () {
+                let name = $(this).attr('name');
+                let value = $(this).val();
 
-                    // ตรวจสอบว่ามี name ไหม (ป้องกันค่า undefined)
-                    if (name) {
-                        // เช็คว่าเป็น radio และถูกเลือกหรือไม่
-                        if ($(this).is(':radio')) {
-                            if ($(this).is(':checked')) {
-                                payload[name] = value;
-                            }
-                        }
-                        // เช็คว่าเป็น checkbox หรือไม่
-                        else if ($(this).is(':checkbox')) {
-                            payload[name] = $(this).is(':checked');
-                        }
-                        // ค่าอื่นๆ (text, select, textarea)
-                        else {
+                // ตรวจสอบว่ามี name ไหม (ป้องกันค่า undefined)
+                if (name) {
+                    // เช็คว่าเป็น radio และถูกเลือกหรือไม่
+                    if ($(this).is(':radio')) {
+                        if ($(this).is(':checked')) {
                             payload[name] = value;
                         }
                     }
-
-                });
+                    // เช็คว่าเป็น checkbox หรือไม่
+                    else if ($(this).is(':checkbox')) {
+                        payload[name] = $(this).is(':checked');
+                    }
+                    // ค่าอื่นๆ (text, select, textarea)
+                    else {
+                        payload[name] = value;
+                    }
+                }
+            }); //cancelBtn.click
 
                 if (payload.country === "AU"){
                     payload.country = "Australia";
@@ -500,6 +498,7 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                 });
 
                 callAjax.done(function (res) {
+                    // alert("done")
                     location.replace("https://localforyou.com/thank-you/");
                 });
 
@@ -511,34 +510,34 @@ $token = !empty($_GET['token']) ? $_GET['token'] : '';
                 });
 
 
-            }); //cancelBtn.click
+
         }
     }
 
 
 
 
-    // function saveDB(){
-    //     const ajaxSaveDB = $.ajax({
-    //             url: "activeAjax.php",
-    //             method: 'POST',
-    //             async: false,
-    //             cache: false,
-    //             dataType: 'json',
-    //             data: payload,
-    //         }
-    //     );
-    //
-    //     ajaxSaveDB.done(function(res) {
-    //         console.log("ajax Send to Database Done");
-    //         return true;
-    //     });
-    //
-    //     ajaxSaveDB.fail(function(xhr, status, error) {
-    //         console.log("ajax Send to Database fail!!");
-    //         console.log(status + ': ' + error);
-    //         return false;
-    //     });
+    function saveDB(){
+        const ajaxSaveDB = $.ajax({
+                url: "activeAjax.php",
+                method: 'POST',
+                async: false,
+                cache: false,
+                dataType: 'json',
+                data: payload,
+            }
+        );
+
+        ajaxSaveDB.done(function(res) {
+            console.log("ajax Send to Database Done");
+            return true;
+        });
+
+        ajaxSaveDB.fail(function(xhr, status, error) {
+            console.log("ajax Send to Database fail!!");
+            console.log(status + ': ' + error);
+            return false;
+        });
 
     }
 
