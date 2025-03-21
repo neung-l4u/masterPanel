@@ -1,6 +1,6 @@
 <?php
-$token = !empty($_REQUEST['token']) ? strtolower(trim($_REQUEST['token'])): '';
-$testMode = ($token == "test") ? 1 : 0;
+$id = !empty($_REQUEST['id']) ? strtolower(trim($_REQUEST['id'])): '';
+$testMode = ($id == "test") ? 1 : 0;
 ?>
 <!doctype html>
 <html lang="en">
@@ -21,15 +21,15 @@ $testMode = ($token == "test") ? 1 : 0;
 </header>
 
 <main style="min-height: 60vh">
-    <?php if ($testMode){
-        echo "<div><h1 class='text-danger'>Test Mode On</h1></div>";
+    <?php if ($id == "test"){
+        echo "<div><h3 class='text-danger'>Test Mode On</h3></div>";
     }
 
 
     ?>
     <div class="container d-flex justify-content-center align-content-center">
         <?php
-        if (empty($_GET['token'])){ ?>
+        if (empty($_GET['id'])){ ?>
             <i class="fa-solid fa-circle-exclamation text-danger"></i>
             <span class="text-danger py-5">Please contact the Local For You staff to submit a request to cancel your membership.</span>
         <?php }else{ ?>
@@ -44,7 +44,8 @@ $testMode = ($token == "test") ? 1 : 0;
                                 <div class="text-center">
                                     <h5 class="card-title font-weight-bold py-4">Business information</h5>
                                 </div>
-                                <div class="form-group">
+
+                                <div class="form-group pt-2">
                                     <label for="formCountry">
                                         <span>Country <b class="red">*</b><small class="text-danger" id="smallCountry">Please Select County.</small></span>
                                     </label>
@@ -57,8 +58,6 @@ $testMode = ($token == "test") ? 1 : 0;
                                         <option value="CA">Canada</option>
                                         <option value="TH">Thailand</option>
                                     </select>
-
-
                                 </div>
 
                                 <div class="form-group pt-2">
@@ -384,8 +383,6 @@ $testMode = ($token == "test") ? 1 : 0;
                             <div>
                                 <!--blank space-->
                                 <input type="hidden" id="testMode" name="testMode" value="<?php echo $testMode; ?>">
-                                <input type="hidden" id="myIP" name="myIP">
-                                <input type="hidden" id="agent" name="agent">
 
                             </div>
                         </div>
@@ -496,7 +493,7 @@ $testMode = ($token == "test") ? 1 : 0;
 
                 callAjax.done(function (res) {
                     // alert("done")
-                    location.replace("https://localforyou.com/thank-you/");
+                    // location.replace("https://localforyou.com/thank-you/");
                 });
 
                 callAjax.fail(function(xhr, status, error) {
@@ -510,7 +507,7 @@ $testMode = ($token == "test") ? 1 : 0;
 
     function saveDB(){
         const ajaxSaveDB = $.ajax({
-                url: "activeAjax.php",
+                url: "activeajax.php",
                 method: 'POST',
                 async: false,
                 cache: false,

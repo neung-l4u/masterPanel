@@ -1,6 +1,5 @@
 <?php
-class db
-{
+class db {
 
     protected $connection;
     protected $query;
@@ -8,8 +7,7 @@ class db
     protected $query_closed = TRUE;
     public $query_count = 0;
 
-    public function __construct($dbhost = 'localhost', $dbuser = 'root', $dbpass = '', $dbname = '', $charset = 'utf8')
-    {
+    public function __construct($dbhost = 'localhost', $dbuser = 'root', $dbpass = '', $dbname = '', $charset = 'utf8') {
         $this->connection = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
         if ($this->connection->connect_error) {
             $this->error('Failed to connect to MySQL - ' . $this->connection->connect_error);
@@ -17,8 +15,7 @@ class db
         $this->connection->set_charset($charset);
     }
 
-    public function query($query)
-    {
+    public function query($query) {
         if (!$this->query_closed) {
             $this->query->close();
         }
@@ -55,8 +52,7 @@ class db
     }
 
 
-    public function fetchAll($callback = null)
-    {
+    public function fetchAll($callback = null) {
         $params = array();
         $row = array();
         $meta = $this->query->result_metadata();
@@ -82,8 +78,7 @@ class db
         return $result;
     }
 
-    public function fetchArray()
-    {
+    public function fetchArray() {
         $params = array();
         $row = array();
         $meta = $this->query->result_metadata();
@@ -102,36 +97,30 @@ class db
         return $result;
     }
 
-    public function close()
-    {
+    public function close() {
         return $this->connection->close();
     }
 
-    public function numRows()
-    {
+    public function numRows() {
         $this->query->store_result();
         return $this->query->num_rows;
     }
 
-    public function affectedRows()
-    {
+    public function affectedRows() {
         return $this->query->affected_rows;
     }
 
-    public function lastInsertID()
-    {
+    public function lastInsertID() {
         return $this->connection->insert_id;
     }
 
-    public function error($error)
-    {
+    public function error($error) {
         if ($this->show_errors) {
             exit($error);
         }
     }
 
-    private function _gettype($var)
-    {
+    private function _gettype($var) {
         if (is_string($var)) return 's';
         if (is_float($var)) return 'd';
         if (is_int($var)) return 'i';
@@ -139,5 +128,4 @@ class db
     }
 
 }
-
 ?>
