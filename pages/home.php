@@ -32,14 +32,13 @@ $loginID = $_SESSION['id'];
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h4 class="m-0">
-<!--                    <svg class="nav-icon mr-2" height="1.5em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z" /></svg>-->
                     <svg class="nav-icon mr-2" height="1.1em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 576 512"><path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></svg>
-                    My Desk
+                    Home
                 </h4>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item active"><a href="main.php">My Desk</a></li>
+                    <li class="breadcrumb-item active"><a href="main.php">Home</a></li>
                 </ol>
             </div><!-- /.col -->
         </div><!-- /.row -->
@@ -85,30 +84,19 @@ $loginID = $_SESSION['id'];
             <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                 <div class="info-box align-items-center">
                     <div class="card-body p-0 ">
-
-                            <div class="d-flex flex-row flex-wrap justify-content-center">
-
-                                    <div class="col-3">
-                                        <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalExchangeCash">
-                                            <i class="fas fa-money-bill"></i> Cash
-                                        </a>
-                                    </div>
-                                    <div class="col-3">
-                                        <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalConvertCoin">
-                                            <i class="fas fa-coins"></i> Convert
-                                        </a>
-                                    </div>
-                                    <div class="col-3">
-                                        <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalTransferCoin">
-                                            <i class="fas fa-arrow-right"></i> Transfer
-                                        </a>
-                                    </div>
-                                    <div class="col-3">
-                                        <a href="javascript:" class="btn btn-outline-primary w-100 linkBTN" data-toggle="modal" data-target="#formModalRedeemGiftCard">
-                                            <i class="fas fa-gift"></i> Gift Card
-                                        </a>
-                                    </div>
-
+                            <div class="d-flex flex-row justify-content-around">
+                                <a class="btn btn-outline-primary linkBTN w-auto" data-toggle="modal" data-target="#formModalExchangeCash">
+                                    <i class="fas fa-money-bill"></i><span class="d-none d-sm-none d-md-none d-lg-block"> Cash</span>
+                                </a>
+                                <a class="btn btn-outline-primary linkBTN w-auto" data-toggle="modal" data-target="#formModalConvertCoin">
+                                    <i class="fas fa-coins"></i><span class="d-none d-sm-none d-md-none d-lg-block">  Convert</span>
+                                </a>
+                                <a class="btn btn-outline-primary linkBTN w-auto" data-toggle="modal" data-target="#formModalTransferCoin">
+                                    <i class="fas fa-arrow-right"></i><span class="d-none d-sm-none d-md-none d-lg-block">  Transfer</span>
+                                </a>
+                                <a class="btn btn-outline-primary linkBTN w-auto" data-toggle="modal" data-target="#formModalRedeemGiftCard">
+                                    <i class="fas fa-gift"></i><span class="d-none d-sm-none d-md-none d-lg-block">  Gift Card</span>
+                                </a>
                             </div>
                     </div>
                 </div>

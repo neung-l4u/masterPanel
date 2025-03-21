@@ -1,8 +1,8 @@
 <?php
 $menuPage = isset($_REQUEST["p"]) ? $_REQUEST["p"] : "";
 
-$showPage = "myDesk.php";
-$activeMenu["lv1"] = "myDesk";
+$showPage = "home.php";
+$activeMenu["lv1"] = "home";
 $activeMenu["lv2"] = "";
 $datatable["show"] = "false";
 $datatable["src"] = "";
@@ -11,9 +11,9 @@ $datatable2["src"] = "";
 $datatable["showDatatableStats"] = "false";
 
 switch ($menuPage){
-    case "myDesk":
-        $showPage = "myDesk.php";
-        $activeMenu["lv1"] = "myDesk";
+    case "home":
+        $showPage = "home.php";
+        $activeMenu["lv1"] = "home";
         $activeMenu["lv2"] = "";
         $datatable["show"] = "false";
         $datatable["src"] = "";
