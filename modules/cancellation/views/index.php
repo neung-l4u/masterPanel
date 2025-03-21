@@ -21,19 +21,13 @@ $testMode = ($id == "test") ? 1 : 0;
 </header>
 
 <main style="min-height: 60vh">
-    <?php if ($id == "test"){
-        echo "<div><h3 class='text-danger'>Test Mode On</h3></div>";
-    }
-
-
-    ?>
+    <?php if ($id == "test"){ echo "<div><h3 class='text-danger'>Test Mode On</h3></div>"; }  ?>
     <div class="container d-flex justify-content-center align-content-center">
         <?php
         if (empty($_GET['id'])){ ?>
             <i class="fa-solid fa-circle-exclamation text-danger"></i>
             <span class="text-danger py-5">Please contact the Local For You staff to submit a request to cancel your membership.</span>
         <?php }else{ ?>
-
             <div>
                 <form id="myForm" action="#" method="POST">
                     <div class="card mt-3">
@@ -61,11 +55,7 @@ $testMode = ($id == "test") ? 1 : 0;
                                 </div>
 
                                 <div class="form-group pt-2">
-                                    <label for="shopName">
-                                        Shop name
-                                        <b class="red">*</b>
-                                        <small class="text-danger" id="smallShopName">Please check the message.</small>
-                                    </label>
+                                    <label for="shopName">Shop name <b class="red">*</b> <small class="text-danger" id="smallShopName">Please check the message.</small></label>
 
                                     <div>
                                         <input
@@ -73,7 +63,7 @@ $testMode = ($id == "test") ? 1 : 0;
                                                 id="shopName"
                                                 name="shopName"
                                                 class="form-control"
-                                                placeholder="Chaba Thai Bistro"
+                                                placeholder="Mali Thai Bistro"
                                                 autocomplete="off"
                                         />
                                     </div>
@@ -169,15 +159,7 @@ $testMode = ($id == "test") ? 1 : 0;
 
                                 <div class="pt-4">
                                     <label for="first_name">First name <b class="red">*</b></label>
-                                    <input
-                                            type="text"
-                                            id="first_name"
-                                            name="first_name"
-                                            class="form-control"
-                                            autocomplete="off"
-                                            required
-                                            placeholder="John"
-                                    />
+                                    <input type="text" id="first_name" name="first_name" class="form-control" autocomplete="off" placeholder="John"/>
                                 </div>
 
                                 <div class="pt-2">
@@ -185,23 +167,13 @@ $testMode = ($id == "test") ? 1 : 0;
                                         <span>Last name</span>
                                         <b class="red">*</b>
                                     </label>
-                                    <input
-                                            type="text"
-                                            id="last_name"
-                                            name="last_name"
-                                            class="form-control"
-                                            autocomplete="off"
-                                            placeholder="Doe"
-                                    />
+                                    <input type="text" id="last_name" name="last_name" class="form-control" autocomplete="off" placeholder="Doe"/>
                                 </div>
 
                                 <div class="pt-2">
                                     <label for="mobile" class="control-label">
-                                        Mobile
-                                        <b class="red">*</b>
-                                        <small class="form-text text-muted">
-                                            ( without country's code )
-                                        </small>
+                                        Mobile <b class="red">*</b>
+                                        <small class="form-text text-muted">(without country's code )</small>
                                     </label>
                                     <div>
                                     <span class="input-group">
@@ -218,33 +190,17 @@ $testMode = ($id == "test") ? 1 : 0;
                                                 autocomplete="off"
                                         />
                                     </span>
-                                        <small id="MobileHelp" class="form-text text-muted">
-                                            e.g. 0408084722
-                                        </small><br>
-                                        <small class="form-text text-primary mobileFormatted">Formatted number will show
-                                            here.</small>
+                                        <small id="MobileHelp" class="form-text text-muted">e.g. 0408084722</small><br>
+                                        <small class="form-text text-primary mobileFormatted">Formatted number will show here.</small>
                                         <input type="hidden" id="ownerMobile" name="ownerMobile" class="mobileFormatted">
                                     </div>
                                 </div>
 
                                 <div class="pt-2">
-                                    <label for="email" class="control-label">
-                                        Email
-                                        <b class="red">*</b>
-                                    </label>
+                                    <label for="email" class="control-label">Email <b class="red">*</b></label>
                                     <div>
-                                        <input
-                                                type="email"
-                                                class="form-control mainEmail text-lowercase"
-                                                id="email"
-                                                name="email"
-                                                maxlength="80"
-                                                autocomplete="off"
-                                                placeholder="mail@localforyou.com"
-                                        />
-                                        <small id="emailHelp" class="form-text text-muted">
-                                            e.g. mail@localforyou.com
-                                        </small>
+                                        <input type="email" class="form-control mainEmail text-lowercase" id="email" name="email" maxlength="80" autocomplete="off" placeholder="mail@localforyou.com"/>
+                                        <small id="emailHelp" class="form-text text-muted">e.g. mail@localforyou.com</small>
                                     </div>
                                 </div>
                             </div>
@@ -277,18 +233,12 @@ $testMode = ($id == "test") ? 1 : 0;
                                 </div>
 
                                 <div class="mb-3 mt-2 w-100" id="other">
-                                    <label for="additionComment" class="form-label">
+                                    <label for="boxother" class="form-label">
                                         <i class="fa-solid fa-note-sticky"></i>&nbsp;
                                         Other
                                         <small class="text-danger" id="smallOther">Please check the message.</small>
                                     </label>
-                                    <textarea
-                                            class="form-control w-100"
-                                            id="boxother"
-                                            name="other"
-                                            rows="3"
-                                            placeholder="-- Comment --"
-                                    ></textarea>
+                                    <textarea class="form-control w-100" id="boxother" name="other" rows="3" placeholder="-- Comment --"></textarea>
                                 </div>
 
                                 <div class="mt-3">
@@ -319,10 +269,8 @@ $testMode = ($id == "test") ? 1 : 0;
                                         <div class="text-center pt-4">
                                             <h5 class="card-title font-weight-bold pb-2">Cancellation Details</h5>
                                         </div>
-                                        <div id="paymentAgreement"
-                                             class="d-flex flex-column align-items-center gap-2 justify-content-evenly">
-                                            <div id="agreementTop"
-                                                 class="pb-4 d-flex flex-column align-items-start">
+                                        <div id="paymentAgreement" class="d-flex flex-column align-items-center gap-2 justify-content-evenly">
+                                            <div id="agreementTop" class="pb-4 d-flex flex-column align-items-start">
 
                                                 <figure>
                                                     <figcaption>NO CONTRACT - Min cancellation Policy</figcaption>
@@ -335,28 +283,16 @@ $testMode = ($id == "test") ? 1 : 0;
                                                 </figure>
 
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="true"
-                                                           id="acceptAgreement">
-                                                    <label class="form-check-label acceptAgreement" for="acceptAgreement">
-                                                        Yes I understand this
-                                                    </label>
+                                                    <input class="form-check-input" type="checkbox" value="true" id="acceptAgreement">
+                                                    <label class="form-check-label acceptAgreement" for="acceptAgreement"> Yes I understand this </label>
                                                 </div>
 
                                                 <div class="mb-3 mt-5 w-100">
                                                     <label for="additionComment" class="form-label">
-                                                        <i class="fa-solid fa-note-sticky"></i>&nbsp;
-                                                        Additional Information or feedback you wish to share with us
+                                                        <i class="fa-solid fa-note-sticky"></i>&nbsp; Additional Information or feedback you wish to share with us
                                                     </label>
-                                                    <textarea
-                                                            class="form-control w-100"
-                                                            id="additionComment"
-                                                            name="note"
-                                                            rows="3"
-                                                            placeholder="Any other information you would like us to know."
-                                                    ></textarea>
-                                                    <small id="subAdditionCommentHelp" class="form-text text-muted">
-                                                        We would love to hear your thoughts!
-                                                    </small>
+                                                    <textarea class="form-control w-100" id="additionComment" name="note" rows="3" placeholder="Any other information you would like us to know."></textarea>
+                                                    <small id="subAdditionCommentHelp" class="form-text text-muted"> We would love to hear your thoughts! </small>
                                                 </div>
                                             </div>
                                         </div>
@@ -369,21 +305,9 @@ $testMode = ($id == "test") ? 1 : 0;
 
                         <div class="card-footer">
                             <div class="float-end">
-                                <span id="loadingAjax" class="text-success">Form Submited</span>
-
-                                <button
-                                        type="button"
-                                        class="btn btn-success"
-                                        id="cancelBtn"
-                                        onclick="validateForm()"
-                                >
-                                    Confirm
-                                </button>
-                            </div>
-                            <div>
-                                <!--blank space-->
+                                <span id="loadingAjax" class="text-success">Form Submitted</span>
+                                <button type="button" class="btn btn-success" id="cancelBtn" onclick="validateForm()">Confirm</button>
                                 <input type="hidden" id="testMode" name="testMode" value="<?php echo $testMode; ?>">
-
                             </div>
                         </div>
                     </div>
@@ -438,49 +362,32 @@ $testMode = ($id == "test") ? 1 : 0;
             $("#lastDate").focus();
         }else{
             $("#loadingAjax").fadeIn(100);
-            // อ่านค่าจาก input, select, textarea ทั้งหมดในฟอร์ม
+
+            // read all input, select, textarea in form
             $('form').find('input, select, textarea').each(function () {
                 let name = $(this).attr('name');
                 let value = $(this).val();
 
-                // ตรวจสอบว่ามี name ไหม (ป้องกันค่า undefined)
                 if (name) {
-                    // เช็คว่าเป็น radio และถูกเลือกหรือไม่
-                    if ($(this).is(':radio')) {
-                        if ($(this).is(':checked')) {
-                            payload[name] = value;
-                        }
-                    }
-                    // เช็คว่าเป็น checkbox หรือไม่
-                    else if ($(this).is(':checkbox')) {
-                        payload[name] = $(this).is(':checked');
-                    }
-                    // ค่าอื่นๆ (text, select, textarea)
-                    else {
-                        payload[name] = value;
-                    }
+                    if ($(this).is(':radio')) { if ($(this).is(':checked')) { payload[name] = value; } } // เช็คว่าเป็น radio และถูกเลือกหรือไม่
+                    else if ($(this).is(':checkbox')) { payload[name] = $(this).is(':checked'); } // เช็คว่าเป็น checkbox หรือไม่
+                    else { payload[name] = value; } // ค่าอื่นๆ (text, select, textarea)
                 }
-            }); //cancelBtn.click
+            }); //read from
 
-                if (payload.country === "AU"){
-                    payload.country = "Australia";
-                }else if (payload.country === "NZ"){
-                    payload.country = "New Zealand";
-                }else if (payload.country === "TH"){
-                    payload.country = "Thailand";
-                }else if (payload.country === "US"){
-                    payload.country = "United States";
-                }else if (payload.country === "CA"){
-                    payload.country = "Canada";
-                }else if (payload.country === "UK"){
-                    payload.country = "United Kingdom";
-                }else{
-                    payload.country = "Please select country";
-                }
+            const countryMap = {
+                AU: "Australia",
+                NZ: "New Zealand",
+                TH: "Thailand",
+                US: "United States",
+                CA: "Canada",
+                UK: "United Kingdom"
+            };
 
-                // แสดง payload ใน console
-                console.log(payload);
-                saveDB();
+            payload.country = countryMap[payload.country] || "Please select country";
+            console.log(payload);
+
+            saveDB();
 
                 console.log("we call webhook");
                 const callAjax = $.ajax({
@@ -492,6 +399,8 @@ $testMode = ($id == "test") ? 1 : 0;
                 });
 
                 callAjax.done(function (res) {
+                    console.log("Ajax done");
+                    console.log("return = ",res);
                     // alert("done")
                     // location.replace("https://localforyou.com/thank-you/");
                 });
@@ -502,8 +411,8 @@ $testMode = ($id == "test") ? 1 : 0;
                     alert("Send fail!!");
 
                 });
-        }
-    }
+        }//Validate pass
+    }//end validateForm()
 
     function saveDB(){
         const ajaxSaveDB = $.ajax({
@@ -526,9 +435,7 @@ $testMode = ($id == "test") ? 1 : 0;
             console.log(status + ': ' + error);
             return false;
         });
-
-    }
-
+    }//saveDB
 </script>
 
 </body>

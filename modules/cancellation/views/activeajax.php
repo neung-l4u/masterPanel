@@ -23,6 +23,7 @@ $data['lastDate'] = !empty($_REQUEST['lastDate']) ? $_REQUEST['lastDate'] : null
 $data['feedback'] = !empty($_REQUEST['feedback']) ? $_REQUEST['feedback'] : null;
 
 $params['result'] = "Default Text";
+$params['timestamp'] = date("Y-m-d H:i:s");
 
 if ($data['mode'] == "save"){
     $insert = $db->query('INSERT INTO `Cancellation`
@@ -34,7 +35,4 @@ if ($data['mode'] == "save"){
     $params['result'] = "Save to Database by Bas";
 }
 
-//$params['name'] = 'L4U = '.$shop_name;
-
 echo json_encode($params);
-?>
