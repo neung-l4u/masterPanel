@@ -402,7 +402,7 @@ $testMode = ($id == "test") ? 1 : 0;
                     console.log("Ajax done");
                     console.log("return = ",res);
                     // alert("done")
-                    // location.replace("https://localforyou.com/thank-you/");
+                    location.replace("https://localforyou.com/thank-you/");
                 });
 
                 callAjax.fail(function(xhr, status, error) {
