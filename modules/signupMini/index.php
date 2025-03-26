@@ -131,7 +131,7 @@ $currentDate = date('d/m/Y');
                                     <option value="Canada">Canada</option>
                                     <option value="New Zealand">New Zealand</option>
                                     <option value="United Kingdom">United Kingdom</option>
-                                    <option value="USA">United States</option>
+                                    <option value="United States">United States</option>
                                     <option value="Thailand">Thailand</option>
                                 </select>
                             </div>
@@ -197,6 +197,7 @@ $currentDate = date('d/m/Y');
                 </div>
             </div>
 
+            <input type="hidden" id="formType" name="formType" value="mini" />
             <input type="hidden" id="leadSource" name="leadSource" value="Landing Page" />
             <input type="hidden" id="leadRecordType" name="leadRecordType" value="Ads" />
         </form>
@@ -225,7 +226,8 @@ $currentDate = date('d/m/Y');
             "SignupFormVersion": $("#SignupFormVersion").val(),
             "countryCode" : countryCode,
             "leadSource": $("#leadSource").val(),
-            "leadRecordType": $("#leadRecordType").val()
+            "leadRecordType": $("#leadRecordType").val(),
+            "formType": $("#formType").val()
         };
 
         const callAjax = $.ajax({
