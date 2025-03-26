@@ -10,9 +10,9 @@
 
 // --------------- Step- 1 -----------------**
 
-$countryTextOnlyStep01_00N2v00000IyVqF = $_POST['00N2v00000IyVqF'] ?? '';
+$countryTextOnlyStep01_00N2v00000IyVqF = $_POST['countryTextOnly'] ?? '';
 
-$industrialTypeStep01_00N9s000000QRyY = $_POST['00N9s000000QRyY'] ?? '';
+$industrialTypeStep01_00N9s000000QRyY = $_POST['formType'] ?? '';
 
 $currency = $_POST['currency'] ?? '';
 
@@ -28,23 +28,23 @@ $mobile = $_POST['mobile'] ?? '';
 
 $email = $_POST['email'] ?? '';
 
-$BestTimeToContactStep02_00N9s000000Nl1G = $_POST['00N9s000000Nl1G'] ?? '';
+$BestTimeToContactStep02_00N9s000000Nl1G = $_POST['bestTimeContact'] ?? '';
 
-$BusinessInformationShopNameStep02_00N2v00000IyVqB = $_POST['00N2v00000IyVqB'] ?? '';
+$BusinessInformationShopNameStep02_00N2v00000IyVqB = $_POST['shopName'] ?? '';
 
 $company = $_POST['company'] ?? ''; //10
 
-$BusinessInformationStep02_00N9s000000QPWu = $_POST['00N9s000000QPWu'] ?? '';
+$BusinessInformationStep02_00N9s000000QPWu = $_POST['businessNumber'] ?? '';
 
-$BusinessInformationStep02_00N2v00000IyVqO = $_POST['00N2v00000IyVqO'] ?? '';
+$BusinessInformationStep02_00N2v00000IyVqO = $_POST['tradingName'] ?? '';
 
 $BusinessInformationStep02_phone = $_POST['phone'] ?? '';
 
 $BusinessInformationStep02_url = $_POST['url'] ?? '';
 
-$BusinessInformationStep02_lang00N2v00000IyVqN = $_POST['00N2v00000IyVqN'] ?? '';
+$BusinessInformationStep02_lang00N2v00000IyVqN = $_POST['supportLanguage'] ?? '';
 
-$BusinessInformationStep02_ShopNum00N2v00000IyVqK = $_POST['00N2v00000IyVqK'] ?? '';
+$BusinessInformationStep02_ShopNum00N2v00000IyVqK = $_POST['physicalShopNumber'] ?? '';
 
 $BusinessInformationStep02_Street = $_POST['street'] ?? '';
 
@@ -58,7 +58,7 @@ $BusinessInformationStep02_shopCountry = $_POST['shopCountry'] ?? '';
 
 $BusinessInformationStep02_shipNumber = $_POST['shipNumber'] ?? '';
 
-$BusinessInformationStep02_shipAdd00N2v00000IyVqE = $_POST['00N2v00000IyVqE'] ?? '';
+$BusinessInformationStep02_shipAdd00N2v00000IyVqE = $_POST['shipAddress1'] ?? '';
 
 
 
@@ -68,35 +68,35 @@ $ProductDetailsStep03_contractPeriod = $_POST['contractPeriod'] ?? '';
 
 $ProductDetailsStep03_product = $_POST['product'] ?? '';
 
-$BookingSystemStep03_email00N9s000000VUeh = $_POST['00N9s000000VUeh'] ?? '';
+$BookingSystemStep03_email00N9s000000VUeh = $_POST['emailBooking'] ?? '';
 
-$BookingSystemStep03_pass00N9s000000VUem = $_POST['00N9s000000VUem'] ?? '';
+$BookingSystemStep03_pass00N9s000000VUem = $_POST['passwordBooking'] ?? '';
 
-$BookingSystemStep03_PaymentOptions00N2v00000IyVq8 = $_POST['00N2v00000IyVq8'] ?? '';
+$BookingSystemStep03_PaymentOptions00N2v00000IyVq8 = $_POST['payCheck'] ?? '';
 
-$BookingSystemStep03_SocialNetworks00N2v00000IyVq6 = $_POST['00N2v00000IyVq6'] ?? '';
+$BookingSystemStep03_SocialNetworks00N2v00000IyVq6 = $_POST['socialFacebook'] ?? '';
 
-$BookingSystemStep03_SocialNetworks00N9s000000Qp8x = $_POST['00N9s000000Qp8x'] ?? ''; //3
+$BookingSystemStep03_SocialNetworks00N9s000000Qp8x = $_POST['socialInstagram'] ?? ''; //3
 
-$BookingSystemStep03_SocialNetworks00N9s000000Qoxu = $_POST['00N9s000000Qoxu'] ?? '';
+$BookingSystemStep03_SocialNetworks00N9s000000Qoxu = $_POST['socialTikTok'] ?? '';
 
-$BookingSystemStep03_SocialNetworks00N9s000000Qoxz = $_POST['00N9s000000Qoxz'] ?? '';
+$BookingSystemStep03_SocialNetworks00N9s000000Qoxz = $_POST['socialYelp'] ?? '';
 
-$DomainNameStep03_SocialNetworks00N2v00000IyVqP = $_POST['00N2v00000IyVqP'] ?? ''; // website
+$DomainNameStep03_SocialNetworks00N2v00000IyVqP = $_POST['websiteDomainName'] ?? ''; // website
 
-$DomainNameStep03_SocialNetworks00N2v00000IyVq3 = $_POST['00N2v00000IyVq3'] ?? ''; // domain name
+$DomainNameStep03_SocialNetworks00N2v00000IyVq3 = $_POST['newDomain'] ?? ''; // domain name
 
-$DomainNameStep03_SocialNetworks00N9s000000VK1z = $_POST['00N9s000000VK1z'] ?? ''; //Username
+$DomainNameStep03_SocialNetworks00N9s000000VK1z = $_POST['ref_Domain_U'] ?? ''; //Username
 
-$DomainNameStep03_SocialNetworks00N9s000000VK29 = $_POST['00N9s000000VK29'] ?? ''; //pass
+$DomainNameStep03_SocialNetworks00N9s000000VK29 = $_POST['ref_Domain_P'] ?? ''; //pass
 
-$DomainNameStep03_SocialNetworks00N9s000000VL1q = $_POST['00N9s000000VL1q'] ?? ''; //comments
+$DomainNameStep03_SocialNetworks00N9s000000VL1q = $_POST['ref_Domain_Comments'] ?? ''; //comments
 
-$DomainNameStep03_SocialNetworks00N9s000000VL1v = $_POST['00N9s000000VL1v'] ?? ''; //Registered
+$DomainNameStep03_SocialNetworks00N9s000000VL1v = $_POST['ref_Domain_Name_Registered'] ?? ''; //Registered
 
-$DomainNameStep03_SocialNetworks00N9s000000QQaH = $_POST['00N9s000000QQaH'] ?? ''; //Add on products
+$DomainNameStep03_SocialNetworks00N9s000000QQaH = $_POST['addonFlyers'] ?? ''; //Add on products
 
-$DomainNameStep03_SocialNetworks00N2v00000IyVpz = $_POST['00N2v00000IyVpz'] ?? ''; //Discount 40
+$DomainNameStep03_SocialNetworks00N2v00000IyVpz = $_POST['discount'] ?? ''; //Discount 40
 
 
 
@@ -104,11 +104,11 @@ $DomainNameStep03_SocialNetworks00N2v00000IyVpz = $_POST['00N2v00000IyVpz'] ?? '
 
 //---------------------- Step -4----------------------------------
 
-$Step04_SocialNetworks00N2u000000mNZ0 = $_POST['00N2u000000mNZ0'] ?? ''; //Coupun code
+$Step04_SocialNetworks00N2u000000mNZ0 = $_POST['couponCode'] ?? ''; //Coupun code
 
 $Step04_SocialNetworkscouponCode2 = $_POST['couponCode2'] ?? ''; //Coupun code 2
 
-$Step04_SocialNetworks00N2v00000IyVq7 = $_POST['00N2v00000IyVq7'] ?? ''; // payment method
+$Step04_SocialNetworks00N2v00000IyVq7 = $_POST['paymentMethod'] ?? ''; // payment method
 
 $Step04_SocialNetworkscreditCardNumber = $_POST['creditCardNumber'] ?? ''; //  Card number
 
@@ -132,27 +132,27 @@ $Step04_SocialNetworksstripePassword = $_POST['stripePassword'] ?? ''; //  strip
 
 $Step04_SocialNetworksemailInvoiceOther = $_POST['emailInvoiceOther'] ?? ''; //  emailInvoiceOther
 
-$Step04_Comments00N2v00000IyVpq = $_POST['00N2v00000IyVpq'] ?? ''; //  Additional comments
+$Step04_Comments00N2v00000IyVpq = $_POST['additionComment'] ?? ''; //  Additional comments
 
-$Step04_SocialNetworks00N2u000000mNZG = $_POST['00N2u000000mNZG'] ?? ''; //  Marketing Agent
+$Step04_SocialNetworks00N2u000000mNZG = $_POST['byAgent'] ?? ''; //  Marketing Agent
 
-$Step04_SocialNetworks00N2v00000IyVq9 = $_POST['00N2v00000IyVq9'] ?? ''; //  Referred  by person
+$Step04_SocialNetworks00N2v00000IyVq9 = $_POST['byPerson'] ?? ''; //  Referred  by person
 
-$Step04_SocialNetworks00N2v00000IyVqA = $_POST['00N2v00000IyVqA'] ?? ''; //  Referred  by shop
+$Step04_SocialNetworks00N2v00000IyVqA = $_POST['byRestaurant'] ?? ''; //  Referred  by shop
 
-$Step04_SocialNetworks00N2u000000mNZ5 = $_POST['00N2u000000mNZ5'] ?? ''; //  First payment
+$Step04_SocialNetworks00N2u000000mNZ5 = $_POST['firstTimePayment'] ?? ''; //  First payment
 
-$Step04_SocialNetworks00N9s000000PDD3 = $_POST['00N9s000000PDD3'] ?? ''; //  Customer stripe email
+$Step04_SocialNetworks00N9s000000PDD3 = $_POST['customerStripeEmail'] ?? ''; //  Customer stripe email
 
-$Step04_Stripecustomerid00N9s000000QYtB = $_POST['00N9s000000QYtB'] ?? ''; //  Customer stripe ID
+$Step04_Stripecustomerid00N9s000000QYtB = $_POST['customerStripeID'] ?? ''; //  Customer stripe ID
 
-$Step04_SocialNetworks00N9s000000VWOl = $_POST['00N9s000000VWOl'] ?? ''; //  customerStripeIDUSA
+$Step04_SocialNetworks00N9s000000VWOl = $_POST['customerStripeIDUSA'] ?? ''; //  customerStripeIDUSA
 
-$Step04_SocialNetworks00N9s000000QQl5 = $_POST['00N9s000000QQl5'] ?? ''; //  Selected package
+$Step04_SocialNetworks00N9s000000QQl5 = $_POST['selectedPackages'] ?? ''; //  Selected package
 
-$Step04_SocialNetworks00NMq000000UrZx = $_POST['00NMq000000UrZx'] ?? ''; //  Agreement generated
+$Step04_SocialNetworks00NMq000000UrZx = $_POST['agreementGenerated'] ?? ''; //  Agreement generated
 
-$Step04_SocialNetworks00N9s000000QgXl = $_POST['00N9s000000QgXl'] ?? ''; //  Currently package
+$Step04_SocialNetworks00N9s000000QgXl = $_POST['currentlyPackage'] ?? ''; //  Currently package
 
 
 
@@ -219,9 +219,10 @@ curl_close($curl);
   // Webhook URL
 
   //$webhookUrl = "https://hook.eu1.make.com/xmrmdjm7lst6gg8qj1yxy1fdklcsoudo";
- //$webhookUrl = "https://hook.us1.make.com/w5le4gjhr9m4oprgwn2ogzpl6un7xtab";
-  $webhookUrl = "https://hook.us1.make.com/udh53vpfeeeithv4rvu5oqsbb7z308vf";
-
+  //$webhookUrl = "https://hook.us1.make.com/w5le4gjhr9m4oprgwn2ogzpl6un7xtab";
+  //$webhookUrl = "https://hook.us1.make.com/udh53vpfeeeithv4rvu5oqsbb7z308vf";
+  //$webhookUrl = "https://hook.us1.make.com/myqks921kn2ono23uszzxnfg1dmseag8";
+    $webhookUrl = "https://hook.us1.make.com/izna04q2cdj68bqylepknapxa4l0wkaz";
 
 
 
