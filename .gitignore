@@ -153,6 +153,6 @@ out
 /modules/formemail/assets/db/initDB.php
 /modules/signupMini/assets/db/initDB.php
 /modules/cancellation/assets/db/initDB.php
-
+/modules/export/assets/db/initDB.php
 .DS_Store
 
