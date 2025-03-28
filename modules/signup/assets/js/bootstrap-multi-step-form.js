@@ -253,7 +253,7 @@ function allowOtherDiscount(){
   }
   else if(others.is(":not(:checked)")){
     discountOther.val("").prop( "disabled", true );
-    let val = $("input[name='00N2v00000IyVpz']:checked").val();
+    let val = $("input[name='discount']:checked").val();
     FirstOnlineOrderDiscount.val(val);
   }
 }
@@ -324,8 +324,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.show();
       routing_number_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.show();
+      domainHelpUS.hide();
       break;
     case "NZ":
       labelBusinessNumber.html("NZBN");
@@ -347,8 +347,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       methodDebit.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.show();
+      domainHelpUS.hide();
       break;
     case "UK":
       inputBusinessNumber.attr('required', true);
@@ -369,8 +369,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("UK");
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.show();
+      domainHelpUS.hide();
       break;
     case "CA":
       inputBusinessNumber.attr('required', true);
@@ -391,8 +391,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("CA");
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.hide();
+      domainHelpUS.show();
       break;
     case "US":
       inputBusinessNumber.attr('required', true);
@@ -413,8 +413,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("US");
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.hide();
+      domainHelpUS.show();
       break;
     case "TH":
       inputBusinessNumber.attr('required', true);
@@ -435,8 +435,8 @@ $('#formCountry').change(function() {
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local Eats Co., Ltd" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("US");
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+      domainHelpAU.show();
+      domainHelpUS.hide();
       break;
     case "TH":
       inputBusinessNumber.attr('required', true);
@@ -558,7 +558,7 @@ function optionState(){
     allState = res[shopCountry];
     optionState.empty().show();
     jQuery.each( allState.state, function( i, val ) {
-      optionState.append("<option value='"+val.code+"'>"+val.code+" : "+val.text+"</option>");
+      optionState.append("<option value='"+val.text+"'>"+val.code+" : "+val.text+"</option>");
     });
   });
 
@@ -575,9 +575,9 @@ function addCuisines(){
   cuisinesSelector.empty();
   jQuery.each( Cuisines, function( i, val ) {
     if (val!=="Other") {
-      cuisinesSelector.append("<li><input class='form-check-input cuisines' onclick='chkCuisine();' type='checkbox' value='" + val + "' name='00N2v00000IyVpy' id='cuisine" + i + "'><label class='form-check-label' for='cuisine" + i + "'>" + val + "</label></li>");
+      cuisinesSelector.append("<li><input class='form-check-input cuisines' onclick='chkCuisine();' type='checkbox' value='" + val + "' name='cuisinesOther' id='cuisine" + i + "'><label class='form-check-label' for='cuisine" + i + "'>" + val + "</label></li>");
     }else {
-      cuisinesSelector.append("<li><input class='form-check-input cuisines cuisinesOther' onclick='chkCuisineOther();' type='checkbox' value='"+val+"' name='00N2v00000IyVpy' id='cuisine"+i+"'><label class='form-check-label' for='cuisine"+i+"'>"+val+"</label></li>");
+      cuisinesSelector.append("<li><input class='form-check-input cuisines cuisinesOther' onclick='chkCuisineOther();' type='checkbox' value='"+val+"' name='cuisinesOther' id='cuisine"+i+"'><label class='form-check-label' for='cuisine"+i+"'>"+val+"</label></li>");
     }
 
   });
@@ -677,6 +677,10 @@ function setShipAddress(){
 
   let shipAddress = [streetAddress1, city, state, zip, country].filter(Boolean).join(" ,");
   shipAddress1.val(shipAddress);
+}
+
+function sanitizeInput(input) {
+  return input.replace(/[ \r\n\t\f\v]+/g, ' ').trim(); // Replace multiple spaces/newlines with a single space
 }
 
 const fillFacebook = () => {
@@ -1218,8 +1222,8 @@ function resetForm(){
 
 /// add ABN, NZBN to Business number
 function setBusinessNumber(){
-  const businessNumber = $("#00N9s000000QPWu");
-  const abnField = $("#00N2v00000IyVpp");
+  const businessNumber = $("#businessNumber");
+  const abnField = $("#abnField");
 
   const myArray = businessNumber.val().split(":");
   myArray.reverse();
@@ -1435,7 +1439,7 @@ const genLinkPDF = () => {
   const agreementGenerated = $("#agreementGenerated");
   let url = "assets/docs/contract_2024_V02.php";
   let customerFullName = $("#first_name").val() + " " + $("#last_name").val();
-  let ShopName = $("#00N2v00000IyVqB").val();
+  let ShopName = $("#shopName").val();
   let State = $("#state option:selected").text();
   let contractPeriod = 0;
   let contractPeriodSelected = $("input[name='contractPeriod']:checked").val();
@@ -1452,7 +1456,7 @@ const genLinkPDF = () => {
     default:
       contractPeriod = 0;
   }
-  let registrationNumber = $("#00N9s000000QPWu").val();
+  let registrationNumber = $("#businessNumber").val();
   let Country = $("#formCountry").val();
 
   url = "https://report.localforyou.com/modules/signup/assets/docs/contract_2024_V02.php?customerFullName=" + customerFullName + "&ShopName=" + ShopName + "&contractPeriod=" + contractPeriod + "&registrationNumber=" + registrationNumber + "&Country=" + Country + "&State=" + State;
