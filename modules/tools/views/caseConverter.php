@@ -23,50 +23,58 @@ global $db;
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <h4 class="card-title mb-3"><i class="bi bi-arrow-left-right"></i> Case Converter</h4>
-                    <textarea aria-label="type here" id="inputText" class="form-control mb-3" rows="5" placeholder="พิมพ์ข้อความที่นี่..."></textarea>
-                    <div id="statusMsg" class="text-success text-center fw-bold" style="display:none; float: right;">Copied to clipboard!</div>
+                    <div id="column" class="row">
+                        <div class="col-4">
+                            <div class="h-100 d-flex flex-column justify-content-around align-items-center">
+                                <img src="../assets/img/case1.png" class="expImg" alt="case1">
+                                <img src="../assets/img/case2.png" class="expImg" alt="case2">
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <textarea aria-label="type here" id="inputText" class="form-control mb-3" rows="5" placeholder="พิมพ์ข้อความที่นี่..."></textarea>
+                            <div id="statusMsg" class="text-success text-center fw-bold" style="display:none; float: right;">Copied to clipboard!</div>
 
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="autoClear">
-                        <label class="form-check-label" for="autoClear">Auto Clear</label>
-                    </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="autoClear">
+                                <label class="form-check-label" for="autoClear">Auto Clear</label>
+                            </div>
 
-                    <div class="mb-3">
-                        <h6 class="text-muted fw-bold"><i class="bi bi-chat-right-dots"></i> Text Cases</h6>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-outline-primary btn-sm" data-case="sentence">Sentence case</button>
-                            <button class="btn btn-outline-primary btn-sm" data-case="lower">lowercase</button>
-                            <button class="btn btn-outline-primary btn-sm" data-case="upper">UPPER CASE</button>
-                            <button class="btn btn-outline-primary btn-sm" data-case="capitalized">Capitalized</button>
-                            <button class="btn btn-outline-primary btn-sm" data-case="title">Title Case</button>
+                            <div class="mb-3">
+                                <h6 class="text-muted fw-bold"><i class="bi bi-chat-right-dots"></i> Text Cases</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" data-case="sentence">Sentence case</button>
+                                    <button class="btn btn-outline-primary btn-sm" data-case="lower">lowercase</button>
+                                    <button class="btn btn-outline-primary btn-sm" data-case="upper">UPPER CASE</button>
+                                    <button class="btn btn-outline-primary btn-sm" data-case="capitalized">Capitalized</button>
+                                    <button class="btn btn-outline-primary btn-sm" data-case="title">Title Case</button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6 class="text-muted fw-bold"><i class="bi bi-wallet-fill"></i> Fun/Fancy</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button class="btn btn-outline-success btn-sm" data-case="alternating">aLtErNaTiNg</button>
+                                    <button class="btn btn-outline-success btn-sm" data-case="inverse">InVeRsE</button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6 class="text-muted fw-bold"><i class="bi bi-code-square"></i> Naming Conventions</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button class="btn btn-outline-secondary btn-sm" data-case="snake">snake_case</button>
+                                    <button class="btn btn-outline-secondary btn-sm" data-case="camel">camelCase</button>
+                                    <button class="btn btn-outline-secondary btn-sm" data-case="pascal">PascalCase</button>
+                                    <button class="btn btn-outline-secondary btn-sm" data-case="kebab">kebab-case</button>
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <button class="btn btn-sm btn-danger" id="clearBtn">
+                                    <i class="bi bi-x-circle"></i> เคลียร์ข้อความ
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="mb-3">
-                        <h6 class="text-muted fw-bold"><i class="bi bi-wallet-fill"></i> Fun/Fancy</h6>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-outline-success btn-sm" data-case="alternating">aLtErNaTiNg</button>
-                            <button class="btn btn-outline-success btn-sm" data-case="inverse">InVeRsE</button>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <h6 class="text-muted fw-bold"><i class="bi bi-code-square"></i> Naming Conventions</h6>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-outline-secondary btn-sm" data-case="snake">snake_case</button>
-                            <button class="btn btn-outline-secondary btn-sm" data-case="camel">camelCase</button>
-                            <button class="btn btn-outline-secondary btn-sm" data-case="pascal">PascalCase</button>
-                            <button class="btn btn-outline-secondary btn-sm" data-case="kebab">kebab-case</button>
-                        </div>
-                    </div>
-
-                    <div class="text-end">
-                        <button class="btn btn-sm btn-danger" id="clearBtn">
-                            <i class="bi bi-x-circle"></i> เคลียร์ข้อความ
-                        </button>
-                    </div>
-
-
                 </div>
             </div>
 
