@@ -17,43 +17,7 @@ global $db;
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="index.php"><i class="bi bi-wrench"></i> Tools</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Case Converter</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="fake.php">Fake Address</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="name.php">Fake Name</a>
-                </li>
-            </ul>
-            <span class="navbar-text">
-                logout
-            </span>
-        </div>
-    </div>
-</nav>
-
-<div class="container py-5">
-
-    <header>
-        <nav class="mb-4" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Case Converter</li>
-            </ol>
-        </nav>
-    </header>
-
-    <main>
+    <main class="container py-5">
         <section class="container" style="min-height: 60vh;">
 
             <div class="card shadow-sm mb-4">
@@ -121,9 +85,6 @@ global $db;
 
         </section>
     </main>
-
-</div><!-- container-->
-
 
 <script src="../assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
