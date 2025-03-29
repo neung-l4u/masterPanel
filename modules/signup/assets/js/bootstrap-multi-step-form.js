@@ -1133,7 +1133,9 @@ function applyCoupon() {
     $("#couponCode2").attr('disabled', 'disabled');
   }
 
-  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB"])
+  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB", "PARTNER96", "PARTNER98", "PARTNER195", "PARTNER198", "PARTNER246"]);
+
+
   inputCode = inputCode.toUpperCase();
   const foundCoupon = availableCoupon.has(inputCode)
 

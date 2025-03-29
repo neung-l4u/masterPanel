@@ -799,7 +799,7 @@ const sendMail = () => {
     }
 
     const ajaxSendLog = $.ajax({
-        url: "https://report.localforyou.com/modules/signup2.9.4/email/sendMail.php",
+        url: "https://report.localforyou.com/modules/signup/email/sendMail.php",
         method: 'POST',
         async: false,
         cache: false,
@@ -893,7 +893,7 @@ const sendMailToL4UTeam = () => {
     };
 
     const ajaxSendL4UMail = $.ajax({
-        url: "https://report.localforyou.com/modules/signup2.9.4/email/L4UEmailAlert.php",
+        url: "https://report.localforyou.com/modules/signup/email/L4UEmailAlert.php",
         method: 'POST',
         async: false,
         cache: false,

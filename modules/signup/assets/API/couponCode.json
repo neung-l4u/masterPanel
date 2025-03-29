@@ -100,7 +100,27 @@
         },
         "PARTNER246": {
             "Restaurant": {
+                "AU": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                },
+                "NZ": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                },
+                "UK": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                },
                 "US": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                },
+                "CA": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                },
+                "TH": {
                     "discount": 24600,
                     "code": "US1Partner246"
                 }
