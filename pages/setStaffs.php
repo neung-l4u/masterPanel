@@ -295,10 +295,7 @@ $password = "Localeats#".date("Y");
             console.log(status + ": " + error);
         });
     }// const
-
-    function reloadTable() {
-
-    }
+    
 
     const setEdit = (id) => {
         const inputName = $("#inputName");
