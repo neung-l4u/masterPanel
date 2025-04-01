@@ -1077,12 +1077,11 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
 <script src="dist/assets/jquery-file-upload/js/jquery.fileupload.js"></script>
 <script src="../controllers/template.js"></script>
 <script>
-        const max_uploads = 20;
+    const max_uploads = 20;
     const multiUploadPrefix = 'album';
     let album_files = [];
 
     $(function() {
-        setAllPageStatus(); //in template.js
         $('#warnMaxFile').hide();
         $('#warnMaxText').text('You can upload up to ' + max_uploads + ' files.');
 
@@ -1144,11 +1143,6 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
             $('#warnMaxFile').hide();
         }
     });
-
-
-$(function() {
-        setAllPageStatus(); //in template.js
-    });//ready
 
     const submitHome = () => {
         page = "home";

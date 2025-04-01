@@ -935,19 +935,18 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
 <script src="dist/assets/jquery-file-upload/js/jquery.iframe-transport.js"></script>
 <script src="dist/assets/jquery-file-upload/js/jquery.fileupload.js"></script>
 <script>
-    const max_uploads = 10;
+    const max_uploads = 20;
     const multiUploadPrefix = 'album';
     let album_files = [];
 
     $(function() {
-        setAllPageStatus(); //in template.js
-        /////////
         $('#warnMaxFile').hide();
         $('#warnMaxText').text('You can upload up to ' + max_uploads + ' files.');
 
         'use strict';
 
         // Change this to the location of your server-side upload handler:
+        const url = '../multiUpload.php?projectID=<?php echo $id; ?>&folderPath=<?php echo $folderName; ?>&prefix=' + multiUploadPrefix;
         const url = '../multiUpload.php?projectID=<?php echo $id; ?>&folderPath=<?php echo $folderName; ?>&prefix=' + multiUploadPrefix;
 
         $('#fileupload').fileupload({
@@ -990,7 +989,6 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
             }
         }).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
-            ////////
 
     });//ready
 
