@@ -230,8 +230,8 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
     const counterNum = $('#counterNum');
     const divStat = $('#divStat');
 
-    setInterval(reloadTable, 1000);
-    setInterval(reloadStat, 5000);
+    setInterval(reloadTable, 5000);
+    setInterval(reloadStat, 6000);
 
     let reportTable = $('#reportData').DataTable({
         pagingType: 'full_numbers',
@@ -325,6 +325,28 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
 
     $(() => {
         $('.text-alert').hide();
+
+        setInterval(function() {
+            let reqHeartbeat = $.ajax({
+                url: "../assets/api/heartbeat.php",
+                method: "POST",
+                async: false,
+                cache: false,
+                dataType: "json",
+            }); //const
+
+            reqHeartbeat.done(function (data) {
+                if (data.status === 'expired') {
+                    alert('Your session has expired. Please log in again.');
+                    window.location = '../../../chkLogin.php?act=expired';
+                }
+            }); //done
+
+            reqHeartbeat.fail(function (xhr, status, error) {
+                console.log("check heart beat fail!!");
+                console.log(status + ": " + error);
+            }); //fail
+        }, 60000); //check heartbeat every 1 minute
     });//ready
 </script>
 

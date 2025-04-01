@@ -114,10 +114,6 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
     };
 
     startDate.datepicker(datepickerOption);
-    /*startDate.datepicker()
-        .on('changeDate', function(e) {
-            alert("fire");
-        });*/
 
     endDate.datepicker(datepickerOption);
 
@@ -216,6 +212,28 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
         });
 
         $("#alert").hide();
+
+        setInterval(function() {
+            let reqHeartbeat = $.ajax({
+                url: "assets/api/heartbeat.php",
+                method: "POST",
+                async: false,
+                cache: false,
+                dataType: "json",
+            }); //const
+
+            reqHeartbeat.done(function (data) {
+                if (data.status === 'expired') {
+                    alert('Your session has expired. Please log in again.');
+                    window.location = 'chkLogin.php?act=expired';
+                }
+            }); //done
+
+            reqHeartbeat.fail(function (xhr, status, error) {
+                console.log("check heart beat fail!!");
+                console.log(status + ": " + error);
+            }); //fail
+        }, 60000); //check heartbeat every 1 minute
 
     });//ready
 
