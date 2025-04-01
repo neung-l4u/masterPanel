@@ -1,5 +1,4 @@
 <?php
-require_once "../../../assets/api/googleAnalytics.php";
 require_once ("../assets/db/db.php");
 require_once ("../assets/db/initDB.php");
 require_once ("../assets/php/share_function.php");
@@ -13,8 +12,15 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
 $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', $id)->fetchArray();
 ?>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-
+    gtag('config', 'G-LGKDYHL23T');
+</script>
 <link rel="stylesheet" href="../assets/css/template.css">
 <link rel="stylesheet" href="../assets/css/template.css">
 <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
