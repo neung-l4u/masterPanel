@@ -1,3 +1,4 @@
+<?php require_once "../assets/api/googleAnalytics.php";?>
 <?php
 global $db, $topData, $topDate;
 require_once "../assets/db/db.php";

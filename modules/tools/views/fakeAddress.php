@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <?php require_once "../../../assets/api/googleAnalytics.php";?>
     <meta charset="UTF-8">
     <title>Fake Address Generator</title>
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">

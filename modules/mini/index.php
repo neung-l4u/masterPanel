@@ -5,6 +5,7 @@ include("assets/function/testMode.php");
 <!doctype html>
 <html lang="en">
 <head>
+    <?php require_once "../../assets/api/googleAnalytics.php";?>
     <title>L4U - Services</title>
     <?php include "form_header.php"; ?>
 </head>

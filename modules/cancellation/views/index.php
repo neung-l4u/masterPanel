@@ -1,3 +1,4 @@
+<?php require_once "../../../assets/api/googleAnalytics.php";?>
 <?php
 $id = !empty($_REQUEST['id']) ? strtolower(trim($_REQUEST['id'])): '';
 $testMode = ($id == "test") ? 1 : 0;

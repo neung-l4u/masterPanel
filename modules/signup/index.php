@@ -12,6 +12,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
 <!doctype html>
 <html lang="en">
 <head>
+    <?php require_once "../../assets/api/googleAnalytics.php";?>
     <title>L4U - Services</title>
     <?php include "form_header.php"; ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">

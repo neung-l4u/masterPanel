@@ -6,6 +6,7 @@ require_once '../assets/php/pageNavigate.php';
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <?php require_once "../../../assets/api/googleAnalytics.php";?>
     <meta charset="UTF-8">
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
     <meta name="viewport"

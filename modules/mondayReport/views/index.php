@@ -34,6 +34,7 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
 <!doctype html>
 <html lang="en">
 <head>
+    <?php require_once "../../../assets/api/googleAnalytics.php";?>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">

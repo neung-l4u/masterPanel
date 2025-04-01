@@ -7,6 +7,7 @@ global $db;
 <!doctype html>
 <html lang="en">
 <head>
+    <?php require_once "../../../assets/api/googleAnalytics.php";?>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">

@@ -1,3 +1,4 @@
+<?php require_once "../../../assets/api/googleAnalytics.php";?>
 <link rel="stylesheet" href="../assets/css/settings.css">
 
 <div class="row">

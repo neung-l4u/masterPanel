@@ -1,4 +1,5 @@
 <?php
+require_once "../../../assets/api/googleAnalytics.php";
 require_once ("../assets/db/db.php");
 require_once ("../assets/db/initDB.php");
 require_once ("../assets/php/share_function.php");

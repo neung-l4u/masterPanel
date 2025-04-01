@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <?php require_once "../../assets/api/googleAnalytics.php";?>
     <?php
     $nub = '1.3.0';
     ?>

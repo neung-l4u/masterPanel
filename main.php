@@ -25,6 +25,7 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <?php require_once "assets/api/googleAnalytics.php";?>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>L4U Master Panel</title>
