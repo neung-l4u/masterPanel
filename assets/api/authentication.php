@@ -33,7 +33,7 @@ if(isset($_POST['act'])){
         if($account['sID'])
         {
             $token = bin2hex(openssl_random_pseudo_bytes(16));
-            $_SESSION['login'] = date('Y-m-d H:i:s', time());
+            $_SESSION['login'] = time();
             $_SESSION['id'] = $account['sID'];
             $_SESSION['email'] = $account['sEmail'];
             $_SESSION['phone'] = $account['sMobile'];
@@ -56,14 +56,6 @@ if(isset($_POST['act'])){
                 setcookie("token", $token, $cookieExpire, "/");
 
         }else if ($data["remember"]===false){
-                /*unset($_COOKIE["user"]);
-                unset($_COOKIE["pass"]);
-                unset($_COOKIE["remember"]);
-                unset($_COOKIE["token"]);
-                setcookie('user', false, -1, '/', $_SERVER["HTTP_HOST"]);
-                setcookie('pass', false, -1, '/', $_SERVER["HTTP_HOST"]);
-                setcookie('remember', false, -1, '/', $_SERVER["HTTP_HOST"]);
-                setcookie('token', false, -1, '/', $_SERVER["HTTP_HOST"]);*/
                 setcookie("user", "", time() - 3600, '/');
                 setcookie("pass", "", time() - 3600, '/');
                 setcookie("remember", "", time() - 3600, '/');

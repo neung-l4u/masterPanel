@@ -2,7 +2,7 @@
 global $db;
 session_start();
 include '../../assets/db/db.php';
-include "../../assets/db/initDB_server.php";
+include "../../assets/db/initDB.php";
 $myID = $_SESSION['id'];
 
 $salt = "L4U";

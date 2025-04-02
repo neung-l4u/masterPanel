@@ -1,3 +1,12 @@
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-LGKDYHL23T');
+</script>
 <?php
 global $db, $date;
 $password = "Localeats#".date("Y");
@@ -24,6 +33,7 @@ $password = "Localeats#".date("Y");
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="main.php?p=home">Home</a></li>
                     <li class="breadcrumb-item"><a href="main.php?p=tools">Tools</a></li>
                     <li class="breadcrumb-item active">Unsubscribes</li>
                 </ol>

@@ -83,7 +83,7 @@ switch ($menuPage){
         $loadTotal["totalMonthly"] = "true";
         $loadTotal["totalYearly"] = "true";
         break;
-    case "revCompany":
+    case "revCompany"://หน้านี้เหมาะเอาไปทำสถิติหรือสรุปจำนวนพนักงาน
         $showPage = "revenueCompany.php";
         $activeMenu["lv1"] = "revenueTracking";
         $activeMenu["lv2"] = "company";

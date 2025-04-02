@@ -12,6 +12,15 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
 <!doctype html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-LGKDYHL23T');
+    </script>
     <title>L4U - Services</title>
     <?php include "form_header.php"; ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,7 +88,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                value="<?php echo $settings["formRedirect"]; ?>">
                         <input type=hidden name="recordType" value="0129s0000004KiL">
                         <input type=hidden name="lead_source" value="New Signup">
-                        <input type="hidden" id="leadStage" name="00N2u000000mQgE" value="New">
+                        <input type="hidden" id="leadStage" name="leadStage" value="New">
                         <input type=hidden name="currency" value="AUD">
 
                         <!-- All Form -->
@@ -106,7 +115,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             <option value="US">United States</option>
                                             <option value="TH">Thailand</option>
                                         </select>
-                                        <input type="hidden" name="00N2v00000IyVqF" id="countryTextOnly">
+                                        <input type="hidden" name="countryTextOnly" id="countryTextOnly">
                                     </div>
                                     <div class="col-2 d-flex align-items-center">
                                         <span id="loadingAjax"></span>
@@ -122,7 +131,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         </label>
                                     </div>
                                     <div class="col-6">
-                                        <select id="formType" class="form-select" name="00N9s000000QRyY">
+                                        <select id="formType" class="form-select" name="formType">
                                             <option selected value="" disabled>--None--</option>
                                             <option value="Thai Restaurants &amp; Takeaways">Thai Restaurants &amp; Takeaways</option>
                                             <option value="Thai Massage">Thai Massage</option>
@@ -249,15 +258,15 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         </div>
                                     </div>
                                     <div class="form-group row pt-2">
-                                        <label for="00N9s000000Nl1G" class="col-2 text-end control-label col-form-label">
+                                        <label for="bestTimeContact" class="col-2 text-end control-label col-form-label">
                                             Best time to Contact
                                         </label>
                                         <div class="col-8">
                                             <input
                                                     type="text"
                                                     class="form-control"
-                                                    id="00N9s000000Nl1G"
-                                                    name="00N9s000000Nl1G"
+                                                    id="bestTimeContact"
+                                                    name="bestTimeContact"
                                                     onchange="ownerBestTime(this.value);"
                                                     autocomplete="off"
                                                     placeholder="All day"
@@ -288,7 +297,12 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         <div class="row col-5">
                                             <span class="col">
                                                 <label class="form-check-label mx-1" for="startProjectOther">
-                                                     <input type="radio" id="startProjectOther" class="form-check-input" name="startProject" value="" id="startProjectOther" onclick="setdateProjectOther();"> Other.
+                                                     <input type="radio"
+                                                            id="startProjectOther"
+                                                            class="form-check-input"
+                                                            name="startProject"
+                                                            value=""
+                                                            onclick="setdateProjectOther();"> Other.
                                                     <input type="date" id="dateproject" value="<?php echo $dateProject;?>">
                                                 </label>
                                             </span>
@@ -317,12 +331,12 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                     <div class="form-group row">
                                         <div class="col-2"></div>
                                         <div class="col-4">
-                                            <label for="00N2v00000IyVqB">Shop name <b class="red">*</b></label>
+                                            <label for="shopName">Shop name <b class="red">*</b></label>
                                             <input
                                                     type="text"
-                                                    id="00N2v00000IyVqB"
+                                                    id="shopName"
                                                     class="form-control"
-                                                    name="00N2v00000IyVqB"
+                                                    name="shopName"
                                                     onchange="setRestaurantName(this.value);"
                                                     placeholder="Authentic Thai Bistro"
                                                     autocomplete="off"
@@ -331,21 +345,21 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             <input type="hidden" name="company">
                                         </div>
                                         <div class="col-3">
-                                            <label for="00N9s000000QPWu" class="businessNumber">
+                                            <label for="businessNumber" class="businessNumber">
                                                 <span id="labelBusinessNumber">businessNumber</span>
                                                 <b class="red">*</b>
                                             </label>
                                             <input
                                                     type="text"
-                                                    id="00N9s000000QPWu"
+                                                    id="businessNumber"
                                                     class="form-control businessNumber"
-                                                    name="00N9s000000QPWu"
+                                                    name="businessNumber"
                                                     onblur="setBusinessNumber();"
                                                     placeholder="e.g. 51824753533"
                                                     autocomplete="off"
                                                     value="<?php echo $test["abn"]; ?>"
                                             />
-                                            <input type="hidden" id="00N2v00000IyVpp" name="00N2v00000IyVpp" value=""/>
+                                            <input type="hidden" id="abnField" name="abnField" value=""/>
                                         </div>
                                         <div class="col-1 d-flex flex-column justify-content-center pt-4">
                                             <a href="https://abr.business.gov.au" class="lookup ABN" target="_blank"
@@ -360,7 +374,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     type="text"
                                                     id="company"
                                                     class="form-control"
-                                                    name="00N2v00000IyVqO"
+                                                    name="tradingName"
                                                     placeholder="Thai Culture Group Inc."
                                                     autocomplete="off"
                                                     value="<?php echo $test["trading"]; ?>"
@@ -425,14 +439,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         <div class="row col-6 pt-2">
                                             <span class="col gx-1">
                                                 <input type="radio" id="supportTh" class="form-check-input supportLanguage"
-                                                       value="Thai only" name="00N2v00000IyVqN">
+                                                       value="Thai only" name="supportLanguage">
                                                 <label class="form-check-label" for="supportTh">
                                                     Thai
                                                 </label>
                                             </span>
                                             <span class="col gx-1">
                                                 <input type="radio" id="supportEng" class="form-check-input supportLanguage" value="English"
-                                                       name="00N2v00000IyVqN" checked>
+                                                       name="supportLanguage" checked>
                                                 <label class="form-check-label" for="supportEng">
                                                     English
                                                 </label>
@@ -440,7 +454,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             
                                             <span class="col gx-1">
                                                 <input type="radio" id="supportEngTH" class="form-check-input supportLanguage"
-                                                       value="English and Thai" name="00N2v00000IyVqN" checked>
+                                                       value="English and Thai" name="supportLanguage" checked>
                                                 <label class="form-check-label" for="supportEngTH">
                                                     Thai & English
                                                 </label>
@@ -461,7 +475,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     type="text"
                                                     id="physicalShopNumber"
                                                     class="form-control shopNumber"
-                                                    name="00N2v00000IyVqK"
+                                                    name="physicalShopNumber"
                                                     placeholder="e.g. 51824753556"
                                                     oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                                     autocomplete="off"
@@ -481,7 +495,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 name="street"
                                                 rows="4"
                                                 onkeyup="setShipAddress();"
-                                                onblur="setShipAddress();"
+                                                onblur="this.value = sanitizeInput(this.value); setShipAddress();"
                                                 placeholder="11/200 Golden Village"
                                         ><?php echo $test["address"]; ?></textarea>
                                         </div>
@@ -580,7 +594,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 <textarea
                                                         class="form-control"
                                                         id="shipAddress1"
-                                                        name="00N2v00000IyVqE"
+                                                        name="shipAddress1"
                                                         rows="4"
                                                         placeholder="11/200 Golden Village ,White Road, White area ,Gray Area ,Australian Capital Territory ,10110 ,Australia"
                                                 >
@@ -606,9 +620,9 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                            onclick="allowOther();">&nbsp;&nbsp;
                                                     <label class="form-check-label" for="others">Other(s)</label>
                                                 </div>
-                                                <input id="cuisineOther" name="00N2u000000mO4X" maxlength="255" type="text"
+                                                <input id="cuisineOther" name="cuisineOther" maxlength="255" type="text"
                                                        class="form-control" disabled>
-                                                <input id="cuisinesOther" type="hidden" value="Other" name='00N2v00000IyVpy'
+                                                <input id="cuisinesOther" type="hidden" value="Other" name='cuisinesOther'
                                                        disabled>
                                             </div>
                                         </div>
@@ -683,7 +697,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         type="email"
                                                         id="emailBooking"
                                                         class="form-control mainEmail text-lowercase"
-                                                        name="00N9s000000VUeh"
+                                                        name="emailBooking"
                                                         maxlength="100"
                                                         required
                                                         autocomplete="off"
@@ -702,7 +716,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 <div class="col-8">
                                                     <input type="text" class="form-control" value="Localbooking" disabled>
                                                     <input type="hidden" id="passwordBooking" class="form-control"
-                                                           name="00N9s000000VUem" value="Localbooking" maxlength="100">
+                                                           name="passwordBooking" value="Localbooking" maxlength="100">
                                                     <small id="BookpasswordHelp" class="form-text text-muted">
                                                         This is a temporary default password, you can change it later.
                                                     </small>
@@ -725,7 +739,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         type="email"
                                                         id="emailShoppingCart"
                                                         class="form-control mainEmail text-lowercase"
-                                                        name="00N2v00000IyVqL"
+                                                        name="emailShoppingCart"
                                                         maxlength="80"
                                                         required
                                                         autocomplete="off"
@@ -756,7 +770,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 <div id="serviceCheck" class="pt-2">
                                                     <div class="form-check">
                                                         <input class="form-check-input serviceOption" type="checkbox"
-                                                               value="Pickup" id="pickup" name="00N9s000000QPvX"
+                                                               value="Pickup" id="pickup" name="serviceCheck"
                                                         >
                                                         <label class="form-check-label" for="pickup">
                                                             Pickup
@@ -765,14 +779,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <div class="form-check">
                                                         <input class="form-check-input serviceOption" type="checkbox"
                                                                value="Table Reservations" id="tableReservation"
-                                                               name="00N9s000000QPvX">
+                                                               name="serviceCheck">
                                                         <label class="form-check-label" for="tableReservation">
                                                             Table Reservation
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
                                                         <input class="form-check-input serviceOption" type="checkbox"
-                                                               value="Dine In" id="DineIn" name="00N9s000000QPvX"
+                                                               value="Dine In" id="DineIn" name="serviceCheck"
                                                                onclick="showTable();">
                                                         <label class="form-check-label" for="DineIn">
                                                             Dine-In table ordering
@@ -797,7 +811,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                     type="number"
                                                                     id="tableNumber"
                                                                     class="form-control w-25"
-                                                                    name="00N9s000000QcXY"
+                                                                    name="tableNumber"
                                                                     min="1"
                                                                     max="100"
                                                                     step="1"
@@ -811,7 +825,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <label class="form-check-label me-2" for="sizeOption">
                                                                     Size
                                                                 </label>
-                                                                <select  id="sizeOption" name="00N9s000000QpC1" class="form-select">
+                                                                <select  id="sizeOption" name="sizeOption" class="form-select">
                                                                     <option value="">--None--</option>
                                                                     <option value="A6">A6</option>
                                                                     <option value="A5">A5</option>
@@ -830,7 +844,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <div class="form-check mx-4" id="selectDelivery" style="display: none">
                                                         <div>
                                                             <input type="radio" id="ownDriver" class="form-check-input"
-                                                                   value="Delivery by own driver" name="00N9s000000QPvX"
+                                                                   value="Delivery by own driver" name="serviceCheck"
                                                                    onclick="setDeliveryOption(this.value);"
                                                             >
                                                             <label class="form-check-label mx-1" for="ownDriver">
@@ -839,7 +853,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         </div>
                                                         <div class="optionDelivery">
                                                             <input type="radio" id="systemDriver" class="form-check-input"
-                                                                   value="Delivery with delivery system" name="00N9s000000QPvX"
+                                                                   value="Delivery with delivery system" name="serviceCheck"
                                                                    onclick="setDeliveryOption(this.value);"
                                                             >
                                                             <label class="form-check-label mx-1" for="systemDriver">
@@ -864,7 +878,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 class="form-control"
                                                                 id="ref_IHD_Email"
                                                                 maxlength="80"
-                                                                name="00N9s000000VK2E"
+                                                                name="ref_IHD_Email"
                                                                 autocomplete="off"
                                                                 placeholder="Leave it blank if you want to provide information later."
                                                             />
@@ -876,7 +890,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 class="form-control"
                                                                 id="ref_IHD_Password"
                                                                 maxlength="100"
-                                                                name="00N9s000000VK2J"
+                                                                name="ref_IHD_Password"
                                                                 autocomplete="off"
                                                                 placeholder="Leave it blank if you want to provide information later."
                                                             />
@@ -888,7 +902,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 class="form-control"
                                                                 id="ref_IHD_Token"
                                                                 maxlength="255"
-                                                                name="00N9s000000VK2O"
+                                                                name="ref_IHD_Token"
                                                                 autocomplete="off"
                                                                 placeholder="Leave it blank if you want to provide information later."
                                                             />
@@ -917,14 +931,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             <div id="payCheck" class="pt-2">
                                                 <div class="form-check">
                                                     <input class="form-check-input paymentOption" type="checkbox"
-                                                           value="Cash" id="cash" name="00N2v00000IyVq8">
+                                                           value="Cash" id="cash" name="payCheck">
                                                     <label class="form-check-label" for="cash">
                                                         Cash
                                                     </label>
                                                 </div>
                                                 <div class="form-check">
                                                     <input class="form-check-input paymentOption" type="checkbox"
-                                                           value="Card at Counter" id="cardCounter" name="00N2v00000IyVq8">
+                                                           value="Card at Counter" id="cardCounter" name="payCheck">
                                                     <label class="form-check-label" for="cardCounter">
                                                         Card at Counter
                                                     </label>
@@ -932,7 +946,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 <div class="form-check">
                                                     <input class="form-check-input paymentOption" type="checkbox"
                                                            value="Call back and take card over phone" id="callBack"
-                                                           name="00N2v00000IyVq8">
+                                                           name="payCheck">
                                                     <label class="form-check-label" for="callBack">
                                                         Call back and take card over phone
                                                     </label>
@@ -940,7 +954,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 <div class="form-check">
                                                     <input class="form-check-input paymentOption" type="checkbox"
                                                            value="Online Payments via Stripe" id="payOnline"
-                                                           name="00N2v00000IyVq8">
+                                                           name="payCheck">
                                                     <label class="form-check-label" for="payOnline">
                                                         Online Payments via Stripe
                                                     </label>
@@ -1066,7 +1080,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                             type="text"
                                                                             id="websiteDomainName"
                                                                             class="form-control text-lowercase"
-                                                                            name="00N2v00000IyVqP"
+                                                                            name="websiteDomainName"
                                                                             maxlength="255"
                                                                             autocomplete="off"
                                                                             placeholder="www.localforyou.com"
@@ -1077,14 +1091,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         <div class="row pt-2">
                                                             <div class="col">
                                                                 <input class="form-check-input" type="checkbox" value="Yes"
-                                                                       id="keepWebsite" name="00N2v00000IyVq2">
+                                                                       id="keepWebsite" name="keepWebsite">
                                                                 <label class="form-check-label mx-2" for="keepWebsite">
                                                                     Keep existing website
                                                                 </label>
                                                             </div>
                                                             <div class="col">
                                                                 <input class="form-check-input" type="checkbox" value="Yes"
-                                                                       id="ownDomain" name="00N2v00000IyVq1">
+                                                                       id="ownDomain" name="ownDomain">
                                                                 <label class="form-check-label mx-2" for="ownDomain">
                                                                     I Own this domain name
                                                                 </label>
@@ -1109,7 +1123,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                     type="text"
                                                                     id="newDomain"
                                                                     class="form-control text-lowercase"
-                                                                    name="00N2v00000IyVq3"
+                                                                    name="newDomain"
                                                                     maxlength="255"
                                                                     autocomplete="off"
                                                                     placeholder="www.localforyou.com"
@@ -1118,13 +1132,12 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                             </span>
                                                             <small id="domainHelpAU" class="form-text">
                                                                 <a href="https://audomains.localforyou.com/" target="_blank" tabindex="-1" class="text-decoration-none">
-                                                                    Check Availability AU, NZ, UK, TH
+                                                                    Check Availability
                                                                 </a>
                                                             </small>
-                                                            <br>
                                                             <small id="domainHelpUS" class="form-text">
                                                                 <a href="https://usadomains.localforyou.com/" target="_blank" tabindex="-1" class="text-decoration-none">
-                                                                    Check Availability US, CA
+                                                                    Check Availability
                                                                 </a>
                                                             </small>
                                                         </div>
@@ -1150,7 +1163,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                         class="form-control"
                                                                         id="ref_Domain_U"
                                                                         maxlength="255"
-                                                                        name="00N9s000000VK1z"
+                                                                        name="ref_Domain_U"
                                                                         autocomplete="off"
                                                                         placeholder="Leave it blank if you want to provide information later."
                                                                     />
@@ -1164,7 +1177,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                         class="form-control"
                                                                         id="ref_Domain_P"
                                                                         maxlength="255"
-                                                                        name="00N9s000000VK29"
+                                                                        name="ref_Domain_P"
                                                                         autocomplete="off"
                                                                         placeholder="Leave it blank if you want to provide information later."
                                                                     />
@@ -1178,7 +1191,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                     <textarea
                                                                         id="ref_Domain_Comments"
                                                                         class="form-control"
-                                                                        name="00N9s000000VL1q"
+                                                                        name="ref_Domain_Comments"
                                                                         rows="3"
                                                                         type="text"
                                                                         wrap="soft"
@@ -1191,7 +1204,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                             <div class="col p-2">
                                                               <span class="input-group">
                                                                   <label for="ref_Domain_Name_Registered" class="input-group-text">Registered</label>
-                                                                  <select  id="ref_Domain_Name_Registered" class="form-select" name="00N9s000000VL1v">
+                                                                  <select  id="ref_Domain_Name_Registered" class="form-select" name="ref_Domain_Name_Registered">
                                                                       <option value="">--None--</option>
                                                                       <option value="Non L4U Reg. Received Uname/paword">Non L4U Reg. Received Username/Password</option>
                                                                       <option value="Registered with L4U">Registered with L4U</option>
@@ -1238,14 +1251,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         <div class="row col-6 pt-2">
                                             <span class="col gx-1">
                                                 <input type="radio" id="discount0" class="form-check-input"
-                                                       name="00N2v00000IyVpz" value="0%" onclick="allowOtherDiscount();">
+                                                       name="discount" value="0%" onclick="allowOtherDiscount();">
                                                 <label class="form-check-label mx-1" for="discount0">
                                                     none
                                                 </label>
                                             </span>
                                             <span class="col gx-1">
                                                 <input type="radio" id="discount10" class="form-check-input"
-                                                       name="00N2v00000IyVpz" value="10%" onclick="allowOtherDiscount();"
+                                                       name="discount" value="10%" onclick="allowOtherDiscount();"
                                                        checked>
                                                 <label class="form-check-label mx-1" for="discount10">
                                                     10%
@@ -1253,14 +1266,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             </span>
                                             <span class="col gx-1">
                                                 <input type="radio" id="discount15" class="form-check-input"
-                                                       name="00N2v00000IyVpz" value="15%" onclick="allowOtherDiscount();">
+                                                       name="discount" value="15%" onclick="allowOtherDiscount();">
                                                 <label class="form-check-label mx-1" for="discount15">
                                                     15%
                                                 </label>
                                             </span>
                                             <span class="col gx-1">
                                                 <input type="radio" id="discount20" class="form-check-input"
-                                                       name="00N2v00000IyVpz" value="20%" onclick="allowOtherDiscount();">
+                                                       name="discount" value="20%" onclick="allowOtherDiscount();">
                                                 <label class="form-check-label mx-1" for="discount20">
                                                     20%
                                                 </label>
@@ -1272,10 +1285,10 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         <div class="col p-0 input-group mb-3">
                                             <div class="input-group-text">
                                                 <input id="othersDiscount" class="form-check-input mt-0" type="radio"
-                                                       name="00N2v00000IyVpz" value="Other" onclick="allowOtherDiscount();">&nbsp;&nbsp;
+                                                       name="discount" value="Other" onclick="allowOtherDiscount();">&nbsp;&nbsp;
                                                 <label class="form-check-label" for="othersDiscount">Other(s)</label>
                                             </div>
-                                            <input id="discountOther" name="00N9s000000QhI8" type="text" class="form-control" maxlength="50"
+                                            <input id="discountOther" name="discountOther" type="text" class="form-control" maxlength="50"
                                                    disabled onkeyup="copyToFirstOnlineOrderDiscount(this.value);" >
                                         </div>
                                     </div>
@@ -1383,7 +1396,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                      type="text"
                                                                      class="form-control"
                                                                      id="couponCode"
-                                                                     name="00N2u000000mNZ0"
+                                                                     name="couponCode"
                                                                      maxlength="30"
                                                                      autocomplete="off"
                                                                      placeholder="1trial"
@@ -1478,7 +1491,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <div class="h6 fw-bold m-0">
                                                         Payment methods
                                                     </div>
-                                                    <input type="hidden" name="00N2v00000IyVq7" id="paymentMethod" value="Credit Card">
+                                                    <input type="hidden" name="paymentMethod" id="paymentMethod" value="Credit Card">
                                                 </div>
                                                 <!-- Tab menu -->
                                                 <ul class="nav nav-tabs mb-3 px-md-4 px-2" data-bs-tabs="tabs">
@@ -1831,7 +1844,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         class="form-control w-100"
                                                         id="additionComment"
                                                         rows="3"
-                                                        name="00N2v00000IyVpq"
+                                                        name="additionComment"
                                                         placeholder="Any other information you would like us to know."
                                                         onkeyup="syncComment(this.value);"
                                                 ><?php echo $test["note"]; ?></textarea>
@@ -1848,12 +1861,11 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                             <i class="fa-solid fa-person"></i> &nbsp; Sales Agent
                                                         </label>
                                                         <div class="col d-flex justify-content-between">
-                                                            <select class="form-select" name="00N2u000000mNZG" id="byAgent" style="min-width: 50%">
+                                                            <select class="form-select" name="byAgent" id="byAgent" style="min-width: 50%">
                                                                 <option value="">--None--</option>
                                                                 <option value="Boom Piyakorn">Boom Piyakorn</option>
                                                                 <option value="Ball Anirut">Ball Anirut</option>
                                                                 <option value="Bim Sujitar">Bim Sujitar</option>
-                                                                <option value="Faye Thitiporn">Faye Thitiporn</option>
                                                                 <option value="Fern Paweena">Fern Paweena</option>
                                                                 <option value="Gun Orana">Gun Orana</option>
                                                                 <option value="Honey Tummaput">Honey Tummaput</option>
@@ -1861,9 +1873,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <option value="Nan Chompunuch">Nan Chompunuch</option>
                                                                 <option value="Naya Sanewong">Naya Sanewong</option>
                                                                 <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
-                                                                <option value="Prae Phimmada">Prae Phimmada</option>
                                                                 <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
-                                                                <option value="Pume Thanut">Pume Thanut</option>
                                                                 <option value="Other">Other</option>
                                                             </select>
                                                             <input
@@ -1888,7 +1898,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 class="form-control"
                                                                 id="byPerson"
                                                                 maxlength="100"
-                                                                name="00N2v00000IyVq9"
+                                                                name="byPerson"
                                                                 type="text"
                                                                 autocomplete="off"
                                                                 placeholder="Jane Doe"
@@ -1919,7 +1929,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 class="form-control"
                                                                 id="byRestaurant"
                                                                 maxlength="200"
-                                                                name="00N2v00000IyVqA"
+                                                                name="byRestaurant"
                                                                 type="text"
                                                                 autocomplete="off"
                                                                 placeholder="The Thai Bistro"

@@ -8,7 +8,15 @@ $id=$_REQUEST['id'];
 $row = $db->query('SELECT *, IF(shopTypeID=1, "Restaurant", "Massage") as "typeName" FROM `tb_project` WHERE projectID = ?;',$id)->fetchArray();
 $projectID = $id;
 ?>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
+    gtag('config', 'G-LGKDYHL23T');
+</script>
 <link rel="stylesheet" href="../assets/css/template.css">
 
 <nav aria-label="breadcrumb">

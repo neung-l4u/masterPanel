@@ -6,6 +6,15 @@ require_once '../assets/php/pageNavigate.php';
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-LGKDYHL23T');
+    </script>
     <meta charset="UTF-8">
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
     <meta name="viewport"
@@ -22,6 +31,31 @@ require_once '../assets/php/pageNavigate.php';
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
     <script src="../controllers/main.js"></script>
+    <script>
+        $(()=>{
+            setInterval(function() {
+                let reqHeartbeat = $.ajax({
+                    url: "../assets/api/heartbeat.php",
+                    method: "POST",
+                    async: false,
+                    cache: false,
+                    dataType: "json",
+                }); //const
+
+                reqHeartbeat.done(function (data) {
+                    if (data.status === 'expired') {
+                        alert('Your session has expired. Please log in again.');
+                        window.location = '../../../chkLogin.php?act=expired';
+                    }
+                }); //done
+
+                reqHeartbeat.fail(function (xhr, status, error) {
+                    console.log("check heart beat fail!!");
+                    console.log(status + ": " + error);
+                }); //fail
+            }, 60000); //check heartbeat every 1 minute
+        });//ready
+    </script>
 </head>
 <body>
     <?php include ('topNav.php');?>

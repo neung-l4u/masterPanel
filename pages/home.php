@@ -1,3 +1,12 @@
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-LGKDYHL23T');
+</script>
 <?php
 global $db, $date;
 $timestamp = time();
@@ -38,7 +47,7 @@ $loginID = $_SESSION['id'];
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item active"><a href="main.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="main.php?p=home">Home</a></li>
                 </ol>
             </div><!-- /.col -->
         </div><!-- /.row -->
@@ -252,6 +261,11 @@ $loginID = $_SESSION['id'];
                                 <div class="direct-chat-msg">
                                     <div class="direct-chat-infos clearfix">
                                         <span class="float-left">
+                                            <h6>22 March 2025</h6>
+                                            <ul>
+                                                <li>Create Tools page.</li>
+                                                <li>Create Unsubscribe view log page</li>
+                                            </ul>
                                             <h6>18 March 2025</h6>
                                             <ul>
                                                 <li>Change UX of Tools > SignUp form.</li>
