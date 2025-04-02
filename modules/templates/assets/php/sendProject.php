@@ -20,7 +20,8 @@ $exday = $year.$month.$day;
 $startDate = $date;
 $businessDaysToAdd = 7;
 $holidays = [];
-$dueDate = addBusinessDays($startDate, $businessDaysToAdd, $holidays);
+//$dueDate = addBusinessDays($startDate, $businessDaysToAdd, $holidays);
+$dueDate = calculateDueDate($startDate);
 
 $param = array();
 $to = "";

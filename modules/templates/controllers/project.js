@@ -349,6 +349,8 @@ const saveForm = () => {
         console.log(status + ": " + error);
     });
 
+
+
 }//saveForm
 
 const frmReset = () => {
@@ -416,6 +418,29 @@ function sendProject(id) {
             }
         });
     }//if
+
+    payload = {
+        act: inputAction.val(),
+        name: inputProjectName.val(),
+        shopTypeID: inputShopTypeID.val(),
+        selectedTemplate: selectedTemplate.val(),
+        country: inputCountry.val(),
+        editID: inputEditID.val(),
+        ownerID: inputLoginID.val(),
+        token: Math.random()
+    };
+
+    const sendProjectMonday =
+        $.ajax({
+            url: "https://hook.us1.make.com/cc7a133uwkf3xaj5ehnfcfjv5qfag9ra",
+            method: "POST",
+            async: false,
+            cache: false,
+            dataType: "json",
+            data: {
+                "projectID": id
+            }
+        });//ajax
 }//sendEmail
 
 function l4uCallback(response) {
