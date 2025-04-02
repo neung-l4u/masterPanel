@@ -1025,7 +1025,7 @@ $loginID = $_SESSION['id'];
                 console.log(res);
                 if (res.error === undefined){location.reload();}
                 else {alert(res.error);}
-                //location.reload();
+                location.reload();
             });
 
             reqAjax.fail(function (xhr, status, error) {
