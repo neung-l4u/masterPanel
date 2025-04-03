@@ -195,8 +195,10 @@ $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Usern
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Password</td><td>'.$project['hostingPass'].'</td></tr>';
 $topData .= '</table><br>';
 
+$linkDetails = '<a href="https://report.localforyou.com/pages/tpSubmittedDetails.php?projectID='.$id.' target="_blank">Click to View Template Submission Details</a>';
+
 // $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'. stripslashes(json_encode($json, JSON_PRETTY_PRINT)) .'</pre></body></html>';
-$message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>Please Get json data form DB</pre></body></html>';
+$message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr>'.$linkDetails.'</body></html>';
 
 $loginPerson = $db->query('SELECT * FROM staffs WHERE sID=?;',$loginID)->fetchArray();
 if($loginPerson['sEmail'] == $project['email']){
