@@ -358,7 +358,7 @@ if ($params ["act"] == "load"){
         $moneyValue = $params["input"]*50;
 
         if ($redeemType == "Money"){
-            $message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin for '.$moneyValue.' Baht. '.
+            $message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin for '.$moneyValue.' Bath. '.
                 '<br><br><strong>Request Date:</strong> '.$date["today"].
                 '<br><strong> Token </strong> : CEX-'.$token;
         }else{
@@ -367,7 +367,7 @@ if ($params ["act"] == "load"){
                 '<br><strong>request date:</strong> '.$date["today"];
         };
 //        $message = $myNickName." Spend ".$params["input"]." L4U coin to ".$reason.
-//        $message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin for. '.$moneyValue.' Baht. '.
+//        $message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin for. '.$moneyValue.' Bath. '.
     
 
 
