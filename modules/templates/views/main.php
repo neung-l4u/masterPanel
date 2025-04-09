@@ -3,6 +3,7 @@ session_start();
 global $title, $view;
 require_once '../assets/php/pageNavigate.php';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

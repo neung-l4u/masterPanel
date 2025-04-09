@@ -21,7 +21,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
 
         gtag('config', 'G-LGKDYHL23T');
     </script>
-    <title>L4U - Services</title>
+    <title>Sign up Form</title>
     <?php include "form_header.php"; ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

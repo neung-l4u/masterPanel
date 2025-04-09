@@ -1133,7 +1133,7 @@ function applyCoupon() {
     $("#couponCode2").attr('disabled', 'disabled');
   }
 
-  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB", "PARTNER96", "PARTNER98", "PARTNER195", "PARTNER198", "PARTNER246"]);
+  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB", "PARTNER96", "PARTNER98", "PARTNER195", "PARTNER198", "PARTNER246", "PARTNER268", "PARTNER118"]);
 
 
   inputCode = inputCode.toUpperCase();

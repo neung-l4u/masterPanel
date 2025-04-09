@@ -76,6 +76,14 @@
                 }
             }
         },
+        "PARTNER118": {
+            "Massage": {
+                "US": {
+                    "discount": 11800,
+                    "code": "US1Partner118"
+                }
+            }
+        },
         "PARTNER195": {
             "Massage": {
                 "US": {
@@ -129,6 +137,14 @@
                 "US": {
                     "discount": 24600,
                     "code": "US1Partner246"
+                }
+            }
+        },
+        "PARTNER268": {
+            "Massage": {
+                "US": {
+                    "discount": 26800,
+                    "code": "US1Partner268"
                 }
             }
         },

@@ -1,3 +1,4 @@
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
 <script>
@@ -7,10 +8,10 @@
 
     gtag('config', 'G-LGKDYHL23T');
 </script>
+    
 <link rel="stylesheet" href="../assets/css/home.css">
 <script src="../controllers/home.js"></script>
 <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
-
 <div class="row">
     <div class="col pt-4">
         <div class="border border-rounded p-3">

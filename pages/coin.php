@@ -50,7 +50,9 @@ $teamIDHardcode = array(
     )
 );
 ?>
+    
     <link rel="stylesheet" href="assets/css/coin.css">
+    
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container-fluid">

@@ -12,6 +12,11 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
 $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', $id)->fetchArray();
 ?>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template submission : Restaurant 3</title>
+</head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
 <script>

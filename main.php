@@ -1,5 +1,5 @@
 <?php
-global $showPage, $datatable, $datatable2, $db, $loadTotal;
+global $showPage, $datatable, $datatable2, $db, $loadTotal, $title;
 session_start();
 include 'assets/db/db.php';
 include "assets/db/initDB.php";
@@ -28,7 +28,7 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
     <?php require_once "assets/api/googleAnalytics.php";?>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>L4U Master Panel</title>
+  <title><?php echo $title;?></title>
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">

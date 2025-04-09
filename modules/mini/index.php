@@ -14,7 +14,7 @@ include("assets/function/testMode.php");
 
         gtag('config', 'G-LGKDYHL23T');
     </script>
-    <title>L4U - Services</title>
+    <title>Sign up Mini</title>
     <?php include "form_header.php"; ?>
 </head>
 <body>
