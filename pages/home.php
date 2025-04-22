@@ -1059,7 +1059,7 @@ $loginID = $_SESSION['id'];
             console.log(params);
 
             const reqAjax = $.ajax({
-                url: "assets/php/actionCoin.php",
+                url: "https://report.localforyou.com/assets/php/actionCoin.php",
                 method: "POST",
                 async: false,
                 cache: false,

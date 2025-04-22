@@ -4,6 +4,7 @@ global $db;
 //เรียกใช้งาน object
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
+require_once ("../assets/php/share_function.php");
 
 //รับค่าที่ส่งมาเก็บใน Array $param
 $param['act'] = (!empty($_REQUEST['act'])) ? trim($_REQUEST['act']) : ''; //ใช้เลือกเคสด้านล่างที่ต้องทำ
@@ -69,9 +70,19 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
 
     $return['result'] = 'success';
     $return['msg'] = 'project updated';
-}else if ( $param['act'] == 'add' ) {  //เพิ่ม projectg
+}else if ( $param['act'] == 'add' ) {  //เพิ่ม project
+
     $project = $db->query('INSERT INTO `tb_project`(`projectName`, `shopTypeID`, `selectedTemplate`, `statusID`, `projectOwner`, `countryID`) VALUES (?,?,?,?,?,?)'
         , $param['name'], $param['shopTypeID'], $param['selectedTemplate'], 1, $param['ownerID'], $param['country']);
+
+    $projectID = $db->lastInsertId(); 
+    $row = $db->query('SELECT `projectName` FROM `tb_project` WHERE `projectID` = ?', $projectID)->fetchArray();
+    $projectName = sanitizeFolderName($row['projectName']);
+
+    $subfolder = "../upload/". $projectID . "-" . $projectName;
+    if (!is_dir($subfolder)) {
+        mkdir($subfolder, 0777, true);
+    }
 
     $return['result'] = 'success';
     $return['msg'] = 'project created';
