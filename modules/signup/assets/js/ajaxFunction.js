@@ -794,12 +794,12 @@ const sendMail = () => {
         "mode" : "confirm",
         "shopName" : $("#shopName").val(),
         "fullName" : formData.owner.firstName+" "+formData.owner.lastName,
-        "acceptAutoPilotAI" : $("#acceptAutoPilotAI").val(),
+        "acceptAutoPilot" : $("input[name=acknowledgeAI]:checked").val(),
         "email" : $("#email").val()
     }
 
     const ajaxSendLog = $.ajax({
-        url: "https://report.localforyou.com/modules/signup/email/sendMail.php",
+        url: "https://hook.us1.make.com/2nm9tihm27otcavx7ftvafpmjlmasigo",
         method: 'POST',
         async: false,
         cache: false,
@@ -820,6 +820,8 @@ const sendMail = () => {
 }//sendMail
 
 const sendMailToL4UTeam = () => {
+
+
     let today = new Date();
     let dd = String(today.getDate()).padStart(2, '0');
     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -841,6 +843,17 @@ const sendMailToL4UTeam = () => {
     if (shopAgent === "Other") {
         shopAgent = $("#otherAgent").val();
     }
+
+    let cuisineSelected = [];
+
+    $("input:checkbox[name='cuisinesOther']:checked").each(function(){
+        cuisineSelected.push($(this).val());
+    });
+    let txtCuisine = cuisineSelected.join();
+
+
+
+
 
     ///////////////////////////////
 
@@ -877,7 +890,7 @@ const sendMailToL4UTeam = () => {
         ShippingAddress: $("#shipAddress1").val(),
         formFullName: $("#first_name").val().trim() + " " + $("#last_name").val().trim(),
         formEmail: $("#email").val().toLowerCase(),
-        formMobile: $("#mobile").val(),
+        formMobile: $("#ownerMobile").val(),
         formBestTime: $("#bestTimeContact").val(),
         formNote: $("#additionComment").val(),
         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
@@ -887,7 +900,85 @@ const sendMailToL4UTeam = () => {
         formPOSUsingOther: $("#posOtherDate").val(),
         formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
         formYesPOSProvider: $("#endDatePOS").val(),
-        acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
+        acceptAutoPilotAI: $("input[name='acknowledgeAI']:checked").val(),
+
+
+        //NEW//
+        formShopNumber: $("#businessNumber").val(),
+        formTradingName: $("#company").val(),
+        formShopPhoneNumber: $("#shopPhoneFormatted").val(),
+        formShopWebsite: $("#webURL").val(),
+        formOwnerFirstLanguageTH: $("input[id='supportTh']:checked").val(),
+        formOwnerFirstLanguageEng: $("input[id='supportEng']:checked").val(),
+        formOwnerFirstLanguageEngTH: $("input[id='supportEngTH']:checked").val(),
+
+        ///Cuisine///
+        cuisinesOther: txtCuisine,
+        formCuisineOther: $("#cuisinesOther").val(),
+
+        formSetupFee0: $("input[name='setup']:checked").val(),
+        formSetupFee3: $("input[name='setup']:checked").val(),
+        formSetupFee12: $("input[name='setup']:checked").val(),
+
+        //Booking System//
+        formLoginEmailBookingSystem: $("#emailBooking").val(),
+        formPasswordBookingSystem: $("#passwordBooking").val(),
+
+        //Online Ordering System//
+        formLoginEmailOnlineOrderingSystem: $("#emailShoppingCart").val(),
+        formPasswordOnlineOrderingSystem: $("#passwordShoppingCart").val(),
+
+        //Services//
+        formPinkUp: $("input[id='pickup']:checked").val(),
+        formTableReservation: $("input[id='tableReservation']:checked").val(),
+
+        formDineInTableOrdering: $("input[id='DineIn']:checked").val(),
+        dineInTable: $("#tableNumber").val(),
+        dineInSize: $("#sizeOption").val(),
+
+        delivery: $("input[id='delivery']:checked").val(),
+        deliveryYourOwn: $("input[id='ownDriver']:checked").val(),
+        deliverySystemDriver: $("input[id='systemDriver']:checked").val(),
+        ihdEmail: $("#ref_IHD_Email").val(),
+        ihdPw: $("#ref_IHD_Password").val(),
+        ihdToken: $("#ref_IHD_Token").val(),
+
+        //Payment Options//
+        cash: $("input[id='cash']:checked").val(),
+        cardCounter: $("input[id='cardCounter']:checked").val(),
+        callBack: $("input[id='callBack']:checked").val(),
+        payOnline: $("input[id='payOnline']:checked").val(),
+
+        //Social Networks//
+        facebook: $("#box_Facebook").val(),
+        tiktok: $("#box_TikTok").val(),
+        instagram: $("#box_Instagram").val(),
+        yelp: $("#box_Yelp").val(),
+
+        //Domain Name//
+        ///Old///
+        websiteDomainName: $("#websiteDomainName").val(),
+        keepWebsite: $("input[id='keepWebsite']:checked").val(),
+        ownDomain: $("input[id='ownDomain']:checked").val(),
+
+        ///New///
+        websiteNewDomain: $("#newDomain").val(),
+
+        ///Domain Name Login info///
+        loginInfoU: $("#ref_Domain_U").val(),
+        loginInfoP: $("#ref_Domain_P").val(),
+        loginInfoComments: $("#ref_Domain_Comments").val(),
+        loginInfoRegistered: $("#ref_Domain_Name_Registered").val(),
+
+        ///1st Order Discount///
+        firstOrderDiscount0: $("input[id='discount0']:checked").val(),
+        firstOrderDiscount10: $("input[id='discount10']:checked").val(),
+        firstOrderDiscount15: $("input[id='discount15']:checked").val(),
+        firstOrderDiscount20: $("input[id='discount20']:checked").val(),
+        firstOrderDiscountOther: $("input[id='othersDiscount']:checked").val(),
+        firstOrderDiscountOtherValue: $("#discountOther").val(),
+
+        //END NEW//
         testMail: CheckedBoxTestmailValue,
         token: Math.random()
     };
