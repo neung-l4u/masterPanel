@@ -5,15 +5,26 @@ include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 $myID = $_SESSION['id'];
 
+//prod//
 $email["hr"] = "nattiya@localforyou.com";
 $email["admin1"] = "neung@localforyou.com";
 $email["admin2"] = "bas@localforyou.com";
 $email["admin3"] = "mark@localforyou.com";
+//prod//
+
+//test//
+//$email["hr"] = "malimongcon@gmail.com";
+//$email["admin1"] = "bas@localforyou.com";
+//$email["admin2"] = "bas+2@localforyou.com";
+//$email["admin3"] = "bas+3@localforyou.com";
+//test//
+
 $users = $db->query('SELECT `sEmail`,`sName`,`sNickName` FROM `staffs` WHERE `sID` = ?;', $myID)->fetchArray();
 $email["my"] = $users['sEmail'];
 $myName = $users['sName'];
 $myNickName = $users['sNickName'];
 
+$token = bin2hex(random_bytes(16));
 $date["today"] = date("d/m/Y H:i:s", strtotime("now"));
 $reverseDate = date("Y-m-d H:i:s", strtotime("now"));
 
@@ -172,35 +183,101 @@ if ($params ["act"] == "load"){
     }
 }elseif ($params ["act"] == "transferCoin"){
 
-    $transferAmount = $_POST['transferAmount'];
-    $receiverId = $_POST['receiverId'];
+    $transferAmount = $_POST['transferAmount'];//เหรียญที่ผู้ให้จะให้
+    $receiverId = $_POST['receiverId'];//ผู้รับ
 
     $usersCoin = $db->query('SELECT `sL4U` AS "L4U", `sNickName` AS "nickName" FROM `staffs` WHERE `sID` = ?;', $myID)->fetchArray();
-    if ($transferAmount <= $usersCoin['L4U']) {
+    if ($transferAmount <= $usersCoin['L4U']) { //เช็คเหรียญ L4U ผู้ให้ในระบบ
 
-        $usersCoinNew["L4U"] = $usersCoin['L4U']-$transferAmount;
-        $usersName = $usersCoin['nickName'];
+        $usersCoinNew["L4U"] = $usersCoin['L4U']-$transferAmount; //เช็คเหรียญผู้ให้ - เหรียญที่ผู้ให้จะให้
+        $usersName = $usersCoin['nickName']; //ชื่อเล่นผู้ให้
 
-        $receiverCoin = $db->query('SELECT `sL4U` AS "L4U", `sNickName` AS "nickName" FROM `staffs` WHERE `sID` = ?;', $receiverId)->fetchArray();
-        $receiverCoinNew["L4U"] = $receiverCoin['L4U']+$transferAmount;
-        $receiverName = $receiverCoin['nickName'];
+        $receiverCoin = $db->query('SELECT `sL4U` AS "L4U", `sNickName` AS "nickName",`sEmail` AS "email" FROM `staffs` WHERE `sID` = ?;', $receiverId)->fetchArray();
+        $receiverCoinNew["L4U"] = $receiverCoin['L4U']+$transferAmount; //เช็คเหรียญผู้รับ + เหรียญที่ผู้ให้จะให้
+        $receiverName = $receiverCoin['nickName'];//ชื่อเล่นผู้รับ
+        $receiverEmail = $receiverCoin['email'];//อีเมลผู้รับ
 
-        $update = $db->query('UPDATE `staffs` SET `sL4U` = ? WHERE `sID` = ?;',$usersCoinNew["L4U"], $myID);
-        $update = $db->query('UPDATE `staffs` SET `sL4U` = ? WHERE `sID` = ?;',$receiverCoinNew["L4U"], $receiverId);
+        $update = $db->query('UPDATE `staffs` SET `sL4U` = ? WHERE `sID` = ?;',$usersCoinNew["L4U"], $myID); //UPDATE เหรียญในตาราง staffs ผู้ให้
+        $update = $db->query('UPDATE `staffs` SET `sL4U` = ? WHERE `sID` = ?;',$receiverCoinNew["L4U"], $receiverId); //UPDATE เหรียญในตาราง staffs ผู้รับ
         $params["affected"] = $update->affectedRows();
 
-        $coinAmount = $transferAmount;
+        $coinAmount = $transferAmount; //เหรียญที่ผู้ให้จะให้
         $coinType = 1;
 
-        $reason = $db->query('SELECT `name` FROM `spendtype` WHERE `id` = ?;', '2')->fetchArray();
-        $newReason = $usersName ." ". $reason['name'] ." ". $transferAmount . " to ". $receiverName;
+        $reason = $db->query('SELECT `name` FROM `SpendType` WHERE `id` = ?;', '2')->fetchArray(); //เหตุผลให้เป็น Transfer Coin
+        $newReason = $usersName ." ". $reason['name'] ." ". $transferAmount . " to ". $receiverName;//E.g. Neung Transfer Coin 300L4U to Bas
 
         $insert = $db->query('INSERT INTO `CoinLogs`(`coinType`, `ownerID`, `amount`, `giveBy`, `reason`, `activityID`) VALUES (?,?,?,?,?,?);'
             ,$coinType, $myID, $coinAmount, $myID, $newReason, 13
         );
-        $insert = $db->query('INSERT INTO `SpendLogs` (`coinType`, `ownerID`, `amount`, `spendType`, `reason`, `spendBy`) VALUES (?,?,?,?,?,?);'
+        //INSERT เข้าตาราง CoinLogs | coinType = 1 = L4U  | ownerID = ผู้เข้าระบบ | amount = เหรียญที่ผู้ให้จะให้ | giveBy = ผู้เข้าระบบ | reason = $newReason | activityID = Transfer to friend
+        $insert2 = $db->query('INSERT INTO `SpendLogs` (`coinType`, `ownerID`, `amount`, `spendType`, `reason`, `spendBy`) VALUES (?,?,?,?,?,?);'
             ,$coinType, $myID, $coinAmount, 4, $newReason, $myID
         );
+        //INSERT เข้าตาราง SpendLogs | coinType = 1 = L4U | ownerID = ผู้เข้าระบบ | amount = เหรียญที่ผู้ให้จะให้ | spendType = Exchange for cash | reason = $newReason | spandBy = ผู้เข้าระบบ
+
+        //// send mail ////
+        $result = [
+            'result' => 0,
+            'msg' => "",
+            'email' => $email["my"]
+        ];
+
+        $data = [
+            'userEmail' => $email["my"],
+            'name' => $myNickName.' '.$myName,
+            'hr' => $email["hr"],
+            'admin1' => $email["admin1"],
+            'admin2' => $email["admin2"],
+            'admin3' => $email["admin3"],
+        ];
+
+        if (!empty($data['userEmail'])) {
+            $data['subject'] = "Transfer Coin by " . $myNickName;
+            $headers = [
+                'From' => 'Coin System <administator@localforyou.com>',
+                'Cc' => $data['userEmail'].','.$receiverEmail.','.$email["hr"],
+                'Bcc' => $data['admin1'].",".$data['admin2'] .",". $data['admin3'],
+                'Reply-To' => $data['admin1'],
+                'X-Sender' => $myNickName.' <'.$data['userEmail'].'>',
+                'X-Mailer' => 'PHP/' . phpversion(),
+                'X-Priority' => '1',
+                'Return-Path' => $data['admin1'], //for error
+                'MIME-Version' => '1.0',
+                'Content-Type' => 'text/html; charset=utf-8'
+            ];
+
+            $moneyValue = $transferAmount*50;
+
+
+                $message = $usersName." ".$reason['name']." amount ".$coinAmount.' L4U coin to '.$receiverName.'.'.
+
+                    '<br><br><strong>Request Date:</strong> '.$date["today"].
+                    '<br><strong> Token </strong> : CEX-'.$token;
+
+
+
+
+            $result['email'] = $email["my"];
+            $result['payload'] = $data;
+
+
+            if (mail($data['hr'], $data['subject'], $message, $headers)) {
+                $result = [
+                    'result' => 1,
+                    'msg' => "Send email successful",
+                    'email' => $data['userEmail']
+                ];
+            } else {
+                $result = [
+                    'result' => 0,
+                    'msg' => "Send email fail!!",
+                    'email' => $data['userEmail']
+                ];
+            }
+        }
+        ///end send mail///
+
     } else {
         $params["error"] = "จำนวนเหรียญไม่เพียงพอ";
     }
@@ -266,9 +343,9 @@ if ($params ["act"] == "load"){
     if (!empty($data['userEmail'])) {
         $data['subject'] = "L4U coin redeem request : " . $myNickName;
         $headers = [
-            'From' => $myNickName.' <'.$data['userEmail'].'>',
-            'Cc' => $data['admin2'] .",". $data['admin3'],
-            'Bcc' => $data['admin1'],
+            'From' => 'Coin System <administator@localforyou.com>',
+            'Cc' => $data['userEmail'].",".$email["hr"],
+            'Bcc' => $data['admin1'].",".$data['admin2'] .",". $data['admin3'],
             'Reply-To' => $data['admin1'],
             'X-Sender' => $myNickName.' <'.$data['userEmail'].'>',
             'X-Mailer' => 'PHP/' . phpversion(),
@@ -280,11 +357,19 @@ if ($params ["act"] == "load"){
 
         $moneyValue = $params["input"]*50;
 
-        $message = $myNickName." Spend ".$params["input"]." L4U coin to ".$reason.
-        //$message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin for. '.$moneyValue.' Baht. '.
+        if ($redeemType == "Money"){
+            $message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin for '.number_format($moneyValue).' Baht. '.
+                '<br><br><strong>Request Date:</strong> '.$date["today"].
+                '<br><strong> Token </strong> : CEX-'.$token;
+        }else{
+            $message = $myNickName." Spend ".$params["input"]." L4U coin to ".$reason.
+                '<br><br> Token : CEX-'.$token.
+                '<br><strong>request date:</strong> '.$date["today"];
+        };
+//        $message = $myNickName." Spend ".$params["input"]." L4U coin to ".$reason.
+//        $message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin for. '.$moneyValue.' Baht. '.
     
-        '<br><br> Cointoken : CEX'.$reverseDate.$params["input"].
-        '<br><strong>request date:</strong> '.$date["today"];
+
 
         $result['email'] = $data['email'];
         $result['payload'] = $data;
