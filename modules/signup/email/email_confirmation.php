@@ -44,7 +44,7 @@ $data['adminEmail'] = "admin@localforyou.com";
                                         <tr>
                                             <td class="pad" style="width:100%;padding-right:0px;padding-left:0px;">
                                                 <div align="left" class="alignment" style="line-height:10px">
-                                                    <img src="https://signup.localforyou.com/assets/img/newL4U-logo-100x100.png" style="display: block; height: auto; border: 0; width: 100px; max-width: 100%;" width="100">
+                                                    <img src="https://report.localforyou.com/modules/signup/assets/img/newL4U-logo-100x100.png" style="display: block; height: auto; border: 0; width: 100px; max-width: 100%;" width="100">
                                                 </div>
                                             </td>
                                         </tr>

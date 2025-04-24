@@ -44,7 +44,7 @@ $comment = "Would be back on June 2024";
                                         <tr>
                                             <td class="pad" style="width:100%;padding-right:0px;padding-left:0px;">
                                                 <div align="left" class="alignment" style="line-height:10px">
-                                                    <img alt="Card Header with Border and Shadow Animated" src="https://signup.localforyou.com/assets/img/newL4U-logo-100x100.png" style="display: block; height: auto; border: 0; width: 100px; max-width: 100%;" title="Card Header with Border and Shadow Animated" width="100">
+                                                    <img alt="Card Header with Border and Shadow Animated" src="https://report.localforyou.com/modules/signup/assets/img/newL4U-logo-100x100.png" style="display: block; height: auto; border: 0; width: 100px; max-width: 100%;" title="Card Header with Border and Shadow Animated" width="100">
                                                 </div>
                                             </td>
                                         </tr>
