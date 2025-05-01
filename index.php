@@ -69,7 +69,7 @@
                                                        autocomplete="off"
                                                        value="<?php echo $_COOKIE['pass'] ?? ''; ?>">
                                                 <span class="input-group-text" id="basic-addon2">
-                                                    <a href="#" id="linkViewPassword" onclick="showPass()">show</a>
+                                                    <a href="#" id="linkViewPassword" onclick="showPass()"><i class="fa-solid fa-eye"></i></a>
                                                 </span>
                                             </div>
                                         </div>
