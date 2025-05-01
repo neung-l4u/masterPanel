@@ -166,4 +166,12 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Logs Unsubscribes Request";
         break;
+    case "websiteList":
+        $showPage = "websiteList.php";
+        $activeMenu["lv1"] = "";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataWebsiteList.php";
+        $title = "Master panel : Website Lists";
+        break;
 }
