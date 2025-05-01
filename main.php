@@ -5,6 +5,7 @@ include 'assets/db/db.php';
 include "assets/db/initDB.php";
 
 $myID = $_SESSION['id'];
+if (isset($_COOKIE['id'])){ $myID = $_COOKIE['id']; }
 $users = $db->query('SELECT `sL4U` AS "L4U", `sCEO` AS "CEO" FROM `staffs` WHERE `sID` = ?;', $myID)->fetchArray();
 $_SESSION['L4UCoin'] = $users['L4U'];
 $_SESSION['CEOCoin'] = $users['CEO'];
