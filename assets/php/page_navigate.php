@@ -168,7 +168,7 @@ switch ($menuPage){
         break;
     case "websiteList":
         $showPage = "websiteList.php";
-        $activeMenu["lv1"] = "";
+        $activeMenu["lv1"] = "websiteList";
         $activeMenu["lv2"] = "";
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataWebsiteList.php";
