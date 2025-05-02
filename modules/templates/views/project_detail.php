@@ -29,6 +29,7 @@ $row['colorTheme2'] = !empty($row['colorTheme2']) ? $row['colorTheme2'] : '#FFFF
 $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFFFF';
 
 ?>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
 <script>

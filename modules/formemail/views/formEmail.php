@@ -15,7 +15,7 @@ $today = date("Y-m-d");
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Email</title>
+    <title>Form fix email sign up error</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
 </head>
 <body>
@@ -200,6 +200,11 @@ $today = date("Y-m-d");
                             <option value="-">No Coupon</option>
                             <option value="1TRIAL">1TRIAL</option>
                             <option value="FREEWEB">FREEWEB</option>
+                            <option value="PARTNER96">PARTNER96</option>
+                            <option value="PARTNER98">PARTNER98</option>
+                            <option value="PARTNER195">PARTNER195</option>
+                            <option value="PARTNER198">PARTNER198</option>
+                            <option value="PARTNER246">PARTNER246</option>
                         </select>
                     </div>
                 </div>
@@ -251,8 +256,6 @@ $today = date("Y-m-d");
                             <option value="">--None--</option>
                             <option value="Boom Piyakorn">Boom Piyakorn</option>
                             <option value="Ball Anirut">Ball Anirut</option>
-                            <option value="Bim Sujitar">Bim Sujitar</option>
-                            <option value="Fern Paweena">Fern Paweena</option>
                             <option value="Gun Orana">Gun Orana</option>
                             <option value="Honey Tummaput">Honey Tummaput</option>
                             <option value="Lani Kunlanit">Lani Kunlanit</option>

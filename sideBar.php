@@ -57,7 +57,7 @@ include ('assets/api/checkSession.php');
                 <li class="nav-item">
                     <a href="main.php?p=home" class="nav-link <?php echo $activeMenu["lv1"] == "home" ? "active":""; ?>">
 <!--                        <svg class="nav-icon mr-2" height="1.5em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"  fill="--><?php //echo $activeMenu["lv1"] == "myDesk" ? "#FB8500":"#a7acb6"; ?><!--"/></svg>-->
-                        <svg class="nav-icon mr-2" height="1.5em" aria-hidden="true"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" fill="<?php echo $activeMenu["lv1"] == "myDesk" ? "#FB8500":"#a7acb6"; ?>"/></svg>
+                        <svg class="nav-icon mr-2" height="1.5em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" fill="<?php echo $activeMenu["lv1"] == "myDesk" ? "#FB8500":"#a7acb6"; ?>"/></svg>
                         <p>Home</p>
                     </a>
                 </li>
@@ -184,7 +184,7 @@ include ('assets/api/checkSession.php');
                                 </li>
                                 <?php if($teamID != 3){ ?>
                                 <li class="nav-item pl-2">
-                                    <a href="modules/cancellation/views/index.php?token=123" target="_blank" class="nav-link <?php echo $activeMenu["lv2"] == "unsubscribe" ? "active":""; ?>">
+                                    <a href="modules/unsub2/views/index.php?id=123" target="_blank" class="nav-link <?php echo $activeMenu["lv2"] == "unsubscribe" ? "active":""; ?>">
                                         <svg class="nav-icon" height="1em" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76.41 95.13"><path d="M.63,17.92L17.97.59c.39-.39.9-.59,1.41-.59h41.63c2.39,0,4.57.98,6.14,2.55,1.23,1.23,2.1,2.83,2.42,4.61,1.65.36,3.12,1.2,4.28,2.35,1.57,1.57,2.55,3.75,2.55,6.14v70.77c0,2.39-.98,4.57-2.55,6.14-1.57,1.57-3.75,2.55-6.14,2.55H15.4c-2.39,0-4.57-.98-6.14-2.55-1.23-1.23-2.1-2.83-2.42-4.61-1.65-.36-3.12-1.2-4.28-2.35C.99,84.04,0,81.86,0,79.47v-2.96h4v2.96c0,1.29.53,2.46,1.38,3.32.85.85,2.03,1.38,3.32,1.38h52.31c1.29,0,2.46-.53,3.32-1.38.85-.85,1.38-2.03,1.38-3.32V8.7c0-1.29-.53-2.46-1.38-3.32-.85-.85-2.03-1.38-3.32-1.38H21.38v8.68c0,2.39-.98,4.57-2.55,6.14-1.57,1.57-3.75,2.55-6.14,2.55H4v42.42H0V19.39c0-.57.24-1.09.63-1.46h0ZM0,72.21v-4.11h4v4.11H0ZM69.71,11.42v68.05c0,2.39-.98,4.57-2.55,6.14-1.57,1.57-3.75,2.55-6.14,2.55H11.04c.24.6.6,1.13,1.05,1.58.85.85,2.03,1.38,3.32,1.38h52.31c1.29,0,2.46-.53,3.32-1.38.85-.85,1.38-2.03,1.38-3.32V15.67c0-1.29-.53-2.46-1.38-3.32-.38-.38-.82-.7-1.32-.93h0ZM6.83,17.39h5.85c1.29,0,2.46-.53,3.32-1.38.85-.85,1.38-2.03,1.38-3.32v-5.85l-10.55,10.55h0Z" fill="#A4CAE9"/><polygon points="0 63.8 0 77.71 4 77.71 4 61.77 0 63.8" fill="#A4CAE9"/><path d="M13.86,28.05c2.34-2.34,6.14-2.34,8.48,0l12.72,12.72,12.72-12.72c2.34-2.34,6.14-2.34,8.48,0s2.34,6.14,0,8.48l-12.72,12.72,12.72,12.72c2.34,2.34,2.34,6.14,0,8.48s-6.14,2.34-8.48,0l-12.72-12.72-12.72,12.72c-2.34,2.34-6.14,2.34-8.48,0s-2.34-6.14,0-8.48l12.72-12.72-12.72-12.72c-2.34-2.34-2.34-6.14,0-8.48Z" fill="#A4CAE9"/></svg>
                                         <p>
                                         Unsubscribe Form
@@ -244,6 +244,15 @@ include ('assets/api/checkSession.php');
 
                     }// Team Sale
                     } //Super Admin Menu */?>
+
+                <li class="nav-item">
+                    <a href="main.php?p=websiteList" class="nav-link <?php echo $activeMenu["lv1"] == "websiteList" ? "active":""; ?>">
+                        <svg class="nav-icon mr-2" height="1.5em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M152.1 38.2c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 113C-2.3 103.6-2.3 88.4 7 79s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zm0 160c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 273c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zM224 96c0-17.7 14.3-32 32-32l224 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-224 0c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32l224 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-224 0c-17.7 0-32-14.3-32-32zM160 416c0-17.7 14.3-32 32-32l288 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32zM48 368a48 48 0 1 1 0 96 48 48 0 1 1 0-96z" fill="<?php echo $activeMenu["lv1"] == "websiteList" ? "#FB8500":"#a7acb6"; ?>"/></svg>
+                        <p>
+                            Website Lists
+                        </p>
+                    </a>
+                </li>
 
                 <li class="nav-item mt-5">
                     <a href="https://localforyou.com/" target="_blank" class="nav-link">

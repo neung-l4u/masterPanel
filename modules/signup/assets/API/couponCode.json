@@ -4,19 +4,19 @@
             "Restaurant": {
                 "AU": {
                     "discount": 19800,
-                    "code": "1TrialRest"
+                    "code": "AU1TRIAL198"
                 },
                 "NZ": {
                     "discount": 19800,
-                    "code": "1TrialRestNZ"
+                    "code": "NZ1TRIAL198"
                 },
                 "UK": {
                     "discount": 6800,
-                    "code": "068Demo1"
+                    "code": "GB1TRIAL68"
                 },
                 "US": {
                     "discount": 4800,
-                    "code": "1TrialRest"
+                    "code": "US1TRIAL48"
                 },
                 "CA": {
                     "discount": 9600,
@@ -29,20 +29,20 @@
             },
             "Massage": {
                 "AU": {
-                    "discount": 9600,
-                    "code": "1TrialMass"
+                    "discount": 11800,
+                    "code": "AU1TRIAL118"
                 },
                 "NZ": {
-                    "discount": 9600,
-                    "code": "1TrialMass"
+                    "discount": 11800,
+                    "code": "NZ1TRIAL118"
                 },
                 "UK": {
-                    "discount": 6800,
-                    "code": "1TrialMass"
+                    "discount": 9800,
+                    "code": "GB1TRIAL98"
                 },
                 "US": {
-                    "discount": 4800,
-                    "code": "1TrialRest"
+                    "discount": 11800,
+                    "code": "US1TRIAL118"
                 },
                 "CA": {
                     "discount": 9600,
@@ -73,6 +73,14 @@
                 "US": {
                     "discount": 9800,
                     "code": "US1Partner98"
+                }
+            }
+        },
+        "PARTNER118": {
+            "Massage": {
+                "US": {
+                    "discount": 11800,
+                    "code": "US1Partner118"
                 }
             }
         },
@@ -129,6 +137,14 @@
                 "US": {
                     "discount": 24600,
                     "code": "US1Partner246"
+                }
+            }
+        },
+        "PARTNER268": {
+            "Massage": {
+                "US": {
+                    "discount": 26800,
+                    "code": "US1Partner268"
                 }
             }
         },

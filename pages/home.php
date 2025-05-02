@@ -261,6 +261,10 @@ $loginID = $_SESSION['id'];
                                 <div class="direct-chat-msg">
                                     <div class="direct-chat-infos clearfix">
                                         <span class="float-left">
+                                            <h6>02 May 2025</h6>
+                                            <ul>
+                                                <li>Add page Website Lists.</li>
+                                            </ul>
                                             <h6>22 March 2025</h6>
                                             <ul>
                                                 <li>Create Tools page.</li>
@@ -1034,7 +1038,7 @@ $loginID = $_SESSION['id'];
                 console.log(res);
                 if (res.error === undefined){location.reload();}
                 else {alert(res.error);}
-                //location.reload();
+                location.reload();
             });
 
             reqAjax.fail(function (xhr, status, error) {
@@ -1059,7 +1063,7 @@ $loginID = $_SESSION['id'];
             console.log(params);
 
             const reqAjax = $.ajax({
-                url: "assets/php/actionCoin.php",
+                url: "https://report.localforyou.com/assets/php/actionCoin.php",
                 method: "POST",
                 async: false,
                 cache: false,

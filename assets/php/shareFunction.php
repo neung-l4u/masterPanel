@@ -17,24 +17,60 @@ function sanitizeFolderName($name): string
     return trim($sanitized);
 }
 
-function addBusinessDays($startDate, $businessDays, $holidays = []): string
+function checkTime()
 {
+// ตรวจสอบว่าเวลาปัจจุบันเป็นก่อนเที่ยง (12:00) โดยไม่รวม 12:00 หรือหลังจากนั้น
+    date_default_timezone_set("Asia/Bangkok");
+    $hour = date("H");
+    $minute = date("i");
+    $second = date("s");
+
+    if ($hour < 12) {
+        echo true;  // เวลาก่อนเที่ยง
+    } else {
+        if ($hour == 12 && ($minute > 0 || $second > 0)) {
+            echo false;  // เวลาหลัง 12:00 นาทีหรือวินาที
+        } else {
+            echo false;  // รวมถึงเวลา 12:00:00 น.
+        }
+    }
+}//checkTime
+
+
+function calculateDueDate($startDate): string
+{
+    $businessDays = 7; //fix ไว้ทีื 7 วันทำการ
     $currentDate = new DateTime($startDate);
+    $includeToday = checkTime();
+    $daysCounted = 0;
 
-    // Start counting from the next day
-    $currentDate->modify('+1 day');
+    if ($includeToday) {
+        $currentDate->modify('+0 day'); // ถ้าสั่งงานก่อนเที่ยงจะ เริ่มนับวันจากวันนี้เลย
+    } else {
+        $currentDate->modify('+1 day'); // ถ้าสั่งงานหลังเที่ยง เริ่มนับจากวันถัดไป
+    }
 
-    $daysAdded = 0;
+    while ($daysCounted < $businessDays) {
+        $weekday = $currentDate->format('N');
 
-    while ($daysAdded < $businessDays) {
-        $weekday = $currentDate->format('N'); // 1 (Monday) to 7 (Sunday)
-
-        // Check if the day is not a weekend and not a holiday
-        if ($weekday < 6 && !in_array($currentDate->format('Y-m-d'), $holidays)) {
-            $daysAdded++;
+        if ($weekday < 6) { //6 = เสาร์
+            $daysCounted++;
         }
 
-        $currentDate->modify('+1 day'); // Move to the next day
+        if ($daysCounted < $businessDays) {
+            $currentDate->modify('+1 day');
+        }
     }
+
+    $currentDate->modify('+1 day');
+
+    // ตรวจสอบวันส่งงาน หากตรงกับเสาร์-อาทิตย์ ให้เลื่อนออกไป
+    if ($currentDate->format('N') == 6) {
+        $currentDate->modify('+2 day');
+    }
+    if ($currentDate->format('N') == 7) {
+        $currentDate->modify('+1 day');
+    }
+
     return $currentDate->format('Y-m-d');
-}//addBusinessDays
+}//calculateDueDate

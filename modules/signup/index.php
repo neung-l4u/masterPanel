@@ -21,7 +21,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
 
         gtag('config', 'G-LGKDYHL23T');
     </script>
-    <title>L4U - Services</title>
+    <title>Sign up Form</title>
     <?php include "form_header.php"; ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1865,8 +1865,6 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <option value="">--None--</option>
                                                                 <option value="Boom Piyakorn">Boom Piyakorn</option>
                                                                 <option value="Ball Anirut">Ball Anirut</option>
-                                                                <option value="Bim Sujitar">Bim Sujitar</option>
-                                                                <option value="Fern Paweena">Fern Paweena</option>
                                                                 <option value="Gun Orana">Gun Orana</option>
                                                                 <option value="Honey Tummaput">Honey Tummaput</option>
                                                                 <option value="Lani Kunlanit">Lani Kunlanit</option>

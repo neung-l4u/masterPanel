@@ -7,7 +7,7 @@
             Signup Form V. <span id="formVersion" style="font-size:0.8rem; font-weight: bolder;">0.00</span>
         </span>
                 <img src="assets/img/monday-icon.svg" alt="Monday Logo" style="width: 20px; height: 20px;" onclick="modalSecretSetupAction('open');">
-                Author: Neung - Distributed By:
+                Author: IT Team - Distributed By:
                 <a style="font-size:0.8rem;" title="Awesome Online Shopping Cart Application" href="https://www.localforyou.com" target="_blank">
                     Local For You
                 </a>
@@ -18,8 +18,8 @@
                 <a href="https://localforyou.com/terms-and-conditions-txt/" target="_blank" style="font-size:0.8rem;">Terms of Service</a>
                 &nbsp; | &nbsp;
                 <a href="https://localforyou.com/privacy-policy-txt/" target="_blank" style="font-size:0.8rem;">Privacy Policy</a>
-                
             </div>
+
         </div>
     </div>
 </footer>

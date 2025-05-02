@@ -50,12 +50,14 @@ if(isset($_POST['act'])){
 
             if ($data["remember"]){
                 $cookieExpire = time() + (86400 * 365); //time + 1 year
+                setcookie("id", $account['sID'], $cookieExpire, "/");
                 setcookie("user", $data["user"], $cookieExpire, "/");
                 setcookie("pass", $data["password"], $cookieExpire, "/");
                 setcookie("remember", $data["remember"], $cookieExpire, "/");
                 setcookie("token", $token, $cookieExpire, "/");
 
         }else if ($data["remember"]===false){
+                setcookie("id", "", time() - 3600, '/');
                 setcookie("user", "", time() - 3600, '/');
                 setcookie("pass", "", time() - 3600, '/');
                 setcookie("remember", "", time() - 3600, '/');

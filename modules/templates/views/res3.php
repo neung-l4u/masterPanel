@@ -12,6 +12,11 @@ $folderName = "upload/". $projectID . "-" . sanitizeFolderName($row["projectName
 
 $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` = ?;', $id)->fetchArray();
 ?>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template submission : Restaurant 3</title>
+</head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
 <script>
@@ -943,19 +948,18 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
 <script src="dist/assets/jquery-file-upload/js/jquery.iframe-transport.js"></script>
 <script src="dist/assets/jquery-file-upload/js/jquery.fileupload.js"></script>
 <script>
-    const max_uploads = 10;
+    const max_uploads = 20;
     const multiUploadPrefix = 'album';
     let album_files = [];
 
     $(function() {
-        setAllPageStatus(); //in template.js
-        /////////
         $('#warnMaxFile').hide();
         $('#warnMaxText').text('You can upload up to ' + max_uploads + ' files.');
 
         'use strict';
 
         // Change this to the location of your server-side upload handler:
+        const url = '../multiUpload.php?projectID=<?php echo $id; ?>&folderPath=<?php echo $folderName; ?>&prefix=' + multiUploadPrefix;
         const url = '../multiUpload.php?projectID=<?php echo $id; ?>&folderPath=<?php echo $folderName; ?>&prefix=' + multiUploadPrefix;
 
         $('#fileupload').fileupload({
@@ -998,7 +1002,6 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
             }
         }).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
-            ////////
 
     });//ready
 

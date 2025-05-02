@@ -4,7 +4,7 @@ const settings = {
     card: "https://payments.localforyou.com/api/payment",
     invoice: "https://payments.localforyou.com/api/invoice",
   },
-  url_getProductList: "assets/API/B-Price-2503201400-updateProductBooking.json",
+  url_getProductList: "assets/API/B-Price-2504081459-updateProductApr.json",
   url_getPrice: "assets/API/price.php",
   url_getStates: "assets/statics/states.json",
   url_authentication: "assets/API/authentication.php",
@@ -46,12 +46,14 @@ const settings = {
   socials: [
     {
       show: true,
+      id: "facebook",
       name: "Facebook",
       icon: "<i class='fa-brands fa-facebook'></i>",
       boxName: "socialFacebook",
     },
     {
       show: true,
+      id: "instagram",
       name: "Instagram",
       icon: "<i class='fa-brands fa-instagram'></i>",
       boxName: "socialInstagram",
@@ -76,6 +78,7 @@ const settings = {
     },
     {
       show: true,
+      id: "tiktok",
       name: "TikTok",
       icon: "<i class='fa-brands fa-tiktok'></i>",
       boxName: "socialTikTok",
@@ -106,6 +109,7 @@ const settings = {
     },
     {
       show: true,
+      id: "yelp",
       name: "Yelp",
       icon: "<i class='fa-brands fa-yelp'></i>",
       boxName: "socialYelp",

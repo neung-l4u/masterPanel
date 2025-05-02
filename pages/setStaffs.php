@@ -474,7 +474,7 @@ $password = "Localeats#".date("Y");
         inputAddress.val('');
         inputEmail.val('');
         inputPhone.val('');
-        inputPassword.val('Localeats#2024').removeAttr('disabled');
+        inputPassword.val('Localeats#2025').removeAttr('disabled');
         passwordNotAllow.hide();
         inputLevel.val('4');
         inputReligion.val('1');

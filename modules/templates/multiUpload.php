@@ -33,6 +33,10 @@ if (!empty($_FILES)) {
         $targetPath = $folder;
         $targetFile =  $targetPath. $new_file_name;  //5
 
+        if (!is_dir($targetPath)) {
+            mkdir($targetPath, 0777, true);
+        }
+
         if ($img = @imagecreatefromstring(file_get_contents($tempFile))) {
             $upload_result = move_uploaded_file($tempFile,$targetFile); //6
             echo $new_file_name;
