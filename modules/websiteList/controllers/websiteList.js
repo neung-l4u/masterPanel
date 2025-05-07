@@ -21,6 +21,15 @@ const ContactEmailUser = $("#wContactEmailUser");
 const ContactEmailPass = $("#wContactEmailPass");
 const ContactEmailRemark = $("#wContactEmailRemark");
 
+let txt = '';
+let txt2 = '';
+let urlTxt = '';
+
+
+//<a href="#" onclick="copyText('admin@localforyou.com')"></a>
+let iconCopy = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">  <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>';
+let iconLink = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"/><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"/></svg>';
+
 const viewDetail = (id) => {
     const reqAjax = $.ajax({
         url: "../models/actionWebsiteList.php",
@@ -36,7 +45,10 @@ const viewDetail = (id) => {
 
     reqAjax.done(function (res) {
         console.log(res);
-        ProjectName.text(res.wProject);
+
+        txt = `<a onclick="copyText('${res.wProject}')" href="#">${iconCopy}</a>${res.wProject}`;
+
+        ProjectName.html(txt);
         Location.text(res.wLocation);
         Owner.text(res.wOwner);
         OwnerEmail.text(res.wOwnerEmail);
@@ -57,9 +69,20 @@ const viewDetail = (id) => {
         LiveStatus.text(res.wLiveStatus);
         CPanelUser.text(res.wCPanelUser);
         CPanelPass.text(res.wCPanelPass);
-        WordpressURL.text(res.wWordpressURL);
-        WordpressUser.text(res.wWordpressUser);
-        WordpressPass.text(res.wWordpressPass);
+
+        urlTxt = `<a href="${res.wWordpressURL}" target="_blank">${iconLink}</a> ${res.wWordpressURL}`;
+        //
+        WordpressURL.html(urlTxt);
+
+
+        txt = `<a onclick="copyText('admin@localforyou.com')" href="#">${iconCopy}</a> admin@localforyou.com`;
+        txt2 = `<a onclick="copyText('L4U=New@min')" href="#">${iconCopy}</a> L4U=New@min`;
+
+        //admin@localforyou.com
+        //L4U=New@min
+
+        WordpressUser.html(txt);
+        WordpressPass.html(txt2);
         SMTPEmailUser.text(res.wSMTPEmailUser);
         SMTPEmailPass.text(res.wSMTPEmailPass);
         SMTPRemark.text(res.wSMTPRemark);
@@ -74,252 +97,6 @@ const viewDetail = (id) => {
         console.log(status + ": " + error);
     });
 }// viewDetail
-
-    // const setStatus = (id, status) => {
-    //     const flagStatus = !status ? 1 : 0;
-    //     const reqAjax = $.ajax({
-    //         url: "assets/php/actionStaffs.php",
-    //         method: "POST",
-    //         async: false,
-    //         cache: false,
-    //         dataType: "json",
-    //         data: {
-    //             act: "setStatus",
-    //             id: id,
-    //             status: flagStatus
-    //         },
-    //     });
-
-    //     reqAjax.done(function (res) {
-    //         reloadTable();
-    //     });
-
-    //     reqAjax.fail(function (xhr, status, error) {
-    //         console.log("ajax request fail!!");
-    //         console.log(status + ": " + error);
-    //     });
-    // }// const
-    
-
-    // const setEdit = (id) => {
-    //     const inputName = $("#inputName");
-    //     const inputTname = $("#inputTname");
-    //     const inputNickName = $("#inputNickName");
-    //     const inputStartDate = $("#inputStartDate");
-    //     const inputEmployeeNumber = $("#inputEmployeeNumber");
-    //     const inputAddress = $("#inputAddress");
-    //     const inputBirthday = $("#inputBirthday");
-    //     const inputEmail = $("#inputEmail");
-    //     const inputPhone = $("#inputPhone");
-    //     const inputPassword = $("#inputPassword");
-    //     const passwordNotAllow = $("#passwordNotAllow");
-    //     const inputLevel = $("#inputLevel");
-    //     const inputReligion = $("#inputReligion");
-    //     const inputTeam = $("#inputTeam");
-    //     const statusOn = $("#statusOn");
-    //     const statusOff = $("#statusOff");
-    //     const editID = $("#editID");
-    //     const formAction = $("#formAction");
-    //     const reqAjax = $.ajax({
-    //         url: "assets/php/actionStaffs.php",
-    //         method: "POST",
-    //         async: false,
-    //         cache: false,
-    //         dataType: "json",
-    //         data: {
-    //             act: "loadUpdate",
-    //             id: id,
-    //         },
-    //     });
-
-        
-    //     reqAjax.done(function (res) {
-    //         console.log(res);
-    //         inputName.val(res.name);
-    //         inputTname.val(res.tname);
-    //         inputNickName.val(res.nickname);
-    //         inputBirthday.val(res.birthday);
-    //         inputStartDate.val(res.startdate);
-    //         inputEmployeeNumber.val(res.employeenumber);
-    //         inputAddress.val(res.address);
-    //         inputEmail.val(res.email);
-    //         inputPhone.val(res.phone);
-    //         inputPassword.val("Encrypted : " + res.password).attr('disabled', 'disabled');
-    //         passwordNotAllow.show();
-    //         inputLevel.val(res.level);
-    //         inputReligion.val(res.religion)
-    //         inputTeam.val(res.team)
-    //         if(res.status === 1) {
-    //             statusOff.prop('checked', false);
-    //             statusOn.prop('checked', true);
-    //         }else{
-    //             statusOn.prop('checked', false);
-    //             statusOff.prop('checked', true);
-    //         }
-    //         editID.val(res.id);
-    //         formAction.val("edit");
-    //         modalFormAction("open");
-    //     });
-
-    //     reqAjax.fail(function (xhr, status, error) {
-    //         console.log("ajax request fail!!");
-    //         console.log(status + ": " + error);
-    //     })
-    // }// const
-
-    // const formSave = () => {
-    //     const inputName = $("#inputName");
-    //     const inputTname = $("#inputTname");
-    //     const inputNickName = $("#inputNickName");
-    //     const inputBirthday = $("#inputBirthday");
-    //     const inputStartDate = $("#inputStartDate");
-    //     const inputEmployeeNumber = $("#inputEmployeeNumber");
-    //     const inputAddress = $("#inputAddress");
-    //     const inputEmail = $("#inputEmail");
-    //     const inputPhone = $("#inputPhone");
-    //     const inputPassword = $("#inputPassword");
-    //     const inputReligion = $("#inputReligion");
-    //     const inputTeam = $("#inputTeam");
-    //     const inputLevel = $("#inputLevel");
-    //     const editID = $("#editID");
-    //     const formAction = $("#formAction");
-
-    //     let statusValue = $("input[name='inputStatus']:checked").val();
-
-    //     let payload = {
-    //             act: "save",
-    //             inputName : inputName.val(),
-    //             inputTname : inputTname.val(),
-    //             inputNickName : inputNickName.val(),
-    //             inputBirthday : inputBirthday.val(),
-    //             inputStartDate : inputStartDate.val(),
-    //             inputEmployeeNumber : inputEmployeeNumber.val(),
-    //             inputAddress : inputAddress.val(),
-    //             inputEmail : inputEmail.val(),
-    //             inputPhone : inputPhone.val(),
-    //             inputPassword : inputPassword.val(),
-    //             inputReligion : inputReligion.val(),
-    //             inputTeam : inputTeam.val(),
-    //             inputLevel : inputLevel.val(),
-    //             inputStatus : statusValue,
-    //             editID : editID.val(),
-    //             formAction : formAction.val()
-    //         };
-
-    //         console.log("payload=",payload);
-            
-    //     const reqAjax = $.ajax({
-    //         url: "assets/php/actionStaffs.php",
-    //         method: "POST",
-    //         async: false,
-    //         cache: false,
-    //         dataType: "json",
-    //         data: payload
-    //     });
-            
-    //     reqAjax.done(function (res) {
-    //         modalFormAction("close");
-    //         console.log(res);
-    //         reloadTable();
-    //         resetForm();
-    //         $("#formModal").modal('hide');
-    //     });
-
-    //     reqAjax.fail(function (xhr, status, error) {
-    //         console.log("ajax request fail!!");
-    //         console.log(status + ": " + error);
-    //     });
-        
-    // }// const
-
-
-    // const resetForm = () => {
-    //     const inputName = $("#inputName");
-    //     const inputTname = $("#inputTname");
-    //     const inputNickName = $("#inputNickName");
-    //     const inputBirthday = $("#inputBirthday");
-    //     const inputStartDate = $("#inputStartDate");
-    //     const inputEmployeeNumber = $("#inputEmployeeNumber");
-    //     const inputAddress = $("#inputAddress");
-    //     const inputEmail = $("#inputEmail");
-    //     const inputPhone = $("#inputPhone");
-    //     const inputPassword = $("#inputPassword");
-    //     const inputReligion = $("#inputReligion");
-    //     const inputTeam = $("#inputTeam");
-    //     const inputLevel = $("#inputLevel");
-    //     const statusOn = $("#statusOn");
-    //     const statusOff = $("#statusOff");
-    //     const editID = $("#editID");
-    //     const formAction = $("#formAction");
-    //     const passwordNotAllow = $("#passwordNotAllow");
-
-    //     const date = new Date();
-
-    //     let day = date.getDate();
-    //     let month = date.getMonth() + 1;
-    //     let year = date.getFullYear();
-    //     let currentDate = `${year}-${month}-${day}`;
-
-    //     inputName.val('');
-    //     inputTname.val('');
-    //     inputNickName.val('');
-    //     inputBirthday.val('');
-    //     inputStartDate.val(currentDate);
-    //     inputEmployeeNumber.val('');
-    //     inputAddress.val('');
-    //     inputEmail.val('');
-    //     inputPhone.val('');
-    //     inputPassword.val('Localeats#2025').removeAttr('disabled');
-    //     passwordNotAllow.hide();
-    //     inputLevel.val('4');
-    //     inputReligion.val('1');
-    //     inputTeam.val('0');
-    //     statusOn.prop('checked', true);
-    //     statusOff.prop('checked', false);
-    //     editID.val('');
-    //     formAction.val('add');
-    // }// const
-
-    // const setDel = (delID) => {
-    //     //alert ("Delete"+delID);
-
-    //     let answer = confirm ("Are you sure to delete this Staff?");
-
-    //     console.log (answer);
-    //     if (answer === true){
-    //         let payload = {
-    //             act: "setDelete",
-    //             id : delID
-    //         };
-
-    //         console.log("payload=",payload);
-
-    //         const reqAjax = $.ajax({
-    //             url: "assets/php/actionStaffs.php",
-    //             method: "POST",
-    //             async: false,
-    //             cache: false,
-    //             dataType: "json",
-    //             data: payload
-    //         });
-                
-    //         reqAjax.done(function (res) {
-    //             modalFormAction("close");
-    //             console.log(res);
-    //             reloadTable();
-    //             resetForm();
-    //             $("#formModal").modal('hide');
-    //         });
-
-    //         reqAjax.fail(function (xhr, status, error) {
-    //             console.log("ajax request fail!!");
-    //             console.log(status + ": " + error);
-    //         });
-
-    //     }//if
-
-
-    // }//setDel
 
 function showCopy() {
     $("#alert").fadeIn(500);
@@ -344,15 +121,13 @@ $(() => {
             url: '../models/dataWebsiteList.php',
             dataSrc: 'data'
         },
-        "pageLength": 8,
+        "pageLength": 14,
         lengthMenu: [
-            [8, 25, 50, -1],
+            [14, 25, 50, -1],
             ['Fit', 25, 50, 'All']
-        ],columnDefs: [
-            {
-                targets: 5,
-                className: 'dt-body-center'
-            }
+        ],"aoColumnDefs": [
+            { "bSortable": false, "aTargets": [ 2,4,5] },
+            { "bSearchable": false, "aTargets": [ 0,5 ] }
         ]
     } );
 }); //ready

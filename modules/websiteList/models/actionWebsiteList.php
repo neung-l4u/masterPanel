@@ -34,30 +34,30 @@ if ($params ["action"] == "setStatus"){
                     WHERE 
                         w.wID = ?;', $params["id"])->fetchArray();
 
-    $params["wProject"] = $row["wProject"];
-    $params["wLocation"] = $row["wLocation"];
-    $params["wOwner"] = $row["wOwner"];
-    $params["wOwnerEmail"] = $row["wOwnerEmail"];
-    $params["wIndustry"] = $row["wIndustry"];
-    $params["wTemplateUsed"] = $row["wTemplateUsed"];
-    $params["wSystemGloriaFood"] = $row["wSystemGloriaFood"];
-    $params["wSystemAmelia"] = $row["wSystemAmelia"];
-    $params["wSystemVoucher"] = $row["wSystemVoucher"];
-    $params["wDomain"] = $row["wDomain"];
-    $params["wDomainProviderID"] = $row["wDomainProviderID"];
-    $params["wPublishDate"] = $row["wPublishDate"];
-    $params["wLiveStatus"] = $row["wLiveStatus"];
-    $params["wCPanelUser"] = $row["wCPanelUser"];
-    $params["wCPanelPass"] = $row["wCPanelPass"];
-    $params["wWordpressURL"] = $row["wWordpressURL"];
-    $params["wWordpressUser"] = $row["wWordpressUser"];
-    $params["wWordpressPass"] = $row["wWordpressPass"];
-    $params["wSMTPEmailUser"] = $row["wSMTPEmailUser"];
-    $params["wSMTPEmailPass"] = $row["wSMTPEmailPass"];
-    $params["wSMTPRemark"] = $row["wSMTPRemark"];
-    $params["wContactEmailUser"] = $row["wContactEmailUser"];
-    $params["wContactEmailPass"] = $row["wContactEmailPass"];
-    $params["wContactEmailRemark"] = $row["wContactEmailRemark"];
+    $params["wProject"] = dash($row["wProject"]);
+    $params["wLocation"] = dash($row["wLocation"]);
+    $params["wOwner"] = dash($row["wOwner"]);
+    $params["wOwnerEmail"] = dash($row["wOwnerEmail"]);
+    $params["wIndustry"] = dash($row["wIndustry"]);
+    $params["wTemplateUsed"] = dash($row["wTemplateUsed"]);
+    $params["wSystemGloriaFood"] = dash($row["wSystemGloriaFood"]);
+    $params["wSystemAmelia"] = dash($row["wSystemAmelia"]);
+    $params["wSystemVoucher"] = dash($row["wSystemVoucher"]);
+    $params["wDomain"] = dash($row["wDomain"]);
+    $params["wDomainProviderID"] = dash($row["wDomainProviderID"]);
+    $params["wPublishDate"] = dash($row["wPublishDate"]);
+    $params["wLiveStatus"] = dash($row["wLiveStatus"]);
+    $params["wCPanelUser"] = dash($row["wCPanelUser"]);
+    $params["wCPanelPass"] = dash($row["wCPanelPass"]);
+    $params["wWordpressURL"] = dash($row["wWordpressURL"]);
+    $params["wWordpressUser"] = dash($row["wWordpressUser"]);
+    $params["wWordpressPass"] = dash($row["wWordpressPass"]);
+    $params["wSMTPEmailUser"] = dash($row["wSMTPEmailUser"]);
+    $params["wSMTPEmailPass"] = dash($row["wSMTPEmailPass"]);
+    $params["wSMTPRemark"] = dash($row["wSMTPRemark"]);
+    $params["wContactEmailUser"] = dash($row["wContactEmailUser"]);
+    $params["wContactEmailPass"] = dash($row["wContactEmailPass"]);
+    $params["wContactEmailRemark"] = dash($row["wContactEmailRemark"]);
 
 }elseif ($params ["action"] == "loadUpdate"){
 
@@ -160,3 +160,10 @@ function dateHumantoSql($databd){//dd/mm/yyyy
 
     return ($Human);//output yyyy-mm-dd
 };
+
+function dash($param){
+    if (empty($param)) { return "-"; }
+    else {
+        return $param;
+    }
+}
