@@ -17,8 +17,8 @@ foreach ($result as $row) {
     $data["data"][] = array(
         $i,
         dash($row["wProject"]),
-        dashAndShort($row["wLocation"]),
-        dashAndShort($row["wOwner"]),
+        '<small>'.dashAndShort($row["wLocation"]).'</small>',
+        '<small>'.dashAndShort($row["wOwner"]).'</small>',
         dash($row["wOwnerEmail"]),
         $btn["URL"].' '.$btn["detail"],
 

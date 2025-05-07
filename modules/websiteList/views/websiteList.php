@@ -50,6 +50,9 @@ global $db;
         h5.text-info{
             font-size: 0.8rem;
         }
+        small{
+            font-size: 0.7rem;
+        }
     </style>
 </head>
 <body>
