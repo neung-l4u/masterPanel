@@ -19,7 +19,7 @@ global $db;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/libs/datatables/datatables.min.css" rel="stylesheet">
+    <link href="../assets/libs/DataTables/datatables.min.css" rel="stylesheet">
     <link href="../assets/css/websiteList.css" rel="stylesheet">
     <title>L4U - CS : Website List</title>
     <style>
@@ -94,14 +94,17 @@ global $db;
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4>Filters</h4>
+                            <h4>
+                                <svg class="nav-icon mr-3" height="16" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/></svg>
+                                Filters
+                            </h4>
                             <div class="row mb-3">
                                 <div class="col-4 mb-2">
                                     <label for="filterShopType" class="form-label">Shop Type</label>
                                     <select class="form-select" id="filterShopType" onchange="filterChange()" aria-label="Default select example">
-                                        <option value="" selected>All</option>
+                                        <option value="" >All</option>
                                         <option value="1">Restaurant</option>
-                                        <option value="2">Massage</option>
+                                        <option value="2" selected>Massage</option>
                                         <option value="3">Grocery</option>
                                         <option value="4">Internal</option>
                                         <option value="5">Template</option>
