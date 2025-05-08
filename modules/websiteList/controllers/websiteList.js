@@ -21,113 +21,120 @@ const ContactEmailUser = $("#wContactEmailUser");
 const ContactEmailPass = $("#wContactEmailPass");
 const ContactEmailRemark = $("#wContactEmailRemark");
 
+const filterShopType = $("#filterShopType");
+const filterSystem = $("#filterSystem");
+const filterStatus = $("#filterStatus");
+
+let shopType = filterShopType.val();
+let system = filterSystem.val();
+let fstatus = filterStatus.val();
+
 let txt = '';
 let txt2 = '';
 let urlTxt = '';
 
-
-//<a href="#" onclick="copyText('admin@localforyou.com')"></a>
-let iconCopy = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">  <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>';
+let iconCopy = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>';
 let iconLink = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"/><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"/></svg>';
 
 const viewDetail = (id) => {
-    const reqAjax = $.ajax({
+    $.ajax({
         url: "../models/actionWebsiteList.php",
         method: "POST",
-        async: false,
-        cache: false,
         dataType: "json",
         data: {
             act: "viewDetail",
-            id: id,
+            id: id
         },
-    });
+        success: function (res) {
+            txt = `<a onclick="copyText('${res.wProject}')" href="#">${iconCopy}</a> ${res.wProject}`;
+            ProjectName.html(txt);
+            Location.text(res.wLocation);
+            Owner.text(res.wOwner);
+            OwnerEmail.text(res.wOwnerEmail);
+            Industry.text(res.wIndustry);
+            TemplateUsed.text(res.wTemplateUsed);
 
-    reqAjax.done(function (res) {
-        console.log(res);
+            if (res.wSystemGloriaFood === 1) {
+                System.text("Gloria Food");
+            } else if (res.wSystemAmelia === 1 && res.wSystemVoucher === 1) {
+                System.text("Amelia, Voucher");
+            } else if (res.wSystemAmelia === 1) {
+                System.text("Amelia");
+            } else if (res.wSystemVoucher === 1) {
+                System.text("Voucher");
+            }
 
-        txt = `<a onclick="copyText('${res.wProject}')" href="#">${iconCopy}</a>${res.wProject}`;
+            DomainName.text(res.wDomain);
+            DomainProviderID.text(res.wDomainProviderID);
+            PublishDate.text(res.wPublishDate);
+            LiveStatus.text(res.wLiveStatus);
+            CPanelUser.text(res.wCPanelUser);
+            CPanelPass.text(res.wCPanelPass);
 
-        ProjectName.html(txt);
-        Location.text(res.wLocation);
-        Owner.text(res.wOwner);
-        OwnerEmail.text(res.wOwnerEmail);
-        Industry.text(res.wIndustry);
-        TemplateUsed.text(res.wTemplateUsed);
-        if(res.wSystemGloriaFood === 1) {
-            System.text("Gloria Food");
-        }else if(res.wSystemAmelia === 1) {
-            System.text("Amelia");
-        }else if(res.wSystemVoucher === 1) {
-            System.text("Voucher");
-        }else if(res.wSystemAmelia === 1 && res.wSystemVoucher === 1) {
-            System.text("Amelia, Voucher");
+            urlTxt = `<a href="${res.wWordpressURL}" target="_blank">${iconLink}</a> ${res.wWordpressURL}`;
+            WordpressURL.html(urlTxt);
+
+            txt = `<a onclick="copyText('admin@localforyou.com')" href="#">${iconCopy}</a> admin@localforyou.com`;
+            txt2 = `<a onclick="copyText('L4U=New@min')" href="#">${iconCopy}</a> L4U=New@min`;
+
+            WordpressUser.html(txt);
+            WordpressPass.html(txt2);
+
+            SMTPEmailUser.text(res.wSMTPEmailUser);
+            SMTPEmailPass.text(res.wSMTPEmailPass);
+            SMTPRemark.text(res.wSMTPRemark);
+            ContactEmailUser.text(res.wContactEmailUser);
+            ContactEmailPass.text(res.wContactEmailPass);
+            ContactEmailRemark.text(res.wContactEmailRemark);
+
+            $("#detailModal").modal("show");
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error:", status, error);
         }
-        DomainName.text(res.wDomain);
-        DomainProviderID.text(res.wDomainProviderID);
-        PublishDate.text(res.wPublishDate);
-        LiveStatus.text(res.wLiveStatus);
-        CPanelUser.text(res.wCPanelUser);
-        CPanelPass.text(res.wCPanelPass);
-
-        urlTxt = `<a href="${res.wWordpressURL}" target="_blank">${iconLink}</a> ${res.wWordpressURL}`;
-        //
-        WordpressURL.html(urlTxt);
-
-
-        txt = `<a onclick="copyText('admin@localforyou.com')" href="#">${iconCopy}</a> admin@localforyou.com`;
-        txt2 = `<a onclick="copyText('L4U=New@min')" href="#">${iconCopy}</a> L4U=New@min`;
-
-        //admin@localforyou.com
-        //L4U=New@min
-
-        WordpressUser.html(txt);
-        WordpressPass.html(txt2);
-        SMTPEmailUser.text(res.wSMTPEmailUser);
-        SMTPEmailPass.text(res.wSMTPEmailPass);
-        SMTPRemark.text(res.wSMTPRemark);
-        ContactEmailUser.text(res.wContactEmailUser);
-        ContactEmailPass.text(res.wContactEmailPass);
-        ContactEmailRemark.text(res.wContactEmailRemark);
-        $("#detailModal").modal("show");
     });
-
-    reqAjax.fail(function (xhr, status, error) {
-        console.log("ajax request fail!!");
-        console.log(status + ": " + error);
-    });
-}// viewDetail
+};
 
 function showCopy() {
-    $("#alert").fadeIn(500);
-    setTimeout(function () {
-        $("#alert").fadeOut();
-    }, 1000);
+    $("#alert").fadeIn(500).delay(1000).fadeOut();
 }
+
 function copyText(text) {
-    navigator.clipboard.writeText(text).then(function() {
-        showCopy();
-    }).catch(function(err) {
-        console.error("Error copying text: ", error);
+    navigator.clipboard.writeText(text).then(showCopy).catch(err => {
+        console.error("Error copying text:", err);
     });
+}
+
+function filterChange() {
+    shopType = filterShopType.val();
+    system = filterSystem.val();
+    fstatus = filterStatus.val();
+    $('#datatable').DataTable().ajax.reload();
 }
 
 $(() => {
     $("#alert").hide();
 
-    $('#datatable').DataTable( {
+    $('#datatable').DataTable({
         pagingType: 'full_numbers',
-        ajax: {
-            url: '../models/dataWebsiteList.php',
-            dataSrc: 'data'
-        },
-        "pageLength": 14,
+        pageLength: 14,
         lengthMenu: [
             [14, 25, 50, -1],
             ['Fit', 25, 50, 'All']
-        ],"aoColumnDefs": [
-            { "bSortable": false, "aTargets": [ 2,4,5] },
-            { "bSearchable": false, "aTargets": [ 0,5 ] }
+        ],
+        ajax: {
+            url: '../models/dataWebsiteList.php',
+            type: 'POST',
+            dataSrc: 'data',
+            data: function (d) {
+                d.shopType = filterShopType.val(),
+                d.system = filterSystem.val(),
+                d.fstatus = filterStatus.val()
+            }
+        },
+        "aoColumnDefs": [
+            { "bSortable": false, "aTargets": [2, 4, 5] },
+            { "bSearchable": false, "aTargets": [0, 5] }
         ]
-    } );
-}); //ready
+    });
+});

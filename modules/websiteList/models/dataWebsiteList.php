@@ -4,7 +4,37 @@ session_start();
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 
-$result = $db->query('SELECT * FROM `websitelist` WHERE delete_at IS NULL ORDER BY wProject;')->fetchAll();
+$params["filterShopType"] = !empty($_REQUEST['shopType']) ? $_REQUEST['shopType'] : '';
+$params["filterSystem"] = !empty($_REQUEST['system']) ? $_REQUEST['system'] : '';
+$params["filterStatus"] = !empty($_REQUEST['fstatus']) ? $_REQUEST['fstatus'] : '';
+
+$sql = 'SELECT * FROM `websitelist` WHERE  delete_at IS NULL ';
+$where1 = "";
+$where2 = "";
+$where3 = "";
+$order = " ORDER BY wID DESC";
+
+// filter
+
+if (!empty($params["filterShopType"])){
+    $where1 = " AND wIndustry = '".$params["filterShopType"]."'";
+}
+if (!empty($params["filterSystem"])){
+    if ($params["filterSystem"] === "AM") {
+        $where2 = " AND wSystemAmelia = 1";
+    } else if ($params["filterSystem"] === "GF") {
+        $where2 = " AND wSystemGloriaFood = 1";
+    } else if ($params["filterSystem"] === "VC") {
+        $where2 = " AND wSystemVoucher = 1";
+    }
+}
+if (!empty($params["filterStatus"])){
+    $where3 = " AND wLiveStatus = '".$params["filterStatus"]."'";
+}
+
+
+$sql = $sql . $where1 . $where2 . $where3 . $order;
+$result = $db->query($sql)->fetchAll();
 
 $data = array("data"=> array());
 

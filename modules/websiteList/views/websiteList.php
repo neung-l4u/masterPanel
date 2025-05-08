@@ -26,9 +26,9 @@ global $db;
         .colNo{
             width: 50px;
         }
-        .colProName{
+        /* .colProName{
 
-        }
+        } */
         .colLocation{
             width: 150px;
         }
@@ -90,6 +90,52 @@ global $db;
     <!-- /.content-header -->
 
     <main>
+             <div class="row mt-4 mb-4">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>Filters</h4>
+                            <div class="row mb-3">
+                                <div class="col-4 mb-2">
+                                    <label for="filterShopType" class="form-label">Shop Type</label>
+                                    <select class="form-select" id="filterShopType" onchange="filterChange()" aria-label="Default select example">
+                                        <option value="" selected>All</option>
+                                        <option value="1">Restaurant</option>
+                                        <option value="2">Massage</option>
+                                        <option value="3">Grocery</option>
+                                        <option value="4">Internal</option>
+                                        <option value="5">Template</option>
+                                        <option value="6">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-4 mb-2">
+                                    <label for="filterSystem" class="form-label">System</label>
+                                    <select class="form-select" id="filterSystem" onchange="filterChange()"  aria-label="Default select example">
+                                        <option value="" selected>All</option>
+                                        <option value="GF">Gloria Food</option>
+                                        <option value="AM">Amelia</option>
+                                        <option value="VC">Voucher</option>
+                                    </select>
+                                </div>
+                                <div class="col-4 mb-2">
+                                    <label for="filterStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="filterStatus" onchange="filterChange()" aria-label="Default select example">
+                                        <option value="" selected>All</option>
+                                        <option value="Live">Live</option>
+                                        <option value="Draft">Draft</option>
+                                        <option value="Transferred">Transferred</option>
+                                        <option value="Pre Live">Pre Live</option>
+                                        <option value="Subdomain">Subdomain</option>
+                                        <option value="Redirect">Redirect</option>
+                                        <option value="Unpublished">Unpublished</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.col-md-12 -->
+            </div><!-- /.row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -110,6 +156,7 @@ global $db;
                     </div>
                 </div><!-- /.col-md-12 -->
             </div><!-- /.row -->
+
             <div id="alert" style="
                 display: block;
                 right: 20px;
