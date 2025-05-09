@@ -445,5 +445,10 @@ function sendProject(id) {
 
 function l4uCallback(response) {
     $('#projectData').DataTable().ajax.reload();
-    console.log("Template Submittion Response:", response);
+    console.log("Template Submitting Response:", response);
+}
+
+function truel4uCallback(response) {
+    $('#projectData').DataTable().ajax.reload();
+    console.log("Template Submitting Response:", response);
 }

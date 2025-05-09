@@ -3,7 +3,7 @@ require_once ("../assets/db/db.php");
 require_once ("../assets/db/initDB.php");
 require_once ("../assets/php/share_function.php");
 global $db, $date;
-$id=$_REQUEST['id'];
+$id=$_GET['id'];
 
 $row = $db->query('SELECT * FROM `tb_project` WHERE `projectID` = ?;',$id)->fetchArray();
 $projectID = $id;
