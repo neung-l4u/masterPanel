@@ -19,7 +19,7 @@ global $db;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/libs/datatables/datatables.min.css" rel="stylesheet">
+    <link href="../assets/libs/DataTables/datatables.min.css" rel="stylesheet">
     <link href="../assets/css/websiteList.css" rel="stylesheet">
     <title>L4U - CS : Website List</title>
     <style>

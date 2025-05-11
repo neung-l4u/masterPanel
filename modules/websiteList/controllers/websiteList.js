@@ -46,7 +46,7 @@ const viewDetail = (id) => {
     reqAjax.done(function (res) {
         console.log(res);
 
-        txt = `<a onclick="copyText('${res.wProject}')" href="#">${iconCopy}</a>${res.wProject}`;
+        txt = `<a onclick="copyText('${res.wProject}')" href="#"> ${iconCopy}</a>${res.wProject}`;
 
         ProjectName.html(txt);
         Location.text(res.wLocation);
@@ -121,7 +121,7 @@ $(() => {
             url: '../models/dataWebsiteList.php',
             dataSrc: 'data'
         },
-        "pageLength": 14,
+        "pageLength": -1,
         lengthMenu: [
             [14, 25, 50, -1],
             ['Fit', 25, 50, 'All']

@@ -24,13 +24,13 @@ if ($params ["action"] == "setStatus"){
                         wt.template AS wTemplateUsed,
                         sv.svName AS wServerName
                     FROM 
-                        websiteList w
+                        websitelist w
                     LEFT JOIN 
                         tb_shopType st ON w.wIndustry = st.id
                     LEFT JOIN 
-                        websiteTemplate wt ON w.wTemplateUsed = wt.id
+                        WebsiteTemplate wt ON w.wTemplateUsed = wt.id
                     LEFT JOIN 
-                        l4uservers sv ON w.svID = sv.svID
+                        L4UServers sv ON w.svID = sv.svID
                     WHERE 
                         w.wID = ?;', $params["id"])->fetchArray();
 
