@@ -5,10 +5,10 @@ include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
 $data["table"] = "";
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["typeID"] = !empty($_REQUEST['typeID']) ? $_REQUEST['typeID'] : "";
-$params["month"] = !empty($_REQUEST['month']) ? $_REQUEST['month'] : "0";
-$params["year"] = !empty($_REQUEST['year']) ? $_REQUEST['year'] : "0";
+$params["action"] = !empty($_POST['act']) ? $_POST['act'] : "";
+$params["typeID"] = !empty($_POST['typeID']) ? $_POST['typeID'] : "";
+$params["month"] = !empty($_POST['month']) ? $_POST['month'] : "0";
+$params["year"] = !empty($_POST['year']) ? $_POST['year'] : "0";
 
 $data["typeID"] = $params["typeID"];
 $result = "";

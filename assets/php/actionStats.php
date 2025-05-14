@@ -4,13 +4,13 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "";
-$params["typeID"] = !empty($_REQUEST['typeID']) ? $_REQUEST['typeID'] : "";
-$params["year"] = !empty($_REQUEST['year']) ? $_REQUEST['year'] : "";
-$params["month"] = !empty($_REQUEST['month']) ? $_REQUEST['month'] : "";
-$params["total"] = !empty($_REQUEST['total']) ? $_REQUEST['total'] : "";
-$params["formAction"] = !empty($_REQUEST['formAction']) ? $_REQUEST['formAction'] : 'add';
+$params["action"] = !empty($_POST['act']) ? $_POST['act'] : "";
+$params["id"] = !empty($_POST['id']) ? $_POST['id'] : "";
+$params["typeID"] = !empty($_POST['typeID']) ? $_POST['typeID'] : "";
+$params["year"] = !empty($_POST['year']) ? $_POST['year'] : "";
+$params["month"] = !empty($_POST['month']) ? $_POST['month'] : "";
+$params["total"] = !empty($_POST['total']) ? $_POST['total'] : "";
+$params["formAction"] = !empty($_POST['formAction']) ? $_POST['formAction'] : 'add';
 
 if ($params ["action"] == "save"){
     $params["txt"] = "Got it";

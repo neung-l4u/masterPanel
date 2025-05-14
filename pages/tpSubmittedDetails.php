@@ -41,8 +41,8 @@ $result = array(
     "result" => 0
 );
 
-$id = $_REQUEST["projectID"];
-$loginID = $_REQUEST["loginID"];
+$id = $_GET["projectID"];
+$loginID = $_POST["loginID"];
 $pageDetails = array();
 
 $project = $db->query(

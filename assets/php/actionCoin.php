@@ -29,23 +29,23 @@ $date["today"] = date("d/m/Y H:i:s", strtotime("now"));
 $reverseDate = date("Y-m-d H:i:s", strtotime("now"));
 
 
-$params["act"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["userID"] = !empty($_REQUEST['userID']) ? $_REQUEST['userID'] : "";
-$params["formAction"] = !empty($_REQUEST['formAction']) ? $_REQUEST['formAction'] : "";
-$params["coinType"] = !empty($_REQUEST['coinType']) ? $_REQUEST['coinType'] : "";
-$params["coinAmount"] = !empty($_REQUEST['coinAmount']) ? $_REQUEST['coinAmount'] : "";
-$params["activityID"] = !empty($_REQUEST['activityID']) ? $_REQUEST['activityID'] : "";
-$params["coinReason"] = !empty($_REQUEST['coinReason']) ? $_REQUEST['coinReason'] : "";
+$params["act"] = !empty($_POST['act']) ? $_POST['act'] : "";
+$params["userID"] = !empty($_POST['userID']) ? $_POST['userID'] : "";
+$params["formAction"] = !empty($_POST['formAction']) ? $_POST['formAction'] : "";
+$params["coinType"] = !empty($_POST['coinType']) ? $_POST['coinType'] : "";
+$params["coinAmount"] = !empty($_POST['coinAmount']) ? $_POST['coinAmount'] : "";
+$params["activityID"] = !empty($_POST['activityID']) ? $_POST['activityID'] : "";
+$params["coinReason"] = !empty($_POST['coinReason']) ? $_POST['coinReason'] : "";
 $params["giveBy"] = $_SESSION['id'];
 $params["coinTypeNum"] = 0;
-$params["selectedTeam"] = !empty($_REQUEST['selectedTeam']) ? $_REQUEST['selectedTeam'] : "0";;
+$params["selectedTeam"] = !empty($_POST['selectedTeam']) ? $_POST['selectedTeam'] : "0";;
 
 if($params["coinType"]=="l4u"){ $params["coinTypeNum"] = 1; }
 elseif($params["coinType"]=="ceo"){ $params["coinTypeNum"] = 2; }
 
 //for convert coin //
-$params["sourceCoin"] = !empty($_REQUEST['sourceCoin']) ? $_REQUEST['sourceCoin'] : "";;
-$params["input"] = !empty($_REQUEST['input']) ? $_REQUEST['input'] : "0";;
+$params["sourceCoin"] = !empty($_POST['sourceCoin']) ? $_POST['sourceCoin'] : "";;
+$params["input"] = !empty($_POST['input']) ? $_POST['input'] : "0";;
 ////////
 
 if ($params ["act"] == "load"){

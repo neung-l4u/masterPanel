@@ -6,11 +6,11 @@ include "../assets/db/initDB.php";
 $myID = $_SESSION['id'];
 
 $salt = "L4U";
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "";
-$params["editID"] = !empty($_REQUEST['editID']) ? $_REQUEST['editID'] : "";
-$params["status"] = !empty($_REQUEST['status']) ? 1 : 0;
-$params["formAction"] = !empty($_REQUEST['formAction']) ? $_REQUEST['formAction'] : 'add';
+$params["action"] = !empty($_POST['act']) ? $_POST['act'] : "";
+$params["id"] = !empty($_POST['id']) ? $_POST['id'] : "";
+$params["editID"] = !empty($_GET['editID']) ? $_GET['editID'] : "";
+$params["status"] = !empty($_POST['status']) ? 1 : 0;
+$params["formAction"] = !empty($_POST['formAction']) ? $_POST['formAction'] : 'add';
 
 if ($params ["action"] == "setStatus"){
     $update = $db->query('UPDATE `staffs` SET `sStatus` = ? WHERE `staffs`.`sID` = ?;', $params ["status"], $params ["id"]);
@@ -81,26 +81,26 @@ if ($params ["action"] == "setStatus"){
 }elseif ($params ["action"] == "save"){
     $params["txt"] = "Got it";
 
-    if (!empty($_REQUEST['inputPassword'])){
-        $passwordHash = md5($salt . $_REQUEST['inputPassword']);
+    if (!empty($_POST['inputPassword'])){
+        $passwordHash = md5($salt . $_POST['inputPassword']);
     }else{
         $passwordHash = md5($salt . "Localeats#2023");
     }
 
-    $params["inputName"] = !empty($_REQUEST['inputName']) ? $_REQUEST['inputName'] : "invalid Name";
-    $params["inputTname"] = !empty($_REQUEST['inputTname']) ? $_REQUEST['inputTname'] : "invalid Thai Name";
-    $params["inputEmail"] = !empty($_REQUEST['inputEmail']) ? $_REQUEST['inputEmail'] : "invalid Email";
-    $params["inputPhone"] = !empty($_REQUEST['inputPhone']) ? $_REQUEST['inputPhone'] : "invalid Phone";
+    $params["inputName"] = !empty($_POST['inputName']) ? $_POST['inputName'] : "invalid Name";
+    $params["inputTname"] = !empty($_POST['inputTname']) ? $_POST['inputTname'] : "invalid Thai Name";
+    $params["inputEmail"] = !empty($_POST['inputEmail']) ? $_POST['inputEmail'] : "invalid Email";
+    $params["inputPhone"] = !empty($_POST['inputPhone']) ? $_POST['inputPhone'] : "invalid Phone";
     $params["inputPassword"] = $passwordHash;
-    $params["inputLevel"] = !empty($_REQUEST['inputLevel']) ? $_REQUEST['inputLevel'] : "3";
-    $params["inputReligion"] = !empty($_REQUEST['inputReligion']) ? $_REQUEST['inputReligion'] : "1";
-    $params["inputStatus"] = !empty($_REQUEST['inputStatus']) ? $_REQUEST['inputStatus'] : "0";
-    $params["inputNickName"] = !empty($_REQUEST['inputNickName']) ? $_REQUEST['inputNickName'] : "";
-    $params["inputBirthday"] = !empty($_REQUEST['inputBirthday']) ? $_REQUEST['inputBirthday'] : NULL;
-    $params["inputStartDate"] = !empty($_REQUEST['inputStartDate']) ? $_REQUEST['inputStartDate'] : NULL;
-    $params["inputEmployeeNumber"] = !empty($_REQUEST['inputEmployeeNumber']) ? $_REQUEST['inputEmployeeNumber'] : NULL;
-    $params["inputAddress"] = !empty($_REQUEST['inputAddress']) ? $_REQUEST['inputAddress'] : NULL;
-    $params["inputTeam"] = !empty($_REQUEST['inputTeam']) ? $_REQUEST['inputTeam'] : "7";
+    $params["inputLevel"] = !empty($_POST['inputLevel']) ? $_POST['inputLevel'] : "3";
+    $params["inputReligion"] = !empty($_POST['inputReligion']) ? $_POST['inputReligion'] : "1";
+    $params["inputStatus"] = !empty($_POST['inputStatus']) ? $_POST['inputStatus'] : "0";
+    $params["inputNickName"] = !empty($_POST['inputNickName']) ? $_POST['inputNickName'] : "";
+    $params["inputBirthday"] = !empty($_POST['inputBirthday']) ? $_POST['inputBirthday'] : NULL;
+    $params["inputStartDate"] = !empty($_POST['inputStartDate']) ? $_POST['inputStartDate'] : NULL;
+    $params["inputEmployeeNumber"] = !empty($_POST['inputEmployeeNumber']) ? $_POST['inputEmployeeNumber'] : NULL;
+    $params["inputAddress"] = !empty($_POST['inputAddress']) ? $_POST['inputAddress'] : NULL;
+    $params["inputTeam"] = !empty($_POST['inputTeam']) ? $_POST['inputTeam'] : "7";
 
 
     $params["by"] = $_SESSION['id'];
@@ -126,8 +126,8 @@ if ($params ["action"] == "setStatus"){
     }
 
 }elseif ($params ["action"] == "changePassword"){
-    if (!empty($_REQUEST['password'])){
-        $passwordHash = md5($salt . $_REQUEST['password']);
+    if (!empty($_POST['password'])){
+        $passwordHash = md5($salt . $_POST['password']);
     }else{
         $passwordHash = md5($salt . "Localeats#2023");
     }
@@ -137,7 +137,7 @@ if ($params ["action"] == "setStatus"){
     $update = $db->query('UPDATE `staffs` SET `sPassword` = ? WHERE sID = ?;', $params["newPassword"], $myID);
     $params["affected"] = $update->affectedRows();
 
-    $_SESSION['password'] = $_REQUEST['password'];
+    $_SESSION['password'] = $_POST['password'];
 
 }elseif ($params ["action"] == "setDelete"){
 

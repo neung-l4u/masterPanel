@@ -1,5 +1,5 @@
 <?php
-$menuPage = isset($_REQUEST["p"]) ? $_REQUEST["p"] : "";
+$menuPage = isset($_POST["p"]) ? $_POST["p"] : "";
 
 $showPage = "home.php";
 $activeMenu["lv1"] = "home";

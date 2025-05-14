@@ -5,11 +5,11 @@ include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 $myID = $_SESSION['id'];
 
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "";
-$params["editID"] = !empty($_REQUEST['editID']) ? $_REQUEST['editID'] : "";
-$params["status"] = !empty($_REQUEST['status']) ? 1 : 0;
-$params["formAction"] = !empty($_REQUEST['formAction']) ? $_REQUEST['formAction'] : 'add';
+$params["action"] = !empty($_POST['act']) ? $_POST['act'] : "";
+$params["id"] = !empty($_POST['id']) ? $_POST['id'] : "";
+$params["editID"] = !empty($_POST['editID']) ? $_POST['editID'] : "";
+$params["status"] = !empty($_POST['status']) ? 1 : 0;
+$params["formAction"] = !empty($_POST['formAction']) ? $_POST['formAction'] : 'add';
 
 if ($params ["action"] == "loadUpdate"){
     $row = $db->query('SELECT * FROM `passwordmanager` WHERE id = ?;',$params ["id"])->fetchArray();
@@ -26,21 +26,21 @@ if ($params ["action"] == "loadUpdate"){
 }elseif ($params ["action"] == "save"){
     $params["txt"] = "Got it";
 
-    if (!empty($_REQUEST['inputPassword'])){
-        $passwordHash = md5($salt . $_REQUEST['inputPassword']);
+    if (!empty($_POST['inputPassword'])){
+        $passwordHash = md5($salt . $_POST['inputPassword']);
     }else{
         $passwordHash = md5($salt . "Localeats#2023");
     }
 
-    $params["inputType"] = !empty($_REQUEST['inputType']) ? $_REQUEST['inputType'] : "invalid Type";
-    $params["inputTeam"] = !empty($_REQUEST['inputTeam']) ? $_REQUEST['inputTeam'] : "invalid Team";
-    $params["inputLevel"] = !empty($_REQUEST['inputLevel']) ? $_REQUEST['inputLevel'] : "invalid Level";
-    $params["inputpwName"] = !empty($_REQUEST['inputpwName']) ? $_REQUEST['inputpwName'] : "invalid Name";
-    $params["inputAccessLink"] = !empty($_REQUEST['inputAccessLink']) ? $_REQUEST['inputAccessLink'] : "invalid Link";
-    $params["inputUserName"] = !empty($_REQUEST['inputUserName']) ? $_REQUEST['inputUserName'] : "invalid Username";
-    $params["inputPassword"] = !empty($_REQUEST['inputPassword']) ? $_REQUEST['inputPassword'] : "invalid Password";
-    $params["inputSharePW"] = !empty($_REQUEST['inputSharePW']) ? $_REQUEST['inputSharePW'] : "0";
-    $params["inputNote"] = !empty($_REQUEST['inputNote']) ? $_REQUEST['inputNote'] : "";
+    $params["inputType"] = !empty($_POST['inputType']) ? $_POST['inputType'] : "invalid Type";
+    $params["inputTeam"] = !empty($_POST['inputTeam']) ? $_POST['inputTeam'] : "invalid Team";
+    $params["inputLevel"] = !empty($_POST['inputLevel']) ? $_POST['inputLevel'] : "invalid Level";
+    $params["inputpwName"] = !empty($_POST['inputpwName']) ? $_POST['inputpwName'] : "invalid Name";
+    $params["inputAccessLink"] = !empty($_POST['inputAccessLink']) ? $_POST['inputAccessLink'] : "invalid Link";
+    $params["inputUserName"] = !empty($_POST['inputUserName']) ? $_POST['inputUserName'] : "invalid Username";
+    $params["inputPassword"] = !empty($_POST['inputPassword']) ? $_POST['inputPassword'] : "invalid Password";
+    $params["inputSharePW"] = !empty($_POST['inputSharePW']) ? $_POST['inputSharePW'] : "0";
+    $params["inputNote"] = !empty($_POST['inputNote']) ? $_POST['inputNote'] : "";
     $params["by"] = $_SESSION['id'];
 
     if($params ["formAction"]=='add'){

@@ -4,7 +4,7 @@ include 'assets/db/db.php';
 include "assets/db/initDB.php";
 $salt = "L4U";
 
-$act = $_REQUEST["act"];
+$act = $_POST["act"];
 
 if($act=="login"){
     header("Location: ../../pages/main.php");
