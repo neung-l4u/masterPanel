@@ -12,8 +12,8 @@
  */
 
 $projectID = $_GET['projectID'];
-$folder = $_POST['folderPath'];
-$prefix = $_POST['prefix'];
+$folder = $_GET['folderPath'];
+$prefix = $_GET['prefix'];
 
 $ds = DIRECTORY_SEPARATOR;  //1
 $storeFolder = 'uploads';   //2

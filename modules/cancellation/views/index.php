@@ -8,7 +8,7 @@
     gtag('config', 'G-LGKDYHL23T');
 </script>
 <?php
-$id = !empty($_REQUEST['id']) ? strtolower(trim($_REQUEST['id'])): '';
+$id = !empty($_GET['id']) ? strtolower(trim($_GET['id'])): '';
 $testMode = ($id == "test") ? 1 : 0;
 ?>
 <!doctype html>

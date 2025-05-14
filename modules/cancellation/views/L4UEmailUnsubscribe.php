@@ -1,21 +1,21 @@
 <?php
 session_start();
 
-$json = $_REQUEST["allData"];
+$json = $_POST["allData"];
 
-$data['mode'] = !empty($_REQUEST['mode']) ? $_REQUEST['mode'] : 'confirm';
-$data['shopName'] = !empty($_REQUEST['shopName']) ? $_REQUEST['shopName'] : null;
-$data['fullName'] = !empty($_REQUEST['fullName']) ? $_REQUEST['fullName'] : null;
-$data['email'] = !empty($_REQUEST['email']) ? $_REQUEST['email'] : null; //customer email
-$data['formCountry'] = !empty($_REQUEST['formCountry']) ? $_REQUEST['formCountry'] : "-";
-$data['company'] = !empty($_REQUEST['company']) ? $_REQUEST['company'] : "-";
-$data['streetAddress1'] = !empty($_REQUEST['streetAddress1']) ? $_REQUEST['streetAddress1'] : "-";
-$data['city'] = !empty($_REQUEST['city']) ? $_REQUEST['city'] : "-";
-$data['state'] = !empty($_REQUEST['state']) ? $_REQUEST['state'] : "-";
-$data['zip'] = !empty($_REQUEST['zip']) ? $_REQUEST['zip'] : "-";
-$data['first_name'] = !empty($_REQUEST['first_name']) ? $_REQUEST['first_name'] : "-";
-$data['last_name'] = !empty($_REQUEST['last_name']) ? $_REQUEST['last_name'] : "-";
-$data['mobile'] = !empty($_REQUEST['mobile']) ? $_REQUEST['last_name'] : "-";
+$data['mode'] = !empty($_POST['mode']) ? $_POST['mode'] : 'confirm';
+$data['shopName'] = !empty($_POST['shopName']) ? $_POST['shopName'] : null;
+$data['fullName'] = !empty($_POST['fullName']) ? $_POST['fullName'] : null;
+$data['email'] = !empty($_POST['email']) ? $_POST['email'] : null; //customer email
+$data['formCountry'] = !empty($_POST['formCountry']) ? $_POST['formCountry'] : "-";
+$data['company'] = !empty($_POST['company']) ? $_POST['company'] : "-";
+$data['streetAddress1'] = !empty($_POST['streetAddress1']) ? $_POST['streetAddress1'] : "-";
+$data['city'] = !empty($_POST['city']) ? $_POST['city'] : "-";
+$data['state'] = !empty($_POST['state']) ? $_POST['state'] : "-";
+$data['zip'] = !empty($_POST['zip']) ? $_POST['zip'] : "-";
+$data['first_name'] = !empty($_POST['first_name']) ? $_POST['first_name'] : "-";
+$data['last_name'] = !empty($_POST['last_name']) ? $_POST['last_name'] : "-";
+$data['mobile'] = !empty($_POST['mobile']) ? $_POST['last_name'] : "-";
 
 
 
