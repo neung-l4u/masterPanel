@@ -35,8 +35,8 @@ $result = array(
 
 $sendMail = false;
 
-$id = $_REQUEST["projectID"];
-$loginID = $_REQUEST["loginID"];
+$id = $_GET["projectID"];
+$loginID = $_GET["loginID"];
 $pageDetails = array();
 
 $project = $db->query(

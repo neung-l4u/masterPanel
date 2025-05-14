@@ -14,7 +14,7 @@ date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
 $timestamp = date("Y-m-d H:i:s");
 
-$dataLogs = !empty($_REQUEST["payload"]) ? $_REQUEST["payload"] : null;
+$dataLogs = !empty($_POST["payload"]) ? $_POST["payload"] : null;
 $countryCode = !empty($dataLogs["countryCode"]) ? $dataLogs["countryCode"] : "-";
 $formType = !empty($dataLogs["formType"]) ? $dataLogs["formType"] : "-";
 
