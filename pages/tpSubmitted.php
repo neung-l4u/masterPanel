@@ -58,7 +58,7 @@ global $db, $date;
                                        style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width: 10%;">Due Date</th>
+                                        <th style="width: 10%;">Timestamp</th>
                                         <th style="width: 10%;">Template</th>
                                         <th style="width: 50%;">Project Name</th>
                                         <th style="width: 10%;">Details</th>
