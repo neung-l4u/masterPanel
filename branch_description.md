@@ -1,3 +1,13 @@
+>250515 mark/fix/TPtimestamp
+>- แก้ datatable view logs ของ Template Submission เปลี่ยนคอลัมน์จาก duedate เป็น timestamp 
+
+>250514 mark/feature/voucherLogs
+>- สร้าง modules/voucherLogs และ database เพื่อเก็บ Logs ก็ซื้อ Voucher แล้วเชื่อมต่อกับ API ของ make.com
+>- ...กำลังทำหน้า view log
+
+>250513 basmark/fix/request
+>- แก้ $_REQUEST ทุกไฟล์เป็น $_POST หรือ $_GET เนื่องจาก A2 อัพเดตระบบ
+
 >250501 mark/feature/websiteLists
 >- เพิ่ม datatable สำหรับ Website Lists เพิ่มหน้า page websiteList.php, dataWebsiteList.php, actionWebsiteList.php 
 
