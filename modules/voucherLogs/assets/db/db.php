@@ -1,6 +1,6 @@
 <?php
 
-namespace voucher\assets\db;
+namespace voucherLogs\assets\db;
 class db
 {
 
