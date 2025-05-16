@@ -5,8 +5,8 @@ include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 
 //ประกาศตัวแปร
-$param['act'] = (!empty($_REQUEST['act'])) ? trim($_REQUEST['act']) : '';
-$param['token'] = (!empty($_REQUEST['token'])) ? trim($_REQUEST['token']) : '';
+$param['act'] = (!empty($_POST['act'])) ? trim($_POST['act']) : '';
+$param['token'] = (!empty($_POST['token'])) ? trim($_POST['token']) : '';
 
 //ส่งค่ากลับ
 $return['result'] = '';

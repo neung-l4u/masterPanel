@@ -33,10 +33,10 @@ $result = array(
 
 $sendMail = false;
 
-$id = $_REQUEST["projectID"];
-$loginID = $_REQUEST["loginID"];
-$json = $_REQUEST["payload"];
-$page = $_REQUEST["page"];
+$id = $_POST["projectID"];
+$loginID = $_POST["loginID"];
+$json = $_POST["payload"];
+$page = $_POST["page"];
 
 $project = $db->query(
     '

@@ -3,24 +3,24 @@ session_start();
 date_default_timezone_set("Asia/Bangkok");
 $when = date('Y-m-d H:i:s');
 
-$json = $_REQUEST["allData"];
+$json = $_POST["allData"];
 
-$data['mode'] = !empty($_REQUEST['mode']) ? $_REQUEST['mode'] : 'confirm';
-$data['shopName'] = !empty($_REQUEST['shopName']) ? $_REQUEST['shopName'] : "-";
-$data['email'] = !empty($_REQUEST['email']) ? $_REQUEST['email'] : "-"; //customer email
-$data['county'] = !empty($_REQUEST['county']) ? $_REQUEST['county'] : "-";
-$data['tradingName'] = !empty($_REQUEST['tradingName']) ? $_REQUEST['tradingName'] : "-";
-$data['streetAddress'] = !empty($_REQUEST['streetAddress']) ? $_REQUEST['streetAddress'] : "-";
-$data['city'] = !empty($_REQUEST['city']) ? $_REQUEST['city'] : "-";
-$data['state'] = !empty($_REQUEST['state']) ? $_REQUEST['state'] : "-";
-$data['zip'] = !empty($_REQUEST['zip']) ? $_REQUEST['zip'] : "-";
-$data['firstName'] = !empty($_REQUEST['firstName']) ? $_REQUEST['firstName'] : "-";
-$data['lastName'] = !empty($_REQUEST['lastName']) ? $_REQUEST['lastName'] : "-";
-$data['mobile'] = !empty($_REQUEST['mobile']) ? $_REQUEST['mobile'] : "-";
-$data['reason'] = !empty($_REQUEST['reason']) ? $_REQUEST['reason'] : "-";
-$data['other'] = !empty($_REQUEST['other']) ? $_REQUEST['other'] : "-";
-$date['lastdate'] = !empty($_REQUEST['lastdate']) ? $_REQUEST['lastdate'] : "-";
-$data['feedback'] = !empty($_REQUEST['feedback']) ? $_REQUEST['feedback'] : "-";
+$data['mode'] = !empty($_POST['mode']) ? $_POST['mode'] : 'confirm';
+$data['shopName'] = !empty($_POST['shopName']) ? $_POST['shopName'] : "-";
+$data['email'] = !empty($_POST['email']) ? $_POST['email'] : "-"; //customer email
+$data['county'] = !empty($_POST['county']) ? $_POST['county'] : "-";
+$data['tradingName'] = !empty($_POST['tradingName']) ? $_POST['tradingName'] : "-";
+$data['streetAddress'] = !empty($_POST['streetAddress']) ? $_POST['streetAddress'] : "-";
+$data['city'] = !empty($_POST['city']) ? $_POST['city'] : "-";
+$data['state'] = !empty($_POST['state']) ? $_POST['state'] : "-";
+$data['zip'] = !empty($_POST['zip']) ? $_POST['zip'] : "-";
+$data['firstName'] = !empty($_POST['firstName']) ? $_POST['firstName'] : "-";
+$data['lastName'] = !empty($_POST['lastName']) ? $_POST['lastName'] : "-";
+$data['mobile'] = !empty($_POST['mobile']) ? $_POST['mobile'] : "-";
+$data['reason'] = !empty($_POST['reason']) ? $_POST['reason'] : "-";
+$data['other'] = !empty($_POST['other']) ? $_POST['other'] : "-";
+$date['lastdate'] = !empty($_POST['lastdate']) ? $_POST['lastdate'] : "-";
+$data['feedback'] = !empty($_POST['feedback']) ? $_POST['feedback'] : "-";
 
 $address = $data['streetAddress']." ".$data['city']." ".$data['state']." ".$data['zip']." ".$data['country'];
 $fullName= $data['firstName']." ".$data['lastName'];

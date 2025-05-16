@@ -7,15 +7,15 @@ include "../assets/db/initDB.php";
 require_once ("../assets/php/share_function.php");
 
 //รับค่าที่ส่งมาเก็บใน Array $param
-$param['act'] = (!empty($_REQUEST['act'])) ? trim($_REQUEST['act']) : ''; //ใช้เลือกเคสด้านล่างที่ต้องทำ
-$param['name'] = (!empty($_REQUEST['name'])) ? trim($_REQUEST['name']) : ''; //ชื่อโปรเจคที่ส่งมา
-$param['shopTypeID'] = (!empty($_REQUEST['shopTypeID'])) ? trim($_REQUEST['shopTypeID']) : '';
-$param['selectedTemplate'] = (!empty($_REQUEST['selectedTemplate'])) ? trim($_REQUEST['selectedTemplate']) : null;
-$param['status'] = (!empty($_REQUEST['status'])) ? trim($_REQUEST['status']) : '1'; //1=Draft , 2=Send
-$param['country'] = (!empty($_REQUEST['country'])) ? trim($_REQUEST['country']) : ''; //ตามตาราง Countries
-$param['editID'] = (!empty($_REQUEST['editID'])) ? trim($_REQUEST['editID']) : ''; //จะส่งมาเฉพาะเคส setEdit , Update
-$param['delID'] = (!empty($_REQUEST['delID'])) ? trim($_REQUEST['delID']) : ''; //จะส่งมาเฉพาะเคส del
-$param['ownerID'] = (!empty($_REQUEST['ownerID'])) ? trim($_REQUEST['ownerID']) : ''; //มาจาก session ที่ frontend อ่านมาให้
+$param['act'] = (!empty($_POST['act'])) ? trim($_POST['act']) : ''; //ใช้เลือกเคสด้านล่างที่ต้องทำ
+$param['name'] = (!empty($_POST['name'])) ? trim($_POST['name']) : ''; //ชื่อโปรเจคที่ส่งมา
+$param['shopTypeID'] = (!empty($_POST['shopTypeID'])) ? trim($_POST['shopTypeID']) : '';
+$param['selectedTemplate'] = (!empty($_POST['selectedTemplate'])) ? trim($_POST['selectedTemplate']) : null;
+$param['status'] = (!empty($_POST['status'])) ? trim($_POST['status']) : '1'; //1=Draft , 2=Send
+$param['country'] = (!empty($_POST['country'])) ? trim($_POST['country']) : ''; //ตามตาราง Countries
+$param['editID'] = (!empty($_POST['editID'])) ? trim($_POST['editID']) : ''; //จะส่งมาเฉพาะเคส setEdit , Update
+$param['delID'] = (!empty($_POST['delID'])) ? trim($_POST['delID']) : ''; //จะส่งมาเฉพาะเคส del
+$param['ownerID'] = (!empty($_POST['ownerID'])) ? trim($_POST['ownerID']) : ''; //มาจาก session ที่ frontend อ่านมาให้
 
 //สร้างตัวแปร Array ไว้ตอนส่งค่ากลับ
 $return['result'] = '';

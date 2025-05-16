@@ -4,9 +4,9 @@ session_start();
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 
-$params["filterShopType"] = !empty($_REQUEST['shopType']) ? $_REQUEST['shopType'] : '';
-$params["filterSystem"] = !empty($_REQUEST['system']) ? $_REQUEST['system'] : '';
-$params["filterStatus"] = !empty($_REQUEST['fstatus']) ? $_REQUEST['fstatus'] : '';
+$params["filterShopType"] = !empty($_POST['shopType']) ? $_POST['shopType'] : '';
+$params["filterSystem"] = !empty($_POST['system']) ? $_POST['system'] : '';
+$params["filterStatus"] = !empty($_POST['fstatus']) ? $_POST['fstatus'] : '';
 
 $sql = 'SELECT * FROM `websitelist` WHERE  delete_at IS NULL ';
 $where1 = "";

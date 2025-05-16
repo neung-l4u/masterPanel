@@ -10,10 +10,10 @@ $timestamp = date("Y-m-d H:i:s");
 $result["result"] = "";
 $result["msg"] = "";
 
-$dataLogs = !empty($_REQUEST["payload"]) ? $_REQUEST["payload"] : null;
-$dataStripe = !empty($_REQUEST["stripePayload"]) ? $_REQUEST["stripePayload"] : null;
-$country = !empty($_REQUEST["country"]) ? $_REQUEST["country"] : null;
-$contractURL = !empty($_REQUEST["contractURL"]) ? $_REQUEST["contractURL"] : null;
+$dataLogs = !empty($_POST["payload"]) ? $_POST["payload"] : null;
+$dataStripe = !empty($_POST["stripePayload"]) ? $_POST["stripePayload"] : null;
+$country = !empty($_POST["country"]) ? $_POST["country"] : null;
+$contractURL = !empty($_POST["contractURL"]) ? $_POST["contractURL"] : null;
 
 $dataLogs = json_encode($dataLogs);
 $dataStripe = json_encode($dataStripe);

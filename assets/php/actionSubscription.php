@@ -4,15 +4,15 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["year"] = !empty($_REQUEST['year']) ? $_REQUEST['year'] : "";
-$params["month"] = !empty($_REQUEST['month']) ? $_REQUEST['month'] : "";
-$params["paidOn"] = !empty($_REQUEST['paidOn']) ? $_REQUEST['paidOn'] : "";
-$params["total"] = !empty($_REQUEST['total']) ? $_REQUEST['total'] : "";
-$params["formAction"] = !empty($_REQUEST['formAction']) ? $_REQUEST['formAction'] : "";
-$params["serviceID"] = !empty($_REQUEST['serviceID']) ? $_REQUEST['serviceID'] : "";
-$params["typeID"] = !empty($_REQUEST['typeID']) ? $_REQUEST['typeID'] : "";
-$params["delID"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "";
+$params["action"] = !empty($_POST['act']) ? $_POST['act'] : "";
+$params["year"] = !empty($_POST['year']) ? $_POST['year'] : "";
+$params["month"] = !empty($_POST['month']) ? $_POST['month'] : "";
+$params["paidOn"] = !empty($_POST['paidOn']) ? $_POST['paidOn'] : "";
+$params["total"] = !empty($_POST['total']) ? $_POST['total'] : "";
+$params["formAction"] = !empty($_POST['formAction']) ? $_POST['formAction'] : "";
+$params["serviceID"] = !empty($_POST['serviceID']) ? $_POST['serviceID'] : "";
+$params["typeID"] = !empty($_POST['typeID']) ? $_POST['typeID'] : "";
+$params["delID"] = !empty($_GET['id']) ? $_GET['id'] : "";
 
 if ($params ["action"] == "save"){
     $params["txt"] = "Got it";

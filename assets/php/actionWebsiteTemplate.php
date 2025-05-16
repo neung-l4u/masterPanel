@@ -5,13 +5,13 @@ include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 $myID = $_SESSION['id'];
 
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "";
-$params["editID"] = !empty($_REQUEST['editID']) ? $_REQUEST['editID'] : "";
+$params["action"] = !empty($_POST['act']) ? $_POST['act'] : "";
+$params["id"] = !empty($_POST['id']) ? $_POST['id'] : "";
+$params["editID"] = !empty($_POST['editID']) ? $_POST['editID'] : "";
 $params["by"] = $_SESSION['id'];
-$params["templateWebsite"] = !empty($_REQUEST['templateWebsite']) ? $_REQUEST['templateWebsite'] : "1";
-$params["linkwebsite"] = !empty($_REQUEST['linkwebsite']) ? $_REQUEST['linkwebsite'] : "https://www.localforyou.com/";
-$params["formAction"] = !empty($_REQUEST['formAction']) ? $_REQUEST['formAction'] : 'add';
+$params["templateWebsite"] = !empty($_POST['templateWebsite']) ? $_POST['templateWebsite'] : "1";
+$params["linkwebsite"] = !empty($_POST['linkwebsite']) ? $_POST['linkwebsite'] : "https://www.localforyou.com/";
+$params["formAction"] = !empty($_POST['formAction']) ? $_POST['formAction'] : 'add';
 
 if ($params ["action"] == "loadUpdate"){
     $row = $db->query('SELECT `id`, `wpTemplate`, `wpLinkCM` FROM `WebsiteTemplateDetail` WHERE id = ?;',$params ["id"])->fetchArray();
