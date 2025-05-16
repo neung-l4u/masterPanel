@@ -51,29 +51,20 @@ $password = "Localeats#".date("Y");
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-end">
-
-                    </div>
-                    <div class="card-body">
-                        <div class="card">
-                            <div class="card-body table-responsive p-4" style="height: 630px;">
-                                <table id="voucherTable" class="table table-borderless table-striped table-hover"
-                                       style="width:100%">
-                                    <thead class="thead-dark">
-                                    <tr>
-                                        <th style="width:11%">Timestamp</th>
-                                        <th style="width:20%">Shop name</th>
-                                        <th style="width:20%">Customer</th>
-                                        <th style="width:20%">Recipient</th>
-                                        <th style="width:20%">Service</th>
-                                        <th style="width:5%">Amount</th>
-                                        <th style="width:4%">Details</th>
-                                    </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
+                    <div class="card-body table-responsive p-4" style="height: 630px;">
+                        <table id="voucherTable" class="table table-borderless table-striped table-hover"
+                               style="width:100%">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th style="width:11%">Timestamp</th>
+                                    <th style="width:20%">Shop name</th>
+                                    <th style="width:20%">Customer</th>
+                                    <th style="width:20%">Service</th>
+                                    <th style="width:5%">Amount</th>
+                                    <th style="width:4%">Details</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
                 </div>
             </div><!-- /.col-md-12 -->
@@ -107,9 +98,6 @@ $password = "Localeats#".date("Y");
                         <pre id="jsonText" class="json">jsonData</pre>
                     </div> <!-- modal-body -->
 
-                    <div class="modal-footer">
-                        
-                    </div> <!-- modal-footer -->
                 </div> <!-- modal-content -->
             </div> <!-- modal-dialog -->
         </div> <!-- modal -->
@@ -135,9 +123,9 @@ $password = "Localeats#".date("Y");
             [8, 25, 50, -1],
             ['Fit', 25, 50, 'All']
         ],columnDefs: [
-            { targets: [0, 1, 2, 3, 4], className: 'dt-left' },
-            { targets: [6], className: 'dt-center', "orderable": "false" },
-            { targets: [5], className: 'dt-right' , "orderable": "false"}
+            { targets: [0, 1, 2, 3], className: 'dt-left' },
+            { targets: [5], className: 'dt-center', "orderable": "false" },
+            { targets: [4], className: 'dt-right' , "orderable": "false"}
         ]
     } );
 
@@ -145,7 +133,6 @@ $password = "Localeats#".date("Y");
         let jsonData = data;
         console.log("data", data.shopName);
         if(data !== undefined){ shopName.text(data.shopName); logType.text("Voucher");}
-        
         $('#formModal').modal('show');
         $('#jsonText').html(JSON.stringify(jsonData, undefined, 2));
     }
