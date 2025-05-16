@@ -6,13 +6,13 @@ include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 
 //รับค่าที่ส่งมาเก็บใน Array $param
-$param['act'] = (!empty($_REQUEST['act'])) ? trim($_REQUEST['act']) : ''; //ใช้เลือกเคสด้านล่างที่ต้องทำ
-$param['status'] = (!empty($_REQUEST['status'])) ? trim($_REQUEST['status']) : '1'; //1=On , 2=Send
-$param['editID'] = (!empty($_REQUEST['editID'])) ? trim($_REQUEST['editID']) : ''; //จะส่งมาเฉพาะเคส setEdit , Update
-$param['delID'] = (!empty($_REQUEST['delID'])) ? trim($_REQUEST['delID']) : ''; //จะส่งมาเฉพาะเคส del
-$param['ownerID'] = (!empty($_REQUEST['ownerID'])) ? trim($_REQUEST['ownerID']) : ''; //มาจาก session ที่ frontend อ่านมาให้
-$param['recipient'] = (!empty($_REQUEST['recipient'])) ? trim($_REQUEST['recipient']) : '';
-$param['channel'] = (!empty($_REQUEST['channel'])) ? trim($_REQUEST['channel']) : '';
+$param['act'] = (!empty($_POST['act'])) ? trim($_POST['act']) : ''; //ใช้เลือกเคสด้านล่างที่ต้องทำ
+$param['status'] = (!empty($_POST['status'])) ? trim($_POST['status']) : '1'; //1=On , 2=Send
+$param['editID'] = (!empty($_POST['editID'])) ? trim($_POST['editID']) : ''; //จะส่งมาเฉพาะเคส setEdit , Update
+$param['delID'] = (!empty($_POST['delID'])) ? trim($_POST['delID']) : ''; //จะส่งมาเฉพาะเคส del
+$param['ownerID'] = (!empty($_POST['ownerID'])) ? trim($_POST['ownerID']) : ''; //มาจาก session ที่ frontend อ่านมาให้
+$param['recipient'] = (!empty($_POST['recipient'])) ? trim($_POST['recipient']) : '';
+$param['channel'] = (!empty($_POST['channel'])) ? trim($_POST['channel']) : '';
 
 //สร้างตัวแปร Array ไว้ตอนส่งค่ากลับ
 $return['result'] = '';

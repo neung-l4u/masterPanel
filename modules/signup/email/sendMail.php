@@ -1,13 +1,13 @@
 <?php
 session_start();
 
-$json = $_REQUEST["allData"];
+$json = $_POST["allData"];
 
-$data['mode'] = !empty($_REQUEST['mode']) ? $_REQUEST['mode'] : 'confirm';
-$data['shopName'] = !empty($_REQUEST['shopName']) ? $_REQUEST['shopName'] : null;
-$data['fullName'] = !empty($_REQUEST['fullName']) ? $_REQUEST['fullName'] : null;
-$data['email'] = !empty($_REQUEST['email']) ? $_REQUEST['email'] : null; //customer email
-$data['acceptAutoPilotAI'] = !empty($_REQUEST['acceptAutoPilotAI']) ? $_REQUEST['acceptAutoPilotAI'] : false;
+$data['mode'] = !empty($_POST['mode']) ? $_POST['mode'] : 'confirm';
+$data['shopName'] = !empty($_POST['shopName']) ? $_POST['shopName'] : null;
+$data['fullName'] = !empty($_POST['fullName']) ? $_POST['fullName'] : null;
+$data['email'] = !empty($_POST['email']) ? $_POST['email'] : null; //customer email
+$data['acceptAutoPilotAI'] = !empty($_POST['acceptAutoPilotAI']) ? $_POST['acceptAutoPilotAI'] : false;
 
 $data['adminEmail'] = "admin@localforyou.com";
 $data['l4uStaff'] = "bas@localforyou.com";  //อีเมล์ผู้ดูแลระบบ

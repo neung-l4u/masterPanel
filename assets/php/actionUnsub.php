@@ -5,8 +5,8 @@ include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
 
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "No Action";
-$params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "9999";
+$params["action"] = !empty($_GET['act']) ? $_GET['act'] : "No Action";
+$params["id"] = !empty($_GET['id']) ? $_GET['id'] : "9999";
 
  $row = $db->query('SELECT * FROM `Cancellation` WHERE id = ?;',$params ["id"])->fetchArray();
 

@@ -6,11 +6,11 @@ include "../../assets/db/initDB.php";
 $myID = $_SESSION['id'];
 
 $salt = "L4U";
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "";
-$params["editID"] = !empty($_REQUEST['editID']) ? $_REQUEST['editID'] : "";
-$params["status"] = !empty($_REQUEST['status']) ? 1 : 0;
-$params["formAction"] = !empty($_REQUEST['formAction']) ? $_REQUEST['formAction'] : 'add';
+$params["action"] = !empty($_POST['act']) ? $_POST['act'] : "";
+$params["id"] = !empty($_POST['id']) ? $_POST['id'] : "";
+$params["editID"] = !empty($_POST['editID']) ? $_POST['editID'] : "";
+$params["status"] = !empty($_POST['status']) ? 1 : 0;
+$params["formAction"] = !empty($_POST['formAction']) ? $_POST['formAction'] : 'add';
 
 if ($params ["action"] == "setStatus"){
     $update = $db->query('UPDATE `tools` SET `status` = ? WHERE `tools`.`id` = ?;', $params ["status"], $params ["id"]);
@@ -27,11 +27,11 @@ if ($params ["action"] == "setStatus"){
     $params["txt"] = "Got it";
 
 
-    $params["inputType"] = !empty($_REQUEST['inputType']) ? $_REQUEST['inputType'] : "";
-    $params["inputServices"] = !empty($_REQUEST['inputServices']) ? $_REQUEST['inputServices'] : "";
-    $params["inputDescription"] = !empty($_REQUEST['inputDescription']) ? $_REQUEST['inputDescription'] : "";
-    $params["inputLink"] = !empty($_REQUEST['inputLink']) ? $_REQUEST['inputLink'] : "";
-    $params["inputStatus"] = !empty($_REQUEST['inputStatus']) ? $_REQUEST['inputStatus'] : "0";
+    $params["inputType"] = !empty($_POST['inputType']) ? $_POST['inputType'] : "";
+    $params["inputServices"] = !empty($_POST['inputServices']) ? $_POST['inputServices'] : "";
+    $params["inputDescription"] = !empty($_POST['inputDescription']) ? $_POST['inputDescription'] : "";
+    $params["inputLink"] = !empty($_POST['inputLink']) ? $_POST['inputLink'] : "";
+    $params["inputStatus"] = !empty($_POST['inputStatus']) ? $_POST['inputStatus'] : "0";
     $params["by"] = $_SESSION['id'];
 }
 

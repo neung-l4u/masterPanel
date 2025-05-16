@@ -4,7 +4,7 @@ error_reporting(E_ERROR | E_PARSE);
 
 $date = date('Y-m-d H:i:s');
 
-$data = $_REQUEST['frm'];
+$data = $_POST['frm'];
 $response['send'] = false;
 
 $country = !empty($data['country']) ? $data['country'] : '-';
