@@ -18,7 +18,8 @@ $data = [];
 foreach ($sales as $row) {
     $data[] = [
         'id' => $row['sID'],
-        'text' => $row['sNickName'] . ' ' . strtok($row['sName'], ' ')
+        'text' => $row['sNickName'] . ' ' . strtok($row['sName'], ' '),
+        'nickname' => $row['sNickName']
     ];
 }
 
