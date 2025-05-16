@@ -1,7 +1,7 @@
 <?php
 
 include_once 'db.php';
-use voucher\assets\db\db;
+use voucherLogs\assets\db\db;
 
 date_default_timezone_set("Asia/Bangkok");
 error_reporting(E_ERROR | E_PARSE);

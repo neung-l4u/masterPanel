@@ -174,4 +174,12 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataWebsiteList.php";
         $title = "Master panel : Website Lists";
         break;
+    case "voucherLogs":
+        $showPage = "voucherLogs.php";
+        $activeMenu["lv1"] = "voucherLogs";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataVoucherLogs.php";
+        $title = "Master panel : Voucher Logs";
+        break;
 }
