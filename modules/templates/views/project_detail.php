@@ -7,7 +7,7 @@ $icon = '<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg
 
 
 global $db, $date;
-$id=$_REQUEST['id'];
+$id=$_GET['id'];
 
 $row = $db->query('SELECT  p.*, IF(p.shopTypeID=1, "Restaurant", "Massage") as "typeName", p.countryID, c.name AS "countryName", s.sNickName 
         FROM tb_project p, staffs s, Countries c 

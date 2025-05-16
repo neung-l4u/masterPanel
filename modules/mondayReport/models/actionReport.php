@@ -6,9 +6,9 @@ global $db;
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 
-$param['loginID'] = (!empty($_REQUEST['loginID'])) ? trim($_REQUEST['loginID']) : '';
-$param['status'] = (!empty($_REQUEST['status'])) ? trim($_REQUEST['status']) : '1';
-$param['act'] = (!empty($_REQUEST['act'])) ? trim($_REQUEST['act']) : '';
+$param['loginID'] = (!empty($_POST['loginID'])) ? trim($_POST['loginID']) : '';
+$param['status'] = (!empty($_POST['status'])) ? trim($_POST['status']) : '1';
+$param['act'] = (!empty($_POST['act'])) ? trim($_POST['act']) : '';
 
 $return['result'] = '';
 $return['msg'] = '';

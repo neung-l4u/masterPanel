@@ -1,5 +1,5 @@
 <?php
-$menu = (!empty($_REQUEST['m'])) ? trim($_REQUEST['m']) : 'home'; //ดูว่าเลือกเมนูไหนอยู่
+$menu = (!empty($_GET['m'])) ? trim($_GET['m']) : 'home'; //ดูว่าเลือกเมนูไหนอยู่
 switch ($menu) {
     case 'project':
         $title = 'Project';

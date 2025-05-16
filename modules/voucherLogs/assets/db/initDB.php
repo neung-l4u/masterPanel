@@ -1,0 +1,14 @@
+<?php
+
+include_once 'db.php';
+use voucherLogs\assets\db\db;
+
+date_default_timezone_set("Asia/Bangkok");
+error_reporting(E_ERROR | E_PARSE);
+
+$dbHost = '85.187.128.54';
+$dbUser = 'localfor_voucher';
+$dbPass = 'Localforyou2025!';
+$dbName = 'localfor_voucher';
+
+$db = new db($dbHost, $dbUser, $dbPass, $dbName);

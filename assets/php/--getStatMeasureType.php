@@ -4,10 +4,10 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "";
-$params["month"] = !empty($_REQUEST['month']) ? $_REQUEST['month'] : "";
-$params["year"] = !empty($_REQUEST['year']) ? $_REQUEST['year'] : "";
+$params["action"] = !empty($_POST['act']) ? $_POST['act'] : "";
+$params["id"] = !empty($_POST['id']) ? $_POST['id'] : "";
+$params["month"] = !empty($_POST['month']) ? $_POST['month'] : "";
+$params["year"] = !empty($_POST['year']) ? $_POST['year'] : "";
 $total = 0;
 
 if ($params ["action"] == "getType"){

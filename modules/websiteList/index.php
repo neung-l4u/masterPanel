@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>redirect page</title>
     <script>
-        window.location.replace("views/index.php");
+        window.location.replace("views/websiteList.php");
     </script>
 </head>
 <body>

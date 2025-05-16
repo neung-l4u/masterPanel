@@ -5,11 +5,11 @@ $filename = date("Y-m-d-His", $timestamp);
 $image = ImageCreateFromJpeg("https://signup.localforyou.com/voucher/assets/img/Voucher2-frame.jpg"); // Path Images
 $font = "./Roboto-Black.ttf";
 
-$code = !empty($_REQUEST['code']) ? trim($_REQUEST['code']) : '';
-$valid = !empty($_REQUEST['valid']) ? trim($_REQUEST['valid']) : '';
-$discount = !empty($_REQUEST['discount']) ? trim($_REQUEST['discount']) : '';
-$url = !empty($_REQUEST['url']) ? trim($_REQUEST['url']) : '';
-$phone = !empty($_REQUEST['phone']) ? trim($_REQUEST['phone']) : '';
+$code = !empty($_GET['code']) ? trim($_GET['code']) : '';
+$valid = !empty($_GET['valid']) ? trim($_GET['valid']) : '';
+$discount = !empty($_GET['discount']) ? trim($_GET['discount']) : '';
+$url = !empty($_GET['url']) ? trim($_GET['url']) : '';
+$phone = !empty($_GET['phone']) ? trim($_GET['phone']) : '';
 
 $apiResponse = [
     'success' => true,

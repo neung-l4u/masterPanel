@@ -9,7 +9,7 @@ $filePath = $folderPath . $fileName;
 $result["result"] = "";
 $result["msg"] = "";
 
-$json = $_REQUEST["allData"];
+$json = $_POST["allData"];
 
 $message = "----- $fileName -> $timestamp -----
 

@@ -4,21 +4,21 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$params["action"] = !empty($_REQUEST['act']) ? $_REQUEST['act'] : "";
-$params["formAction"] = !empty($_REQUEST['formAction']) ? $_REQUEST['formAction'] : "";
-$params["typeID"] = !empty($_REQUEST['typeID']) ? $_REQUEST['typeID'] : "";
-$params["nickName"] = !empty($_REQUEST['nickName']) ? $_REQUEST['nickName'] : "";
-$params["name"] = !empty($_REQUEST['name']) ? $_REQUEST['name'] : "";
-$params["team"] = !empty($_REQUEST['team']) ? $_REQUEST['team'] : "";
-$params["status"] = !empty($_REQUEST['status']) ? $_REQUEST['status'] : "";
-$params["datepicker"] = !empty($_REQUEST['datepicker']) ? reDateFormat($_REQUEST['datepicker']) : "";
-$params["typeExpense"] = !empty($_REQUEST['typeExpense']) ? $_REQUEST['typeExpense'] : "";
-$params["value"] = !empty($_REQUEST['value']) ? $_REQUEST['value'] : "";
-$params["month"] = !empty($_REQUEST['month']) ? $_REQUEST['month'] : "";
-$params["year"] = !empty($_REQUEST['year']) ? $_REQUEST['year'] : "";
-$params["delID"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "";
-$params["id"] = !empty($_REQUEST['id']) ? $_REQUEST['id'] : "";
-$params["employeeStatus"] = !empty($_REQUEST['employeeStatus']) ? 1 : 0;
+$params["action"] = !empty($_POST['act']) ? $_POST['act'] : "";
+$params["formAction"] = !empty($_POST['formAction']) ? $_POST['formAction'] : "";
+$params["typeID"] = !empty($_POST['typeID']) ? $_POST['typeID'] : "";
+$params["nickName"] = !empty($_POST['nickName']) ? $_POST['nickName'] : "";
+$params["name"] = !empty($_POST['name']) ? $_POST['name'] : "";
+$params["team"] = !empty($_POST['team']) ? $_POST['team'] : "";
+$params["status"] = !empty($_POST['status']) ? $_POST['status'] : "";
+$params["datepicker"] = !empty($_POST['datepicker']) ? reDateFormat($_POST['datepicker']) : "";
+$params["typeExpense"] = !empty($_POST['typeExpense']) ? $_POST['typeExpense'] : "";
+$params["value"] = !empty($_POST['value']) ? $_POST['value'] : "";
+$params["month"] = !empty($_POST['month']) ? $_POST['month'] : "";
+$params["year"] = !empty($_POST['year']) ? $_POST['year'] : "";
+$params["delID"] = !empty($_POST['id']) ? $_POST['id'] : "";
+$params["id"] = !empty($_POST['id']) ? $_POST['id'] : "";
+$params["employeeStatus"] = !empty($_POST['employeeStatus']) ? 1 : 0;
 
 
 if ($params ["action"] == "save"){

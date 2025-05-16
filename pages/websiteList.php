@@ -12,7 +12,18 @@ global $db, $date;
 
 $password = "Localeats#".date("Y");
 ?>
-
+<style>
+    td > abbr{
+        font-size:1em;
+        line-height:1em;
+        /*height:1em;*/
+        width: 250px;
+        /*border:3px solid #00ACEE;*/
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: '...?';
+    }
+</style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="container-fluid">
@@ -56,8 +67,6 @@ $password = "Localeats#".date("Y");
                         </button> -->
 
                         <!-- Modal -->
-
-
                     </div>
                     <div class="card-body">
                         <div class="card">
@@ -65,23 +74,23 @@ $password = "Localeats#".date("Y");
                                 <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:5%">No.</th>
-                                        <th style="width:20%">Project</th>
-                                        <th style="width:20%">Location</th>
-                                        <th style="width:20%">Owner</th>
-                                        <th style="width:15%">Owner Email</th>
-                                        <th style="width:5%">URL</th>
-                                        <th style="width:5%">Detail</th>
+                                        <th style="width:50px;">No.</th>
+                                        <th>Project name</th>
+                                        <th style="width:250px;">Location</th>
+                                        <th style="width:150px">Owner</th>
+                                        <th style="width:300px">Owner Email</th>
+                                        <th style="width:100px">WP-Admin</th>
+                                        <th style="width:20px">Detail</th>
                                     </tr>
                                     </thead>
                                     <tfoot class="thead-dark">
                                     <tr>
                                         <th>No.</th>
-                                        <th>Project</th>
+                                        <th>Project name</th>
                                         <th>Location</th>
                                         <th>Owner</th>
                                         <th>Owner Email</th>
-                                        <th>URL</th>
+                                        <th>WP-Admin</th>
                                         <th>Detail</th>
                                     </tr>
                                     </tfoot>
