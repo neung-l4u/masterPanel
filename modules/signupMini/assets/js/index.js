@@ -35,20 +35,17 @@ function shortCountry() {
     }
 }
 
+// index.js (แก้แล้ว)
 function validateForm() {
     let isValid = true;
-
-    // Clear errors
     $(".text-danger").remove();
 
     let firstName = $("#first_name");
-    let lastName = $("#last_name");
     let email = $("#email");
     let mobile = $("#mobile");
     let company = $("#company");
     let country = $("#country");
 
-    // Error message
     function showError(input, message) {
         let error = $("<small class='text-danger'></small>").text(message);
         input.parent().append(error);
@@ -57,10 +54,6 @@ function validateForm() {
 
     if ($.trim(firstName.val()) === "") {
         showError(firstName, "First Name is required.");
-    }
-
-    if ($.trim(lastName.val()) === "") {
-        showError(lastName, "Last Name is required.");
     }
 
     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -81,9 +74,5 @@ function validateForm() {
         showError(country, "Please select your country.");
     }
 
-    if (!isValid) {
-        event.preventDefault(); // Prevent form submission if validation fails
-    }
-
-    return isValid; // Return validation status
+    return isValid;
 }
