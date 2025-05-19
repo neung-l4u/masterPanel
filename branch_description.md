@@ -1,3 +1,6 @@
+>250519 mark/fix/signupMiniValidate
+>- ลบ field last_name และการ validate ออก
+
 >250515 mark/fix/TPtimestamp
 >- แก้ datatable view logs ของ Template Submission เปลี่ยนคอลัมน์จาก duedate เป็น timestamp 
 
