@@ -408,6 +408,11 @@ $testMode = ($id == "test") ? 1 : 0;
                 });
 
                 callAjax.done(function (res) {
+                    $("#cancelBtn").hide();
+                    setTimeout(() => {
+                        $("#cancelBtn").show();
+                    }, 5000);
+
                     console.log("Ajax done");
                     console.log("return = ",res);
                     // alert("done")
