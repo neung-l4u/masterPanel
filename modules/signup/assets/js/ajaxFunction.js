@@ -723,6 +723,7 @@ function requestToPay() {
     modalRespondAction('open','success');
 
     if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe
+        // TODO :  ชาร์จเงินผ่าน stripe
         const reqPay = $.ajax({
             url: paymentURL,
             method: 'POST',
@@ -797,8 +798,8 @@ const sendMail = () => {
         "acceptAutoPilot" : $("input[name=acknowledgeAI]:checked").val(),
         "email" : $("#email").val()
     }
-
-    const ajaxSendLog = $.ajax({
+// TODO : Send Email to Customer
+    const ajaxMailToCustomer = $.ajax({
         url: "https://hook.us1.make.com/2nm9tihm27otcavx7ftvafpmjlmasigo",
         method: 'POST',
         async: false,
@@ -807,13 +808,13 @@ const sendMail = () => {
         data: sendMailPayload
     });
 
-    ajaxSendLog.done(function(res) {
+    ajaxMailToCustomer.done(function(res) {
         console.log(res);
         return true;
     });
 
-    ajaxSendLog.fail(function(xhr, status, error) {
-        console.log("ajax Send Mail fail!!");
+    ajaxMailToCustomer.fail(function(xhr, status, error) {
+        console.log("ajax Send Mail to Customer fail!!");
         console.log(status + ': ' + error);
         return false;
     });
@@ -983,6 +984,7 @@ const sendMailToL4UTeam = () => {
         token: Math.random()
     };
 
+    // TODO: Send Email To Staff
     const ajaxSendL4UMail = $.ajax({
         url: "https://report.localforyou.com/modules/signup/email/L4UEmailAlert.php",
         method: 'POST',
@@ -1002,8 +1004,9 @@ const sendMailToL4UTeam = () => {
         console.log(status + ': ' + error);
         return false;
     });
-}//sendMail
 
+}//sendMail
+// TODO : Build Logs File to DB by Mark
 const saveToDB = (stripePayload) => {
     genLinkPDF();
     const agreementGenerated = $("#agreementGenerated");
@@ -1132,6 +1135,7 @@ const saveToDB = (stripePayload) => {
         formYesPOSProvider: $("#endDatePOS").val(),
     };
 
+    // TODO : Save To Database
     const ajaxSaveToDB = $.ajax({
         url: settings.url_saveToDB,
         method: 'POST',
@@ -1281,7 +1285,7 @@ const createLogs = (stripePayload) => {
         formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
         formYesPOSProvider: $("#endDatePOS").val(),
     };
-
+// TODO : Build Logs File
     const ajaxSendLog = $.ajax({
         url: settings.url_logs,
         method: 'POST',
