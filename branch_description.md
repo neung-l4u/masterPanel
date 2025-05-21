@@ -1,3 +1,6 @@
+>250521 mark/feature/WLaction
+>- ทำปุ่ม Add, Edit, Delete
+
 >250520 mark/fix/templateCantSave
 >- แก้ Template Res3 กด save ไม่ได้
 
