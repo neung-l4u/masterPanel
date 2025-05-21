@@ -909,17 +909,14 @@ const sendMailToL4UTeam = () => {
         formTradingName: $("#company").val(),
         formShopPhoneNumber: $("#shopPhoneFormatted").val(),
         formShopWebsite: $("#webURL").val(),
-        formOwnerFirstLanguageTH: $("input[id='supportTh']:checked").val(),
-        formOwnerFirstLanguageEng: $("input[id='supportEng']:checked").val(),
-        formOwnerFirstLanguageEngTH: $("input[id='supportEngTH']:checked").val(),
+        formOwnerFirstLanguage: $("input[name='supportLanguage']:checked").val(),
+
 
         ///Cuisine///
         cuisinesOther: txtCuisine,
         formCuisineOther: $("#cuisinesOther").val(),
+        formSetupFee: $("input[name='setup']:checked").val(),
 
-        formSetupFee0: $("input[name='setup']:checked").val(),
-        formSetupFee3: $("input[name='setup']:checked").val(),
-        formSetupFee12: $("input[name='setup']:checked").val(),
 
         //Booking System//
         formLoginEmailBookingSystem: $("#emailBooking").val(),
@@ -979,6 +976,7 @@ const sendMailToL4UTeam = () => {
         firstOrderDiscountOther: $("input[id='othersDiscount']:checked").val(),
         firstOrderDiscountOtherValue: $("#discountOther").val(),
 
+
         //END NEW//
         testMail: CheckedBoxTestmailValue,
         token: Math.random()
@@ -986,7 +984,7 @@ const sendMailToL4UTeam = () => {
 
     // TODO: Send Email To Staff
     const ajaxSendL4UMail = $.ajax({
-        url: "https://report.localforyou.com/modules/signup/email/L4UEmailAlert.php",
+        url: "https://hook.us1.make.com/7r536tvdcr50jd77tvw5vo41yk61kygx",
         method: 'POST',
         async: false,
         cache: false,
