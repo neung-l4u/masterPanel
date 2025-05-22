@@ -95,7 +95,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                         <option value="CA">Canada</option>
                         <option value="TH">Thailand</option>
                     </select>
-                    <input aria-label="none" type="text" id="city" name="city" class="form-control mb-3" placeholder="เมือง (ถ้ามี)"/>
+                    <input aria-label="none" type="text" id="city" name="city" class="form-control mb-3" placeholder="City name (optional)"/>
                 </div>
                 <div class="d-flex flex-row gap-3">
                     <button type="button" class="btn btn-secondary" onclick="prevStep(1)">Previous</button>
@@ -105,7 +105,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
 
             <!-- Step 3: Select Sales -->
             <div class="step-section" id="step-3">
-                <label for="sales">3. เลือกเซล</label>
+                <label for="sales">3. Select salesperson</label>
                 <div class="d-flex flex-row gap-3 mb-3">
                     <select id="sales" name="sales" class="form-select mb-3" >
                         <option></option>
@@ -119,7 +119,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
 
             <!-- Step 4: Select Date -->
             <div class="step-section" id="step-4">
-                <label for="date">4. เลือกวันนัด</label>
+                <label for="date">4. Select appointment date</label>
                 <div class="d-flex flex-row gap-3 mb-3">
                     <input type="text" id="date" name="date" value="<?php echo $tomorrow; ?>" class="form-control mb-3" />
                 </div>
@@ -145,16 +145,16 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
 
             <!-- Step 6: Customer Info -->
             <div class="step-section" id="step-6">
-                <label>6. ข้อมูลลูกค้า</label>
+                <label>6. Customer information</label>
                 <div class="d-flex flex-column gap-3 mb-3">
                     <label for="shop_name">Shop name</label>
-                        <input type="text" id="shop_name" name="shop_name" class="form-control mb-2" autocomplete="off" placeholder="ชื่อร้าน" >
+                        <input type="text" id="shop_name" name="shop_name" class="form-control mb-2" autocomplete="off" placeholder="fill your shop name" >
                     <label for="customer_name">Customer name</label>
-                        <input type="text" id="customer_name" name="customer_name" class="form-control mb-2" autocomplete="off" placeholder="ชื่อเจ้าของร้าน">
+                        <input type="text" id="customer_name" name="customer_name" class="form-control mb-2" autocomplete="off" placeholder="fill customer name" >
                     <label for="contact_email">Contact email</label>
-                        <input type="email" id="contact_email" name="contact_email" class="form-control mb-2" autocomplete="off" placeholder="อีเมล">
+                        <input type="email" id="contact_email" name="contact_email" class="form-control mb-2" autocomplete="off" placeholder="fill contact email" >
                     <label for="contact_phone">Contact phone</label>
-                        <input type="text" id="contact_phone" name="contact_phone" class="form-control mb-2" autocomplete="off" placeholder="เบอร์โทร">
+                        <input type="text" id="contact_phone" name="contact_phone" class="form-control mb-2" autocomplete="off" placeholder="fill contact phone" >
                     <label for="line_id">Line ID</label>
                         <input type="text" id="line_id" name="line_id" class="form-control mb-2" autocomplete="off" placeholder="LINE ID">
                     <label for="whatsapp">WhatsApp</label>
@@ -193,46 +193,54 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     let sendEmailPayload = {};
 
     $(document).ready(function () {
-        $('#shop_type').select2({placeholder: 'เลือกประเภทร้าน',theme: 'bootstrap-5'});
-        country.select2({placeholder: 'เลือกประเทศ',theme: 'bootstrap-5'});
-        $('#sales').select2({placeholder: 'เลือกเซล',theme: 'bootstrap-5'});
-        $('#time').select2({placeholder: 'เลือกเวลานัด',theme: 'bootstrap-5'});
-        $('#date').flatpickr({
+        $('#shop_type').select2({placeholder: 'Select your store type',theme: 'bootstrap-5'});
+        country.select2({placeholder: 'Select country',theme: 'bootstrap-5'});
+        $('#sales').select2({placeholder: 'Select salesperson',theme: 'bootstrap-5'});
+        $('#time').select2({placeholder: 'Select appointment time',theme: 'bootstrap-5'});
+
+        date.flatpickr({
             minDate: new Date().fp_incr(1),
             maxDate: new Date().fp_incr(7),
             dateFormat: 'Y-m-d',
             disableMobile: true
+        })
+
+        time.empty().trigger('change');
+        const times = [];
+        for (let h = 0; h < 24; h++) {
+            for (let m = 0; m < 60; m += 15) {
+                const hh = h.toString().padStart(2, '0');
+                const mm = m.toString().padStart(2, '0');
+                const label = `${hh}:${mm}`;
+                times.push(new Option(label, `${hh}:${mm}:00`, false, false));
+            }
+        }
+        time.append(times).trigger('change');
+
+
+
+        // ✅ Step 3: โหลดเซลทั้งหมดในทีม
+        $.get('../models/load_all_sales.php', function (res) {
+            if (res.status === 'ok') {
+                let options = res.data.map(user => new Option(user.text, user.id, false, false));
+                $('#sales').append(options).trigger('change');
+            }
         });
 
-        country.on('change', function () {
-            let country = $(this).val();
-            $('#sales').empty().trigger('change');
-            if (!country) return;
-
-            $.get('../models/load_sales_by_country.php', { country_code: country }, function (res) {
-                if (res.status === 'ok') {
-                    let newOptions = res.data.map(user => new Option(user.text, user.id, false, false));
-                    $('#sales').append(newOptions).trigger('change');
-                    //$("#country").val($("#country option:first").val());
+        // ✅ Step 5: แสดงเวลาทุกช่วงแบบ 15 นาที (00:00 - 23:45)
+        date.on('change', function () {
+            time.empty().trigger('change');
+            const times = [];
+            for (let h = 0; h < 24; h++) {
+                for (let m = 0; m < 60; m += 15) {
+                    const hh = h.toString().padStart(2, '0');
+                    const mm = m.toString().padStart(2, '0');
+                    const label = `${hh}:${mm}`;
+                    times.push(new Option(label, `${hh}:${mm}:00`, false, false));
                 }
-            });
-        });//country change
-
-
-        $('#date, #sales').on('change', function () {
-            let staff_id = $('#sales').val();
-            let date = $('#date').val();
-            $('#time').empty().trigger('change');
-
-            if (!staff_id || !date) return;
-
-            $.get('../models/load_available_times.php', { staff_id, date }, function (res) {
-                if (res.status === 'ok') {
-                    let options = res.data.map(t => new Option(t.text, t.id, false, false));
-                    $('#time').append(options).trigger('change');
-                }
-            });
-        });//date, sale change
+            }
+            time.append(times).trigger('change');
+        });
 
         $('#bookingForm').on('submit', function (e) {
             e.preventDefault();
@@ -240,7 +248,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                 if (res.status === 'ok') {
                     sendEmail();
                     bookCalendar();
-                    alert('✅ จองนัดเรียบร้อย');
+                    alert('✅ Appointment has been booked.');
 
                     //location.href = 'booking_success.php';
                 } else {
@@ -354,21 +362,22 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
 
 
     function getStaffEmail(id) {
-        /*const map = {
+        const map = {
             17: 'boom@localforyou.com',
-            18: 'dear@localforyou.com',
             24: 'honey@localforyou.com',
             35: 'pluem@localforyou.com',
             38: 'pruek@localforyou.com',
-            47: 'toffee@localforyou.com',
             62: 'ball@localforyou.com',
-            72: 'lani@localforyou.com',
-            76: 'naya@localforyou.com',
             79: 'gun@localforyou.com',
             84: 'aon@localforyou.com',
-        };*/
+            85: 'mild.th@localforyou.com',
+            86: 'jiw@localforyou.com',
+            90: 'foo.si@localforyou.com'
+        };
 
-        const map = {
+
+
+/*        const map = {
             17: 'neung@localforyou.com',
             18: 'neung@localforyou.com',
             24: 'neung@localforyou.com',
@@ -380,7 +389,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             76: 'neung@localforyou.com',
             79: 'neung@localforyou.com',
             84: 'neung@localforyou.com',
-        };
+        };*/
         return map[id] || 'administrator@localforyou.com';
     }
 
