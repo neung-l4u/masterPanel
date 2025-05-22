@@ -299,6 +299,8 @@ $('#formCountry').change(function() {
   const routing_number_div = $(".routing_number_div");
   const domainHelpAU = $("#domainHelpAU");
   const domainHelpUS = $("#domainHelpUS");
+  const iconDomain = $("#iconDomain");
+  const iconPlay = $("#iconPlay");
   countryValue.val($(this).val());
   inputBusinessNumber.removeClass("is-invalid");
   resetForm();
@@ -326,6 +328,8 @@ $('#formCountry').change(function() {
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
       domainHelpAU.show();
       domainHelpUS.hide();
+      iconDomain.show();
+      iconPlay.show();
       break;
     case "NZ":
       labelBusinessNumber.html("NZBN");
@@ -349,6 +353,8 @@ $('#formCountry').change(function() {
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
       domainHelpAU.show();
       domainHelpUS.hide();
+      iconDomain.show();
+      iconPlay.show();
       break;
     case "UK":
       inputBusinessNumber.attr('required', true);
@@ -371,6 +377,8 @@ $('#formCountry').change(function() {
       getProductList("UK");
       domainHelpAU.show();
       domainHelpUS.hide();
+      iconDomain.show();
+      iconPlay.show();
       break;
     case "CA":
       inputBusinessNumber.attr('required', true);
@@ -393,6 +401,8 @@ $('#formCountry').change(function() {
       getProductList("CA");
       domainHelpAU.hide();
       domainHelpUS.show();
+      iconDomain.hide();
+      iconPlay.hide();
       break;
     case "US":
       inputBusinessNumber.attr('required', true);
@@ -415,6 +425,8 @@ $('#formCountry').change(function() {
       getProductList("US");
       domainHelpAU.hide();
       domainHelpUS.show();
+      iconDomain.hide();
+      iconPlay.hide();
       break;
     case "TH":
       inputBusinessNumber.attr('required', true);
@@ -437,6 +449,8 @@ $('#formCountry').change(function() {
       getProductList("US");
       domainHelpAU.show();
       domainHelpUS.hide();
+      iconDomain.hide();
+      iconPlay.hide();
       break;
     case "TH":
       inputBusinessNumber.attr('required', true);

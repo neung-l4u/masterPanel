@@ -109,9 +109,14 @@
                         <br><br><br><br><br>
                         <div class="form-switch">
                             <input class="form-check-input" type="checkbox" role="switch" id="enableCRM" onclick="enableCRMButton();">
-                            <label class="form-check-label text-danger" for="enableCRM">Turn me on to save data to CRM</label>
+                            <label class="form-check-label text-danger" for="enableCRM">Save to Monday</label>
                         </div>
-                        <button type="button" id="CRMButton" disabled class="btn btn-primary" onclick="submitToCRM();" data-bs-dismiss="modal">Understood</button>
+                        <img src="assets/img/ballLoading.gif" alt="loading" id="ballLoading" width="30" height="30" style="display:none;">
+                        <span id="countdownText" class="text-muted fw-bold" style="display:none; margin-left: 10px;"></span>
+                        <button type="button" id="CRMButton" disabled class="btn btn-primary" style="display:none;" onclick="submitToCRM();" data-bs-dismiss="modal">Save</button>
+
+                        <!--                        <img src="assets/img/ballLoading.gif" alt="loading" id="ballLoading" width="30" height="30">-->
+<!--                        <button type="button" id="CRMButton" disabled class="btn btn-primary" onclick="submitToCRM();" data-bs-dismiss="modal">Understood</button>-->
                     </div>
                 </div>
             </div>
@@ -137,14 +142,4 @@
     </div>
 </div>
 
-<script>
-    const enableCRMButton = () => {
-        const enableCRM = $("#enableCRM").is(':checked');;
-        const CRMButton = $("#CRMButton");
-        if (enableCRM){
-            CRMButton.prop('disabled', false);
-        }else{
-            CRMButton.prop('disabled', true);
-        }
-    }
-</script>
+<script src="assets/js/modalSubmit.js?v=2.0.0"></script>
