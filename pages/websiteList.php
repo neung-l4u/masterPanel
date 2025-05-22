@@ -196,7 +196,6 @@ $password = "Localeats#".date("Y");
         </div><!-- /.row -->
 
         <!-- Modal -->
-
         <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -572,6 +571,31 @@ $password = "Localeats#".date("Y");
         });
     }
 
+    const inputProject = $("#inputProject");
+    const inputDomain = $("#inputDomain");
+    const inputDomainProvider = $("#inputDomainProvider");
+    const inputPublishedDate = $("#inputPublishedDate");
+    const inputLiveStatus = $("#inputLiveStatus");
+    const inputShopType = $("#inputShopType");
+    const inputTemplate = $("#inputTemplate");
+    const inputServer = $("#inputServer");
+    const inputCPanelUser = $("#inputCPanelUser");
+    const inputCPanelPass = $("#inputCPanelPass");
+    const inputWordPressUser = $("#inputWordPressUser");
+    const inputWordPressPass = $("#inputWordPressPass");
+    const inputWordpressURL = $("#inputWordpressURL");
+    const inputSMTPUser = $("#inputSMTPUser");
+    const inputSMTPPass = $("#inputSMTPPass");
+    const inputSMTPRemark = $("#inputSMTPRemark");
+    const inputContactEmailUser = $("#inputContactEmailUser");
+    const inputContactEmailPass = $("#inputContactEmailPass");
+    const inputContactEmailRemark = $("#inputContactEmailRemark");
+    const inputGloriaFood = $("#inputGloriaFood");
+    const inputAmelia = $("#inputAmelia");
+    const inputVoucher = $("#inputVoucher");
+    const editID = $("#editID");
+    const formAction = $("#formAction");
+
     const ProjectName = $("#wProject");
     const Location = $("#wLocation");
     const Owner = $("#wOwner");
@@ -696,22 +720,9 @@ $password = "Localeats#".date("Y");
     
 
     const setEdit = (id) => {
-        const inputName = $("#inputName");
-        const inputTname = $("#inputTname");
-        const inputNickName = $("#inputNickName");
-        const inputStartDate = $("#inputStartDate");
-        const inputEmployeeNumber = $("#inputEmployeeNumber");
-        const inputAddress = $("#inputAddress");
-        const inputBirthday = $("#inputBirthday");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const passwordNotAllow = $("#passwordNotAllow");
-        const inputLevel = $("#inputLevel");
-        const inputReligion = $("#inputReligion");
-        const inputTeam = $("#inputTeam");
-        const statusOn = $("#statusOn");
-        const statusOff = $("#statusOff");
+        
+
+
         const editID = $("#editID");
         const formAction = $("#formAction");
         const reqAjax = $.ajax({
@@ -762,48 +773,39 @@ $password = "Localeats#".date("Y");
     }// const
 
     const formSave = () => {
-        const inputName = $("#inputName");
-        const inputTname = $("#inputTname");
-        const inputNickName = $("#inputNickName");
-        const inputBirthday = $("#inputBirthday");
-        const inputStartDate = $("#inputStartDate");
-        const inputEmployeeNumber = $("#inputEmployeeNumber");
-        const inputAddress = $("#inputAddress");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const inputReligion = $("#inputReligion");
-        const inputTeam = $("#inputTeam");
-        const inputLevel = $("#inputLevel");
-        const editID = $("#editID");
-        const formAction = $("#formAction");
-
-        let statusValue = $("input[name='inputStatus']:checked").val();
 
         let payload = {
                 act: "save",
-                inputName : inputName.val(),
-                inputTname : inputTname.val(),
-                inputNickName : inputNickName.val(),
-                inputBirthday : inputBirthday.val(),
-                inputStartDate : inputStartDate.val(),
-                inputEmployeeNumber : inputEmployeeNumber.val(),
-                inputAddress : inputAddress.val(),
-                inputEmail : inputEmail.val(),
-                inputPhone : inputPhone.val(),
-                inputPassword : inputPassword.val(),
-                inputReligion : inputReligion.val(),
-                inputTeam : inputTeam.val(),
-                inputLevel : inputLevel.val(),
-                inputStatus : statusValue,
-                editID : editID.val(),
-                formAction : formAction.val()
+                inputProject: inputProject.val(),
+                inputDomain: inputDomain.val(),
+                inputDomainProvider: inputDomainProvider.val(),
+                inputPublishedDate: inputPublishedDate.val(),
+                inputLiveStatus: inputLiveStatus.val(), 
+                inputShopType: inputShopType.val(),
+                inputTemplate: inputTemplate.val(),
+                inputServer: inputServer.val(),
+                inputCPanelUser: inputCPanelUser.val(),
+                inputCPanelPass: inputCPanelPass.val(),
+                inputWordPressUser: inputWordPressUser.val(),
+                inputWordPressPass: inputWordPressPass.val(),
+                inputWordpressURL: inputWordpressURL.val(),
+                inputSMTPUser: inputSMTPUser.val(),
+                inputSMTPPass: inputSMTPPass.val(),
+                inputSMTPRemark: inputSMTPRemark.val(),
+                inputContactEmailUser: inputContactEmailUser.val(),
+                inputContactEmailPass: inputContactEmailPass.val(),
+                inputContactEmailRemark: inputContactEmailRemark.val(),
+                inputGloriaFood: inputGloriaFood.val(),
+                inputAmelia: inputAmelia.val(),
+                inputVoucher: inputVoucher.val(),
+                editID: editID.val(),
+                formAction: formAction.val(),
             };
 
             console.log("payload=",payload);
             
         const reqAjax = $.ajax({
-            url: "assets/php/actionStaffs.php",
+            url: "assets/php/actionWebsiteList.php",
             method: "POST",
             async: false,
             cache: false,

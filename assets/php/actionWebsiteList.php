@@ -5,11 +5,9 @@ include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 $myID = $_SESSION['id'];
 
-$salt = "L4U";
 $params["action"] = !empty($_POST['act']) ? $_POST['act'] : "";
 $params["id"] = !empty($_POST['id']) ? $_POST['id'] : "";
 $params["editID"] = !empty($_GET['editID']) ? $_GET['editID'] : "";
-$params["status"] = !empty($_POST['status']) ? 1 : 0;
 $params["formAction"] = !empty($_POST['formAction']) ? $_POST['formAction'] : 'add';
 
 if ($params ["action"] == "setStatus"){
@@ -79,37 +77,39 @@ if ($params ["action"] == "setStatus"){
     $params["address"] = $row["sAddress"];
 
 }elseif ($params ["action"] == "save"){
-    $params["txt"] = "Got it";
-
-    if (!empty($_POST['inputPassword'])){
-        $passwordHash = md5($salt . $_POST['inputPassword']);
-    }else{
-        $passwordHash = md5($salt . "Localeats#2023");
-    }
-
-    $params["inputName"] = !empty($_POST['inputName']) ? $_POST['inputName'] : "invalid Name";
-    $params["inputTname"] = !empty($_POST['inputTname']) ? $_POST['inputTname'] : "invalid Thai Name";
-    $params["inputEmail"] = !empty($_POST['inputEmail']) ? $_POST['inputEmail'] : "invalid Email";
-    $params["inputPhone"] = !empty($_POST['inputPhone']) ? $_POST['inputPhone'] : "invalid Phone";
-    $params["inputPassword"] = $passwordHash;
-    $params["inputLevel"] = !empty($_POST['inputLevel']) ? $_POST['inputLevel'] : "3";
-    $params["inputReligion"] = !empty($_POST['inputReligion']) ? $_POST['inputReligion'] : "1";
-    $params["inputStatus"] = !empty($_POST['inputStatus']) ? $_POST['inputStatus'] : "0";
-    $params["inputNickName"] = !empty($_POST['inputNickName']) ? $_POST['inputNickName'] : "";
-    $params["inputBirthday"] = !empty($_POST['inputBirthday']) ? $_POST['inputBirthday'] : NULL;
-    $params["inputStartDate"] = !empty($_POST['inputStartDate']) ? $_POST['inputStartDate'] : NULL;
-    $params["inputEmployeeNumber"] = !empty($_POST['inputEmployeeNumber']) ? $_POST['inputEmployeeNumber'] : NULL;
-    $params["inputAddress"] = !empty($_POST['inputAddress']) ? $_POST['inputAddress'] : NULL;
-    $params["inputTeam"] = !empty($_POST['inputTeam']) ? $_POST['inputTeam'] : "7";
-
+    $params["inputProject"] = !empty($_POST['inputProject']) ? $_POST['inputProject'] : "";
+    $params["inputLocation"] = !empty($_POST['inputLocation']) ? $_POST['inputLocation'] : "";
+    $params["inputOwner"] = !empty($_POST['inputOwner']) ? $_POST['inputOwner'] : "";
+    $params["inputOwnerEmail"] = !empty($_POST['inputOwnerEmail']) ? $_POST['inputOwnerEmail'] : "";
+    $params["inputDomain"] = !empty($_POST['inputDomain']) ? $_POST['inputDomain'] : "";
+    $params["inputDomainProvider"] = !empty($_POST['inputDomainProvider']) ? $_POST['inputDomainProvider'] : "";
+    $params["inputPublishedDate"] = !empty($_POST['inputPublishedDate']) ? $_POST['inputPublishedDate'] : "";
+    $params["inputLiveStatus"] = !empty($_POST['inputLiveStatus']) ? $_POST['inputLiveStatus'] : "";
+    $params["inputShopType"] = !empty($_POST['inputShopType']) ? $_POST['inputShopType'] : "";
+    $params["inputTemplate"] = !empty($_POST['inputTemplate']) ? $_POST['inputTemplate'] : "";
+    $params["inputServer"] = !empty($_POST['inputServer']) ? $_POST['inputServer'] : "";
+    $params["inputCPanelUser"] = !empty($_POST['inputCPanelUser']) ? $_POST['inputCPanelUser'] : "";
+    $params["inputCPanelPass"] = !empty($_POST['inputCPanelPass']) ? $_POST['inputCPanelPass'] : "";
+    $params["inputWordPressUser"] = !empty($_POST['inputWordPressUser']) ? $_POST['inputWordPressUser'] : "";
+    $params["inputWordPressPass"] = !empty($_POST['inputWordPressPass']) ? $_POST['inputWordPressPass'] : "";
+    $params["inputWordpressURL"] = !empty($_POST['inputWordpressURL']) ? $_POST['inputWordpressURL'] : "";
+    $params["inputSMTPUser"] = !empty($_POST['inputSMTPUser']) ? $_POST['inputSMTPUser'] : "";
+    $params["inputSMTPPass"] = !empty($_POST['inputSMTPPass']) ? $_POST['inputSMTPPass'] : "";
+    $params["inputSMTPRemark"] = !empty($_POST['inputSMTPRemark']) ? $_POST['inputSMTPRemark'] : "";
+    $params["inputContactEmailUser"] = !empty($_POST['inputContactEmailUser']) ? $_POST['inputContactEmailUser'] : "";
+    $params["inputContactEmailPass"] = !empty($_POST['inputContactEmailPass']) ? $_POST['inputContactEmailPass'] : "";
+    $params["inputContactEmailRemark"] = !empty($_POST['inputContactEmailRemark']) ? $_POST['inputContactEmailRemark'] : "";
+    $params["inputGloriaFood"] = isset($_POST['inputGloriaFood']) ? 1 : 0;
+    $params["inputAmelia"] = isset($_POST['inputAmelia']) ? 1 : 0;
+    $params["inputVoucher"] = isset($_POST['inputVoucher']) ? 1 : 0;
 
     $params["by"] = $_SESSION['id'];
 
     if($params ["formAction"]=='add'){
-        $insert = $db->query('INSERT INTO `staffs`
-                                (`sName`,`STName`, `sNickName`,`sDOB`,`sActiveDate`,`sEmpID`,`sAddress`,`sEmail`, `sMobile`, `sPassword`,`rID`,`teamID`, `sStatus`, `sLevel`, `sCreateBy`) 
-                                VALUES (?,?,?,?,?,?,?,?,?, ?,?, ?,?,?,?);'
-            ,$params["inputName"],$params["inputTname"],$params["inputNickName"],$params["inputBirthday"],$params["inputStartDate"],$params["inputEmployeeNumber"],$params["inputAddress"],$params["inputEmail"],$params["inputPhone"],$params["inputPassword"],$params["inputReligion"],$params["inputTeam"],$params["inputStatus"],$params["inputLevel"],$myID
+        $insert = $db->query('INSERT INTO `websiteList` 
+                                (`wProject`,`wLocation`, `wOwner`,`wOwnerEmail`,`wDomain`,`wDomainProvidersID`, `wPublishedDate`, `wLiveStatus`,`wIndustry`,`wTemplateUsed`, `svID`, `wCPanelUser`, `wCPanelPass`, `wWordpressUser`, `wWordpressPass`, `wWordpressURL`, `wSMTPEmailUser`, `wSMTPEmailPass`, `wSMTPRemark`, `wContactEmailUser`, `wContactEmailPass`, `wContactEmailRemark`,`wSystemGloriaFood`,`wSystemAmelia`,`wSystemVoucher`, `create_by`)
+                                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+            ,$params["inputProject"],$params["inputLocation"],$params["inputOwner"],$params["inputOwnerEmail"],$params["inputDomain"],$params["inputDomainProvider"],$params["inputPublishedDate"],$params["inputLiveStatus"],$params["inputShopType"],$params["inputTemplate"],$params["inputServer"],$params["inputCPanelUser"],$params["inputCPanelPass"],$params["inputWordPressUser"],$params["inputWordPressPass"],$params["inputWordpressURL"],$params["inputSMTPUser"],$params["inputSMTPPass"],$params["inputSMTPRemark"],$params["inputContactEmailUser"],$params["inputContactEmailPass"],$params["inputContactEmailRemark"],$params["inputGloriaFood"],$params["inputAmelia"],$params["inputVoucher"],$myID
         );
 
         $params["affected"] = $insert->affectedRows();
