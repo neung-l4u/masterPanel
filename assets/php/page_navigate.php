@@ -139,7 +139,7 @@ switch ($menuPage){
         $activeMenu["lv1"] = "";
         $activeMenu["lv2"] = "";
         $datatable["show"] = "true";
-        $datatable["src"] = "pages/tableRendering/viewLogs.php";
+        $datatable["src"] = "pages/tableRendering/dataViewLogs.php";
         $title = "Master panel : SignUp Form Logs";
         break;
     case "tpSubmitted":

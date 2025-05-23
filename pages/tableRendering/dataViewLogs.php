@@ -21,7 +21,11 @@ foreach ($result as $row) {
         default => $row["countryCode"],
     };
 
+
+
     $json = json_decode($row["dataLogs"], true);
+    $shopType = showType($json["CustomerType"]);
+
     $jsonText = json_encode($json, JSON_PRETTY_PRINT);
 
     $shopName = $json["ShopName"];
@@ -34,6 +38,7 @@ foreach ($result as $row) {
     $data["data"][] = array(
         $date,
         $country,
+        $shopType,
         $shopName,
         $signupLogsBtn,
         $stripeLogsBtn,
@@ -43,3 +48,20 @@ foreach ($result as $row) {
 }//foreach
 
 echo json_encode($data);
+
+
+
+
+function showType($shopType){
+    switch ($shopType) {
+        case "Thai Restaurants & Takeaways":
+            return "Restaurant";
+            break;
+        case "Thai Massage":
+            return "Massage";
+            break;
+        case "Restaurants & Takeaways":
+            return "Restaurant";
+    }
+
+}

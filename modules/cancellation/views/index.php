@@ -206,7 +206,9 @@ $testMode = ($id == "test") ? 1 : 0;
                                 </div>
 
                                 <div class="pt-2">
-                                    <label for="email" class="control-label">Email <b class="red">*</b></label>
+                                    <label for="email" class="control-label">
+                                        <span>Email <b class="red">*</b><small class="text-danger" id="smallEmail">Please provide a valid email address.</small></span>
+                                    </label>
                                     <div>
                                         <input type="email" class="form-control mainEmail text-lowercase" id="email" name="email" maxlength="80" autocomplete="off" placeholder="mail@localforyou.com"/>
                                         <small id="emailHelp" class="form-text text-muted">e.g. mail@localforyou.com</small>
@@ -351,12 +353,14 @@ $testMode = ($id == "test") ? 1 : 0;
         $("#smallShopName").hide()
         $("#smallDate").hide()
         $("#smallOther").hide()
+        $("#smallEmail").hide()
     });//ready
 
     function validateForm(){
         let country = $("#formCountry").val();
         let shopName = $("#shopName").val();
         let lastDate = $("#lastDate").val();
+        let email = $("#smallEmail").val();
 
         if (country === ""){
             $("#smallCountry").show();
@@ -369,6 +373,14 @@ $testMode = ($id == "test") ? 1 : 0;
             $("#smallShopName").hide();
             $("#smallDate").show();
             $("#lastDate").focus();
+        }else if (lastDate === ""){
+            $("#smallShopName").hide();
+            $("#smallDate").show();
+            $("#lastDate").focus();
+        }else if (email === ""){
+            $("#smallShopName").hide();
+            $("#smallEmail").show();
+            $("#email").focus();
         }else{
             $("#loadingAjax").fadeIn(100);
 
