@@ -32,7 +32,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
 <link rel="stylesheet" href="../assets/css/mas1.css">
 <link rel="stylesheet" href="dist/css/newStyle.css">
 
-<script src="../controllers/res3.js"></script>
+<script src="../controllers/res3.js?v=1.0.0"></script>
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
