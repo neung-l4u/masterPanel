@@ -1,3 +1,6 @@
+>250526 mark/fix/multiUploadParam
+>- แก้ URL การส่ง parameter จากหน้า detail ไปหน้า multiupload ค่าของ folderPath ไม่ได้ encode ทำให้ URL พัง
+
 >250521 mark/feature/WLaction
 >- ทำปุ่ม Add, Edit, Delete
 
