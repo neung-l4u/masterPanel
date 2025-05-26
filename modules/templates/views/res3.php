@@ -959,7 +959,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
         'use strict';
 
         // Change this to the location of your server-side upload handler:
-        const url = '../multiUpload.php?projectID=<?php echo $id; ?>&folderPath=<?php echo $folderName; ?>&prefix=' + multiUploadPrefix;
+        const url = '../multiUpload.php?projectID=<?php echo $id; ?>&folderPath=<?php echo urlencode($folderName); ?>&prefix=' + multiUploadPrefix;
 
         $('#fileupload').fileupload({
             url: url,
