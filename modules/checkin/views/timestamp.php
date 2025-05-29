@@ -1,0 +1,242 @@
+<?php
+global $db;
+date_default_timezone_set('Asia/Bangkok');
+$today = date("Y-m-d");
+$now = date("H:i");
+?>
+<link href="../assets/libs/flatpickr/flatpickr.min.css" rel="stylesheet">
+<link href="../assets/libs/select2/css/select2.min.css" rel="stylesheet" />
+<link href="../assets/libs/select2/css/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+<style>
+    /*body { padding: 2rem; background: #f8f9fa; }*/
+    .form-control:focus { box-shadow: none; }
+    .red{ color: red; }
+    ::placeholder {
+        color: lightgray !important;
+        opacity: 1; /* Firefox */
+    }
+
+    ::-ms-input-placeholder { /* Edge 12 -18 */
+        color: lightgray !important;
+    }
+</style>
+<header>
+    <nav class="mb-4" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li><i style="margin-right: 0.5em;" class="bi bi-house-fill"></i></li>
+            <li class="breadcrumb-item"><a href="main.php?p=home">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Time stamp</li>
+        </ol>
+    </nav>
+</header>
+
+<main>
+    <!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        modal
+    </button>-->
+    <section style="min-height: 50vh;">
+        <h3 class="mb-5"><i class="bi bi-life-preserver"></i> Timestamp: </h3>
+        <form id="checkForm">
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="staffName" class="form-label"><i class="bi bi-person-fill"></i> Staff name <span class="red">*</span></label>
+                    <select id="staffName" name="staffName" class="form-select" required>
+                        <option value="">-- Select --</option>
+                        <?php
+                        $staff = $db->query('SELECT * FROM `staffs` WHERE sStaffType = "partTime" ORDER BY sNickName')->fetchAll();
+                        foreach ($staff as $row) {
+                            ?>
+                            <option value="<?php echo $row['sNickName']; ?>"><?php echo $row['sNickName'].' '.showName($row['sName']); ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+
+                <div class="col-6">
+                    <label for="workShift" class="form-label"><i class="bi bi-alarm-fill"></i> Shift</label>
+                    <select id="workShift" name="workShift" class="form-select" required>
+                        <option value="">-- Select --</option>
+                        <option value="Appointment setter UK Shift (Part-time)">UK Shift</option>
+                        <option value="Appointment setter AU/NZ Shift (Part-time)">AU/NZ Shift</option>
+                        <option value="Appointment setter USA Shift (Part-time)">USA Shift</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <label for="actionType" class="form-label"><i class="bi bi-postage-fill"></i> Log Type <span class="red">*</span></label>
+                <select id="actionType" name="actionType" class="form-select" required>
+                    <option value="">-- Select --</option>
+                    <option value="checkin">Check-in</option>
+                    <option value="checkout">Check-out</option>
+                </select>
+            </div>
+
+
+            <div class="row mb-3">
+                <div class="col-6" id="workDateDiv" style="display:none;">
+                    <label for="workDate" class="form-label"><i class="bi bi-calendar-date-fill"></i> Date  <span class="red">*</span> <small><a href="#" class="text-primary" onclick="setToDay();">Today</a></small></label>
+                    <input type="text" id="workDate" name="workDate" class="form-control flatpickr" value="<?php echo $today; ?>" required>
+                </div>
+
+                <div class="col-6" id="checkinTimeDiv" style="display:none;">
+                    <label for="checkinTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-in time  <span class="red">*</span> <small><a href="#" onclick="setToNow();">Now</a></small></label>
+                    <input type="time" id="checkinTime" name="checkinTime" value="<?php echo $now; ?>" class="form-control">
+                </div>
+
+                <div class="col-6" id="checkoutTimeDiv" style="display:none;">
+                    <label for="checkoutTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-out time  <span class="red">*</span> <small><a href="#" onclick="setToNow();">Now</a></small></label>
+                    <input type="time" id="checkoutTime" name="checkoutTime" value="<?php echo $now; ?>" class="form-control">
+                </div>
+            </div>
+
+            <div class="mb-3" id="noteCheckinDiv" style="display: none;">
+                <label for="noteCheckin" class="form-label"><i class="bi bi-card-list"></i> Note (Check-in)</label>
+                <textarea id="noteCheckin" name="noteCheckin" class="form-control" rows="2" placeholder="หมายเหตุ (เวลาเริ่มงาน)"></textarea>
+            </div>
+
+            <div class="mb-3" id="noteCheckoutDiv" style="display: none;">
+                <label for="noteCheckout" class="form-label"><i class="bi bi-card-list"></i> Note (Check-out)</label>
+                <textarea id="noteCheckout" name="noteCheckout" class="form-control" rows="2" placeholder="หมายเหตุ (เวลาเลิกงาน)"></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+
+        <div id="result" class="mt-3"></div>
+    </section>
+    <!-- Modal -->
+    <!--<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>-->
+    <!-- Modal-->
+</main>
+<script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
+<script src="../assets/libs/flatpickr/flatpickr.js"></script>
+<script src="../assets/libs/select2/js/select2.min.js"></script>
+<script src="../assets/libs/moment-2.30.1/moment.min.js"></script>
+<script>
+    const result = $('#result');
+    let now = new moment();
+
+    $(function () {
+        $('.flatpickr').flatpickr({ dateFormat: "Y-m-d" });
+        // $('#staffName').select2();
+
+        $('#actionType').on('change', function () {
+            const action = $(this).val();
+            $('#workDateDiv').show();
+            $('#checkinTimeDiv, #checkoutTimeDiv').hide();
+            $('#checkinTimeDiv, #checkoutTimeDiv, #noteCheckinDiv, #noteCheckoutDiv').hide();
+
+            if (action === 'checkin') {
+                $('#checkinTimeDiv').show();
+                $('#noteCheckinDiv').show();
+                $('input[name="checkoutTime"]').val(now.format("HH:mm"));
+                $('textarea[name="noteCheckout"]').val('');
+            } else if (action === 'checkout') {
+                $('#checkoutTimeDiv').show();
+                $('#noteCheckoutDiv').show();
+                $('input[name="checkinTime"]').val(now.format("HH:mm"));
+                $('textarea[name="noteCheckin"]').val('');
+            }
+        });
+
+        $('#checkForm').on('submit', function (e) {
+            e.preventDefault();
+            result.html(`<div class="alert alert-warning"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Processing...</div>`);
+
+            const formData = $(this).serializeArray().reduce((obj, item) => {
+                obj[item.name] = item.value;
+                return obj;
+            }, {});
+
+            const [checkinHour, checkinMinute] = (formData.checkinTime || '').split(':');
+            formData.checkinHour = checkinHour;
+            formData.checkinMinute = checkinMinute;
+
+            const [checkoutHour, checkoutMinute] = (formData.checkoutTime || '').split(':');
+            formData.checkoutHour = checkoutHour;
+            formData.checkoutMinute = checkoutMinute;
+
+            formData.noteCheckin = $('textarea[name="noteCheckin"]').val();
+            formData.noteCheckout = $('textarea[name="noteCheckout"]').val();
+
+            // ตรวจสอบก่อนส่ง
+            if (formData.actionType === 'checkin' && !formData.checkinTime) {
+                result.html(`<div class="alert alert-warning">Please enter start time.</div>`); return;
+            }
+
+            if (formData.actionType === 'checkout' && !formData.checkoutTime) {
+                result.html(`<div class="alert alert-warning">Please enter end time.</div>`); return;
+            }
+
+            // ส่งข้อมูลไปยัง Make Webhook
+            const makeWebhookURL = "https://hook.us1.make.com/75bocum3gs8v35045jfkb7qktlq2awru";
+
+            $.post(makeWebhookURL, formData)
+                .done(() => result.html(`<div class="alert alert-success">Data sent successfully</div>`))
+                .fail(() => result.html(`<div class="alert alert-danger">An error occurred. Please try again.</div>`));
+        });
+    });
+
+    function setToNow() {
+        now = new moment();
+        console.log(now.format("HH:mm"));
+        $('#checkinTime').val(now.format("HH:mm"));
+        $('#checkoutTime').val(now.format("HH:mm"));
+    }
+
+    function setToDay() {
+        now = new moment();
+        console.log(now.format('YYYY-MM-DD'));
+        $('#workDate').val(now.format('YYYY-MM-DD'));
+    }
+
+    /*function cmdSubmit(){
+        const reqAjax = $.ajax({
+            url: "assets/php/actionWebsiteList.php",
+            method: "POST",
+            async: false,
+            cache: false,
+            dataType: "json",
+            data: {
+                act: "loadUpdate",
+                id: id,
+            },
+        });
+
+
+        reqAjax.done(function (res) {
+
+        });
+
+        reqAjax.fail(function (xhr, status, error) {
+            console.log("ajax loadUpdate fail!!");
+            console.log(status + ": " + error);
+        })
+    }*/
+</script>
+<?php
+function showName($full): string
+{
+    $temp = explode(" ", $full);
+    return $temp[0];
+}
+?>
