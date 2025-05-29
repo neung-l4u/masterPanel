@@ -85,7 +85,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             <!-- Step 2: Country -->
             <div class="step-section" id="step-2">
                 <label for="country">2. Select your country</label>
-                <div class="d-flex flex-row gap-3 mb-3">
+                <div class="d-flex flex-row gap-3">
                     <select id="country" name="country" class="form-select mb-3" >
                         <option></option>
                         <option value="AU">Australia</option>
@@ -95,7 +95,10 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                         <option value="CA">Canada</option>
                         <option value="TH">Thailand</option>
                     </select>
-                    <input aria-label="none" type="text" id="city" name="city" class="form-control mb-3" placeholder="City name (optional)"/>
+                    <input aria-label="none" type="text" id="city" name="city" class="form-control" placeholder="City name (optional)"/>
+                </div>
+                <div class="d-flex flex-column justify-content-start align-items-start mb-3">
+                    <div id="timeZone"></div>
                 </div>
                 <div class="d-flex flex-row gap-3">
                     <button type="button" class="btn btn-secondary" onclick="prevStep(1)">Previous</button>
@@ -163,7 +166,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                 <div class="d-flex flex-row gap-3 mb-3">
                     <button type="button" class="btn btn-secondary" onclick="prevStep(5)">Previous</button>
                     <button type="submit" class="btn btn-success">Book now!!</button>
-                    <a href="#" onclick="sendEmail();">Alert</a>
+<!--                    <a href="#" onclick="sendEmail();">Alert</a>-->
                 </div>
             </div>
         </form>
@@ -179,6 +182,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     const shop_type = $('#shop_type');
     const country = $('#country');
     const city = $('#city');
+    const timeZone = $('#timeZone');
     const sales = $('#sales');
     const date = $('#date');
     const time = $('#time');
@@ -217,7 +221,9 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         }
         time.append(times).trigger('change');
 
-
+        country.on('change', function () {
+            timeZone.text(timeZone.text());)
+        });
 
         // ✅ Step 3: โหลดเซลทั้งหมดในทีม
         $.get('../models/load_all_sales.php', function (res) {
@@ -250,7 +256,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                     bookCalendar();
                     alert('✅ Appointment has been booked.');
 
-                    //location.href = 'booking_success.php';
+                    location.href = 'booking_success.php';
                 } else {
                     alert('❌ ' + res.message);
                 }
@@ -311,7 +317,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
          sendEmail.fail(function(xhr, status, error) {
              console.log("ajax webhook fail!!");
              console.log(status + ': ' + error);
-             alert("Send fail!!");
+             //alert("Send fail!!");
          });
     }//sendEmail
 
@@ -356,7 +362,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         makeAppointment.fail(function(xhr, status, error) {
             console.log("make Appointment webhook fail!!");
             console.log(status + ': ' + error);
-            alert("Send fail!!");
+            //alert("Send fail!!");
         });
     }//bookCalendar
 
