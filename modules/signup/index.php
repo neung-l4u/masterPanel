@@ -757,7 +757,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <b class="red">*</b></label>
                                                 <div class="col-8">
                                                     <input type="text" id="passwordShoppingCart" class="form-control"
-                                                           name="passwordShoppingCart" value="Localeats" disabled>
+                                                           name="passwordShoppingCart" value="Localeats@1" disabled>
                                                     <small id="passwordHelp" class="form-text text-muted">
                                                         This is a temporary default password, you can change it later.
                                                     </small>
