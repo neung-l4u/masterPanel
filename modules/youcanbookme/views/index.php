@@ -50,6 +50,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <section style="min-height: 50vh;">
             <h4>Version 1.0 Alpha Testing</h4>
             <ul>
+                <li>Save booking information to the database</li>
+                <li>Send confirmation email to customers, sales.</li>
                 <li>Send a calendar link via email after booking.</li>
             </ul>
         </section>
