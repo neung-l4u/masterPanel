@@ -36,7 +36,7 @@ require_once '../assets/php/pageNavigate.php';
         $(()=>{
             setInterval(function() {
                 let reqHeartbeat = $.ajax({
-                    url: "../assets/api/heartbeat.php",
+                    url: "../assets/API/heartbeat.php",
                     method: "POST",
                     async: false,
                     cache: false,
