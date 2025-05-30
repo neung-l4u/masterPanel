@@ -728,7 +728,7 @@ $row['colorTheme3'] = !empty($row['colorTheme3']) ? $row['colorTheme3'] : '#FFFF
 
 <script src="../assets/js/jquery-3.7.1.min.js"></script>
 <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
-<script src="../controllers/project_detail.js"></script>
+<script src="../controllers/project_detail.js?v=1.0.0"></script>
 <script>
     const hiddenShopType = $("#ShopType");
     const inputName = $("#bsName");

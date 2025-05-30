@@ -31,7 +31,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
 <link rel="stylesheet" href="../assets/css/res3.css">
 <link rel="stylesheet" href="dist/css/newStyle.css">
 
-<script src="../controllers/res3.js"></script>
+<script src="../controllers/res3.js?v=1.0.0"></script>
 
 <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-5">
     <ol class="breadcrumb">

@@ -30,7 +30,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
 <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
 <link rel="stylesheet" href="../assets/css/res1.css">
 <link rel="stylesheet" href="dist/css/newStyle.css">
-<script src="../controllers/res1.js"></script>
+<script src="../controllers/res1.js?v=1.0.0"></script>
 
 <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-5">
     <ol class="breadcrumb">
@@ -1088,7 +1088,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
 <script src="dist/assets/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
 <script src="dist/assets/jquery-file-upload/js/jquery.iframe-transport.js"></script>
 <script src="dist/assets/jquery-file-upload/js/jquery.fileupload.js"></script>
-<script src="../controllers/template.js"></script>
+<script src="../controllers/template.js?v=1.0.0"></script>
 <script>
     const max_uploads = 20;
     const multiUploadPrefix = 'album';

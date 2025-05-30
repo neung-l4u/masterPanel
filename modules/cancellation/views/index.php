@@ -50,10 +50,10 @@ $testMode = ($id == "test") ? 1 : 0;
 
                                 <div class="form-group pt-2">
                                     <label for="formCountry">
-                                        <span>Country <b class="red">*</b><small class="text-danger" id="smallCountry">Please Select County.</small></span>
+                                        <span>Country <b class="red">*</b><small class="text-danger warningText" id="smallCountry">Please Select County.</small></span>
                                     </label>
                                     <select id="formCountry" class="form-select" name="country">
-                                        <option selected value="">Please select Country</option>
+                                        <option selected value="" disabled>Please select Country</option>
                                         <option value="AU">Australia</option>
                                         <option value="NZ">New Zealand</option>
                                         <option value="US">United States</option>
@@ -64,7 +64,7 @@ $testMode = ($id == "test") ? 1 : 0;
                                 </div>
 
                                 <div class="form-group pt-2">
-                                    <label for="shopName">Shop name <b class="red">*</b> <small class="text-danger" id="smallShopName">Please check the message.</small></label>
+                                    <label for="shopName">Shop name <b class="red">*</b> <small class="text-danger warningText" id="smallShopName">Please check the message.</small></label>
 
                                     <div>
                                         <input
@@ -207,7 +207,7 @@ $testMode = ($id == "test") ? 1 : 0;
 
                                 <div class="pt-2">
                                     <label for="email" class="control-label">
-                                        <span>Email <b class="red">*</b><small class="text-danger" id="smallEmail">Please provide a valid email address.</small></span>
+                                        <span>Email <b class="red">*</b><small class="text-danger warningText" id="smallEmail">Please provide a valid email address.</small></span>
                                     </label>
                                     <div>
                                         <input type="email" class="form-control mainEmail text-lowercase" id="email" name="email" maxlength="80" autocomplete="off" placeholder="mail@localforyou.com"/>
@@ -243,11 +243,11 @@ $testMode = ($id == "test") ? 1 : 0;
                                     </div>
                                 </div>
 
-                                <div class="mb-3 mt-2 w-100" id="other">
+                                <div class="mb-3 mt-2 w-100 warningText" id="other">
                                     <label for="boxother" class="form-label">
                                         <i class="fa-solid fa-note-sticky"></i>&nbsp;
                                         Other
-                                        <small class="text-danger" id="smallOther">Please check the message.</small>
+                                        <small class="text-danger warningText" id="smallOther">Please check the message.</small>
                                     </label>
                                     <textarea class="form-control w-100" id="boxother" name="other" rows="3" placeholder="-- Comment --"></textarea>
                                 </div>
@@ -255,7 +255,7 @@ $testMode = ($id == "test") ? 1 : 0;
                                 <div class="mt-3">
                                     <div class="col d-flex flex-column">
                                         <label for="lastDate">
-                                            Last Date you want the system Live? <b class="red">*</b><small class="text-danger" id="smallDate">Please select a date.</small>
+                                            Last Date you want the system Live? <b class="red">*</b><small class="text-danger warningText" id="smallDate">Please select a date.</small>
                                         </label>
 
                                         <div class="date" id="datepicker">
@@ -316,7 +316,8 @@ $testMode = ($id == "test") ? 1 : 0;
 
                         <div class="card-footer">
                             <div class="float-end">
-                                <span id="loadingAjax" class="text-success">Form Submitted</span>
+                                <span id="loadingAjax" class="text-primary warningText"><img src="../assets/img/loadingSpin.gif" alt="" width="41"> Loading...</span>
+                                <span id="doneForm" class="text-success warningText">Success</span>
                                 <button type="button" class="btn btn-success" id="cancelBtn" onclick="validateForm()">Confirm</button>
                                 <input type="hidden" id="testMode" name="testMode" value="<?php echo $testMode; ?>">
                             </div>
@@ -328,7 +329,7 @@ $testMode = ($id == "test") ? 1 : 0;
     </div>
 </main>
 <footer class="credit">
-    Author: IT Team - Distributed By:
+     Version 1.5.2 Author: IT Team - Distributed By:
     <a
             title="Awesome Online Shopping Cart Application"
             href="https://www.localforyou.com"
@@ -339,28 +340,29 @@ $testMode = ($id == "test") ? 1 : 0;
 </footer>
 <script src="../assets/js/jquery.3.6.0.min.js"></script>
 <script src="../assets/js/bootstrap5.0.2.bundle.min.js"></script>
-<script src="../assets/js/global_data.js"></script>
+<script src="../assets/js/global_data.js?v=1.5.2"></script>
 <script src="../assets/js/date_format.js"></script>
 <script src="../assets/js/popper.2.11.5.min.js"></script>
-<script src="../assets/js/unsubData.js"></script>
+<script src="../assets/js/unsubData.js?v=1.5.2"></script>
 <script>
     let payload = {};
 
     $( document ).ready(function() {
-        $("#other").hide()
-        $("#loadingAjax").hide()
-        $("#smallCountry").hide()
-        $("#smallShopName").hide()
-        $("#smallDate").hide()
-        $("#smallOther").hide()
-        $("#smallEmail").hide()
+        $(".warningText").hide();
+        // $("#other").hide()
+        // $("#loadingAjax").hide()
+        // $("#smallCountry").hide()
+        // $("#smallShopName").hide()
+        // $("#smallDate").hide()
+        // $("#smallOther").hide()
+        // $("#smallEmail").hide()
     });//ready
 
     function validateForm(){
         let country = $("#formCountry").val();
         let shopName = $("#shopName").val();
         let lastDate = $("#lastDate").val();
-        let email = $("#smallEmail").val();
+        let email = $("#email").val();
 
         if (country === ""){
             $("#smallCountry").show();
@@ -373,16 +375,14 @@ $testMode = ($id == "test") ? 1 : 0;
             $("#smallShopName").hide();
             $("#smallDate").show();
             $("#lastDate").focus();
-        }else if (lastDate === ""){
-            $("#smallShopName").hide();
-            $("#smallDate").show();
-            $("#lastDate").focus();
         }else if (email === ""){
             $("#smallShopName").hide();
             $("#smallEmail").show();
             $("#email").focus();
         }else{
+            $("#cancelBtn").hide();
             $("#loadingAjax").fadeIn(100);
+
 
             // read all input, select, textarea in form
             $('form').find('input, select, textarea').each(function () {
@@ -411,6 +411,9 @@ $testMode = ($id == "test") ? 1 : 0;
             saveDB();
 
                 console.log("we call webhook");
+
+
+                //TODO : ยิงไป webhook unsub ให้ส่งเมล
                 const callAjax = $.ajax({
                     type: "POST",
                     crossDomain: true,
@@ -420,14 +423,12 @@ $testMode = ($id == "test") ? 1 : 0;
                 });
 
                 callAjax.done(function (res) {
-                    $("#cancelBtn").hide();
-                    setTimeout(() => {
-                        $("#cancelBtn").show();
-                    }, 5000);
+                    $("#loadingAjax").hide();
+                     $("#doneForm").show();
+
 
                     console.log("Ajax done");
                     console.log("return = ",res);
-                    // alert("done")
                     location.replace("https://localforyou.com/thank-you/");
                 });
 
@@ -441,6 +442,8 @@ $testMode = ($id == "test") ? 1 : 0;
     }//end validateForm()
 
     function saveDB(){
+
+        //TODO : Save Database table Cancellation
         const ajaxSaveDB = $.ajax({
                 url: "activeajax.php",
                 method: 'POST',
