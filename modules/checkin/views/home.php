@@ -15,10 +15,10 @@
     <section style="min-height: 50vh;">
         <h3>Instruction: </h3>
         <ul>
-            <li>Lorem ipsum dolor sit amet consectetur adipiscing elit.</li>
-            <li>Consectetur adipiscing elit quisque faucibus ex sapien vitae.</li>
-            <li>Ex sapien vitae pellentesque sem placerat in id. Placerat in id cursus mi pretium tellus duis.</li>
-            <li>Pretium tellus duis convallis tempus leo eu aenean.</li>
+            <li>Please note that you can check in and check out once per day only.</li>
+            <li>The time is recorded automatically when you submit the form — no need to enter it yourself.</li>
+            <li>Be careful, when choosing Clock In / Clock Out — once submitted, it cannot be changed.</li>
+            <li>If you encounter any issues, don't hesitate to get in touch with the admin team.</li>
         </ul>
         <div class="d-flex justify-content-center">
             <a href="main.php?p=time" class="btn btn-primary">Stamp time</a>
