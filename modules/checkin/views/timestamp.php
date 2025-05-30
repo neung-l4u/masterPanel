@@ -8,7 +8,6 @@ $now = date("H:i");
 <link href="../assets/libs/select2/css/select2.min.css" rel="stylesheet" />
 <link href="../assets/libs/select2/css/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 <style>
-    /*body { padding: 2rem; background: #f8f9fa; }*/
     .form-control:focus { box-shadow: none; }
     .red{ color: red; }
     ::placeholder {
@@ -31,9 +30,6 @@ $now = date("H:i");
 </header>
 
 <main>
-    <!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        modal
-    </button>-->
     <section style="min-height: 50vh;">
         <h3 class="mb-5"><i class="bi bi-life-preserver"></i> Timestamp: </h3>
         <form id="checkForm">
@@ -101,31 +97,12 @@ $now = date("H:i");
             </div>
 
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button id="cmdSubmit" type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>
 
         <div id="result" class="mt-3"></div>
     </section>
-    <!-- Modal -->
-    <!--<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Understood</button>
-                </div>
-            </div>
-        </div>
-    </div>-->
-    <!-- Modal-->
 </main>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
 <script src="../assets/libs/flatpickr/flatpickr.js"></script>
@@ -133,6 +110,7 @@ $now = date("H:i");
 <script src="../assets/libs/moment-2.30.1/moment.min.js"></script>
 <script>
     const result = $('#result');
+    const cmdSubmit = $('#cmdSubmit');
     let now = new moment();
 
     $(function () {
@@ -161,6 +139,7 @@ $now = date("H:i");
         $('#checkForm').on('submit', function (e) {
             e.preventDefault();
             result.html(`<div class="alert alert-warning"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Processing...</div>`);
+            cmdSubmit.prop('disabled', true); // ✅ ปิดปุ่ม save
 
             const formData = $(this).serializeArray().reduce((obj, item) => {
                 obj[item.name] = item.value;
@@ -178,23 +157,43 @@ $now = date("H:i");
             formData.noteCheckin = $('textarea[name="noteCheckin"]').val();
             formData.noteCheckout = $('textarea[name="noteCheckout"]').val();
 
-            // ตรวจสอบก่อนส่ง
             if (formData.actionType === 'checkin' && !formData.checkinTime) {
-                result.html(`<div class="alert alert-warning">Please enter start time.</div>`); return;
+                result.html(`<div class="alert alert-warning"><i class="bi bi-exclamation-circle-fill"></i> Please enter start time.</div>`);
+                cmdSubmit.prop('disabled', false); // ✅ เปิดปุ่มอีกครั้ง
+                return;
             }
 
             if (formData.actionType === 'checkout' && !formData.checkoutTime) {
-                result.html(`<div class="alert alert-warning">Please enter end time.</div>`); return;
+                result.html(`<div class="alert alert-warning"><i class="bi bi-exclamation-circle-fill"></i> Please enter end time.</div>`);
+                cmdSubmit.prop('disabled', false); // ✅ เปิดปุ่มอีกครั้ง
+                return;
             }
 
-            // ส่งข้อมูลไปยัง Make Webhook
             const makeWebhookURL = "https://hook.us1.make.com/75bocum3gs8v35045jfkb7qktlq2awru";
 
             $.post(makeWebhookURL, formData)
-                .done(() => result.html(`<div class="alert alert-success">Data sent successfully</div>`))
-                .fail(() => result.html(`<div class="alert alert-danger">An error occurred. Please try again.</div>`));
+                .done(() => {
+                    result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
+                 <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">5</span>...</div>`);
+
+                    let countdown = 5;
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        $('#countDown').text(countdown);
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                            window.location.reload();
+                        }
+                    }, 1000);
+                })
+                .fail(() => {
+                    result.html(`<div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> An error occurred. Please try again.</div>`);
+                    cmdSubmit.prop('disabled', false); // ✅ เปิดปุ่มอีกครั้ง
+                });
         });
-    });
+
+
+    })//ready
 
     function setToNow() {
         now = new moment();
@@ -208,30 +207,6 @@ $now = date("H:i");
         console.log(now.format('YYYY-MM-DD'));
         $('#workDate').val(now.format('YYYY-MM-DD'));
     }
-
-    /*function cmdSubmit(){
-        const reqAjax = $.ajax({
-            url: "assets/php/actionWebsiteList.php",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: {
-                act: "loadUpdate",
-                id: id,
-            },
-        });
-
-
-        reqAjax.done(function (res) {
-
-        });
-
-        reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax loadUpdate fail!!");
-            console.log(status + ": " + error);
-        })
-    }*/
 </script>
 <?php
 function showName($full): string
