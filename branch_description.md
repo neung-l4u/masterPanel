@@ -1,3 +1,9 @@
+>250526 mark/feature/timeOff
+>- ทำฟอร์มการลาของ part-time
+
+>250526 mark/fix/projectSendingIcon
+>- send mail ของหน้า project ช้า เลยเพิ่ม loading
+
 >250526 mark/fix/multiUploadParam
 >- แก้ URL การส่ง parameter จากหน้า detail ไปหน้า multiupload ค่าของ folderPath ไม่ได้ encode ทำให้ URL พัง
 
