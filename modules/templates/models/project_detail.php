@@ -11,6 +11,7 @@ $data = array();
 $myID = $_SESSION['id'];
 
 $data['projectID'] = !empty($_POST['projectID']) ? $_POST['projectID'] : null;
+$data['projectCode'] = !empty($_POST['projectCode']) ? $_POST['projectCode'] : null;
 $data['shopType'] = !empty($_POST['shopType']) ? $_POST['shopType'] : null; //restaurant, massage
 $data['mode'] = !empty($_POST['mode']) ? $_POST['mode'] : "";
 $data['projectName'] = !empty($_POST['projectName']) ? trim($_POST['projectName']) : "No name";
@@ -90,7 +91,7 @@ if (!empty($_POST['customDeliChk']) && $_POST['customDeliChk'] === 'true') {
 
 if ($data['mode'] ==  "save") {
     $select = $db->query('UPDATE `tb_project` SET 
-        `saveFlag`=?, `email`=?, `phone`=?, `address`=?, `openingCustom`=?, `openingHours`=?, 
+        `projectCode`=?, `saveFlag`=?, `email`=?, `phone`=?, `address`=?, `openingCustom`=?, `openingHours`=?, 
         `deliveryCustom`=?, `pickupAndDelivery`=?, `logo`=?, `colorTheme1`=?, `colorTheme2`=?, 
         `colorTheme3`=?, `domainName`=?, `domainHave`=?, `domainProvidersID`=?, `domainUser`=?, 
         `domainPass`=?, `hostingName`=?, `hostingHave`=?, `hostingProvidersID`=?, `hostingUser`=?, 
@@ -98,6 +99,7 @@ if ($data['mode'] ==  "save") {
         `amelia`=?, `voucher`=?, `bookOther`=?, `masOtherSystem`=?, `needEmail`=?, `facebookURL`=?, 
         `instagramURL`=?, `youtubeURL`=?, `tiktokURL`=?, `updateBy`=? 
         WHERE `projectID`=?',
+        $data['projectCode'],
         1,
         $data['email'],
         $data['phone'],
