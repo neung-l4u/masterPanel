@@ -12,7 +12,7 @@
  */
 
 $projectID = $_GET['projectID'];
-$folder = $_GET['folderPath'];
+$folder = urldecode($_GET['folderPath']);
 $prefix = $_GET['prefix'];
 
 $ds = DIRECTORY_SEPARATOR;  //1
