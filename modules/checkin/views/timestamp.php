@@ -49,23 +49,13 @@ $now = date("H:i");
                 </div>
 
                 <div class="col-6">
-                    <label for="workShift" class="form-label"><i class="bi bi-alarm-fill"></i> Shift</label>
-                    <select id="workShift" name="workShift" class="form-select" required>
+                    <label for="actionType" class="form-label"><i class="bi bi-postage-fill"></i> Log Type <span class="red">*</span></label>
+                    <select id="actionType" name="actionType" class="form-select" required>
                         <option value="">-- Select --</option>
-                        <option value="Appointment setter UK Shift (Part-time)">UK Shift</option>
-                        <option value="Appointment setter AU/NZ Shift (Part-time)">AU/NZ Shift</option>
-                        <option value="Appointment setter USA Shift (Part-time)">USA Shift</option>
+                        <option value="checkin">Check-in</option>
+                        <option value="checkout">Check-out</option>
                     </select>
                 </div>
-            </div>
-
-            <div class="mb-5">
-                <label for="actionType" class="form-label"><i class="bi bi-postage-fill"></i> Log Type <span class="red">*</span></label>
-                <select id="actionType" name="actionType" class="form-select" required>
-                    <option value="">-- Select --</option>
-                    <option value="checkin">Check-in</option>
-                    <option value="checkout">Check-out</option>
-                </select>
             </div>
 
 
@@ -88,12 +78,12 @@ $now = date("H:i");
 
             <div class="mb-3" id="noteCheckinDiv" style="display: none;">
                 <label for="noteCheckin" class="form-label"><i class="bi bi-card-list"></i> Note (Check-in)</label>
-                <textarea id="noteCheckin" name="noteCheckin" class="form-control" rows="2" placeholder="หมายเหตุ (เวลาเริ่มงาน)"></textarea>
+                <textarea id="noteCheckin" name="noteCheckin" class="form-control" rows="3" placeholder="Short description (check-in)"></textarea>
             </div>
 
             <div class="mb-3" id="noteCheckoutDiv" style="display: none;">
                 <label for="noteCheckout" class="form-label"><i class="bi bi-card-list"></i> Note (Check-out)</label>
-                <textarea id="noteCheckout" name="noteCheckout" class="form-control" rows="2" placeholder="หมายเหตุ (เวลาเลิกงาน)"></textarea>
+                <textarea id="noteCheckout" name="noteCheckout" class="form-control" rows="3" placeholder="Short description (check-out)"></textarea>
             </div>
 
             <div class="d-flex justify-content-end">
@@ -174,9 +164,9 @@ $now = date("H:i");
             $.post(makeWebhookURL, formData)
                 .done(() => {
                     result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
-                 <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">5</span>...</div>`);
+                 <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
 
-                    let countdown = 5;
+                    let countdown = 3;
                     const countdownInterval = setInterval(() => {
                         countdown--;
                         $('#countDown').text(countdown);
