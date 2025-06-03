@@ -154,6 +154,8 @@ out
 /modules/signupMini/assets/db/initDB.php
 /modules/cancellation/assets/db/initDB.php
 /modules/export/assets/db/initDB.php
+/modules/checkin/assets/db/initDB.php
+/modules/ucanbookme/assets/db/initDB.php
 .DS_Store
 
-/modules/checkin/assets/db/initDB.php
+
