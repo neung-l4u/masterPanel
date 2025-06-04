@@ -63,6 +63,7 @@ $password = "Localeats#".date("Y");
                                     <tr>
                                         <th style="width:11%">Timestamp</th>
                                         <th style="width:10%">Country</th>
+                                        <th style="width:10%">Shop Type</th>
                                         <th style="width:49%">Shop name</th>
                                         <th style="width:5%">Signup</th>
                                         <th style="width:5%">Stripe</th>
@@ -120,6 +121,7 @@ $password = "Localeats#".date("Y");
 
 <script src="plugins/jquery/jquery.min.js"></script>
 <script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
+<script src="plugins/datatables-bs4/js/dataTables."></script>
 <script>
     let shopName = $(".shopName");
     let logType = $(".logType");
@@ -136,7 +138,7 @@ $password = "Localeats#".date("Y");
             ['Fit', 25, 50, 'All']
         ],columnDefs: [
             { targets: [0], className: 'dt-left' },
-            { targets: [3, 4, 5], className: 'dt-center', "orderable": "false" },
+            { targets: [4, 5], className: 'dt-center', "orderable": "false" },
             { targets: [6], className: 'dt-right' , "orderable": "false"}
         ]
     } );

@@ -401,6 +401,44 @@ function updateTemplates() {
     }
 }
 
+function sending(id) {
+    $("#processingTxt" + id).hide();
+    $("#savetoDBTxt" + id).hide();
+    $("#creatMondayTxt" + id).hide();
+    $("#sendMailTxt" + id).hide();
+
+    sendProject(id);
+    $("#actionDiv" + id).hide();
+    $("#sendingDiv" + id).show();
+
+    setTimeout(function() {
+        $("#processingTxt" + id).show();
+    }, 0);
+
+    setTimeout(function() {
+        $("#processingTxt" + id).hide();
+        $("#savetoDBTxt" + id).show();
+    }, 2000);
+
+    setTimeout(function() {
+        $("#savetoDBTxt" + id).hide();
+        $("#creatMondayTxt" + id).show();
+    }, 4000);
+
+    setTimeout(function() {
+        $("#creatMondayTxt" + id).hide();
+        $("#sendMailTxt" + id).show();
+    }, 6000);
+
+    setTimeout(function() {
+        $('#projectData').DataTable().ajax.reload();
+        $("#sendMailTxt" + id).hide();
+        $("#sendingDiv" + id).hide();
+        $("#actionDiv" + id).show();
+    }, 8000);
+
+}
+
 function sendProject(id) {
     let answer = confirm("Are you sure you want to submit this project?");
 
@@ -444,11 +482,13 @@ function sendProject(id) {
 }//sendEmail
 
 function l4uCallback(response) {
-    $('#projectData').DataTable().ajax.reload();
-    console.log("Template Submitting Response:", response);
+    console.log("Monday Report Response:", response);
 }
 
 function truel4uCallback(response) {
-    $('#projectData').DataTable().ajax.reload();
-    console.log("Template Submitting Response:", response);
+    console.log("Email Response:", response);
+}
+
+function falsel4uCallback(response) {
+    console.log("Email Response:", response);
 }

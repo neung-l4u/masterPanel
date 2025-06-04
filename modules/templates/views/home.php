@@ -10,7 +10,7 @@
 </script>
     
 <link rel="stylesheet" href="../assets/css/home.css">
-<script src="../controllers/home.js"></script>
+<script src="../controllers/home.js?v=1.0.0"></script>
 <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
 <div class="row">
     <div class="col pt-4">

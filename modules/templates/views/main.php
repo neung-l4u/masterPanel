@@ -31,12 +31,12 @@ require_once '../assets/php/pageNavigate.php';
 
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
-    <script src="../controllers/main.js"></script>
+    <script src="../controllers/main.js?v=1.0.0"></script>
     <script>
         $(()=>{
             setInterval(function() {
                 let reqHeartbeat = $.ajax({
-                    url: "../assets/api/heartbeat.php",
+                    url: "../assets/API/heartbeat.php",
                     method: "POST",
                     async: false,
                     cache: false,
