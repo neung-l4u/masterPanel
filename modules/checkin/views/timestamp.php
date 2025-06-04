@@ -61,17 +61,17 @@ $now = date("H:i");
 
             <div class="row mb-3">
                 <div class="col-6" id="workDateDiv" style="display:none;">
-                    <label for="workDate" class="form-label"><i class="bi bi-calendar-date-fill"></i> Date  <span class="red">*</span> <small><a href="#" class="text-primary" onclick="setToDay();">Today</a></small></label>
+                    <label for="workDate" class="form-label"><i class="bi bi-calendar-date-fill"></i> Date  <span class="red">Auto Generate</span> <!--<small><a href="#" class="text-primary" onclick="setToDay();">Today</a></small>--></label>
                     <input type="text" id="workDate" name="workDate" class="form-control flatpickr" value="<?php echo $today; ?>" required>
                 </div>
 
                 <div class="col-6" id="checkinTimeDiv" style="display:none;">
-                    <label for="checkinTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-in time  <span class="red">*</span> <small><a href="#" onclick="setToNow();">Now</a></small></label>
+                    <label for="checkinTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-in time  <span class="red">Auto Generate</span> <!--<small><a href="#" onclick="setToNow();">Now</a></small>--></label>
                     <input type="time" id="checkinTime" name="checkinTime" value="<?php echo $now; ?>" class="form-control">
                 </div>
 
                 <div class="col-6" id="checkoutTimeDiv" style="display:none;">
-                    <label for="checkoutTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-out time  <span class="red">*</span> <small><a href="#" onclick="setToNow();">Now</a></small></label>
+                    <label for="checkoutTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-out time  <span class="red">Auto Generate</span> <!--<small><a href="#" onclick="setToNow();">Now</a></small>--></label>
                     <input type="time" id="checkoutTime" name="checkoutTime" value="<?php echo $now; ?>" class="form-control">
                 </div>
             </div>
@@ -85,6 +85,8 @@ $now = date("H:i");
                 <label for="noteCheckout" class="form-label"><i class="bi bi-card-list"></i> Note (Check-out)</label>
                 <textarea id="noteCheckout" name="noteCheckout" class="form-control" rows="3" placeholder="Short description (check-out)"></textarea>
             </div>
+
+            <input type="hidden" id="activeSQL" name="activeSQL" value="save">
 
             <div class="d-flex justify-content-end">
                 <button id="cmdSubmit" type="submit" class="btn btn-primary">Save</button>
@@ -110,7 +112,7 @@ $now = date("H:i");
         $('#actionType').on('change', function () {
             const action = $(this).val();
             $('#workDateDiv').show();
-            $('#checkinTimeDiv, #checkoutTimeDiv').hide();
+            $('#checkinTimeDiv, #checkoutTimeDiv, #checkinTime, #checkoutTime, #workDate').hide();
             $('#checkinTimeDiv, #checkoutTimeDiv, #noteCheckinDiv, #noteCheckoutDiv').hide();
 
             if (action === 'checkin') {
@@ -130,6 +132,9 @@ $now = date("H:i");
             e.preventDefault();
             result.html(`<div class="alert alert-warning"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Processing...</div>`);
             cmdSubmit.prop('disabled', true); // ✅ ปิดปุ่ม save
+            now = new moment();
+            $('input[name="checkoutTime"]').val(now.format("HH:mm"));
+            $('input[name="checkinTime"]').val(now.format("HH:mm"));
 
             const formData = $(this).serializeArray().reduce((obj, item) => {
                 obj[item.name] = item.value;
@@ -161,8 +166,11 @@ $now = date("H:i");
 
             const makeWebhookURL = "https://hook.us1.make.com/75bocum3gs8v35045jfkb7qktlq2awru";
 
+
             $.post(makeWebhookURL, formData)
                 .done(() => {
+
+
                     result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
                  <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
 
@@ -179,8 +187,24 @@ $now = date("H:i");
                 .fail(() => {
                     result.html(`<div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> An error occurred. Please try again.</div>`);
                     cmdSubmit.prop('disabled', false); // ✅ เปิดปุ่มอีกครั้ง
+                });//webhook
+
+            const dataBase = "../models/activeTimestamp.php";
+
+
+            $.post(dataBase, formData)
+                .done(() => {
+                    console.log('success');
+
+                })
+                .fail(() => {
+                    console.log('fail');
                 });
-        });
+
+
+        });//on submit
+
+
 
 
     })//ready
