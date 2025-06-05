@@ -75,7 +75,6 @@ $now = date("H:i");
                         <option value="">-- Select --</option>
                         <option value="Working From Home">Working From Home</option>
                         <option value="Working Remote">Working Remote</option>
-                        <option value="Can Partially Work During Vacation">Can Partially Work During Vacation</option>
                         <option value="Time off - Vacation">Time off - Vacation</option>
                         <option value="Sick Leave">Sick Leave</option>
                         <option value="Maternity Leave">Maternity Leave</option>
