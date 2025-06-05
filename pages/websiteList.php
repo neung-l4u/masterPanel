@@ -54,6 +54,8 @@ $password = "Localeats#".date("Y");
         font-size: 0.7rem;
     }
 </style>
+<link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
 
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -62,7 +64,7 @@ $password = "Localeats#".date("Y");
             <div class="col-sm-6">
                 <h4 class="m-0">
                     <svg class="nav-icon mr-3" height="1em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M152.1 38.2c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 113C-2.3 103.6-2.3 88.4 7 79s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zm0 160c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 273c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zM224 96c0-17.7 14.3-32 32-32l224 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-224 0c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32l224 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-224 0c-17.7 0-32-14.3-32-32zM160 416c0-17.7 14.3-32 32-32l288 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32zM48 368a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"  fill="#000000" /></svg>
-                    Website Lists
+                    Website Lists 
                 </h4>
             </div><!-- /.col -->
             <div class="col-sm-6">
@@ -212,6 +214,22 @@ $password = "Localeats#".date("Y");
                                     <label for="inputProject">Project</label>
                                     <input type="text" class="form-control" id="inputProject" maxlength="255" placeholder="e.g. Hoon Hay">
                                 </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputLocation">Location</label>
+                                        <textarea class="form-control" id="inputLocation" rows="5" placeholder="e.g. Hoon Hay"> </textarea>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <div class="form-group">
+                                            <label for="inputOwner">Owner</label>
+                                            <input type="text" class="form-control" id="inputOwner" maxlength="255" placeholder="e.g. John Doe">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputOwnerEmail">Owner Email</label>
+                                            <input type="email" class="form-control" id="inputOwnerEmail" maxlength="255" placeholder="e.g. johndoe@gmail.com">
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
@@ -241,13 +259,13 @@ $password = "Localeats#".date("Y");
                                         <label for="inputLiveStatus">Live Status</label>
                                         <select id="inputLiveStatus" class="form-control">
                                             <option value="0" selected>-- None --</option>
-                                            <option value="1">Live</option>
-                                            <option value="2">Draft</option>
-                                            <option value="3">Transferred</option>
-                                            <option value="4">Pre Live</option>
-                                            <option value="5">Subdomain</option>
-                                            <option value="6">Redirect</option>
-                                            <option value="7">Unpublished</option>
+                                            <option value="Live">Live</option>
+                                            <option value="Draft">Draft</option>
+                                            <option value="Transferred">Transferred</option>
+                                            <option value="Pre Live">Pre Live</option>
+                                            <option value="Subdomain">Subdomain</option>
+                                            <option value="Redirect">Redirect</option>
+                                            <option value="Unpublished">Unpublished</option>
                                         </select>
                                     </div>
                                 </div>
@@ -305,17 +323,17 @@ $password = "Localeats#".date("Y");
 
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label for="inputWordPressUser">WordPress User</label>
-                                        <input type="text" class="form-control" id="inputWordPressUser" placeholder="Hoonhay">
+                                        <label for="inputWordpressUser">Wordpress User</label>
+                                        <input type="text" class="form-control" id="inputWordpressUser" placeholder="Hoonhay">
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="inputWordPressPass">WordPress Pass</label>
-                                        <input type="text" class="form-control" id="inputWordPressPass" placeholder="99U@VFe~Ypm+">
+                                        <label for="inputWordpressPass">Wordpress Pass</label>
+                                        <input type="text" class="form-control" id="inputWordpressPass" placeholder="99U@VFe~Ypm+">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="inputWordpressURL">WordPress URL</label>
+                                    <label for="inputWordpressURL">Wordpress URL</label>
                                     <input type="text" class="form-control" id="inputWordpressURL" placeholder="https://www.hoonhay.com/wp-admin/">
                                 </div>
 
@@ -454,7 +472,7 @@ $password = "Localeats#".date("Y");
                                         <tbody>
                                             <tr>
                                                 <th scope="row" class="colInfo">Publish Date</th>
-                                                <td><span id="wPublishDate"></span></td>
+                                                <td><span id="wPublishedDate"></span></td>
                                             </tr>
                                             <tr>
                                                 <th scope="row" class="colInfo">Live Status</th>
@@ -468,6 +486,22 @@ $password = "Localeats#".date("Y");
                             <h5 class="text-info">Log-in Information</h5>
                             <div class="row mb-3">
                                 <div class="col">
+                                    <table class="table border">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" class="colInfo">cPanel Log-in</th>
+                                                <td><span id="cPanelURL"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" class="colInfo">cPanel User</th>
+                                                <td><span id="wCPanelUser"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" class="colInfo">cPanel Pass</th>
+                                                <td><span id="wCPanelPass"></span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                     <table class="table border">
                                         <tbody>
                                             <tr>
@@ -556,6 +590,7 @@ $password = "Localeats#".date("Y");
 <!-- /.content -->
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function showCopy() {
         $("#alert").fadeIn(500);
@@ -571,7 +606,11 @@ $password = "Localeats#".date("Y");
         });
     }
 
+    // Modal Form Action
     const inputProject = $("#inputProject");
+    const inputLocation = $("#inputLocation");
+    const inputOwner = $("#inputOwner");
+    const inputOwnerEmail = $("#inputOwnerEmail");
     const inputDomain = $("#inputDomain");
     const inputDomainProvider = $("#inputDomainProvider");
     const inputPublishedDate = $("#inputPublishedDate");
@@ -581,8 +620,8 @@ $password = "Localeats#".date("Y");
     const inputServer = $("#inputServer");
     const inputCPanelUser = $("#inputCPanelUser");
     const inputCPanelPass = $("#inputCPanelPass");
-    const inputWordPressUser = $("#inputWordPressUser");
-    const inputWordPressPass = $("#inputWordPressPass");
+    const inputWordpressUser = $("#inputWordpressUser");
+    const inputWordpressPass = $("#inputWordpressPass");
     const inputWordpressURL = $("#inputWordpressURL");
     const inputSMTPUser = $("#inputSMTPUser");
     const inputSMTPPass = $("#inputSMTPPass");
@@ -596,6 +635,7 @@ $password = "Localeats#".date("Y");
     const editID = $("#editID");
     const formAction = $("#formAction");
 
+    // Modal Form Detail
     const ProjectName = $("#wProject");
     const Location = $("#wLocation");
     const Owner = $("#wOwner");
@@ -605,8 +645,9 @@ $password = "Localeats#".date("Y");
     const System = $("#wSystem");
     const DomainName = $("#wDomain");
     const DomainProviderID = $("#wDomainProviderID");
-    const PublishDate = $("#wPublishDate");
+    const PublishedDate = $("#wPublishedDate");
     const LiveStatus = $("#wLiveStatus");
+    const cPanelURL = $("#cPanelURL");
     const CPanelUser = $("#wCPanelUser");
     const CPanelPass = $("#wCPanelPass");
     const WordpressURL = $("#wWordpressURL");
@@ -664,8 +705,9 @@ $password = "Localeats#".date("Y");
 
                 DomainName.text(res.wDomain);
                 DomainProviderID.text(res.wDomainProviderID);
-                PublishDate.text(res.wPublishDate);
+                PublishedDate.text(res.wPublishedDate);
                 LiveStatus.text(res.wLiveStatus);
+                cPanelURL.text(res.svName);
                 CPanelUser.text(res.wCPanelUser);
                 CPanelPass.text(res.wCPanelPass);
 
@@ -693,40 +735,10 @@ $password = "Localeats#".date("Y");
         });
     };
 
-    // const setStatus = (id, status) => {
-    //     const flagStatus = !status ? 1 : 0;
-    //     const reqAjax = $.ajax({
-    //         url: "assets/php/actionStaffs.php",
-    //         method: "POST",
-    //         async: false,
-    //         cache: false,
-    //         dataType: "json",
-    //         data: {
-    //             act: "setStatus",
-    //             id: id,
-    //             status: flagStatus
-    //         },
-    //     });
-
-    //     reqAjax.done(function (res) {
-    //         reloadTable();
-    //     });
-
-    //     reqAjax.fail(function (xhr, status, error) {
-    //         console.log("ajax request fail!!");
-    //         console.log(status + ": " + error);
-    //     });
-    // }// const
-    
-
     const setEdit = (id) => {
-        
 
-
-        const editID = $("#editID");
-        const formAction = $("#formAction");
         const reqAjax = $.ajax({
-            url: "assets/php/actionStaffs.php",
+            url: "assets/php/actionWebsiteList.php",
             method: "POST",
             async: false,
             cache: false,
@@ -740,40 +752,44 @@ $password = "Localeats#".date("Y");
         
         reqAjax.done(function (res) {
             console.log(res);
-            inputName.val(res.name);
-            inputTname.val(res.tname);
-            inputNickName.val(res.nickname);
-            inputBirthday.val(res.birthday);
-            inputStartDate.val(res.startdate);
-            inputEmployeeNumber.val(res.employeenumber);
-            inputAddress.val(res.address);
-            inputEmail.val(res.email);
-            inputPhone.val(res.phone);
-            inputPassword.val("Encrypted : " + res.password).attr('disabled', 'disabled');
-            passwordNotAllow.show();
-            inputLevel.val(res.level);
-            inputReligion.val(res.religion)
-            inputTeam.val(res.team)
-            if(res.status === 1) {
-                statusOff.prop('checked', false);
-                statusOn.prop('checked', true);
-            }else{
-                statusOn.prop('checked', false);
-                statusOff.prop('checked', true);
-            }
+            inputProject.val(res.wProject);
+
+            inputDomain.val(res.wDomain);
+            inputLocation.val(res.wLocation);
+            inputOwner.val(res.wOwner);
+            inputOwnerEmail.val(res.wOwnerEmail);
+            inputDomainProvider.val(res.wDomainProvidersID).prop("selected", true);
+            inputPublishedDate.val(res.wPublishedDate);
+            inputLiveStatus.val(res.wLiveStatus);
+            inputShopType.val(res.wIndustry).prop("selected", true);
+            inputTemplate.val(res.wTemplateUsed).prop("selected", true);
+            inputServer.val(res.wServerID);
+            inputCPanelUser.val(res.wCPanelUser);
+            inputCPanelPass.val(res.wCPanelPass);
+            inputWordpressUser.val(res.wWordpressUser);
+            inputWordpressPass.val(res.wWordpressPass);
+            inputWordpressURL.val(res.wWordpressURL);
+            inputSMTPUser.val(res.wSMTPEmailUser);
+            inputSMTPPass.val(res.wSMTPEmailPass);
+            inputSMTPRemark.val(res.wSMTPRemark);
+            inputContactEmailUser.val(res.wContactEmailUser);
+            inputContactEmailPass.val(res.wContactEmailPass);
+            inputContactEmailRemark.val(res.wContactEmailRemark);
+            inputGloriaFood.prop("checked", res.wSystemGloriaFood === 1 ? 1 : 0);
+            inputAmelia.prop("checked", res.wSystemAmelia === 1 ? 1 : 0);
+            inputVoucher.prop("checked", res.wSystemVoucher === 1 ? 1 : 0);
             editID.val(res.id);
             formAction.val("edit");
             modalFormAction("open");
         });
 
         reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
+            console.log("ajax loadUpdate fail!!");
             console.log(status + ": " + error);
         })
-    }// const
+    }// setEdit
 
     const formSave = () => {
-
         let payload = {
                 act: "save",
                 inputProject: inputProject.val(),
@@ -786,8 +802,8 @@ $password = "Localeats#".date("Y");
                 inputServer: inputServer.val(),
                 inputCPanelUser: inputCPanelUser.val(),
                 inputCPanelPass: inputCPanelPass.val(),
-                inputWordPressUser: inputWordPressUser.val(),
-                inputWordPressPass: inputWordPressPass.val(),
+                inputWordpressUser: inputWordpressUser.val(),
+                inputWordpressPass: inputWordpressPass.val(),
                 inputWordpressURL: inputWordpressURL.val(),
                 inputSMTPUser: inputSMTPUser.val(),
                 inputSMTPPass: inputSMTPPass.val(),
@@ -795,9 +811,9 @@ $password = "Localeats#".date("Y");
                 inputContactEmailUser: inputContactEmailUser.val(),
                 inputContactEmailPass: inputContactEmailPass.val(),
                 inputContactEmailRemark: inputContactEmailRemark.val(),
-                inputGloriaFood: inputGloriaFood.val(),
-                inputAmelia: inputAmelia.val(),
-                inputVoucher: inputVoucher.val(),
+                inputGloriaFood: inputGloriaFood.prop("checked") ? 1 : 0,
+                inputAmelia: inputAmelia.prop("checked") ? 1 : 0,
+                inputVoucher: inputVoucher.prop("checked") ? 1 : 0,
                 editID: editID.val(),
                 formAction: formAction.val(),
             };
@@ -822,62 +838,40 @@ $password = "Localeats#".date("Y");
         });
 
         reqAjax.fail(function (xhr, status, error) {
-            console.log("ajax request fail!!");
+            console.log("ajax save fail!!");
             console.log(status + ": " + error);
         });
         
-    }// const
-
+    }//formSave
 
     const resetForm = () => {
-        const inputName = $("#inputName");
-        const inputTname = $("#inputTname");
-        const inputNickName = $("#inputNickName");
-        const inputBirthday = $("#inputBirthday");
-        const inputStartDate = $("#inputStartDate");
-        const inputEmployeeNumber = $("#inputEmployeeNumber");
-        const inputAddress = $("#inputAddress");
-        const inputEmail = $("#inputEmail");
-        const inputPhone = $("#inputPhone");
-        const inputPassword = $("#inputPassword");
-        const inputReligion = $("#inputReligion");
-        const inputTeam = $("#inputTeam");
-        const inputLevel = $("#inputLevel");
-        const statusOn = $("#statusOn");
-        const statusOff = $("#statusOff");
-        const editID = $("#editID");
-        const formAction = $("#formAction");
-        const passwordNotAllow = $("#passwordNotAllow");
-
-        const date = new Date();
-
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-        let currentDate = `${year}-${month}-${day}`;
-
-        inputName.val('');
-        inputTname.val('');
-        inputNickName.val('');
-        inputBirthday.val('');
-        inputStartDate.val(currentDate);
-        inputEmployeeNumber.val('');
-        inputAddress.val('');
-        inputEmail.val('');
-        inputPhone.val('');
-        inputPassword.val('Localeats#2025').removeAttr('disabled');
-        passwordNotAllow.hide();
-        inputLevel.val('4');
-        inputReligion.val('1');
-        inputTeam.val('0');
-        statusOn.prop('checked', true);
-        statusOff.prop('checked', false);
+        inputProject.val('');
+        inputDomain.val('');
+        inputDomainProvider.val('');
+        inputPublishedDate.val('');
+        inputLiveStatus.val('');
+        inputShopType.val('');
+        inputTemplate.val('');
+        inputServer.val('');
+        inputCPanelUser.val('');
+        inputCPanelPass.val('');
+        inputWordpressUser.val('');
+        inputWordpressPass.val('');
+        inputWordpressURL.val('');
+        inputSMTPUser.val('');
+        inputSMTPPass.val('');
+        inputSMTPRemark.val('');
+        inputContactEmailUser.val('');
+        inputContactEmailPass.val('');
+        inputContactEmailRemark.val('');
+        inputGloriaFood.prop("checked", false);
+        inputAmelia.prop("checked", false);
+        inputVoucher.prop("checked", false);
         editID.val('');
         formAction.val('add');
-    }// const
+    }//resetForm
 
     const setDel = (delID) => {
-        //alert ("Delete"+delID);
 
         let answer = confirm ("Are you sure to delete this Staff?");
 
@@ -887,11 +881,10 @@ $password = "Localeats#".date("Y");
                 act: "setDelete",
                 id : delID
             };
-
             console.log("payload=",payload);
 
             const reqAjax = $.ajax({
-                url: "assets/php/actionStaffs.php",
+                url: "assets/php/actionWebsiteList.php",
                 method: "POST",
                 async: false,
                 cache: false,
@@ -908,13 +901,11 @@ $password = "Localeats#".date("Y");
             });
 
             reqAjax.fail(function (xhr, status, error) {
-                console.log("ajax request fail!!");
+                console.log("ajax setDel fail!!");
                 console.log(status + ": " + error);
             });
 
         }//if
-
-
     }//setDel
 
 </script>
