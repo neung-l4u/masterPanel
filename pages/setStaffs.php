@@ -100,17 +100,34 @@ $password = "Localeats#".date("Y");
 
                         <div class="d-flex flex-column">
 
-                            <div class="form-group row">
-                                <label class="col-2 col-form-label">Status</label>
-                                <div class="col">
-                                    <div class="form-group d-flex">
-                                        <div class="custom-control custom-radio mr-5">
-                                            <input class="custom-control-input" type="radio" id="statusOn" name="inputStatus" value="1" checked>
-                                            <label for="statusOn" class="custom-control-label">On</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group row">
+                                        <label class="col-2 col-form-label">Status</label>
+                                        <div class="col">
+                                            <div class="form-group d-flex">
+                                                <div class="custom-control custom-radio mr-5">
+                                                    <input class="custom-control-input" type="radio" id="statusOn" name="inputStatus" value="1" checked>
+                                                    <label for="statusOn" class="custom-control-label">On</label>
+                                                </div>
+                                                <div class="custom-control custom-radio">
+                                                    <input class="custom-control-input" type="radio" id="statusOff" name="inputStatus" value="0">
+                                                    <label for="statusOff" class="custom-control-label">Off</label>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="custom-control custom-radio">
-                                            <input class="custom-control-input" type="radio" id="statusOff" name="inputStatus" value="0">
-                                            <label for="statusOff" class="custom-control-label">Off</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group row">
+                                        <label class="col-2 col-form-label">Type</label>
+                                        <div class="col">
+                                            <div class="form-group d-flex">
+                                                <select id="inputStaffType" class="custom-select">
+                                                    <option value="fullTime" selected>fullTime</option>
+                                                    <option value="partTime">partTime</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -213,10 +230,10 @@ $password = "Localeats#".date("Y");
                                 </div>
                             </div>
 
-                            <div class="row mb-5">
+                            <div class="row">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="inputReligion" class="col-2 col-form-label">Religion</label>    
+                                        <label for="inputReligion">Religion</label>    
                                         <select id="inputReligion" class="custom-select">
                                             <option value="1" selected>-- ไม่ระบุ --</option>
                                             <?php
@@ -230,7 +247,17 @@ $password = "Localeats#".date("Y");
                                 </div>
                             </div>
 
-                            
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputNationality">Nationality</label>    
+                                        <select id="inputNationality" class="custom-select">
+                                            <option value="Thai" selected>Thai</option>
+                                            <option value="Foreign">Foreign</option>
+                                        </select>        
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="row">
                                 <div class="col">
@@ -307,6 +334,7 @@ $password = "Localeats#".date("Y");
     
 
     const setEdit = (id) => {
+        const inputStaffType = $("#inputStaffType");
         const inputName = $("#inputName");
         const inputTname = $("#inputTname");
         const inputNickName = $("#inputNickName");
@@ -320,6 +348,7 @@ $password = "Localeats#".date("Y");
         const passwordNotAllow = $("#passwordNotAllow");
         const inputLevel = $("#inputLevel");
         const inputReligion = $("#inputReligion");
+        const inputNationality = $("#inputNationality");
         const inputTeam = $("#inputTeam");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
@@ -340,6 +369,7 @@ $password = "Localeats#".date("Y");
         
         reqAjax.done(function (res) {
             console.log(res);
+            inputStaffType.val(res.stafftype);
             inputName.val(res.name);
             inputTname.val(res.tname);
             inputNickName.val(res.nickname);
@@ -353,6 +383,7 @@ $password = "Localeats#".date("Y");
             passwordNotAllow.show();
             inputLevel.val(res.level);
             inputReligion.val(res.religion)
+            inputNationality.val(res.nationality)
             inputTeam.val(res.team)
             if(res.status === 1) {
                 statusOff.prop('checked', false);
@@ -373,6 +404,7 @@ $password = "Localeats#".date("Y");
     }// const
 
     const formSave = () => {
+        const inputStaffType = $("#inputStaffType");
         const inputName = $("#inputName");
         const inputTname = $("#inputTname");
         const inputNickName = $("#inputNickName");
@@ -384,6 +416,8 @@ $password = "Localeats#".date("Y");
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
         const inputReligion = $("#inputReligion");
+        const inputNationality = $("#inputNationality");
+        const passwordNotAllow = $("#passwordNotAllow");
         const inputTeam = $("#inputTeam");
         const inputLevel = $("#inputLevel");
         const editID = $("#editID");
@@ -393,6 +427,7 @@ $password = "Localeats#".date("Y");
 
         let payload = {
                 act: "save",
+                inputStaffType : inputStaffType.val(),
                 inputName : inputName.val(),
                 inputTname : inputTname.val(),
                 inputNickName : inputNickName.val(),
@@ -404,6 +439,7 @@ $password = "Localeats#".date("Y");
                 inputPhone : inputPhone.val(),
                 inputPassword : inputPassword.val(),
                 inputReligion : inputReligion.val(),
+                inputNationality : inputNationality.val(),
                 inputTeam : inputTeam.val(),
                 inputLevel : inputLevel.val(),
                 inputStatus : statusValue,
@@ -439,6 +475,7 @@ $password = "Localeats#".date("Y");
 
 
     const resetForm = () => {
+        const inputStaffType = $("#inputStaffType");
         const inputName = $("#inputName");
         const inputTname = $("#inputTname");
         const inputNickName = $("#inputNickName");
@@ -450,6 +487,7 @@ $password = "Localeats#".date("Y");
         const inputPhone = $("#inputPhone");
         const inputPassword = $("#inputPassword");
         const inputReligion = $("#inputReligion");
+        const inputNationality = $("#inputNationality");
         const inputTeam = $("#inputTeam");
         const inputLevel = $("#inputLevel");
         const statusOn = $("#statusOn");
@@ -465,6 +503,7 @@ $password = "Localeats#".date("Y");
         let year = date.getFullYear();
         let currentDate = `${year}-${month}-${day}`;
 
+        inputStaffType.val('fullTime');
         inputName.val('');
         inputTname.val('');
         inputNickName.val('');
@@ -478,6 +517,7 @@ $password = "Localeats#".date("Y");
         passwordNotAllow.hide();
         inputLevel.val('4');
         inputReligion.val('1');
+        inputNationality.val('Thai');
         inputTeam.val('0');
         statusOn.prop('checked', true);
         statusOff.prop('checked', false);
