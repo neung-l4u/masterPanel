@@ -43,7 +43,7 @@ $now = date("H:i");
                         $staff = $db->query('SELECT * FROM `staffs` WHERE sStaffType = "partTime" ORDER BY sNickName')->fetchAll();
                         foreach ($staff as $row) {
                             ?>
-                            <option value="<?php echo $row['sNickName']; ?>"><?php echo $row['sNickName'].' '.showName($row['sName']); ?></option>
+                            <option value="<?php echo $row['sID']; ?>"><?php echo showName($row['sNickName'],$row['sName'],$row['sNationality']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -61,17 +61,17 @@ $now = date("H:i");
 
             <div class="row mb-3">
                 <div class="col-6" id="workDateDiv" style="display:none;">
-                    <label for="workDate" class="form-label"><i class="bi bi-calendar-date-fill"></i> Date  <span class="red">Auto Generate</span> <!--<small><a href="#" class="text-primary" onclick="setToDay();">Today</a></small>--></label>
+                    <label for="workDate" class="form-label"><i class="bi bi-calendar-date-fill"></i> Date: <span class="text-primary">Auto Generate</span> <!--<small><a href="#" class="text-primary" onclick="setToDay();">Today</a></small>--></label>
                     <input type="text" id="workDate" name="workDate" class="form-control flatpickr" value="<?php echo $today; ?>" required>
                 </div>
 
                 <div class="col-6" id="checkinTimeDiv" style="display:none;">
-                    <label for="checkinTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-in time  <span class="red">Auto Generate</span> <!--<small><a href="#" onclick="setToNow();">Now</a></small>--></label>
+                    <label for="checkinTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-in time: <span class="text-primary">Auto Generate</span> <!--<small><a href="#" onclick="setToNow();">Now</a></small>--></label>
                     <input type="time" id="checkinTime" name="checkinTime" value="<?php echo $now; ?>" class="form-control">
                 </div>
 
                 <div class="col-6" id="checkoutTimeDiv" style="display:none;">
-                    <label for="checkoutTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-out time  <span class="red">Auto Generate</span> <!--<small><a href="#" onclick="setToNow();">Now</a></small>--></label>
+                    <label for="checkoutTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-out time: <span class="text-primary">Auto Generate</span> <!--<small><a href="#" onclick="setToNow();">Now</a></small>--></label>
                     <input type="time" id="checkoutTime" name="checkoutTime" value="<?php echo $now; ?>" class="form-control">
                 </div>
             </div>
@@ -89,7 +89,7 @@ $now = date("H:i");
             <input type="hidden" id="activeSQL" name="activeSQL" value="save">
 
             <div class="d-flex justify-content-end">
-                <button id="cmdSubmit" type="submit" class="btn btn-primary">Save</button>
+                <button id="cmdSubmit" type="submit" class="btn btn-primary">Save <i class="bi bi-floppy-fill"></i></button>
             </div>
         </form>
 
@@ -104,15 +104,14 @@ $now = date("H:i");
     const result = $('#result');
     const cmdSubmit = $('#cmdSubmit');
     let now = new moment();
+    let staff = {};
 
     $(function () {
         $('.flatpickr').flatpickr({ dateFormat: "Y-m-d" });
-        // $('#staffName').select2();
 
         $('#actionType').on('change', function () {
             const action = $(this).val();
             $('#workDateDiv').show();
-            $('#checkinTimeDiv, #checkoutTimeDiv, #checkinTime, #checkoutTime, #workDate').hide();
             $('#checkinTimeDiv, #checkoutTimeDiv, #noteCheckinDiv, #noteCheckoutDiv').hide();
 
             if (action === 'checkin') {
@@ -164,48 +163,63 @@ $now = date("H:i");
                 return;
             }
 
+
+            const dataStaff = "../models/getStaff.php";
+            const payload = { "staff": $("#staffName").val() };
+
+            const reqStaff = $.ajax({
+                url: dataStaff,
+                method: "POST",
+                async: false,
+                cache: false,
+                dataType: "json",
+                data: payload,
+            });
+
+            reqStaff.done(function (res) {
+                formData.staffName = res.staffName;
+                formData.Department = res.team;
+                formData.manager = res.manager;
+            });
+
+            reqStaff.fail(function (xhr, status, error) {
+                console.log("ajax reqStaff fail!!");
+                console.log(status + ": " + error);
+            })
+
+
+            console.log(formData);
             const makeWebhookURL = "https://hook.us1.make.com/75bocum3gs8v35045jfkb7qktlq2awru";
-
-
             $.post(makeWebhookURL, formData)
-                .done(() => {
+                 .done(() => {
+                     result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
+                  <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
 
+                     let countdown = 3;
+                     const countdownInterval = setInterval(() => {
+                         countdown--;
+                         $('#countDown').text(countdown);
+                         if (countdown <= 0) {
+                             clearInterval(countdownInterval);
+                             window.location.reload();
+                         }
+                     }, 1000);
+                 })
+                 .fail(() => {
+                     result.html(`<div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> An error occurred. Please try again.</div>`);
+                     cmdSubmit.prop('disabled', false); // ✅ เปิดปุ่มอีกครั้ง
+                 });//webhook
 
-                    result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
-                 <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
+             const dataBase = "../models/activeTimestamp.php";
+             $.post(dataBase, formData)
+                 .done(() => {
+                     console.log('success');
 
-                    let countdown = 3;
-                    const countdownInterval = setInterval(() => {
-                        countdown--;
-                        $('#countDown').text(countdown);
-                        if (countdown <= 0) {
-                            clearInterval(countdownInterval);
-                            window.location.reload();
-                        }
-                    }, 1000);
-                })
-                .fail(() => {
-                    result.html(`<div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> An error occurred. Please try again.</div>`);
-                    cmdSubmit.prop('disabled', false); // ✅ เปิดปุ่มอีกครั้ง
-                });//webhook
-
-            const dataBase = "../models/activeTimestamp.php";
-
-
-            $.post(dataBase, formData)
-                .done(() => {
-                    console.log('success');
-
-                })
-                .fail(() => {
-                    console.log('fail');
-                });
-
-
-        });//on submit
-
-
-
+                 })
+                 .fail(() => {
+                     console.log('fail');
+                 });
+        });//on submitting
 
     })//ready
 
@@ -223,9 +237,13 @@ $now = date("H:i");
     }
 </script>
 <?php
-function showName($full): string
+function showName($nick="", $full="", $nationality=""): string
 {
-    $temp = explode(" ", $full);
-    return $temp[0];
+    if($nationality == "Thai") {
+        $temp = explode(" ", $full);
+        return $nick.' '.$temp[0];
+    }else{
+        return $full;
+    }
 }
 ?>
