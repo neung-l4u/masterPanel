@@ -108,12 +108,10 @@ $now = date("H:i");
 
     $(function () {
         $('.flatpickr').flatpickr({ dateFormat: "Y-m-d" });
-        // $('#staffName').select2();
 
         $('#actionType').on('change', function () {
             const action = $(this).val();
             $('#workDateDiv').show();
-            $('#checkinTimeDiv, #checkoutTimeDiv, #checkinTime, #checkoutTime, #workDate').hide();
             $('#checkinTimeDiv, #checkoutTimeDiv, #noteCheckinDiv, #noteCheckoutDiv').hide();
 
             if (action === 'checkin') {
@@ -166,9 +164,8 @@ $now = date("H:i");
             }
 
 
-
             const dataStaff = "../models/getStaff.php";
-            let payload = { "staff": $("#staffName").val() };
+            const payload = { "staff": $("#staffName").val() };
 
             const reqStaff = $.ajax({
                 url: dataStaff,
@@ -180,7 +177,6 @@ $now = date("H:i");
             });
 
             reqStaff.done(function (res) {
-                //console.log(res);
                 formData.staffName = res.staffName;
                 formData.Department = res.team;
                 formData.manager = res.manager;
@@ -193,7 +189,6 @@ $now = date("H:i");
 
 
             console.log(formData);
-            // TODO: delete
             const makeWebhookURL = "https://hook.us1.make.com/75bocum3gs8v35045jfkb7qktlq2awru";
             $.post(makeWebhookURL, formData)
                  .done(() => {
@@ -224,12 +219,7 @@ $now = date("H:i");
                  .fail(() => {
                      console.log('fail');
                  });
-
-
         });//on submitting
-
-
-
 
     })//ready
 
