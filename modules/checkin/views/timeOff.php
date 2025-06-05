@@ -52,13 +52,13 @@ $now = date("H:i");
                             ?>
                             <option value="<?php echo $row['sID']; ?>"><?php echo $displayName; ?></option>
                         <?php endforeach; ?>
-                        <input type="hidden" name="staffName" id="staffName" value="<?php echo $displayName; ?>">
+                        <input type="hidden" name="staffName" id="staffName" value="">
                     </select>
                 </div>
                 
                 <div class="col-6">
                     <label for="staffTeam" class="form-label"><i class="bi bi-person-fill"></i> Department <span class="red">*</span></label>
-                    <select id="staffTeam" name="staffTeam" class="form-select" disabled>
+                    <select id="staffTeam" name="staffTeam" class="form-select">
                         <option value="">auto select</option>
                         <option value="Customer Support">Customer Support</option>
                         <option value="Account Manager">Account Manager</option>

@@ -1,30 +1,22 @@
 function getStaffTeam(id) {
-    const staffID = id;
+    const staff = id;
     const $staffName = $("#staffName");
     const $staffTeam = $("#staffTeam");
     const $manager = $("#manager");
-    const $staffNameVal = $staffName.val();
 
     $.ajax({
-        url: '../models/timeOff.php',
+        url: '../models/getStaff.php',
         type: 'POST',
         dataType: 'json',
         data: {
-            staffID: staffID
+            staff: staff
         }
     }).done((res) => {
         console.log(res);
-        if (res.team === "Information Technology") {
-            res.team = "IT";
-        }
-        const staffNameArr = res.staffName.split(" ");
-        let staffName = staffNameArr[0];
-        const managerNameArr = res.managerName.split(" ");
-        let managerName = managerNameArr[0];
 
-        $staffName.val($staffNameVal);
+        $staffName.val(res.staffName);
         $staffTeam.val(res.team).attr("selected", true);
-        $manager.val(res.managerNickName + " " + managerName);
+        $manager.val(res.manager);
     }).fail(() => {
         alert("Failed to select team");
     });
