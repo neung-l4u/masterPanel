@@ -61,6 +61,9 @@ global $db, $showPage;
                 <li class="nav-item">
                     <a id="menuTime" class="nav-link <?php echo ($showPage=="timestamp.php")?'active':''; ?>" href="main.php?p=time">Time stamp</a>
                 </li>
+                <li class="nav-item">
+                    <a id="menuTime" class="nav-link <?php echo ($showPage=="timeOff.php")?'active':''; ?>" href="main.php?p=timeOff">Time Off</a>
+                </li>
             </ul>
             <!--<span class="navbar-text">
                 logout

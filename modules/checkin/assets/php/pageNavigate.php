@@ -10,6 +10,9 @@ switch ($menuPage){
     case "time":
         $showPage = "timestamp.php";
         break;
+    case "timeOff":
+        $showPage = "timeOff.php";
+        break;
     default:
         $showPage = "home.php";
 }
