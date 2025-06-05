@@ -13,7 +13,7 @@ if (isset($_FILES["file"])) {
     $fileType = strtolower($fileExt);
 
     $staffName = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $staffName);
-    $newName = date("Ymd") . "_" . $staffName . "." . $fileType;
+    $newName = time() . "_" . $staffName . "." . $fileType;
 
     $location = $folderPath . $newName;
     $serverPath = "https://report.localforyou.com/modules/checkin/upload/" . $newName;
