@@ -49,8 +49,7 @@ $data['staffID'] = $id;
 
 $data['staffName'] = showName($staff['nick'], $staff['full'], $staff['national']);
 $data['team'] = $teams[$staff['team']];
-$data['manager'] = $managers[$staff['manager']];
-$data['manager2'] = $managers2[$staff['manager']];
+$data['manager'] = $managers2[$staff['manager']];
 $data['teamName'] = $staff['teamName'];
 
 echo json_encode($data);

@@ -38,47 +38,50 @@ $now = date("H:i");
 
             <div class="row mb-3">
                 <div class="col-6">
-                    <label for="staffName" class="form-label"><i class="bi bi-person-fill"></i> Staff name <span class="red">*</span></label>
-                    <select id="staffName" name="staffName" class="form-select" required>
+                    <label for="staffID" class="form-label"><i class="bi bi-person-fill"></i> Staff name <span class="red">*</span></label>
+                    <?php $staff = $db->query("SELECT * FROM `staffs` WHERE `sStaffType` = 'partTime' ORDER BY `sNickName`;")->fetchAll(); ?>
+                    <select id="staffID" name="staffID" class="form-select" onchange="getStaffTeam(this.value);" required>
                         <option value="">-- Select --</option>
-                        <?php
-                        $staff = $db->query("SELECT sID, CASE WHEN `sNationality` = 'Foreign' THEN `sName` ELSE CONCAT(`sNickName`, ' ', `sName`) END AS `displayName` FROM `staffs` WHERE `sStaffType` = 'partTime' ORDER BY `sNickName`;")->fetchAll();
-                        foreach ($staff as $row) {
+                        <?php foreach ($staff as $row): ?>
+                            <?php
+                                if ($row['sNationality'] === 'Foreign') {
+                                    $displayName = $row['sName'];
+                                } else if ($row['sNationality'] === 'Thai') {
+                                    $displayName = $row['sNickName'] . ' ' . showName($row['sName']);
+                                }
                             ?>
-                            <option value="<?php echo $row['displayName']; ?>"><?php echo $row['displayName']; ?></option>
-                        <?php } ?>
+                            <option value="<?php echo $row['sID']; ?>"><?php echo $displayName; ?></option>
+                        <?php endforeach; ?>
+                        <input type="hidden" name="staffName" id="staffName" value="">
                     </select>
                 </div>
-
+                
                 <div class="col-6">
                     <label for="staffTeam" class="form-label"><i class="bi bi-person-fill"></i> Department <span class="red">*</span></label>
-                    <select id="staffTeam" name="staffTeam" class="form-select" required>
-                        <option value="">-- Select --</option>
-                        <option value="Appointment setter UK Shift (Part-time)">Appointment setter UK Shift (Part-time)</option>
-                        <option value="Appointment setter AU/NZ Shift (Part-time)">Appointment setter AU/NZ Shift (Part-time)</option>
-                        <option value="Appointment setter USA Shift (Part-time)">Appointment setter USA Shift (Part-time)</option>
-                        <option value="Graphic Designer">Graphic Designer</option>
-                        <option value="Website Developer">Website Developer</option>
-                        <option value="IT Department">IT Department</option>
-                        <option value="Account Manager Dayshift">Account Manager Dayshift</option>
-                        <option value="Account Manager Nightshift">Account Manager Nightshift</option>
+                    <select id="staffTeam" name="staffTeam" class="form-select">
+                        <option value="">auto select</option>
+                        <option value="Customer Support">Customer Support</option>
+                        <option value="Account Manager">Account Manager</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Human Resource">Human Resource</option>
+                        <option value="IT">IT</option>
+                        <option value="Marketing">Marketing</option>
                         <option value="House Keeping">House Keeping</option>
                     </select>
+                    <input type="hidden" name="manager" id="manager" value="">
                 </div>
             </div>
 
 
             <div class="row mb-3">
                 <div class="col-6" id="timeOffStatusDiv">
-                    <label for="timeOffStatus" class="form-label"><i class="bi bi-postage-fill"></i> Status While Away <span class="red">*</span></label>
+                    <label for="timeOffStatus" class="form-label"><i class="bi bi-postage-fill"></i> Leave Types <span class="red">*</span></label>
                     <select id="timeOffStatus" name="timeOffStatus" class="form-select" required>
                         <option value="">-- Select --</option>
-                        <option value="Working From Home">Working From Home</option>
-                        <option value="Working Remote">Working Remote</option>
-                        <option value="Time off - Vacation">Time off - Vacation</option>
-                        <option value="Sick Leave">Sick Leave</option>
-                        <option value="Maternity Leave">Maternity Leave</option>
-                        <option value="Business leave">Business leave</option>
+                        <option value="Sick leave">Sick leave</option>
+                        <option value="Public holiday">Public holiday</option>
+                        <option value="Vacation">Vacation</option>
+                        <option value="Time Off">Time Off</option>
                     </select>
                 </div>
 
