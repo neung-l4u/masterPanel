@@ -4,12 +4,15 @@ require_once '../../assets/db/initDB.php';
 ?>
 <style>
     table.users {
-       border: 1px solid #999999;
+       border: 1px solid #DDDDDD;
         width: 50%;
         margin: auto;
+        border-collapse: collapse;
+        border-radius: 10px;
     }
-    table.users tr td{
-        border: 1px solid #CCCCCC;
+    table.users tr th, table.users tr td{
+        border: 1px solid #EEEEEE;
+        padding: 5px;
     }
 </style>
 
