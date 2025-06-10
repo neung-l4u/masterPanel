@@ -85,7 +85,8 @@ $now = date("H:i");
                 <label for="noteCheckout" class="form-label"><i class="bi bi-card-list"></i> Note (Check-out)</label>
                 <textarea id="noteCheckout" name="noteCheckout" class="form-control" rows="3" placeholder="Short description (check-out)"></textarea>
             </div>
-
+            <!--<input type="hidden" id="Department" name="Department" value="">
+            <input type="hidden" id="manager" name="manager" value="">-->
             <input type="hidden" id="activeSQL" name="activeSQL" value="save">
 
             <div class="d-flex justify-content-end">
@@ -180,6 +181,7 @@ $now = date("H:i");
                 formData.staffName = res.staffName;
                 formData.Department = res.team;
                 formData.manager = res.manager;
+                formData.manager2 = res.manager2;
             });
 
             reqStaff.fail(function (xhr, status, error) {
@@ -189,36 +191,42 @@ $now = date("H:i");
 
 
             console.log(formData);
-            const makeWebhookURL = "https://hook.us1.make.com/75bocum3gs8v35045jfkb7qktlq2awru";
-            $.post(makeWebhookURL, formData)
-                 .done(() => {
-                     result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
-                  <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
 
-                     let countdown = 3;
-                     const countdownInterval = setInterval(() => {
-                         countdown--;
-                         $('#countDown').text(countdown);
-                         if (countdown <= 0) {
-                             clearInterval(countdownInterval);
-                             window.location.reload();
-                         }
-                     }, 1000);
-                 })
-                 .fail(() => {
-                     result.html(`<div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> An error occurred. Please try again.</div>`);
-                     cmdSubmit.prop('disabled', false); // ✅ เปิดปุ่มอีกครั้ง
-                 });//webhook
 
              const dataBase = "../models/activeTimestamp.php";
              $.post(dataBase, formData)
                  .done(() => {
+                     formData.staffName = res.staffName;
+                     formData.Department = res.team;
+                     formData.manager = res.manager;
+                     formData.manager2 = res.manager2;
                      console.log('success');
 
                  })
                  .fail(() => {
                      console.log('fail');
                  });
+
+            /*const makeWebhookURL = "https://hook.us1.make.com/75bocum3gs8v35045jfkb7qktlq2awru";
+            $.post(makeWebhookURL, formData)
+                .done(() => {
+                    result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
+                  <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
+
+                    let countdown = 3;
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        $('#countDown').text(countdown);
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                            window.location.reload();
+                        }
+                    }, 1000);
+                })
+                .fail(() => {
+                    result.html(`<div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> An error occurred. Please try again.</div>`);
+                    cmdSubmit.prop('disabled', false); // ✅ เปิดปุ่มอีกครั้ง
+                });//webhook*/
         });//on submitting
 
     })//ready
