@@ -19,9 +19,15 @@ global $db;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/index.css" rel="stylesheet">
-    <script src="../assets/js/index.js"></script>
+    <link href="../assets/css/index.css?v=1.0.0" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+    <script src="../assets/js/index.js?v=1.0.0"></script>
     <title>Hello, world!</title>
+    <style>
+        .breadcrumb li a{
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -34,7 +40,7 @@ global $db;
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link active" aria-current="page" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Features</a>
@@ -55,6 +61,7 @@ global $db;
     <header>
         <nav class="mb-4" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
             <ol class="breadcrumb">
+                <i class="bi bi-house-fill"></i>&nbsp;
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Library</li>
             </ol>
@@ -71,7 +78,7 @@ global $db;
     </main>
 
     <footer>
-        copyright
+        copyright © 2024 by localforyou.com
     </footer>
 
 
@@ -98,6 +105,6 @@ global $db;
 
 <script src="../assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
-<script src="../controllers/index.js"></script>
+<script src="../controllers/index.js?v=1.0.0"></script>
 </body>
 </html>

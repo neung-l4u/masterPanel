@@ -119,5 +119,5 @@
     </div>
 </div>
 
-<script src="../controllers/project.js"></script>
+<script src="../controllers/project.js?v=1.0.0"></script>
 <script src="../assets/js/datatables-bs5.min.js"></script>

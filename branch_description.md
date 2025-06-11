@@ -1,3 +1,21 @@
+>250526 mark/feature/timeOff
+>- ทำฟอร์มการลาของ part-time
+
+>250526 mark/fix/projectSendingIcon
+>- send mail ของหน้า project ช้า เลยเพิ่ม loading
+
+>250526 mark/fix/multiUploadParam
+>- แก้ URL การส่ง parameter จากหน้า detail ไปหน้า multiupload ค่าของ folderPath ไม่ได้ encode ทำให้ URL พัง
+
+>250521 mark/feature/WLaction
+>- ทำปุ่ม Add, Edit, Delete
+
+>250520 mark/fix/templateCantSave
+>- แก้ Template Res3 กด save ไม่ได้
+
+>250519 mark/fix/signupMiniValidate
+>- ลบ field last_name และการ validate ออก
+
 >250515 mark/fix/TPtimestamp
 >- แก้ datatable view logs ของ Template Submission เปลี่ยนคอลัมน์จาก duedate เป็น timestamp 
 

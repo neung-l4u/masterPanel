@@ -32,7 +32,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
 <link rel="stylesheet" href="../assets/css/mas1.css">
 <link rel="stylesheet" href="dist/css/newStyle.css">
 
-<script src="../controllers/res3.js"></script>
+<script src="../controllers/res3.js?v=1.0.0"></script>
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -1220,7 +1220,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
         'use strict';
 
         // Change this to the location of your server-side upload handler:
-        const url = '../multiUpload.php?projectID=<?php echo $id; ?>&folderPath=<?php echo $folderName; ?>&prefix=' + multiUploadPrefix;
+        const url = '../multiUpload.php?projectID=<?php echo $id; ?>&folderPath=<?php echo urlencode($folderName); ?>&prefix=' + multiUploadPrefix;
 
         $('#fileupload').fileupload({
             url: url,

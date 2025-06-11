@@ -15,6 +15,14 @@
         body{
             background-color: #ffffff !important;
         }
+        .btn-block {
+            background-color: #00BCF4;
+            border-color: #00BCF4;
+        }
+        .btn-block:hover {
+            background-color: #273B91;
+            border-color: #273B91;
+        }
     </style>
      
 </head>
@@ -46,13 +54,8 @@
                         -->
 
                         <div class="form-group">
-                            <label for="first_name">First Name</label>
-                            <input id="first_name" maxlength="40" name="first_name" type="text" class="form-control" placeholder="Enter your first name">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="last_name">Last Name</label>
-                            <input id="last_name" maxlength="40" name="last_name" type="text" class="form-control" placeholder="Enter your last name">
+                            <label for="first_name">Name</label>
+                            <input id="first_name" maxlength="40" name="first_name" type="text" class="form-control" placeholder="Enter your name">
                         </div>
 
                         <div class="form-group">
@@ -61,7 +64,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="phone">Mobile Phone</label>
+                            <label for="phone">Phone</label>
                             <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="0123456789" pattern="\+?[0-9\s\-]+" maxlength="15">
                         </div>
 
@@ -88,7 +91,7 @@
                         <input type="hidden" id="leadSource" name="leadSource" value="Landing Page" />
                         <input type="hidden" id="leadRecordType" name="leadRecordType" value="Ads" />
                     
-                        <input id="cmdSubmit" class="btn btn-sm btn-success btn-block" type="button" value="Yes! I want a FREE Demo.">
+                        <input id="cmdSubmit" class="btn btn-sm btn-success btn-block" type="submit" value="Get Started">
                         
                         <div id="successMessage" class="mt-3 border border-success py-1 px-2" style="display: none;">
                             <small class="text-success">Success! We will contact you shortly to schedule a demo.</small>
@@ -103,73 +106,56 @@
 </div> <!--End of Container-->
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<!-- <script src="https://report.localforyou.com/modules/signupMini/assets/js/index.js"></script> -->
-<script src="assets/js/index.js"></script>
+<script src="https://report.localforyou.com/modules/signupMini/assets/js/index.js"></script>
+<!-- <script src="assets/js/index.js"></script> -->
 <script>
 
-    $("#cmdSubmit").click(function () {
+    $("form").submit(function (e) {
+        e.preventDefault();
 
-        if (validateForm() == false) {
+        if (typeof validateForm === "function" && validateForm() === false) {
+            console.log("Validation failed");
             return false;
-        } else {
-            let countryCode = shortCountry(); //function located in modules/signupMini/assets/js/index.js
-
-            let payload = {
-                "first_name": $("#first_name").val(),
-                "last_name": $("#last_name").val(),
-                "email": $('#email').val(),
-                "mobile": $("#mobile").val(),
-                "company": $("#company").val(),
-                "country": $("#country").val(),
-                "countryCode": countryCode,
-                "shopType": $("#shopType").val(),
-                "formType": $("#formType").val(),
-                "leadSource": $("#leadSource").val(),
-                "leadRecordType": $("#leadRecordType").val()
-            };
-
-            const callAjax = $.ajax({
-                url: "https://report.localforyou.com/modules/signupMini/models/index.php",
-                //url: "models/index.php",
-                method: 'POST',
-                async: false,
-                cache: false,
-                dataType: 'jsonp',
-                data: {
-                    "payload": payload
-                }
-            });
-            
-            callAjax.done(function(res) {
-                console.log('return',res);
-                return true;
-            });
-            
-            callAjax.fail(function(xhr, status, error) {
-                console.log("ajax fail!!");
-                console.log(status + ': ' + error);
-                return false;
-            });
-
-            const sendWebhooks = $.ajax({
-                url: "https://hook.us1.make.com/47ue45ij7fhm7sol8rldp6dxpag2ldjl",
-                method: 'POST',
-                async: false,
-                cache: false,
-                dataType: 'json',
-                data: payload,
-                success: function(response) {
-                    if (response.result === "Leads to Monday successfully") {
-                        $("#successMessage").fadeIn();
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX Error: " + status + " - " + error);
-                }
-            });
         }
 
-    }); //cmdSubmit.click
+        let countryCode = shortCountry();
+
+        let payload = {
+            "first_name": $("#first_name").val(),
+            //"last_name": $("#last_name").val(),
+            "email": $('#email').val(),
+            "mobile": $("#mobile").val(),
+            "company": $("#company").val(),
+            "country": $("#country").val(),
+            "countryCode": countryCode,
+            "shopType": $("#shopType").val(),
+            "formType": $("#formType").val(),
+            "leadSource": $("#leadSource").val(),
+            "leadRecordType": $("#leadRecordType").val()
+        };
+
+        console.log("Payload to send:", payload);
+
+        $.ajax({
+            url: "https://hook.us1.make.com/47ue45ij7fhm7sol8rldp6dxpag2ldjl",
+            method: 'POST',
+            dataType: 'json',
+            data: payload,
+            success: function (response) {
+                console.log("Webhook success:", response);
+                if (response.result === "Leads to Monday successfully") {
+                    $("#successMessage").show();
+                    setTimeout(function () {
+                        window.location.href = "https://localforyou.com/thank-you/";
+                    }, 1500);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Webhook failed:", status, error);
+            }
+        });
+    });
+
 
 </script>
 </body>

@@ -85,7 +85,7 @@
     </div>
 </div>
 
-<script src="../controllers/settings.js">
+<script src="../controllers/settings.js?v=1.0.0">
 
 
 </script>

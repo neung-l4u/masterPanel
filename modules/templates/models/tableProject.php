@@ -32,7 +32,9 @@ $projects = $db->query('SELECT pj.saveFlag, pj.projectID AS "id", pj.projectName
     $i = 1;
     $data = array("data"=> array());
     foreach ($projects as $row) {
-        
+
+        //$iconSendMailReady = '<img src="../assets/img/sendMail.svg" alt="Send Mail" title="Send Mail" class="action_icon" id="iconSendMailReady' .$row["id"]. '" onclick="sendProject('. $row["id"] .');">';
+
         $statusText = ($row["statusID"] == 1) ? 'Draft' : 'Send';
         $url = 'main.php?m=detail&id='.$row["id"];
         $temPage = ($row["shopType"] == "Restaurant") ? 'res' : 'mas';
@@ -57,7 +59,8 @@ $projects = $db->query('SELECT pj.saveFlag, pj.projectID AS "id", pj.projectName
 
         if ($row["shopType"] == 'Restaurant') {
             if ($row["homePage"] !== null && $row["aboutPage"] !== null && $row["contactPage"] !== null) {
-                $iconSendMail = '<a href="#" onclick="sendProject('. $row["id"] .');">'. $iconSendMailReady .'</a>';
+                $iconSendMail = '<a href="#" onclick="sending('. $row["id"] .');">'. $iconSendMailReady .'</a>';
+                //$iconSendMail = '<a href="#">'. $iconSendMailReady .'</a>';
                 if ($row["statusID"] == 1) {
                     $statusText = "Ready";
                 }
@@ -66,7 +69,8 @@ $projects = $db->query('SELECT pj.saveFlag, pj.projectID AS "id", pj.projectName
             }
         } else if ($row["shopType"] == 'Massage') {
             if ($row["homePage"] !== null && $row["aboutPage"] !== null && $row["servicesPage"] !== null && $row["contactPage"] !== null) {
-                $iconSendMail = '<a href="#" onclick="sendProject('. $row["id"] .');">'. $iconSendMailReady .'</a>';
+                $iconSendMail = '<a href="#" onclick="sending('. $row["id"] .');">'. $iconSendMailReady .'</a>';
+                //$iconSendMail = '<a href="#">'. $iconSendMailReady .'</a>';
                 if ($row["statusID"] == 1) {
                     $statusText = "Ready";
                 }
@@ -75,6 +79,15 @@ $projects = $db->query('SELECT pj.saveFlag, pj.projectID AS "id", pj.projectName
             }
         }
         if ($row["statusID"] == 2) { $iconSendMail = '<a>'. $iconSendMailSend .'</a>'; }
+
+        $processingTxt = '<span id="processingTxt' .$row["id"]. '">Processing &nbsp;</span>';
+        $savetoDBTxt = '<span id="savetoDBTxt' .$row["id"]. '">Save to Database &nbsp;</span>';
+        $creatMondayTxt = '<span id="creatMondayTxt' .$row["id"]. '">Create Task Monday &nbsp;</span>';
+        $sendMailTxt = '<span id="sendMailTxt' .$row["id"]. '">Sending Email &nbsp;</span>';
+        $iconSending = '<img src="../assets/img/unnamed.gif" alt="Sending" title="Sending" class="action_icon" id="iconSending' .$row["id"]. '">';
+        
+        $sendingDiv = '<div id="sendingDiv'.$row["id"].'" style="display:none;">'. $processingTxt . $savetoDBTxt . $creatMondayTxt . $sendMailTxt . $iconSending .'</div>';
+        $actionDiv = '<div id="actionDiv'.$row["id"].'">'. $iconSendMail . $linkTemplate . '<a href="'.$url.'">'.$iconNext.'</a><a href="#" onclick="setEdit('.$row["id"].');">'.$iconEdit.'</a><a href="#" onclick="setDel('.$row["id"].');">'.$iconDelete.'</a>'. '</div>';
         
         $data["data"][] = array(
             $i,
@@ -82,11 +95,10 @@ $projects = $db->query('SELECT pj.saveFlag, pj.projectID AS "id", pj.projectName
             $row["countryCode"] .' : '. $row["projectName"],
             $iconPage,
             $statusText,
-            $iconSendMail . $linkTemplate . '<a href="'.$url.'">'.$iconNext.'</a><a href="#" onclick="setEdit('.$row["id"].');">'.$iconEdit.'</a><a href="#" onclick="setDel('.$row["id"].');">'.$iconDelete.'</a>'
+            $sendingDiv . $actionDiv,
         );
 
         $i++;
     }//foreach
-
 
 echo json_encode($data);

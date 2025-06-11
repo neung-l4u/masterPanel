@@ -29,6 +29,10 @@ $teamIDHardcode = array(
         "name" => "AM: Account Manager (All)"
     ),
     array(
+        "id" => 12,
+        "name" => "MK: Marketing"
+    ),
+    array(
         "id" => 3,
         "name" => "SE: Sales"
     ),
@@ -381,7 +385,7 @@ $teamIDHardcode = array(
             };
 
             const reqAjax = $.ajax({
-                url: "../assets/php/actionCoin.php",
+                url: "assets/php/actionCoin.php",
                 method: "POST",
                 async: false,
                 cache: false,
@@ -453,7 +457,7 @@ $teamIDHardcode = array(
                 console.log(params);
 
                 const reqAjax = $.ajax({
-                    url: "../assets/php/actionCoin.php",
+                    url: "assets/php/actionCoin.php",
                     method: "POST",
                     async: false,
                     cache: false,
@@ -486,7 +490,7 @@ $teamIDHardcode = array(
             };
 
             const reqAjax = $.ajax({
-                url: "../assets/php/actionCoin.php",
+                url: "assets/php/actionCoin.php",
                 method: "POST",
                 async: false,
                 cache: false,
@@ -518,7 +522,7 @@ $teamIDHardcode = array(
                 console.log(params);
 
                 const reqAjax = $.ajax({
-                    url: "../assets/php/actionCoin.php",
+                    url: "assets/php/actionCoin.php",
                     method: "POST",
                     async: false,
                     cache: false,

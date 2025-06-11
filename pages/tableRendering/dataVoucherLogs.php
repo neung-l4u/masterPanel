@@ -22,7 +22,6 @@ foreach ($result as $row) {
         $date,
         $shopName,
         $json["customerName"] . " " . $json["customerEmail"],
-        $json["recipientName"] . " " . $json["recipientEmail"],
         $json["servicesName"],
         $json["voucherAmount"] . " " . $json["currency"],
         $voucherLogsBtn,

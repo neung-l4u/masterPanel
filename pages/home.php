@@ -261,27 +261,59 @@ $loginID = $_SESSION['id'];
                                 <div class="direct-chat-msg">
                                     <div class="direct-chat-infos clearfix">
                                         <span class="float-left">
-                                            <h6>02 May 2025</h6>
+                                            <h6>17 May 2025</h6>
                                             <ul>
-                                                <li>Add page Website Lists.</li>
+                                                <li>Fixed issue with the email unsubscribe form.</li>
                                             </ul>
-                                            <h6>22 March 2025</h6>
+                                            <h6>16 May 2025</h6>
                                             <ul>
-                                                <li>Create Tools page.</li>
-                                                <li>Create Unsubscribe view log page</li>
+                                                <li>Fixed the email signup form integration with Make.com.</li>
                                             </ul>
-                                            <h6>18 March 2025</h6>
+                                            <h6>14 May 2025</h6>
                                             <ul>
-                                                <li>Change UX of Tools > SignUp form.</li>
-                                                <li>Add calendar to Monday Report page.</li>
-                                                <li>Change to new logo.</li>
-                                                <li>add show password on the login page.</li>
+                                                <li>Created voucher logs module and data database.</li>
+                                                <li>Connected API with Make.com.</li>
                                             </ul>
-                                            <h6>16 March 2025</h6>
+                                            <h6>01 May 2025</h6>
                                             <ul>
-                                                <li>Template submission always cc to admin@localforyou.com </li>
+                                                <li>Added data table for website lists.</li>
+                                            </ul>
+                                            <h6>03 March 2025</h6>
+                                            <ul>
+                                                <li>Created mini signup form and connected to Make.com > Leads Monday.</li>
+                                            </ul>
+                                            <h6>01 March 2025</h6>
+                                            <ul>
+                                                <li>Added "POS" field to the signup form.</li>
+                                            </ul>
+                                            <h6>20 February 2025</h6>
+                                            <ul>
+                                                <li>Saved contract links to the database.</li>
+                                                <li>Created module for generating agreements.</li>
+                                                <li>Updated policy to version 1.3.0.</li>
+                                                <li>Fixed the email signup form.</li>
+                                            </ul>
+                                            <h6>19 February 2025</h6>
+                                            <ul>
+                                                <li>Created page to view signup form logs, Stripe logs, and contract links.</li>
+                                                <li>Changed "State" field in signup form to "Street Address".</li>
+                                            </ul>
+                                            <h6>17 February 2025</h6>
+                                            <ul>
+                                                <li>Fixed payment-related issues.</li>
+                                                <li>Saved Stripe logs to the database.</li>
+                                            </ul>
+                                            <h6>15 February 2025</h6>
+                                            <ul>
+                                                <li>Managed email notification settings.</li>
+                                            </ul>
+                                            <h6>24 December 2024</h6>
+                                            <ul>
+                                                <li>Fixed layout of Master Panel, Gift List, and Convert Coin.</li>
+                                                <li>Fixed example website for sales team.</li>
                                             </ul>
                                         </span>
+
                                     </div>
                                 </div>
                             </div>

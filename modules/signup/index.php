@@ -757,7 +757,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <b class="red">*</b></label>
                                                 <div class="col-8">
                                                     <input type="text" id="passwordShoppingCart" class="form-control"
-                                                           name="passwordShoppingCart" value="Localeats" disabled>
+                                                           name="passwordShoppingCart" value="Localeats@1" disabled>
                                                     <small id="passwordHelp" class="form-text text-muted">
                                                         This is a temporary default password, you can change it later.
                                                     </small>
@@ -886,13 +886,22 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <span class="input-group">
                                                             <label for="ref_IHD_Password" class="input-group-text">IHD PW</label>
                                                             <input
-                                                                type="text"
+                                                                type="hidden"
                                                                 class="form-control"
                                                                 id="ref_IHD_Password"
                                                                 maxlength="100"
                                                                 name="ref_IHD_Password"
                                                                 autocomplete="off"
-                                                                placeholder="Leave it blank if you want to provide information later."
+                                                                value="Localeats"
+                                                            /><!-- No Show -->
+                                                            <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="ref_IHD_PasswordShow"
+                                                                    maxlength="100"
+                                                                    name="ref_IHD_PasswordShow"
+                                                                    autocomplete="off"
+                                                                    value="Localeats" disabled
                                                             />
                                                         </span>
                                                                 <span class="input-group">
@@ -1114,7 +1123,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <h6 class="card-title fw-semibold">New Domain Name to Register</h6>
                                                     <div class="card-text pt-2">                                        
 
-                                                    <div class="row">
+                                                        <div class="row">
                                                         <div class="col-10">
                                                             <label for="newDomain">New Domain name</label>
                                                             <span class="input-group mb-2">
@@ -1135,14 +1144,43 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                     Check Availability
                                                                 </a>
                                                             </small>
+
                                                             <small id="domainHelpUS" class="form-text">
                                                                 <a href="https://usadomains.localforyou.com/" target="_blank" tabindex="-1" class="text-decoration-none">
                                                                     Check Availability
                                                                 </a>
                                                             </small>
+
+                                                            <span id="iconDomain" class="mytooltip tooltip-effect-1">
+                                                                <span id="iconDomain" class="tooltip-item">
+                                                                    <a href="https://reseller.ds.network/home/login/" target="_blank" title="Login Domain">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"></path><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"></path></svg>
+                                                                    </a>
+                                                                </span>
+                                                                <span id="iconDomain">
+                                                                    <span id="domainHelpAU" class="tooltip-content clearfix">
+                                                                        <img src="assets/img/exampleEmail.jpg" alt="Magnet">
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+
+                                                            <a id="iconPlay" href="https://youtu.be/bMIlH16IxHk" target="_blank" title="Video Tutorial">
+                                                                <svg id="iconPlay" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-circle" viewBox="0 0 16 16">
+                                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                                                    <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445"/>
+                                                                </svg>
+                                                            </a>
+
                                                         </div>
+
                                                     </div>
-                                            
+
+                                                    </div>
+                                                    <div class="card-text pt-2">
+                                                        <div class="row">
+                                                            <small>New domain register <b style="color: #ff0000;">password: L4U@2017:)domain</b></small>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -1292,7 +1330,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                    disabled onkeyup="copyToFirstOnlineOrderDiscount(this.value);" >
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group row pt-2">
                                         <label class="col control-label col-form-label">
                                             I acknowledge
@@ -1300,7 +1338,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             that AI-powered marketing will be applied as part of the package
                                             <b class="red">*</b>
                                         </label>
-                                       
+
                                     </div>
                                     <div class="row col pt-2">
                                             <span class="col-3 gx-1">
@@ -1867,9 +1905,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <option value="Ball Anirut">Ball Anirut</option>
                                                                 <option value="Gun Orana">Gun Orana</option>
                                                                 <option value="Honey Tummaput">Honey Tummaput</option>
-                                                                <option value="Lani Kunlanit">Lani Kunlanit</option>
                                                                 <option value="Nan Chompunuch">Nan Chompunuch</option>
-                                                                <option value="Naya Sanewong">Naya Sanewong</option>
                                                                 <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
                                                                 <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
                                                                 <option value="Other">Other</option>
