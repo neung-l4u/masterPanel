@@ -20,15 +20,19 @@ if ($params ["action"] == "setStatus"){
                         w.*,
                         st.name AS wIndustry,
                         wt.template AS wTemplateUsed,
-                        sv.svName AS wServerName
+                        sv.svName AS wServerName,
+                        dp.name AS domainProvidersName,
+                        sv.svCpanelURL AS svCpanelURL
                     FROM 
                         websiteList w
                     LEFT JOIN 
                         tb_shopType st ON w.wIndustry = st.id
                     LEFT JOIN 
-                        websiteTemplate wt ON w.wTemplateUsed = wt.id
+                        WebsiteTemplate wt ON w.wTemplateUsed = wt.id
                     LEFT JOIN 
-                        l4uservers sv ON w.svID = sv.svID
+                        L4UServers sv ON w.svID = sv.svID
+                    LEFT JOIN 
+                        DomainProviders dp ON w.wDomainProvidersID = dp.id
                     WHERE 
                         w.wID = ?;', $params["id"])->fetchArray();
 
@@ -42,14 +46,11 @@ if ($params ["action"] == "setStatus"){
     $params["wSystemAmelia"] = $row["wSystemAmelia"];
     $params["wSystemVoucher"] = $row["wSystemVoucher"];
     $params["wDomain"] = $row["wDomain"];
-    $params["wDomainProviderID"] = $row["wDomainProviderID"];
+    $params["domainProvidersName"] = $row["domainProvidersName"];
+    $params["wServerName"] = $row["wServerName"];
+    $params["svCpanelURL"] = $row["svCpanelURL"];
 
     $date = $row["wPublishedDate"];
-    function changeDateFormat($date) {
-        $date = date("d-m-Y", strtotime($date));
-        return $date;
-    }
-    $date = changeDateFormat($date);
     $params["wPublishedDate"] = $date;
     
     $params["wLiveStatus"] = $row["wLiveStatus"];
@@ -73,7 +74,7 @@ if ($params ["action"] == "setStatus"){
                     FROM 
                         websiteList w
                     LEFT JOIN 
-                        l4uservers sv ON w.svID = sv.svID
+                        L4UServers sv ON w.svID = sv.svID
                     WHERE 
                         w.wID = ?;', $params["id"])->fetchArray();
 

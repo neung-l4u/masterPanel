@@ -74,14 +74,6 @@ $password = "Localeats#".date("Y");
                 </ol>
             </div><!-- /.col -->
         </div><!-- /.row -->
-        <div class="row d-flex justify-content-end mb-2">
-            <div class="float-sm-right text-right pr-2">
-                <span class="mr-2">User: admin@localforyou.com</span>
-                <a href="#" onclick="copyText('admin@localforyou.com')"><i class="fas fa-copy"></i></a>
-                <span class="ml-4 mr-2">Pass: L4U=New@min</span>
-                <a href="#" onclick="copyText('L4U=New@min')"><i class="fas fa-copy"></i></a>
-            </div>
-        </div>
     </div><!-- /.container-fluid -->
 </div>
 <!-- /.content-header -->
@@ -103,7 +95,7 @@ $password = "Localeats#".date("Y");
                             <div class="col-3 mb-2">
                                 <div>
                                     <label for="filterShopType" class="form-label">Shop Type</label>
-                                    <select class="form-select" id="filterShopType" onchange="filterChange()" aria-label="Default select example">
+                                    <select class="form-select" id="filterShopType" onchange="filterChange()" aria-label="Default select example" disabled>
                                         <option value="" >All</option>
                                         <option value="1">Restaurant</option>
                                         <option value="2" selected>Massage</option>
@@ -115,7 +107,7 @@ $password = "Localeats#".date("Y");
                                 </div>
                                 <div>
                                     <label for="filterTemplate" class="form-label">Template</label>
-                                    <select class="form-select" id="filterTemplate" onchange="filterChange()" aria-label="Default select example">
+                                    <select class="form-select" id="filterTemplate" onchange="filterChange()" aria-label="Default select example" disabled>
                                         <option value="" selected>All</option>
                                         <option value="1">Template 1</option>
                                         <option value="2">Template 2</option>
@@ -126,7 +118,7 @@ $password = "Localeats#".date("Y");
                             <div class="col-3 mb-2">
                                 <div>
                                     <label for="filterSystem" class="form-label">System</label>
-                                    <select class="form-select" id="filterSystem" onchange="filterChange()"  aria-label="Default select example">
+                                    <select class="form-select" id="filterSystem" onchange="filterChange()"  aria-label="Default select example" disabled>
                                         <option value="" selected>All</option>
                                         <option value="GF">Gloria Food</option>
                                         <option value="AM">Amelia</option>
@@ -135,7 +127,7 @@ $password = "Localeats#".date("Y");
                                 </div>
                                 <div>
                                     <label for="filterCountry" class="form-label">Country</label>
-                                    <select class="form-select" id="filterCountry" onchange="filterChange()" aria-label="Default select example">
+                                    <select class="form-select" id="filterCountry" onchange="filterChange()" aria-label="Default select example" disabled>
                                         <option value="" selected>All</option>
                                         <option value="AU">Australia</option>
                                         <option value="NZ">New Zealand</option>
@@ -149,7 +141,7 @@ $password = "Localeats#".date("Y");
                             <div class="col-3 mb-2">
                                 <div>
                                     <label for="filterStatus" class="form-label">Status</label>
-                                    <select class="form-select" id="filterStatus" onchange="filterChange()" aria-label="Default select example">
+                                    <select class="form-select" id="filterStatus" onchange="filterChange()" aria-label="Default select example" disabled>
                                         <option value="" selected>All</option>
                                         <option value="Live">Live</option>
                                         <option value="Draft">Draft</option>
@@ -162,7 +154,7 @@ $password = "Localeats#".date("Y");
                                 </div>
                                 <div>
                                     <label for="filterServer" class="form-label">Server</label>
-                                    <select class="form-select" id="filterServer" onchange="filterChange()" aria-label="Default select example">
+                                    <select class="form-select" id="filterServer" onchange="filterChange()" aria-label="Default select example" disabled>
                                         <option value="" selected>All</option>
                                         <option value="1">az1-tr102.supercp.com</option>
                                         <option value="2">mi3-tr104.supercp.com</option>
@@ -241,7 +233,7 @@ $password = "Localeats#".date("Y");
                                         <select id="inputDomainProvider" class="form-control">
                                             <option value="0" selected>-- None --</option>
                                             <?php
-                                            $dbDomainProviders = $db->query('SELECT id, name FROM domainProviders WHERE status=1 ORDER BY id;')->fetchAll();
+                                            $dbDomainProviders = $db->query('SELECT id, name FROM DomainProviders WHERE status=1 ORDER BY id;')->fetchAll();
                                             foreach ($dbDomainProviders as $row){
                                                 ?>
                                                 <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
@@ -276,7 +268,7 @@ $password = "Localeats#".date("Y");
                                         <select id="inputShopType" class="form-control">
                                             <option value="0" selected>-- None --</option>
                                             <?php
-                                            $dbShoptype = $db->query('SELECT id, name FROM tb_shoptype WHERE status=1 ORDER BY id;')->fetchAll();
+                                            $dbShoptype = $db->query('SELECT id, name FROM tb_shopType WHERE status=1 ORDER BY id;')->fetchAll();
                                             foreach ($dbShoptype as $row){
                                                 ?>
                                                 <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
@@ -288,7 +280,7 @@ $password = "Localeats#".date("Y");
                                         <select id="inputTemplate" class="form-control">
                                             <option value="0" selected>-- None --</option>
                                             <?php
-                                            $dbWebsiteTemplate = $db->query('SELECT id, template FROM websiteTemplate ORDER BY id;')->fetchAll();
+                                            $dbWebsiteTemplate = $db->query('SELECT id, template FROM WebsiteTemplate ORDER BY id;')->fetchAll();
                                             foreach ($dbWebsiteTemplate as $row){
                                                 ?>
                                                 <option value="<?php echo $row['id']; ?>"><?php echo $row['template']; ?></option>
@@ -302,7 +294,7 @@ $password = "Localeats#".date("Y");
                                     <select id="inputServer" class="form-control">
                                         <option value="0" selected>-- None --</option>
                                         <?php
-                                        $dbl4uServers = $db->query('SELECT svID, svName FROM l4uServers ORDER BY svID;')->fetchAll();
+                                        $dbl4uServers = $db->query('SELECT svID, svName FROM L4UServers ORDER BY svID;')->fetchAll();
                                         foreach ($dbl4uServers as $row){
                                             ?>
                                             <option value="<?php echo $row['svID']; ?>"><?php echo $row['svName']; ?></option>
@@ -460,7 +452,7 @@ $password = "Localeats#".date("Y");
                                             </tr>
                                             <tr>
                                                 <th scope="row" class="colInfo">Domain Provider</th>
-                                                <td><span id="wDomainProviderID"></span></td>
+                                                <td><span id="wDomainProvidersID"></span></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -644,7 +636,7 @@ $password = "Localeats#".date("Y");
     const TemplateUsed = $("#wTemplateUsed");
     const System = $("#wSystem");
     const DomainName = $("#wDomain");
-    const DomainProviderID = $("#wDomainProviderID");
+    const DomainProvidersID = $("#wDomainProvidersID");
     const PublishedDate = $("#wPublishedDate");
     const LiveStatus = $("#wLiveStatus");
     const cPanelURL = $("#cPanelURL");
@@ -704,10 +696,12 @@ $password = "Localeats#".date("Y");
                 }
 
                 DomainName.text(res.wDomain);
-                DomainProviderID.text(res.wDomainProviderID);
+                DomainProvidersID.text(res.domainProvidersName);
                 PublishedDate.text(res.wPublishedDate);
                 LiveStatus.text(res.wLiveStatus);
-                cPanelURL.text(res.svName);
+
+                cPanelLink = `<a href="${res.svCpanelURL}" target="_blank">${iconLink}</a> ${res.svCpanelURL}`;
+                cPanelURL.html(cPanelLink);
                 CPanelUser.text(res.wCPanelUser);
                 CPanelPass.text(res.wCPanelPass);
 
@@ -717,8 +711,8 @@ $password = "Localeats#".date("Y");
                 txt = `<a onclick="copyText('admin@localforyou.com')" href="#">${iconCopy}</a> admin@localforyou.com`;
                 txt2 = `<a onclick="copyText('L4U=New@min')" href="#">${iconCopy}</a> L4U=New@min`;
 
-                WordpressUser.html(txt);
-                WordpressPass.html(txt2);
+                WordpressUser.html(res.wWordpressUser);
+                WordpressPass.html(res.wWordpressPass);
 
                 SMTPEmailUser.text(res.wSMTPEmailUser);
                 SMTPEmailPass.text(res.wSMTPEmailPass);
@@ -793,6 +787,9 @@ $password = "Localeats#".date("Y");
         let payload = {
                 act: "save",
                 inputProject: inputProject.val(),
+                inputLocation: inputLocation.val(),
+                inputOwner: inputOwner.val(),
+                inputOwnerEmail: inputOwnerEmail.val(),
                 inputDomain: inputDomain.val(),
                 inputDomainProvider: inputDomainProvider.val(),
                 inputPublishedDate: inputPublishedDate.val(),
@@ -846,6 +843,9 @@ $password = "Localeats#".date("Y");
 
     const resetForm = () => {
         inputProject.val('');
+        inputLocation.val('');
+        inputOwner.val('');
+        inputOwnerEmail.val('');
         inputDomain.val('');
         inputDomainProvider.val('');
         inputPublishedDate.val('');

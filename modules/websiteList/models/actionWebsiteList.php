@@ -24,7 +24,7 @@ if ($params ["action"] == "setStatus"){
                         wt.template AS wTemplateUsed,
                         sv.svName AS wServerName
                     FROM 
-                        websitelist w
+                        websiteList w
                     LEFT JOIN 
                         tb_shopType st ON w.wIndustry = st.id
                     LEFT JOIN 
