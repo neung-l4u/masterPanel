@@ -12,24 +12,41 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // รับค่าจากฟอร์ม
-$staff_id = $_POST['sales'] ?? null;
-$created_by = $_SESSION['id'] ?? null; // พนักงานที่ล็อกอินอยู่
-$shop_type_id = $_POST['shop_type'] ?? null;
-$country = $_POST['country'] ?? '';
-$city = $_POST['city'] ?? '';
-$date = $_POST['date'] ?? '';
-$time = $_POST['time'] ?? '';
-$customer_name = trim($_POST['customer_name'] ?? '');
-$shop_name = trim($_POST['shop_name'] ?? '');
-$contact_email = trim($_POST['contact_email'] ?? '');
-$contact_phone = trim($_POST['contact_phone'] ?? '');
-$line_id = trim($_POST['line_id'] ?? '');
-$whatsapp = trim($_POST['whatsapp'] ?? '');
+$staff_id = !empty($_POST['sales']) ? $_POST['sales'] : '';
+$created_by = $_SESSION['id']; // พนักงานที่ล็อกอินอยู่
+$shop_type_id = !empty($_POST['shop_type']) ? $_POST['shop_type'] : '';
+$country = !empty($_POST['country']) ? $_POST['country'] : '';
+$city = !empty($_POST['city']) ? $_POST['city'] : '';
+$date = !empty($_POST['date']) ? $_POST['date'] : '';
+$time = !empty($_POST['time']) ? $_POST['time'] : '';
+$customer_name = !empty($_POST['customer_name']) ? $_POST['customer_name'] : '';
+$shop_name = !empty($_POST['shop_name']) ? $_POST['shop_name'] : '';
+$contact_email =  !empty($_POST['contact_email']) ? $_POST['contact_email'] : '';
+$contact_phone = !empty($_POST['contact_phone']) ? $_POST['contact_phone'] : '';
+$line_id = !empty($_POST['line_id']) ? $_POST['line_id'] : '';
+$whatsapp = !empty($_POST['whatsapp']) ? $_POST['whatsapp'] : '';
 
 if (!$staff_id || !$date || !$time || !$customer_name || !$shop_name) {
     echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
     exit;
 }
+
+$staff_email = '';
+$staff_email_map = [
+    17 => 'boom@localforyou.com',
+    18 => 'dear@localforyou.com',
+    24 => 'honey@localforyou.com',
+    35 => 'pluem@localforyou.com',
+    38 => 'pruek@localforyou.com',
+    47 => 'toffee@localforyou.com',
+    62 => 'ball@localforyou.com',
+    72 => 'lani@localforyou.com',
+    76 => 'naya@localforyou.com',
+    79 => 'gun@localforyou.com',
+    84 => 'aon@localforyou.com',
+];
+
+$staff_email = $staff_email_map[$staff_id] ?? null; // ถ้าไม่มีใน map จะได้ null
 
 // คำนวณเวลาสิ้นสุด (15 นาทีถัดไป)
 $end_time = date('H:i:s', strtotime($time) + 900); // +15 นาที
