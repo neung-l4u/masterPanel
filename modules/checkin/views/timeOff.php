@@ -80,8 +80,7 @@ $now = date("H:i");
                         <option value="">-- Select --</option>
                         <option value="Sick leave">Sick leave</option>
                         <option value="Public holiday">Public holiday</option>
-                        <option value="Vacation">Vacation</option>
-                        <option value="Time Off">Time Off</option>
+                        <option value="Annual leave">Annual leave</option>
                     </select>
                 </div>
 
