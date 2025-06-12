@@ -385,7 +385,7 @@ $teamIDHardcode = array(
             };
 
             const reqAjax = $.ajax({
-                url: "../assets/php/actionCoin.php",
+                url: "assets/php/actionCoin.php",
                 method: "POST",
                 async: false,
                 cache: false,
@@ -457,7 +457,7 @@ $teamIDHardcode = array(
                 console.log(params);
 
                 const reqAjax = $.ajax({
-                    url: "../assets/php/actionCoin.php",
+                    url: "assets/php/actionCoin.php",
                     method: "POST",
                     async: false,
                     cache: false,
@@ -490,7 +490,7 @@ $teamIDHardcode = array(
             };
 
             const reqAjax = $.ajax({
-                url: "../assets/php/actionCoin.php",
+                url: "assets/php/actionCoin.php",
                 method: "POST",
                 async: false,
                 cache: false,
@@ -522,7 +522,7 @@ $teamIDHardcode = array(
                 console.log(params);
 
                 const reqAjax = $.ajax({
-                    url: "../assets/php/actionCoin.php",
+                    url: "assets/php/actionCoin.php",
                     method: "POST",
                     async: false,
                     cache: false,

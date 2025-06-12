@@ -886,13 +886,22 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <span class="input-group">
                                                             <label for="ref_IHD_Password" class="input-group-text">IHD PW</label>
                                                             <input
-                                                                type="text"
+                                                                type="hidden"
                                                                 class="form-control"
                                                                 id="ref_IHD_Password"
                                                                 maxlength="100"
                                                                 name="ref_IHD_Password"
                                                                 autocomplete="off"
-                                                                placeholder="Leave it blank if you want to provide information later."
+                                                                value="Localeats"
+                                                            /><!-- No Show -->
+                                                            <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="ref_IHD_PasswordShow"
+                                                                    maxlength="100"
+                                                                    name="ref_IHD_PasswordShow"
+                                                                    autocomplete="off"
+                                                                    value="Localeats" disabled
                                                             />
                                                         </span>
                                                                 <span class="input-group">
@@ -1114,7 +1123,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <h6 class="card-title fw-semibold">New Domain Name to Register</h6>
                                                     <div class="card-text pt-2">                                        
 
-                                                    <div class="row">
+                                                        <div class="row">
                                                         <div class="col-10">
                                                             <label for="newDomain">New Domain name</label>
                                                             <span class="input-group mb-2">
@@ -1163,7 +1172,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                             </a>
 
                                                         </div>
+
                                                     </div>
+
+                                                    </div>
+                                                    <div class="card-text pt-2">
+                                                        <div class="row">
+                                                            <small>New domain register <b style="color: #ff0000;">password: L4U@2017:)domain</b></small>
+                                                        </div>
 
                                                     </div>
                                                 </div>

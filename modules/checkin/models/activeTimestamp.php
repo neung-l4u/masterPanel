@@ -17,7 +17,12 @@ $data['checkinTime'] = !empty($_POST['checkinTime']) ? $_POST['checkinTime'] : "
 $data['checkoutTime'] = !empty($_POST['checkoutTime']) ? $_POST['checkoutTime'] : "-";
 $data['noteCheckin'] = !empty($_POST['noteCheckin']) ? $_POST['noteCheckin'] : "-";
 $data['noteCheckout'] = !empty($_POST['noteCheckout']) ? $_POST['noteCheckout'] : "-";
+$data['Department'] = !empty($_POST['Department']) ? $_POST['Department'] : "-";
+$data['manager'] = !empty($_POST['manager']) ? $_POST['manager'] : "-";
+$data['manager2'] = !empty($_POST['manager2']) ? $_POST['manager2'] : "-";
 $data['activeSQL'] = !empty($_POST['activeSQL']) ? $_POST['activeSQL'] : "-";
+
+
 
 $json = json_encode($data);
 
