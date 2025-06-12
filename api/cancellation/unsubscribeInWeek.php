@@ -34,17 +34,37 @@ $startDayForWeek = $obj_startDate->format('Y-m-d 00:00:00'); //เอาตั�
 $lastDayForWeek = $obj_endDate->format('Y-m-d 23:59:59'); //เอาถึงแค่ 23:59:59
 
 
-/*if ($act == 'newPerWeek') {
-    $row = $db->query('SELECT * FROM `Cancellation` WHERE timestamp BETWEEN ? AND ?;',$startDayForWeek ,$lastDayForWeek)->fetchArray();
-    $shopname = !empty($row["shopname"]) ? $row["shopname"] : "-";
-
-}*/
-
-
-
-
+if ($act == 'newPerWeek') {
+    $updateQue = $db->query('UPDATE Cancellation SET reported_at = NOW(), gen_report = 1  WHERE timestamp BETWEEN ? AND ? ;',$startDayForWeek ,$lastDayForWeek);
+    $selectQue = $db->query('SELECT * FROM Cancellation WHERE timestamp BETWEEN ? AND ? ORDER BY county ASC ;',$startDayForWeek ,$lastDayForWeek)->fetchAll();
+    $totalUnsubscribes = count($selectQue);
+}
 ?>
-<div><?php echo "Time Stamp: ".$whatDay;?></div><br>
-<div><?php echo "input Day : ".$day;?></div>
-<div><?php echo "Start Day : ".$startDayForWeek;?></div>
-<div><?php echo "End Day : ".$lastDayForWeek;?></div>
+
+<p><b>**Unsubscribe**</b> (Total:<?php echo $totalUnsubscribes; ?> )
+
+</p>
+<table cellpadding="10" cellspacing="0" border="1">
+    <tr style="background-color:#f2f2f2" bgcolor="#f2f2f2" >
+        <th style="font-size: 16px;">#</th>
+        <th style="font-size: 16px;">Shop</th>
+        <th style="font-size: 16px;">Country</th>
+        <th style="font-size: 16px;">Reason</th>
+    </tr>
+    <?php
+    $index = 1;
+    if (!empty($selectQue)) {
+        foreach ($selectQue as $row) { ?>
+            <tr>
+                <td style="font-size: 14px;"><?php echo $index++; ?></td>
+                <td style="font-size: 14px;"><?php echo $row["shopname"] ?: "-"; ?></td>
+                <td style="font-size: 14px;"><?php echo $row["county"] ?: "-"; ?></td>
+                <td style="font-size: 14px;"><?php echo ($row["reason"] == "other") ? $row["other"] : $row["reason"]; ?></td>
+            </tr>
+        <?php }
+    } else {
+        echo "<tr><td colspan='4'>ไม่พบข้อมูลในสัปดาห์นี้</td></tr>";
+    }
+    ?>
+
+</table>
