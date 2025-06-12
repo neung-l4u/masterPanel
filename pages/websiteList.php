@@ -53,6 +53,30 @@ $password = "Localeats#".date("Y");
     small{
         font-size: 0.7rem;
     }
+    .filterLabel{
+        /*border: 1px solid black;*/
+        width: 100px;
+    }
+    .filterSelect{
+        width: 300px !important;
+    }
+    a.linkDetail:link {
+        color: black;
+        text-decoration: none;
+    }
+
+    a.linkDetail:visited {
+        color: black;
+    }
+
+    a.linkDetail:hover {
+        color: red;
+        text-decoration: underline;
+    }
+
+    a.linkDetail:active {
+        color: blue;
+    }
 </style>
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
@@ -83,107 +107,108 @@ $password = "Localeats#".date("Y");
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row mb-3">
-                            <h4>
-                                <svg class="nav-icon mr-3" height="16" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/></svg>
+                <div class="mt-3 mb-5">
+                    <div class="row">
+                        <div class="col d-flex align-items-center justify-content-between">
+                            <h5>
+                                <i class="nav-icon mr-3 bi bi-funnel"></i>
                                 Filters
-                            </h4>
+                            </h5>
+                            <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                                <i class="bi bi-plus"></i> New Item
+                            </button>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-3 mb-2">
-                                <div>
-                                    <label for="filterShopType" class="form-label">Shop Type</label>
-                                    <select class="form-select" id="filterShopType" onchange="filterChange()" aria-label="Default select example" disabled>
-                                        <option value="" >All</option>
-                                        <option value="1">Restaurant</option>
-                                        <option value="2" selected>Massage</option>
-                                        <option value="3">Grocery</option>
-                                        <option value="4">Internal</option>
-                                        <option value="5">Template</option>
-                                        <option value="6">Other</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="filterTemplate" class="form-label">Template</label>
-                                    <select class="form-select" id="filterTemplate" onchange="filterChange()" aria-label="Default select example" disabled>
-                                        <option value="" selected>All</option>
-                                        <option value="1">Template 1</option>
-                                        <option value="2">Template 2</option>
-                                        <option value="3">Template 3</option>
-                                    </select>
-                                </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col d-flex align-items-center gap-5">
+                            <div class="d-flex align-items-center gap-3">
+                                <label for="filterShopType" class="form-label filterLabel">Shop Type</label>
+                                <select class="form-select filterSelect" id="filterShopType" onchange="filterChange()" aria-label="Default select example" disabled>
+                                    <option value="" selected >All</option>
+                                    <option value="1">Restaurant</option>
+                                    <option value="2" >Massage</option>
+                                    <option value="3">Grocery</option>
+                                    <option value="4">Internal</option>
+                                    <option value="5">Template</option>
+                                    <option value="6">Other</option>
+                                </select>
                             </div>
-                            <div class="col-3 mb-2">
-                                <div>
-                                    <label for="filterSystem" class="form-label">System</label>
-                                    <select class="form-select" id="filterSystem" onchange="filterChange()"  aria-label="Default select example" disabled>
-                                        <option value="" selected>All</option>
-                                        <option value="GF">Gloria Food</option>
-                                        <option value="AM">Amelia</option>
-                                        <option value="VC">Voucher</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="filterCountry" class="form-label">Country</label>
-                                    <select class="form-select" id="filterCountry" onchange="filterChange()" aria-label="Default select example" disabled>
-                                        <option value="" selected>All</option>
-                                        <option value="AU">Australia</option>
-                                        <option value="NZ">New Zealand</option>
-                                        <option value="UK">United Kingdom</option>
-                                        <option value="CA">Canada</option>
-                                        <option value="USA">United States</option>
-                                        <option value="TH">Thailand</option>
-                                    </select>
-                                </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <label for="filterSystem" class="form-label filterLabel">System</label>
+                                <select class="form-select filterSelect" id="filterSystem" onchange="filterChange()"  aria-label="Default select example" disabled>
+                                    <option value="" selected>All</option>
+                                    <option value="GF">Gloria Food</option>
+                                    <option value="AM">Amelia</option>
+                                    <option value="VC">Voucher</option>
+                                </select>
                             </div>
-                            <div class="col-3 mb-2">
-                                <div>
-                                    <label for="filterStatus" class="form-label">Status</label>
-                                    <select class="form-select" id="filterStatus" onchange="filterChange()" aria-label="Default select example" disabled>
-                                        <option value="" selected>All</option>
-                                        <option value="Live">Live</option>
-                                        <option value="Draft">Draft</option>
-                                        <option value="Transferred">Transferred</option>
-                                        <option value="Pre Live">Pre Live</option>
-                                        <option value="Subdomain">Subdomain</option>
-                                        <option value="Redirect">Redirect</option>
-                                        <option value="Unpublished">Unpublished</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="filterServer" class="form-label">Server</label>
-                                    <select class="form-select" id="filterServer" onchange="filterChange()" aria-label="Default select example" disabled>
-                                        <option value="" selected>All</option>
-                                        <option value="1">az1-tr102.supercp.com</option>
-                                        <option value="2">mi3-tr104.supercp.com</option>
-                                        <option value="3">nl1-cl9-atr1.supercp.com</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-3 mb-2 d-flex justify-content-end">
-                                <!-- Button trigger modal -->
-                                <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
-                                </button>
-                                <!-- Modal -->
+                            <div class="d-flex align-items-center gap-3">
+                                <label for="filterStatus" class="form-label filterLabel">Status</label>
+                                <select class="form-select filterSelect" id="filterStatus" onchange="filterChange()" aria-label="Default select example" disabled>
+                                    <option value="" selected>All</option>
+                                    <option value="Live">Live</option>
+                                    <option value="Draft">Draft</option>
+                                    <option value="Transferred">Transferred</option>
+                                    <option value="Pre Live">Pre Live</option>
+                                    <option value="Subdomain">Subdomain</option>
+                                    <option value="Redirect">Redirect</option>
+                                    <option value="Unpublished">Unpublished</option>
+                                </select>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
-                            <thead class="thead-dark">
-                            <tr>
-                                <th class="colNo">#</th>
-                                <th class="colProName">Project name</th>
-                                <th class="colLocation">Location</th>
-                                <th class="colOwner">Owner</th>
-                                <th class="colEmail">Owner Email</th>
-                                <th class="colDetail"></th>
-                            </tr>
-                            </thead>
-                        </table>
+                    <div class="row mb-3">
+                        <div class="col d-flex align-items-center gap-5">
+                            <div class="d-flex align-items-center gap-3">
+                                <label for="filterTemplate" class="form-label filterLabel">Template</label>
+                                <select class="form-select filterSelect" id="filterTemplate" onchange="filterChange()" aria-label="Default select example" disabled>
+                                    <option value="" selected>All</option>
+                                    <option value="1">Template 1</option>
+                                    <option value="2">Template 2</option>
+                                    <option value="3">Template 3</option>
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <label for="filterCountry" class="form-label filterLabel">Country</label>
+                                <select class="form-select filterSelect" id="filterCountry" onchange="filterChange()" aria-label="Default select example" disabled>
+                                    <option value="" selected>All</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="NZ">New Zealand</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="USA">United States</option>
+                                    <option value="TH">Thailand</option>
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <label for="filterServer" class="form-label filterLabel">Server</label>
+                                <select class="form-select filterSelect" id="filterServer" onchange="filterChange()" aria-label="Default select example" disabled>
+                                    <option value="" selected>All</option>
+                                    <option value="1">az1-tr102.supercp.com</option>
+                                    <option value="2">mi3-tr104.supercp.com</option>
+                                    <option value="3">nl1-cl9-atr1.supercp.com</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card p-3">
+                        <div class="card-body">
+                            <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th class="colNo">#</th>
+                                    <th class="colProName">Project name</th>
+                                    <th class="colLocation">Location</th>
+                                    <th class="colOwner">Owner</th>
+                                    <th class="colEmail">Owner Email</th>
+                                    <th class="colDetail"></th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div><!-- /.col-md-12 -->

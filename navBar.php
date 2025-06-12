@@ -1,6 +1,7 @@
 <?php
 $userLevel = $_SESSION['level'];
 $myID = $_SESSION['id'];
+$teamID = $_SESSION['teamID'];
 ?>
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Left navbar links -->
@@ -9,19 +10,19 @@ $myID = $_SESSION['id'];
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="https://forms.monday.com/forms/da9ca9feccd4e43b4d264a3b45ba38ed?r=apse2" target="_blank" class="nav-link">Coin Request</a>
+                <a href="https://forms.monday.com/forms/da9ca9feccd4e43b4d264a3b45ba38ed?r=apse2" target="_blank" class="nav-link">Coin Request <i class="bi bi-box-arrow-up-right"></i></a>
             </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="https://app.respond.io/user/login" target="_blank" class="nav-link">Respond.io</a>
+            <a href="https://app.respond.io/user/login" target="_blank" class="nav-link">Respond.io <i class="bi bi-box-arrow-up-right"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="https://app.trainual.com/local-for-you/users/sign_in" target="_blank" class="nav-link">Trainual</a>
+            <a href="https://app.trainual.com/local-for-you/users/sign_in" target="_blank" class="nav-link">Trainual <i class="bi bi-box-arrow-up-right"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="modules/mondayReport/views/index.php?id=<?php echo $myID; ?>" target="_blank" class="nav-link btn btn-outline-warning">
                 <i class="bi bi-exclamation-triangle-fill"></i>
                 <span>
-                    Monday Report
+                    Monday Report <i class="bi bi-box-arrow-up-right"></i>
                 </span>
             </a>
         </li>
@@ -32,11 +33,13 @@ $myID = $_SESSION['id'];
     <ul class="navbar-nav ml-auto">
 
         <!-- Navbar Search -->
+        <?php if ($teamID == 5){ ?>
         <li class="nav-item">
             <a class="nav-link" href="main.php?p=tools" role="button">
                 <i class="bi bi-tools"></i>
             </a>
         </li>
+        <?php } ?>
         <li class="nav-item">
             <a class="nav-link" data-widget="navbar-search" href="#" role="button">
                 <i class="fas fa-search"></i>

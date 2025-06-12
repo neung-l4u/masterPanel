@@ -139,7 +139,7 @@ include ('assets/api/checkSession.php');
                 </li>
                 <?php ?>
 
-                <?php if($userLevel<=4){
+                <?php if($userLevel<=2){
                     ?>
                     <li class="nav-item <?php echo $activeMenu["lv1"] == "settings" ? "menu-is-opening menu-open":""; ?>">
                         <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "settings" ? "active":""; ?>">
@@ -176,24 +176,24 @@ include ('assets/api/checkSession.php');
                                     <a href="modules/signup/index.php" target="_blank" class="nav-link">
                                         <i class="nav-icon mr-3 bi bi-file-earmark-person"></i>
                                         <p>
-                                            Sign up form
+                                            Signup Form &nbsp; <i class="bi bi-box-arrow-up-right"></i>
                                         </p>
                                     </a>
                                 </li>
                                 <?php if($teamID != 3){ ?>
                                 <li class="nav-item pl-2">
-                                    <a href="modules/unsub2/views/index.php?id=123" target="_blank" class="nav-link <?php echo $activeMenu["lv2"] == "unsubscribe" ? "active":""; ?>">
+                                    <a href="modules/unsub2/views/index.php?id=123" target="_blank" class="nav-link">
                                         <i class="nav-icon mr-3 bi bi-file-earmark-excel"></i>
                                         <p>
-                                        Unsubscribe Form
+                                        Unsubscribe Form &nbsp; <i class="bi bi-box-arrow-up-right"></i>
                                         </p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-2">
-                                    <a href="modules/templates/views/main.php" target="_blank" class="nav-link <?php echo $activeMenu["lv2"] == "unsubscribe" ? "active":""; ?>">
+                                    <a href="modules/templates/views/main.php" target="_blank" class="nav-link">
                                         <i class="nav-icon mr-3 bi bi-file-earmark-break"></i>
                                         <p>
-                                        Template submissions
+                                        Template submissions &nbsp; <i class="bi bi-box-arrow-up-right"></i>
                                         </p>
                                     </a>
                                 </li>
@@ -244,10 +244,19 @@ include ('assets/api/checkSession.php');
                     } //Super Admin Menu */?>
 
                 <li class="nav-item">
-                    <a href="https://report.localforyou.com/modules/websiteList/views/websiteList.php#" target="_blank" class="nav-link <?php echo $activeMenu["lv1"] == "websiteList" ? "active":""; ?>">
+                    <a href="https://report.localforyou.com/modules/websiteList/views/websiteList.php#" target="_blank" class="nav-link">
                         <i class="nav-icon mr-2 bi bi-list-check"></i>
                         <p>
-                            Website Lists
+                            Website Lists &nbsp; <i class="bi bi-box-arrow-up-right"></i>
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="modules/L4UBooking" target="_blank" class="nav-link">
+                        <i class="nav-icon mr-2 bi bi-bookmarks"></i>
+                        <p>
+                            L4U Booking &nbsp; <i class="bi bi-box-arrow-up-right"></i>
                         </p>
                     </a>
                 </li>
@@ -256,7 +265,7 @@ include ('assets/api/checkSession.php');
                     <a href="https://localforyou.com/" target="_blank" class="nav-link">
                         <i class="nav-icon mr-2 bi bi-browser-safari"></i>
                         <p>
-                            L4U Website
+                            L4U Website &nbsp; <i class="bi bi-box-arrow-up-right"></i>
                         </p>
                     </a>
                 </li>
@@ -264,7 +273,7 @@ include ('assets/api/checkSession.php');
                     <a href="https://local-for-you.monday.com/" target="_blank" class="nav-link">
                         <i class="nav-icon mr-2 bi bi-share"></i>
                         <p>
-                            Monday
+                            Monday &nbsp; <i class="bi bi-box-arrow-up-right"></i>
                         </p>
                     </a>
                 </li>
@@ -273,7 +282,7 @@ include ('assets/api/checkSession.php');
                     <a href="modules/mondayReport/views/index.php?id=<?php echo $myID; ?>" target="_blank" class="nav-link text-warning">
                         <i class="nav-icon mr-2 bi bi-exclamation-triangle-fill"></i>
                         <p>
-                            Monday Report
+                            Monday Report &nbsp; <i class="bi bi-box-arrow-up-right"></i>
                         </p>
                     </a>
                 </li>
