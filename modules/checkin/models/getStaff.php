@@ -31,6 +31,17 @@ $managers = [
     83 => "Patt Pattranit"
 ];
 
+$managers2 = [
+    1 => "57653825",
+    13 => "57652194",
+    16 => "61031099",
+    17 => "57649130",
+    42 => "57717609",
+    45 => "57647868",
+    49 => "57650527",
+    83 => "75103676"
+];
+
 //$data['staff'] = $staff;
 $data['result'] = true;
 $data['staffID'] = $id;
@@ -38,7 +49,7 @@ $data['staffID'] = $id;
 
 $data['staffName'] = showName($staff['nick'], $staff['full'], $staff['national']);
 $data['team'] = $teams[$staff['team']];
-$data['manager'] = $managers[$staff['manager']];
+$data['manager'] = $managers2[$staff['manager']];
 $data['teamName'] = $staff['teamName'];
 
 echo json_encode($data);
