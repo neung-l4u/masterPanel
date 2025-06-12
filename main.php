@@ -39,6 +39,7 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
   <!-- datepicker styles -->
     <link rel="stylesheet" href="assets/css/jquery-ui-v1.13.2.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" media="screen" />
+    <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
