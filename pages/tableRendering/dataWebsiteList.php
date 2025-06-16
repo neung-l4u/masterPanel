@@ -49,9 +49,6 @@ foreach ($result as $row) {
     $data["data"][] = array(
         $i,
         '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail" class="linkDetail">'.dash($row["wProject"]).'</a>',
-        '<small>'.dashAndShort($row["wLocation"]).'</small>',
-        '<small>'.dashAndShort($row["wOwner"]).'</small>',
-        dash($row["wOwnerEmail"]),
         $btn["URL"]." ".$btn["edit"]." ".$btn["delete"]
     );
     $i++;

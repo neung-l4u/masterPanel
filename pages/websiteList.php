@@ -77,6 +77,14 @@ $password = "Localeats#".date("Y");
     a.linkDetail:active {
         color: blue;
     }
+    ::placeholder {
+        color: #DDDDDD !important;
+        opacity: 1; /* Firefox */
+    }
+
+    ::-ms-input-placeholder { /* Edge 12 -18 */
+        color: #DDDDDD !important;
+    }
 </style>
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
@@ -201,9 +209,6 @@ $password = "Localeats#".date("Y");
                                 <tr>
                                     <th class="colNo">#</th>
                                     <th class="colProName">Project name</th>
-                                    <th class="colLocation">Location</th>
-                                    <th class="colOwner">Owner</th>
-                                    <th class="colEmail">Owner Email</th>
                                     <th class="colDetail"></th>
                                 </tr>
                                 </thead>
@@ -219,7 +224,7 @@ $password = "Localeats#".date("Y");
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="formModalLabel">Form Website</h5>
+                        <h5 class="modal-title" id="formModalLabel"><i class="bi bi-file-earmark-plus"></i> Form Website</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span>&times;</span>
                         </button>
