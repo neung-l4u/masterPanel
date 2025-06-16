@@ -78,10 +78,9 @@ $now = date("H:i");
                     <label for="timeOffStatus" class="form-label"><i class="bi bi-postage-fill"></i> Leave Types <span class="red">*</span></label>
                     <select id="timeOffStatus" name="timeOffStatus" class="form-select" required>
                         <option value="">-- Select --</option>
-                        <option value="Sick leave">Sick leave</option>
-                        <option value="Public holiday">Public holiday</option>
-                        <option value="Vacation">Vacation</option>
-                        <option value="Time Off">Time Off</option>
+                        <option value="Sick leave">Sick Leave</option>
+                        <option value="Public holiday">Public Holiday</option>
+                        <option value="Annual leave">Annual Leave</option>
                     </select>
                 </div>
 
