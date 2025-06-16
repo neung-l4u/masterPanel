@@ -263,6 +263,10 @@ $loginID = $_SESSION['id'];
                                 <div class="direct-chat-msg">
                                     <div class="direct-chat-infos clearfix">
                                         <span class="float-left">
+                                            <h6>v 1.2.3 - 16 June 2025</h6>
+                                            <ul>
+                                                <li>Update UI.</li>
+                                            </ul>
                                             <h6>17 May 2025</h6>
                                             <ul>
                                                 <li>Fixed issue with the email unsubscribe form.</li>
