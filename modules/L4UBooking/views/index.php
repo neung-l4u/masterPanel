@@ -22,7 +22,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/css/index.css" rel="stylesheet">
     <script src="../assets/js/index.js"></script>
-    <title>Hello, world! <?php echo $currentPage; ?></title>
+    <title>L4U: You Can Book Me</title>
 </head>
 <body>
 
@@ -44,14 +44,22 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     </header>
 
     <main>
+        <div class="mb-4">
+            <a href="bookingStep.php" class="btn btn-primary">Book now</a>
+        </div>
         <section style="min-height: 50vh;">
-            <h3>New page</h3>
+            <h4>Version 1.0 Alpha Testing</h4>
+            <ul>
+                <li>Save booking information to the database</li>
+                <li>Send confirmation email to customers, sales.</li>
+                <li>Send a calendar link via email after booking.</li>
+            </ul>
         </section>
     </main>
 
-    <footer>
+    <!--<footer>
         copyright
-    </footer>
+    </footer>-->
 
 
     <!-- Modal -->

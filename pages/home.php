@@ -4,7 +4,6 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-LGKDYHL23T');
 </script>
 <?php
@@ -16,7 +15,7 @@ $loginID = $_SESSION['id'];
 
 ?>
 <!-- ChartJS -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
 <style>
     .iconRewardAction{
         height: 90px !important;
@@ -34,6 +33,9 @@ $loginID = $_SESSION['id'];
     .linkBTN{
         font-size: 0.8rem !important;
     }
+    .red{
+        color: red !important;
+    }
 </style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -41,7 +43,7 @@ $loginID = $_SESSION['id'];
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h4 class="m-0">
-                    <svg class="nav-icon mr-2" height="1.1em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 576 512"><path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></svg>
+                    <i class="nav-icon mr-2 bi bi-house-fill"></i>
                     Home
                 </h4>
             </div><!-- /.col -->
@@ -62,11 +64,11 @@ $loginID = $_SESSION['id'];
         <div class="row">
             <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
                 <div class="info-box mb-3">
-                    <span class="info-box-icon bg-warning elevation-1">L4U</span>
-                    <!--<i class="fas fa-thumbs-up"></i>-->
+                    <span class="info-box-icon bg-success elevation-1">L4U</span>
+
                     <div class="info-box-content">
                         <span class="info-box-text">Coin(s)</span>
-                        <span class="info-box-number"><?php echo number_format($coins["l4u"],2); ?></span>
+                        <span class="info-box-number"><i class="bi bi-coin"></i> <?php echo number_format($coins["l4u"],2); ?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
@@ -81,8 +83,8 @@ $loginID = $_SESSION['id'];
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-primary elevation-1">CEO</span>
                     <div class="info-box-content">
-                        <span class="info-box-text">Coin(s)</span>
-                        <span class="info-box-number"><?php echo number_format($coins["ceo"],2); ?></span>
+                        <span class="info-box-text">Coin(s) <small class="text-muted">(1 CEO = 10 L4U)</small></span>
+                        <span class="info-box-number"><i class="bi bi-cash-coin"></i> <?php echo number_format($coins["ceo"],2); ?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
@@ -95,16 +97,16 @@ $loginID = $_SESSION['id'];
                     <div class="card-body p-0 ">
                             <div class="d-flex flex-row justify-content-around">
                                 <a class="btn btn-outline-primary linkBTN w-auto" data-toggle="modal" data-target="#formModalExchangeCash">
-                                    <i class="fas fa-money-bill"></i><span class="d-none d-sm-none d-md-none d-lg-block"> Cash</span>
+                                    <i class="bi bi-cash-stack"></i><span class="d-none d-sm-none d-md-none d-lg-block"> Cash</span>
                                 </a>
                                 <a class="btn btn-outline-primary linkBTN w-auto" data-toggle="modal" data-target="#formModalConvertCoin">
-                                    <i class="fas fa-coins"></i><span class="d-none d-sm-none d-md-none d-lg-block">  Convert</span>
+                                    <i class="bi bi-arrow-left-right"></i><span class="d-none d-sm-none d-md-none d-lg-block">  Convert</span>
                                 </a>
                                 <a class="btn btn-outline-primary linkBTN w-auto" data-toggle="modal" data-target="#formModalTransferCoin">
-                                    <i class="fas fa-arrow-right"></i><span class="d-none d-sm-none d-md-none d-lg-block">  Transfer</span>
+                                    <i class="bi bi-arrow-right-circle-fill"></i><span class="d-none d-sm-none d-md-none d-lg-block">  Transfer</span>
                                 </a>
                                 <a class="btn btn-outline-primary linkBTN w-auto" data-toggle="modal" data-target="#formModalRedeemGiftCard">
-                                    <i class="fas fa-gift"></i><span class="d-none d-sm-none d-md-none d-lg-block">  Gift Card</span>
+                                    <i class="bi bi-box2-heart-fill"></i><span class="d-none d-sm-none d-md-none d-lg-block">  Gift Card</span>
                                 </a>
                             </div>
                     </div>
@@ -116,7 +118,7 @@ $loginID = $_SESSION['id'];
                 <div>
                     <div class="card direct-chat direct-chat-warning">
                     <div class="card-header" >
-                        <h3 class="card-title">History of receiving coins (Last 30 days)</h3>
+                        <h3 class="card-title"><i class="bi bi-clock-history"></i> History of receiving coins (Last 30 days)</h3>
                         <?php
                         $logs = $db->query('SELECT CL.`id`, CT.`name` AS "coin", CL.`ownerID`, CL.`amount`, ST.`sNickName` AS "nick",ST.`sName` AS "from", ST.`sPic` AS "pic", CL.`reason`, CL.`giveOn`, CL.`lastUpdate`, CL.`activityID`  
                                 FROM `CoinLogs` CL, `staffs` ST, `CoinType` CT
@@ -245,7 +247,7 @@ $loginID = $_SESSION['id'];
                     <!-- Change log -->
                     <div class="card">
                         <div class="card-header" >
-                            <h3 class="card-title">Change Logs</h3>
+                            <h3 class="card-title"><i class="bi bi-journal-text"></i> Change Logs</h3>
                             <div class="card-tools">
                                 <!-- <span title="0 items" class="badge badge-warning">0 items</span>-->
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -261,6 +263,10 @@ $loginID = $_SESSION['id'];
                                 <div class="direct-chat-msg">
                                     <div class="direct-chat-infos clearfix">
                                         <span class="float-left">
+                                            <h6>v 1.2.3 - 16 June 2025</h6>
+                                            <ul>
+                                                <li>Update UI.</li>
+                                            </ul>
                                             <h6>17 May 2025</h6>
                                             <ul>
                                                 <li>Fixed issue with the email unsubscribe form.</li>
@@ -327,7 +333,7 @@ $loginID = $_SESSION['id'];
                 <!-- USERS LIST -->
                 <div class="card gift-list gift-list-warning">
                     <div class="card-header">
-                        <h3 class="card-title">Gift list</h3>
+                        <h3 class="card-title"><i class="bi bi-box2-heart"></i> Gift list</h3>
                         <?php
                         $spendLogs = $db->query('SELECT `rcTitle`,`rcReward`,`rcSpend`,`rcPic`
                             FROM `rewardcategories`  
@@ -492,7 +498,7 @@ $loginID = $_SESSION['id'];
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="formModalLabel">Exchange for cash</h5>
+                    <h5 class="modal-title" id="formModalLabel"><i class="bi bi-cash-stack"></i> Exchange for cash</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -500,9 +506,9 @@ $loginID = $_SESSION['id'];
                 <div class="modal-body">
                     <div class="card">
                         <div class="card-body d-flex flex-column">
-                            <h4>How does it work?</h4>
+                            <h5><i class="bi bi-question-circle"></i> How does it work?</h5>
                                 <ol>
-                                    <li>Only L4U coins are available for redemption. If you have CEO coins, please use the <span class="text-success font-weight-bold">coin convert menu</span>.</li>
+                                    <li><span class="red">Only L4U coins are available for redemption.</span> If you have CEO coins, please use the <span class="text-success font-weight-bold">coin convert menu</span>.</li>
                                     <li>The redeem button becomes available once you have enough coins to redeem.</li>
                                     <li>Please make an exchange transaction before the 20th of every month.</li>
                                     <li>If you make an exchange transaction after the 21st of the month, it will be carried over to the next month.</li>
@@ -513,6 +519,7 @@ $loginID = $_SESSION['id'];
                                 <div class="row mb-3">
                                     <div class="col-12 col-sm-6 col-md-3">
                                         <div class="info">
+                                            <i class="bi bi-coin"></i>
                                             <span class="badge badge-pill badge-warning">L4U</span>
                                             <span class="info-box-number"><?php echo number_format($coins["l4u"],2); ?></span>
                                             <!-- /.info-box-content -->
@@ -526,6 +533,7 @@ $loginID = $_SESSION['id'];
 
                                     <div class="col-12 col-sm-6 col-md-3">
                                         <div class="info">
+                                            <i class="bi bi-cash-coin"></i>
                                             <span class="badge badge-pill badge-primary">CEO</span>
                                             <span class="info-box-number"><?php echo number_format($coins["ceo"],2); ?></span>
                                             <!-- /.info-box-content -->
@@ -539,9 +547,7 @@ $loginID = $_SESSION['id'];
                                 <table class="table table-striped table-hover">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Title</th>
-                                        <th scope="col">Require</th>
+                                        <th style="width:80px" scope="col">Need</th>
                                         <th scope="col">Reward</th>
                                         <th></th>
                                     </tr>
@@ -554,11 +560,9 @@ $loginID = $_SESSION['id'];
                                         $i=1;
                                         foreach ($rewards as $row){ ?>
                                             <tr>
-                                                <td><?php echo $i; ?></td>
-                                                <td><?php echo $row['title']; ?></td>
-                                                <td><?php echo number_format($row['spend']); ?></td>
-                                                <td><?php echo $row['reward']; ?></td>
-                                                <td>
+                                                <td class="text-right"><?php echo number_format($row['spend']); ?></td>
+                                                <td><small class="text-muted"><?php echo $row['title'].'</small> >> '.$row['reward']; ?></td>
+                                                <td class="text-right">
                                                     <?php if($row['spend'] <= $coins["l4u"]){ ?>
                                                         <a href="#" onclick="makeRedeem(<?php echo $row['spend']; ?>, '<?php echo $row['type']; ?>');" class="btn btn-primary" >Redeem</a>
                                                     <?php }else{ ?>
@@ -596,7 +600,7 @@ $loginID = $_SESSION['id'];
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="formModalLabel">Convert Coin</h5>
+                    <h5 class="modal-title" id="formModalLabel"><i class="bi bi-arrow-left-right"></i> Convert Coin</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -604,7 +608,7 @@ $loginID = $_SESSION['id'];
                 <div class="modal-body">
                     <div class="card">
                         <div class="card-body d-flex flex-column">
-                            <h4>How does it work?</h4>
+                            <h5><i class="bi bi-question-circle"></i> How does it work?</h5>
                             <ol>
                                 <li>Coins used to pay for items or special privileges in the system  <span class="text-success font-weight-bold">must be L4U coins only</span>.</li>
                                 <li>You can freely exchange coins between L4U and CEO.</li>
@@ -614,6 +618,7 @@ $loginID = $_SESSION['id'];
                                 <div class="row mb-3">
                                     <div class="col-12 col-sm-6 col-md-3">
                                         <div class="info">
+                                            <i class="bi bi-coin"></i>
                                             <span class="badge badge-pill badge-warning">L4U</span>
                                             <span class="info-box-number"><?php echo number_format($coins["l4u"],2); ?></span>
                                             <!-- /.info-box-content -->
@@ -627,6 +632,7 @@ $loginID = $_SESSION['id'];
 
                                     <div class="col-12 col-sm-6 col-md-3">
                                         <div class="info">
+                                            <i class="bi bi-cash-coin"></i>
                                             <span class="badge badge-pill badge-primary">CEO</span>
                                             <span class="info-box-number"><?php echo number_format($coins["ceo"],2); ?></span>
                                             <!-- /.info-box-content -->
@@ -687,7 +693,7 @@ $loginID = $_SESSION['id'];
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="formModalLabel">Transfer Coin</h5>
+                    <h5 class="modal-title" id="formModalLabel"><i class="bi bi-arrow-right-circle-fill"></i> Transfer Coin</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -695,7 +701,7 @@ $loginID = $_SESSION['id'];
                 <div class="modal-body">
                     <div class="card">
                             <div class="card-body d-flex flex-column">
-                                <h4>How does it work?</h4>
+                                <h5><i class="bi bi-question-circle"></i> How does it work?</h5>
                                 <ol>
                                     <li>Transferred coin must be <span class="text-success font-weight-bold">L4U coins only</span>.</li>
                                     <li>You cannot undo this action.</li>
@@ -705,6 +711,7 @@ $loginID = $_SESSION['id'];
                                     <div class="row mb-3">
                                         <div class="col-12 col-sm-6 col-md-3">
                                             <div class="info">
+                                                <i class="bi bi-coin"></i>
                                                 <span class="badge badge-pill badge-warning">L4U</span>
                                                 <span class="info-box-number"><?php echo number_format($coins["l4u"],2); ?></span>
                                                 <!-- /.info-box-content -->
@@ -718,6 +725,7 @@ $loginID = $_SESSION['id'];
 
                                         <div class="col-12 col-sm-6 col-md-3">
                                             <div class="info">
+                                                <i class="bi bi-cash-coin"></i>
                                                 <span class="badge badge-pill badge-primary">CEO</span>
                                                 <span class="info-box-number"><?php echo number_format($coins["ceo"],2); ?></span>
                                                 <!-- /.info-box-content -->
@@ -791,18 +799,18 @@ $loginID = $_SESSION['id'];
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="formModalLabel">Redeem Gift Card</h5>
+                    <h5 class="modal-title" id="formModalLabel"><i class="bi bi-box2-heart-fill"></i> Redeem Gift Card</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="card">
+                    <div class="card">`
                         <div class="card-body d-flex flex-column">
                             <div>
-                            <h4>How does it work?</h4>
+                                <h5><i class="bi bi-question-circle"></i> How does it work?</h5>
                                 <ol>
-                                    <li>Only L4U coins are available for redemption. If you have CEO coins, please use the <span class="text-success font-weight-bold">coin convert menu</span>.</li>
+                                    <li><span class="red">Only L4U coins are available for redemption.</span>  If you have CEO coins, please use the <span class="text-success font-weight-bold">coin convert menu</span>.</li>
                                     <li>The redeem button becomes available once you have enough coins to redeem.</li>
                                     <li>Please make an exchange transaction before the 20th of every month.</li>
                                     <li>If you make an exchange transaction after the 21st of the month, it will be carried over to the next month.</li>
@@ -814,6 +822,7 @@ $loginID = $_SESSION['id'];
                                 <div class="row mb-3">
                                     <div class="col-12 col-sm-6 col-md-3">
                                         <div class="info">
+                                            <i class="bi bi-coin"></i>
                                             <span class="badge badge-pill badge-warning">L4U</span>
                                             <span class="info-box-number"><?php echo number_format($coins["l4u"],2); ?></span>
                                             <!-- /.info-box-content -->
@@ -827,6 +836,7 @@ $loginID = $_SESSION['id'];
 
                                     <div class="col-12 col-sm-6 col-md-3">
                                         <div class="info">
+                                            <i class="bi bi-cash-coin"></i>
                                             <span class="badge badge-pill badge-primary">CEO</span>
                                             <span class="info-box-number"><?php echo number_format($coins["ceo"],2); ?></span>
                                             <!-- /.info-box-content -->
@@ -840,9 +850,7 @@ $loginID = $_SESSION['id'];
                                 <table class="table table-striped table-hover">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Title</th>
-                                        <th scope="col">Require</th>
+                                        <th scope="col">Need</th>
                                         <th scope="col">Reward</th>
                                         <th></th>
                                     </tr>
@@ -855,10 +863,8 @@ $loginID = $_SESSION['id'];
                                         $i=1;
                                         foreach ($rewards as $row){ ?>
                                             <tr>
-                                                <td><?php echo $i; ?></td>
-                                                <td><?php echo $row['title']; ?></td>
-                                                <td><?php echo number_format($row['spend']); ?></td>
-                                                <td><?php echo $row['reward']; ?></td>
+                                                <td class="text-right"><?php echo number_format($row['spend']); ?></td>
+                                                <td><?php echo '<strong>'.$row['title'].'</strong> >> <small class="text-muted">'.$row['reward'].'</small>'; ?></td>
                                                 <td>
                                                     <?php if($row['spend'] <= $coins["l4u"]){ ?>
                                                         <a href="#" onclick="makeRedeem(<?php echo $row['spend']; ?>, '<?php echo $row['type']; ?>');" class="btn btn-primary" >Redeem</a>
@@ -884,10 +890,6 @@ $loginID = $_SESSION['id'];
                     </div> <!-- card -->
 
                 </div> <!-- modal-body -->
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
             </div>
         </div>
     </div> <!-- modal -->

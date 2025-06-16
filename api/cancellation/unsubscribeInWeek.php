@@ -1,0 +1,70 @@
+<?php
+require_once '../../assets/db/db.php';
+require_once '../../assets/db/initDB.php';
+$currentDate = date('Y-m-d');
+
+$act = !empty($_GET['act']) ? $_GET['act'] : '';
+$day = !empty($_GET['day']) ? $_GET['day'] : $currentDate;
+
+
+$startDay = $day;
+$endDay = $day;
+
+
+
+$dayTimeStamp = strtotime($day);//เปลี่ยนเป็นเวลา
+
+$date=date_create($day);//เอาค่าที่ทำเป็นเวลา (ทำเป็น ฟอแมท)
+$whatDay = date_format($date,"w");//เอาค่ามาหา w(index ของสัปดาห์) ได้ 0 1 2 3 4 5 6
+
+$endDay = 6-$whatDay;
+
+
+// Create a DateTime object
+$obj_startDate = new DateTime($day);//ทำ obj start date
+$obj_endDate = new DateTime($day);//ทำ obj end date
+
+
+// Add 7 days to the date
+$obj_startDate->modify('-'.$whatDay.' days');//เอาค่าที่ได้ไปลบตัวมันเอง ตัวอย่าง วันที่ 3 วัน - วันปัจจุบัน : 1999-08-11 = 1999-08-08
+$obj_endDate->modify('+'.$endDay.' days');//เอาค่าที่ได้ไปบวกค่าที่ได้ ตัวอย่าง วันที่ได้ 3 วัน(ตัวแปรนี้เอาไป -6 แล้ว) + วันปัจจุบัน : 1999-08-11 = 1999-08-14
+
+// Format and output the modified date
+$startDayForWeek = $obj_startDate->format('Y-m-d 00:00:00'); //เอาตั้งแต่เวลา 00:00:00 ของวันเรา
+$lastDayForWeek = $obj_endDate->format('Y-m-d 23:59:59'); //เอาถึงแค่ 23:59:59
+
+
+if ($act == 'newPerWeek') {
+    $updateQue = $db->query('UPDATE Cancellation SET reported_at = NOW(), gen_report = 1  WHERE timestamp BETWEEN ? AND ? ;',$startDayForWeek ,$lastDayForWeek);
+    $selectQue = $db->query('SELECT * FROM Cancellation WHERE timestamp BETWEEN ? AND ? ORDER BY county ASC ;',$startDayForWeek ,$lastDayForWeek)->fetchAll();
+    $totalUnsubscribes = count($selectQue);
+}
+?>
+
+<p><b>**Unsubscribe**</b> (Total:<?php echo $totalUnsubscribes; ?> )
+
+</p>
+<table cellpadding="10" cellspacing="0" border="1">
+    <tr style="background-color:#f2f2f2" bgcolor="#f2f2f2" >
+        <th style="font-size: 16px;">#</th>
+        <th style="font-size: 16px;">Shop</th>
+        <th style="font-size: 16px;">Country</th>
+        <th style="font-size: 16px;">Reason</th>
+    </tr>
+    <?php
+    $index = 1;
+    if (!empty($selectQue)) {
+        foreach ($selectQue as $row) { ?>
+            <tr>
+                <td style="font-size: 14px;"><?php echo $index++; ?></td>
+                <td style="font-size: 14px;"><?php echo $row["shopname"] ?: "-"; ?></td>
+                <td style="font-size: 14px;"><?php echo $row["county"] ?: "-"; ?></td>
+                <td style="font-size: 14px;"><?php echo ($row["reason"] == "other") ? $row["other"] : $row["reason"]; ?></td>
+            </tr>
+        <?php }
+    } else {
+        echo "<tr><td colspan='4'>ไม่พบข้อมูลในสัปดาห์นี้</td></tr>";
+    }
+    ?>
+
+</table>

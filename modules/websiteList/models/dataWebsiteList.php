@@ -8,7 +8,7 @@ $params["filterShopType"] = !empty($_POST['shopType']) ? $_POST['shopType'] : ''
 $params["filterSystem"] = !empty($_POST['system']) ? $_POST['system'] : '';
 $params["filterStatus"] = !empty($_POST['fstatus']) ? $_POST['fstatus'] : '';
 
-$sql = 'SELECT * FROM `websitelist` WHERE  delete_at IS NULL ';
+$sql = 'SELECT * FROM `websiteList` WHERE  delete_at IS NULL ';
 $where1 = "";
 $where2 = "";
 $where3 = "";
