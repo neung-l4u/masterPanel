@@ -8,7 +8,7 @@ $params["filterShopType"] = !empty($_POST['shopType']) ? $_POST['shopType'] : ''
 $params["filterSystem"] = !empty($_POST['system']) ? $_POST['system'] : '';
 $params["filterStatus"] = !empty($_POST['fstatus']) ? $_POST['fstatus'] : '';
 
-$sql = 'SELECT * FROM `websitelist` WHERE  delete_at IS NULL ';
+$sql = 'SELECT * FROM `websiteList` WHERE  delete_at IS NULL ';
 $where1 = "";
 $where2 = "";
 $where3 = "";
@@ -48,11 +48,8 @@ foreach ($result as $row) {
     
     $data["data"][] = array(
         $i,
-        dash($row["wProject"]),
-        '<small>'.dashAndShort($row["wLocation"]).'</small>',
-        '<small>'.dashAndShort($row["wOwner"]).'</small>',
-        dash($row["wOwnerEmail"]),
-        $btn["URL"]." ".$btn["detail"]." ".$btn["edit"]." ".$btn["delete"]
+        '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail" class="linkDetail">'.dash($row["wProject"]).'</a>',
+        $btn["URL"]." ".$btn["edit"]." ".$btn["delete"]
     );
     $i++;
 }
