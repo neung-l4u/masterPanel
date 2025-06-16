@@ -46,7 +46,7 @@ if ($params ["action"] == "loadUpdate"){
     if($params ["formAction"]=='add'){
         $insert = $db->query('INSERT INTO `passwordmanager`
                                 (`pwName`, `pwLink`, `pwUser`, `pwPass`, `pwType`, `pwTeam`, `pwLevel`, `pwNote`, `pwShare`, `pwCreateBy`) 
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);'
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
             ,$params["inputpwName"],
             $params["inputAccessLink"],
             $params["inputUserName"],
