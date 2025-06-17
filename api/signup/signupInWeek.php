@@ -33,7 +33,7 @@ if ($act = 'newPerWeek') {
         text-align: center;
     }
     table.report {
-       border: 1px solid #999999;
+        border: 1px solid #999999;
         width: 50%;
         margin: auto;
     }
