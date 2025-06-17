@@ -21,8 +21,9 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/css/index.css" rel="stylesheet">
+    <link href="../../../assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/index.js"></script>
-    <title>L4U: You Can Book Me</title>
+    <title>L4U Booking: Home</title>
 </head>
 <body>
 
@@ -38,7 +39,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </div>-->
         <nav class="mb-4" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page">🛖 Home</li>
+                <li class="breadcrumb-item active" aria-current="page"><i class="bi bi-house-fill"></i> Home</li>
             </ol>
         </nav>
     </header>
@@ -48,7 +49,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <a href="bookingStep.php" class="btn btn-primary">Book now</a>
         </div>
         <section style="min-height: 50vh;">
-            <h4>Version 1.0 Alpha Testing</h4>
+            <h4><i class="bi bi-card-list"></i> Version 1.0 Alpha Testing</h4>
             <ul>
                 <li>Save booking information to the database</li>
                 <li>Send confirmation email to customers, sales.</li>
