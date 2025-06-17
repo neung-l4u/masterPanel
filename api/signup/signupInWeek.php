@@ -27,10 +27,30 @@ if ($act = 'newPerWeek') {
 // echo "End date : ".$endDate;
 ?>
 
+<style>
+    h2 {
+        padding: 10px 0 0 0;
+        text-align: center;
+    }
+    table.report {
+       border: 1px solid #999999;
+        width: 50%;
+        margin: auto;
+    }
+    table.report th{
+        background-color:#f2f2f2;
+        border: 1px solid #CCCCCC;
+    }
+    table.report td{
+        border: 1px solid #CCCCCC;
+    }
+
+</style>
+
 <h2><b>**New Signups**</b> (Total:<?php echo $totalSignups; ?> )</h2>
 
-<table cellpadding="10" cellspacing="0" border="1">
-    <tr style="background-color:#f2f2f2" bgcolor="#f2f2f2" >
+<table class="report" cellpadding="10" cellspacing="0">
+    <tr>
         <th style="font-size: 16px;">#</th>
         <th style="font-size: 16px;">Shop</th>
         <th style="font-size: 16px;">Type</th>
@@ -44,7 +64,7 @@ if ($act = 'newPerWeek') {
         $shopName = $dataLogs["ShopName"];
         $customerType = $dataLogs["CustomerType"];
         $country = $dataLogs["Country"];
-        
+
         ?>
         <tr>
             <td style="font-size: 14px;"><?php echo $index++; ?></td>
