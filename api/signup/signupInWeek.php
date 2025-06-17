@@ -52,7 +52,7 @@ if ($act = 'newPerWeek') {
 <table class="report" cellpadding="10" cellspacing="0">
     <tr>
         <th style="font-size: 16px;">#</th>
-        <th style="font-size: 16px;">Shop</th>
+        <th style="font-size: 16px;">Shop Name</th>
         <th style="font-size: 16px;">Type</th>
         <th style="font-size: 16px;">Country</th>
     </tr>
