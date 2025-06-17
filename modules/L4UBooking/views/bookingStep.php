@@ -13,7 +13,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sale Appointment Booking</title>
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="../../../assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="../assets/libs/select2/css/select2.min.css" rel="stylesheet"/>
     <link href="../assets/libs/select2/css/select2-bootstrap-5-theme.min.css" rel="stylesheet"/>
     <link href="../assets/libs/flatpickr/flatpickr.min.css" rel="stylesheet"/>
@@ -169,9 +169,13 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                         <label for="line_id">Line ID</label>
                             <input type="text" id="line_id" name="line_id" class="form-control mb-2" autocomplete="off" placeholder="LINE ID">
                     </div>
-                    <div class="col-4 mb-3">
+                    <div class="col-4">
                         <label for="whatsapp">WhatsApp</label>
                             <input type="text" id="whatsapp" name="whatsapp" class="form-control mb-2" autocomplete="off" placeholder="WhatsApp">
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label for="address">Address</label>
+                        <textarea class="form-control" name="address" id="address" rows="4" placeholder="Address"></textarea>
                     </div>
                 <div class="d-flex flex-row gap-3 mb-3">
                     <button type="button" class="btn btn-secondary" onclick="prevStep(3)"><i class="bi bi-arrow-left-short"></i> Previous</button>
@@ -218,6 +222,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     const contact_phone = $('#contact_phone');
     const line_id = $('#line_id');
     const whatsapp = $('#whatsapp');
+    const address = $('#address');
 
     let appointmentDetail = {};
     let sendEmailPayload = {};
@@ -344,6 +349,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "contact_phone": contact_phone.val(),
             "line_id": line_id.val(),
             "whatsapp": whatsapp.val(),
+            "address": address.val(),
             "formVersion": "1.0.0"
         };
 
@@ -391,6 +397,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "contact_phone": contact_phone.val(),
             "line_id": line_id.val(),
             "whatsapp": whatsapp.val(),
+            "address": address.val(),
             "formVersion": "1.0.0"
         };
 
@@ -526,7 +533,8 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "Email": contact_email.val(),
             "Phone": contact_phone.val(),
             "Line ID": line_id.val() || '-',
-            "WhatsApp": whatsapp.val() || '-'
+            "WhatsApp": whatsapp.val() || '-',
+            "Address": address.val() || '-'
         };
 
         const iconMap = {
@@ -541,7 +549,8 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "Email": "bi-envelope",
             "Phone": "bi-telephone",
             "Line ID": "bi-chat-dots",
-            "WhatsApp": "bi-whatsapp"
+            "WhatsApp": "bi-whatsapp",
+            "Address": "bi-geo-alt-fill"
         };
 
         let html = '';
