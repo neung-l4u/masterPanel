@@ -1,4 +1,4 @@
-<?php
+test_select.php<?php
 require_once '../../assets/db/db.php';
 require_once '../../assets/db/initDB.php';
 ?>
