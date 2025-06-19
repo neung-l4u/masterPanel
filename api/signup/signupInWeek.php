@@ -30,7 +30,7 @@ if ($act = 'newPerWeek') {
 <p><b>**New Signups**</b> (Total:<?php echo $totalSignups; ?> )</p>
 
 <table cellpadding="10" cellspacing="0" border="1">
-    <tr>
+    <tr bgcolor="#f2f2f2">
         <th>#</th>
         <th>Shop Name</th>
         <th>Type</th>
