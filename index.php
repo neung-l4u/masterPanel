@@ -15,8 +15,8 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Master Panel</title>
-    <link rel="stylesheet" href="/assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css'>
     <link rel='stylesheet' href="assets/css/login_form.css?v=1.0.0">
     <script src="https://kit.fontawesome.com/9c38e6ba4e.js" crossorigin="anonymous"></script>
@@ -73,15 +73,6 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <!--<div class="form-outline mb-2">
-                                            <label class="form-label" for="formPassword">Password</label>
-                                            <input type="password" id="formPassword"
-                                                   class="form-control form-control-lg"
-                                                   placeholder="your password here"
-                                                   autocomplete="off"
-                                                   value="<?php /*echo $_COOKIE['pass'] ?? ''; */?>"
-                                            />
-                                        </div>-->
                                         <div class="form-outline mb-5 d-flex justify-content-between gap-2">
                                             <div class="small">
                                                 <input class="form-check-input" type="checkbox" value="true"
@@ -89,9 +80,9 @@
                                                 <label class="form-check-label" for="formRemember"> Remember me </label>
                                             </div>
                                             <div class="small">
-<!--                                                <a href="#">-->
-<!--                                                    Forgot password-->
-<!--                                                </a>-->
+                                                <a href="#">
+                                                    Forgot password
+                                                </a>
                                             </div>
                                         </div>
                                         <div class="pt-1 mb-4">
