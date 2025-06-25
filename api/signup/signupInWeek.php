@@ -53,8 +53,8 @@ if ($act = 'newPerWeek') {
             $customerType = $dataLogs["CustomerType"];
             $country = $dataLogs["Country"];
 
-            if ($dup !== $row["ShopName"]) {
-                $dup = $row["ShopName"];
+            if ($dup !== $shopName) {
+                $dup = $shopName;
             ?>
             <tr style="border: 1px solid;">
                 <td><?php echo $index++; ?></td>
