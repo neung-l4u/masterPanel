@@ -14,11 +14,11 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Master Panel</title>
+    <title>Reset Password</title>
     <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css'>
-    <link rel='stylesheet' href="assets/css/login_form.css?v=1.0.0">
+    <link rel='stylesheet' href="assets/css/login_form.css?v=1.0.1">
     <script src="https://kit.fontawesome.com/9c38e6ba4e.js" crossorigin="anonymous"></script>
     <style>
         #linkViewPassword{
@@ -37,94 +37,70 @@
                 <div class="col col-xl-10">
                     <div class="card" style="border-radius: 1rem;">
                         <div class="row g-0">
-                            <div class="col-md-6 col-lg-5 d-none d-md-block">
-                                <img src="assets/img/marissa-unsplash.jpg"
-                                     alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;"/>
-                            </div>
+
                             <div class="col-md-6 col-lg-7 d-flex align-items-center">
                                 <div class="card-body p-4 p-lg-5 text-black">
                                     <form>
                                         <div class="d-flex align-items-center mb-3 pb-1">
-                                            <img src="assets/img/logo-login2.png" alt="logo"/>
-                                            <span class="h3 fw-light mb-0">L4U Master Panel</span>
+                                            <span class="h3 fw-light mb-0">Reset New Password</span>
                                         </div>
                                         <h5 class="fw-normal mb-3 pb-3 text-uppercase" style="letter-spacing: 1px;">
-                                            Please Sign In
+                                            Email :
                                         </h5>
-                                        <div class="form-outline mb-4" id="formEmail">
-                                            <label class="form-label" for="formUser">Email or Mobile</label>
-                                            <input type="email" id="formUser"
-                                                   class="form-control form-control-lg"
-                                                   placeholder="mail@localforyou.com | 0891234567"
-                                                   autocomplete="off"
-                                                   value="<?php echo $_COOKIE['user'] ?? ''; ?>"
-                                            />
-                                        </div>
-                                        <div class="form-outline mb-4" id="formForgotEmail">
-                                            <label class="form-label" for="inputForgotEmail">Email <small class="text-danger" id="noEmail">The email was not found.</small></label>
-                                            <input type="email" id="inputForgotEmail"
-                                                   class="form-control form-control-lg"
-                                                   placeholder="mail@localforyou.com"
-                                                   value=""
-                                            />
-                                        </div>
+
                                         <div class="form-outline mb-2" id="formPassword">
-                                            <label class="form-label" for="formPassword">Password</label>
+                                            <label class="form-label" for="formPassword">New Password</label>
                                             <div class="input-group mb-3">
                                                 <input type="password" id="formPassword"
                                                        class="form-control form-control-lg"
-                                                       placeholder="your password here"
+                                                       placeholder="New Password"
                                                        autocomplete="off"
-                                                       value="<?php echo $_COOKIE['pass'] ?? ''; ?>">
+                                                       value="">
                                                 <span class="input-group-text" id="basic-addon2">
                                                     <a href="#" id="linkViewPassword" onclick="showPass()"><i class="fa-solid fa-eye"></i></a>
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="form-outline mb-5 d-flex justify-content-between gap-2" >
-                                            <div class="small" id="checkBoxTik">
-                                                <input class="form-check-input" type="checkbox" value="true"
-                                                       id="formRemember" checked/>
-                                                <label class="form-check-label" for="formRemember"> Remember me </label>
-                                            </div>
-                                            <div class="small" id="linkForgotPassword">
-                                                <a href="#" onclick="showForgotPassword();">
-                                                    Forgot password
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="pt-1 mb-4">
-                                            <button class="btn btn-primary btn-lg btn-block w-100 rounded-pill" type="button" id="cmdLogin">
-                                                <span class="d-flex justify-content-between align-items-center pr-5">
-                                                    <span class="w-100 text-right">
-                                                        Login
-                                                    </span>
-                                                    <i class="fa-solid fa-fingerprint"></i>
+                                        <div class="form-outline mb-2" id="formPassword">
+                                            <label class="form-label" for="formPassword">Confirm New Password*</label>
+                                            <div class="input-group mb-3">
+                                                <input type="password" id="formPassword"
+                                                       class="form-control form-control-lg"
+                                                       placeholder="Confirm New Password"
+                                                       autocomplete="off"
+                                                       value="">
+                                                <span class="input-group-text" id="basic-addon2">
+                                                    <a href="#" id="linkViewPassword" onclick="showPass()"><i class="fa-solid fa-eye"></i></a>
                                                 </span>
-                                            </button>
+                                            </div>
                                         </div>
                                         <div class="pt-1 mb-4">
-                                            <button class="btn btn-muted btn-lg btn-block w-20 rounded-pill" type="button" id="backToLogin" onclick="backLogin();">
-                                                <span class="d-flex justify-content-between align-items-between pr-5">
-                                                    <span class="w-100 text-right">
+                                            <button class="btn btn-muted btn-lg btn-block w-10 rounded-pill" type="button" id="cmdLogin">
+                                                <span class="d-flex justify-content-between align-items-center pr-5">
+                                                    <span class="w-10 text-right">
                                                         Cancel
                                                     </span>
                                                 </span>
                                             </button>
-                                            <button class="btn btn-primary btn-lg btn-block w-20 rounded-pill" type="button" id="sendEmail" onclick="checkEmail();">
-                                                <span class="d-flex justify-content-between align-items-between pr-5">
-                                                    <span class="w-100 text-right">
-                                                        Search Email
+                                            <button class="btn btn-secondary btn-lg btn-block w-10 rounded-pill" type="button" id="cmdLogin">
+                                                <span class="d-flex justify-content-between align-items-center pr-5">
+                                                    <span class="w-10 text-right">
+                                                        Change Password
                                                     </span>
                                                 </span>
                                             </button>
 
                                         </div>
+
                                         <div class="pt-1" id="resultText">
                                             <small>&nbsp;</small>
                                         </div>
                                     </form>
                                 </div>
+                            </div>
+                            <div class="col-md-6 col-lg-5 d-none d-md-block">
+                                <img src="assets/img/forgot-password.jpg"
+                                     alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;"/>
                             </div>
                         </div>
                     </div>
@@ -149,12 +125,7 @@
 <script src="https://unpkg.com/@popperjs/core@2.11.5/dist/umd/popper.min.js"></script>
 <script src="assets/js/authentication.js?v=1.0.0"></script>
 <script>
-    $( document ).ready(function() {
-     $("#backToLogin").hide();
-     $("#sendEmail").hide();
-     $("#formForgotEmail").hide();
-     $("#noEmail").hide();
-    });//ready
+
 
 
     function showPass() {
@@ -162,32 +133,6 @@
         input.attr('type') === 'password' ? input.attr('type', 'text') : input.attr('type', 'password');
     }
 
-    function showForgotPassword() {
-        $("#formEmail").hide();
-        $("#formPassword").hide();
-        $("#linkForgotPassword").hide();
-        $("#cmdLogin").hide();
-        $("#checkBoxTik").hide();
-        $("#formForgotEmail").show();
-        $("#inputForgotEmail").focus();
-        $("#backToLogin").show();
-        $("#sendEmail").show();
-
-    }
-
-
-     function backLogin(){
-         $("#formEmail").show();
-         $("#formPassword").show();
-         $("#linkForgotPassword").show();
-         $("#cmdLogin").show();
-         $("#inputForgotEmail").hide();
-         $("#backToLogin").hide();
-         $("#sendEmail").hide();
-         $("#formUser").focus();
-         $("#resultText").html('');
-         $("#checkBoxTik").show();
-    }
 
      function checkEmail (){
         alert("check email");
