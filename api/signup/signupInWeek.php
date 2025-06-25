@@ -27,10 +27,10 @@ if ($act = 'newPerWeek') {
 // echo "End date : ".$endDate;
 ?>
 
-<p><b>**New Signups**</b> (Total:<?php echo $totalSignups; ?> )</p>
+<p style="font: 14px roboto, sans-serif;"><b>**New Signups**</b> (Total:<?php echo $totalSignups; ?> )</p>
 
-<table cellpadding="10" cellspacing="0" border="1">
-    <tr bgcolor="#f2f2f2">
+<table cellpadding="10" cellspacing="0" border="1" style="font: 14px roboto, sans-serif;">
+    <tr style="background-color: #d6e6f4; border: 1px solid;">
         <th>#</th>
         <th>Shop Name</th>
         <th>Type</th>
@@ -53,7 +53,7 @@ if ($act = 'newPerWeek') {
             $country = $dataLogs["Country"];
 
             ?>
-            <tr>
+            <tr style="border: 1px solid;">
                 <td><?php echo $index++; ?></td>
                 <td><?php echo $shopName ?: "-"; ?></td>
                 <td><?php echo $customerType ?: "-"; ?></td>

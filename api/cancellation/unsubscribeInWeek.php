@@ -41,25 +41,25 @@ if ($act == 'newPerWeek') {
 }
 ?>
 
-<p><b>**Unsubscribe**</b> (Total:<?php echo $totalUnsubscribes; ?> )
+<p style="font: 14px roboto, sans-serif;"><b>**Unsubscribe**</b> (Total:<?php echo $totalUnsubscribes; ?> )
 
 </p>
-<table cellpadding="10" cellspacing="0" border="1">
-    <tr style="background-color:#f2f2f2" bgcolor="#f2f2f2" >
-        <th style="font-size: 16px;">#</th>
-        <th style="font-size: 16px;">Shop</th>
-        <th style="font-size: 16px;">Country</th>
-        <th style="font-size: 16px;">Reason</th>
+<table cellpadding="10" cellspacing="0" border="1" style="font: 14px roboto, sans-serif;">
+    <tr style="background-color: #d6e6f4; border: 1px solid;">
+        <th>#</th>
+        <th>Shop Name</th>
+        <th>Reason</th>
+        <th>Country</th>
     </tr>
     <?php
     $index = 1;
     if (!empty($selectQue)) {
         foreach ($selectQue as $row) { ?>
-            <tr>
-                <td style="font-size: 14px;"><?php echo $index++; ?></td>
-                <td style="font-size: 14px;"><?php echo $row["shopname"] ?: "-"; ?></td>
-                <td style="font-size: 14px;"><?php echo $row["county"] ?: "-"; ?></td>
-                <td style="font-size: 14px;"><?php echo ($row["reason"] == "other") ? $row["other"] : $row["reason"]; ?></td>
+            <tr style="border: 1px solid;">
+                <td><?php echo $index++; ?></td>
+                <td><?php echo $row["shopname"] ?: "-"; ?></td>
+                <td><?php echo ($row["reason"] == "other") ? $row["other"] : $row["reason"]; ?></td>
+                <td><?php echo $row["county"] ?: "-"; ?></td>
             </tr>
         <?php }
     } else {
