@@ -49,11 +49,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <a href="bookingStep.php" class="btn btn-primary">Book now</a>
         </div>
         <section style="min-height: 50vh;">
-            <h4><i class="bi bi-card-list"></i> Version 1.0 Alpha Testing</h4>
+            <h4><i class="bi bi-card-list"></i> Version 1.1</h4>
             <ul>
                 <li>Save booking information to the database</li>
                 <li>Send confirmation email to customers, sales.</li>
                 <li>Send a calendar link via email after booking.</li>
+                <li>Reminders three times.</li>
             </ul>
         </section>
     </main>

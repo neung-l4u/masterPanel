@@ -437,21 +437,6 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             90: 'foo.si@localforyou.com'
         };
 
-
-
-/*        const map = {
-            17: 'neung@localforyou.com',
-            18: 'neung@localforyou.com',
-            24: 'neung@localforyou.com',
-            35: 'neung@localforyou.com',
-            38: 'neung@localforyou.com',
-            47: 'neung@localforyou.com',
-            62: 'neung@localforyou.com',
-            72: 'neung@localforyou.com',
-            76: 'neung@localforyou.com',
-            79: 'neung@localforyou.com',
-            84: 'neung@localforyou.com',
-        };*/
         return map[id] || 'administrator@localforyou.com';
     }
 
