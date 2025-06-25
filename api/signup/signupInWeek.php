@@ -45,6 +45,7 @@ if ($act = 'newPerWeek') {
         </tr>
         <?php
     } else {
+        $dup = "";
         foreach ($selectReport as $row) {
 
             $dataLogs = json_decode($row["dataLogs"], true);
@@ -52,6 +53,8 @@ if ($act = 'newPerWeek') {
             $customerType = $dataLogs["CustomerType"];
             $country = $dataLogs["Country"];
 
+            if ($dup !== $row["ShopName"]) {
+                $dup = $row["ShopName"];
             ?>
             <tr style="border: 1px solid;">
                 <td><?php echo $index++; ?></td>
@@ -59,7 +62,8 @@ if ($act = 'newPerWeek') {
                 <td><?php echo $customerType ?: "-"; ?></td>
                 <td><?php echo $country ?: "-"; ?></td>
             </tr>
-        <?php 
+        <?php
+            }//if
         } //foreach
     } //else
 ?>
