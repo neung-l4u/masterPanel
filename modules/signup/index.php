@@ -1140,7 +1140,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 /> 
                                                             </span>
                                                             <small id="domainHelpAU" class="form-text">
-                                                                <a href="https://audomains.localforyou.com/" target="_blank" tabindex="-1" class="text-decoration-none">
+                                                                <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
                                                                     Check Availability
                                                                 </a>
                                                             </small>
@@ -1176,12 +1176,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     </div>
 
                                                     </div>
-                                                    <div class="card-text pt-2">
+                                                    <!-- <div class="card-text pt-2">
                                                         <div class="row">
-                                                            <small>New domain register <b style="color: #ff0000;">password: L4U@2017:)domain</b></small>
+                                                            <small><b>Dreamscape</b><br>
+                                                                <b>U</b>: admin@localforyou.com<br>
+                                                                <b>P</b>: L4U@2017:)domain
+                                                                </b></small>
                                                         </div>
-
-                                                    </div>
+                                                    </div> -->
                                                 </div>
                                             </div>
                                         </div>
