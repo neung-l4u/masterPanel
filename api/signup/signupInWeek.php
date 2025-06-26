@@ -40,9 +40,7 @@ if ($act = 'newPerWeek') {
     $index = 1;
     if ($totalSignups == 0) {
         ?>
-        <tr>
-            <td colspan="4">No items</td>
-        </tr>
+            <tr><td colspan="4">ไม่พบข้อมูลในสัปดาห์นี้</td></tr>
         <?php
     } else {
         $dup = "";
