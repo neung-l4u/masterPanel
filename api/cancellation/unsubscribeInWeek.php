@@ -54,17 +54,23 @@ if ($act == 'newPerWeek') {
     <?php
     $index = 1;
     if (!empty($selectQue)) {
-        foreach ($selectQue as $row) { ?>
+        $dup = "";
+        foreach ($selectQue as $row) { 
+            if ($dup !== $row["shopname"]) {
+                $dup = $row["shopname"];
+            ?>
             <tr style="border: 1px solid;">
                 <td><?php echo $index++; ?></td>
                 <td><?php echo $row["shopname"] ?: "-"; ?></td>
                 <td><?php echo ($row["reason"] == "other") ? $row["other"] : $row["reason"]; ?></td>
                 <td><?php echo $row["county"] ?: "-"; ?></td>
             </tr>
-        <?php }
+        <?php 
+            }//if
+        }//foreach
     } else {
         echo "<tr><td colspan='4'>ไม่พบข้อมูลในสัปดาห์นี้</td></tr>";
-    }
+    }//if
     ?>
 
 </table>
