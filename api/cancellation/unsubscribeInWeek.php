@@ -41,7 +41,7 @@ if ($act == 'newPerWeek') {
 }
 ?>
 
-<p style="font: 14px roboto, sans-serif;"><b>**Unsubscribe**</b> (Total:<?php echo $totalUnsubscribes; ?> )
+<p style="font: 14px roboto, sans-serif;"><b>**Unsubscribe Requests**</b> (Total:<?php echo $totalUnsubscribes; ?> )
 
 </p>
 <table cellpadding="10" cellspacing="0" border="1" style="font: 14px roboto, sans-serif;">
