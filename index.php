@@ -60,15 +60,7 @@
                                                    value="<?php echo $_COOKIE['user'] ?? ''; ?>"
                                             />
                                         </div>
-                                        <div class="form-outline mb-4" id="formForgotEmail">
-                                            <label class="form-label" for="inputForgotEmail">Email <small class="text-danger" id="noEmail">The email was not found.</small></label>
-                                            <input type="email" id="inputForgotEmail"
-                                                   class="form-control form-control-lg"
-                                                   placeholder="mail@localforyou.com"
-                                                   value=""
-                                            />
-                                        </div>
-                                        <div class="form-outline mb-2" id="formPassword">
+                                        <div class="form-outline mb-2" id="oldPassword">
                                             <label class="form-label" for="formPassword">Password</label>
                                             <div class="input-group mb-3">
                                                 <input type="password" id="formPassword"
@@ -88,7 +80,7 @@
                                                 <label class="form-check-label" for="formRemember"> Remember me </label>
                                             </div>
                                             <div class="small" id="linkForgotPassword">
-                                                <a href="#" onclick="showForgotPassword();">
+                                                <a href="sendEmailForgotToMake.php" >
                                                     Forgot password
                                                 </a>
                                             </div>
@@ -103,23 +95,7 @@
                                                 </span>
                                             </button>
                                         </div>
-                                        <div class="pt-1 mb-4">
-                                            <button class="btn btn-muted btn-lg btn-block w-20 rounded-pill" type="button" id="backToLogin" onclick="backLogin();">
-                                                <span class="d-flex justify-content-between align-items-between pr-5">
-                                                    <span class="w-100 text-right">
-                                                        Cancel
-                                                    </span>
-                                                </span>
-                                            </button>
-                                            <button class="btn btn-primary btn-lg btn-block w-20 rounded-pill" type="button" id="sendEmail" onclick="checkEmail();">
-                                                <span class="d-flex justify-content-between align-items-between pr-5">
-                                                    <span class="w-100 text-right">
-                                                        Search Email
-                                                    </span>
-                                                </span>
-                                            </button>
 
-                                        </div>
                                         <div class="pt-1" id="resultText">
                                             <small>&nbsp;</small>
                                         </div>
@@ -134,13 +110,11 @@
     </section>
 </main>
 <footer class="credit">
-    Version 1.2.3 (16.06.2025)<br>
+    Version 1.3.0 (26.06.2025)<br>
     © 2017 Localforyou.com #1 Marketing Agency for Thai Restaurant & Thai Massage
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+<script src="assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
+<script src="assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
 <script src="assets/js/settings.js?v=1.0.0"></script>
 <script src="assets/js/date_format.js?v=1.0.0"></script>
 <script src="assets/js/getUserAgent.js?v=1.0.0"></script>
@@ -149,83 +123,11 @@
 <script src="https://unpkg.com/@popperjs/core@2.11.5/dist/umd/popper.min.js"></script>
 <script src="assets/js/authentication.js?v=1.0.0"></script>
 <script>
-    $( document ).ready(function() {
-     $("#backToLogin").hide();
-     $("#sendEmail").hide();
-     $("#formForgotEmail").hide();
-     $("#noEmail").hide();
-    });//ready
-
 
     function showPass() {
         let input = $("#formPassword");
         input.attr('type') === 'password' ? input.attr('type', 'text') : input.attr('type', 'password');
     }
-
-    function showForgotPassword() {
-        $("#formEmail").hide();
-        $("#formPassword").hide();
-        $("#linkForgotPassword").hide();
-        $("#cmdLogin").hide();
-        $("#checkBoxTik").hide();
-        $("#formForgotEmail").show();
-        $("#inputForgotEmail").focus();
-        $("#backToLogin").show();
-        $("#sendEmail").show();
-
-    }
-
-
-     function backLogin(){
-         $("#formEmail").show();
-         $("#formPassword").show();
-         $("#linkForgotPassword").show();
-         $("#cmdLogin").show();
-         $("#inputForgotEmail").hide();
-         $("#backToLogin").hide();
-         $("#sendEmail").hide();
-         $("#formUser").focus();
-         $("#resultText").html('');
-         $("#checkBoxTik").show();
-    }
-
-     function checkEmail (){
-        alert("check email");
-
-         const email = $("#inputForgotEmail").val();
-         const action = "checkEmail";
-
-         $.ajax({
-             url: "api/masterpanel/login/actionCheckPassword.php",
-             method: "POST",
-             dataType: "json",
-             data: {
-                 act: action,
-                 email: email
-             }
-         })
-             .done(function(res) {
-                 console.log("Response:", res);
-                 if (res.status === "found") {
-                     $("#noEmail").hide();
-                     $("#resultText").html(`<small class="text-success">Email Correct: ${res.sEmail}</small>`);
-
-
-                     $Email = res.sEmail;
-
-                 } else {
-                     $("#noEmail").show();
-                 }
-
-
-
-             })
-             .fail(function(xhr, status, error) {
-                 alert("Failed to send email.");
-                 console.log("AJAX Error", status, error);
-             });
-     }
-
 
 </script>
 </body>

@@ -1,8 +1,8 @@
 <?php
 global $db;
 session_start();
-include '../../../assets/db/db.php';
-include "../../../assets/db/initDB.php";
+include '../../assets/db/db.php';
+include "../../assets/db/initDB.php";
 
 
 
