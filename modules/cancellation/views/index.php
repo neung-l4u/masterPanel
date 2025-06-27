@@ -62,6 +62,7 @@ $testMode = ($id == "test") ? 1 : 0;
                                         <option value="TH">Thailand</option>
                                     </select>
                                 </div>
+                                <?php if ($id == "test"){ echo "<div><input type='hidden' name='testMode' id='testMode' value='1'></div>"; }  ?>
 
                                 <div class="form-group pt-2">
                                     <label for="shopName">Shop name <b class="red">*</b> <small class="text-danger warningText" id="smallShopName">Please check the message.</small></label>

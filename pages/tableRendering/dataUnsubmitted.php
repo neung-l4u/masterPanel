@@ -5,7 +5,7 @@ include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
 
-$result = $db->query('SELECT `id`, `county`, `city`, `shopname`, `trading`, `address`, `state`, `zip`, `firstname`, `lastname`, `mobile`, `email`, `other`, `reason`, `lastdate`, `feedback`, `timestamp` FROM Cancellation')->fetchAll();
+$result = $db->query('SELECT `id`, `county`, `city`, `shopname`, `trading`, `address`, `state`, `zip`, `firstname`, `lastname`, `mobile`, `email`, `other`, `reason`, `lastdate`, `feedback`, `timestamp` FROM Cancellation WHERE test = 0')->fetchAll();
 
 $data = array("data"=> array());
 foreach ($result as $row) {
