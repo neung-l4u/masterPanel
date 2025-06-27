@@ -780,7 +780,7 @@ function requestToPay() {
             $(done).appendTo(".paymentResult");
             $(cusID).appendTo(".paymentResult");
             genLinkPDF();
-            sendMailToL4UTeam();
+            //sendMailToL4UTeam();
             modalRespondAction('open', 'success');
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
@@ -851,10 +851,6 @@ const sendMailToL4UTeam = () => {
         cuisineSelected.push($(this).val());
     });
     let txtCuisine = cuisineSelected.join();
-
-
-
-
 
     ///////////////////////////////
 
@@ -1040,6 +1036,8 @@ const saveToDB = (stripePayload) => {
         shopAgent = $("#otherAgent").val();
     }
 
+    let CheckedBoxTestmailValue = $("#CheckedBoxTestmail").is(':checked') ? $("#CheckedBoxTestmail").val() : 0;
+
     let payload = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
@@ -1144,7 +1142,8 @@ const saveToDB = (stripePayload) => {
             "stripePayload" : stripePayload,
             "payload" : payload,
             "country" : Country,
-            "contractURL" : contractURL
+            "contractURL" : contractURL,
+            "testMail" : CheckedBoxTestmailValue
         }
     });
 
@@ -1281,7 +1280,7 @@ const createLogs = (stripePayload) => {
         formPOSUsing: $("#posSystem").val(),
         formPOSUsingOther: $("#posOtherDate").val(),
         formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
-        formYesPOSProvider: $("#endDatePOS").val(),
+        formYesPOSProvider: $("#endDatePOS").val()
     };
 // TODO : Build Logs File
     const ajaxSendLog = $.ajax({

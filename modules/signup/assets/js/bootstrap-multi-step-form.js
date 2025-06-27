@@ -328,8 +328,8 @@ $('#formCountry').change(function() {
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
       domainHelpAU.show();
       domainHelpUS.hide();
-      iconDomain.show();
-      iconPlay.show();
+      iconDomain.hide();
+      iconPlay.hide();
       break;
     case "NZ":
       labelBusinessNumber.html("NZBN");
@@ -353,8 +353,8 @@ $('#formCountry').change(function() {
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
       domainHelpAU.show();
       domainHelpUS.hide();
-      iconDomain.show();
-      iconPlay.show();
+      iconDomain.hide();
+      iconPlay.hide();
       break;
     case "UK":
       inputBusinessNumber.attr('required', true);
@@ -377,8 +377,8 @@ $('#formCountry').change(function() {
       getProductList("UK");
       domainHelpAU.show();
       domainHelpUS.hide();
-      iconDomain.show();
-      iconPlay.show();
+      iconDomain.hide();
+      iconPlay.hide();
       break;
     case "CA":
       inputBusinessNumber.attr('required', true);

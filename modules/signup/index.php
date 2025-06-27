@@ -1140,7 +1140,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 /> 
                                                             </span>
                                                             <small id="domainHelpAU" class="form-text">
-                                                                <a href="https://audomains.localforyou.com/" target="_blank" tabindex="-1" class="text-decoration-none">
+                                                                <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
                                                                     Check Availability
                                                                 </a>
                                                             </small>
@@ -1151,7 +1151,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 </a>
                                                             </small>
 
-                                                            <span id="iconDomain" class="mytooltip tooltip-effect-1">
+                                                            <!-- <span id="iconDomain" class="mytooltip tooltip-effect-1">
                                                                 <span id="iconDomain" class="tooltip-item">
                                                                     <a href="https://reseller.ds.network/home/login/" target="_blank" title="Login Domain">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"></path><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"></path></svg>
@@ -1169,19 +1169,21 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                                                     <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445"/>
                                                                 </svg>
-                                                            </a>
+                                                            </a> -->
 
                                                         </div>
 
                                                     </div>
 
                                                     </div>
-                                                    <div class="card-text pt-2">
+                                                    <!-- <div class="card-text pt-2">
                                                         <div class="row">
-                                                            <small>New domain register <b style="color: #ff0000;">password: L4U@2017:)domain</b></small>
+                                                            <small><b>Dreamscape</b><br>
+                                                                <b>U</b>: admin@localforyou.com<br>
+                                                                <b>P</b>: L4U@2017:)domain
+                                                                </b></small>
                                                         </div>
-
-                                                    </div>
+                                                    </div> -->
                                                 </div>
                                             </div>
                                         </div>

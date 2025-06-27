@@ -1,0 +1,72 @@
+<?php
+require_once '../../assets/db/db.php';
+require_once '../../assets/db/initDB.php';
+$act = $_GET['act'];
+$day = $_GET["day"];
+
+$obj_day = new DateTime($day);
+$dateIndex = $obj_day->format('w');
+
+$endDate = 6-$dateIndex;
+
+$obj_startDate = new DateTime($day);
+$startDate = $obj_startDate->modify("-$dateIndex day")->format('Y-m-d 00:00:00');
+
+$obj_endDate = new DateTime($day);
+$endDate = $obj_endDate->modify("+$endDate days")->format('Y-m-d 23:59:59');
+
+if ($act = 'newPerWeek') {
+    $updateReport = $db->query('UPDATE logssignup SET gen_report = 1, reported_at = NOW() WHERE createAt BETWEEN ? AND ? ;', $startDate, $endDate);
+    $selectReport = $db->query('SELECT dataLogs FROM logssignup WHERE createAt BETWEEN ? AND ? AND test = 0 ORDER BY createAt ASC;', $startDate, $endDate)->fetchAll();
+    $totalSignups = count($selectReport);
+}
+
+// echo "Date : ".$day."<br>";
+// echo "Index : ".$dateIndex."<br>";
+// echo "Start date : ".$startDate."<br>";
+// echo "End date : ".$endDate;
+?>
+
+<p style="font: 14px roboto, sans-serif;"><b>**New Signups**</b> (Total:<?php echo $totalSignups; ?> )</p>
+
+<table cellpadding="10" cellspacing="0" border="1" style="font: 14px roboto, sans-serif;">
+    <tr style="background-color: #d6e6f4; border: 1px solid;">
+        <th>#</th>
+        <th>Shop Name</th>
+        <th>Type</th>
+        <th>Product</th>
+        <th>Country</th>
+    </tr>
+<?php
+    $index = 1;
+    if ($totalSignups == 0) {
+        ?>
+            <tr><td colspan="4">ไม่พบข้อมูลในสัปดาห์นี้</td></tr>
+        <?php
+    } else {
+        $dup = "";
+        foreach ($selectReport as $row) {
+
+            $dataLogs = json_decode($row["dataLogs"], true);
+            $shopName = $dataLogs["ShopName"];
+            $customerType = $dataLogs["CustomerType"];
+            $product = $dataLogs["MainProduct"];
+            $country = $dataLogs["Country"];
+
+            if ($dup !== $shopName) {
+                $dup = $shopName;
+            ?>
+            <tr style="border: 1px solid;">
+                <td><?php echo $index++; ?></td>
+                <td><?php echo $shopName ?: "-"; ?></td>
+                <td><?php echo $customerType ?: "-"; ?></td>
+                <td><?php echo $product ?: "-"; ?></td>
+                <td><?php echo $country ?: "-"; ?></td>
+            </tr>
+        <?php
+            }//if
+        } //foreach
+    } //else
+?>
+</table>
+

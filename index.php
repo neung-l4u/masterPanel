@@ -15,10 +15,10 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Master Panel</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css'>
-    <link rel='stylesheet' href="assets/css/login_form.css">
+    <link rel='stylesheet' href="assets/css/login_form.css?v=1.0.0">
     <script src="https://kit.fontawesome.com/9c38e6ba4e.js" crossorigin="anonymous"></script>
     <style>
         #linkViewPassword{
@@ -51,7 +51,7 @@
                                         <h5 class="fw-normal mb-3 pb-3 text-uppercase" style="letter-spacing: 1px;">
                                             Please Sign In
                                         </h5>
-                                        <div class="form-outline mb-4">
+                                        <div class="form-outline mb-4" id="formEmail">
                                             <label class="form-label" for="formUser">Email or Mobile</label>
                                             <input type="email" id="formUser"
                                                    class="form-control form-control-lg"
@@ -60,7 +60,7 @@
                                                    value="<?php echo $_COOKIE['user'] ?? ''; ?>"
                                             />
                                         </div>
-                                        <div class="form-outline mb-2">
+                                        <div class="form-outline mb-2" id="oldPassword">
                                             <label class="form-label" for="formPassword">Password</label>
                                             <div class="input-group mb-3">
                                                 <input type="password" id="formPassword"
@@ -73,25 +73,16 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <!--<div class="form-outline mb-2">
-                                            <label class="form-label" for="formPassword">Password</label>
-                                            <input type="password" id="formPassword"
-                                                   class="form-control form-control-lg"
-                                                   placeholder="your password here"
-                                                   autocomplete="off"
-                                                   value="<?php /*echo $_COOKIE['pass'] ?? ''; */?>"
-                                            />
-                                        </div>-->
-                                        <div class="form-outline mb-5 d-flex justify-content-between gap-2">
-                                            <div class="small">
+                                        <div class="form-outline mb-5 d-flex justify-content-between gap-2" >
+                                            <div class="small" id="checkBoxTik">
                                                 <input class="form-check-input" type="checkbox" value="true"
                                                        id="formRemember" checked/>
                                                 <label class="form-check-label" for="formRemember"> Remember me </label>
                                             </div>
-                                            <div class="small">
-<!--                                                <a href="#">-->
-<!--                                                    Forgot password-->
-<!--                                                </a>-->
+                                            <div class="small" id="linkForgotPassword">
+                                                <a href="sendEmailForgotToMake.php" >
+                                                    Forgot password
+                                                </a>
                                             </div>
                                         </div>
                                         <div class="pt-1 mb-4">
@@ -104,6 +95,7 @@
                                                 </span>
                                             </button>
                                         </div>
+
                                         <div class="pt-1" id="resultText">
                                             <small>&nbsp;</small>
                                         </div>
@@ -118,13 +110,11 @@
     </section>
 </main>
 <footer class="credit">
-    Version 1.2.3 (16.06.2025)<br>
+    Version 1.3.0 (26.06.2025)<br>
     © 2017 Localforyou.com #1 Marketing Agency for Thai Restaurant & Thai Massage
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+<script src="assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
+<script src="assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
 <script src="assets/js/settings.js?v=1.0.0"></script>
 <script src="assets/js/date_format.js?v=1.0.0"></script>
 <script src="assets/js/getUserAgent.js?v=1.0.0"></script>
@@ -133,10 +123,12 @@
 <script src="https://unpkg.com/@popperjs/core@2.11.5/dist/umd/popper.min.js"></script>
 <script src="assets/js/authentication.js?v=1.0.0"></script>
 <script>
+
     function showPass() {
         let input = $("#formPassword");
         input.attr('type') === 'password' ? input.attr('type', 'text') : input.attr('type', 'password');
     }
+
 </script>
 </body>
 </html>
