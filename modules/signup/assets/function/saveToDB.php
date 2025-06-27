@@ -14,14 +14,15 @@ $dataLogs = !empty($_POST["payload"]) ? $_POST["payload"] : null;
 $dataStripe = !empty($_POST["stripePayload"]) ? $_POST["stripePayload"] : null;
 $country = !empty($_POST["country"]) ? $_POST["country"] : null;
 $contractURL = !empty($_POST["contractURL"]) ? $_POST["contractURL"] : null;
+$testMode = !empty($_POST["testMail"]) ? $_POST["testMail"] : 0;
 
 $dataLogs = json_encode($dataLogs);
 $dataStripe = json_encode($dataStripe);
 $status = 1;
 $signupBy = !empty($_SESSION['id']) ? $_SESSION['id'] : 0;
 
-$logsToDB =  $db->query('INSERT INTO `logssignup`(`dataLogs`, `dataStripe`, `dataContract`, `countryCode`, `status`, `createAt`, `createBy`) VALUES (?,?,?,?,?,?,?)'
-    , $dataLogs, $dataStripe, $contractURL, $country, $status, $timestamp, $signupBy );
+$logsToDB =  $db->query('INSERT INTO `logssignup`(`dataLogs`, `dataStripe`, `dataContract`, `countryCode`, `status`, `test`, `createAt`, `createBy`) VALUES (?,?,?,?,?,?,?,?)'
+    , $dataLogs, $dataStripe, $contractURL, $country, $status, $testMode, $timestamp, $signupBy );
 
 
 $result["result"] = "success";

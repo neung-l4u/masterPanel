@@ -17,7 +17,7 @@ $endDate = $obj_endDate->modify("+$endDate days")->format('Y-m-d 23:59:59');
 
 if ($act = 'newPerWeek') {
     $updateReport = $db->query('UPDATE logssignup SET gen_report = 1, reported_at = NOW() WHERE createAt BETWEEN ? AND ? ;', $startDate, $endDate);
-    $selectReport = $db->query('SELECT dataLogs FROM logssignup WHERE createAt BETWEEN ? AND ? ORDER BY createAt ASC;', $startDate, $endDate)->fetchAll();
+    $selectReport = $db->query('SELECT dataLogs FROM logssignup WHERE createAt BETWEEN ? AND ? AND test = 0 ORDER BY createAt ASC;', $startDate, $endDate)->fetchAll();
     $totalSignups = count($selectReport);
 }
 
