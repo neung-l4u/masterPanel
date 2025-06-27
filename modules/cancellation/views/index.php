@@ -62,6 +62,7 @@ $testMode = ($id == "test") ? 1 : 0;
                                         <option value="TH">Thailand</option>
                                     </select>
                                 </div>
+                                <?php if ($id == "test"){ echo "<div><input type='hidden' name='testMode' id='testMode' value='1'></div>"; }  ?>
 
                                 <div class="form-group pt-2">
                                     <label for="shopName">Shop name <b class="red">*</b> <small class="text-danger warningText" id="smallShopName">Please check the message.</small></label>
@@ -237,7 +238,6 @@ $testMode = ($id == "test") ? 1 : 0;
                                             <option value="NO longer want online ordering">NO longer want online ordering</option>
                                             <option value="Cost too much">Cost too much</option>
                                             <option value="Found something better">Found something better</option>
-                                            <option value="COVID-19 (Closed the Shop, will not be re-opening) ">COVID-19 (Closed the Shop, will not be re-opening) </option>
                                             <option value="other">Other</option>
                                         </select>
                                     </div>
