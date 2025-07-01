@@ -349,17 +349,19 @@ function getProductList(country) {
                     'Flyers A6 (US 5` x 7`) x 2,000' : 'addonFlyers',
                     'Flyers A6 (US 5` x 7`) x 5,000' : 'addonFlyers',
                     'Flyers A6 (US 5` x 7`) x 10,000' : 'addonFlyers',
-                    'Fridge Magnet x 500' : 'addonFridgeMagnet',
-                    'Fridge Magnet x 1,000' : 'addonFridgeMagnet',
-                    'Fridge Magnet x 2,000' : 'addonFridgeMagnet',
-                    'Fridge Magnet x 4,000' : 'addonFridgeMagnet',
-                    'Adv Promo' : 'addonAdvPromo',
-                    'Social Media Management' : 'addonSocialMedia',
-                    'Influencer Package' : 'addonInfluencer',
-                    'Dine-in Dual Online Ordering System' : 'addonDineInDual',
+                    'Fridge Magnet x 500 pcs' : 'addonFridgeMagnet',
+                    'Fridge Magnet x 1,000 pcs' : 'addonFridgeMagnet',
+                    'Fridge Magnet x 2,000 pcs' : 'addonFridgeMagnet',
+                    'Fridge Magnet x 4,000 pcs' : 'addonFridgeMagnet',
                     'Menu / Massage Pricing Design' : 'addonPricingDesign',
-                    'Website Makeover / Build' : 'addonWebsiteMakeover',
-                    'Website Hosting + Email included' : 'addonWebsiteHosting'
+                    'Dine-In Dual Online Ordering System' : 'addonDineInDual',
+                    'Promotions Add-on' : 'addonAdvPromo',
+                    'Mob App' : 'addonMobApp',
+                    'Website Hosting + Email included' : 'addonWebsiteHosting',
+                    'Social Media Management' : 'addonSocialMedia',
+                    'Website Makeover/ Build template customize' : 'addWebsiteMakeoverTemplate',
+                    'Website Makeover/ Build fully customize' : 'addWebsiteMakeoverFully',
+                    'Influencer Package' : 'addonInfluencer'
                 }
 
                 // ถ้าเป็น Website Hosting ให้ใส่ class ไว้ จะเอาไว้เลือก Auto จาก package อื่น
@@ -750,7 +752,6 @@ function requestToPay() {
                 setTimeout(function () {
                     genLinkPDF();
                     modalRespondAction('open', 'success');
-                    sendMail();
                     sendMailToL4UTeam();
                 }, 1000);
             } else {
@@ -780,7 +781,7 @@ function requestToPay() {
             $(done).appendTo(".paymentResult");
             $(cusID).appendTo(".paymentResult");
             genLinkPDF();
-            //sendMailToL4UTeam();
+            sendMailToL4UTeam();
             modalRespondAction('open', 'success');
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
@@ -789,7 +790,7 @@ function requestToPay() {
 
 }//function
 
-const sendMail = () => {
+/*const sendMail = () => {
 
     let sendMailPayload = {
         "mode" : "confirm",
@@ -798,7 +799,7 @@ const sendMail = () => {
         "acceptAutoPilot" : $("input[name=acknowledgeAI]:checked").val(),
         "email" : $("#email").val()
     }
-// TODO : Send Email to Customer
+
     const ajaxMailToCustomer = $.ajax({
         url: "https://hook.us1.make.com/2nm9tihm27otcavx7ftvafpmjlmasigo",
         method: 'POST',
@@ -818,7 +819,8 @@ const sendMail = () => {
         console.log(status + ': ' + error);
         return false;
     });
-}//sendMail
+}*/
+//sendMail
 
 const sendMailToL4UTeam = () => {
 
@@ -872,15 +874,31 @@ const sendMailToL4UTeam = () => {
         formRefShop: $("#byRestaurant").val(),
         formFirstTimePayment: $("#firstTimePayment").val(),
         formPaymentMethod: $("#paymentMethod").val(),
-        formFlyer: $("#initAddOnPrintedFlyers").val(),
-        formDineIn: $("#initAddOnDineInSystem").val(),
-        formMagnet: $("#initAddOnFridgeMagnet").val(),
-        formSocialMedia: $("#initAddOnSocialMediaPosts").val(),
-        formMenuDesign: $("#initAddOnDigitalMenuDesign").val(),
-        formWebsiteMakeOver: $("#initAddOnWebsiteMakeOver").val(),
-        formADVPromo: $("#initAddOnAdvPromo").val(),
-        formWebHosting: $("#initAddOnWebHosting").val(),
-        formInfluencer: $("#initAddOnInfluencer").val(),
+
+        addonFlyer: $("input:checkbox[name='addonFlyers']:checked").val(),
+        addonFridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
+        addonDigitalMenu: $("input:checkbox[name='addonPricingDesign']:checked").val(),
+        addonDineInDual: $("input:checkbox[name='addonDineInDual']:checked").val(),
+        addonAdvPromo: $("input:checkbox[name='addonAdvPromo']:checked").val(),
+        addonMobApp: $("input:checkbox[name='addonMobApp']:checked").val(),
+        addonWebsiteHosting: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
+        addonSocialMedia: $("input:checkbox[name='addonSocialMedia']:checked").val(),
+        addonWebsiteMakeoverTemplate: $("input:checkbox[name='addWebsiteMakeoverTemplate']:checked").val(),
+        addonWebsiteMakeoverFully: $("input:checkbox[name='addWebsiteMakeoverFully']:checked").val(),
+        addonInfluencer: $("input:checkbox[name='addonInfluencer']:checked").val(),
+
+
+
+        // formFlyer: $("#initAddOnPrintedFlyers").val(),
+        // formDineIn: $("#initAddOnDineInSystem").val(),
+        // formMagnet: $("#initAddOnFridgeMagnet").val(),
+        // formSocialMedia: $("#initAddOnSocialMediaPosts").val(),
+        // formMenuDesign: $("#initAddOnDigitalMenuDesign").val(),
+        // formWebsiteMakeOver: $("#initAddOnWebsiteMakeOver").val(),
+        // formADVPromo: $("#initAddOnAdvPromo").val(),
+        // formWebHosting: $("#initAddOnWebHosting").val(),
+        // formInfluencer: $("#initAddOnInfluencer").val(),
+
         formCustomerType: $("#formType option:selected").text(),
         formShopName: $("#shopName").val(),
         formCountry: $("#formCountry option:selected").text(),
