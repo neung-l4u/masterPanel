@@ -98,11 +98,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                         <option value="CA">Canada</option>
                         <option value="TH">Thailand</option>
                     </select>
-<!--                    Timezone: <span id="timeZone" class="text-primary timeZone">-</span>-->
-                    <label for="timezone">Select Timezone <span class="red">*</span></label>
-                    <select id="timezone" name="timezone" class="form-select mb-3" style="width: 400px;">
-                        <option value="">-- Please Select --</option>
-                    </select>
+                    Timezone: <span id="timeZone" class="text-primary timeZone">-</span>
                 </div>
                 <div class="d-flex flex-column justify-content-start align-items-start mb-3">
                     <div class="mt-2">
@@ -321,25 +317,6 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         date.on('change', updateThaiTimePreview);
         time.on('change', updateThaiTimePreview);
 
-        const countryToTimezones = {
-            AU: ["Australia/Sydney", "Australia/Brisbane", "Australia/Perth"],
-            US: ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles"],
-            CA: ["America/Toronto", "America/Vancouver"],
-            UK: ["Europe/London"],
-            NZ: ["Pacific/Auckland"],
-            TH: ["Asia/Bangkok"]
-        };
-
-        country.on('change', function () {
-            const zones = countryToTimezones[country.val()] || [];
-            const timezoneSelect = $('#timezone');
-            timezoneSelect.empty().append(`<option value="">-- Please Select --</option>`);
-            zones.forEach(zone => {
-                timezoneSelect.append(`<option value="${zone}">${zone}</option>`);
-            });
-            timeZone.text(zones[0] || '-');
-        });
-
     });//ready
 
     function nextStep(step) {
@@ -363,7 +340,6 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "shop_type_id": shop_type.val(),
             "shop_type": $("#shop_type option:selected").text(),
             "country": country.val(),
-            "timezone": $('#timezone').val(),
             "city": city.val(),
             "date": date.val(),
             "time": time.val(),
@@ -407,7 +383,6 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "staff_nickname": getNickname($("#sales option:selected").text()),
             "shop_type": $("#shop_type option:selected").text(),
             "country": country.val(),
-            "timezone": $('#timezone').val(),
             "city": city.val(),
             "startDate": date.val(),
             "startTime": time.val(),
@@ -450,7 +425,6 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
 
     function getStaffEmail(id) {
         const map = {
-            1: 'neung@localforyou.com',
             17: 'boom@localforyou.com',
             24: 'honey@localforyou.com',
             35: 'pluem@localforyou.com',
@@ -538,7 +512,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "City": city.val() || '-',
             "Salesperson": $("#sales option:selected").text(),
             "Date": date.val(),
-            "Time": `(${country.val()}) ${time.val().substring(0, 5)} = ${getThaiTimeText(date.val(), time.val())}`,
+            "Time": `(${country.val()}) ${time.val().substring(0, 5)} = ${getThaiTimeText(date.val(), time.val(), country.val())}`,
             "Shop Name": shop_name.val(),
             "Customer Name": customer_name.val(),
             "Email": contact_email.val(),
@@ -588,11 +562,15 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     }
 
 
-    function getThaiTimeText(dateStr, timeStr) {
+    function getThaiTimeText(dateStr, timeStr, countryCode) {
         try {
-            const selectedZone = $('#timezone').val() || 'Asia/Bangkok';
-            const local = luxon.DateTime.fromISO(`${dateStr}T${timeStr}`, { zone: selectedZone });
-            const thai = local.setZone('Asia/Bangkok');
+            const targetZone = timeZoneMap[countryCode] || 'Asia/Bangkok';
+            const thaiZone = 'Asia/Bangkok';
+
+            const datetimeStr = `${dateStr}T${timeStr}`;
+            const local = luxon.DateTime.fromISO(datetimeStr, { zone: targetZone });
+            const thai = local.setZone(thaiZone);
+
             return `(TH) : ${thai.toFormat('HH:mm')}`;
         } catch (e) {
             return '-';
