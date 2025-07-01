@@ -3,7 +3,7 @@ global $db;
 session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
-include "../../assets/php/shareFunction.php";
+include_once "../../assets/php/shareFunction.php";
 
 $result = $db->query('SELECT pj.saveFlag, pj.projectID, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, s.sNickName AS "owner", c.name AS "countryName", c.code AS "countryCode", pj.projectTimestamp, 
                                    pd.home AS "homePage", pd.about AS "aboutPage", pd.services AS "servicesPage", pd.contact AS "contactPage", s.sNickName AS "PO", pj.updateAt AS "updateAt"
