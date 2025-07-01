@@ -35,22 +35,17 @@ $holidays = [];
 $data = array("data"=> array());
 
 foreach ($result as $row) {
-    // $data = $row["data"];
-    // $shortData = shorten($data, 10);
 
-    $submitDate = $row["updateAt"];
-    $startDate = date('Y-m-d', strtotime($submitDate));
-    //$dueDate = addBusinessDays($submitDate, $businessDaysToAdd, $holidays);
-    $dueDate = calculateDueDate($startDate);
+    $submitDate = $row["projectTimestamp"];
 
-    $temPage = ($row["shopType"] === "Restaurant") ? 'Restaurant' : 'Massage';
-    $temPage = $temPage." ".$row["selectedTemplate"];
+    $shopType = ($row["shopType"] === "Restaurant") ? 'Restaurant' : 'Massage';
+    $template = $shopType." ".$row["selectedTemplate"];
 
     $details = '<a href="pages/tpSubmittedDetails.php?projectID='.$row["projectID"].'" target="_blank"><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" class="mr-3" height="1.2em" version="1.1" viewBox="0 0 100 99.7"><path d="M80,47.3c-2.4,0-4.4,2-4.4,4.4v37.1H11.2V24.4h37.1c2.4,0,4.4-2,4.4-4.4s-2-4.4-4.4-4.4H6.9c-2.4,0-4.4,2-4.4,4.4v73.1c0,2.4,2,4.4,4.4,4.4h73.1c2.4,0,4.4-2,4.4-4.4v-41.5c0-2.4-2-4.3-4.4-4.3Z"/><path d="M93.1,2.5h-26.3c-2.4,0-4.4,2-4.4,4.4s2,4.4,4.4,4.4h15.8l-45,45c-1.7,1.7-1.7,4.5,0,6.2s2,1.3,3.1,1.3,2.2-.4,3.1-1.3l45-45v15.8c0,2.4,2,4.4,4.4,4.4s4.4-2,4.4-4.4V6.9c-.1-2.4-2.1-4.4-4.5-4.4Z"/></a>' ;
 
         $data["data"][] = array(
         $submitDate,
-        $temPage,
+        $template,
         $row["countryCode"]." : ". $row["projectName"],
         $details,
         $row["PO"]
