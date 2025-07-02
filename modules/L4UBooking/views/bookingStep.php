@@ -353,11 +353,12 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     }
 
     function sendEmail() {
+        const selectedSale = $("#sales option:selected");
         sendEmailPayload = {
             "staff_id": sales.val(),
             "staff_email": getStaffEmail(sales.val()),
-            "staff_name": $("#sales option:selected").text(),
-            "staff_nickname": getNickname($("#sales option:selected").text()),
+            "staff_name": selectedSale.text(),
+            "staff_nickname": getNickname(selectedSale.text()),
             "created_by": "1",
             "shop_type_id": shop_type.val(),
             "shop_type": $("#shop_type option:selected").text(),
@@ -400,10 +401,11 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     }//sendEmail
 
     function bookCalendar() {
+        const selectedSale = $("#sales option:selected");
         appointmentDetail = {
             "staff_email": getStaffEmail(sales.val()),
-            "staff_name": $("#sales option:selected").text(),
-            "staff_nickname": getNickname($("#sales option:selected").text()),
+            "staff_name": selectedSale.text(),
+            "staff_nickname": getNickname(selectedSale.text()),
             "shop_type": $("#shop_type option:selected").text(),
             "country": country.val(),
             "timezone": $('#timezone').val(),
@@ -514,9 +516,10 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         const selectedCountry = country.val();
         const selectedDate = date.val();
         const selectedTime = time.val();
+        const thTimePreview = $('#thTimePreview');
 
         if (!selectedCountry || !selectedDate || !selectedTime) {
-            $('#thTimePreview').text('');
+            thTimePreview.text('');
             return;
         }
 
@@ -527,7 +530,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
 
         const thaiFormatted = dateTimeInThaiTZ.toFormat("HH:mm (ccc dd MMM)");
 
-        $('#thTimePreview').text(`⏰ BKK: ${thaiFormatted}`);
+        thTimePreview.text(`⏰ BKK: ${thaiFormatted}`);
     }
 
     function showReview() {
