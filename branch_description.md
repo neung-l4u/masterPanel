@@ -1,3 +1,12 @@
+>250526  mark/feature/logStripeRes
+>- เพิ่ม field เก็บ log response ของ Stripe
+
+>250526 mark/feature/ITSeeAll
+>- ปรับ Datatable หน้า Projects ให้ IT เห็นทุกโปรเจค
+
+>250526 mark/feature/signupFlagTest
+>- เพิ่ม field test ใน signup log เพื่อ filter
+
 >250526 mark/feature/timeOff
 >- ทำฟอร์มการลาของ part-time
 
