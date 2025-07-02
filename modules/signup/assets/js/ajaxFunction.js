@@ -713,7 +713,6 @@ function requestToPay() {
         "account_number": account_number
     };
 
-    saveToDB(stripePayload);
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -736,7 +735,10 @@ function requestToPay() {
         });
 
         reqPay.done(function (res) {
+
             console.log(res);
+
+            let stripeRes = JSON.stringify(res);
 
             if (res.message === "Success") {
                 result.empty();
@@ -749,6 +751,9 @@ function requestToPay() {
                 } else {
                     customerStripeID.val(res.customer_id);
                 }
+                
+                saveToDB(stripePayload, stripeRes);
+
                 setTimeout(function () {
                     genLinkPDF();
                     modalRespondAction('open', 'success');
@@ -760,18 +765,25 @@ function requestToPay() {
                 $(fail).appendTo(".paymentResult");
                 res.message = "Payment step is fail"
                 alert("Payment step is fail");
+
+                saveToDB(stripePayload, stripeRes);
             }
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
+
             return res.message;
         });
 
         reqPay.fail(function (xhr, status, error) {
+            //console.log(xhr.responseText);
             console.log("ajax request Payment fail!!");
             console.log(status + ': ' + error);
             modalRespondAction('open', 'fail');
             result.html("");
             $("#cmdSubmit").removeClass("btn-outline-info").addClass("btn-outline-success").prop("disabled", false);
             $("#paymentSubmit").prop('disabled', false);
+
+            let stripeRes = xhr.responseText;
+            saveToDB(stripePayload, stripeRes);
             return res.message;
         });
     }else{ //submit without a charge
@@ -1029,7 +1041,7 @@ const sendMailToL4UTeam = () => {
 
 }//sendMail
 // TODO : Build Logs File to DB by Mark
-const saveToDB = (stripePayload) => {
+const saveToDB = (stripePayload, stripeRes) => {
     genLinkPDF();
     const agreementGenerated = $("#agreementGenerated");
     let contractURL = agreementGenerated.val();
@@ -1171,7 +1183,8 @@ const saveToDB = (stripePayload) => {
             "payload" : payload,
             "country" : Country,
             "contractURL" : contractURL,
-            "testMail" : CheckedBoxTestmailValue
+            "testMail" : CheckedBoxTestmailValue,
+            "stripeRes" : stripeRes
         }
     });
 
