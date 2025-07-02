@@ -17,16 +17,28 @@ $iconTemplateGray = '<img src="../assets/img/template_gray.svg" alt="Edit Templa
 
 $param['ownerID'] = $_SESSION['id'];
 
-$projects = $db->query('SELECT pj.saveFlag, pj.projectID AS "id", pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, s.sNickName AS "owner", c.name AS "countryName", c.code AS "countryCode", pj.projectTimestamp, 
-                                   pd.home AS "homePage", pd.about AS "aboutPage", pd.services AS "servicesPage", pd.contact AS "contactPage"
-                            FROM `tb_project` pj 
-                            LEFT JOIN `templatepagedetails` pd ON pj.projectID = pd.projectID 
-                            LEFT JOIN `Countries` c ON pj.countryID = c.id
-                            LEFT JOIN `staffs` s ON pj.projectOwner = s.sID
-                            LEFT JOIN `tb_shopType` t ON pj.shopTypeID = t.id
-                            WHERE pj.projectOwner = ?
-                            AND pj.deleteAt IS NULL;'
-        ,$param['ownerID'])->fetchAll();
+    $ownerID = $param['ownerID'];
+    $showAll = in_array($ownerID, [1, 14, 60]);
+    $where = '';
+
+    $sql = 'SELECT pj.saveFlag, pj.projectID, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, 
+                s.sNickName AS "owner", c.name AS "countryName", c.code AS "countryCode", pj.projectTimestamp, 
+                pd.home AS "homePage", pd.about AS "aboutPage", pd.services AS "servicesPage", pd.contact AS "contactPage"
+            FROM `tb_project` pj 
+            LEFT JOIN `templatepagedetails` pd ON pj.projectID = pd.projectID 
+            LEFT JOIN `Countries` c ON pj.countryID = c.id
+            LEFT JOIN `staffs` s ON pj.projectOwner = s.sID
+            LEFT JOIN `tb_shopType` t ON pj.shopTypeID = t.id
+            ';
+    
+    $where = 'WHERE pj.deleteAt IS NULL';
+
+    if (!$showAll) {
+        $sql = $sql . ' ' . $where . ' AND pj.projectOwner = ?';
+        $projects = $db->query($sql, $ownerID)->fetchAll();
+    } else {
+        $projects = $db->query($sql . ' ' . $where)->fetchAll();
+    }
     
     $row = array();
     $i = 1;
