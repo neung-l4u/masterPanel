@@ -891,6 +891,7 @@ const sendMailToL4UTeam = () => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formPaymentMethod: $("#paymentMethod").val(),
 
+        toTeam: toTeam,
 
         addonFlyer: $("input:checkbox[name='addonFlyers']:checked").val(),
         addonFridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
