@@ -360,15 +360,9 @@ $loginID = $_SESSION['id'];
                         foreach ($spendLogs as $row){ ?>
                             <div class="col-xl-4 col-lg-4 col-sm-4 col-md-4">
                                 <div class="d-flex flex-r info-box">
-                                    <div class="col-xl-12 col-lg-12 col-sm-12 col-md-12 d-flex flex-column flex-wrap justify-content-center align-items-center">
-                                        <img class="info-box-icon bg-info elevation-1" width="150px" height="80px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
-
+                                    <div class="col-xl-12 col-lg-12 col-sm-12 col-md-12 d-flex flex-row">
+                                        <img class="bg-info elevation-1 rounded-lg" width="130px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
                                         <div class="info-box-content">
-                                            <span class="img-rounded" style="font-size: 0.7em; text-align: center;">
-                                                <abbr title="<?php echo $row['rcTitle']; ?>">
-                                                    <?php echo $row['rcTitle']; ?>
-                                                </abbr>
-                                            </span>
                                             <span class="info-box-number" style="font-size: 0.8em; text-align: center;">
                                                     <?php echo $row['rcSpend']; ?> L4U
                                             </span>
