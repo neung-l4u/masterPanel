@@ -854,6 +854,22 @@ const sendMailToL4UTeam = () => {
     });
     let txtCuisine = cuisineSelected.join();
 
+    let checkProduct = $("input[name='product']:checked").val();
+    let toTeam = "";
+
+    if(checkProduct.includes("Bundle")){
+        toTeam = "All";
+    }else if(checkProduct.includes("Solo") || checkProduct.includes("Yelp")){
+        toTeam = "AM";
+    }else if(checkProduct.includes("System")){
+        toTeam = "CS";
+    }else{
+        toTeam = "All";
+    }
+
+    console.log(toTeam);
+
+
     ///////////////////////////////
 
     //formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
@@ -875,6 +891,8 @@ const sendMailToL4UTeam = () => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formPaymentMethod: $("#paymentMethod").val(),
 
+        toTeam: toTeam,
+
         addonFlyer: $("input:checkbox[name='addonFlyers']:checked").val(),
         addonFridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
         addonDigitalMenu: $("input:checkbox[name='addonPricingDesign']:checked").val(),
@@ -888,16 +906,6 @@ const sendMailToL4UTeam = () => {
         addonInfluencer: $("input:checkbox[name='addonInfluencer']:checked").val(),
 
 
-
-        // formFlyer: $("#initAddOnPrintedFlyers").val(),
-        // formDineIn: $("#initAddOnDineInSystem").val(),
-        // formMagnet: $("#initAddOnFridgeMagnet").val(),
-        // formSocialMedia: $("#initAddOnSocialMediaPosts").val(),
-        // formMenuDesign: $("#initAddOnDigitalMenuDesign").val(),
-        // formWebsiteMakeOver: $("#initAddOnWebsiteMakeOver").val(),
-        // formADVPromo: $("#initAddOnAdvPromo").val(),
-        // formWebHosting: $("#initAddOnWebHosting").val(),
-        // formInfluencer: $("#initAddOnInfluencer").val(),
 
         formCustomerType: $("#formType option:selected").text(),
         formShopName: $("#shopName").val(),
@@ -995,6 +1003,8 @@ const sendMailToL4UTeam = () => {
         testMail: CheckedBoxTestmailValue,
         token: Math.random()
     };
+
+
 
     // TODO: Send Email To Staff
     const ajaxSendL4UMail = $.ajax({
