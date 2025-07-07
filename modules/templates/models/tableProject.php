@@ -21,7 +21,7 @@ $param['ownerID'] = $_SESSION['id'];
     $showAll = in_array($ownerID, [1, 14, 60]);
     $where = '';
 
-    $sql = 'SELECT pj.saveFlag, pj.projectID, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, 
+    $sql = 'SELECT pj.saveFlag, pj.projectID AS id, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, 
                 s.sNickName AS "owner", c.name AS "countryName", c.code AS "countryCode", pj.projectTimestamp, 
                 pd.home AS "homePage", pd.about AS "aboutPage", pd.services AS "servicesPage", pd.contact AS "contactPage"
             FROM `tb_project` pj 
