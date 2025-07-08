@@ -35,44 +35,28 @@ function shortCountry() {
     }
 }
 
-// index.js (แก้แล้ว)
-function validateForm() {
-    let isValid = true;
-    $(".text-danger").remove();
+function validateForm(form) {
+  let isValid = true;
+  form.find(".text-danger").remove(); // Clear previous errors
 
-    let firstName = $("#first_name");
-    let email = $("#email");
-    let mobile = $("#mobile");
-    let company = $("#company");
-    let country = $("#country");
+  const firstName = form.find('[name="first_name"]');
+  const email     = form.find('[name="email"]');
+  const mobile    = form.find('[name="mobile"]');
+  const company   = form.find('[name="company"]');
+  const country   = form.find('[name="country"]');
 
-    function showError(input, message) {
-        let error = $("<small class='text-danger'></small>").text(message);
-        input.parent().append(error);
-        isValid = false;
-    }
+  function showError(input, message) {
+    const error = $('<small class="text-danger d-block mt-1"></small>').text(message);
+    input.after(error);
+    isValid = false;
+  }
 
-    if ($.trim(firstName.val()) === "") {
-        showError(firstName, "First Name is required.");
-    }
+  if (!firstName.val().trim()) showError(firstName, "First name is required.");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.val())) showError(email, "Invalid email.");
+  if (!/^\+?[0-9\s\-]{8,15}$/.test(mobile.val())) showError(mobile, "Invalid mobile number.");
+  if (!company.val().trim()) showError(company, "Restaurant name required.");
+  if (!country.val()) showError(country, "Please select a country.");
 
-    let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test($.trim(email.val()))) {
-        showError(email, "Please enter a valid email.");
-    }
-
-    let phonePattern = /^\+?[0-9\s\-]{8,15}$/;
-    if (!phonePattern.test($.trim(mobile.val()))) {
-        showError(mobile, "Please enter a valid mobile number.");
-    }
-
-    if ($.trim(company.val()) === "") {
-        showError(company, "Restaurant Name is required.");
-    }
-
-    if (!country.val()) {
-        showError(country, "Please select your country.");
-    }
-
-    return isValid;
+  return isValid;
 }
+
