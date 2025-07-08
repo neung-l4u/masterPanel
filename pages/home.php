@@ -364,7 +364,7 @@ $loginID = $_SESSION['id'];
                                         <img class="bg-info elevation-1 rounded-lg" width="130px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
                                         <div class="info-box-content">
                                             <span class="info-box-number" style="font-size: 0.8em; text-align: center;">
-                                                    <?php echo $row['rcSpend']; ?> L4U
+                                                    <?php echo sprintf("%03d", $row['rcSpend']); ?> L4U
                                             </span>
                                         </div>
                                         <!-- /.contacts-list-info -->

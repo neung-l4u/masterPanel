@@ -12,7 +12,7 @@
         gtag('config', 'G-LGKDYHL23T');
     </script>
     <?php
-    $nub = '1.4.0';
+    $nub = '1.3.0';
     ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
