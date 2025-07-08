@@ -35,28 +35,64 @@ function shortCountry() {
     }
 }
 
-function validateForm(form) {
-  let isValid = true;
-  form.find(".text-danger").remove(); // Clear previous errors
-
-  const firstName = form.find('[name="first_name"]');
-  const email     = form.find('[name="email"]');
-  const mobile    = form.find('[name="mobile"]');
-  const company   = form.find('[name="company"]');
-  const country   = form.find('[name="country"]');
-
-  function showError(input, message) {
-    const error = $('<small class="text-danger d-block mt-1"></small>').text(message);
-    input.after(error);
-    isValid = false;
-  }
-
-  if (!firstName.val().trim()) showError(firstName, "First name is required.");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.val())) showError(email, "Invalid email.");
-  if (!/^\+?[0-9\s\-]{8,15}$/.test(mobile.val())) showError(mobile, "Invalid mobile number.");
-  if (!company.val().trim()) showError(company, "Restaurant name required.");
-  if (!country.val()) showError(country, "Please select a country.");
-
-  return isValid;
+function getPayload(form) {
+    return {
+        first_name: form.find("[name='first_name']").val(),
+        email: form.find("[name='email']").val(),
+        mobile: form.find("[name='mobile']").val(),
+        company: form.find("[name='company']").val(),
+        country: form.find("[name='country']").val(),
+        countryCode: "", // You can use shortCountry() here if needed
+        shopType: form.find("[name='shopType']").val(),
+        formType: form.find("[name='formType']").val(),
+        leadSource: form.find("[name='leadSource']").val(),
+        leadRecordType: form.find("[name='leadRecordType']").val()
+    };
 }
 
+function sendPayload(payload) {
+    console.log("🚀 Sending Payload:", payload);
+    $.ajax({
+        url: "https://hook.us1.make.com/47ue45ij7fhm7sol8rldp6dxpag2ldjl",
+        method: "POST",
+        dataType: "json",
+        data: payload,
+        success: function (response) {
+            console.log("✅ Webhook Success:", response);
+            if (response.result === "Leads to Monday successfully") {
+                $("#successMessage").show();
+                setTimeout(() => {
+                    window.location.href = "https://localforyou.com/thank-you/";
+                }, 1500);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("❌ Webhook Failed:", status, error);
+        }
+    });
+}
+
+function validateForm(form) {
+    let isValid = true;
+    form.find(".text-danger").remove(); // Clear previous errors
+
+    const firstName = form.find('[name="first_name"]');
+    const email     = form.find('[name="email"]');
+    const mobile    = form.find('[name="mobile"]');
+    const company   = form.find('[name="company"]');
+    const country   = form.find('[name="country"]');
+
+    function showError(input, message) {
+        const error = $('<small class="text-danger d-block mt-1"></small>').text(message);
+        input.after(error);
+        isValid = false;
+    }
+
+    if (!firstName.val().trim()) showError(firstName, "First name is required.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.val())) showError(email, "Invalid email.");
+    if (!/^\+?[0-9\s\-]{8,15}$/.test(mobile.val())) showError(mobile, "Invalid mobile number.");
+    if (!company.val().trim()) showError(company, "Restaurant name required.");
+    if (!country.val()) showError(country, "Please select a country.");
+
+    return isValid;
+}
