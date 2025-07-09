@@ -38,12 +38,21 @@ function shortCountry() {
 function getPayload(form) {
     return {
         first_name: form.find("[name='first_name']").val(),
+        last_name: form.find("[name='last_name']").val(),
         email: form.find("[name='email']").val(),
         mobile: form.find("[name='mobile']").val(),
+        contactTime: form.find("[name='contactTime']").val(),
         company: form.find("[name='company']").val(),
+        shopName: form.find("[name='shopName']").val(),
         country: form.find("[name='country']").val(),
-        countryCode: "", // You can use shortCountry() here if needed
+        countryCode: shortCountry(),
         shopType: form.find("[name='shopType']").val(),
+        url: form.find("[name='url']").val(),
+        city: form.find("[name='city']").val(),
+        currency: form.find("[name='currency']").val(),
+        interest: form.find("[name='interest']").val(),
+        comments: form.find("[name='comments']").val(),
+        SignupFormVersion: form.find("[name='SignupFormVersion']").val(),
         formType: form.find("[name='formType']").val(),
         leadSource: form.find("[name='leadSource']").val(),
         leadRecordType: form.find("[name='leadRecordType']").val()
@@ -91,7 +100,7 @@ function validateForm(form) {
     if (!firstName.val().trim()) showError(firstName, "First name is required.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.val())) showError(email, "Invalid email.");
     if (!/^\+?[0-9\s\-]{8,15}$/.test(mobile.val())) showError(mobile, "Invalid mobile number.");
-    if (!company.val().trim()) showError(company, "Restaurant name required.");
+    if (!company.val()) showError(company, "Please select a business type.");
     if (!country.val()) showError(country, "Please select a country.");
 
     return isValid;

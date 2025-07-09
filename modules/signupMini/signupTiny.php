@@ -62,8 +62,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="company">Restaurant Name</label>
-                        <input type="text" class="form-control" id="company" name="company" placeholder="Enter your restaurant name">
+                        <label for="shopType">Business Type</label>
+                        <select class="form-control" id="shopType" name="shopType">
+                            <option value="" disabled selected>Select your business</option>
+                            <option value="Thai Restaurants &amp; Takeaways">Thai Restaurants & Takeaways</option>
+                            <option value="Thai Massage">Thai Massage</option>
+                            <option value="Restaurants &amp; Takeaways">Restaurants & Takeaways</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -79,7 +84,6 @@
                         </select>
                     </div>
 
-                    <input type="hidden" id="shopType" name="shopType" value="Thai Restaurants &amp; Takeaways" />
                     <input type="hidden" id="formType" name="formType" value="tiny" />
                     <input type="hidden" id="leadSource" name="leadSource" value="Landing Page" />
                     <input type="hidden" id="leadRecordType" name="leadRecordType" value="Ads" />
@@ -96,8 +100,8 @@
 </div> <!--End of Container-->
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://report.localforyou.com/modules/signupMini/assets/js/index.js"></script>
-<!-- <script src="assets/js/index.js"></script> -->
+<!-- <script src="https://report.localforyou.com/modules/signupMini/assets/js/index.js"></script> -->
+<script src="assets/js/index.js"></script>
 <script>
 const form1 = $("#tinyForm1");
 
