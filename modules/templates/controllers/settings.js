@@ -34,13 +34,18 @@ const loadData = () => {
         let allData = res.data.length;
         let row = res.data;
         let i = 0;
-        const iconEdit = '<img src="../assets/img/edit.svg" alt="edit" title="Edit" class="action_icon">';
-        const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
+        const iconEdit = '<i class="bi bi-pencil action_icon"></i>';
+        const iconDelete = '<i class="bi bi-trash3 action_icon"></i>';
+        const iconCC = '<i class="bi bi-badge-cc action_icon" title="CC"></i>';
+        const iconTo = '<i class="bi bi-envelope action_icon" title="To"></i>';
+        const iconOff = '<i class="bi bi-toggle-off action_icon" title="Off"></i>';
+        const iconOn = '<i class="bi bi-toggle-on action_icon" title="On"></i>';
 
         if (allData>0) {
             row.forEach(item => {
                 let {id, email, channel, status} = item;
-                let textStatus = (status===1) ? 'On' : 'Off';
+                let textStatus = (status===1) ? iconOn : iconOff;
+                channel = (channel === "Cc") ? iconCC : iconTo;
 
                 $('#settingsData > tbody:last-child').append(
                     `<tr>
@@ -49,8 +54,8 @@ const loadData = () => {
                         <td>${channel}</td>
                         <td>${textStatus}</td>
                         <td class="d-flex justify-content-end gap-2">
-                            <a href="#" onclick="setEdit(${id});">${iconEdit}</a>
-                            <a href="#" onclick="setDel(${id});">${iconDelete}</a>
+                            <a href="#" onclick="setEdit(${id});" title="Edit">${iconEdit}</a>
+                            <a href="#" onclick="setDel(${id});" title="Delete">${iconDelete}</a>
                         </td>
                     </tr>`
                 );

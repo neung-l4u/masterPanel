@@ -361,7 +361,7 @@ $loginID = $_SESSION['id'];
                             <div class="col-xl-4 col-lg-4 col-sm-4 col-md-4">
                                 <div class="d-flex flex-r info-box">
                                     <div class="col-xl-12 col-lg-12 col-sm-12 col-md-12 d-flex flex-row">
-                                        <img class="bg-info elevation-1 rounded-lg" width="130px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="Reward image">
+                                        <a href="assets/img/reward/<?php echo $row['rcPic']; ?>" target="_blank" title="<?php echo $row['rcTitle'].' : '.$row['rcReward']; ?>"><img class="bg-info elevation-1 rounded-lg" width="130px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="<?php echo $row['rcTitle'].' : '.$row['rcReward']; ?>"></a>
                                         <div class="info-box-content">
                                             <span class="info-box-number" style="font-size: 0.8em; text-align: center;">
                                                     <?php echo sprintf("%03d", $row['rcSpend']); ?> L4U

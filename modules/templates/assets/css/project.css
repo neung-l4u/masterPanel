@@ -1,5 +1,11 @@
+th{
+    text-align: center !important;
+}
+
 .action_icon{
     height: 1.8em;
+    margin-right: .3em;
+    font-size: 1.3em !important;
 }
 
 .status_icon{
@@ -11,11 +17,11 @@
 }
 
 .col_id{
-    width: 5%;
+    width: 50px;
 }
 
 .col_type{
-    width: 10%;
+    width: 80px;
 }
 
 .col_template{
@@ -23,29 +29,35 @@
 }
 
 .col_name{
-    width: 25%;
+    text-align: left !important;
 }
 
 .col_page{
-    width: 15%;
+    width: 130px;
 }
 
 .col_status{
     width: 5%;
 }
 
-/* .col_owner{
-    width: 10%;
-} */
+ .col_owner{
+    width: 50px;
+}
 
 .col_country{
     width: 10%;
 }
 
 .col_action{
-    width: 15%;
-    text-align: end;
+    width: 150px;
+    text-align: center;
 }
+
+td{
+    font-size: 0.9em !important;
+}
+
+
 
 ::placeholder {
     color: #cccccc !important;

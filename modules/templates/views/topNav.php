@@ -20,10 +20,10 @@ $level = $_SESSION['level'];
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                     <li class="nav-item <?php echo (empty($menu) or ($menu == 'home')) ? 'active':''; ?>">
-                        <a class="nav-link" href="main.php?m=home">Home</a>
+                        <a class="nav-link" href="main.php?m=home"><i class="bi bi-file-earmark-medical"></i> Home</a>
                     </li>
                     <li class="nav-item <?php echo (($menu == 'project') or ($menu == 'detail')) ? 'active':''; ?>">
-                        <a class="nav-link" href="main.php?m=project">Projects</a>
+                        <a class="nav-link" href="main.php?m=project"><i class="bi bi-cast"></i> Projects</a>
                     </li>
                 </ul>
             <form class="d-flex gap-3" role="search">

@@ -1,5 +1,11 @@
+th{
+    text-align: center !important;
+}
+
 .action_icon{
     height: 1.8em;
+    margin-right: .3em;
+    font-size: 1.3em !important;
 }
 
 .status_icon{
@@ -7,11 +13,11 @@
 }
 
 .col_id{
-    width: 5%;
+    width: 50px;
 }
 
 .col_email{
-    width: 60%;
+    text-align: left !important;
 }
 
 .col_channel{
@@ -19,12 +25,12 @@
 }
 
 .col_status{
-    width: 10%;
+    width: 5%;
 }
 
 .col_action{
-    width: 15%;
-    text-align: end;
+    width: 150px;
+    text-align: center;
 }
 
 ::placeholder {

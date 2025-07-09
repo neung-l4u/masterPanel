@@ -28,7 +28,7 @@ require_once '../assets/php/pageNavigate.php';
     <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.v4.6.2.css">
     <link rel="stylesheet" href="../assets/css/main.css">
-
+    <link rel="stylesheet" href="../assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
 
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
@@ -64,7 +64,7 @@ require_once '../assets/php/pageNavigate.php';
     <div class="container pt-5">
         <div class="row">
             <div class="col">
-                <h6 class="text-danger-emphasis">Current page : <?php echo $title; ?></h6>
+                <h6 class="text-danger-emphasis"><i class="bi bi-geo"></i> Current page : <?php echo $title; ?></h6>
             </div>
         </div>
         <?php include($view);?>
