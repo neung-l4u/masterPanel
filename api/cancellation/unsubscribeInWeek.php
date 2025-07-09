@@ -41,8 +41,6 @@ if ($act == 'newPerWeek') {
 }
 ?>
 
-<p style="font: 14px roboto, sans-serif;"><b>**Unsubscribe Requests**</b> (Total:<?php echo $totalUnsubscribes; ?> )
-
 </p>
 <table cellpadding="10" cellspacing="0" border="1" style="font: 14px roboto, sans-serif;">
     <tr style="background-color: #d6e6f4; border: 1px solid;">
@@ -53,11 +51,13 @@ if ($act == 'newPerWeek') {
     </tr>
     <?php
     $index = 1;
+    $totalRow = 0;
     if (!empty($selectQue)) {
         $dup = "";
         foreach ($selectQue as $row) { 
             if ($dup !== $row["shopname"]) {
                 $dup = $row["shopname"];
+                $totalRow++;
             ?>
             <tr style="border: 1px solid;">
                 <td><?php echo $index++; ?></td>
@@ -72,5 +72,5 @@ if ($act == 'newPerWeek') {
         echo "<tr><td colspan='4'>ไม่พบข้อมูลในสัปดาห์นี้</td></tr>";
     }//if
     ?>
-
+<caption style="font: 14px roboto, sans-serif; text-align: left; margin-bottom: 10px;"><b>**Unsubscribe Requests**</b> (Total:<?php echo $totalRow; ?> )</caption>
 </table>
