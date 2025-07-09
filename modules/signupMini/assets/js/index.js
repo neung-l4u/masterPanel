@@ -35,6 +35,17 @@ function shortCountry() {
     }
 }
 
+function shopTypeForLeadManagement() {
+    let shopType = $("#shopType").val();
+    if (shopType === "Thai Restaurants &amp; Takeaways"){
+        return "Thai Restaurant";
+    }else if (shopType === "Thai Massage"){
+        return "Thai Massage";
+    }else if (shopType === "Restaurants &amp; Takeaways"){
+        return "Restaurant";
+    }
+}
+
 function getPayload(form) {
     return {
         first_name: form.find("[name='first_name']").val(),
@@ -47,6 +58,7 @@ function getPayload(form) {
         country: form.find("[name='country']").val(),
         countryCode: shortCountry(),
         shopType: form.find("[name='shopType']").val(),
+        shopTypeForLeadManagement: shopTypeForLeadManagement(),
         url: form.find("[name='url']").val(),
         city: form.find("[name='city']").val(),
         currency: form.find("[name='currency']").val(),
