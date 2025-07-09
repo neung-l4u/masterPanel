@@ -100,8 +100,8 @@
 </div> <!--End of Container-->
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<!-- <script src="https://report.localforyou.com/modules/signupMini/assets/js/index.js"></script> -->
-<script src="assets/js/index.js"></script>
+<script src="https://report.localforyou.com/modules/signupMini/assets/js/index.js"></script>
+<!-- <script src="assets/js/index.js"></script> -->
 <script>
 const form1 = $("#tinyForm1");
 

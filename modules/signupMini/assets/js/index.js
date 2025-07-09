@@ -100,7 +100,7 @@ function validateForm(form) {
     const firstName = form.find('[name="first_name"]');
     const email     = form.find('[name="email"]');
     const mobile    = form.find('[name="mobile"]');
-    const company   = form.find('[name="company"]');
+    const shopType   = form.find('[name="shopType"]');
     const country   = form.find('[name="country"]');
 
     function showError(input, message) {
@@ -112,7 +112,7 @@ function validateForm(form) {
     if (!firstName.val().trim()) showError(firstName, "First name is required.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.val())) showError(email, "Invalid email.");
     if (!/^\+?[0-9\s\-]{8,15}$/.test(mobile.val())) showError(mobile, "Invalid mobile number.");
-    if (!company.val()) showError(company, "Please select a business type.");
+    if (!shopType.val()) showError(shopType, "Please select a business type.");
     if (!country.val()) showError(country, "Please select a country.");
 
     return isValid;
