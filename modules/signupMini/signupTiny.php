@@ -1,28 +1,3 @@
-<head>
-    <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <title>signupMini - Local For You</title>
-    
-    <style>
-        header, .elementor-location-footer, .elementor-location-header
-        {
-        	display:block;
-        }
-        body{
-            background-color: #ffffff !important;
-        }
-        .btn-block {
-            background-color: #00BCF4;
-            border-color: #00BCF4;
-        }
-        .btn-block:hover {
-            background-color: #273B91;
-            border-color: #273B91;
-        }
-    </style>
-</head>
-
 <body>
 <div class="container">
     <div class="row justify-content-center">
@@ -68,6 +43,7 @@
                             <option value="Thai Restaurants &amp; Takeaways">Thai Restaurants & Takeaways</option>
                             <option value="Thai Massage">Thai Massage</option>
                             <option value="Restaurants &amp; Takeaways">Restaurants & Takeaways</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
 
