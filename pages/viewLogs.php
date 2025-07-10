@@ -155,8 +155,6 @@ $password = "Localeats#".date("Y");
 
         if(stripeResult === undefined || stripeResult === null) {
             stripeResult = "---";
-        } else {
-            stripeResult = result;
         }
 
         $('#formModal').modal('show');

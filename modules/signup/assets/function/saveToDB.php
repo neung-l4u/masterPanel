@@ -22,6 +22,15 @@ $dataStripe = json_encode($dataStripe);
 $status = 1;
 $signupBy = !empty($_SESSION['id']) ? $_SESSION['id'] : 0;
 
+if (!is_null($stripeResult)) {
+    $trimmed = trim($stripeResult);
+    json_decode($trimmed);
+
+    if (json_last_error() !== JSON_ERROR_NONE || $trimmed === "null") {
+        $stripeResult = json_encode($stripeResult);
+    }
+}
+
 $logsToDB =  $db->query('INSERT INTO `logssignup`(`dataLogs`, `dataStripe`, `stripeResult`, `dataContract`, `countryCode`, `status`, `test`, `createAt`, `createBy`) VALUES (?,?,?,?,?,?,?,?,?)'
     , $dataLogs, $dataStripe, $stripeResult, $contractURL, $country, $status, $testMode, $timestamp, $signupBy );
 
