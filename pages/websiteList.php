@@ -122,7 +122,7 @@ $password = "Localeats#".date("Y");
                                 <i class="nav-icon mr-3 bi bi-funnel"></i>
                                 Filters
                             </h5>
-                            <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                            <button id="btnModal" type="button" class="btn btn-primary" onclick="openFormModal()" data-toggle="modal" data-target="#formModal">
                                 <i class="bi bi-plus"></i> New Item
                             </button>
                         </div>
@@ -686,6 +686,8 @@ $password = "Localeats#".date("Y");
     const filterSystem = $("#filterSystem");
     const filterStatus = $("#filterStatus");
 
+    const newModalForm = new bootstrap.Modal(document.getElementById("formModal"), {});
+
     let shopType = filterShopType.val();
     let system = filterSystem.val();
     let fstatus = filterStatus.val();
@@ -696,6 +698,10 @@ $password = "Localeats#".date("Y");
 
     let iconCopy = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>';
     let iconLink = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"/><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"/></svg>';
+
+    function openFormModal() {
+        newModalForm.show();
+    }
 
     const viewDetail = (id) => {
         $.ajax({
@@ -804,7 +810,7 @@ $password = "Localeats#".date("Y");
             inputVoucher.prop("checked", res.wSystemVoucher === 1 ? 1 : 0);
             editID.val(res.id);
             formAction.val("edit");
-            modalFormAction("open");
+            newModalFormAction("open");
         });
 
         reqAjax.fail(function (xhr, status, error) {
@@ -857,11 +863,11 @@ $password = "Localeats#".date("Y");
         });
             
         reqAjax.done(function (res) {
-            modalFormAction("close");
+            
             console.log(res);
             reloadTable();
             resetForm();
-            $("#formModal").modal('hide');
+            newModalFormAction("close");
         });
 
         reqAjax.fail(function (xhr, status, error) {
@@ -937,5 +943,15 @@ $password = "Localeats#".date("Y");
 
         }//if
     }//setDel
+
+    function newModalFormAction(action) {
+    console.log("goNew = " + action);
+    if (action === "open") {
+        newModalForm.show();
+    } else {
+        newModalForm.hide();
+        $(".modal-backdrop").hide();
+    }
+}
 
 </script>
