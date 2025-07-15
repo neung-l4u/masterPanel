@@ -151,7 +151,7 @@
                     }
 
 
-                    $strDate = "2025-02-04";
+                    $strDate = "2025-07-15";
                     //$strDate2 = "2024-01-12";
                     $dateObj = date_create($strDate);
                     //echo "<h1>".date_format($date,"w")."</h1>";
@@ -193,27 +193,31 @@
                             <li class="font-weight-bold">หากต้องการรูปแบบอื่นนอกจากเทมเพลตที่มีอยู่ <span class="text-danger">จะเป็นอีก 1 บริการที่มีค่าใช้จ่ายเพิ่มเติม ($995)</span></li>
                             <li class="font-weight-bold">เว็บไซต์เทมเพลตจะใช้เวลาในการสร้างประมาณ 7 วันทำการ <span class="text-danger">กรณีเป็นฟูลลี่คัสตอมไมซ์จะใช้เวลาในการสร้างขั้นต่ำ 10 วันแล้วแต่ความยากง่าย</span></li>
                             <li class="font-weight-bold">จะสามารถเริ่มนับวันที่ 1 เมื่อเราได้รับข้อมูลที่จำเป็นครบถ้วนแล้วเท่านั้น</li>
-                            <li class="font-weight-bold">ข้อมูลที่จำเป็นในการใช้ทำเว็บไซต์</li>
-                            <ol type="a">
-                                <li>ชื่อร้าน</li>
-                                <li>โทนสีที่ต้องการ</li>
-                                <li>โลโก้ของร้าน</li>
-                                <li>รูปภาพต่างๆของร้าน เช่น บรรยากาศร้าน, อาหาร, ฯลฯ ที่ต้องการให้ใส่ในเว็บไซต์</li>
-                                <li>ข้อมูลเมนู บริการ<a href="example.php" target="_blank">ตัวอย่าง</a></li>
-                                <li>เวลาทำการของร้าน</li>
-                                <li>ที่อยู่และช่องทางการติดต่อ</li>
-                                <li>Social media URL , GMB ฯลฯ</li>
-                                <li>ระบุว่าต้องการใช้ระบบ Online ordering, Booking System บนเว็บไซต์หรือไม่?</li>
+                            <li class="font-weight-bold">ข้อมูลที่จำเป็นในการใช้ทำเว็บไซต์
+                                <ol type="a">
+                                    <li>ชื่อร้าน</li>
+                                    <li>โทนสีที่ต้องการ</li>
+                                    <li>โลโก้ของร้าน</li>
+                                    <li>รูปภาพต่างๆของร้าน เช่น บรรยากาศร้าน, อาหาร, ฯลฯ ที่ต้องการให้ใส่ในเว็บไซต์</li>
+                                    <li>ข้อมูลเมนู บริการ<a href="example.php" target="_blank">ตัวอย่าง</a></li>
+                                    <li>เวลาทำการของร้าน</li>
+                                    <li>ที่อยู่และช่องทางการติดต่อ</li>
+                                    <li>Social media URL , GMB ฯลฯ</li>
+                                    <li>ระบุว่าต้องการใช้ระบบ Online ordering, Booking System บนเว็บไซต์หรือไม่?</li>
                                     <ul>
                                         <li>เราจะส่งดราฟเว็บไซต์ให้ตรวจก่อนจะส่งขึ้น Live หากต้องการปรับรูปแบบ เช่น เปลี่ยนสี, ปรับเปลี่ยนรูปแบบคอนเทนต์ สามารถแก้ได้ไม่เกิน 3 ครั้ง</li>
                                     </ul>
-                            </ol>
+                                </ol>
+                            </li>
+
                             <li class="font-weight-bold">การแก้ไขที่ไม่ใช่การปรับเปลี่ยนรูปแบบเว็บ เช่น อัปเดตคอนเทนต์, แก้ไขคำผิด, แก้ไขข้อมูลร้าน, ปรับเปลี่ยนเวลาเปิด/ปิด, แก้ไขราคา/รายละเอียดบริการ สามารถทำได้ไม่จำกัดจำนวนครั้ง</li>
-                            <li class="font-weight-bold">เมื่อส่งเว็บไซต์ให้ตรวจ เจ้าของร้านจำเป็นต้องตอบยืนยันภายใน 7 วันทำการ <span class="text-danger">** หากเกิน 7 วันแล้ว ไม่ได้ตอบกลับ จะถือว่าได้รับการยืนยันแล้วและส่งขึ้น Live ต่อไป</span></li>
-                            <ol type="a">
-                                <li>หลังจากที่ไลฟ์เว็บไซต์แล้ว หากมีจุดที่ต้องการปรับเปลี่ยน เจ้าของยังสามารถขอแก้ไขเพิ่มเติมได้ (ถ้ายังไม่เกินจำนวนครั้งที่กำหนดข้างต้น) ภายในระยะเวลาไม่เกิน 14 วัน</li>
-                                <li><span class="text-danger">การแก้ไขเกินจำนวนครั้งที่กำหนดอาจมีค่าใช้จ่ายเพิ่มเติม</span></li>
-                            </ol>
+                            <li class="font-weight-bold">เมื่อส่งเว็บไซต์ให้ตรวจ เจ้าของร้านจำเป็นต้องตอบยืนยันภายใน 7 วันทำการ <span class="text-danger">** หากเกิน 7 วันแล้ว ไม่ได้ตอบกลับ จะถือว่าได้รับการยืนยันแล้วและส่งขึ้น Live ต่อไป</span>
+                                <ol type="a">
+                                    <li>หลังจากที่ไลฟ์เว็บไซต์แล้ว หากมีจุดที่ต้องการปรับเปลี่ยน เจ้าของยังสามารถขอแก้ไขเพิ่มเติมได้ (ถ้ายังไม่เกินจำนวนครั้งที่กำหนดข้างต้น) ภายในระยะเวลาไม่เกิน 14 วัน</li>
+                                    <li><span class="text-danger">การแก้ไขเกินจำนวนครั้งที่กำหนดอาจมีค่าใช้จ่ายเพิ่มเติม</span></li>
+                                </ol>
+                            </li>
+                        </ol>
                     </div>
                 </div>
             </div>
@@ -249,27 +253,31 @@
                             <li class="font-weight-bold">If you want a format other than the existing template we provided, <span class="text-danger">it will be another service that costs an additional fee ($995).</span></li>
                             <li class="font-weight-bold">The website creation will take approximately 7 business days to complete.</li>
                             <li class="font-weight-bold">You will be able to start counting day 1 when we have received all necessary information from you.</li>
-                            <li class="font-weight-bold">Require Information for website creation:</li>
-                            <ol type="a">
-                                <li>Shop name</li>
-                                <li>Desired color, mood & tone</li>
-                                <li>Logo of the store (if you have raw file version eg. .ai, .pdf is the best)</li>
-                                <li>Various pictures of your store such as the store landscape, food, etc.</li>
-                                <li>Menu information, service <a href="example.php" target="_blank">Examples</a></li>
-                                <li>Opening hours</li>
-                                <li>Address and contact methods</li>
-                                <li>Social media URLs, GMB, etc.</li>
-                                <li>Specify whether you want to use the Online ordering system, Booking System on the website or not?</li>
-                                    <ol type="i">
-                                        <li>We will send a draft of the website for review before sending it live. If you want to adjust the format, such as changing colors, modifying the content format. (limit 3 times)</li>
-                                        <li>For the adjustment that does not affect the website layout, such as updating content, correcting typos, modifying store information, modifying opening/closing hours, modifying prices/service details. You can request these changes unlimited times.</li>
-                                        <li>When submitting a website for review, The store owner is required to respond within 7 business days.
-                                            <span class="text-danger">** If it's been more than 7 days and you haven't responded. It will be considered confirmed and sent on Live.</span>
-                                        </li>
-                                        <li>After the website is live If you have anything that needs to be changed You can also request additional amendments. (if not over the limitation specified above) within a period not exceeding 14 days</li>
-                                        <li><span class="text-danger">Requests for edits exceeding the limitation may incur additional fees.</span></li>
-                                    </ol>
-                            </ol>
+                            <li class="font-weight-bold">Require Information for website creation:
+                                <ol type="a">
+                                    <li>Shop name</li>
+                                    <li>Desired color, mood & tone</li>
+                                    <li>Logo of the store (if you have raw file version eg. .ai, .pdf is the best)</li>
+                                    <li>Various pictures of your store such as the store landscape, food, etc.</li>
+                                    <li>Menu information, service <a href="example.php" target="_blank">Examples</a></li>
+                                    <li>Opening hours</li>
+                                    <li>Address and contact methods</li>
+                                    <li>Social media URLs, GMB, etc.</li>
+                                    <li>Specify whether you want to use the Online ordering system, Booking System on the website or not?
+                                        <ol type="i">
+                                            <li>We will send a draft of the website for review before sending it live. If you want to adjust the format, such as changing colors, modifying the content format. (limit 3 times)</li>
+                                            <li>For the adjustment that does not affect the website layout, such as updating content, correcting typos, modifying store information, modifying opening/closing hours, modifying prices/service details. You can request these changes unlimited times.</li>
+                                            <li>When submitting a website for review, The store owner is required to respond within 7 business days.
+                                                <span class="text-danger">** If it's been more than 7 days and you haven't responded. It will be considered confirmed and sent on Live.</span>
+                                            </li>
+                                            <li>After the website is live If you have anything that needs to be changed You can also request additional amendments. (if not over the limitation specified above) within a period not exceeding 14 days</li>
+                                            <li><span class="text-danger">Requests for edits exceeding the limitation may incur additional fees.</span></li>
+                                        </ol>
+                                    </li>
+
+                                </ol>
+                            </li>
+
                         </ol>
                     </div>
                 </div>
