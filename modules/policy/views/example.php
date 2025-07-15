@@ -28,7 +28,7 @@
     <div class="container ">
 
         <div class="d-flex justify-content-center mt-5 mb-5">
-            <img src="pic/l4ulogo.png" id="logol4u">
+            <img src="../pic/l4ulogo.png" id="logol4u">
         </div>
 
         <div class="card">
@@ -36,7 +36,7 @@
                 <h5 class="font-weight-bold">Service Information Example</h5>
             </div>
             <div class="card-body">
-                <img src="pic/service_example.jpg" id="picex">
+                <img src="../pic/service_example.jpg" id="picex">
             </div>
         </div>
 
