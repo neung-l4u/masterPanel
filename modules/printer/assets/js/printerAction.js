@@ -29,8 +29,8 @@ const cmdSubmit = () => {
         price = '$359.00 Inc GST + Free Shipping (Ethernet)';
         printerFullName = 'EPSON TM-T82IIIL ETH Ethernet $359+ Free Shipping';
     }else if((printerModel==='TM-M30') && (country==='NZ')){
-        price = '$685 Inc GST + Free Shipping (Bluetooth)';
-        printerFullName = 'Epson TM-M30 Bluetooth PSU Black Thermal Receipt Printer $685 + Free Shipping - NZ';
+        price = '$699 Inc GST + Free Shipping (Bluetooth)';
+        printerFullName = 'Epson TM-M30 Bluetooth PSU Black Thermal Receipt Printer $699 + Free Shipping - NZ';
     }
 
     let payload = {
@@ -138,5 +138,5 @@ const modalRespondAction = (action,status) => {
 
 const closeModal = () =>{
     myModal.hide();
-    window.location.replace("https://www.localforyou.com");
+    //window.location.replace("https://www.localforyou.com");
 }
