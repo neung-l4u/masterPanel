@@ -106,6 +106,9 @@ $password = "Localeats#".date("Y");
 
                     <div class="modal-body">
                         <pre id="jsonText" class="json">jsonData</pre>
+                        <hr class="my-3">
+                        <h5 class="mt-4">Stripe Result</h5>
+                        <pre id="stripeResult" class="json">stripeResult</pre>
                     </div> <!-- modal-body -->
 
                     <div class="modal-footer">
@@ -143,14 +146,20 @@ $password = "Localeats#".date("Y");
         ]
     } );
 
-    function viewJson(data) {
-        let jsonData = data;
+    function viewJson(data, result) {
+        let signupData = data;
+        let stripeResult = result;
         console.log("data", data.shopName);
         if(data !== undefined){ shopName.text(data.ShopName); logType.text("Signup");}
         if(data.restaurant_name !== undefined){ shopName.text(data.restaurant_name); logType.text("Stripe");}
-        
+
+        if(stripeResult === undefined || stripeResult === null) {
+            stripeResult = "---";
+        }
+
         $('#formModal').modal('show');
-        $('#jsonText').html(JSON.stringify(jsonData, undefined, 2));
+        $('#jsonText').html(JSON.stringify(signupData, undefined, 2));
+        $('#stripeResult').html(JSON.stringify(stripeResult, undefined, 2));
     }
 
     const resetForm = () => {
