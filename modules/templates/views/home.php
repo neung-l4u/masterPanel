@@ -13,9 +13,16 @@
 <script src="../controllers/home.js?v=1.0.0"></script>
 <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
 <div class="row">
+    <div class="col">
+        <div class="d-flex justify-content-between">
+            <h4><i class="bi bi-file-earmark-medical"></i> Instruction</h4>
+        </div>
+    </div>
+</div>
+<div class="row">
     <div class="col pt-4">
         <div class="border border-rounded p-3">
-            <h5>How to use</h5>
+            <h5><i class="bi bi-card-list"></i> How to use</h5>
             <ol>
                 <li>go to <a href="main.php?m=project">Project</a> page to view the full list</li>
                 <li>Select an existing project or add a new one as you wish.</li>

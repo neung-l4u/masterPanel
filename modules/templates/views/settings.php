@@ -1,3 +1,4 @@
+<?php $random = rand(); ?>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
 <script>
@@ -7,14 +8,14 @@
 
     gtag('config', 'G-LGKDYHL23T');
 </script>
-<link rel="stylesheet" href="../assets/css/settings.css">
+<link rel="stylesheet" href="../assets/css/settings.css?v1.0.0&r=<?php echo $random; ?>">
 
 <div class="row">
     <div class="col">
         <div class="d-flex justify-content-between">
-            <h4>Settings</h4>
+            <h4><i class="bi bi-gear-wide-connected"></i> Settings</h4>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSettings">
-                Add new
+                <i class="bi bi-plus-circle"></i> Add new
             </button>
         </div>
     </div>
@@ -29,11 +30,11 @@
         <table id="settingsData" class="table table-striped table-hover">
             <thead class="table-dark thead-dark">
             <tr>
-                <th class="col_id">#</th>
+                <th class="col_id"><i class="bi bi-record2" title="ID"></i></th>
                 <th class="col_email">Email</th>
                 <th class="col_channel">Channel</th>
                 <th class="col_status">Status</th>
-                <th class="col_action"></th>
+                <th class="col_action"><i class="bi bi-gear-wide-connected" title="Action"></i></th>
             </tr>
             </thead>
             <tbody>
@@ -85,7 +86,4 @@
     </div>
 </div>
 
-<script src="../controllers/settings.js?v=1.0.0">
-
-
-</script>
+<script src="../controllers/settings.js?v=1.0.0&r=<?php echo $random; ?>"></script>

@@ -35,44 +35,85 @@ function shortCountry() {
     }
 }
 
-// index.js (แก้แล้ว)
-function validateForm() {
-    let isValid = true;
-    $(".text-danger").remove();
+function shopTypeForLeadManagement() {
+    let shopType = $("#shopType").val();
+    if (shopType === "Thai Restaurants &amp; Takeaways"){
+        return "Thai Restaurant";
+    }else if (shopType === "Thai Massage"){
+        return "Thai Massage";
+    }else if (shopType === "Restaurants &amp; Takeaways"){
+        return "Restaurant";
+    }
+}
 
-    let firstName = $("#first_name");
-    let email = $("#email");
-    let mobile = $("#mobile");
-    let company = $("#company");
-    let country = $("#country");
+function getPayload(form) {
+    return {
+        first_name: form.find("[name='first_name']").val(),
+        last_name: form.find("[name='last_name']").val(),
+        email: form.find("[name='email']").val(),
+        mobile: form.find("[name='mobile']").val(),
+        contactTime: form.find("[name='contactTime']").val(),
+        company: form.find("[name='company']").val(),
+        shopName: form.find("[name='shopName']").val(),
+        country: form.find("[name='country']").val(),
+        countryCode: shortCountry(),
+        shopType: form.find("[name='shopType']").val(),
+        shopTypeForLeadManagement: shopTypeForLeadManagement(),
+        url: form.find("[name='url']").val(),
+        city: form.find("[name='city']").val(),
+        currency: form.find("[name='currency']").val(),
+        interest: form.find("[name='interest']").val(),
+        comments: form.find("[name='comments']").val(),
+        SignupFormVersion: form.find("[name='SignupFormVersion']").val(),
+        formType: form.find("[name='formType']").val(),
+        leadSource: form.find("[name='leadSource']").val(),
+        leadRecordType: form.find("[name='leadRecordType']").val()
+    };
+}
+
+function sendPayload(payload) {
+    console.log("🚀 Sending Payload:", payload);
+    $.ajax({
+        url: "https://hook.us1.make.com/47ue45ij7fhm7sol8rldp6dxpag2ldjl",
+        method: "POST",
+        dataType: "json",
+        data: payload,
+        success: function (response) {
+            console.log("✅ Webhook Success:", response);
+            if (response.result === "Leads to Monday successfully") {
+                $("#successMessage").show();
+                setTimeout(() => {
+                    window.location.href = "https://localforyou.com/thank-you/";
+                }, 1500);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("❌ Webhook Failed:", status, error);
+        }
+    });
+}
+
+function validateForm(form) {
+    let isValid = true;
+    form.find(".text-danger").remove(); // Clear previous errors
+
+    const firstName = form.find('[name="first_name"]');
+    const email     = form.find('[name="email"]');
+    const mobile    = form.find('[name="mobile"]');
+    const shopType   = form.find('[name="shopType"]');
+    const country   = form.find('[name="country"]');
 
     function showError(input, message) {
-        let error = $("<small class='text-danger'></small>").text(message);
-        input.parent().append(error);
+        const error = $('<small class="text-danger d-block mt-1"></small>').text(message);
+        input.after(error);
         isValid = false;
     }
 
-    if ($.trim(firstName.val()) === "") {
-        showError(firstName, "First Name is required.");
-    }
-
-    let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test($.trim(email.val()))) {
-        showError(email, "Please enter a valid email.");
-    }
-
-    let phonePattern = /^\+?[0-9\s\-]{8,15}$/;
-    if (!phonePattern.test($.trim(mobile.val()))) {
-        showError(mobile, "Please enter a valid mobile number.");
-    }
-
-    if ($.trim(company.val()) === "") {
-        showError(company, "Restaurant Name is required.");
-    }
-
-    if (!country.val()) {
-        showError(country, "Please select your country.");
-    }
+    if (!firstName.val().trim()) showError(firstName, "First name is required.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.val())) showError(email, "Invalid email.");
+    if (!/^\+?[0-9\s\-]{8,15}$/.test(mobile.val())) showError(mobile, "Invalid mobile number.");
+    if (!shopType.val()) showError(shopType, "Please select a business type.");
+    if (!country.val()) showError(country, "Please select a country.");
 
     return isValid;
 }

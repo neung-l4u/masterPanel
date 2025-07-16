@@ -186,7 +186,7 @@
                                 </div>
                                 <div class="d-flex align-items-center justify-content-end">
                                     <span class="badge rounded-pill bg-info">FREE Shipping - NZ</span>
-                                    <h1 class="display-6 text-success">$685</h1>
+                                    <h1 class="display-6 text-success">$699</h1>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-end">
                                     <small class="text-warning">* Standard 12 Month Warranty</small>

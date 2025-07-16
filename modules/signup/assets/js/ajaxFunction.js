@@ -713,7 +713,6 @@ function requestToPay() {
         "account_number": account_number
     };
 
-    saveToDB(stripePayload);
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -736,7 +735,10 @@ function requestToPay() {
         });
 
         reqPay.done(function (res) {
+
             console.log(res);
+
+            let stripeRes = JSON.stringify(res);
 
             if (res.message === "Success") {
                 result.empty();
@@ -749,6 +751,9 @@ function requestToPay() {
                 } else {
                     customerStripeID.val(res.customer_id);
                 }
+                
+                saveToDB(stripePayload, stripeRes);
+
                 setTimeout(function () {
                     genLinkPDF();
                     modalRespondAction('open', 'success');
@@ -760,18 +765,25 @@ function requestToPay() {
                 $(fail).appendTo(".paymentResult");
                 res.message = "Payment step is fail"
                 alert("Payment step is fail");
+
+                saveToDB(stripePayload, stripeRes);
             }
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
+
             return res.message;
         });
 
         reqPay.fail(function (xhr, status, error) {
+            //console.log(xhr.responseText);
             console.log("ajax request Payment fail!!");
             console.log(status + ': ' + error);
             modalRespondAction('open', 'fail');
             result.html("");
             $("#cmdSubmit").removeClass("btn-outline-info").addClass("btn-outline-success").prop("disabled", false);
             $("#paymentSubmit").prop('disabled', false);
+
+            let stripeRes = xhr.responseText;
+            saveToDB(stripePayload, stripeRes);
             return res.message;
         });
     }else{ //submit without a charge
@@ -854,6 +866,22 @@ const sendMailToL4UTeam = () => {
     });
     let txtCuisine = cuisineSelected.join();
 
+    let checkProduct = $("input[name='product']:checked").val();
+    let toTeam = "";
+
+    if(checkProduct.includes("Bundle")){
+        toTeam = "All";
+    }else if(checkProduct.includes("Solo") || checkProduct.includes("Yelp")){
+        toTeam = "AM";
+    }else if(checkProduct.includes("System")){
+        toTeam = "CS";
+    }else{
+        toTeam = "All";
+    }
+
+    console.log(toTeam);
+
+
     ///////////////////////////////
 
     //formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
@@ -875,6 +903,8 @@ const sendMailToL4UTeam = () => {
         formFirstTimePayment: $("#firstTimePayment").val(),
         formPaymentMethod: $("#paymentMethod").val(),
 
+        toTeam: toTeam,
+
         addonFlyer: $("input:checkbox[name='addonFlyers']:checked").val(),
         addonFridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
         addonDigitalMenu: $("input:checkbox[name='addonPricingDesign']:checked").val(),
@@ -888,16 +918,6 @@ const sendMailToL4UTeam = () => {
         addonInfluencer: $("input:checkbox[name='addonInfluencer']:checked").val(),
 
 
-
-        // formFlyer: $("#initAddOnPrintedFlyers").val(),
-        // formDineIn: $("#initAddOnDineInSystem").val(),
-        // formMagnet: $("#initAddOnFridgeMagnet").val(),
-        // formSocialMedia: $("#initAddOnSocialMediaPosts").val(),
-        // formMenuDesign: $("#initAddOnDigitalMenuDesign").val(),
-        // formWebsiteMakeOver: $("#initAddOnWebsiteMakeOver").val(),
-        // formADVPromo: $("#initAddOnAdvPromo").val(),
-        // formWebHosting: $("#initAddOnWebHosting").val(),
-        // formInfluencer: $("#initAddOnInfluencer").val(),
 
         formCustomerType: $("#formType option:selected").text(),
         formShopName: $("#shopName").val(),
@@ -996,6 +1016,8 @@ const sendMailToL4UTeam = () => {
         token: Math.random()
     };
 
+
+
     // TODO: Send Email To Staff
     const ajaxSendL4UMail = $.ajax({
         url: "https://hook.us1.make.com/7r536tvdcr50jd77tvw5vo41yk61kygx",
@@ -1019,7 +1041,7 @@ const sendMailToL4UTeam = () => {
 
 }//sendMail
 // TODO : Build Logs File to DB by Mark
-const saveToDB = (stripePayload) => {
+const saveToDB = (stripePayload, stripeRes) => {
     genLinkPDF();
     const agreementGenerated = $("#agreementGenerated");
     let contractURL = agreementGenerated.val();
@@ -1161,7 +1183,8 @@ const saveToDB = (stripePayload) => {
             "payload" : payload,
             "country" : Country,
             "contractURL" : contractURL,
-            "testMail" : CheckedBoxTestmailValue
+            "testMail" : CheckedBoxTestmailValue,
+            "stripeRes" : stripeRes
         }
     });
 
