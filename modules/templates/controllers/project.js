@@ -23,14 +23,18 @@ $(function() {
             url: '../models/tableProject.php',
             dataSrc: 'data'
         },
-        "pageLength": 8,
+        "pageLength": 10,
         lengthMenu: [
-            [8, 25, 50, -1],
+            [10, 25, 50, -1],
             ['Fit', 25, 50, 'All']
         ],columnDefs: [
             {
                 targets: -1,
                 className: 'dt-body-right'
+            },
+            {
+                targets: [4,6], // <-- เพิ่มส่วนนี้เข้ามา
+                orderable: false
             }
         ]
     } );

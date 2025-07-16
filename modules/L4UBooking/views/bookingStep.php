@@ -13,7 +13,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sale Appointment Booking</title>
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="../../../assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="../assets/libs/select2/css/select2.min.css" rel="stylesheet"/>
     <link href="../assets/libs/select2/css/select2-bootstrap-5-theme.min.css" rel="stylesheet"/>
     <link href="../assets/libs/flatpickr/flatpickr.min.css" rel="stylesheet"/>
@@ -51,7 +51,6 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
 <div class="container py-5">
     <header>
         <nav class="mb-4"
-             style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
              aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php"><i class="bi bi-house-fill"></i> Home</a></li>
@@ -98,7 +97,11 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                         <option value="CA">Canada</option>
                         <option value="TH">Thailand</option>
                     </select>
-                    Timezone: <span id="timeZone" class="text-primary timeZone">-</span>
+<!--                    Timezone: <span id="timeZone" class="text-primary timeZone">-</span>-->
+                    <label for="timezone">Select Timezone <span class="red">*</span></label>
+                    <select id="timezone" name="timezone" class="form-select mb-3" style="width: 400px;">
+                        <option value="">-- Please Select --</option>
+                    </select>
                 </div>
                 <div class="d-flex flex-column justify-content-start align-items-start mb-3">
                     <div class="mt-2">
@@ -169,9 +172,13 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                         <label for="line_id">Line ID</label>
                             <input type="text" id="line_id" name="line_id" class="form-control mb-2" autocomplete="off" placeholder="LINE ID">
                     </div>
-                    <div class="col-4 mb-3">
+                    <div class="col-4">
                         <label for="whatsapp">WhatsApp</label>
                             <input type="text" id="whatsapp" name="whatsapp" class="form-control mb-2" autocomplete="off" placeholder="WhatsApp">
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label for="address">Address</label>
+                        <textarea class="form-control" name="address" id="address" rows="4" placeholder="Address"></textarea>
                     </div>
                 <div class="d-flex flex-row gap-3 mb-3">
                     <button type="button" class="btn btn-secondary" onclick="prevStep(3)"><i class="bi bi-arrow-left-short"></i> Previous</button>
@@ -218,6 +225,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     const contact_phone = $('#contact_phone');
     const line_id = $('#line_id');
     const whatsapp = $('#whatsapp');
+    const address = $('#address');
 
     let appointmentDetail = {};
     let sendEmailPayload = {};
@@ -312,6 +320,25 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         date.on('change', updateThaiTimePreview);
         time.on('change', updateThaiTimePreview);
 
+        const countryToTimezones = {
+            AU: ["Australia/Sydney", "Australia/Brisbane", "Australia/Perth"],
+            US: ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles"],
+            CA: ["America/Toronto", "America/Vancouver"],
+            UK: ["Europe/London"],
+            NZ: ["Pacific/Auckland"],
+            TH: ["Asia/Bangkok"]
+        };
+
+        country.on('change', function () {
+            const zones = countryToTimezones[country.val()] || [];
+            const timezoneSelect = $('#timezone');
+            timezoneSelect.empty().append(`<option value="">-- Please Select --</option>`);
+            zones.forEach(zone => {
+                timezoneSelect.append(`<option value="${zone}">${zone}</option>`);
+            });
+            timeZone.text(zones[0] || '-');
+        });
+
     });//ready
 
     function nextStep(step) {
@@ -326,15 +353,17 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     }
 
     function sendEmail() {
+        const selectedSale = $("#sales option:selected");
         sendEmailPayload = {
             "staff_id": sales.val(),
             "staff_email": getStaffEmail(sales.val()),
-            "staff_name": $("#sales option:selected").text(),
-            "staff_nickname": getNickname($("#sales option:selected").text()),
+            "staff_name": selectedSale.text(),
+            "staff_nickname": getNickname(selectedSale.text()),
             "created_by": "1",
             "shop_type_id": shop_type.val(),
             "shop_type": $("#shop_type option:selected").text(),
             "country": country.val(),
+            "timezone": $('#timezone').val(),
             "city": city.val(),
             "date": date.val(),
             "time": time.val(),
@@ -344,6 +373,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "contact_phone": contact_phone.val(),
             "line_id": line_id.val(),
             "whatsapp": whatsapp.val(),
+            "address": address.val(),
             "formVersion": "1.0.0"
         };
 
@@ -371,12 +401,14 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     }//sendEmail
 
     function bookCalendar() {
+        const selectedSale = $("#sales option:selected");
         appointmentDetail = {
             "staff_email": getStaffEmail(sales.val()),
-            "staff_name": $("#sales option:selected").text(),
-            "staff_nickname": getNickname($("#sales option:selected").text()),
+            "staff_name": selectedSale.text(),
+            "staff_nickname": getNickname(selectedSale.text()),
             "shop_type": $("#shop_type option:selected").text(),
             "country": country.val(),
+            "timezone": $('#timezone').val(),
             "city": city.val(),
             "startDate": date.val(),
             "startTime": time.val(),
@@ -391,6 +423,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "contact_phone": contact_phone.val(),
             "line_id": line_id.val(),
             "whatsapp": whatsapp.val(),
+            "address": address.val(),
             "formVersion": "1.0.0"
         };
 
@@ -418,6 +451,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
 
     function getStaffEmail(id) {
         const map = {
+            1: 'neung@localforyou.com',
             17: 'boom@localforyou.com',
             24: 'honey@localforyou.com',
             35: 'pluem@localforyou.com',
@@ -430,21 +464,6 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             90: 'foo.si@localforyou.com'
         };
 
-
-
-/*        const map = {
-            17: 'neung@localforyou.com',
-            18: 'neung@localforyou.com',
-            24: 'neung@localforyou.com',
-            35: 'neung@localforyou.com',
-            38: 'neung@localforyou.com',
-            47: 'neung@localforyou.com',
-            62: 'neung@localforyou.com',
-            72: 'neung@localforyou.com',
-            76: 'neung@localforyou.com',
-            79: 'neung@localforyou.com',
-            84: 'neung@localforyou.com',
-        };*/
         return map[id] || 'administrator@localforyou.com';
     }
 
@@ -497,9 +516,10 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         const selectedCountry = country.val();
         const selectedDate = date.val();
         const selectedTime = time.val();
+        const thTimePreview = $('#thTimePreview');
 
         if (!selectedCountry || !selectedDate || !selectedTime) {
-            $('#thTimePreview').text('');
+            thTimePreview.text('');
             return;
         }
 
@@ -510,7 +530,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
 
         const thaiFormatted = dateTimeInThaiTZ.toFormat("HH:mm (ccc dd MMM)");
 
-        $('#thTimePreview').text(`⏰ BKK: ${thaiFormatted}`);
+        thTimePreview.text(`⏰ BKK: ${thaiFormatted}`);
     }
 
     function showReview() {
@@ -520,13 +540,14 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "City": city.val() || '-',
             "Salesperson": $("#sales option:selected").text(),
             "Date": date.val(),
-            "Time": `(${country.val()}) ${time.val().substring(0, 5)} = ${getThaiTimeText(date.val(), time.val(), country.val())}`,
+            "Time": `(${country.val()}) ${time.val().substring(0, 5)} = ${getThaiTimeText(date.val(), time.val())}`,
             "Shop Name": shop_name.val(),
             "Customer Name": customer_name.val(),
             "Email": contact_email.val(),
             "Phone": contact_phone.val(),
             "Line ID": line_id.val() || '-',
-            "WhatsApp": whatsapp.val() || '-'
+            "WhatsApp": whatsapp.val() || '-',
+            "Address": address.val() || '-'
         };
 
         const iconMap = {
@@ -541,7 +562,8 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "Email": "bi-envelope",
             "Phone": "bi-telephone",
             "Line ID": "bi-chat-dots",
-            "WhatsApp": "bi-whatsapp"
+            "WhatsApp": "bi-whatsapp",
+            "Address": "bi-geo-alt-fill"
         };
 
         let html = '';
@@ -568,15 +590,11 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     }
 
 
-    function getThaiTimeText(dateStr, timeStr, countryCode) {
+    function getThaiTimeText(dateStr, timeStr) {
         try {
-            const targetZone = timeZoneMap[countryCode] || 'Asia/Bangkok';
-            const thaiZone = 'Asia/Bangkok';
-
-            const datetimeStr = `${dateStr}T${timeStr}`;
-            const local = luxon.DateTime.fromISO(datetimeStr, { zone: targetZone });
-            const thai = local.setZone(thaiZone);
-
+            const selectedZone = $('#timezone').val() || 'Asia/Bangkok';
+            const local = luxon.DateTime.fromISO(`${dateStr}T${timeStr}`, { zone: selectedZone });
+            const thai = local.setZone('Asia/Bangkok');
             return `(TH) : ${thai.toFormat('HH:mm')}`;
         } catch (e) {
             return '-';

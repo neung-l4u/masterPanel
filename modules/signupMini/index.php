@@ -17,7 +17,7 @@ $currentDate = date('d/m/Y');
 
 <body>
     <div class="container">
-        <form class="p-5" action="#" method="POST">
+        <form class="p-5" action="#" method="POST" id="miniForm">
 
             <div class="card">
                 <div class="card-header">
@@ -71,7 +71,7 @@ $currentDate = date('d/m/Y');
                         <div class="col">
                             <div class="form-group">
                                 <label for="contactTime" class="font-weight-bold">Best time to Contact</label>
-                                <input id="contactTime" class="form-control" name="bestTimeToContact" placeholder="10:00am" type="text">
+                                <input id="contactTime" class="form-control" name="contactTime" placeholder="10:00am" type="text">
                             </div>
                         </div>
                     </div>
@@ -176,8 +176,8 @@ $currentDate = date('d/m/Y');
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="comment" class="font-weight-bold">Comments</label>
-                                <textarea id="comment" class="form-control" name="comment" rows="3" type="text" wrap="soft"></textarea>
+                                <label for="comments" class="font-weight-bold">Comments</label>
+                                <textarea id="comments" class="form-control" name="comments" rows="3" type="text" wrap="soft"></textarea>
                             </div>
                         </div>
                     </div>
@@ -204,60 +204,15 @@ $currentDate = date('d/m/Y');
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://report.localforyou.com/modules/signupMini/assets/js/index.js"></script>
 <script>
+    const miniForm = $("#miniForm");
 
-    $("form").submit(function (e) {
+    miniForm.submit(function (e) {
         e.preventDefault();
-
-        if (typeof validateForm === "function" && validateForm() === false) {
-            console.log("Validation failed");
-            return false;
-        }
-
+        const isValid = validateForm(miniForm);
+        if (!isValid) return false;
         setMoney();
-        let countryCode = shortCountry();
-
-        let payload = {
-            "first_name": $("#first_name").val(),
-            "last_name": $("#last_name").val(),
-            "email": $('#email').val(),
-            "mobile": $("#mobile").val(),
-            "contactTime": $("#contactTime").val(),
-            "company": $("#company").val(),
-            "shopName": $("#shopName").val(),
-            "shopType": $("#shopType").val(),
-            "url": $("#url").val(),
-            "city": $("#city").val(),
-            "country": $("#country").val(),
-            "currency": $("#currency").val(),
-            "interest": $("#interest").val(),
-            "comments": $("#comment").val(),
-            "SignupFormVersion": $("#SignupFormVersion").val(),
-            "countryCode" : countryCode,
-            "leadSource": $("#leadSource").val(),
-            "leadRecordType": $("#leadRecordType").val(),
-            "formType": $("#formType").val()
-        };
-
-        console.log("Payload to send:", payload);
-
-        $.ajax({
-            url: "https://hook.us1.make.com/47ue45ij7fhm7sol8rldp6dxpag2ldjl",
-            method: 'POST',
-            dataType: 'json',
-            data: payload,
-            success: function (response) {
-                console.log("Webhook success:", response);
-                if (response.result === "Leads to Monday successfully") {
-                    $("#successMessage").show();
-                    setTimeout(function () {
-                        window.location.href = "https://localforyou.com/thank-you/";
-                    }, 1500);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Webhook failed:", status, error);
-            }
-        });
+        const payload = getPayload(miniForm);
+        sendPayload(payload);
     });
 
 </script>
