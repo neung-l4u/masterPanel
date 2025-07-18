@@ -143,3 +143,5 @@ out
 /modules/voucher/phpInfo.php
 /modules/templates/upload
 /modules/templates/views/server/uploads
+/modules/feedback/upload
+/modules/feedback/assets/db/initDB.php
