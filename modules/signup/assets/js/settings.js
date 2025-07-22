@@ -19,28 +19,28 @@ const settings = {
   },
   PaymentFee: {
     AU: {
-      "Restaurant": "1.75% + 30 cent",
-      "Massage": "4% + 30 cent"
+      "Restaurant": "1.75% + $0.30 per transaction",
+      "Massage": "1.75% + $0.30 per transaction"
     },
     NZ: {
-      "Restaurant": "2.9% + 30 cent",
-      "Massage": "4% + 30 cent"
+      "Restaurant": "2.9% + $0.30 per transaction",
+      "Massage": "2.9% + $0.30 per transaction"
     },
     UK: {
-      "Restaurant": "2.9% + 30 cent",
-      "Massage": "4% + 30 cent"
+      "Restaurant": "2.9% + £0.30 per transaction",
+      "Massage": "2.9% + £0.30 per transaction"
     },
     CA: {
-      "Restaurant": "2.9% + 30 cent",
-      "Massage": "4% + 30 cent"
+      "Restaurant": "2.9% + £0.30 per transaction",
+      "Massage": "2.9% + £0.30 per transaction"
     },
     US: {
-      "Restaurant": "2.9% + 30 cent",
-      "Massage": "4% + 30 cent"
+      "Restaurant": "2.9% + $0.30 per transaction",
+      "Massage": "2.9% + $0.30 per transaction"
     },
     TH: {
-      "Restaurant": "2.9% + 30 cent",
-      "Massage": "4% + 30 cent"
+      "Restaurant": "1.75% + $0.30 per transaction",
+      "Massage": "1.75% + $0.30 per transaction"
     }
   },
   socials: [

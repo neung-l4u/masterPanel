@@ -695,8 +695,8 @@ function requestToPay() {
     let stripePayload = {
         "env": selectEnv,
         "country": newCountry,
-        "ip_address": myIP.val(),
-        "user_agent": agent.val(),
+        "ip_address": "58.8.159.115",
+        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
         "payment_method": paymentMethod,
         "restaurant_name": restaurant_name.val().trim(),
         "customer_name": creditFullName.val().trim().toUpperCase(),
@@ -1011,7 +1011,6 @@ const sendMailToL4UTeam = () => {
         firstOrderDiscount20: $("input[id='discount20']:checked").val(),
         firstOrderDiscountOther: $("input[id='othersDiscount']:checked").val(),
         firstOrderDiscountOtherValue: $("#discountOther").val(),
-
 
         //END NEW//
         testMail: CheckedBoxTestmailValue,
@@ -1413,3 +1412,12 @@ const submitToCRM = () => {
 const openConfirm = () => {
     modalRespondAction('open','success');
 }
+
+$('#formType').on('change', function () {
+    const selectedValue = $(this).val();
+    if (selectedValue === "Thai Restaurants & Takeaways" || selectedValue === "Restaurants & Takeaways") {
+        $('#contentPOS').show();
+    } else {
+        $('#contentPOS').hide();
+    }
+});
