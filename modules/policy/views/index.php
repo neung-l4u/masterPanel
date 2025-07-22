@@ -13,6 +13,8 @@
     </script>
     <?php
     $nub = '1.4.0';
+    $lastupdate = '16/07/2025';
+    $effectivedate = '01/08/2025';
     ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -107,6 +109,10 @@
         <div id="lastUpdate_en">
             <p class="text-right">
                 <small class="text-muted">
+                    Document Version: <?php echo $nub; ?><br>
+                    Last Updated: <?php echo $lastupdate; ?><br>
+                    Effective Date : <?php echo $effectivedate; ?><br>
+
                     version <?php echo $nub; ?> | Last update :
                     <?php
                     $updateDate = "2025-07-15";
@@ -119,7 +125,12 @@
         <div id="lastUpdate_th" class="nono">
             <p class="text-right">
                 <small class="text-muted">
-                    เวอร์ชั่น <?php echo $nub; ?>
+                    เวอร์ชั่นเอกสาร: <?php echo $nub; ?><br>
+                    วันที่ปรับปรุงเอกสาร: <?php echo $lastupdate; ?><br>
+                    วันที่มีผลบังคับใช้: <?php echo $effectivedate; ?><br>
+
+
+                    <!--เวอร์ชั่น <?php echo $nub; ?>
 
                     <?php
                     function DateThai($strDate)
