@@ -787,6 +787,8 @@ function requestToPay() {
             return res.message;
         });
     }else{ //submit without a charge
+            let stripeRes = "Test Mode - No Charge";
+            saveToDB(stripePayload, stripeRes);
             result.empty();
             let done = `<span class="badge bg-success">No Charge</span>`;
             let cusID = `<span class="badge bg-info">No Stripe Connect</span>`;
