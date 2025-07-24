@@ -98,6 +98,12 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                         <option value="TH">Thailand</option>
                     </select>
 <!--                    Timezone: <span id="timeZone" class="text-primary timeZone">-</span>-->
+                    <label for="state">Select State <span class="red">*</span></label>
+                    <select id="state" name="state" class="form-select mb-3" style="width: 400px;">
+                        <option value="">-- Please Select --</option>
+                    </select>
+                </div>
+                <div class="d-flex flex-column gap-1">
                     <label for="timezone">Select Timezone <span class="red">*</span></label>
                     <select id="timezone" name="timezone" class="form-select mb-3" style="width: 400px;">
                         <option value="">-- Please Select --</option>
@@ -212,6 +218,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
 <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
 
 <script>
+    //ประกาศตัวแปรผูกกับ id กับ class
     const shop_type = $('#shop_type');
     const country = $('#country');
     const city = $('#city');
@@ -226,10 +233,13 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     const line_id = $('#line_id');
     const whatsapp = $('#whatsapp');
     const address = $('#address');
+    const state = $('#state');
 
+    //ตัวแปรเปล่า
     let appointmentDetail = {};
     let sendEmailPayload = {};
 
+    //ตัวแปร array
     const timeZoneMap = {
         "AU": "Australia/Sydney",
         "NZ": "Pacific/Auckland",
@@ -239,6 +249,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         "TH": "Asia/Bangkok"
     };
 
+    //เมื่อเริ่มให้ทำอะไร
     $(document).ready(function () {
         //$('#shop_type').select2({placeholder: 'Select your store type',theme: 'bootstrap-5'});
         //country.select2({placeholder: 'Select country',theme: 'bootstrap-5'});
@@ -264,6 +275,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         }
         time.append(times).trigger('change');
 
+        //ตัวแปร array เกี่ยวกับ timezone
         const timezones = {
             AU: "Australia/Sydney",
             NZ: "Pacific/Auckland",
@@ -272,6 +284,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             CA: "America/Toronto",
             TH: "Asia/Bangkok"
         };
+        //เมื่อตัวแปร country จะ class timeZone ทั้งจะกลายเป็นชื่อของแต่ล่ะ country ตัวอย่างเมื่อเลือก AU ตัวแปร timeZone จะเท่ากับ Australia/Sydney
         country.on('change', function () {
             const tz = timezones[country.val()] || '';
             timeZone.text(tz);
@@ -321,14 +334,15 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         time.on('change', updateThaiTimePreview);
 
         const countryToTimezones = {
-            AU: ["Australia/Sydney", "Australia/Brisbane", "Australia/Perth"],
-            US: ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles"],
-            CA: ["America/Toronto", "America/Vancouver"],
+            AU: ["Australia/Sydney", "Australia/Brisbane", "Australia/Perth", "Australia/Melbourne", "Australia/Adelaide ", "Australia/Hobart", "Australia/Darwin"],
+            US: ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Phoenix", "America/Anchorage", "America/Indiana/Indianapolis", "America/Detroit", "America/Indiana/Knox" ,"Pacific/Honolulu"],
+            CA: ["America/Toronto", "America/Vancouver", "America/Edmonton (Alberta)", "America/Winnipeg", "America/Halifax", "America/St_Johns", "America/Moncton", "America/Montreal"],
             UK: ["Europe/London"],
-            NZ: ["Pacific/Auckland"],
+            NZ: ["Pacific/Auckland", "Pacific/Chatham"],
             TH: ["Asia/Bangkok"]
         };
 
+        //เมื่อตัวแปร country ถูก'เปลี่ยน'
         country.on('change', function () {
             const zones = countryToTimezones[country.val()] || [];
             const timezoneSelect = $('#timezone');
@@ -337,7 +351,139 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
                 timezoneSelect.append(`<option value="${zone}">${zone}</option>`);
             });
             timeZone.text(zones[0] || '-');
+
+
+            const selectedCountry = country.val();
+            const states = countryToState[selectedCountry] || [];
+            const stateSelect = $('#state');
+            stateSelect.empty().append(`<option value="">-- Please Select --</option>`);
+            states.forEach(state => {
+                stateSelect.append(`<option value="${state.code}">${state.code} : ${state.name}</option>`);
+
+            });
         });
+
+        $('#state').on('change', function() {
+            const selectedCode = $(this).val();
+            const states = countryToState[country.val()] || [];
+            const selectedState = states.find(s => s.code === selectedCode);
+            if (selectedState) {
+                $('#timezone').val(selectedState.timezone).trigger('change');
+            } else {
+                $('#timezone').val('').trigger('change');
+            }
+        });
+
+        const countryToState = {
+                AU: [
+                    { code: "NSW", name: "New South Wales", timezone: "Australia/Sydney" },
+                    { code: "VIC", name: "Victoria", timezone: "Australia/Melbourne" },
+                    { code: "QLD", name: "Queensland", timezone: "Australia/Brisbane" },
+                    { code: "SA", name: "South Australia", timezone: "Australia/Adelaide" },
+                    { code: "WA", name: "Western Australia", timezone: "Australia/Perth" },
+                    { code: "TAS", name: "Tasmania", timezone: "Australia/Hobart" },
+                    { code: "NT", name: "Northern Territory", timezone: "Australia/Darwin" },
+                    { code: "ACT", name: "Australian Capital Territory", timezone: "Australia/Sydney" } // ACT ใช้ timezone Sydney
+                ],
+                US: [
+                    { code: "AL", name: "Alabama", timezone: "America/Chicago" },
+                    { code: "AK", name: "Alaska", timezone: "America/Anchorage" },
+                    { code: "AZ", name: "Arizona", timezone: "America/Phoenix" },
+                    { code: "AR", name: "Arkansas", timezone: "America/Chicago" },
+                    { code: "CA", name: "California", timezone: "America/Los_Angeles" },
+                    { code: "CO", name: "Colorado", timezone: "America/Denver" },
+                    { code: "CT", name: "Connecticut", timezone: "America/New_York" },
+                    { code: "DE", name: "Delaware", timezone: "America/New_York" },
+                    { code: "FL", name: "Florida", timezone: "America/New_York" },
+                    { code: "GA", name: "Georgia", timezone: "America/New_York" },
+                    { code: "HI", name: "Hawaii", timezone: "Pacific/Honolulu" },
+                    { code: "ID", name: "Idaho", timezone: "America/Denver" },
+                    { code: "IL", name: "Illinois", timezone: "America/Chicago" },
+                    { code: "IN", name: "Indiana", timezone: "America/Indiana/Indianapolis" },
+                    { code: "IA", name: "Iowa", timezone: "America/Chicago" },
+                    { code: "KS", name: "Kansas", timezone: "America/Chicago" },
+                    { code: "KY", name: "Kentucky", timezone: "America/New_York" },
+                    { code: "LA", name: "Louisiana", timezone: "America/Chicago" },
+                    { code: "ME", name: "Maine", timezone: "America/New_York" },
+                    { code: "MD", name: "Maryland", timezone: "America/New_York" },
+                    { code: "MA", name: "Massachusetts", timezone: "America/New_York" },
+                    { code: "MI", name: "Michigan", timezone: "America/Detroit" },
+                    { code: "MN", name: "Minnesota", timezone: "America/Chicago" },
+                    { code: "MS", name: "Mississippi", timezone: "America/Chicago" },
+                    { code: "MO", name: "Missouri", timezone: "America/Chicago" },
+                    { code: "MT", name: "Montana", timezone: "America/Denver" },
+                    { code: "NE", name: "Nebraska", timezone: "America/Chicago" },
+                    { code: "NV", name: "Nevada", timezone: "America/Los_Angeles" },
+                    { code: "NH", name: "New Hampshire", timezone: "America/New_York" },
+                    { code: "NJ", name: "New Jersey", timezone: "America/New_York" },
+                    { code: "NM", name: "New Mexico", timezone: "America/Denver" },
+                    { code: "NY", name: "New York", timezone: "America/New_York" },
+                    { code: "NC", name: "North Carolina", timezone: "America/New_York" },
+                    { code: "ND", name: "North Dakota", timezone: "America/Chicago" },
+                    { code: "OH", name: "Ohio", timezone: "America/New_York" },
+                    { code: "OK", name: "Oklahoma", timezone: "America/Chicago" },
+                    { code: "OR", name: "Oregon", timezone: "America/Los_Angeles" },
+                    { code: "PA", name: "Pennsylvania", timezone: "America/New_York" },
+                    { code: "RI", name: "Rhode Island", timezone: "America/New_York" },
+                    { code: "SC", name: "South Carolina", timezone: "America/New_York" },
+                    { code: "SD", name: "South Dakota", timezone: "America/Chicago" },
+                    { code: "TN", name: "Tennessee", timezone: "America/Chicago" },
+                    { code: "TX", name: "Texas", timezone: "America/Chicago" },
+                    { code: "UT", name: "Utah", timezone: "America/Denver" },
+                    { code: "VT", name: "Vermont", timezone: "America/New_York" },
+                    { code: "VA", name: "Virginia", timezone: "America/New_York" },
+                    { code: "WA", name: "Washington", timezone: "America/Los_Angeles" },
+                    { code: "WV", name: "West Virginia", timezone: "America/New_York" },
+                    { code: "WI", name: "Wisconsin", timezone: "America/Chicago" },
+                    { code: "WY", name: "Wyoming", timezone: "America/Denver" }
+                ],
+                CA: [
+                    { code: "AB", name: "Alberta", timezone: "America/Edmonton" },
+                    { code: "BC", name: "British Columbia", timezone: "America/Vancouver" },
+                    { code: "MB", name: "Manitoba", timezone: "America/Winnipeg" },
+                    { code: "NB", name: "New Brunswick", timezone: "America/Moncton" },
+                    { code: "NL", name: "Newfoundland and Labrador", timezone: "America/St_Johns" },
+                    { code: "NS", name: "Nova Scotia", timezone: "America/Halifax" },
+                    { code: "ON", name: "Ontario", timezone: "America/Toronto" },
+                    { code: "PE", name: "Prince Edward Island", timezone: "America/Halifax" },
+                    { code: "QC", name: "Quebec", timezone: "America/Montreal" },
+                    { code: "SK", name: "Saskatchewan", timezone: "America/Regina" },
+                    { code: "NT", name: "Northwest Territories", timezone: "America/Yellowknife" },
+                    { code: "NU", name: "Nunavut", timezone: "America/Iqaluit" },
+                    { code: "YT", name: "Yukon", timezone: "America/Whitehorse" }
+                ],
+                UK: [
+                    { code: "ENG", name: "England", timezone: "Europe/London" },
+                    { code: "SCT", name: "Scotland", timezone: "Europe/London" },
+                    { code: "WLS", name: "Wales", timezone: "Europe/London" },
+                    { code: "NIR", name: "Northern Ireland", timezone: "Europe/London" }
+                ],
+                NZ: [
+                    { code: "AUK", name: "Auckland", timezone: "Pacific/Auckland" },
+                    { code: "BOP", name: "Bay of Plenty", timezone: "Pacific/Auckland" },
+                    { code: "CAN", name: "Canterbury", timezone: "Pacific/Auckland" },
+                    { code: "CIT", name: "Chatham Islands Territory", timezone: "Pacific/Chatham" },
+                    { code: "GIS", name: "Gisborne", timezone: "Pacific/Auckland" },
+                    { code: "HKB", name: "Hawke's Bay", timezone: "Pacific/Auckland" },
+                    { code: "MBH", name: "Marlborough", timezone: "Pacific/Auckland" },
+                    { code: "MWT", name: "Manawatu-Wanganui", timezone: "Pacific/Auckland" },
+                    { code: "NSN", name: "Nelson", timezone: "Pacific/Auckland" },
+                    { code: "NTL", name: "Northland", timezone: "Pacific/Auckland" },
+                    { code: "OTA", name: "Otago", timezone: "Pacific/Auckland" },
+                    { code: "STL", name: "Southland", timezone: "Pacific/Auckland" },
+                    { code: "TAS", name: "Tasman", timezone: "Pacific/Auckland" },
+                    { code: "TKI", name: "Taranaki", timezone: "Pacific/Auckland" },
+                    { code: "WGN", name: "Wellington", timezone: "Pacific/Auckland" },
+                    { code: "WKO", name: "Waikato", timezone: "Pacific/Auckland" }
+                ],
+                TH: [
+                    { code: "BKK", name: "Bangkok", timezone: "Asia/Bangkok" }
+                ]
+            };
+
+
+
+
 
     });//ready
 
@@ -365,6 +511,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "country": country.val(),
             "timezone": $('#timezone').val(),
             "city": city.val(),
+            "state": state.val(),
             "date": date.val(),
             "time": time.val(),
             "customer_name": customer_name.val(),
@@ -538,6 +685,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "Shop Type": $("#shop_type option:selected").text(),
             "Country": $("#country option:selected").text(),
             "City": city.val() || '-',
+            "State": state.val() || '-',
             "Salesperson": $("#sales option:selected").text(),
             "Date": date.val(),
             "Time": `(${country.val()}) ${time.val().substring(0, 5)} = ${getThaiTimeText(date.val(), time.val())}`,
@@ -554,6 +702,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             "Shop Type": "bi-shop",
             "Country": "bi-flag",
             "City": "bi-geo",
+            "State": "bi-geo-alt-fill",
             "Salesperson": "bi-person",
             "Date": "bi-calendar",
             "Time": "bi-clock",
