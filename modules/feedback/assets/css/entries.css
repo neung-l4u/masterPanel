@@ -1,0 +1,25 @@
+.form-title {
+    font-weight: 600;
+    color: #0d6efd;
+    text-align: center;
+}
+
+.viewDetail {
+    cursor: pointer;
+    color: #0d6efd;
+}
+
+table.dataTable {
+    font-size: 0.9em;
+}
+
+table.dataTable th, table.dataTable thead td {
+    border-right: 1px solid #5e6a75;
+}
+
+.modal-body .row:nth-child(odd) {
+  background-color: #f8f9fa; /* light gray */
+}
+.modal-body .row:nth-child(even) {
+  background-color: #ffffff; /* white */
+}

@@ -19,21 +19,19 @@ global $db;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/index.css?v=1.0.0" rel="stylesheet">
+    <link href="../assets/css/feedbackForm.css?v=1.0.0" rel="stylesheet">
     <link rel="stylesheet" href="../assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
-    <script src="../assets/js/index.js?v=1.0.0"></script>
-    <title>Hello, world!</title>
-    <style>
-        .breadcrumb li a{
-            text-decoration: none;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <title>Feedback</title>
 </head>
-<body>
+<body style="min-height: 100vh;">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Logo..</a>
+        <a class="navbar-brand" href="#"><img src="../assets/img/L4U-Site-Icon.png" alt="logo" style="width: 50px;"/></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -43,10 +41,10 @@ global $db;
                     <a class="nav-link active" aria-current="page" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Features</a>
+                    <a class="nav-link" href="../views/feedbackForm.php">Form</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Pricing</a>
+                    <a class="nav-link" href="../views/entries.php">Entries</a>
                 </li>
             </ul>
             <span class="navbar-text">
@@ -56,52 +54,32 @@ global $db;
     </div>
 </nav>
 
-<div class="container py-5">
-
-    <header>
-        <nav class="mb-4" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <i class="bi bi-house-fill"></i>&nbsp;
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Library</li>
-            </ol>
-        </nav>
-    </header>
-
+<div class="container">
     <main>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-            modal
-        </button>
-        <section style="min-height: 50vh;">
-            <h1>Project Form Feedback</h1>
-        </section>
-    </main>
-
-    <footer>
-        copyright © 2024 by localforyou.com
-    </footer>
-
-
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <section class="d-flex justify-content-center align-items-center">
+            <div class="row align-items-center" style="height: 85vh;">
+                <!-- Left Content -->
+                <div class="col-md-6 text-center text-md-start mb-4 mb-md-0">
+                    <h1 class="display-4 fw-bold">Local For You<br>Feedback</h1>
+                    <p class="text-muted mt-3">
+                    Our feedback system allows you to easily share your thoughts, suggestions, or issues. Every entry helps us improve our service and better meet your needs.
+                    </p>
+                    <div class="mt-4">
+                    <a href="feedbackForm.php" class="btn btn-primary me-2">Feedback Form</a>
+                    <a href="Entries.php" class="btn btn-outline-dark">View Entries</a>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Understood</button>
+
+                <!-- Right Image -->
+                <div class="col-md-6 text-center">
+                    <img src="../assets/img/l4u-feedback.png" alt="l4u-feedback" class="w-100 hero-img">
                 </div>
             </div>
-        </div>
-    </div> <!-- Modal-->
+        </section>
+    </main>
 </div><!-- container-->
 
+<?php include '../layout/footer.php'; ?>
 
 <script src="../assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
