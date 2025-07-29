@@ -27,8 +27,8 @@ const settings = {
       "Massage": "2.7% + $0.30 per transaction"
     },
     UK: {
-      "Restaurant": "2.9% + £0.30 per transaction",
-      "Massage": "2.9% + £0.30 per transaction"
+      "Restaurant": "1.4% + £0.20 per transaction",
+      "Massage": "1.4% + £0.20 per transaction"
     },
     CA: {
       "Restaurant": "2.9% + $0.30 per transaction",
