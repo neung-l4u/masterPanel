@@ -94,6 +94,15 @@
                 width: 10%;
             }
 
+            #headtopic2 {
+                color: #000000 !important;
+            }
+
+
+            #headtopic {
+                color: #000000 !important;
+            }
+
             .card-header {
                 break-after: avoid;
             }
@@ -202,9 +211,32 @@
 
         <div id="boxAllContent" style="margin-top: 2rem;">
             <div id="th" class="nono">
+
                 <div class="card">
+                    <div class="card-header bg-primary text-white" >
+                        <h5 class="font-weight-bold" id="headtopic"><b>1. ข้อมูลที่ต้องจัดเตรียม</b></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">
+                            <ul>
+                                <li class="font-weight-bolder"><b>ชื่อร้าน</b></li>
+                                <li class="font-weight-bold"><b>โทนสีและอารมณ์ของเว็บไซต์ที่ต้องการ</b></li>
+                                <li class="font-weight-bold"><b>โลโก้ร้าน (ถ้ามีไฟล์ต้นฉบับ เช่น .ai, .pdf จะดีที่สุด)</b></li>
+                                <li class="font-weight-bold"><b>รูปภาพร้าน เช่น ภาพหน้าร้าน อาหาร ฯลฯ</b></li>
+                                <li class="font-weight-bold"><b>ข้อมูลเมนูหรือบริการ</b></li>
+                                <li class="font-weight-bold"><b>วัน-เวลาเปิดทำการ</b></li>
+                                <li class="font-weight-bold"><b>ที่อยู่และช่องทางติดต่อ</b></li>
+                                <li class="font-weight-bold"><b>ลิงก์โซเชียลมีเดีย, Google My Business ฯลฯ</b></li>
+                                <li class="font-weight-bold"><b>ระบุว่าต้องการใช้ระบบสั่งอาหารออนไลน์หรือระบบจองคิวนัดหมายในเว็บไซต์หรือไม่</b></li>
+                                <li class="font-weight-bold"><b>สำหรับเว็บไซต์ Fully Customize กรุณาระบุตัวอย่างเว็บไซต์ที่ต้องการ (Reference) เพื่อใช้เป็นแนวทางในการออกแบบ</b></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
                     <div class="card-header">
-                        <h5 class="font-weight-bold">1. ขอบเขตบริการ</h5>
+                        <h5 class="font-weight-bold">2. ขอบเขตบริการ</h5>
                     </div>
                     <div class="card-body">
                         <div class="card-text">
@@ -219,27 +251,7 @@
                     </div>
                 </div>
 
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h5 class="font-weight-bold">2. ข้อมูลที่ต้องจัดเตรียม</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-text">
-                            <ul>
-                                <li class="font-weight-bold">ชื่อร้าน</li>
-                                <li class="font-weight-bold">โทนสีและอารมณ์ของเว็บไซต์ที่ต้องการ</li>
-                                <li class="font-weight-bold">โลโก้ร้าน (ถ้ามีไฟล์ต้นฉบับ เช่น .ai, .pdf จะดีที่สุด)</li>
-                                <li class="font-weight-bold">รูปภาพร้าน เช่น ภาพหน้าร้าน อาหาร ฯลฯ</li>
-                                <li class="font-weight-bold">ข้อมูลเมนูหรือบริการ</li>
-                                <li class="font-weight-bold">วัน-เวลาเปิดทำการ</li>
-                                <li class="font-weight-bold">ที่อยู่และช่องทางติดต่อ</li>
-                                <li class="font-weight-bold">ลิงก์โซเชียลมีเดีย, Google My Business ฯลฯ</li>
-                                <li class="font-weight-bold">ระบุว่าต้องการใช้ระบบสั่งอาหารออนไลน์หรือระบบจองคิวนัดหมายในเว็บไซต์หรือไม่</li>
-                                <li class="font-weight-bold">สำหรับเว็บไซต์ Fully Customize กรุณาระบุตัวอย่างเว็บไซต์ที่ต้องการ (Reference) เพื่อใช้เป็นแนวทางในการออกแบบ</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+
 
                 <div class="card mt-3">
                     <div class="card-header">
@@ -300,9 +312,31 @@
 
 
             <div id="en" class="card">
+
                 <div class="card">
+                    <div class="card-header bg-primary text-white" >
+                        <h5 class="font-weight-bold" id="headtopic2"><b>1. Required Information for Website Creation</b></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">
+                            <ul>
+                                <li class="font-weight-bold"><b>Store name</b></li>
+                                <li class="font-weight-bold"><b>Preferred color scheme, mood, and tone</b></li>
+                                <li class="font-weight-bold"><b>Store logo (original file formats such as .ai or .pdf are highly preferred)</b></li>
+                                <li class="font-weight-bold"><b>Store photos (e.g. storefront, food, interior, etc.)</b></li>
+                                <li class="font-weight-bold"><b>Menu or service details</b></li>
+                                <li class="font-weight-bold"><b>Business hours</b></li>
+                                <li class="font-weight-bold"><b>Address and contact information</b></li>
+                                <li class="font-weight-bold"><b>Social media URLs, Google My Business link, etc.</b></li>
+                                <li class="font-weight-bold"><b>Specify whether you would like to include an Online Ordering System or Booking System on the website</b></li>
+                                <li class="font-weight-bold"><b>For Fully Customize websites, please provide example websites (references) for design guidance</b></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
                     <div class="card-header">
-                        <h5 class="font-weight-bold">1. Scope of Service</h5>
+                        <h5 class="font-weight-bold">2. Scope of Service</h5>
                     </div>
                     <div class="card-body">
                         <div class="card-text px-3">
@@ -318,27 +352,7 @@
                     </div>
                 </div>
 
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h5 class="font-weight-bold">2. Required Information for Website Creation</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-text">
-                            <ul>
-                                <li class="font-weight-bold">Store name</li>
-                                <li class="font-weight-bold">Preferred color scheme, mood, and tone</li>
-                                <li class="font-weight-bold">Store logo (original file formats such as .ai or .pdf are highly preferred)</li>
-                                <li class="font-weight-bold">Store photos (e.g. storefront, food, interior, etc.)</li>
-                                <li class="font-weight-bold">Menu or service details</li>
-                                <li class="font-weight-bold">Business hours</li>
-                                <li class="font-weight-bold">Address and contact information</li>
-                                <li class="font-weight-bold">Social media URLs, Google My Business link, etc.</li>
-                                <li class="font-weight-bold">Specify whether you would like to include an <b>Online Ordering System</b> or <b>Booking System</b> on the website</li>
-                                <li class="font-weight-bold">For Fully Customize websites, please provide example websites (references) for design guidance</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+
 
                 <div class="card mt-3">
                     <div class="card-header">
