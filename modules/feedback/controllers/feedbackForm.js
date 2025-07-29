@@ -44,6 +44,8 @@ function sendMail(formData) {
         data: JSON.stringify(jsonData),
         success: () => {
             console.log("✅ Webhook sent successfully.");
+            window.location.replace("thankyou.php");
+
         },
         error: () => {
             console.error("❌ Webhook sending failed.");

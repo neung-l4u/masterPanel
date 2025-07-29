@@ -66,7 +66,7 @@ global $db;
                     </p>
                     <div class="mt-4">
                     <a href="feedbackForm.php" class="btn btn-primary me-2">Feedback Form</a>
-                    <a href="Entries.php" class="btn btn-outline-dark">View Entries</a>
+                    <a href="entries.php" class="btn btn-outline-dark">View Entries</a>
                     </div>
                 </div>
 
