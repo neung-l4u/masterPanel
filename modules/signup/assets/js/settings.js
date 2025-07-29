@@ -23,16 +23,16 @@ const settings = {
       "Massage": "1.75% + $0.30 per transaction"
     },
     NZ: {
-      "Restaurant": "2.9% + $0.30 per transaction",
-      "Massage": "2.9% + $0.30 per transaction"
+      "Restaurant": "2.7% + $0.30 per transaction",
+      "Massage": "2.7% + $0.30 per transaction"
     },
     UK: {
       "Restaurant": "2.9% + £0.30 per transaction",
       "Massage": "2.9% + £0.30 per transaction"
     },
     CA: {
-      "Restaurant": "2.9% + £0.30 per transaction",
-      "Massage": "2.9% + £0.30 per transaction"
+      "Restaurant": "2.9% + $0.30 per transaction",
+      "Massage": "2.9% + $0.30 per transaction"
     },
     US: {
       "Restaurant": "2.9% + $0.30 per transaction",
