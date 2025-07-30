@@ -1024,14 +1024,13 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         placeholder="e.g. Ocha, Panda"
                                                 />
                                                 </div>
-                                            </div>
-
+                                            </div><!-- Which POS are you using?-->
                                         <div class="form-group row pt-2">
                                             <label class="col control-label col-form-label">
                                                 Do you have a contract with a POS provider?
                                                 <b class="red">*</b>
                                             </label>
-                                        </div>
+                                        </div><!-- label Do you have a contract with a POS provider?-->
                                         <div class="row col pt-2">
                                             <span class="col-3 gx-1">
                                                 <input type="radio" id="yesPOSProvider" class="form-check-input"
@@ -1047,21 +1046,118 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     no
                                                 </label>
                                             </span>
-                                        </div>
-
+                                        </div><!-- radio check box -->
                                         <div class="posContractEnd" id="posBoxDate">
-                                        <div class="form-group row pt-2">
-                                            <label class="col control-label col-form-label" for="endDatePOS">
-                                                Contract end date if on contract with POS provider Not sure.
-                                            </label>
-                                        </div>
+                                            <div class="form-group row pt-2">
+                                                <label class="col control-label col-form-label" for="endDatePOS">
+                                                    Contract end date if on contract with POS provider Not sure.
+                                                </label>
+                                            </div>
+                                            <div class="row col pt-2">
+                                                <input type="text" class="form-control" id="endDatePOS" name="endDatePOS" placeholder="Not sure.">
+                                            </div>
+                                                <small class="text-muted d-flex mb-5">e.g. Dec 2025, in 3 months, I can’t remember, etc.</small>
+                                            </div><!-- if input radio check yes ( label Contract end date if on contract with POS provider Not sure. ) -->
 
-                                        <div class="row col pt-2">
-                                            <input type="text" class="form-control" id="endDatePOS" name="endDatePOS" placeholder="Not sure.">
+
+                                        <!--  Check Box-->
+                                        <div class="form-group col pt-2">
+                                            <div class="col-3 control-label col-form-label">
+                                                Do you have a POS system?
+                                                <b class="red">*</b>
+                                            </div>
                                         </div>
-                                        <small class="text-muted d-flex mb-5">e.g. Dec 2025, in 3 months, I can’t remember, etc.</small>
+                                        <div class="col-12">
+
+                                            <div class="pt-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input pos" type="checkbox"
+                                                           value="KYC upload" id="checkboxpos1" name="checkboxpos1">
+                                                    <label class="form-check-label" for="checkboxpos1">
+                                                        KYC upload
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input pos" type="checkbox"
+                                                           value="Registered under company name" id="checkboxpos2" name="checkboxpos2">
+                                                    <label class="form-check-label" for="checkboxpos2">
+                                                        Registered under company name ( individual or sole proprietor accounts are not accepted )
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input pos" type="checkbox"
+                                                           value="Have all partners" id="checkboxpos3" name="checkboxpos3">
+                                                    <label class="form-check-label" for="checkboxpos3">
+                                                        Have all partners, especially the decision-maker, been informed about the POS registration
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <p>
+                                                ***(For the new build shop)<br>
+                                                How long will the renovation take? Do you have all the necessary permits to open?<br><br>
+                                                Necessary permits Recheck
+                                            </p>
+                                        </div>
+                                        <div class="col-12">
+                                            <div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input pos" type="checkbox"
+                                                           value="Business License" id="checkboxpos4" name="checkboxpos5">
+                                                    <label class="form-check-label" for="checkboxpos4">
+                                                        ใบอนุญาตการประกอบธุรกิจ (Business License)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input pos" type="checkbox"
+                                                           value="Food Establishment Permit" id="checkboxpos5" name="checkboxpos5">
+                                                    <label class="form-check-label" for="checkboxpos5">
+                                                        ใบอนุญาตอาหารและเครื่องดื่ม (Food Establishment Permit)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input pos" type="checkbox"
+                                                           value="Zoning Permit" id="checkboxpos6" name="checkboxpos6">
+                                                    <label class="form-check-label" for="checkboxpos6">
+                                                        ใบอนุญาตการใช้ที่ดิน (Zoning Permit)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input pos" type="checkbox"
+                                                           value="Health Department Permit" id="checkboxpos7" name="checkboxpos7">
+                                                    <label class="form-check-label" for="checkboxpos7">
+                                                        ใบอนุญาตสุขอนามัย (Health Department Permit)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input pos" type="checkbox"
+                                                           value="Food Handler's Permit" id="checkboxpos8" name="checkboxpos8">
+                                                    <label class="form-check-label" for="checkboxpos8">
+                                                        ใบอนุญาตสำหรับพนักงานที่จัดเตรียมอาหาร (Food Handler's Permit)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input pos" type="checkbox"
+                                                           value="Fire Department Permit" id="checkboxpos9" name="checkboxpos9">
+                                                    <label class="form-check-label" for="checkboxpos9">
+                                                        ใบอนุญาตการเผาไหม้และไฟ (Fire Department Permit)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input pos" type="checkbox"
+                                                           value="Waste Disposal Permit" id="checkboxpos10" name="checkboxpos10">
+                                                    <label class="form-check-label" for="checkboxpos10">
+                                                        ใบอนุญาตการจัดการขยะ (Waste Disposal Permit)
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="posCheck" name="posCheck" value="posCheck">
+                                        <!-- End Check Box -->
+
                                     </div>
-                                    </div>
+
 
 
 
