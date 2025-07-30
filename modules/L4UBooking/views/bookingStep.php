@@ -284,11 +284,14 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             CA: "America/Toronto",
             TH: "Asia/Bangkok"
         };
-        //เมื่อตัวแปร country จะ class timeZone ทั้งจะกลายเป็นชื่อของแต่ล่ะ country ตัวอย่างเมื่อเลือก AU ตัวแปร timeZone จะเท่ากับ Australia/Sydney
+
+
+        //เมื่อตัวแปร country จะเปลี่ยน class timeZone ทั้งจะกลายเป็นชื่อของแต่ล่ะ country ตัวอย่างเมื่อเลือก AU ตัวแปร timeZone จะเท่ากับ Australia/Sydney
         country.on('change', function () {
             const tz = timezones[country.val()] || '';
             timeZone.text(tz);
         });
+
 
         // ✅ Step 3: โหลดเซลทั้งหมดในทีม
         $.get('../models/load_all_sales.php', function (res) {
@@ -334,9 +337,9 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         time.on('change', updateThaiTimePreview);
 
         const countryToTimezones = {
-            AU: ["Australia/Sydney", "Australia/Brisbane", "Australia/Perth", "Australia/Melbourne", "Australia/Adelaide ", "Australia/Hobart", "Australia/Darwin"],
+            AU: ["Australia/Sydney", "Australia/Brisbane", "Australia/Perth", "Australia/Melbourne", "Australia/Adelaide", "Australia/Hobart", "Australia/Darwin"],
             US: ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Phoenix", "America/Anchorage", "America/Indiana/Indianapolis", "America/Detroit", "America/Indiana/Knox" ,"Pacific/Honolulu"],
-            CA: ["America/Toronto", "America/Vancouver", "America/Edmonton (Alberta)", "America/Winnipeg", "America/Halifax", "America/St_Johns", "America/Moncton", "America/Montreal"],
+            CA: ["America/Toronto", "America/Vancouver", "America/Edmonton", "America/Winnipeg", "America/Halifax", "America/St_Johns", "America/Moncton", "America/Montreal","America/Regina"],
             UK: ["Europe/London"],
             NZ: ["Pacific/Auckland", "Pacific/Chatham"],
             TH: ["Asia/Bangkok"]
@@ -369,8 +372,10 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             const selectedState = states.find(s => s.code === selectedCode);
             if (selectedState) {
                 $('#timezone').val(selectedState.timezone).trigger('change');
+                $('#timeZone').text(selectedState.timezone);
             } else {
                 $('#timezone').val('').trigger('change');
+                $('#timeZone').text('');
             }
         });
 
@@ -599,6 +604,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     function getStaffEmail(id) {
         const map = {
             1: 'neung@localforyou.com',
+            14: 'bas@localforyou.com',
             17: 'boom@localforyou.com',
             24: 'honey@localforyou.com',
             35: 'pluem@localforyou.com',
@@ -651,16 +657,124 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     const { DateTime } = luxon;
 
     const countryToTimezone = {
-        AU: "Australia/Sydney",
+/*        AU: "Australia/Sydney",
         NZ: "Pacific/Auckland",
         US: "America/New_York",
         UK: "Europe/London",
         CA: "America/Toronto",
-        TH: "Asia/Bangkok"
+        TH: "Asia/Bangkok"*/
+        AU: [
+            { code: "NSW", name: "New South Wales", timezone: "Australia/Sydney" },
+            { code: "VIC", name: "Victoria", timezone: "Australia/Melbourne" },
+            { code: "QLD", name: "Queensland", timezone: "Australia/Brisbane" },
+            { code: "SA", name: "South Australia", timezone: "Australia/Adelaide" },
+            { code: "WA", name: "Western Australia", timezone: "Australia/Perth" },
+            { code: "TAS", name: "Tasmania", timezone: "Australia/Hobart" },
+            { code: "NT", name: "Northern Territory", timezone: "Australia/Darwin" },
+            { code: "ACT", name: "Australian Capital Territory", timezone: "Australia/Sydney" } // ACT ใช้ timezone Sydney
+        ],
+        US: [
+            { code: "AL", name: "Alabama", timezone: "America/Chicago" },
+            { code: "AK", name: "Alaska", timezone: "America/Anchorage" },
+            { code: "AZ", name: "Arizona", timezone: "America/Phoenix" },
+            { code: "AR", name: "Arkansas", timezone: "America/Chicago" },
+            { code: "CA", name: "California", timezone: "America/Los_Angeles" },
+            { code: "CO", name: "Colorado", timezone: "America/Denver" },
+            { code: "CT", name: "Connecticut", timezone: "America/New_York" },
+            { code: "DE", name: "Delaware", timezone: "America/New_York" },
+            { code: "FL", name: "Florida", timezone: "America/New_York" },
+            { code: "GA", name: "Georgia", timezone: "America/New_York" },
+            { code: "HI", name: "Hawaii", timezone: "Pacific/Honolulu" },
+            { code: "ID", name: "Idaho", timezone: "America/Denver" },
+            { code: "IL", name: "Illinois", timezone: "America/Chicago" },
+            { code: "IN", name: "Indiana", timezone: "America/Indiana/Indianapolis" },
+            { code: "IA", name: "Iowa", timezone: "America/Chicago" },
+            { code: "KS", name: "Kansas", timezone: "America/Chicago" },
+            { code: "KY", name: "Kentucky", timezone: "America/New_York" },
+            { code: "LA", name: "Louisiana", timezone: "America/Chicago" },
+            { code: "ME", name: "Maine", timezone: "America/New_York" },
+            { code: "MD", name: "Maryland", timezone: "America/New_York" },
+            { code: "MA", name: "Massachusetts", timezone: "America/New_York" },
+            { code: "MI", name: "Michigan", timezone: "America/Detroit" },
+            { code: "MN", name: "Minnesota", timezone: "America/Chicago" },
+            { code: "MS", name: "Mississippi", timezone: "America/Chicago" },
+            { code: "MO", name: "Missouri", timezone: "America/Chicago" },
+            { code: "MT", name: "Montana", timezone: "America/Denver" },
+            { code: "NE", name: "Nebraska", timezone: "America/Chicago" },
+            { code: "NV", name: "Nevada", timezone: "America/Los_Angeles" },
+            { code: "NH", name: "New Hampshire", timezone: "America/New_York" },
+            { code: "NJ", name: "New Jersey", timezone: "America/New_York" },
+            { code: "NM", name: "New Mexico", timezone: "America/Denver" },
+            { code: "NY", name: "New York", timezone: "America/New_York" },
+            { code: "NC", name: "North Carolina", timezone: "America/New_York" },
+            { code: "ND", name: "North Dakota", timezone: "America/Chicago" },
+            { code: "OH", name: "Ohio", timezone: "America/New_York" },
+            { code: "OK", name: "Oklahoma", timezone: "America/Chicago" },
+            { code: "OR", name: "Oregon", timezone: "America/Los_Angeles" },
+            { code: "PA", name: "Pennsylvania", timezone: "America/New_York" },
+            { code: "RI", name: "Rhode Island", timezone: "America/New_York" },
+            { code: "SC", name: "South Carolina", timezone: "America/New_York" },
+            { code: "SD", name: "South Dakota", timezone: "America/Chicago" },
+            { code: "TN", name: "Tennessee", timezone: "America/Chicago" },
+            { code: "TX", name: "Texas", timezone: "America/Chicago" },
+            { code: "UT", name: "Utah", timezone: "America/Denver" },
+            { code: "VT", name: "Vermont", timezone: "America/New_York" },
+            { code: "VA", name: "Virginia", timezone: "America/New_York" },
+            { code: "WA", name: "Washington", timezone: "America/Los_Angeles" },
+            { code: "WV", name: "West Virginia", timezone: "America/New_York" },
+            { code: "WI", name: "Wisconsin", timezone: "America/Chicago" },
+            { code: "WY", name: "Wyoming", timezone: "America/Denver" }
+        ],
+        CA: [
+            { code: "AB", name: "Alberta", timezone: "America/Edmonton" },
+            { code: "BC", name: "British Columbia", timezone: "America/Vancouver" },
+            { code: "MB", name: "Manitoba", timezone: "America/Winnipeg" },
+            { code: "NB", name: "New Brunswick", timezone: "America/Moncton" },
+            { code: "NL", name: "Newfoundland and Labrador", timezone: "America/St_Johns" },
+            { code: "NS", name: "Nova Scotia", timezone: "America/Halifax" },
+            { code: "ON", name: "Ontario", timezone: "America/Toronto" },
+            { code: "PE", name: "Prince Edward Island", timezone: "America/Halifax" },
+            { code: "QC", name: "Quebec", timezone: "America/Montreal" },
+            { code: "SK", name: "Saskatchewan", timezone: "America/Regina" },
+            { code: "NT", name: "Northwest Territories", timezone: "America/Yellowknife" },
+            { code: "NU", name: "Nunavut", timezone: "America/Iqaluit" },
+            { code: "YT", name: "Yukon", timezone: "America/Whitehorse" }
+        ],
+        UK: [
+            { code: "ENG", name: "England", timezone: "Europe/London" },
+            { code: "SCT", name: "Scotland", timezone: "Europe/London" },
+            { code: "WLS", name: "Wales", timezone: "Europe/London" },
+            { code: "NIR", name: "Northern Ireland", timezone: "Europe/London" }
+        ],
+        NZ: [
+            { code: "AUK", name: "Auckland", timezone: "Pacific/Auckland" },
+            { code: "BOP", name: "Bay of Plenty", timezone: "Pacific/Auckland" },
+            { code: "CAN", name: "Canterbury", timezone: "Pacific/Auckland" },
+            { code: "CIT", name: "Chatham Islands Territory", timezone: "Pacific/Chatham" },
+            { code: "GIS", name: "Gisborne", timezone: "Pacific/Auckland" },
+            { code: "HKB", name: "Hawke's Bay", timezone: "Pacific/Auckland" },
+            { code: "MBH", name: "Marlborough", timezone: "Pacific/Auckland" },
+            { code: "MWT", name: "Manawatu-Wanganui", timezone: "Pacific/Auckland" },
+            { code: "NSN", name: "Nelson", timezone: "Pacific/Auckland" },
+            { code: "NTL", name: "Northland", timezone: "Pacific/Auckland" },
+            { code: "OTA", name: "Otago", timezone: "Pacific/Auckland" },
+            { code: "STL", name: "Southland", timezone: "Pacific/Auckland" },
+            { code: "TAS", name: "Tasman", timezone: "Pacific/Auckland" },
+            { code: "TKI", name: "Taranaki", timezone: "Pacific/Auckland" },
+            { code: "WGN", name: "Wellington", timezone: "Pacific/Auckland" },
+            { code: "WKO", name: "Waikato", timezone: "Pacific/Auckland" }
+        ],
+        TH: [
+            { code: "BKK", name: "Bangkok", timezone: "Asia/Bangkok" }
+        ]
     };
 
-    function updateThaiTimePreview() {
+
+
+
+/*    function updateThaiTimePreview() {
         const selectedCountry = country.val();
+        const selectedState = state.val();
         const selectedDate = date.val();
         const selectedTime = time.val();
         const thTimePreview = $('#thTimePreview');
@@ -670,15 +784,54 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
             return;
         }
 
-        const timezone = countryToTimezone[selectedCountry] || 'Asia/Bangkok';
-
+        /!*const timezone = countryToTimezone[selectedCountry] || 'Asia/Bangkok';*!/
+        const timezone = countryToTimezone[selectedState] || 'Asia/Bangkok';
+        console.log("selectedCountry = ", selectedCountry);
+        console.log("selectedState = ", selectedState);
         const dateTimeInCustomerTZ = DateTime.fromISO(`${selectedDate}T${selectedTime}`, { zone: timezone });
         const dateTimeInThaiTZ = dateTimeInCustomerTZ.setZone('Asia/Bangkok');
 
         const thaiFormatted = dateTimeInThaiTZ.toFormat("HH:mm (ccc dd MMM)");
 
         thTimePreview.text(`⏰ BKK: ${thaiFormatted}`);
+    }*/
+
+    function updateThaiTimePreview() {
+        const selectedCountry = country.val();
+        const selectedStateCode = state.val();
+        const selectedDate = date.val();
+        const selectedTime = time.val();
+        const thTimePreview = $('#thTimePreview');
+
+        if (!selectedCountry || !selectedStateCode || !selectedDate || !selectedTime) {
+            thTimePreview.text('');
+            return;
+        }
+
+        let timezone = 'Asia/Bangkok';
+
+        if (countryToTimezone[selectedCountry]) {
+            const selectedState = countryToTimezone[selectedCountry].find(s => s.code === selectedStateCode);
+            if (selectedState && selectedState.timezone) {
+                timezone = selectedState.timezone;
+            }
+        }
+
+        const dateTimeInCustomerTZ = DateTime.fromISO(`${selectedDate}T${selectedTime}`, { zone: timezone });
+
+        // บางครั้ง dateTimeInCustomerTZ อาจ Invalid ถ้า timezone ผิด
+        if (!dateTimeInCustomerTZ.isValid) {
+            thTimePreview.text('⚠️ Invalid Date/Time');
+            return;
+        }
+
+        const dateTimeInThaiTZ = dateTimeInCustomerTZ.setZone('Asia/Bangkok');
+        const thaiFormatted = dateTimeInThaiTZ.toFormat("HH:mm (ccc dd MMM)");
+
+        thTimePreview.text(`⏰ BKK: ${thaiFormatted}`);
     }
+
+
 
     function showReview() {
         const data = {
