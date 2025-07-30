@@ -4,7 +4,7 @@ require_once '../assets/db/db.php';
 require_once '../assets/db/initDB.php';
 global $db;
 $currentPage = basename($_SERVER['PHP_SELF']);
-$tomorrow = date("Y-m-d", strtotime("+1 day"));
+$tomorrow = date("Y-m-d", strtotime("now"));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -257,7 +257,7 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
         $('#time').select2({placeholder: 'Select appointment time',theme: 'bootstrap-5'});
 
         date.flatpickr({
-            minDate: new Date().fp_incr(1),
+            minDate: new Date().fp_incr(0),
             maxDate: new Date().fp_incr(7),
             dateFormat: 'Y-m-d',
             disableMobile: true
