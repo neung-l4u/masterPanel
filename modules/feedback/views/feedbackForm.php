@@ -66,40 +66,41 @@ global $db;
                 <form id="feedbackForm" name="feedbackForm" method="post" enctype="multipart/form-data">
                     <div class="mb-4">
                         <label for="name" class="form-label"><i class="bi bi-file-person"></i> Your Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="e.g. Jane Doe">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="e.g. Jane Doe" required>
                     </div>
 
                     <div class="mb-4">
                         <label for="shopName" class="form-label"><i class="bi bi-shop-window"></i> Shop Name</label>
-                        <input type="text" class="form-control" id="shopName" name="shopName" placeholder="e.g. The Calm Spa">
+                        <input type="text" class="form-control" id="shopName" name="shopName" placeholder="e.g. The Calm Spa" required>
                     </div>
 
                     <div class="mb-4">
                         <label for="email" class="form-label"><i class="bi bi-envelope"></i> Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="e.g. hello@example.com">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="e.g. hello@example.com" required>
                     </div>
 
                     <div class="mb-4">
                         <label for="shopType" class="form-label"><i class="bi bi-shop-window"></i> Shop Type</label>
-                        <select class="form-select" id="shopType" name="shopType">
+                        <select class="form-select" id="shopType" name="shopType" required>
                             <option selected disabled>Select</option>
-                            <option value="restaurant">Restaurant</option>
-                            <option value="massage">Massage</option>
+                            <option value="Restaurant">Restaurant</option>
+                            <option value="Massage">Massage</option>
                         </select>
                     </div>
 
                     <div class="mb-4">
                         <label for="package" class="form-label"><i class="bi bi-bookmark-check"></i> Select Package</label>
-                        <select class="form-select" id="package" name="package" onchange="toggleOtherInput(this)">
+                        <select class="form-select" id="package" name="package" onchange="toggleOtherInput(this)" required>
                             <option selected disabled>Select</option>
-                            <option value="customer-support">Customer Support</option>
-                            <option value="marketing">Marketing</option>
-                            <option value="sales">Sales</option>
-                            <option value="booking-system">Booking System</option>
-                            <option value="online-ordering">Online Ordering</option>
-                            <option value="website">Website</option>
-                            <option value="voucher">Voucher</option>
-                            <option value="other">Other</option>
+                            <option value="Customer Support">Customer Support</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Massage Booking system">Massage Booking system</option>
+                            <option value="Restaurant Online ordering">Restaurant Online ordering</option>
+                            <option value="Website">Website</option>
+                            <option value="Voucher">Voucher</option>
+                            <option value="Payment">Payment</option>
+                            <option value="Subscription">Subscription</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
 
@@ -110,7 +111,7 @@ global $db;
 
                     <div class="mb-4">
                         <label for="description" class="form-label"><i class="bi bi-chat-right-text"></i> Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Tell us more about your business or needs..."></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Tell us more about your business or needs..." required></textarea>
                     </div>
 
                     <div class="mb-3" id="imageDiv">

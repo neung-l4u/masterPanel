@@ -83,6 +83,6 @@ global $db;
 
 <script src="../assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
-<script src="../controllers/index.js?v=1.0.0"></script>
+<!-- <script src="../controllers/index.js?v=1.0.0"></script> -->
 </body>
 </html>

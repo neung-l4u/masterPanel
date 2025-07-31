@@ -18,7 +18,7 @@ function sendMail(formData) {
     const now = new Date();
     const formattedDate = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-    const selectedPackage = formData.package === "other" ? formData.otherInput : formData.package;
+    const selectedPackage = formData.package === "Other" ? "Other: " + formData.otherInput : formData.package;
     //const modulePath = "http://localhost/masterPanel/modules/feedback"; // Local path
     const modulePath = "https://report.localforyou.com/modules/feedback"; // Server path
     const filePath = formData.filePath || "";
@@ -79,7 +79,7 @@ function saveToDB(payload, result, cmdSubmit) {
 
 function toggleOtherInput(select) {
     const otherInput = document.getElementById('otherInputWrapper');
-    if (select.value === 'other') {
+    if (select.value === 'Other') {
       otherInput.classList.remove('d-none');
     } else {
       otherInput.classList.add('d-none');
@@ -124,6 +124,65 @@ const handleFileUpload = (input) => {
     });
 };
 
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('feedbackForm');
+    const packageSelect = document.getElementById('package');
+    const otherInputWrapper = document.getElementById('otherInputWrapper');
+    const otherInput = document.getElementById('otherInput');
+
+    form.addEventListener('submit', function (e) {
+        let isValid = true;
+
+        // Check required fields
+        const requiredFields = ['name', 'shopName', 'email', 'shopType', 'package', 'description'];
+        requiredFields.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el.value.trim()) {
+                el.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                el.classList.remove('is-invalid');
+            }
+        });
+
+        // Validate email pattern
+        const email = document.getElementById('email').value;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            document.getElementById('email').classList.add('is-invalid');
+            isValid = false;
+        }
+
+        // Show "Other" field if "Other" is selected
+        if (packageSelect.value === 'Other') {
+            if (!otherInput.value.trim()) {
+                otherInput.classList.add('is-invalid');
+                otherInputWrapper.classList.remove('d-none');
+                isValid = false;
+            } else {
+                otherInput.classList.remove('is-invalid');
+            }
+        }
+
+        if (!isValid) {
+            e.preventDefault(); // prevent form submission
+            document.getElementById('result').innerHTML = `
+                <div class="alert alert-danger">Please fill in all required fields correctly.</div>
+            `;
+        }
+    });
+
+    packageSelect.addEventListener('change', function () {
+        if (this.value === 'Other') {
+            otherInputWrapper.classList.remove('d-none');
+            otherInput.setAttribute('required', 'required');
+        } else {
+            otherInputWrapper.classList.add('d-none');
+            otherInput.removeAttribute('required');
+            otherInput.classList.remove('is-invalid');
+        }
+    });
+});
 // $(() => {
 // 
 // }); //ready

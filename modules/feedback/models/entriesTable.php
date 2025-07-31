@@ -20,46 +20,52 @@ foreach ($result as $row) {
     $shopName = $json["shopName"];
     $email = $json["email"];
     $shopType = $json["shopType"];
-    $description = $json["description"];
+
+    $fullDesc = $json["description"];
+    $shortDesc = shortDesc($fullDesc);
 
     $fileName = $json["fileName"];
-    $filePath = "../" . $json["filePath"];
+    //$modulePath = "../"; // Local path
+    $modulePath = "https://report.localforyou.com/modules/feedback"; // Server path
+    $filePath = $modulePath . $json["filePath"];
 
     if (empty($fileName)) {
         $attachFile = "-";
     } else {
-        $attachFile = "<a href='$filePath' target='_blank'><i class='bi bi-image'></i></a>";
+        $attachFile = "<a href='$filePath' target='_blank'><i class='bi bi-image'></i></a><p class='d-none'>$filePath</p>";
     }
 
-    if ($json["package"] == "other") {
-        $package = $json["otherInput"];
+    if ($json["package"] == "Other") {
+        $package = "Other: ".$json["otherInput"];
     } else {
         $package = $json["package"];
     }
 
+    // $detail = array(
+    //     "name" => $cusName,
+    //     "shopName" => $shopName,
+    //     "email" => $email,
+    //     "shopType" => $shopType,
+    //     "package" => $package,
+    //     "description" => $description,
+    //     "attachFile" => $attachFile,
+    //     "date" => $dateOnly,
+    //     "time" => $timeOnly,
+    // );
+    // $detail = htmlspecialchars(json_encode($detail, JSON_UNESCAPED_UNICODE), ENT_QUOTES);
 
-    $detail = array(
-        "name" => $cusName,
-        "shopName" => $shopName,
-        "email" => $email,
-        "shopType" => $shopType,
-        "package" => $package,
-        "description" => $description,
-        "attachFile" => $attachFile,
-        "date" => $dateOnly,
-        "time" => $timeOnly,
-    );
-    $detail = htmlspecialchars(json_encode($detail, JSON_UNESCAPED_UNICODE), ENT_QUOTES);
-
-    $detailBtn = "<a class='viewDetail' onclick='viewDetail(" . $detail . ")'><i class='bi bi-file-earmark-text'></i></a><h3 class='d-none'>" . $email . "</h3>";
+    //$detailBtn = "<a class='viewDetail' onclick='viewDetail(" . $detail . ")'><i class='bi bi-file-earmark-text'></i></a><h3 class='d-none'>" . $email . "</h3>";
 
     $data["data"][] = array(
         $i,
         $cusName,
         $shopName,
+        $email,
         $shopType,
         $package,
-        $detailBtn,
+        $shortDesc,
+        $fullDesc,
+        $attachFile,
         $dateOnly,
     );//array
 
@@ -67,3 +73,9 @@ foreach ($result as $row) {
 }//foreach
 
 echo json_encode($data);
+
+function shortDesc($param): string
+{
+    $desc = mb_substr($param, 0, 20).'...';
+    return "<p class='description' data-bs-toggle='tooltip' title='$param'>$desc</p>";
+}
