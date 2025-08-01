@@ -1012,6 +1012,11 @@ const sendMailToL4UTeam = () => {
         firstOrderDiscountOther: $("input[id='othersDiscount']:checked").val(),
         firstOrderDiscountOtherValue: $("#discountOther").val(),
 
+        ///POS Check Box///
+        posCheck: $("#posCheck").val(),
+        renovationTakePOS: $("#renovationTakePOS").val(),
+        necessaryPermitsPOS: $("#necessaryPermitsPOS").val(),
+
         //END NEW//
         testMail: CheckedBoxTestmailValue,
         token: Math.random()
@@ -1421,3 +1426,4 @@ $('#formType').on('change', function () {
         $('#contentPOS').hide();
     }
 });
+

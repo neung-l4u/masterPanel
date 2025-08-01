@@ -77,6 +77,10 @@ const inputFormType = $('#formType');
 const inputFormTypeOption = $('#formType option');
 const inputInitialProductOffering = $('#initialProductOffering');
 const terms_permission = $("#terms_permission");
+
+
+
+
 //////////////////
 
 const modalTerms = new bootstrap.Modal(document.getElementById("modalTerms"), {});
@@ -103,7 +107,6 @@ testMode = true;
 
 $(document).ready(function () {
 
-
   stepProgress(step);
   $("#formVersion").html($("#signupFormVersion").val());
 
@@ -120,7 +123,11 @@ $(document).ready(function () {
   $(".firstStepForm").show();
   $("#datePOSBox").hide();
   $("#posBoxDate").hide();
-  ////
+
+  $("#boxPOScheck").hide();
+
+
+
 });//ready
 
 //on click Next button
@@ -201,6 +208,7 @@ function noPosPro(){
 }
 
 
+
 // DISPLAY AND HIDE "NEXT", "BACK" AND "SUBMIT" BUTTONS
 hideButtons = function (step) {
   let limit = parseInt($(".step").length);
@@ -275,6 +283,8 @@ inputExpireDate.bind('keyup','keydown', function(e){
     inputExpireDate.val(out);
   }
 });
+
+
 
 
 //Set country value to hidden input and label when country change
@@ -756,6 +766,11 @@ function addMainCart(name, price, amount, special, product_id){
   //setSetupFee(setup_fee);
   ///////////////
 
+
+
+
+
+
   //mirror to init value
   let packageFullName = `${name} - $${price} ${special}/Month`;
   initPackage.val(packageFullName);
@@ -771,6 +786,31 @@ function addMainCart(name, price, amount, special, product_id){
       oldPrice = readMainProduct[index].amount;
     }
   }
+
+  //Check POS
+  const productPOS = $("input[name='product']");
+
+
+  /*ใส่คำค้นหาที่ต้องการให้แสดง section checkbox
+   ตัวอย่าง ["POS", "Partner", "Mega"] */
+  const keywords = ["POS"];
+
+  ///function POS Check Box
+  productPOS.on("change", function () {
+    const selectedVal = $("input[name='product']:checked").val();
+
+    const matched = keywords.some(k => selectedVal.includes(k));
+    if (matched) {
+      $(".posUsing").hide();
+      $("#boxPOScheck").show();
+      console.log("Matched:", selectedVal);
+    } else {
+      $("#boxPOScheck").hide();
+      $("#posCheck").val('');
+      $(".posUsing").show();
+      console.log("No match:", selectedVal);
+    }
+  });
 
   cart.subscription = [];
   bag.subscription = [];
