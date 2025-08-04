@@ -62,7 +62,14 @@ if ($act == 'newPerWeek') {
             <tr style="border: 1px solid;">
                 <td><?php echo $index++; ?></td>
                 <td><?php echo $row["shopname"] ?: "-"; ?></td>
-                <td><?php echo ($row["reason"] == "other") ? $row["other"] : $row["reason"]; ?></td>
+                <td><?php if ($row["reason"] == "other"){
+                    echo $row["other"];
+                    }elseif ( empty($row["other"])){
+                     echo "-";
+                    }else {
+                     echo "-";
+                    }
+                 ?></td>
                 <td><?php echo $row["county"] ?: "-"; ?></td>
             </tr>
         <?php 
