@@ -35,26 +35,17 @@ foreach ($result as $row) {
         $attachFile = "<a href='$filePath' target='_blank'><i class='bi bi-image'></i></a><p class='d-none'>$filePath</p>";
     }
 
+    if ($json["shopType"] == "Other") {
+        $shopType = "Other: ".$json["shopTypeOtherInput"];
+    } else {
+        $shopType = $json["shopType"];
+    }
+
     if ($json["package"] == "Other") {
-        $package = "Other: ".$json["otherInput"];
+        $package = "Other: ".$json["packageOtherInput"];
     } else {
         $package = $json["package"];
     }
-
-    // $detail = array(
-    //     "name" => $cusName,
-    //     "shopName" => $shopName,
-    //     "email" => $email,
-    //     "shopType" => $shopType,
-    //     "package" => $package,
-    //     "description" => $description,
-    //     "attachFile" => $attachFile,
-    //     "date" => $dateOnly,
-    //     "time" => $timeOnly,
-    // );
-    // $detail = htmlspecialchars(json_encode($detail, JSON_UNESCAPED_UNICODE), ENT_QUOTES);
-
-    //$detailBtn = "<a class='viewDetail' onclick='viewDetail(" . $detail . ")'><i class='bi bi-file-earmark-text'></i></a><h3 class='d-none'>" . $email . "</h3>";
 
     $data["data"][] = array(
         $i,

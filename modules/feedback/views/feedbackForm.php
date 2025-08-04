@@ -85,11 +85,17 @@ global $db;
                             <option selected disabled>Select</option>
                             <option value="Restaurant">Restaurant</option>
                             <option value="Massage">Massage</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
 
+                    <div class="mb-4 d-none" id="shopTypeOtherWrapper">
+                        <label for="shopTypeOtherInput" class="form-label">Other (please specify)</label>
+                        <input type="text" class="form-control" id="shopTypeOtherInput" name="shopTypeOtherInput" placeholder="Enter your custom shop type">
+                    </div>
+
                     <div class="mb-4">
-                        <label for="package" class="form-label"><i class="bi bi-bookmark-check"></i> Select Package</label>
+                        <label for="package" class="form-label"><i class="bi bi-bookmark-check"></i> Topic</label>
                         <select class="form-select" id="package" name="package" onchange="toggleOtherInput(this)" required>
                             <option selected disabled>Select</option>
                             <option value="Customer Support">Customer Support</option>
@@ -104,9 +110,9 @@ global $db;
                         </select>
                     </div>
 
-                    <div class="mb-4 d-none" id="otherInputWrapper">
-                        <label for="otherInput" class="form-label">Other (please specify)</label>
-                        <input type="text" class="form-control" id="otherInput" name="otherInput" placeholder="Enter your custom request">
+                    <div class="mb-4 d-none" id="packageOtherWrapper">
+                        <label for="packageOtherInput" class="form-label">Other (please specify)</label>
+                        <input type="text" class="form-control" id="packageOtherInput" name="packageOtherInput" placeholder="Enter your custom request">
                     </div>
 
                     <div class="mb-4">
@@ -138,5 +144,24 @@ global $db;
 <script src="../assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
 <script src="../controllers/feedbackForm.js?v=1.0.0"></script>
+<script>
+$(function() {
+    $('#shopType').on('change', function () {
+        if ($(this).val() === 'Other') {
+            $('#shopTypeOtherWrapper').removeClass('d-none');
+        } else {
+            $('#shopTypeOtherWrapper').addClass('d-none');
+        }
+    });
+
+    $('#package').on('change', function () {
+        if ($(this).val() === 'Other') {
+            $('#packageOtherWrapper').removeClass('d-none');
+        } else {
+            $('#packageOtherWrapper').addClass('d-none');
+        }
+    });
+});
+</script>
 </body>
 </html>

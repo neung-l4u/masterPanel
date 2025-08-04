@@ -18,7 +18,8 @@ function sendMail(formData) {
     const now = new Date();
     const formattedDate = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-    const selectedPackage = formData.package === "Other" ? "Other: " + formData.otherInput : formData.package;
+    const selectedShopType = formData.shopType === "Other" ? "Other: " + formData.shopTypeOtherInput : formData.shopType;
+    const selectedPackage = formData.package === "Other" ? "Other: " + formData.packageOtherInput : formData.package;
     //const modulePath = "http://localhost/masterPanel/modules/feedback"; // Local path
     const modulePath = "https://report.localforyou.com/modules/feedback"; // Server path
     const filePath = formData.filePath || "";
@@ -28,7 +29,7 @@ function sendMail(formData) {
         name: formData.name || "No Name",
         shopName: formData.shopName || "No Shop Name",
         email: formData.email || "No Email",
-        shopType: formData.shopType || "No Shop Type",
+        shopType: selectedShopType || "No Shop Type",
         package: selectedPackage || "No Package",
         description: formData.description || "No Description",
         uploadFile: attachFile,
@@ -77,15 +78,6 @@ function saveToDB(payload, result, cmdSubmit) {
     });
 }
 
-function toggleOtherInput(select) {
-    const otherInput = document.getElementById('otherInputWrapper');
-    if (select.value === 'Other') {
-      otherInput.classList.remove('d-none');
-    } else {
-      otherInput.classList.add('d-none');
-    }
-}
-
 const handleFileUpload = (input) => {
     const $form = $(input).closest("form");
     const $filePath = $form.find(".filePath");
@@ -126,26 +118,29 @@ const handleFileUpload = (input) => {
 
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('feedbackForm');
+    
+    const shopTypeSelect = document.getElementById('shopType');
+    const shopTypeOtherWrapper = document.getElementById('shopTypeOtherWrapper');
+    const shopTypeOtherInput = document.getElementById('shopTypeOtherInput');
+
     const packageSelect = document.getElementById('package');
-    const otherInputWrapper = document.getElementById('otherInputWrapper');
-    const otherInput = document.getElementById('otherInput');
+    const packageOtherWrapper = document.getElementById('packageOtherWrapper');
+    const packageOtherInput = document.getElementById('packageOtherInput');
 
     form.addEventListener('submit', function (e) {
         let isValid = true;
 
-        // Check required fields
         const requiredFields = ['name', 'shopName', 'email', 'shopType', 'package', 'description'];
         requiredFields.forEach(id => {
             const el = document.getElementById(id);
-            if (!el.value.trim()) {
+            if (el && !el.value.trim()) {
                 el.classList.add('is-invalid');
                 isValid = false;
-            } else {
+            } else if (el) {
                 el.classList.remove('is-invalid');
             }
         });
 
-        // Validate email pattern
         const email = document.getElementById('email').value;
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
@@ -153,36 +148,53 @@ document.addEventListener('DOMContentLoaded', function () {
             isValid = false;
         }
 
-        // Show "Other" field if "Other" is selected
-        if (packageSelect.value === 'Other') {
-            if (!otherInput.value.trim()) {
-                otherInput.classList.add('is-invalid');
-                otherInputWrapper.classList.remove('d-none');
+        if (shopTypeSelect.value === 'Other') {
+            if (!shopTypeOtherInput.value.trim()) {
+                shopTypeOtherInput.classList.add('is-invalid');
+                shopTypeOtherWrapper.classList.remove('d-none');
                 isValid = false;
             } else {
-                otherInput.classList.remove('is-invalid');
+                shopTypeOtherInput.classList.remove('is-invalid');
+            }
+        }
+
+        if (packageSelect.value === 'Other') {
+            if (!packageOtherInput.value.trim()) {
+                packageOtherInput.classList.add('is-invalid');
+                packageOtherWrapper.classList.remove('d-none');
+                isValid = false;
+            } else {
+                packageOtherInput.classList.remove('is-invalid');
             }
         }
 
         if (!isValid) {
-            e.preventDefault(); // prevent form submission
+            e.preventDefault();
             document.getElementById('result').innerHTML = `
                 <div class="alert alert-danger">Please fill in all required fields correctly.</div>
             `;
         }
     });
 
+    shopTypeSelect.addEventListener('change', function () {
+        if (this.value === 'Other') {
+            shopTypeOtherWrapper.classList.remove('d-none');
+            shopTypeOtherInput.setAttribute('required', 'required');
+        } else {
+            shopTypeOtherWrapper.classList.add('d-none');
+            shopTypeOtherInput.removeAttribute('required');
+            shopTypeOtherInput.classList.remove('is-invalid');
+        }
+    });
+
     packageSelect.addEventListener('change', function () {
         if (this.value === 'Other') {
-            otherInputWrapper.classList.remove('d-none');
-            otherInput.setAttribute('required', 'required');
+            packageOtherWrapper.classList.remove('d-none');
+            packageOtherInput.setAttribute('required', 'required');
         } else {
-            otherInputWrapper.classList.add('d-none');
-            otherInput.removeAttribute('required');
-            otherInput.classList.remove('is-invalid');
+            packageOtherWrapper.classList.add('d-none');
+            packageOtherInput.removeAttribute('required');
+            packageOtherInput.classList.remove('is-invalid');
         }
     });
 });
-// $(() => {
-// 
-// }); //ready
