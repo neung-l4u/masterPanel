@@ -96,16 +96,16 @@ global $db;
 
                     <div class="mb-4">
                         <label for="package" class="form-label"><i class="bi bi-bookmark-check"></i> Topic</label>
-                        <select class="form-select" id="package" name="package" onchange="toggleOtherInput(this)" required>
+                        <select class="form-select" id="package" name="package" required>
                             <option selected disabled>Select</option>
-                            <option value="Customer Support">Customer Support</option>
-                            <option value="Marketing">Marketing</option>
-                            <option value="Massage Booking system">Massage Booking system</option>
-                            <option value="Restaurant Online ordering">Restaurant Online ordering</option>
                             <option value="Website">Website</option>
                             <option value="Voucher">Voucher</option>
                             <option value="Payment">Payment</option>
+                            <option value="Marketing">Marketing</option>
                             <option value="Subscription">Subscription</option>
+                            <option value="Customer Support">Customer Support</option>
+                            <option value="Massage Booking system">Massage Booking system</option>
+                            <option value="Restaurant Online ordering">Restaurant Online ordering</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
