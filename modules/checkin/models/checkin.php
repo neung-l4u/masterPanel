@@ -38,7 +38,8 @@ $result["msg"] = "";
 
 
 if ($data['actionType'] == 'Clock In'){
-    $logsToDB = $db->query('INSERT INTO `checkin` (`employee`, `status`, `department`, `workShiftTimeLogging`, `issueDate`, `checkIn`, `noteCheckIn`, `createBy`) VALUES (?, ?, ? ,? ,? ,? ,? ,?)' ,$data['staffName'],$status,$data['Department'], $data['actionType'], $issueDate,$data['checkinTime'],$data['noteCheckin'],$id );
+    $logsToDB = $db->query('INSERT INTO `checkin` (`employee`, `status`, `department`, `workShiftTimeLogging`, `checkinDate`, `checkIn`,`dayCheckIn`, `noteCheckIn`, `createBy`) 
+VALUES (?, ?, ? ,? ,? ,? ,?,? ,?)' ,$data['staffName'],$status,$data['Department'], $data['actionType'], $issueDate,$data['checkinTime'],$data['workDate'],$data['noteCheckin'],$id );
 }
 
 
@@ -48,4 +49,3 @@ $return['msg'] = 'Insert success';
 
 
 echo json_encode($return);
-?>

@@ -3,6 +3,7 @@ global $db;
 date_default_timezone_set('Asia/Bangkok');
 $today = date("Y-m-d");
 $now = date("H:i");
+/*$now = "10:00";*/
 ?>
 <link href="../assets/libs/flatpickr/flatpickr.min.css" rel="stylesheet">
 <link href="../assets/libs/select2/css/select2.min.css" rel="stylesheet" />
@@ -65,9 +66,16 @@ $now = date("H:i");
                     <input type="text" id="workDate" name="workDate" class="form-control flatpickr" value="<?php echo $today; ?>" required>
                 </div>
 
+                <div class="col-6" id="workDateDivOut" style="display:none;">
+                    <label for="workDateOut" class="form-label"><i class="bi bi-calendar-date-fill"></i> Date: <span class="text-primary">Auto Generate</span> <!--<small><a href="#" class="text-primary" onclick="setToDay();">Today</a></small>--></label>
+                    <input type="text" id="workDateOut" name="workDateOut" class="form-control flatpickr" value="<?php echo $today; ?>" required>
+                </div>
+
+
+
                 <div class="col-6" id="checkinTimeDiv" style="display:none;">
                     <label for="checkinTime" class="form-label"><i class="bi bi-clock-fill"></i> Check-in time: <span class="text-primary">Auto Generate</span> <!--<small><a href="#" onclick="setToNow();">Now</a></small>--></label>
-                    <input type="time" id="checkinTime" name="checkinTime" value="<?php echo $now; ?>" class="form-control">
+                    <input type="time" id="checkinTime" name="checkinTime" value="<?php echo $now; ?>"  class="form-control">
                 </div>
 
                 <div class="col-6" id="checkoutTimeDiv" style="display:none;">
@@ -116,19 +124,26 @@ $now = date("H:i");
 
         $('#actionType').on('change', function () {
             const action = $(this).val();
+            if (action === 'checkin') {
             $('#workDateDiv').show();
+            $('#workDateDivOut').hide();
             $('#checkinTimeDiv, #checkoutTimeDiv, #noteCheckinDiv, #noteCheckoutDiv').hide();
+            } else if (action === 'checkout') {
+                $('#workDateDivOut').show();
+                $('#workDateDiv').hide();
+                $('#checkinTimeDiv, #checkoutTimeDiv, #noteCheckinDiv, #noteCheckoutDiv').hide();
+            }
 
             if (action === 'checkin') {
                 $('#checkinTimeDiv').show();
                 $('#noteCheckinDiv').show();
-                $('input[name="checkoutTime"]').val(now.format("HH:mm"));
-                $('textarea[name="noteCheckout"]').val('');
+                $('input[name="checkinTime"]').val(now.format("HH:mm"));
+                $('textarea[name="noteCheckin"]').val('');
             } else if (action === 'checkout') {
                 $('#checkoutTimeDiv').show();
                 $('#noteCheckoutDiv').show();
-                $('input[name="checkinTime"]').val(now.format("HH:mm"));
-                $('textarea[name="noteCheckin"]').val('');
+                $('input[name="checkoutTime"]').val(now.format("HH:mm"));
+                $('textarea[name="noteCheckout"]').val('');
             }
         });//ซ่อน/แสดง input ตามประเภทการบันทึก
 
@@ -222,9 +237,9 @@ $now = date("H:i");
                  $.post(dataBase2, dataToSend)
                      .done(() => {
                          result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
-                  <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
+                  <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">1</span>...</div>`);
 
-                         let countdown = 3;
+                         let countdown = 1;
                          const countdownInterval = setInterval(() => {
                              countdown--;
                              $('#countDown').text(countdown);
@@ -239,91 +254,85 @@ $now = date("H:i");
                      });
 
 
-             }else if (formData.actionType === 'checkout'){
-                const dataBase2 = "../models/checkout.php";
-                const dataToSend = { ...formData, ...payload };
+             }else if (formData.actionType === 'checkout') {
+                 const dataBase2 = "../models/checkout.php";
+
+                 const dataToSend = {
+                     ...formData,
+                     ...payload
+                 };
+
+                 $.post(dataBase2, dataToSend)
+                     .done(function(response) {
+                         itemData = {
+                             "name":"new Obj",
+                             ...response,
+                             "by":"Mark"
+                         };
+                         /*console.log('response = ',response);*/
+                         /*const [checkIn,checkOut,checkinDate,createAt,createBy,dayCheckIn,dayCheckOut,employee,id,noteCheckIn,send,status,workShiftTimeLogging] = response;*/
+
+                         itemData.item['checkOut'] = $("#checkoutTime").val();
+                         itemData.item['dayCheckOut'] = $("#workDateOut").val();
+                         itemData.item['noteCheckOut'] = $("#noteCheckout").val();
+                         /*let itemIDToMake = itemData.item['id'];*/
+
+                         /*console.log('itemData = ',itemData.item);*/
+
+                         let dateToMake = itemData.item;
+
+                        const dataBaseToMake = "../models/updateToMake.php";
+
+                        $.post(dataBaseToMake, dateToMake)
+                            .done(function(res) {
+
+                                let resToMake = res.item;
 
 
-                $.post(dataBase2, dataToSend)
-                    .done(function(response) {
+                                let checkOutFull = res.item['checkOut'];
+                                let checkOutHour = checkOutFull.split(':')[0];
+                                let checkOutMinute = checkOutFull.split(':')[1];
+                                resToMake.checkOutHour = checkOutHour;
+                                resToMake.checkOutMinute = checkOutMinute;
 
-                        itemData = {};
-                        itemData = response;
-
-                        // Split checkinTime
-                        if (formData.checkinTime && formData.checkinTime.includes(":")) {
-                            const [inHour, inMinute] = formData.checkinTime.split(":");
-                            itemData.item['checkinHour'] = inHour;
-                            itemData.item['checkinMinute'] = inMinute;
-                        } else {
-                            itemData.item['checkinHour'] = '00';
-                            itemData.item['checkinMinute'] = '00';
-                        }
-
-                        // Split checkoutTime
-                        if (formData.checkoutTime && formData.checkoutTime.includes(":")) {
-                            const [outHour, outMinute] = formData.checkoutTime.split(":");
-                            itemData.item['checkoutHour'] = outHour;
-                            itemData.item['checkoutMinute'] = outMinute;
-                        } else {
-                            itemData.item['checkoutHour'] = '00';
-                            itemData.item['checkoutMinute'] = '00';
-                        }
-
-                        if (formData.createAtTime && formData.createAtTime.includes(" ")) {
-                            const [date, time] = formData.createAtTime.split(" ");
-                            itemData.item['createAtDate'] = date;
-                            itemData.item['createAtTime'] = time;
-                        }else{
-                            itemData.item['createAtDate'] = now.format("YYYY-MM-DD");
-                            itemData.item['createAtTime'] = now.format("HH:mm");
-                        }
-
-                        if (formData.updateAtTime && formData.updateAtTime.includes(" ")) {
-                            const [date, time] = formData.updateAtTime.split(" ");
-                            itemData.item['updateAtDate'] = date;
-                            itemData.item['updateAtTime'] = time;
-                        }else{
-                            itemData.item['updateAtDate'] = now.format("YYYY-MM-DD");
-                            itemData.item['updateAtTime'] = now.format("HH:mm");
-                        }
-
-                        // Set full time fields
-                        itemData.item['checkinTime'] = formData.checkinTime;
-                        itemData.item['checkoutTime'] = formData.checkoutTime;
-                        itemData.item['createAtTime'] = formData.createAtTime;
-                        itemData.item['updateAtTime'] = formData.updateAtTime;
+                                let checkInFull = res.item['checkIn'];
+                                let checkInHour = checkInFull.split(':')[0];
+                                let checkInMinute = checkInFull.split(':')[1];
+                                resToMake.checkInHour = checkInHour;
+                                resToMake.checkInMinute = checkInMinute;
 
 
-                        /*itemData.item['checkinTime'] = formData.checkinTime;
-                        itemData.item['checkoutTime'] = formData.checkoutTime;
 
-                        itemData.item['checkinHour'] = 'Local for You';*/
+                                ///////////////////////////////////////////////////////////////////////////////////////////
+                                const makeWebhookURL = "https://hook.us1.make.com/75bocum3gs8v35045jfkb7qktlq2awru";
 
-                        ///////////////////////////////////////////////////////////////////////////////////////////
-                        const makeWebhookURL = "https://hook.us1.make.com/75bocum3gs8v35045jfkb7qktlq2awru";
+                                $.post(makeWebhookURL, res.item)
+                                    .done(() => {
+                                        result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
+                          <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">1</span>...</div>`);
 
-                        $.post(makeWebhookURL, itemData)
-                            .done(() => {
-                                result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
-                  <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
+                                        let countdown = 1;
+                                        const countdownInterval = setInterval(() => {
+                                            countdown--;
+                                            $('#countDown').text(countdown);
+                                            if (countdown <= 0) {
+                                                clearInterval(countdownInterval);
+                                                window.location.reload();
+                                            }
+                                        }, 1000);
+                                    })
+                                    .fail(() => {
+                                        result.html(`<div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> An error occurred. Please try again.</div>`);
+                                        cmdSubmit.prop('disabled', false); // ✅ เปิดปุ่มอีกครั้ง
+                                    });//webhook
+                                ///////////////////////////////////////////////////////////////////////////////////////////
 
-                                let countdown = 3;
-                                const countdownInterval = setInterval(() => {
-                                    countdown--;
-                                    $('#countDown').text(countdown);
-                                    if (countdown <= 0) {
-                                        clearInterval(countdownInterval);
-                                        window.location.reload();
-                                    }
-                                }, 1000);
+
                             })
-                            .fail(() => {
-                                result.html(`<div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> An error occurred. Please try again.</div>`);
-                                cmdSubmit.prop('disabled', false); // ✅ เปิดปุ่มอีกครั้ง
-                            });//webhook
-                        ///////////////////////////////////////////////////////////////////////////////////////////
-
+                         .fail(() => {
+                                alert('fail please check in!');
+                                window.location.reload();
+                            });
 
                     })
                     .fail(function(error) {
