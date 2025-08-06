@@ -48,9 +48,6 @@ global $db;
                     <a class="nav-link active" href="../views/entries.php">Entries</a>
                 </li>
             </ul>
-            <span class="navbar-text">
-                logout
-            </span>
         </div>
     </div>
 </nav>
