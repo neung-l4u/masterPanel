@@ -75,7 +75,7 @@ function saveToDB(payload, result, cmdSubmit) {
                 $('#countDown').text(countdown);
                 if (countdown <= 0) {
                     clearInterval(countdownInterval);
-                    //window.location.reload();
+                    window.location.reload();
                 }
             }, 1000);
         },
