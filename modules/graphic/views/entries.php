@@ -26,7 +26,7 @@ global $db;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     
-    <title>Feedback - Entries</title>
+    <title>Graphic - Entries</title>
 </head>
 <body>
 
@@ -42,7 +42,7 @@ global $db;
                     <a class="nav-link" aria-current="page" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../views/feedbackForm.php">Form</a>
+                    <a class="nav-link" href="../views/graphicForm.php">Form</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="../views/entries.php">Entries</a>
@@ -66,8 +66,8 @@ global $db;
                         </ol>
                     </nav>
                 </header> -->
-                <h3 class="mb-4 text-center text-uppercase form-title">Feedback Entries</h3>
-                <p class="text-center">Here you can view all feedback entries submitted through the form.</p>
+                <h3 class="mb-4 text-center text-uppercase form-title">Graphic Entries</h3>
+                <p class="text-center">Here you can view all graphic entries submitted through the form.</p>
             </div>
 
             <div class="row pt-3">

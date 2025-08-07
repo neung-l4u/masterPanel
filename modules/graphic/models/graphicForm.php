@@ -10,7 +10,7 @@ $result["msg"] = "";
 
 $dataLogs = !empty($_POST["payload"]) ? $_POST["payload"] : "no data";
 
-$logsToDB =  $db->query('INSERT INTO `feedback`(`dataLogs`) VALUES (?)', [$dataLogs]);
+$logsToDB =  $db->query('INSERT INTO `graphic`(`dataLogs`) VALUES (?)', [$dataLogs]);
 
 $result["result"] = "success";
 $result["msg"] = "Save to DB successfully!";

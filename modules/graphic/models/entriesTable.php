@@ -4,7 +4,7 @@ session_start();
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 
-$result = $db->query('SELECT * FROM feedback')->fetchAll();
+$result = $db->query('SELECT * FROM graphic')->fetchAll();
 
 $data = array("data"=> array());
 
@@ -26,7 +26,7 @@ foreach ($result as $row) {
 
     $fileName = $json["fileName"];
     //$modulePath = "../"; // Local path
-    $modulePath = "https://report.localforyou.com/modules/feedback"; // Server path
+    $modulePath = "https://report.localforyou.com/modules/graphic"; // Server path
     $filePath = $modulePath . $json["filePath"];
 
     if (empty($fileName)) {
