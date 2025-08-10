@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $position = $_POST['position'];
     $start_date = convertDateFormat($_POST['start_date']);
 
-    $company_email = strtolower($nickname_en) . "@localforyou.com";
+    $company_email = strtolower($nickname_en) . "." . getFirstTwoLower($fullName_en) ."@localforyou.com";
     $password = "Localeats#" . date("Y");
 }
     ?>
@@ -25,8 +25,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <title>Employee Account Result</title>
 <!--        <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">-->
         <style>
+            h6 {
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            caption {
+                font-size: 14px;
+                font-weight: bold;
+                margin-bottom: 5px;
+                color: #006cfa;
+            }
+
             table, td, th {
-                border: 1px solid;
+                border: 1px solid #cccccc;
+            }
+
+            tr{
+                min-height: 30px;
             }
 
             table {
@@ -60,14 +77,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         </style>
     </head>
-    <body>
+    <body style="padding: 2rem; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #000000; background-color: #ffffff;">
     <div>
-        <h3>Employee Account Creation Details</h3>
+        <h3>Employee Account Creation Details</h3><br>
         <h6>Subject:</h6>
         <p>Local For You | Employee Account Creation Details For <?php echo $nickname_en; ?></p>
         <h6>Message:</h6>
-        <p>Hi <?php echo $nickname_en; ?>,
-            Welcome to Local For You! Your employee account has been successfully created. Below, you’ll find the
+        <p>Hi <?php echo $nickname_en; ?>, <br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp; Welcome to Local For You! Your employee account has been successfully created. <br>Below, you’ll find the
             details
             you need to access our systems:</p>
     </div>
@@ -75,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div>
     <h4>Employee Details</h4>
     <table>
-        <tr>
+        <tr style="height: 36px;">
             <td>
                 <b>Employee ID: </b>
                 <?php echo $employee_id; ?>
@@ -85,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php echo $start_date; ?>
             </td>
         </tr>
-        <tr>
+        <tr style="height: 36px;">
             <td>
                 <b>Team: </b>
                 <?php echo $team; ?>
@@ -117,10 +134,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <th>Personal Email</th>
             <td><?php echo $personal_email; ?></td>
         </tr>
-        <tr>
+        <!--<tr>
             <th>Address</th>
-            <td><?php echo $address; ?></td>
-        </tr>
+            <td><?php /*echo $address; */?></td>
+        </tr>-->
     </table>
     <br><br>
 
@@ -188,4 +205,7 @@ function convertDateFormat($date): string
     return date('d/m/Y', strtotime($date));
 }
 
+function getFirstTwoLower($name) {
+    return strtolower(substr($name, 0, 2));
+}
 ?>
