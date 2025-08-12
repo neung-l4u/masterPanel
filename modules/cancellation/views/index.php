@@ -8,8 +8,15 @@
     gtag('config', 'G-LGKDYHL23T');
 </script>
 <?php
+date_default_timezone_set('Asia/Bangkok');
+
 $id = !empty($_GET['id']) ? strtolower(trim($_GET['id'])): '';
 $testMode = ($id == "test") ? 1 : 0;
+$leadSource = "Unsubscribe Form";
+$formVersion = "1.5.3";
+$emailVersion = "1.0";
+$timestamps = date("H:i D ,d M Y") . " (BKK)";
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -320,6 +327,10 @@ $testMode = ($id == "test") ? 1 : 0;
                                 <span id="doneForm" class="text-success warningText">Success</span>
                                 <button type="button" class="btn btn-success" id="cancelBtn" onclick="validateForm()">Confirm</button>
                                 <input type="hidden" id="testMode" name="testMode" value="<?php echo $testMode; ?>">
+                                <input type="hidden" id="leadSource" name="leadSource" value="<?php echo $leadSource; ?>">
+                                <input type="hidden" id="formVersion" name="formVersion" value="<?php echo $formVersion; ?>">
+                                <input type="hidden" id="emailVersion" name="emailVersion" value="<?php echo $emailVersion; ?>">
+                                <input type="hidden" id="timeStamps" name="timeStamps" value="<?php echo $timestamps; ?>">
                             </div>
                         </div>
                     </div>
@@ -329,7 +340,7 @@ $testMode = ($id == "test") ? 1 : 0;
     </div>
 </main>
 <footer class="credit">
-     Version 1.5.2 Author: IT Team - Distributed By:
+     Version <?php echo $formVersion;?> Author: IT Team - Distributed By:
     <a
             title="Awesome Online Shopping Cart Application"
             href="https://www.localforyou.com"
