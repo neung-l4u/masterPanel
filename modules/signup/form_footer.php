@@ -27,7 +27,7 @@
 <script src="assets/js/jquery.3.6.0.min.js"></script>
 <script src="assets/js/bootstrap5.0.2.bundle.min.js"></script>
 <script src="assets/js/global_data.js?v=2.0.2"></script>
-<script src="assets/js/settings.js?v=2.0.6"></script>
+<script src="assets/js/settings.js?v=2.0.7"></script>
 <script src="assets/js/date_format.js"></script>
 <script src="assets/js/getUserAgent.js"></script>
 <script src="assets/js/util.js?v=2.0.2"></script>
