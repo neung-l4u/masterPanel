@@ -339,15 +339,26 @@ $timestamps = date("H:i D ,d M Y") . " (BKK)";
         <?php }//else ?>
     </div>
 </main>
-<footer class="credit">
+<footer class="credit" style="display: flex; justify-content: space-around; ">
+    <div>
+        <a
+                title="Local For You Website - Cancellation Policy"
+                href="https://localforyou.com/en/cancellation-policy/"
+                target="_blank"
+        >
+            Cancellation Policy
+        </a>
+    </div>
+    <div>
      Version <?php echo $formVersion;?> Author: IT Team - Distributed By:
     <a
-            title="Awesome Online Shopping Cart Application"
+            title="Local For You Website"
             href="https://www.localforyou.com"
             target="_blank"
     >
         Local For You
-    </a>
+    </a></div>
+
 </footer>
 <script src="../assets/js/jquery.3.6.0.min.js"></script>
 <script src="../assets/js/bootstrap5.0.2.bundle.min.js"></script>
