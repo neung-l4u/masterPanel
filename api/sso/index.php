@@ -45,7 +45,7 @@ if (count($account) !== 0) {
     $oneYearLaterTimestamp = strtotime('+1 year', $currentTimestamp);
 
     echo json_encode([
-        "status" => "TRUE",
+        "status" => true,
         "userID" => $staffID,
         "name"   => $staffName,
         "role"   => $role,
@@ -56,7 +56,7 @@ if (count($account) !== 0) {
     ]);
 } else {
     echo json_encode([
-        "status" => "FALSE",
+        "status" => false,
         "msg" => "Not found"
     ]);
 }
