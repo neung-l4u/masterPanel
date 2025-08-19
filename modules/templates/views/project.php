@@ -16,6 +16,33 @@
 <link rel="stylesheet" href="../assets/css/project.css?v=1.1.0&r=<?php echo $random; ?>">
 <link rel="stylesheet" href="../assets/css/datatables-bs5.min.css">
 
+<?php
+require_once "../assets/db/db.php";
+require_once "../assets/db/initDB.php";
+
+$loginPerson = $db->query('SELECT * FROM staffs WHERE sID=?;',$_SESSION['id'])->fetchArray();
+$loginPerson['sEmail'];
+
+$CS = $db->query('SELECT `sEmail` FROM staffs WHERE teamID = ? AND `sStatus` <> ?;', 1, 0)->fetchAll();
+$CSemail = array_column($CS, 'sEmail');
+
+$AM = $db->query('SELECT `sEmail` FROM staffs WHERE teamID IN(?) AND `sStatus` <> ?;' , "2,8,10,11", 0)->fetchAll();
+$AMemail = array_column($AM, 'sEmail');
+
+// echo "<pre>";
+// print_r($loginPerson);
+// print_r($CSemail);
+// print_r($AMemail);
+// echo "</pre>";
+
+if (in_array($loginPerson['sEmail'], $CSemail)){
+    $teamEmail = "admin@localforyou.com";
+} elseif (in_array($loginPerson['sEmail'], $AMemail)) {
+    $teamEmail = "promotion@localforyou.com";
+} else {
+    $teamEmail = "";
+}
+?>
 
 <div class="row">
     <div class="col">
@@ -92,6 +119,8 @@
                 </div>
                 <div class="form-group text-right">
                     <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
+                    <input type="hidden" id="poEmail" value="<?php echo $loginPerson['sEmail']; ?>">
+                    <input type="hidden" id="teamEmail" value="<?php echo $teamEmail; ?>">
                     <input type="hidden" id="editID" value="">
                     <input type="hidden" id="frmAction" value="add">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Close</button>

@@ -456,6 +456,8 @@ function sendProject(id) {
             data: {
                 "projectID": id,
                 "loginID": inputLoginID.val(),
+                "poEmail": $("#poEmail").val(),
+                "teamEmail": $("#teamEmail").val(),
                 "act": "sendProject"
             }
         });//ajax
