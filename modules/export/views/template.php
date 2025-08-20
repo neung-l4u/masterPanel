@@ -56,8 +56,7 @@ if (empty($projects['projectCode'])){
     $twoDigits = sprintf("%02d", $dateCount);
     $projects['projectCode'] = "WEB-" . $exday . "-" . $twoDigits . " " . $projects['projectName'];
 
-    $db->query('UPDATE `tb_project` SET `projectCode` = ? WHERE `projectID` = ?;', $projects['projectCode'], $param['id']);
+    $db->query('UPDATE `tb_project` SET `projectCode` = ?, `statusID` = 2 WHERE `projectID` = ?;', $projects['projectCode'], $param['id']);
 }
 
 echo json_encode($projects);
-

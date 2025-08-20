@@ -238,6 +238,8 @@ $tomorrow = date("Y-m-d", strtotime("now"));
     //ตัวแปรเปล่า
     let appointmentDetail = {};
     let sendEmailPayload = {};
+    let thaiTimePreview = "";
+    let thaiDayPreview = "";
 
     //ตัวแปร array
     const timeZoneMap = {
@@ -516,6 +518,9 @@ $tomorrow = date("Y-m-d", strtotime("now"));
             "country": country.val(),
             "timezone": $('#timezone').val(),
             "city": city.val(),
+            "daythaionly" : thaiDayPreview,
+            "timethaionly": thaiTimePreview,
+            "end_timethaionly": addMinutes(thaiTimePreview,15),
             "state": state.val(),
             "date": date.val(),
             "time": time.val(),
@@ -552,6 +557,7 @@ $tomorrow = date("Y-m-d", strtotime("now"));
          });
     }//sendEmail
 
+    //ส่งจองลงปฏิทิน
     function bookCalendar() {
         const selectedSale = $("#sales option:selected");
         appointmentDetail = {
@@ -561,6 +567,9 @@ $tomorrow = date("Y-m-d", strtotime("now"));
             "shop_type": $("#shop_type option:selected").text(),
             "country": country.val(),
             "timezone": $('#timezone').val(),
+            "daythaionly" : thaiDayPreview,
+            "timethaionly": thaiTimePreview,
+            "end_timethaionly": addMinutes(thaiTimePreview,15),
             "city": city.val(),
             "startDate": date.val(),
             "startTime": time.val(),
@@ -580,6 +589,7 @@ $tomorrow = date("Y-m-d", strtotime("now"));
         };
 
         console.log("we call webhook UCanBookMe - Appointment created");
+        console.table(appointmentDetail);
         const makeAppointment = $.ajax({
             type: "POST",
             crossDomain: true,
@@ -769,9 +779,6 @@ $tomorrow = date("Y-m-d", strtotime("now"));
         ]
     };
 
-
-
-
 /*    function updateThaiTimePreview() {
         const selectedCountry = country.val();
         const selectedState = state.val();
@@ -827,11 +834,17 @@ $tomorrow = date("Y-m-d", strtotime("now"));
 
         const dateTimeInThaiTZ = dateTimeInCustomerTZ.setZone('Asia/Bangkok');
         const thaiFormatted = dateTimeInThaiTZ.toFormat("HH:mm (ccc dd MMM)");
+        const onlyNumberTimeThai = dateTimeInThaiTZ.toFormat("HH:mm:ss");
+        const onlyNumberDayThai = dateTimeInThaiTZ.toFormat("yyyy-MM-dd");
+
+        thaiTimePreview = onlyNumberTimeThai;
+        thaiDayPreview = onlyNumberDayThai;
+
+
 
         thTimePreview.text(`⏰ BKK: ${thaiFormatted}`);
+        console.log('TimePreview' , thaiTimePreview);
     }
-
-
 
     function showReview() {
         const data = {
@@ -890,7 +903,6 @@ $tomorrow = date("Y-m-d", strtotime("now"));
     function submitBooking() {
         $('#bookingForm').submit();
     }
-
 
     function getThaiTimeText(dateStr, timeStr) {
         try {

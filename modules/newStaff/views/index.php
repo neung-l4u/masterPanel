@@ -98,12 +98,12 @@ $teams = array("None", "Sales", "Customer Support", "Account Manager", "Marketin
                     <input id="personal_email" type="email" name="personal_email" class="form-control">
                 </td>
             </tr>
-            <tr>
+            <!--<tr>
                 <td colspan="2">
                     <label for="address" class="form-label">ที่อยู่ปัจจุบัน</label>
                     <textarea id="address" name="address" class="form-control"></textarea>
                 </td>
-            </tr>
+            </tr>-->
         </table>
         </div>
         <div class="text-center">

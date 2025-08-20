@@ -8,8 +8,15 @@
     gtag('config', 'G-LGKDYHL23T');
 </script>
 <?php
+date_default_timezone_set('Asia/Bangkok');
+
 $id = !empty($_GET['id']) ? strtolower(trim($_GET['id'])): '';
 $testMode = ($id == "test") ? 1 : 0;
+$leadSource = "Unsubscribe Form";
+$formVersion = "1.5.3";
+$emailVersion = "1.0";
+$timestamps = date("H:i D ,d M Y") . " (BKK)";
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -320,6 +327,10 @@ $testMode = ($id == "test") ? 1 : 0;
                                 <span id="doneForm" class="text-success warningText">Success</span>
                                 <button type="button" class="btn btn-success" id="cancelBtn" onclick="validateForm()">Confirm</button>
                                 <input type="hidden" id="testMode" name="testMode" value="<?php echo $testMode; ?>">
+                                <input type="hidden" id="leadSource" name="leadSource" value="<?php echo $leadSource; ?>">
+                                <input type="hidden" id="formVersion" name="formVersion" value="<?php echo $formVersion; ?>">
+                                <input type="hidden" id="emailVersion" name="emailVersion" value="<?php echo $emailVersion; ?>">
+                                <input type="hidden" id="timeStamps" name="timeStamps" value="<?php echo $timestamps; ?>">
                             </div>
                         </div>
                     </div>
@@ -328,15 +339,26 @@ $testMode = ($id == "test") ? 1 : 0;
         <?php }//else ?>
     </div>
 </main>
-<footer class="credit">
-     Version 1.5.2 Author: IT Team - Distributed By:
+<footer class="credit" style="display: flex; justify-content: space-around; ">
+    <div>
+        <a
+                title="Local For You Website - Cancellation Policy"
+                href="https://localforyou.com/en/cancellation-policy/"
+                target="_blank"
+        >
+            Cancellation Policy
+        </a>
+    </div>
+    <div>
+     Version <?php echo $formVersion;?> Author: IT Team - Distributed By:
     <a
-            title="Awesome Online Shopping Cart Application"
+            title="Local For You Website"
             href="https://www.localforyou.com"
             target="_blank"
     >
         Local For You
-    </a>
+    </a></div>
+
 </footer>
 <script src="../assets/js/jquery.3.6.0.min.js"></script>
 <script src="../assets/js/bootstrap5.0.2.bundle.min.js"></script>

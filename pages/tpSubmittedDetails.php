@@ -20,17 +20,6 @@ $timestamp = date("Y-m-d H:i:s");
 
 $cutday = explode("-","$date");
 
-$month = $cutday[1];
-$day = $cutday[2];
-$year = $cutday[0];
-
-$exday = $year.$month.$day;
-
-$startDate = $date;
-$businessDaysToAdd = 7;
-$holidays = [];
-$dueDate = addBusinessDays($startDate, $businessDaysToAdd, $holidays);
-
 $param = array();
 $to = "";
 $cc = "";
@@ -41,6 +30,7 @@ $result = array(
     "result" => 0
 );
 
+$act = $_GET["act"];
 $id = $_GET["projectID"];
 $loginID = $_POST["loginID"];
 $pageDetails = array();
@@ -200,7 +190,11 @@ $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Usern
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Password</td><td>'.$project['hostingPass'].'</td></tr>';
 $topData .= '</table><br>';
 
-$message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'. $prettyJson .'</pre></body></html>';
-// $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>Please Get json data form DB</pre></body></html>';
+if ($act == "sendProject") {
+    $linkDetails = '<a href="https://report.localforyou.com/pages/tpSubmittedDetails.php?act=readProject&projectID='.$id.'">Click to View Template Submission Details</a>';
+    $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr>'.$linkDetails.'</body></html>';
+} else {
+    $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'. $prettyJson .'</pre></body></html>';
+}
 
 echo $message;

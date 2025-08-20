@@ -1427,3 +1427,12 @@ $('#formType').on('change', function () {
     }
 });
 
+$('#formCountry').on('change', function () {
+    const selectedCountryValue = $(this).val();
+    if (selectedCountryValue === "TH") {
+        $('#policyNoThai').hide();
+    }else{
+        $('#policyNoThai').show();
+    }
+})
+

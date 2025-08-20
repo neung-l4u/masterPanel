@@ -1971,6 +1971,8 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 <li class="fw-bold">I understand that no contract period applies and I can
                                                     cancel at anytime (3-day Notice required).
                                                 </li>
+                                                <li class="fw-bold" id="policyNoThai">Your subscription for the purchased product will be automatically renewed after the specified promotion period at the product’s regular price. If you wish to unsubscribe, please notify our staff at least 3 days prior to your billing date.
+                                                </li>
                                             </ol>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" value="true"
