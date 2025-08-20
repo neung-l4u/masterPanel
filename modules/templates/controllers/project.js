@@ -447,52 +447,27 @@ function sendProject(id) {
     let answer = confirm("Are you sure you want to submit this project?");
 
     if (answer) {
-        const callAjax = $.ajax({
-            type: "GET",
-            crossDomain: true,
-            dataType: 'jsonp',
-            jsonpCallback: "l4uCallback",
-            headers: {  'Access-Control-Allow-Origin': 'https://report.localforyou.com' },
-            url: "https://report.localforyou.com/modules/templates/assets/php/sendProject.php",
-            data: {
-                "loginID": inputLoginID.val(),
-                "projectID": id
-            }
-        });
-    }//if
-
-    payload = {
-        act: inputAction.val(),
-        name: inputProjectName.val(),
-        shopTypeID: inputShopTypeID.val(),
-        selectedTemplate: selectedTemplate.val(),
-        country: inputCountry.val(),
-        editID: inputEditID.val(),
-        ownerID: inputLoginID.val(),
-        token: Math.random()
-    };
-
-    const sendProjectMonday =
-        $.ajax({
+        const sendProject = $.ajax({
             url: "https://hook.us1.make.com/cc7a133uwkf3xaj5ehnfcfjv5qfag9ra",
             method: "POST",
             async: false,
             cache: false,
             dataType: "json",
             data: {
-                "projectID": id
+                "projectID": id,
+                "loginID": inputLoginID.val(),
+                "poEmail": $("#poEmail").val(),
+                "teamEmail": $("#teamEmail").val(),
+                "act": "sendProject"
             }
         });//ajax
+        sendProject.done(function (res) {
+            console.log(res);
+        });
+        sendProject.fail(function (xhr, status, error) {
+            console.log("ajax call fail!!");
+            console.log(status + ": " + error);
+        });
+    }//if
+
 }//sendEmail
-
-function l4uCallback(response) {
-    console.log("Monday Report Response:", response);
-}
-
-function truel4uCallback(response) {
-    console.log("Email Response:", response);
-}
-
-function falsel4uCallback(response) {
-    console.log("Email Response:", response);
-}
