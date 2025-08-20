@@ -713,6 +713,8 @@ function requestToPay() {
         "account_number": account_number
     };
 
+    let saveAction = "create";
+    saveToDB(saveAction, stripePayload);
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -734,8 +736,9 @@ function requestToPay() {
             data: JSON.stringify(stripePayload)
         });
 
-        reqPay.done(function (res) {
+        let saveAction = "update";
 
+        reqPay.done(function (res) {
             console.log(res);
 
             let stripeRes = JSON.stringify(res);
@@ -752,8 +755,7 @@ function requestToPay() {
                     customerStripeID.val(res.customer_id);
                 }
                 
-                saveToDB(stripePayload, stripeRes);
-
+                saveToDB(saveAction, stripeRes);
                 setTimeout(function () {
                     genLinkPDF();
                     modalRespondAction('open', 'success');
@@ -765,8 +767,7 @@ function requestToPay() {
                 $(fail).appendTo(".paymentResult");
                 res.message = "Payment step is fail"
                 alert("Payment step is fail");
-
-                saveToDB(stripePayload, stripeRes);
+                saveToDB(saveAction, stripeRes);
             }
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
 
@@ -783,19 +784,20 @@ function requestToPay() {
             $("#paymentSubmit").prop('disabled', false);
 
             let stripeRes = xhr.responseText;
-            saveToDB(stripePayload, stripeRes);
+            saveToDB(saveAction, stripeRes);
             return res.message;
         });
     }else{ //submit without a charge
+            let saveAction = "update";
             let stripeRes = "Test Mode - No Charge";
-            saveToDB(stripePayload, stripeRes);
+            saveToDB(saveAction, stripeRes);
             result.empty();
             let done = `<span class="badge bg-success">No Charge</span>`;
             let cusID = `<span class="badge bg-info">No Stripe Connect</span>`;
             $(done).appendTo(".paymentResult");
             $(cusID).appendTo(".paymentResult");
             genLinkPDF();
-            sendMailToL4UTeam();
+            //sendMailToL4UTeam();
             modalRespondAction('open', 'success');
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
@@ -837,8 +839,6 @@ function requestToPay() {
 //sendMail
 
 const sendMailToL4UTeam = () => {
-
-
     let today = new Date();
     let dd = String(today.getDate()).padStart(2, '0');
     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -1047,7 +1047,7 @@ const sendMailToL4UTeam = () => {
 
 }//sendMail
 // TODO : Build Logs File to DB by Mark
-const saveToDB = (stripePayload, stripeRes) => {
+const saveToDB = (saveAction, stripeData) => {
     genLinkPDF();
     const agreementGenerated = $("#agreementGenerated");
     let contractURL = agreementGenerated.val();
@@ -1185,12 +1185,11 @@ const saveToDB = (stripePayload, stripeRes) => {
         cache: false,
         dataType: 'json',
         data: {
-            "stripePayload" : stripePayload,
+            "stripeData" : stripeData,
             "payload" : payload,
             "country" : Country,
             "contractURL" : contractURL,
             "testMail" : CheckedBoxTestmailValue,
-            "stripeRes" : stripeRes
         }
     });
 
