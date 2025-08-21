@@ -758,7 +758,7 @@ function requestToPay() {
                 setTimeout(function () {
                     genLinkPDF();
                     modalRespondAction('open', 'success');
-                    //sendMailToL4UTeam();
+                    sendMailToL4UTeam();
                 }, 1000);
             } else {
                 result.empty();
@@ -796,7 +796,7 @@ function requestToPay() {
             $(done).appendTo(".paymentResult");
             $(cusID).appendTo(".paymentResult");
             genLinkPDF();
-            //sendMailToL4UTeam();
+            sendMailToL4UTeam();
             modalRespondAction('open', 'success');
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
