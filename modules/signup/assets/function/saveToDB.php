@@ -11,7 +11,7 @@ $result["result"] = "";
 $result["msg"] = "";
 
 $dataLogs = !empty($_POST["payload"]) ? $_POST["payload"] : null;
-$dataStripe = !empty($_POST["stripeData"]) ? $_POST["stripeData"] : null;
+$dataStripe = !empty($_POST["stripePayload"]) ? $_POST["stripePayload"] : null;
 $country = !empty($_POST["country"]) ? $_POST["country"] : null;
 $contractURL = !empty($_POST["contractURL"]) ? $_POST["contractURL"] : null;
 $stripeResult = !empty($_POST["stripeRes"]) ? $_POST["stripeRes"] : null;
