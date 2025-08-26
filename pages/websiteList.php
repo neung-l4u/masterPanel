@@ -86,7 +86,7 @@ $password = "Localeats#".date("Y");
         color: #DDDDDD !important;
     }
 </style>
-<link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
 
 <!-- Content Header (Page header) -->
@@ -414,7 +414,7 @@ $password = "Localeats#".date("Y");
                     </div> <!-- modal-body -->
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="newModalFormAction('close')">Close</button>
                         <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit">Save changes</button>
                     </div>
                 </div>
@@ -612,7 +612,7 @@ $password = "Localeats#".date("Y");
 <!-- /.content -->
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
 <script>
     function showCopy() {
         $("#alert").fadeIn(500);
