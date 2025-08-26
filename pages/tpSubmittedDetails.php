@@ -50,23 +50,23 @@ $project = $db->query(
     ',$id)->fetchArray();
 
 $openingHours = explode("__", $project["openingHours"]);
-$openingSunday = "Sunday : " . (($openingHours[6] !== "") ? $openingHours[6] : "-");
-$openingMonday = "Monday : " . (($openingHours[0] !== "") ? $openingHours[0] : "-");
-$openingTuesday = "Tuesday : " . (($openingHours[1] !== "") ? $openingHours[1] : "-");
-$openingWednesday = "Wednesday : " . (($openingHours[2] !== "") ? $openingHours[2] : "-");
-$openingThursday = "Thursday : " . (($openingHours[3] !== "") ? $openingHours[3] : "-");
-$openingFriday = "Friday : " . (($openingHours[4] !== "") ? $openingHours[4] : "-");
-$openingSaturday = "Saturday : " . (($openingHours[5] !== "") ? $openingHours[5] : "-");
+$openingSunday = "Sunday : " . (($openingHours[0] !== "") ? $openingHours[0] : "-");
+$openingMonday = "Monday : " . (($openingHours[1] !== "") ? $openingHours[1] : "-");
+$openingTuesday = "Tuesday : " . (($openingHours[2] !== "") ? $openingHours[2] : "-");
+$openingWednesday = "Wednesday : " . (($openingHours[3] !== "") ? $openingHours[3] : "-");
+$openingThursday = "Thursday : " . (($openingHours[4] !== "") ? $openingHours[4] : "-");
+$openingFriday = "Friday : " . (($openingHours[5] !== "") ? $openingHours[5] : "-");
+$openingSaturday = "Saturday : " . (($openingHours[6] !== "") ? $openingHours[6] : "-");
 $openingHours = $openingSunday.'<br>'.$openingMonday.'<br>'.$openingTuesday.'<br>'.$openingWednesday.'<br>'.$openingThursday.'<br>'.$openingFriday.'<br>'.$openingSaturday;
 
 $pickupAndDelivery = explode("__", $project["pickupAndDelivery"]);
-$pickupSunday = "Sunday : " . (($pickupAndDelivery[6] !== "") ? $pickupAndDelivery[6] : "-");
-$pickupMonday = "Monday : " . (($pickupAndDelivery[0] !== "") ? $pickupAndDelivery[0] : "-");
-$pickupTuesday = "Tuesday : " . (($pickupAndDelivery[1] !== "") ? $pickupAndDelivery[1] : "-");
-$pickupWednesday = "Wednesday : " . (($pickupAndDelivery[2] !== "") ? $pickupAndDelivery[2] : "-");
-$pickupThursday = "Thursday : " . (($pickupAndDelivery[3] !== "") ? $pickupAndDelivery[3] : "-");
-$pickupFriday = "Friday : " . (($pickupAndDelivery[4] !== "") ? $pickupAndDelivery[4] : "-");
-$pickupSaturday = "Saturday : " . (($pickupAndDelivery[5] !== "") ? $pickupAndDelivery[5] : "-");
+$pickupSunday = "Sunday : " . (($pickupAndDelivery[0] !== "") ? $pickupAndDelivery[0] : "-");
+$pickupMonday = "Monday : " . (($pickupAndDelivery[1] !== "") ? $pickupAndDelivery[1] : "-");
+$pickupTuesday = "Tuesday : " . (($pickupAndDelivery[2] !== "") ? $pickupAndDelivery[2] : "-");
+$pickupWednesday = "Wednesday : " . (($pickupAndDelivery[3] !== "") ? $pickupAndDelivery[3] : "-");
+$pickupThursday = "Thursday : " . (($pickupAndDelivery[4] !== "") ? $pickupAndDelivery[4] : "-");
+$pickupFriday = "Friday : " . (($pickupAndDelivery[5] !== "") ? $pickupAndDelivery[5] : "-");
+$pickupSaturday = "Saturday : " . (($pickupAndDelivery[6] !== "") ? $pickupAndDelivery[6] : "-");
 $pickupAndDelivery = $pickupSunday.'<br>'.$pickupMonday.'<br>'.$pickupTuesday.'<br>'.$pickupWednesday.'<br>'.$pickupThursday.'<br>'.$pickupFriday.'<br>'.$pickupSaturday;
 
 $pageDetails = $db->query(
