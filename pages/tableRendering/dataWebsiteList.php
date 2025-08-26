@@ -41,6 +41,8 @@ $data = array("data"=> array());
 $i=1;
 foreach ($result as $row) {
     $No = $row["wID"];
+    $statusWebsite = $row["wLiveStatus"];
+    $url = '<a href="'.$row["wDomain"].'" target="_blank" title="WP-Link">'.$row["wDomain"].'</a>';
     $btn["URL"] = '<a href="'.$row["wWordpressURL"].'" target="_blank" title="WP-Admin"><i class="bi bi-box-arrow-up-right"></i></a>';
     $btn["detail"] = '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail"><i class="bi bi-file-earmark-text"></i></a>';
     $btn["edit"] = '<a href="#" onclick="setEdit('.$row["wID"].')" title="Edit"><i class="bi bi-pencil-square text-dark"></i></a>';
@@ -49,6 +51,8 @@ foreach ($result as $row) {
     $data["data"][] = array(
         $i,
         '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail" class="linkDetail">'.dash($row["wProject"]).'</a>',
+        $url,
+        $statusWebsite,
         $btn["URL"]." ".$btn["edit"]." ".$btn["delete"]
     );
     $i++;

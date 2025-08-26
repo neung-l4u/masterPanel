@@ -209,6 +209,8 @@ $password = "Localeats#".date("Y");
                                 <tr>
                                     <th class="colNo">#</th>
                                     <th class="colProName">Project name</th>
+                                    <th class="colURL">URL</th>
+                                    <th class="colStatus">Status</th>
                                     <th class="colDetail"></th>
                                 </tr>
                                 </thead>
