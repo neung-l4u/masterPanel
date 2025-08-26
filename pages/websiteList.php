@@ -225,7 +225,7 @@ $password = "Localeats#".date("Y");
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="formModalLabel"><i class="bi bi-file-earmark-plus"></i> Form Website</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="newModalFormAction('close')">
                             <span>&times;</span>
                         </button>
                     </div>
