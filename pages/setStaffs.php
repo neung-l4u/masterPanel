@@ -98,7 +98,7 @@ $password = "Localeats#".date("Y");
                     </div>
                     <div class="modal-body">
 
-                        <div class="d-flex flex-column">
+                        <div class="d-flex flex-column px-5">
 
                             <div class="row">
                                 <div class="col-6">
@@ -120,12 +120,12 @@ $password = "Localeats#".date("Y");
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group row">
-                                        <label class="col-2 col-form-label">Type</label>
+                                        <label class="col-2 col-form-label" for="inputStaffType">Type</label>
                                         <div class="col">
                                             <div class="form-group d-flex">
                                                 <select id="inputStaffType" class="custom-select">
-                                                    <option value="fullTime" selected>fullTime</option>
-                                                    <option value="partTime">partTime</option>
+                                                    <option value="fullTime" selected>Full-time</option>
+                                                    <option value="partTime">Part-time</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -134,6 +134,22 @@ $password = "Localeats#".date("Y");
                             </div>
 
                             <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group mb-3 row">
+                                        <label class="col-3 col-form-label" for="inputEmployeeNumber">Emp No.</label>
+                                        <input type="text" class="form-control col" id="inputEmployeeNumber" maxlength="6" placeholder="e.g. LOC061">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group mb-3 row">
+                                        <label class="col-3 col-form-label" for="inputStartDate">StartDate</label>
+                                        <input type="date" class="form-control col" id="inputStartDate" placeholder="dd-mm-yyyy">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- StartDate and Emp No.-->
+
+                            <div class="row mb-5">
                                 <div class="col-6">
                                     <div class="form-group row">
                                         <label for="inputLevel" class="col-2 col-form-label">Level</label>
@@ -166,34 +182,23 @@ $password = "Localeats#".date("Y");
                             </div>
                              <!-- Level and Team-->
 
-
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <div class="form-group mb-3 row">
-                                        <label class="col-3 col-form-label" for="inputStartDate">StartDate</label>
-                                        <input type="date" class="form-control col" id="inputStartDate" placeholder="dd-mm-yyyy">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputNickName">Nick Name</label>
+                                        <input type="text" class="form-control" id="inputNickName" maxlength="50" placeholder="Enter Staff Nick Name">
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                <div class="form-group mb-3 row">
-                                    <label class="col-3 col-form-label" for="inputEmployeeNumber">Emp No.</label>
-                                    <input type="text" class="form-control col" id="inputEmployeeNumber" maxlength="6" placeholder="e.g. LOC061">
-                                </div>
-                                </div>
                             </div>
-                            <!-- StartDate and Emp No.-->
-
 
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="inputName">Full Name</label>
+                                        <label for="inputName">English Name</label>
                                         <input type="text" class="form-control" id="inputName" maxlength="255" placeholder="e.g. Peeraphat Malimongkhon">
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="inputTname">Thai Name</label>
@@ -205,27 +210,17 @@ $password = "Localeats#".date("Y");
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="inputNickName">Nick Name</label>
-                                        <input type="text" class="form-control" id="inputNickName" maxlength="50" placeholder="Enter Staff Nick Name">
+                                        <label for="inputAddress">Address</label>
+                                        <textarea id="inputAddress" class="form-control" placeholder="Enter Address" rows="3"></textarea>
                                     </div>
                                 </div>
-
                             </div>
 
-                            <div class="row">
+                            <div class="row mt-5">
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="inputBirthday">Birthday</label>
                                         <input type="date" class="form-control" id="inputBirthday" placeholder="dd-mm-yyyy">
-                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputAddress">Address</label>
-                                        <textarea id="inputAddress" class="form-control" placeholder="Enter Address" rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -245,9 +240,7 @@ $password = "Localeats#".date("Y");
                                         </select>        
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="inputNationality">Nationality</label>    
@@ -259,7 +252,7 @@ $password = "Localeats#".date("Y");
                                 </div>
                             </div>
 
-                            <div class="row">
+                            <div class="row mt-5">
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="inputEmail">Email</label>
@@ -267,9 +260,7 @@ $password = "Localeats#".date("Y");
                                         <small id="emailHelp" class="form-text text-muted">e.g. mail@localforyou.com.</small>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="inputPhone">Phone</label>
