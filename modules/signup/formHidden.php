@@ -113,4 +113,5 @@
         <option value="3 months">3 months</option>
         <option value="12 months">12 months</option>
     </select>
+    <input type="hidden" id="logID" name="logID" value="">
 </div>
