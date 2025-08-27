@@ -56,12 +56,12 @@ $password = "Localeats#".date("Y");
                                style="width:100%">
                             <thead class="thead-dark">
                                 <tr>
-                                    <th style="width:11%">Timestamp</th>
-                                    <th style="width:20%">Shop name</th>
-                                    <th style="width:20%">Customer</th>
-                                    <th style="width:20%">Service</th>
-                                    <th style="width:5%">Amount</th>
-                                    <th style="width:4%">Details</th>
+                                    <th style="width:10%">Timestamp</th>
+                                    <th style="width:15%">Shop name</th>
+                                    <th style="width:20%">Customer : Email</th>
+                                    <th style="width:20%">Recipient : Email</th>
+                                    <th style="width:25%">Amount</th>
+                                    <th style="width:10%">Details</th>
                                 </tr>
                             </thead>
                         </table>
@@ -129,10 +129,18 @@ $password = "Localeats#".date("Y");
         ]
     } );
 
-    function viewJson(data) {
+    function viewJsonShop(data) {
         let jsonData = data;
-        console.log("data", data.shopName);
-        if(data !== undefined){ shopName.text(data.shopName); logType.text("Voucher");}
+        console.log("data", data.shop_name);
+        if(data !== undefined){ shopName.text(data.shop_name); logType.text("Shop Details");}
+        $('#formModal').modal('show');
+        $('#jsonText').html(JSON.stringify(jsonData, undefined, 2));
+    }
+
+    function viewJsonVoucher(data) {
+        let jsonData = data;
+        console.log("data", data.store_name);
+        if(data !== undefined){ shopName.text(data.store_name); logType.text("Voucher Details");}
         $('#formModal').modal('show');
         $('#jsonText').html(JSON.stringify(jsonData, undefined, 2));
     }
