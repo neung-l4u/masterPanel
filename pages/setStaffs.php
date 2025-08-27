@@ -19,13 +19,13 @@ $password = "Localeats#".date("Y");
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h4 class="m-0">
-                    <svg class="nav-icon mr-3" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512"><path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3zM609.3 512H471.4c5.4-9.4 8.6-20.3 8.6-32v-8c0-60.7-27.1-115.2-69.8-151.8c2.4-.1 4.7-.2 7.1-.2h61.4C567.8 320 640 392.2 640 481.3c0 17-13.8 30.7-30.7 30.7zM432 256c-31 0-59-12.6-79.3-32.9C372.4 196.5 384 163.6 384 128c0-26.8-6.6-52.1-18.3-74.3C384.3 40.1 407.2 32 432 32c61.9 0 112 50.1 112 112s-50.1 112-112 112z" fill="#000000" /></svg>
+                    <i class="bi bi-people-fill"></i>
                     Settings / Staffs
                 </h4>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="main.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="main.php"><i class="bi bi-house-door-fill"></i></a></li>
                     <li class="breadcrumb-item"><a href="#">Settings</a></li>
                     <li class="breadcrumb-item active">Staffs</li>
                 </ol>
@@ -43,37 +43,38 @@ $password = "Localeats#".date("Y");
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-end">
-                        <!-- Button trigger modal -->
                         <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
+                            <i class="bi bi-plus-circle-fill"></i> Add new
                         </button>
-
-                        <!-- Modal -->
-
-
                     </div>
                     <div class="card-body">
                         <div class="card">
+                            <div class="form-check mt-4 ml-4">
+                                <input class="form-check-input" type="checkbox" value="1" id="includeInactive">
+                                <label class="form-check-label" for="includeInactive">
+                                    Include inactive staffs.
+                                </label>
+                            </div>
                             <div class="card-body table-responsive p-4" style="height: 620px;">
                                 <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:50px;" class="text-center">#</th>
-                                        <th>Name</th>
-                                        <th style="width:120px;" class="text-center">Level</th>
-                                        <th style="width:150px;" class="text-center">Email</th>
-                                        <th style="width:120px;" class="text-center">Phone</th>
-                                        <th style="width:50px"></th>
+                                        <th style="width:50px;" class="text-center"><i class="bi bi-hash"></i></th>
+                                        <th><i class="bi bi-person-circle"></i> name</th>
+                                        <th style="width:120px;" class="text-center"><i class="bi bi-star-fill"></i> role</th>
+                                        <th style="width:150px;" class="text-center"><i class="bi bi-envelope-fill"></i> mail</th>
+                                        <th style="width:120px;" class="text-center"><i class="bi bi-telephone-fill"></i> mob</th>
+                                        <th style="width:50px"><i class="bi bi-tools"></i></th>
                                     </tr>
                                     </thead>
                                     <tfoot class="thead-dark">
                                     <tr>
-                                        <th class="text-center">#</th>
-                                        <th>Name</th>
-                                        <th class="text-center">Level</th>
-                                        <th class="text-center">Email</th>
-                                        <th class="text-center">Phone</th>
-                                        <th></th>
+                                        <th class="text-center"><i class="bi bi-hash"></i></th>
+                                        <th><i class="bi bi-person-circle"></i> name</th>
+                                        <th class="text-center"><i class="bi bi-star-fill"></i> role</th>
+                                        <th class="text-center"><i class="bi bi-envelope-fill"></i> mail</th>
+                                        <th class="text-center"><i class="bi bi-telephone-fill"></i> mob</th>
+                                        <th><i class="bi bi-tools"></i></th>
                                     </tr>
                                     </tfoot>
                                 </table>
@@ -284,8 +285,8 @@ $password = "Localeats#".date("Y");
                     </div> <!-- modal-body -->
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-circle"></i> Close</button>
+                        <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit"><i class="bi bi-floppy-fill"></i> Save</button>
                     </div>
                 </div>
             </div>

@@ -4,7 +4,14 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$result = $db->query('SELECT s.sID, s.sEmail, s.sMobile, s.sName, s.sNickName, l.lName, s.sStatus FROM `staffs` s , `userLevel` l WHERE s.sDeleteAt IS NULL  AND s.sLevel = l.lID;')->fetchAll();
+$params["filterInactive"] = !empty($_POST['includeInactive']) ? $_POST['includeInactive'] : 0;
+
+if($params["filterInactive"] == 1){
+    $result = $db->query('SELECT s.sID, s.sEmail, s.sMobile, s.sName, s.sNickName, l.lName, s.sStatus FROM `staffs` s , `userLevel` l WHERE s.sDeleteAt IS NULL  AND s.sLevel = l.lID;')->fetchAll();
+}else{
+    $result = $db->query('SELECT s.sID, s.sEmail, s.sMobile, s.sName, s.sNickName, l.lName, s.sStatus FROM `staffs` s , `userLevel` l WHERE s.sDeleteAt IS NULL  AND s.sLevel = l.lID AND sStatus=1;')->fetchAll();
+}
+
 
 $data = array("data"=> array());
 
@@ -19,9 +26,9 @@ foreach ($result as $row) {
     $data["data"][] = array(
         $btn["status"],
         showName($row["sNickName"],$row["sName"]),
-        $row["lName"],
-        $row["sEmail"],
-        $row["sMobile"],
+        '<i class="bi bi-person-circle"></i>&nbsp;'.$row["lName"],
+        '<i class="bi bi-envelope"></i>&nbsp;'.$row["sEmail"],
+        '<i class="bi bi-telephone"></i>&nbsp;'.$row["sMobile"],
         $btn["edit"] . " " .$btn["del"]
     );
 }
