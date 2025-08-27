@@ -16,6 +16,10 @@ if ($mode == "loadArray"){
         FROM tb_project
         WHERE projectID = ?;', $projectID)->fetchArray();
 
+    $params["openingCustom"] = $row["openingCustom"];
+    $params["openingHours"] = $row["openingHours"];
+    $params["deliveryCustom"] = $row["deliveryCustom"];
+    $params["pickupAndDelivery"] = $row["pickupAndDelivery"];
     $params["domainHave"] = $row["domainHave"];
     $params["hostingHave"] = $row["hostingHave"];
     $params["gloriaHave"] = $row["gloriaHave"];
