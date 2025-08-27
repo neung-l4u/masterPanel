@@ -963,8 +963,9 @@ $tomorrow = date("Y-m-d H:i:s", strtotime("now"));
     }
 
 
-
     function showReview() {
+
+        let emailRegex = /^([a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)$/;
 
         if (shop_type.val() === '') {
             $('#alertShopType').show();
@@ -1038,6 +1039,19 @@ $tomorrow = date("Y-m-d H:i:s", strtotime("now"));
             $('#alertLanguage').hide();
             $('#alertShopName').hide();
             $('#alertCustomerName').hide();
+        }else if (!emailRegex.test(contact_email.val())){
+            $('#alertCustomerEmailValid').show();
+            contact_email.focus();
+            nextStep(8);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+            $('#alertState').hide();
+            $('#alertSale').hide();
+            $('#alertBooking').hide();
+            $('#alertLanguage').hide();
+            $('#alertShopName').hide();
+            $('#alertCustomerName').hide();
+            $('#alertCustomerEmail').hide();
         }else if (contact_phone.val() === ''){
             $('#alertCustomerPhone').show();
             contact_phone.focus();
