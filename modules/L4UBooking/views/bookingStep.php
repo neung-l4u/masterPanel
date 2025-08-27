@@ -4,7 +4,7 @@ require_once '../assets/db/db.php';
 require_once '../assets/db/initDB.php';
 global $db;
 $currentPage = basename($_SERVER['PHP_SELF']);
-$tomorrow = date("Y-m-d", strtotime("now"));
+$tomorrow = date("Y-m-d H:i:s", strtotime("now"));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,6 +29,9 @@ $tomorrow = date("Y-m-d", strtotime("now"));
             width:400px;
         }
         #sales{
+            width:500px;
+        }
+        #bookBy{
             width:500px;
         }
         #time{
@@ -71,10 +74,10 @@ $tomorrow = date("Y-m-d", strtotime("now"));
             <div class="step-section active" id="step-1">
                 <div class="row">
                      <div class="col-6">
-                        <label for="shop_type" class="form-label">1. Select your shop type <span class="red">*</span></label>
+                        <label for="shop_type" class="form-label">1. Select your shop type <span class="red">*</span><span class="red" id="alertShopType">Please Select Shop Type.</span></label>
                         <div class="d-flex flex-row gap-3">
                             <select id="shop_type" name="shop_type" class="form-control form-select mb-3" >
-                                <option>--Please Select--</option>
+                                <option value="">--Please Select--</option>
                                 <?php
                                 $shopType = $db->query('SELECT * FROM `tb_shopType` WHERE status = ?',1)->fetchAll();
                                 foreach ($shopType as $row) {
@@ -86,10 +89,10 @@ $tomorrow = date("Y-m-d", strtotime("now"));
                     </div>
                 </div>
 
-                <label for="country">2. Select your country <span class="red">*</span></label>
+                <label for="country">2. Select your country <span class="red">*</span><span class="red" id="alertCountry">Please Select Country.</span></label>
                 <div class="d-flex flex-row gap-3">
                     <select id="country" name="country" class="form-select mb-3" >
-                        <option>--Please Select--</option>
+                        <option value="">--Please Select--</option>
                         <option value="AU">Australia</option>
                         <option value="NZ">New Zealand</option>
                         <option value="US">United States</option>
@@ -102,6 +105,7 @@ $tomorrow = date("Y-m-d", strtotime("now"));
                     <select id="state" name="state" class="form-select mb-3" style="width: 400px;">
                         <option value="">-- Please Select --</option>
                     </select>
+                    <span class="red" id="alertState">* Please Select State.</span>
                 </div>
                 <div class="d-flex flex-column gap-1">
                     <label for="timezone">Select Timezone <span class="red">*</span></label>
@@ -124,7 +128,7 @@ $tomorrow = date("Y-m-d", strtotime("now"));
             <div class="step-section" id="step-3">
                 <div class="row">
                     <div class="col-6">
-                        <label for="sales">3. Select salesperson</label>
+                        <label for="sales">3. Select salesperson</label><span class="red">* </span><span class="red" id="alertSale">Please Select Sale.</span>
                         <div class="d-flex flex-row gap-3 mb-3">
                             <select id="sales" name="sales" class="form-select mb-3" >
                                 <option></option>
@@ -133,15 +137,42 @@ $tomorrow = date("Y-m-d", strtotime("now"));
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-6">
+                        <label for="bookBy">4. Booked By</label><span class="red">* </span><span class="red" id="alertBooking">Please Select Booking.</span>
+                        <div class="d-flex flex-row gap-3 mb-3">
+                            <select id="bookBy" name="bookBy" class="form-select mb-3" >
+                                <option></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-5">
+                        <label for="presentation">5. Presentation Language</label><span class="red">* </span><span class="red" id="alertLanguage">Please Select Booking.</span>
+                        <div class="d-flex flex-row gap-3 mb-3">
+                            <select id="presentation" name="presentation" class="form-select" >
+                                <option value="">--Please Select--</option>
+                                <option value="English">English</option>
+                                <option value="Thai">Thai</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 <div class="col-4">
-                    <label for="date">4. Select appointment date</label>
-                    <div class="d-flex flex-row gap-3 mb-3">
+                    <label for="date">6. Select appointment date</label>
+                    <div class="d-flex flex-row gap-3 mb-1">
                         <input type="text" id="date" name="date" value="<?php echo $tomorrow; ?>" class="form-control mb-3" />
                     </div>
                 </div>
 
                 <div class="col-8">
-                    <label for="time">5. Available time <small class="text-muted">(<span id="timeZone" class="text-primary timeZone">-</span>)</small></label>
+                    <label for="time">7. Available time <small class="text-muted">(<span id="timeZone" class="text-primary timeZone">-</span>)</small></label>
                     <div class="d-flex flex-column gap-3 mb-3">
                         <select id="time" name="time" class="form-select mb-3" >
                             <option></option>
@@ -151,40 +182,63 @@ $tomorrow = date("Y-m-d", strtotime("now"));
                 </div>
                 <div class="d-flex flex-row gap-3 mb-3">
                     <button type="button" class="btn btn-secondary" onclick="prevStep(1)"><i class="bi bi-arrow-left-short"></i> Previous</button>
-                    <button type="button" class="btn btn-primary" onclick="nextStep(6)">Next <i class="bi bi-arrow-right-short"></i></button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(8)">Next <i class="bi bi-arrow-right-short"></i></button>
                 </div>
             </div>
 
-            <!-- Step 6: Customer Info -->
-            <div class="step-section" id="step-6">
-                <label>6. Customer information</label>
-                    <div class="col-4">
-                        <label for="shop_name">Shop name</label>
+            <!-- Step 8: Customer Info -->
+            <div class="step-section" id="step-8">
+                <label>8. Customer information</label>
+                    <div class="col-5">
+                        <label for="shop_name">Shop name</label><span class="red">* </span><span class="red" id="alertShopName">Please enter the shop name</span>
                             <input type="text" id="shop_name" name="shop_name" class="form-control mb-2" autocomplete="off" placeholder="fill your shop name" >
                     </div>
-                    <div class="col-4">
-                        <label for="customer_name">Customer name</label>
-                            <input type="text" id="customer_name" name="customer_name" class="form-control mb-2" autocomplete="off" placeholder="fill customer name" >
+
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="customer_name">Customer name</label><span class="red">* </span><span class="red" id="alertCustomerName">Please enter Customer name</span>
+                                <input type="text" id="customer_name" name="customer_name" class="form-control mb-2" autocomplete="off" placeholder="fill customer name" >
+                        </div>
+                        <div class="col-5">
+                            <label for="contact_email">Contact email</label><span class="red">* </span><span class="red" id="alertCustomerEmail">Please enter Customer email</span>
+                            <span class="red" id="alertCustomerEmailValid">Please enter a valid email address.</span>
+                                <input type="email" id="contact_email" name="contact_email" class="form-control mb-2" autocomplete="off" placeholder="fill contact email" >
+                        </div>
                     </div>
-                    <div class="col-4">
-                        <label for="contact_email">Contact email</label>
-                            <input type="email" id="contact_email" name="contact_email" class="form-control mb-2" autocomplete="off" placeholder="fill contact email" >
+
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="contact_phone">Contact phone</label><span class="red">* </span><span class="red" id="alertCustomerPhone">Please enter Phone number</span>
+                            <span class="red" id="alertCustomerPhoneComplete">Please enter a complete number.</span>
+                                <input type="text" id="contact_phone" name="contact_phone" class="form-control mb-2" autocomplete="off" placeholder="fill contact phone" >
+                        </div>
+                        <div class="col-5">
+                            <label for="contact_mobile">Contact mobile</label>
+                            <input type="text" id="contact_mobile" name="contact_mobile" class="form-control mb-2" autocomplete="off" placeholder="fill contact mobile" >
+                        </div>
                     </div>
-                    <div class="col-4">
-                        <label for="contact_phone">Contact phone</label>
-                            <input type="text" id="contact_phone" name="contact_phone" class="form-control mb-2" autocomplete="off" placeholder="fill contact phone" >
+
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="line_id">Line ID</label>
+                                <input type="text" id="line_id" name="line_id" class="form-control mb-2" autocomplete="off" placeholder="LINE ID">
+                        </div>
+                        <div class="col-5">
+                            <label for="whatsapp">WhatsApp</label>
+                                <input type="text" id="whatsapp" name="whatsapp" class="form-control mb-2" autocomplete="off" placeholder="WhatsApp">
+                        </div>
                     </div>
-                    <div class="col-4">
-                        <label for="line_id">Line ID</label>
-                            <input type="text" id="line_id" name="line_id" class="form-control mb-2" autocomplete="off" placeholder="LINE ID">
-                    </div>
-                    <div class="col-4">
-                        <label for="whatsapp">WhatsApp</label>
-                            <input type="text" id="whatsapp" name="whatsapp" class="form-control mb-2" autocomplete="off" placeholder="WhatsApp">
-                    </div>
-                    <div class="col-4 mb-3">
-                        <label for="address">Address</label>
-                        <textarea class="form-control" name="address" id="address" rows="4" placeholder="Address"></textarea>
+
+                    <div class="row">
+                        <div class="col-5 mb-3">
+                            <label for="address">Address</label>
+                            <textarea class="form-control" name="address" id="address" rows="4" placeholder="Address"></textarea>
+                        </div>
+                        <div class="col-5 mb-3">
+                            <label for="comment">Comment</label>
+                            <textarea class="form-control" name="comment" id="comment" rows="4" placeholder="Comment"></textarea>
+                        </div>
+                        <input type="hidden" value="<?php echo $tomorrow; ?>" name="timeToDayNow" id="timeToDayNow">
                     </div>
                 <div class="d-flex flex-row gap-3 mb-3">
                     <button type="button" class="btn btn-secondary" onclick="prevStep(3)"><i class="bi bi-arrow-left-short"></i> Previous</button>
@@ -192,14 +246,14 @@ $tomorrow = date("Y-m-d", strtotime("now"));
                 </div>
             </div>
 
-            <!-- Step 7: Review Info -->
-            <div class="step-section" id="step-7">
-                <label>7. Review your booking</label>
+            <!-- Step 9: Review Info -->
+            <div class="step-section" id="step-9">
+                <label>9. Review your booking</label>
                 <div id="reviewSection" class="row row-cols-1 row-cols-md-2 g-3 mb-3 p-5">
                     <!-- Filled dynamically by JS -->
                 </div>
                 <div class="d-flex flex-row gap-3 mb-3">
-                    <button type="button" class="btn btn-secondary" onclick="prevStep(6)"><i class="bi bi-arrow-left-short"></i> Previous</button>
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(8)"><i class="bi bi-arrow-left-short"></i> Previous</button>
                 </div>
                 <div class="d-flex flex-row justify-content-center mb-3">
                     <button type="button" class="btn btn-success" onclick="submitBooking()">Confirm & Book <i class="bi bi-journal-check"></i></button>
@@ -224,16 +278,21 @@ $tomorrow = date("Y-m-d", strtotime("now"));
     const city = $('#city');
     const timeZone = $('.timeZone');
     const sales = $('#sales');
+    const bookBy = $('#bookBy');
+    const presentation = $('#presentation');
     const date = $('#date');
     const time = $('#time');
     const shop_name = $('#shop_name');
     const customer_name = $('#customer_name');
     const contact_email = $('#contact_email');
     const contact_phone = $('#contact_phone');
+    const contact_mobile = $('#contact_mobile');
     const line_id = $('#line_id');
     const whatsapp = $('#whatsapp');
     const address = $('#address');
+    const comment = $('#comment');
     const state = $('#state');
+    const timeToDayNow = $('#timeToDayNow');
 
     //ตัวแปรเปล่า
     let appointmentDetail = {};
@@ -257,6 +316,20 @@ $tomorrow = date("Y-m-d", strtotime("now"));
         //country.select2({placeholder: 'Select country',theme: 'bootstrap-5'});
         $('#sales').select2({placeholder: 'Select salesperson',theme: 'bootstrap-5'});
         $('#time').select2({placeholder: 'Select appointment time',theme: 'bootstrap-5'});
+        $('#bookBy').select2({placeholder: 'Select booked person',theme: 'bootstrap-5'});
+
+        $('#alertShopType').hide();
+        $('#alertCountry').hide();
+        $('#alertState').hide();
+        $('#alertSale').hide();
+        $('#alertBooking').hide();
+        $('#alertLanguage').hide();
+        $('#alertShopName').hide();
+        $('#alertCustomerName').hide();
+        $('#alertCustomerEmail').hide();
+        $('#alertCustomerPhone').hide();
+        $('#alertCustomerEmailValid').hide();
+        $('#alertCustomerPhoneComplete').hide();
 
         date.flatpickr({
             minDate: new Date().fp_incr(0),
@@ -303,6 +376,13 @@ $tomorrow = date("Y-m-d", strtotime("now"));
             }
         });
 
+        $.get('../models/load_all_sales.php', function (res) {
+            if (res.status === 'ok') {
+                let options = res.data.map(user => new Option(user.text, user.id, false, false));
+                $('#bookBy').append(options).trigger('change');
+            }
+        });
+
         // ✅ Step 5: แสดงเวลาทุกช่วงแบบ 15 นาที (00:00 - 23:45)
         date.on('change', function () {
             time.empty().trigger('change');
@@ -319,18 +399,20 @@ $tomorrow = date("Y-m-d", strtotime("now"));
         });
 
         $('#bookingForm').on('submit', function (e) {
-            e.preventDefault();
-            $.post('../models/save_appointment.php', $(this).serialize(), function (res) {
-                if (res.status === 'ok') {
-                    sendEmail();
-                    bookCalendar();
-                    alert('✅ Appointment has been booked.');
 
-                    location.href = 'booking_success.php';
-                } else {
-                    alert('❌ ' + res.message);
-                }
-            });
+                e.preventDefault();
+                $.post('../models/save_appointment.php', $(this).serialize(), function (res) {
+                    if (res.status === 'ok') {
+                        sendEmail();
+                        bookCalendar();
+                        alert('✅ Appointment has been booked.');
+
+                        location.href = 'booking_success.php';
+                    } else {
+                        alert('❌ ' + res.message);
+                    }
+                });
+
 
         });//form submit
 
@@ -495,7 +577,6 @@ $tomorrow = date("Y-m-d", strtotime("now"));
     });//ready
 
     function nextStep(step) {
-
         $('.step-section').removeClass('active');
         $('#step-' + step).addClass('active');
     }
@@ -506,12 +587,19 @@ $tomorrow = date("Y-m-d", strtotime("now"));
     }
 
     function sendEmail() {
+
+
+
         const selectedSale = $("#sales option:selected");
+        const selectedBookBy = $("#bookBy option:selected");
         sendEmailPayload = {
             "staff_id": sales.val(),
             "staff_email": getStaffEmail(sales.val()),
+            "book_by": getStaffEmail(bookBy.val()),
             "staff_name": selectedSale.text(),
             "staff_nickname": getNickname(selectedSale.text()),
+            "book_by_name": selectedBookBy.text(),
+            "book_by_nickname": getNickname(selectedBookBy.text()),
             "created_by": "1",
             "shop_type_id": shop_type.val(),
             "shop_type": $("#shop_type option:selected").text(),
@@ -528,14 +616,19 @@ $tomorrow = date("Y-m-d", strtotime("now"));
             "shop_name": shop_name.val(),
             "contact_email": contact_email.val(),
             "contact_phone": contact_phone.val(),
+            "contact_mobile": contact_mobile.val(),
+            "presentation": presentation.val(),
             "line_id": line_id.val(),
             "whatsapp": whatsapp.val(),
             "address": address.val(),
-            "formVersion": "1.0.0"
+            "comment": comment.val(),
+            "timetodaynow": timeToDayNow.val(),
+            "formVersion": "1.2.0"
         };
 
         console.log("we call webhook UCanBookMe - email alert");
         console.log(sendEmailPayload);
+        console.table(sendEmailPayload);
 
          const sendEmail = $.ajax({
              type: "POST",
@@ -559,11 +652,27 @@ $tomorrow = date("Y-m-d", strtotime("now"));
 
     //ส่งจองลงปฏิทิน
     function bookCalendar() {
+
+        const dtStamp = toUTCFormat(date.val(), time.val(),0);
+        const dtStart = toUTCFormat(date.val(), time.val(),0);
+        const dtEnd = toUTCFormat(date.val(), addMinutes(time.val(),15),0);
+        const timezone = $('#timezone').val();
+
+        const dtStartNoZ = dtStart.replace(/Z$/,'');
+        const dtEndNoZ = dtEnd.replace(/Z$/,'');
+
+        const dtStartReal = timezone + ":" + dtStartNoZ;
+        const dtEndReal = timezone + ":" + dtEndNoZ;
+
         const selectedSale = $("#sales option:selected");
+        const selectedBookBy = $("#bookBy option:selected");
         appointmentDetail = {
             "staff_email": getStaffEmail(sales.val()),
             "staff_name": selectedSale.text(),
             "staff_nickname": getNickname(selectedSale.text()),
+            "book_by": getStaffEmail(bookBy.val()),
+            "book_by_name": selectedBookBy.text(),
+            "book_by_nickname": getNickname(selectedBookBy.text()),
             "shop_type": $("#shop_type option:selected").text(),
             "country": country.val(),
             "timezone": $('#timezone').val(),
@@ -576,17 +685,25 @@ $tomorrow = date("Y-m-d", strtotime("now"));
             "endDate": date.val(),
             "endTime": addMinutes(time.val(),15),
             "dtStamp": toUTCFormat(date.val(), time.val(),0),
-            "dtStart": toUTCFormat(date.val(), time.val(),0),
-            "dtEnd": toUTCFormat(date.val(), addMinutes(time.val(),15),0),
+            "dtStart": dtStartReal,
+            "dtEnd": dtEndReal,
             "customer_name": customer_name.val(),
             "shop_name": shop_name.val(),
             "contact_email": contact_email.val(),
             "contact_phone": contact_phone.val(),
+            "contact_mobile": contact_mobile.val(),
+            "presentation": presentation.val(),
             "line_id": line_id.val(),
             "whatsapp": whatsapp.val(),
             "address": address.val(),
-            "formVersion": "1.0.0"
+            "comment": comment.val(),
+            "timetodaynow": timeToDayNow.val(),
+            "formVersion": "1.2.0"
         };
+
+        console.log("dtStamp = ",dtStamp);
+        console.log("dtStart = ",dtStart);
+        console.log("dtEnd = ",dtEnd);
 
         console.log("we call webhook UCanBookMe - Appointment created");
         console.table(appointmentDetail);
@@ -614,7 +731,6 @@ $tomorrow = date("Y-m-d", strtotime("now"));
     function getStaffEmail(id) {
         const map = {
             1: 'neung@localforyou.com',
-            14: 'bas@localforyou.com',
             17: 'boom@localforyou.com',
             24: 'honey@localforyou.com',
             35: 'pluem@localforyou.com',
@@ -846,62 +962,196 @@ $tomorrow = date("Y-m-d", strtotime("now"));
         console.log('TimePreview' , thaiTimePreview);
     }
 
+
     function showReview() {
-        const data = {
-            "Shop Type": $("#shop_type option:selected").text(),
-            "Country": $("#country option:selected").text(),
-            "City": city.val() || '-',
-            "State": state.val() || '-',
-            "Salesperson": $("#sales option:selected").text(),
-            "Date": date.val(),
-            "Time": `(${country.val()}) ${time.val().substring(0, 5)} = ${getThaiTimeText(date.val(), time.val())}`,
-            "Shop Name": shop_name.val(),
-            "Customer Name": customer_name.val(),
-            "Email": contact_email.val(),
-            "Phone": contact_phone.val(),
-            "Line ID": line_id.val() || '-',
-            "WhatsApp": whatsapp.val() || '-',
-            "Address": address.val() || '-'
-        };
 
-        const iconMap = {
-            "Shop Type": "bi-shop",
-            "Country": "bi-flag",
-            "City": "bi-geo",
-            "State": "bi-geo-alt-fill",
-            "Salesperson": "bi-person",
-            "Date": "bi-calendar",
-            "Time": "bi-clock",
-            "Shop Name": "bi-building",
-            "Customer Name": "bi-person-circle",
-            "Email": "bi-envelope",
-            "Phone": "bi-telephone",
-            "Line ID": "bi-chat-dots",
-            "WhatsApp": "bi-whatsapp",
-            "Address": "bi-geo-alt-fill"
-        };
+        let emailRegex = /^([a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)$/;
 
-        let html = '';
-        for (const key in data) {
-            html += `
-        <div class="col">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title text-primary">
-                        <i class="bi ${iconMap[key]} me-2"></i>${key}
-                    </h6>
-                    <p class="card-text mb-0">${data[key]}</p>
+        if (shop_type.val() === '') {
+            $('#alertShopType').show();
+            shop_type.focus();
+            nextStep(1);
+        }else if (country.val() === ''){
+            $('#alertCountry').show();
+            country.focus();
+            nextStep(1);
+            $('#alertShopType').hide();
+        }else if (state.val() === ''){
+            $('#alertState').show();
+            state.focus();
+            nextStep(1);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+        }else if (sales.val() === ''){
+            $('#alertSale').show();
+            sales.focus();
+            nextStep(3);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+            $('#alertState').hide();
+        }else if (bookBy.val() === ''){
+            $('#alertBooking').show();
+            bookBy.focus();
+            nextStep(3);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+            $('#alertState').hide();
+            $('#alertSale').hide();
+        }else if (presentation.val() === ''){
+            $('#alertLanguage').show();
+            presentation.focus();
+            nextStep(3);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+            $('#alertState').hide();
+            $('#alertSale').hide();
+            $('#alertBooking').hide();
+        }else if (shop_name.val() === ''){
+            $('#alertShopName').show();
+            presentation.focus();
+            nextStep(8);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+            $('#alertState').hide();
+            $('#alertSale').hide();
+            $('#alertBooking').hide();
+            $('#alertLanguage').hide();
+        }else if (customer_name.val() === ''){
+            $('#alertCustomerName').show();
+            customer_name.focus();
+            nextStep(8);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+            $('#alertState').hide();
+            $('#alertSale').hide();
+            $('#alertBooking').hide();
+            $('#alertLanguage').hide();
+            $('#alertShopName').hide();
+        }else if (contact_email.val() === ''){
+            $('#alertCustomerEmail').show();
+            contact_email.focus();
+            nextStep(8);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+            $('#alertState').hide();
+            $('#alertSale').hide();
+            $('#alertBooking').hide();
+            $('#alertLanguage').hide();
+            $('#alertShopName').hide();
+            $('#alertCustomerName').hide();
+        }else if (!emailRegex.test(contact_email.val())){
+            $('#alertCustomerEmailValid').show();
+            contact_email.focus();
+            nextStep(8);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+            $('#alertState').hide();
+            $('#alertSale').hide();
+            $('#alertBooking').hide();
+            $('#alertLanguage').hide();
+            $('#alertShopName').hide();
+            $('#alertCustomerName').hide();
+            $('#alertCustomerEmail').hide();
+        }else if (contact_phone.val() === ''){
+            $('#alertCustomerPhone').show();
+            contact_phone.focus();
+            nextStep(8);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+            $('#alertState').hide();
+            $('#alertSale').hide();
+            $('#alertBooking').hide();
+            $('#alertLanguage').hide();
+            $('#alertShopName').hide();
+            $('#alertCustomerName').hide();
+            $('#alertCustomerEmail').hide();
+            $('#alertCustomerEmailValid').hide();
+        }else if (contact_phone.val().length < 10){
+            $('#alertCustomerPhoneComplete').show();
+            contact_phone.focus();
+            nextStep(8);
+            $('#alertShopType').hide();
+            $('#alertCountry').hide();
+            $('#alertState').hide();
+            $('#alertSale').hide();
+            $('#alertBooking').hide();
+            $('#alertLanguage').hide();
+            $('#alertShopName').hide();
+            $('#alertCustomerName').hide();
+            $('#alertCustomerEmail').hide();
+            $('#alertCustomerEmailValid').hide();
+            $('#alertCustomerPhone').hide();
+        }else {
+
+            const data = {
+                "Shop Type": $("#shop_type option:selected").text(),
+                "Country": $("#country option:selected").text(),
+                "City": city.val() || '-',
+                "State": state.val() || '-',
+                "Salesperson": $("#sales option:selected").text() || '-',
+                "Booking By": $("#bookBy option:selected").text() || '-',
+                "Presentation": $("#presentation option:selected").text(),
+                "Date": date.val(),
+                "Time": `(${country.val()}) ${time.val().substring(0, 5)} = ${getThaiTimeText(date.val(), time.val())}`,
+                "Shop Name": shop_name.val() || '-',
+                "Customer Name": customer_name.val() || '-',
+                "Email": contact_email.val() || '-',
+                "Phone": contact_phone.val() || '-',
+                "Mobile": contact_mobile.val() || '-',
+                "Line ID": line_id.val() || '-',
+                "WhatsApp": whatsapp.val() || '-',
+                "Address": address.val() || '-',
+                "Comment": comment.val() || '-'
+            };
+
+            const iconMap = {
+                "Shop Type": "bi-shop",
+                "Country": "bi-flag",
+                "City": "bi-geo",
+                "State": "bi-geo-alt-fill",
+                "Salesperson": "bi-person",
+                "Booking By": "bi bi-journal-bookmark-fill",
+                "Presentation": "bi bi-translate",
+                "Date": "bi-calendar",
+                "Time": "bi-clock",
+                "Shop Name": "bi-building",
+                "Customer Name": "bi-person-circle",
+                "Email": "bi-envelope",
+                "Phone": "bi-telephone",
+                "Mobile": "bi-phone",
+                "Line ID": "bi-chat-dots",
+                "WhatsApp": "bi-whatsapp",
+                "Address": "bi-geo-alt-fill",
+                "Comment": "bi bi-chat-right-text"
+            };
+
+            let html = '';
+            for (const key in data) {
+                html += `
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title text-primary">
+                            <i class="bi ${iconMap[key]} me-2"></i>${key}
+                        </h6>
+                        <p class="card-text mb-0">${data[key]}</p>
+                    </div>
                 </div>
-            </div>
-        </div>`;
+            </div>`;
+            }
+
+            $('#reviewSection').html(html);
+
+            nextStep(9);
         }
 
-        $('#reviewSection').html(html);
-        nextStep(7);
+
     }
 
     function submitBooking() {
+
         $('#bookingForm').submit();
+
     }
 
     function getThaiTimeText(dateStr, timeStr) {
