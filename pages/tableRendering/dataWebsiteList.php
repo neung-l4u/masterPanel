@@ -4,36 +4,49 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$params["filterShopType"] = !empty($_POST['shopType']) ? $_POST['shopType'] : '';
-$params["filterSystem"] = !empty($_POST['system']) ? $_POST['system'] : '';
-$params["filterStatus"] = !empty($_POST['fstatus']) ? $_POST['fstatus'] : '';
+$params = [
+    "shopType" => !empty($_POST['shopType']) ? $_POST['shopType'] : '',
+    "system"   => !empty($_POST['system'])   ? $_POST['system']   : '',
+    "liveStatus"   => !empty($_POST['liveStatus'])  ? $_POST['liveStatus']  : '',
+    "template" => !empty($_POST['template']) ? $_POST['template'] : '',
+    "country"  => !empty($_POST['country'])  ? $_POST['country']  : '',
+    "server"   => !empty($_POST['server'])   ? $_POST['server']   : '',
+];
 
-$sql = 'SELECT * FROM `websiteList` WHERE  delete_at IS NULL ';
-$where1 = "";
-$where2 = "";
-$where3 = "";
+$sql   = "SELECT * FROM `websiteList` WHERE delete_at IS NULL";
+$where = "";
 $order = " ORDER BY wID DESC";
 
-// filter
-
-if (!empty($params["filterShopType"])){
-    $where1 = " AND wIndustry = '".$params["filterShopType"]."'";
+if ($params["shopType"] !== '') {
+    $where .= " AND wIndustry = '".$params["shopType"]."'";
 }
-if (!empty($params["filterSystem"])){
-    if ($params["filterSystem"] === "AM") {
-        $where2 = " AND wSystemAmelia = 1";
-    } else if ($params["filterSystem"] === "GF") {
-        $where2 = " AND wSystemGloriaFood = 1";
-    } else if ($params["filterSystem"] === "VC") {
-        $where2 = " AND wSystemVoucher = 1";
+
+if ($params["system"] !== '') {
+    if ($params["system"] === "AM") {
+        $where .= " AND wSystemAmelia = 1";
+    } elseif ($params["system"] === "GF") {
+        $where .= " AND wSystemGloriaFood = 1";
+    } elseif ($params["system"] === "VC") {
+        $where .= " AND wSystemVoucher = 1";
     }
 }
-if (!empty($params["filterStatus"])){
-    $where3 = " AND wLiveStatus = '".$params["filterStatus"]."'";
+if ($params["liveStatus"] !== '') {
+    $where .= " AND wLiveStatus = '".$params["liveStatus"]."'";
 }
 
+if ($params["template"] !== '') {
+    $where .= " AND wTemplateUsed = '".$params["template"]."'";
+}
 
-$sql = $sql . $where1 . $where2 . $where3 . $order;
+if ($params["country"] !== '') {
+    $where .= " AND wCountry = '".$params["country"]."'";
+}
+
+if ($params["server"] !== '') {
+    $where .= " AND svID = '".$params["server"]."'";
+}
+
+$sql = $sql . $where . $order;
 $result = $db->query($sql)->fetchAll();
 
 $data = array("data"=> array());

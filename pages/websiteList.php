@@ -53,12 +53,17 @@ $password = "Localeats#".date("Y");
     small{
         font-size: 0.7rem;
     }
+
+    .filterCol{
+        width: 30%;
+        max-width: 300px;
+    }
     .filterLabel{
         /*border: 1px solid black;*/
         width: 100px;
     }
     .filterSelect{
-        width: 300px !important;
+        width: 100% !important;
     }
     a.linkDetail:link {
         color: black;
@@ -77,6 +82,10 @@ $password = "Localeats#".date("Y");
     a.linkDetail:active {
         color: blue;
     }
+
+    .table .thead-dark th {
+        background-color: #212529 !important;
+    }
     ::placeholder {
         color: #DDDDDD !important;
         opacity: 1; /* Firefox */
@@ -88,6 +97,7 @@ $password = "Localeats#".date("Y");
 </style>
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
 
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -128,31 +138,31 @@ $password = "Localeats#".date("Y");
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col d-flex align-items-center gap-5">
-                            <div class="d-flex align-items-center gap-3">
+                        <div class="col d-flex flex-row gap-5">
+                            <div class="filterCol">
                                 <label for="filterShopType" class="form-label filterLabel">Shop Type</label>
-                                <select class="form-select filterSelect" id="filterShopType" onchange="filterChange()" aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterShopType" onchange="filterChange()" aria-label="Default select example">
                                     <option value="" selected >All</option>
                                     <option value="1">Restaurant</option>
-                                    <option value="2" >Massage</option>
+                                    <option value="2">Massage</option>
                                     <option value="3">Grocery</option>
                                     <option value="4">Internal</option>
                                     <option value="5">Template</option>
                                     <option value="6">Other</option>
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="filterCol">
                                 <label for="filterSystem" class="form-label filterLabel">System</label>
-                                <select class="form-select filterSelect" id="filterSystem" onchange="filterChange()"  aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterSystem" onchange="filterChange()"  aria-label="Default select example">
                                     <option value="" selected>All</option>
                                     <option value="GF">Gloria Food</option>
                                     <option value="AM">Amelia</option>
                                     <option value="VC">Voucher</option>
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="filterCol">
                                 <label for="filterStatus" class="form-label filterLabel">Status</label>
-                                <select class="form-select filterSelect" id="filterStatus" onchange="filterChange()" aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterStatus" onchange="filterChange()" aria-label="Default select example">
                                     <option value="" selected>All</option>
                                     <option value="Live">Live</option>
                                     <option value="Draft">Draft</option>
@@ -166,19 +176,19 @@ $password = "Localeats#".date("Y");
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col d-flex align-items-center gap-5">
-                            <div class="d-flex align-items-center gap-3">
+                        <div class="col d-flex flex-row gap-5">
+                            <div class="filterCol">
                                 <label for="filterTemplate" class="form-label filterLabel">Template</label>
-                                <select class="form-select filterSelect" id="filterTemplate" onchange="filterChange()" aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterTemplate" onchange="filterChange()" aria-label="Default select example">
                                     <option value="" selected>All</option>
                                     <option value="1">Template 1</option>
                                     <option value="2">Template 2</option>
                                     <option value="3">Template 3</option>
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="filterCol">
                                 <label for="filterCountry" class="form-label filterLabel">Country</label>
-                                <select class="form-select filterSelect" id="filterCountry" onchange="filterChange()" aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterCountry" onchange="filterChange()" aria-label="Default select example">
                                     <option value="" selected>All</option>
                                     <option value="AU">Australia</option>
                                     <option value="NZ">New Zealand</option>
@@ -188,9 +198,9 @@ $password = "Localeats#".date("Y");
                                     <option value="TH">Thailand</option>
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="filterCol">
                                 <label for="filterServer" class="form-label filterLabel">Server</label>
-                                <select class="form-select filterSelect" id="filterServer" onchange="filterChange()" aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterServer" onchange="filterChange()" aria-label="Default select example">
                                     <option value="" selected>All</option>
                                     <option value="1">az1-tr102.supercp.com</option>
                                     <option value="2">mi3-tr104.supercp.com</option>
@@ -204,7 +214,7 @@ $password = "Localeats#".date("Y");
                 <div>
                     <div class="card p-3">
                         <div class="card-body">
-                            <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
+                            <table id="websiteListTable" class="table table-borderless table-striped table-hover" style="width:100%">
                                 <thead class="thead-dark">
                                 <tr>
                                     <th class="colNo">#</th>
@@ -615,6 +625,8 @@ $password = "Localeats#".date("Y");
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
+<script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
+
 <script>
     function showCopy() {
         $("#alert").fadeIn(500);
@@ -947,13 +959,48 @@ $password = "Localeats#".date("Y");
     }//setDel
 
     function newModalFormAction(action) {
-    console.log("goNew = " + action);
-    if (action === "open") {
-        newModalForm.show();
-    } else {
-        newModalForm.hide();
-        $(".modal-backdrop").hide();
+        console.log("goNew = " + action);
+        if (action === "open") {
+            newModalForm.show();
+        } else {
+            newModalForm.hide();
+            $(".modal-backdrop").hide();
+        }
     }
-}
+
+    function filterChange() {
+        $('#websiteListTable').DataTable().ajax.reload();
+    }
+
+    $(() => {
+        $("#alert").hide();
+
+        $('#websiteListTable').DataTable(
+        {
+            pagingType: 'full_numbers',
+            pageLength: 14,
+            lengthMenu: [
+                [14, 25, 50, -1],
+                ['Fit', 25, 50, 'All']
+            ],
+            ajax: {
+                url: 'pages/tableRendering/dataWebsiteList.php',
+                type: 'POST',
+                dataSrc: 'data',
+                data: function (d) {
+                    d.shopType  = $("#filterShopType").val();
+                    d.system    = $("#filterSystem").val();
+                    d.liveStatus= $("#filterStatus").val();
+                    d.template  = $("#filterTemplate").val();
+                    d.country   = $("#filterCountry").val();
+                    d.server    = $("#filterServer").val();
+                }
+            },
+            "aoColumnDefs": [
+                { "bSortable": false, "aTargets": [4] }
+            ],
+            //"order": [[ 0, "desc" ]]
+        });
+    });
 
 </script>
