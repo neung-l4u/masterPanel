@@ -36,31 +36,31 @@ $password = "Localeats#".date("Y");
 <!-- /.content-header -->
 
 <!-- Main content -->
-<div class="content">
-    <div class="container-fluid">
-
+<div class="content-fluid px-4">
         <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-end">
-                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
-                            <i class="bi bi-plus-circle-fill"></i> Add new
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div class="card">
-                            <div class="form-check mt-4 ml-4">
+            <div class="col px-3">
+                <div class="card px-3">
+                    <div class="card-header ">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="1" id="includeInactive">
                                 <label class="form-check-label" for="includeInactive">
                                     Include inactive staffs.
                                 </label>
                             </div>
+                            <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                                <i class="bi bi-plus-circle-fill"></i> Add new
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card">
                             <div class="card-body table-responsive p-4" style="height: 620px;">
                                 <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
                                         <th style="width:50px;" class="text-center"><i class="bi bi-hash"></i></th>
-                                        <th><i class="bi bi-person-circle"></i> name</th>
+                                        <th><i class="bi bi-person-fill"></i> name</th>
                                         <th style="width:120px;" class="text-center"><i class="bi bi-star-fill"></i> role</th>
                                         <th style="width:150px;" class="text-center"><i class="bi bi-envelope-fill"></i> mail</th>
                                         <th style="width:120px;" class="text-center"><i class="bi bi-telephone-fill"></i> mob</th>
@@ -70,7 +70,7 @@ $password = "Localeats#".date("Y");
                                     <tfoot class="thead-dark">
                                     <tr>
                                         <th class="text-center"><i class="bi bi-hash"></i></th>
-                                        <th><i class="bi bi-person-circle"></i> name</th>
+                                        <th><i class="bi bi-person-fill"></i> name</th>
                                         <th class="text-center"><i class="bi bi-star-fill"></i> role</th>
                                         <th class="text-center"><i class="bi bi-envelope-fill"></i> mail</th>
                                         <th class="text-center"><i class="bi bi-telephone-fill"></i> mob</th>
@@ -291,8 +291,6 @@ $password = "Localeats#".date("Y");
                 </div>
             </div>
         </div>
-
-    </div><!-- /.container-fluid -->
 </div>
 <!-- /.content -->
 

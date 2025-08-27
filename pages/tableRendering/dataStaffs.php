@@ -25,7 +25,7 @@ foreach ($result as $row) {
 
     $data["data"][] = array(
         $btn["status"],
-        showName($row["sNickName"],$row["sName"]),
+        '<i class="bi bi-person"></i>&nbsp;'.showName($row["sNickName"],$row["sName"]),
         '<i class="bi bi-person-circle"></i>&nbsp;'.$row["lName"],
         '<i class="bi bi-envelope"></i>&nbsp;'.$row["sEmail"],
         '<i class="bi bi-telephone"></i>&nbsp;'.$row["sMobile"],
