@@ -101,9 +101,9 @@ $password = "Localeats#".date("Y");
                         <div class="d-flex flex-column px-5">
 
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col">
                                     <div class="form-group row">
-                                        <label class="col-2 col-form-label">Status</label>
+                                        <label>Status</label>
                                         <div class="col">
                                             <div class="form-group d-flex">
                                                 <div class="custom-control custom-radio mr-5">
@@ -118,31 +118,31 @@ $password = "Localeats#".date("Y");
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="form-group row">
-                                        <label class="col-2 col-form-label" for="inputStaffType">Type</label>
-                                        <div class="col">
-                                            <div class="form-group d-flex">
-                                                <select id="inputStaffType" class="custom-select">
-                                                    <option value="fullTime" selected>Full-time</option>
-                                                    <option value="partTime">Part-time</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group mb-3 row">
-                                        <label class="col-3 col-form-label" for="inputEmployeeNumber">Emp No.</label>
-                                        <input type="text" class="form-control col" id="inputEmployeeNumber" maxlength="6" placeholder="e.g. LOC061">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputStaffType">Type</label>
+                                        <div class="form-group d-flex">
+                                            <select id="inputStaffType" class="custom-select">
+                                                <option value="fullTime" selected>Full-time</option>
+                                                <option value="partTime">Part-time</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="form-group mb-3 row">
-                                        <label class="col-3 col-form-label" for="inputStartDate">StartDate</label>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputEmployeeNumber">Emp No.</label>
+                                        <input type="text" class="form-control" id="inputEmployeeNumber" maxlength="6" placeholder="e.g. LOC061">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputStartDate">Start</label>
                                         <input type="date" class="form-control col" id="inputStartDate" placeholder="dd-mm-yyyy">
                                     </div>
                                 </div>
@@ -223,9 +223,7 @@ $password = "Localeats#".date("Y");
                                         <input type="date" class="form-control" id="inputBirthday" placeholder="dd-mm-yyyy">
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="inputReligion">Religion</label>    
