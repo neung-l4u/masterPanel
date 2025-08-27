@@ -58,21 +58,21 @@ $password = "Localeats#".date("Y");
                                 <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
+                                        <th style="width:50px;" class="text-center">#</th>
                                         <th>Name</th>
-                                        <th style="width:20%">Email</th>
-                                        <th style="width:15%">Phone</th>
-                                        <th style="width:15%">Level</th>
-                                        <th style="width:10%">Status</th>
-                                        <th style="width:10%"></th>
+                                        <th style="width:120px;" class="text-center">Level</th>
+                                        <th style="width:150px;" class="text-center">Email</th>
+                                        <th style="width:120px;" class="text-center">Phone</th>
+                                        <th style="width:50px"></th>
                                     </tr>
                                     </thead>
                                     <tfoot class="thead-dark">
                                     <tr>
+                                        <th class="text-center">#</th>
                                         <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>Level</th>
-                                        <th>Status</th>
+                                        <th class="text-center">Level</th>
+                                        <th class="text-center">Email</th>
+                                        <th class="text-center">Phone</th>
                                         <th></th>
                                     </tr>
                                     </tfoot>
