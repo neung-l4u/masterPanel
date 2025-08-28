@@ -305,7 +305,7 @@ $password = "Localeats#".date("Y");
                                         <label for="inputLiveStatus">Live Status</label>
                                         <select id="inputLiveStatus" class="form-control">
                                             <?php
-                                                $row = $db->query("SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'websitelist' AND COLUMN_NAME = 'wLiveStatus'")->fetchArray();;
+                                                $row = $db->query("SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'websiteList' AND COLUMN_NAME = 'wLiveStatus'")->fetchArray();;
                                                 $enum = str_replace(["enum(", ")", "'"], "", $row['COLUMN_TYPE']);
                                                 $options = explode(",", $enum);
                                             ?>
