@@ -39,7 +39,7 @@ if ($params["template"] !== '') {
 }
 
 if ($params["country"] !== '') {
-    $where .= " AND wCountry = '".$params["country"]."'";
+    $where .= " AND countryID = '".$params["country"]."'";
 }
 
 if ($params["server"] !== '') {
@@ -56,6 +56,22 @@ foreach ($result as $row) {
     $No = $row["wID"];
     $statusWebsite = $row["wLiveStatus"];
     $url = '<a href="'.$row["wDomain"].'" target="_blank" title="WP-Link">'.$row["wDomain"].'</a>';
+    switch ($row["svID"]) {
+        case 1:
+            $server = "1: localforyou";
+            break;
+        case 2:
+            $server = "2: adayinbkk";
+            break;
+        case 3:
+            $server = "3: thaieatdoncaster";
+            break;
+        case 4:
+            $server = "4: katiethaimassage";
+            break;
+        default:
+            $server = "-";
+    }
     $btn["URL"] = '<a href="'.$row["wWordpressURL"].'" target="_blank" title="WP-Admin"><i class="bi bi-box-arrow-up-right"></i></a>';
     $btn["detail"] = '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail"><i class="bi bi-file-earmark-text"></i></a>';
     $btn["edit"] = '<a href="#" onclick="setEdit('.$row["wID"].')" title="Edit"><i class="bi bi-pencil-square text-dark"></i></a>';
@@ -65,6 +81,7 @@ foreach ($result as $row) {
         $i,
         '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail" class="linkDetail">'.dash($row["wProject"]).'</a>',
         $url,
+        $server,
         $statusWebsite,
         $btn["URL"]." ".$btn["edit"]." ".$btn["delete"]
     );
