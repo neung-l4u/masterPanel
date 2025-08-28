@@ -133,7 +133,7 @@ $password = "Localeats#".date("Y");
                                 <select class="form-select filterSelect" id="filterShopType" onchange="filterChange()" aria-label="Default select example">
                                     <option value="" selected>All</option>
                                     <?php
-                                    $dbShoptype = $db->query('SELECT id, name FROM tb_shopType WHERE status=1 ORDER BY id;')->fetchAll();
+                                    $dbShoptype = $db->query('SELECT id, name FROM tb_shopType ORDER BY id;')->fetchAll();
                                     foreach ($dbShoptype as $row){
                                         ?>
                                         <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
@@ -153,7 +153,7 @@ $password = "Localeats#".date("Y");
                                 <label for="filterStatus" class="form-label filterLabel">Status</label>
                                 <select class="form-select filterSelect" id="filterStatus" onchange="filterChange()" aria-label="Default select example">
                                     <?php
-                                        $row = $db->query("SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'websitelist' AND COLUMN_NAME = 'wLiveStatus'")->fetchArray();;
+                                        $row = $db->query("SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'websiteList' AND COLUMN_NAME = 'wLiveStatus'")->fetchArray();;
                                         $enum = str_replace(["enum(", ")", "'"], "", $row['COLUMN_TYPE']);
                                         $options = explode(",", $enum);
                                     ?>
@@ -184,7 +184,7 @@ $password = "Localeats#".date("Y");
                                 <select class="form-select filterSelect" id="filterCountry" onchange="filterChange()" aria-label="Default select example">
                                     <option value="" selected>All</option>
                                     <?php
-                                    $dbCountries = $db->query('SELECT id, code, name FROM countries ORDER BY id;')->fetchAll();
+                                    $dbCountries = $db->query('SELECT id, code, name FROM Countries ORDER BY id;')->fetchAll();
                                     foreach ($dbCountries as $row){
                                         ?>
                                         <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
@@ -197,10 +197,9 @@ $password = "Localeats#".date("Y");
                                     <option value="" selected>All</option>
                                     <?php
                                     $dbl4uServers = $db->query('SELECT svID, svName FROM L4UServers ORDER BY svID;')->fetchAll();
-                                    $i = 1;
                                     foreach ($dbl4uServers as $row){
                                         ?>
-                                        <option value="<?php echo $row['svID']; ?>"><?php echo $i++.": ". $row['svName']; ?></option>
+                                        <option value="<?php echo $row['svID']; ?>"><?php echo $row['svName']; ?></option>
                                     <?php }//foreach ?>
                                     </select>
                                 </select>
@@ -243,9 +242,23 @@ $password = "Localeats#".date("Y");
                     <div class="modal-body">
                         <div class="container py-4">
                             <form>
-                                <div class="form-group">
-                                    <label for="inputProject">Project</label>
-                                    <input type="text" class="form-control" id="inputProject" maxlength="255" placeholder="e.g. Hoon Hay">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputProject">Project</label>
+                                        <input type="text" class="form-control" id="inputProject" maxlength="255" placeholder="e.g. Hoon Hay">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="inputCountry">Country</label>
+                                        <select class="form-select inputCountry" id="inputCountry">
+                                            <option value="" selected>-- None --</option>
+                                            <?php
+                                            $dbCountries = $db->query('SELECT id, code, name FROM Countries ORDER BY id;')->fetchAll();
+                                            foreach ($dbCountries as $row){
+                                                ?>
+                                                <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                            <?php }//foreach ?>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
@@ -337,10 +350,9 @@ $password = "Localeats#".date("Y");
                                         <option value="" selected>-- None --</option>
                                         <?php
                                         $dbl4uServers = $db->query('SELECT svID, svName FROM L4UServers ORDER BY svID;')->fetchAll();
-                                        $i = 1;
                                         foreach ($dbl4uServers as $row){
                                             ?>
-                                            <option value="<?php echo $row['svID']; ?>"><?php echo $i++.": ".$row['svName']; ?></option>
+                                            <option value="<?php echo $row['svID']; ?>"><?php echo $row['svName']; ?></option>
                                         <?php }//foreach ?>
                                     </select>
                                 </div>
@@ -645,6 +657,7 @@ $password = "Localeats#".date("Y");
 
     // Modal Form Action
     const inputProject = $("#inputProject");
+    const inputCountry = $("#inputCountry");
     const inputLocation = $("#inputLocation");
     const inputOwner = $("#inputOwner");
     const inputOwnerEmail = $("#inputOwnerEmail");
@@ -709,6 +722,9 @@ $password = "Localeats#".date("Y");
     let shopType = filterShopType.val();
     let system = filterSystem.val();
     let fstatus = filterStatus.val();
+    let template = filterTemplate.val();
+    let country = filterCountry.val();
+    let server = filterServer.val();
 
     let txt = '';
     let txt2 = '';
@@ -801,7 +817,7 @@ $password = "Localeats#".date("Y");
         reqAjax.done(function (res) {
             console.log(res);
             inputProject.val(res.wProject);
-
+            inputCountry.val(res.countryID).prop("selected", true);
             inputDomain.val(res.wDomain);
             inputLocation.val(res.wLocation);
             inputOwner.val(res.wOwner);
@@ -841,6 +857,7 @@ $password = "Localeats#".date("Y");
         let payload = {
                 act: "save",
                 inputProject: inputProject.val(),
+                inputCountry: inputCountry.val(),
                 inputLocation: inputLocation.val(),
                 inputOwner: inputOwner.val(),
                 inputOwnerEmail: inputOwnerEmail.val(),
@@ -881,9 +898,7 @@ $password = "Localeats#".date("Y");
         });
             
         reqAjax.done(function (res) {
-            
             console.log(res);
-            reloadTable();
             resetForm();
             newModalFormAction("close");
         });
@@ -897,6 +912,7 @@ $password = "Localeats#".date("Y");
 
     const resetForm = () => {
         inputProject.val('');
+        inputCountry.val('');
         inputLocation.val('');
         inputOwner.val('');
         inputOwnerEmail.val('');
@@ -923,6 +939,7 @@ $password = "Localeats#".date("Y");
         inputVoucher.prop("checked", false);
         editID.val('');
         formAction.val('add');
+        reloadTable_bs5();
     }//resetForm
 
     const setDel = (delID) => {
@@ -949,7 +966,6 @@ $password = "Localeats#".date("Y");
             reqAjax.done(function (res) {
                 modalFormAction("close");
                 console.log(res);
-                reloadTable();
                 resetForm();
                 $("#formModal").modal('hide');
             });
@@ -962,6 +978,10 @@ $password = "Localeats#".date("Y");
         }//if
     }//setDel
 
+    function reloadTable_bs5() {
+        $('#websiteListTable').DataTable().ajax.reload();
+    }
+
     function newModalFormAction(action) {
         console.log("goNew = " + action);
         if (action === "open") {
@@ -973,7 +993,7 @@ $password = "Localeats#".date("Y");
     }
 
     function filterChange() {
-        $('#websiteListTable').DataTable().ajax.reload();
+        reloadTable_bs5();
     }
 
     function filterAll() {
@@ -983,7 +1003,7 @@ $password = "Localeats#".date("Y");
         filterTemplate.val('');
         filterCountry.val('');
         filterServer.val('');
-        $('#websiteListTable').DataTable().ajax.reload();
+        reloadTable_bs5();
     }
 
     $(() => {

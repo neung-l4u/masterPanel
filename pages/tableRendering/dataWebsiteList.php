@@ -13,40 +13,41 @@ $params = [
     "server"   => !empty($_POST['server'])   ? $_POST['server']   : '',
 ];
 
-$sql   = "SELECT * FROM `websiteList` WHERE delete_at IS NULL";
-$where = "";
-$order = " ORDER BY wID DESC";
+$sql   = "SELECT *";
+$from = " FROM websiteList w LEFT JOIN L4UServers sv ON w.svID = sv.svID";
+$where = " WHERE delete_at IS NULL";
+$order = " ORDER BY w.wID DESC";
 
 if ($params["shopType"] !== '') {
-    $where .= " AND wIndustry = '".$params["shopType"]."'";
+    $where .= " AND w.wIndustry = '".$params["shopType"]."'";
 }
 
 if ($params["system"] !== '') {
     if ($params["system"] === "AM") {
-        $where .= " AND wSystemAmelia = 1";
+        $where .= " AND w.wSystemAmelia = 1";
     } elseif ($params["system"] === "GF") {
-        $where .= " AND wSystemGloriaFood = 1";
+        $where .= " AND w.wSystemGloriaFood = 1";
     } elseif ($params["system"] === "VC") {
-        $where .= " AND wSystemVoucher = 1";
+        $where .= " AND w.wSystemVoucher = 1";
     }
 }
 if ($params["liveStatus"] !== '') {
-    $where .= " AND wLiveStatus = '".$params["liveStatus"]."'";
+    $where .= " AND w.wLiveStatus = '".$params["liveStatus"]."'";
 }
 
 if ($params["template"] !== '') {
-    $where .= " AND wTemplateUsed = '".$params["template"]."'";
+    $where .= " AND w.wTemplateUsed = '".$params["template"]."'";
 }
 
 if ($params["country"] !== '') {
-    $where .= " AND countryID = '".$params["country"]."'";
+    $where .= " AND w.countryID = '".$params["country"]."'";
 }
 
 if ($params["server"] !== '') {
-    $where .= " AND svID = '".$params["server"]."'";
+    $where .= " AND sv.svID = '".$params["server"]."'";
 }
 
-$sql = $sql . $where . $order;
+$sql = $sql . $from . $where . $order;
 $result = $db->query($sql)->fetchAll();
 
 $data = array("data"=> array());
@@ -54,24 +55,10 @@ $data = array("data"=> array());
 $i=1;
 foreach ($result as $row) {
     $No = $row["wID"];
-    $statusWebsite = $row["wLiveStatus"];
+    $statusWebsite = !empty($row["wLiveStatus"]) ? $row["wLiveStatus"] : '-';
     $url = '<a href="'.$row["wDomain"].'" target="_blank" title="WP-Link">'.$row["wDomain"].'</a>';
-    switch ($row["svID"]) {
-        case 1:
-            $server = "1: localforyou";
-            break;
-        case 2:
-            $server = "2: adayinbkk";
-            break;
-        case 3:
-            $server = "3: thaieatdoncaster";
-            break;
-        case 4:
-            $server = "4: katiethaimassage";
-            break;
-        default:
-            $server = "-";
-    }
+    $link = !empty($row["wDomain"]) ? $url : '-';
+    $server = $row['svName'] ?? '-';
     $btn["URL"] = '<a href="'.$row["wWordpressURL"].'" target="_blank" title="WP-Admin"><i class="bi bi-box-arrow-up-right"></i></a>';
     $btn["detail"] = '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail"><i class="bi bi-file-earmark-text"></i></a>';
     $btn["edit"] = '<a href="#" onclick="setEdit('.$row["wID"].')" title="Edit"><i class="bi bi-pencil-square text-dark"></i></a>';
@@ -80,7 +67,7 @@ foreach ($result as $row) {
     $data["data"][] = array(
         $i,
         '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail" class="linkDetail">'.dash($row["wProject"]).'</a>',
-        $url,
+        $link,
         $server,
         $statusWebsite,
         $btn["URL"]." ".$btn["edit"]." ".$btn["delete"]
