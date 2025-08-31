@@ -13,6 +13,7 @@ global $db, $date;
 $password = "Localeats#".date("Y");
 ?>
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">
+<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
 
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -333,6 +334,9 @@ $password = "Localeats#".date("Y");
         </div>
 </div>
 <!-- /.content -->
+
+<script src="assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
+<script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
 
 <script>
     const setStatus = (id, status) => {
