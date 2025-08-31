@@ -12,6 +12,7 @@ global $db, $date;
 
 $password = "Localeats#".date("Y");
 ?>
+<link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">
 
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -279,6 +280,45 @@ $password = "Localeats#".date("Y");
                                 </div>
                             </div>
 
+                            <div class="row mt-5">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputZoomExt">Zoom Extension</label>
+                                        <input type="text" class="form-control" id="inputZoomExt" placeholder="Enter Zoom Extension" maxlength="10">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>License</label><br>
+                                        <div class="form-check form-check-inline">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseAU" value="AU">
+                                            <label class="form-check-label" for="inputZoomlicenseAU">AU</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseNZ" value="NZ">
+                                            <label class="form-check-label" for="inputZoomlicenseNZ">NZ</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseUK" value="UK">
+                                            <label class="form-check-label" for="inputZoomlicenseUK">UK</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseUS" value="US">
+                                            <label class="form-check-label" for="inputZoomlicenseUS">US</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseCA" value="CA">
+                                            <label class="form-check-label" for="inputZoomlicenseCA">CA</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseInter" value="Inter">
+                                            <label class="form-check-label" for="inputZoomlicenseInter">Inter</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <input type="hidden" name="editID" id="editID" value="">
                             <input type="hidden" name="formAction" id="formAction" value="add">
                         </div> <!-- flex -->
@@ -338,6 +378,8 @@ $password = "Localeats#".date("Y");
         const inputReligion = $("#inputReligion");
         const inputNationality = $("#inputNationality");
         const inputTeam = $("#inputTeam");
+        const inputZoomExt = $("#inputZoomExt");
+        const zoomLicense = $(".zoom-license");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
         const editID = $("#editID");
@@ -380,6 +422,14 @@ $password = "Localeats#".date("Y");
                 statusOn.prop('checked', false);
                 statusOff.prop('checked', true);
             }
+            let zoomData = (typeof res.zoomExt === "string") ? JSON.parse(res.zoomExt) : res.zoomExt;
+            $("#inputZoomExt").val(zoomData.ext);
+            if(Array.isArray(zoomData.license)) {
+                zoomData.license.forEach(function(lic) {
+                    $(".zoom-license[value='" + lic + "']").prop('checked', true);
+                });
+            }
+            
             editID.val(res.id);
             formAction.val("edit");
             modalFormAction("open");
@@ -392,6 +442,7 @@ $password = "Localeats#".date("Y");
     }// const
 
     const formSave = () => {
+        const includeInactive = $("#includeInactive");
         const inputStaffType = $("#inputStaffType");
         const inputName = $("#inputName");
         const inputTname = $("#inputTname");
@@ -408,9 +459,15 @@ $password = "Localeats#".date("Y");
         const passwordNotAllow = $("#passwordNotAllow");
         const inputTeam = $("#inputTeam");
         const inputLevel = $("#inputLevel");
+        
+        const inputZoomExt = $("#inputZoomExt").val();
+        const licenses = [];
+        $(".zoom-license:checked").each(function() {
+            licenses.push($(this).val());
+        });
+
         const editID = $("#editID");
         const formAction = $("#formAction");
-
         let statusValue = $("input[name='inputStatus']:checked").val();
 
         let payload = {
@@ -430,6 +487,10 @@ $password = "Localeats#".date("Y");
                 inputNationality : inputNationality.val(),
                 inputTeam : inputTeam.val(),
                 inputLevel : inputLevel.val(),
+                zoomExt: {
+                    ext: inputZoomExt,
+                    license: licenses
+                },
                 inputStatus : statusValue,
                 editID : editID.val(),
                 formAction : formAction.val()
@@ -478,6 +539,8 @@ $password = "Localeats#".date("Y");
         const inputNationality = $("#inputNationality");
         const inputTeam = $("#inputTeam");
         const inputLevel = $("#inputLevel");
+        const inputZoomExt = $("#inputZoomExt");
+        const zoomLicense = $(".zoom-license");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
         const editID = $("#editID");
@@ -507,6 +570,8 @@ $password = "Localeats#".date("Y");
         inputReligion.val('1');
         inputNationality.val('Thai');
         inputTeam.val('0');
+        inputZoomExt.val('');
+        zoomLicense.prop('checked', false);
         statusOn.prop('checked', true);
         statusOff.prop('checked', false);
         editID.val('');
