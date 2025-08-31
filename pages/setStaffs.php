@@ -14,7 +14,10 @@ $password = "Localeats#".date("Y");
 ?>
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">
 <link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
+<style>
 
+    
+</style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="container-fluid">
@@ -58,7 +61,7 @@ $password = "Localeats#".date("Y");
                     <div class="card-body">
                         <div class="card">
                             <div class="card-body table-responsive p-4" style="height: 620px;">
-                                <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
+                                <table id="staffTable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
                                         <th style="width:50px;" class="text-center"><i class="bi bi-hash"></i></th>
@@ -335,6 +338,7 @@ $password = "Localeats#".date("Y");
 </div>
 <!-- /.content -->
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
 <script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
 
@@ -617,10 +621,41 @@ $password = "Localeats#".date("Y");
                 console.log("ajax request fail!!");
                 console.log(status + ": " + error);
             });
-
         }//if
-
-
     }//setDel
+
+    function filterChange() {
+        $('#staffTable').DataTable().ajax.reload();
+    }
+
+    $(() => {
+        $('#staffTable').DataTable(
+        {
+            pagingType: 'full_numbers',
+            pageLength: 14,
+            lengthMenu: [
+                [14, 25, 50, -1],
+                ['Fit', 25, 50, 'All']
+            ],
+            ajax: {
+                url: 'pages/tableRendering/dataStaffs.php',
+                type: 'POST',
+                dataSrc: 'data',
+                data: function (d) {
+                    d.shopType  = $("#includeInactive").val();
+                }
+            },
+            columnDefs: [
+                {
+                    targets: -1,
+                    className: 'dt-body-right'
+                },
+                {
+                    targets: [5],
+                    orderable: false
+                }
+            ],
+        });
+    });
 
 </script>
