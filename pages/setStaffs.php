@@ -15,8 +15,9 @@ $password = "Localeats#".date("Y");
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">
 <link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
 <style>
-
-    
+    .table .thead-dark th {
+        background-color: #212529 !important;
+    }
 </style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
