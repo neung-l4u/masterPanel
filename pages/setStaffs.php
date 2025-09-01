@@ -18,6 +18,9 @@ $password = "Localeats#".date("Y");
     .table .thead-dark th {
         background-color: #212529 !important;
     }
+    div.dataTables_wrapper div.dataTables_length select {
+        width: 100%;
+    }
 </style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -49,7 +52,7 @@ $password = "Localeats#".date("Y");
                     <div class="card-header ">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="1" id="includeInactive">
+                                <input class="form-check-input" type="checkbox" id="includeInactive" onchange="reloadTable_bs5()">
                                 <label class="form-check-label" for="includeInactive">
                                     Include inactive staffs.
                                 </label>
@@ -65,12 +68,12 @@ $password = "Localeats#".date("Y");
                                 <table id="staffTable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:50px;" class="text-center"><i class="bi bi-hash"></i></th>
+                                        <th style="width:5%;" class="text-center"><i class="bi bi-hash"></i></th>
                                         <th><i class="bi bi-person-fill"></i> name</th>
-                                        <th style="width:120px;" class="text-center"><i class="bi bi-star-fill"></i> role</th>
-                                        <th style="width:150px;" class="text-center"><i class="bi bi-envelope-fill"></i> mail</th>
-                                        <th style="width:120px;" class="text-center"><i class="bi bi-telephone-fill"></i> mob</th>
-                                        <th style="width:50px"><i class="bi bi-tools"></i></th>
+                                        <th style="width:13%;" class="text-center"><i class="bi bi-star-fill"></i> role</th>
+                                        <th style="width:15%;" class="text-center"><i class="bi bi-envelope-fill"></i> mail</th>
+                                        <th style="width:10%;" class="text-center"><i class="bi bi-telephone-fill"></i> mob</th>
+                                        <th style="width:8%;" class="text-center"><i class="bi bi-tools"></i></th>
                                     </tr>
                                     </thead>
                                     <tfoot class="thead-dark">
@@ -625,7 +628,7 @@ $password = "Localeats#".date("Y");
         }//if
     }//setDel
 
-    function filterChange() {
+    function reloadTable_bs5() {
         $('#staffTable').DataTable().ajax.reload();
     }
 
@@ -633,9 +636,9 @@ $password = "Localeats#".date("Y");
         $('#staffTable').DataTable(
         {
             pagingType: 'full_numbers',
-            pageLength: 14,
+            pageLength: 10,
             lengthMenu: [
-                [14, 25, 50, -1],
+                [10, 25, 50, -1],
                 ['Fit', 25, 50, 'All']
             ],
             ajax: {
@@ -643,10 +646,14 @@ $password = "Localeats#".date("Y");
                 type: 'POST',
                 dataSrc: 'data',
                 data: function (d) {
-                    d.shopType  = $("#includeInactive").val();
+                    d.includeInactive  = $("#includeInactive").is(":checked") ? 1 : 0;
                 }
             },
             columnDefs: [
+                {
+                    targets: 0,
+                    className: 'dt-body-center'
+                },
                 {
                     targets: -1,
                     className: 'dt-body-right'

@@ -4,7 +4,7 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$params["filterInactive"] = !empty($_POST['includeInactive']) ? $_POST['includeInactive'] : 0;
+$params["filterInactive"] = !empty($_POST['includeInactive']) ? 1 : 0;
 
 if($params["filterInactive"] == 1){
     $result = $db->query('SELECT s.sID, s.sEmail, s.sMobile, s.sName, s.sNickName, l.lName, s.sStatus FROM `staffs` s , `userLevel` l WHERE s.sDeleteAt IS NULL  AND s.sLevel = l.lID;')->fetchAll();
