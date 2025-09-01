@@ -4,7 +4,7 @@ const settings = {
     card: "https://payments.localforyou.com/api/payment",
     invoice: "https://payments.localforyou.com/api/invoice",
   },
-  url_getProductList: "assets/API/B-Price-2509010704-delNewPromotion2months80discount.json",
+  url_getProductList: "assets/API/B-Price-2508091743-addProductTH.json",
   url_getPrice: "assets/API/price.php",
   url_getStates: "assets/statics/states.json",
   url_authentication: "assets/API/authentication.php",
