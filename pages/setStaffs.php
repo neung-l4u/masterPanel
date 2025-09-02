@@ -49,7 +49,7 @@ $password = "Localeats#".date("Y");
     <div class="row">
         <div class="col px-3">
             <div class="card px-3">
-                <div class="card-header ">
+                <div class="card-header bg-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="includeInactive" onchange="reloadTable_bs5()">
