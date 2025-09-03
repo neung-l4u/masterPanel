@@ -10,12 +10,14 @@ $timestamp = date("Y-m-d H:i:s");
 $result["result"] = "";
 $result["msg"] = "";
 
+$act = !empty($_POST["act"]) ? $_POST["act"] : null;
 $dataLogs = !empty($_POST["payload"]) ? $_POST["payload"] : null;
 $dataStripe = !empty($_POST["stripePayload"]) ? $_POST["stripePayload"] : null;
 $country = !empty($_POST["country"]) ? $_POST["country"] : null;
 $contractURL = !empty($_POST["contractURL"]) ? $_POST["contractURL"] : null;
 $stripeResult = !empty($_POST["stripeRes"]) ? $_POST["stripeRes"] : null;
 $testMode = !empty($_POST["testMail"]) ? $_POST["testMail"] : 0;
+$logID = !empty($_POST["logID"]) ? $_POST["logID"] : null;
 
 $dataLogs = json_encode($dataLogs);
 $dataStripe = json_encode($dataStripe);
@@ -31,12 +33,17 @@ if (!is_null($stripeResult)) {
     }
 }
 
-$logsToDB =  $db->query('INSERT INTO `logssignup`(`dataLogs`, `dataStripe`, `stripeResult`, `dataContract`, `countryCode`, `status`, `test`, `createAt`, `createBy`) VALUES (?,?,?,?,?,?,?,?,?)'
-    , $dataLogs, $dataStripe, $stripeResult, $contractURL, $country, $status, $testMode, $timestamp, $signupBy );
+if ($act === "add") {
+    $logsToDB =  $db->query('INSERT INTO `logssignup`(`dataLogs`, `dataStripe`, `dataContract`, `countryCode`, `status`, `test`, `createAt`, `createBy`) VALUES (?,?,?,?,?,?,?,?)'
+    , $dataLogs, $dataStripe, $contractURL, $country, $status, $testMode, $timestamp, $signupBy );
+} elseif ($act === "update") {
+    $resToDB = $db->query('UPDATE `logssignup` SET `stripeResult`=? WHERE id=?', $stripeResult, $logID);
+}
 
+$lastInsertId = $db->lastInsertId();
 
 $result["result"] = "success";
-
+$result["logID"] = $lastInsertId;
 $result["msg"] = "Save to DB successfully!";
 
 echo json_encode($result);

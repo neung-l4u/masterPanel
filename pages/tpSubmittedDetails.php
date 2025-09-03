@@ -14,11 +14,26 @@ require_once "../assets/db/initDB.php";
 include_once "../assets/php/shareFunction.php";
 header('Content-Type: text/html; charset=UTF-8');
 
+//
 date_default_timezone_set("Asia/Bangkok");
-$date = date("Y-m-d");
-$timestamp = date("Y-m-d H:i:s");
+$date = date("y-m-d");
+$dateFull = date("Y-m-d");
+//$dateFull = "2025-03-14";
+$timestamp = date("y-m-d H:i:s");
 
 $cutday = explode("-","$date");
+
+$month = $cutday[1];
+$day = $cutday[2];
+$year = $cutday[0];
+
+$exday = $year.$month.$day;
+
+$startDate = $date;
+$businessDaysToAdd = 7;
+$holidays = [];
+$dueDate = addBusinessDays($startDate, $businessDaysToAdd, $holidays);
+//End Due Date
 
 $param = array();
 $to = "";
@@ -37,8 +52,8 @@ $pageDetails = array();
 
 $project = $db->query(
     'SELECT pj.`projectName`,st.name AS "shopType", pj.`selectedTemplate`, ct.name AS "country", 
-               pj.`projectTimestamp`, sf.sNickName AS "PO", pj.`email`, pj.`phone`, pj.`address`, 
-               pj.`openingHours`, pj.`pickupAndDelivery`, pj.`logo`, pj.`colorTheme1`, pj.`colorTheme2`, 
+               pj.`projectTimestamp`, sf.sNickName AS "PO", pj.`email`, pj.`phone`, pj.`address`, pj.`openingCustom`, 
+               pj.`openingHours`, pj.`deliveryCustom`, pj.`pickupAndDelivery`, pj.`logo`, pj.`colorTheme1`, pj.`colorTheme2`, 
                pj.`colorTheme3`, pj.`domainName`, pj.`domainHave`, dp.name AS "domainProvider", pj.`domainUser`, 
                pj.`domainPass`, pj.`hostingName`, pj.`hostingHave`, hp.name AS "HostingProvider", pj.`hostingUser`, 
                pj.`hostingPass`, pj.`gloriaHave`, pj.`orderURL`, pj.`tableURL`, pj.`orderOther`, pj.`resOtherSystem`, 
@@ -49,25 +64,50 @@ $project = $db->query(
               pj.`projectOwner` = sf.sID AND pj.`DomainProvidersID` = dp.id AND pj.`HostingProvidersID` = hp.id
     ',$id)->fetchArray();
 
-$openingHours = explode("__", $project["openingHours"]);
-$openingSunday = "Sunday : " . (($openingHours[6] !== "") ? $openingHours[6] : "-");
-$openingMonday = "Monday : " . (($openingHours[0] !== "") ? $openingHours[0] : "-");
-$openingTuesday = "Tuesday : " . (($openingHours[1] !== "") ? $openingHours[1] : "-");
-$openingWednesday = "Wednesday : " . (($openingHours[2] !== "") ? $openingHours[2] : "-");
-$openingThursday = "Thursday : " . (($openingHours[3] !== "") ? $openingHours[3] : "-");
-$openingFriday = "Friday : " . (($openingHours[4] !== "") ? $openingHours[4] : "-");
-$openingSaturday = "Saturday : " . (($openingHours[5] !== "") ? $openingHours[5] : "-");
-$openingHours = $openingSunday.'<br>'.$openingMonday.'<br>'.$openingTuesday.'<br>'.$openingWednesday.'<br>'.$openingThursday.'<br>'.$openingFriday.'<br>'.$openingSaturday;
+switch ($project["openingCustom"]) {
+    case 0:
+        $openingHours = explode("__", $project["openingHours"]);
+        $openingSunday = "Sunday : " . (($openingHours[0] !== "") ? $openingHours[0] : "-");
+        $openingMonday = "Monday : " . (($openingHours[1] !== "") ? $openingHours[1] : "-");
+        $openingTuesday = "Tuesday : " . (($openingHours[2] !== "") ? $openingHours[2] : "-");
+        $openingWednesday = "Wednesday : " . (($openingHours[3] !== "") ? $openingHours[3] : "-");
+        $openingThursday = "Thursday : " . (($openingHours[4] !== "") ? $openingHours[4] : "-");
+        $openingFriday = "Friday : " . (($openingHours[5] !== "") ? $openingHours[5] : "-");
+        $openingSaturday = "Saturday : " . (($openingHours[6] !== "") ? $openingHours[6] : "-");
+        $openingHours = $openingSunday.'<br>'.$openingMonday.'<br>'.$openingTuesday.'<br>'.$openingWednesday.'<br>'.$openingThursday.'<br>'.$openingFriday.'<br>'.$openingSaturday;
+        break;
+    case 1:
+        $openingHours = $project["openingHours"];
+        break;
+    default:
+        $openingHours = "No data";
+        break;
+}
 
-$pickupAndDelivery = explode("__", $project["pickupAndDelivery"]);
-$pickupSunday = "Sunday : " . (($pickupAndDelivery[6] !== "") ? $pickupAndDelivery[6] : "-");
-$pickupMonday = "Monday : " . (($pickupAndDelivery[0] !== "") ? $pickupAndDelivery[0] : "-");
-$pickupTuesday = "Tuesday : " . (($pickupAndDelivery[1] !== "") ? $pickupAndDelivery[1] : "-");
-$pickupWednesday = "Wednesday : " . (($pickupAndDelivery[2] !== "") ? $pickupAndDelivery[2] : "-");
-$pickupThursday = "Thursday : " . (($pickupAndDelivery[3] !== "") ? $pickupAndDelivery[3] : "-");
-$pickupFriday = "Friday : " . (($pickupAndDelivery[4] !== "") ? $pickupAndDelivery[4] : "-");
-$pickupSaturday = "Saturday : " . (($pickupAndDelivery[5] !== "") ? $pickupAndDelivery[5] : "-");
-$pickupAndDelivery = $pickupSunday.'<br>'.$pickupMonday.'<br>'.$pickupTuesday.'<br>'.$pickupWednesday.'<br>'.$pickupThursday.'<br>'.$pickupFriday.'<br>'.$pickupSaturday;
+switch ($project["deliveryCustom"]) {
+    case 0:
+        $pickupAndDelivery = explode("__", $project["pickupAndDelivery"]);
+        $pickupSunday = "Sunday : " . (($pickupAndDelivery[0] !== "") ? $pickupAndDelivery[0] : "-");
+        $pickupMonday = "Monday : " . (($pickupAndDelivery[1] !== "") ? $pickupAndDelivery[1] : "-");
+        $pickupTuesday = "Tuesday : " . (($pickupAndDelivery[2] !== "") ? $pickupAndDelivery[2] : "-");
+        $pickupWednesday = "Wednesday : " . (($pickupAndDelivery[3] !== "") ? $pickupAndDelivery[3] : "-");
+        $pickupThursday = "Thursday : " . (($pickupAndDelivery[4] !== "") ? $pickupAndDelivery[4] : "-");
+        $pickupFriday = "Friday : " . (($pickupAndDelivery[5] !== "") ? $pickupAndDelivery[5] : "-");
+        $pickupSaturday = "Saturday : " . (($pickupAndDelivery[6] !== "") ? $pickupAndDelivery[6] : "-");
+        $pickupAndDelivery = $pickupSunday.'<br>'.$pickupMonday.'<br>'.$pickupTuesday.'<br>'.$pickupWednesday.'<br>'.$pickupThursday.'<br>'.$pickupFriday.'<br>'.$pickupSaturday;
+        break;
+    case 1:
+        $pickupAndDelivery = $project["pickupAndDelivery"];
+        break;
+    default:
+        $pickupAndDelivery = "No data";
+        break;
+}
+
+$domainUser  = $project['domainUser']  ?? "-";
+$domainPass  = $project['domainPass']  ?? "-";
+$hostingUser = $project['hostingUser'] ?? "-";
+$hostingPass = $project['hostingPass'] ?? "-";
 
 $pageDetails = $db->query(
     'SELECT `home`, `about`, `services`, `contact`
@@ -176,19 +216,31 @@ $topData .= '<thead><tr><th colspan="2" style="background-color: #1827B8; color:
 $topData .= '<tbody>';
 $topData .= '<tr><td style="width: 150px; font-weight: bold; background-color: #f8f9fa;">Domain Name</td><td>'.$project['domainName'].'</td></tr>';
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Domain Provider</td><td>'.$project['domainProvider'].'</td></tr>';
-$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Username</td><td>'.$project['domainUser'].'</td></tr>';
-$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Password</td><td>'.$project['domainPass'].'</td></tr>';
-$topData .= '</tbody>';
-$topData .= '</table><br>';
 
+if ($project['domainHave'] == 0){
+    $topData .= '</tbody>';
+    $topData .= '</table><br>';
+} else {
+    $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Username</td><td>'.$domainUser.'</td></tr>';
+    $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Password</td><td>'.$domainPass.'</td></tr>';
+    $topData .= '</tbody>';
+    $topData .= '</table><br>';
+}
 
 $topData .= '<table width="650px" border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px;">';
-$topData .= '<thead><tr><th colspan="2" style="background-color: #1827B8; color: white; padding: 10px; text-align: left;">Hostimg Details</th></tr></thead>';
+$topData .= '<thead><tr><th colspan="2" style="background-color: #1827B8; color: white; padding: 10px; text-align: left;">Hosting Details</th></tr></thead>';
 $topData .= '<tbody>';
 $topData .= '<tr><td style="width: 150px; font-weight: bold; background-color: #f8f9fa;">Hosting Provider</td><td>'.$project['HostingProvider'].'</td></tr>';
-$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Username</td><td>'.$project['hostingUser'].'</td></tr>';
-$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Password</td><td>'.$project['hostingPass'].'</td></tr>';
-$topData .= '</table><br>';
+
+if ($project['hostingHave'] == 0){
+    $topData .= '</tbody>';
+    $topData .= '</table><br>';
+} else {
+    $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Username</td><td>'.$hostingUser.'</td></tr>';
+    $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Password</td><td>'.$hostingPass.'</td></tr>';
+    $topData .= '</tbody>';
+    $topData .= '</table><br>';
+}
 
 if ($act == "sendProject") {
     $linkDetails = '<a href="https://report.localforyou.com/pages/tpSubmittedDetails.php?act=readProject&projectID='.$id.'">Click to View Template Submission Details</a>';

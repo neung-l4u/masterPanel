@@ -182,4 +182,12 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataVoucherLogs.php";
         $title = "Master panel : Voucher Logs";
         break;
+    case "zoomExt":
+        $showPage = "zoomExt.php";
+        $activeMenu["lv1"] = "zoomExt";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataZoomExt.php";
+        $title = "Master panel : Zoom Extension";
+        break;
 }

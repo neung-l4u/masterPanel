@@ -35,6 +35,7 @@ if ($params ["action"] == "setStatus"){
     $params["startdate"] = $row["sActiveDate"];//yyyy-mm-dd
     $params["employeenumber"] = $row["sEmpID"];
     $params["address"] = $row["sAddress"];
+    $params["zoomExt"] = $row["ext"];
 
 }elseif ($params ["action"] == "save"){
     $params["txt"] = "Got it";
@@ -61,15 +62,16 @@ if ($params ["action"] == "setStatus"){
     $params["inputEmployeeNumber"] = !empty($_POST['inputEmployeeNumber']) ? $_POST['inputEmployeeNumber'] : NULL;
     $params["inputAddress"] = !empty($_POST['inputAddress']) ? $_POST['inputAddress'] : NULL;
     $params["inputTeam"] = !empty($_POST['inputTeam']) ? $_POST['inputTeam'] : "7";
-
+    $params["zoomExt"] = !empty($_POST['zoomExt']) ? $_POST['zoomExt'] : "";
+    $zoomExtJson = json_encode($params["zoomExt"]);
 
     $params["by"] = $_SESSION['id'];
 
     if($params ["formAction"]=='add'){
         $insert = $db->query('INSERT INTO `staffs`
-                                (`sName`,`STName`, `sNickName`,`sDOB`,`sActiveDate`,`sEmpID`,`sAddress`,`sEmail`, `sMobile`, `sPassword`,`rID`,`teamID`, `sStatus`, `sLevel`, `sStaffType`, `sNationality`, `sCreateBy`) 
-                                VALUES (?,?,?,?,?,?,?,?,?, ?,?, ?,?,?,?,?,?);'
-            ,$params["inputName"],$params["inputTname"],$params["inputNickName"],$params["inputBirthday"],$params["inputStartDate"],$params["inputEmployeeNumber"],$params["inputAddress"],$params["inputEmail"],$params["inputPhone"],$params["inputPassword"],$params["inputReligion"],$params["inputTeam"],$params["inputStatus"],$params["inputLevel"],$params["inputStaffType"],$params["inputNationality"],$myID
+                                (`sName`,`STName`, `sNickName`,`sDOB`,`sActiveDate`,`sEmpID`,`sAddress`,`sEmail`, `sMobile`, `sPassword`,`rID`,`teamID`, `sStatus`, `sLevel`, `sStaffType`, `ext`, `sNationality`, `sCreateBy`) 
+                                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);'
+            ,$params["inputName"],$params["inputTname"],$params["inputNickName"],$params["inputBirthday"],$params["inputStartDate"],$params["inputEmployeeNumber"],$params["inputAddress"],$params["inputEmail"],$params["inputPhone"],$params["inputPassword"],$params["inputReligion"],$params["inputTeam"],$params["inputStatus"],$params["inputLevel"],$params["inputStaffType"], $zoomExtJson,$params["inputNationality"],$myID
         );
 
         $params["affected"] = $insert->affectedRows();
@@ -77,9 +79,9 @@ if ($params ["action"] == "setStatus"){
     }elseif($params ["formAction"]=='edit'){
 
         $update = $db->query('UPDATE `staffs` SET 
-                                `sName`= ?,`sTName`= ?, `sNickName`=?, `sDOB`= ?, `rID`= ?, `sActiveDate`= ?, `sEmpID`= ?, `sAddress`= ?,`sEmail` = ?, `sMobile` =?,`rID` = ?,`teamID` = ?, `sStatus` = ?, `sLevel` = ?, `sStaffType` = ?, `sNationality` = ?, `sUpdateBy`= ?, sUpdateAt = NOW() 
+                                `sName`= ?,`sTName`= ?, `sNickName`=?, `sDOB`= ?, `rID`= ?, `sActiveDate`= ?, `sEmpID`= ?, `sAddress`= ?,`sEmail` = ?, `sMobile` =?,`rID` = ?,`teamID` = ?, `sStatus` = ?, `sLevel` = ?, `sStaffType` = ?,`ext` = ?, `sNationality` = ?, `sUpdateBy`= ?, sUpdateAt = NOW() 
                                 WHERE sID = ? ;'
-            ,$params["inputName"],$params["inputTname"],$params["inputNickName"],$params["inputBirthday"],$params["inputReligion"],$params["inputStartDate"],$params["inputEmployeeNumber"],$params["inputAddress"],$params["inputEmail"],$params["inputPhone"],$params["inputReligion"],$params["inputTeam"],$params["inputStatus"],$params["inputLevel"],$params["inputStaffType"],$params["inputNationality"],$params["by"],$params ["editID"]
+            ,$params["inputName"],$params["inputTname"],$params["inputNickName"],$params["inputBirthday"],$params["inputReligion"],$params["inputStartDate"],$params["inputEmployeeNumber"],$params["inputAddress"],$params["inputEmail"],$params["inputPhone"],$params["inputReligion"],$params["inputTeam"],$params["inputStatus"],$params["inputLevel"],$params["inputStaffType"],$zoomExtJson,$params["inputNationality"],$params["by"],$params ["editID"]
         );
 
         $params["affected"] = $update->affectedRows();

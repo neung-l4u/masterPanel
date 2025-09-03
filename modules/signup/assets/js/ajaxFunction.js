@@ -713,6 +713,7 @@ function requestToPay() {
         "account_number": account_number
     };
 
+    saveToDB(stripePayload);
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -752,7 +753,7 @@ function requestToPay() {
                     customerStripeID.val(res.customer_id);
                 }
                 
-                saveToDB(stripePayload, stripeRes);
+                stripeResToDB(stripeRes);
 
                 setTimeout(function () {
                     genLinkPDF();
@@ -765,8 +766,8 @@ function requestToPay() {
                 $(fail).appendTo(".paymentResult");
                 res.message = "Payment step is fail"
                 alert("Payment step is fail");
-
-                saveToDB(stripePayload, stripeRes);
+                let stripeRes = "Ajax Fail : " + stripeRes;
+                stripeResToDB(stripeRes);
             }
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
 
@@ -783,12 +784,12 @@ function requestToPay() {
             $("#paymentSubmit").prop('disabled', false);
 
             let stripeRes = xhr.responseText;
-            saveToDB(stripePayload, stripeRes);
+            stripeResToDB(stripeRes);
             return res.message;
         });
     }else{ //submit without a charge
             let stripeRes = "Test Mode - No Charge";
-            saveToDB(stripePayload, stripeRes);
+            stripeResToDB(stripeRes);
             result.empty();
             let done = `<span class="badge bg-success">No Charge</span>`;
             let cusID = `<span class="badge bg-info">No Stripe Connect</span>`;
@@ -1185,17 +1186,18 @@ const saveToDB = (stripePayload, stripeRes) => {
         cache: false,
         dataType: 'json',
         data: {
+            "act": "add",
             "stripePayload" : stripePayload,
             "payload" : payload,
             "country" : Country,
             "contractURL" : contractURL,
             "testMail" : CheckedBoxTestmailValue,
-            "stripeRes" : stripeRes
         }
     });
 
     ajaxSaveToDB.done(function(res) {
         console.log(res);
+        $("#logID").val(res.logID);
         return true;
     });
 
@@ -1206,6 +1208,32 @@ const saveToDB = (stripePayload, stripeRes) => {
     });
 }
 
+const stripeResToDB = (stripeRes) => {
+    let logID = $("#logID").val();
+    const ajaxStripeResToDB = $.ajax({
+        url: settings.url_saveToDB,
+        method: 'POST',
+        async: false,
+        cache: false,
+        dataType: 'json',
+        data: {
+            "act": "update",
+            "logID": logID,
+            "stripeRes": stripeRes
+        }
+    });
+
+    ajaxStripeResToDB.done(function(res) {
+        console.log(res);
+        return true;
+    });
+
+    ajaxStripeResToDB.fail(function(xhr, status, error) {
+        console.log("Save Stripe Response to DB fail!!");
+        console.log(status + ': ' + error);
+        return false;
+    });
+}
 
 const createLogs = (stripePayload) => {
     let cuisineSelected = [];

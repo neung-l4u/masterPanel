@@ -12,20 +12,29 @@ global $db, $date;
 
 $password = "Localeats#".date("Y");
 ?>
-
+<link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">
+<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
+<style>
+    .table .thead-dark th {
+        background-color: #212529 !important;
+    }
+    div.dataTables_wrapper div.dataTables_length select {
+        width: 100%;
+    }
+</style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h4 class="m-0">
-                    <svg class="nav-icon mr-3" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512"><path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3zM609.3 512H471.4c5.4-9.4 8.6-20.3 8.6-32v-8c0-60.7-27.1-115.2-69.8-151.8c2.4-.1 4.7-.2 7.1-.2h61.4C567.8 320 640 392.2 640 481.3c0 17-13.8 30.7-30.7 30.7zM432 256c-31 0-59-12.6-79.3-32.9C372.4 196.5 384 163.6 384 128c0-26.8-6.6-52.1-18.3-74.3C384.3 40.1 407.2 32 432 32c61.9 0 112 50.1 112 112s-50.1 112-112 112z" fill="#000000" /></svg>
+                    <i class="bi bi-people-fill"></i>
                     Settings / Staffs
                 </h4>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="main.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="main.php"><i class="bi bi-house-door-fill"></i></a></li>
                     <li class="breadcrumb-item"><a href="#">Settings</a></li>
                     <li class="breadcrumb-item active">Staffs</li>
                 </ol>
@@ -36,275 +45,308 @@ $password = "Localeats#".date("Y");
 <!-- /.content-header -->
 
 <!-- Main content -->
-<div class="content">
-    <div class="container-fluid">
-
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-end">
-                        <!-- Button trigger modal -->
-                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
-                        </button>
-
-                        <!-- Modal -->
-
-
-                    </div>
-                    <div class="card-body">
-                        <div class="card">
-                            <div class="card-body table-responsive p-4" style="height: 620px;">
-                                <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
-                                    <thead class="thead-dark">
-                                    <tr>
-                                        <th>Name</th>
-                                        <th style="width:20%">Email</th>
-                                        <th style="width:15%">Phone</th>
-                                        <th style="width:15%">Level</th>
-                                        <th style="width:10%">Status</th>
-                                        <th style="width:10%"></th>
-                                    </tr>
-                                    </thead>
-                                    <tfoot class="thead-dark">
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>Level</th>
-                                        <th>Status</th>
-                                        <th></th>
-                                    </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
+<div class="content-fluid px-4">
+    <div class="row">
+        <div class="col px-3">
+            <div class="card px-3">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeInactive" onchange="reloadTable_bs5()">
+                            <label class="form-check-label" for="includeInactive">
+                                Include inactive staffs.
+                            </label>
                         </div>
+                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                            <i class="bi bi-plus-circle-fill"></i> Add new
+                        </button>
                     </div>
                 </div>
-            </div><!-- /.col-md-12 -->
-        </div><!-- /.row -->
-
-
-        <!-- Modal -->
-        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="formModalLabel">Form Staff</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span>&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-
-                        <div class="d-flex flex-column">
-
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group row">
-                                        <label class="col-2 col-form-label">Status</label>
-                                        <div class="col">
-                                            <div class="form-group d-flex">
-                                                <div class="custom-control custom-radio mr-5">
-                                                    <input class="custom-control-input" type="radio" id="statusOn" name="inputStatus" value="1" checked>
-                                                    <label for="statusOn" class="custom-control-label">On</label>
-                                                </div>
-                                                <div class="custom-control custom-radio">
-                                                    <input class="custom-control-input" type="radio" id="statusOff" name="inputStatus" value="0">
-                                                    <label for="statusOff" class="custom-control-label">Off</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group row">
-                                        <label class="col-2 col-form-label">Type</label>
-                                        <div class="col">
-                                            <div class="form-group d-flex">
-                                                <select id="inputStaffType" class="custom-select">
-                                                    <option value="fullTime" selected>fullTime</option>
-                                                    <option value="partTime">partTime</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group row">
-                                        <label for="inputLevel" class="col-2 col-form-label">Level</label>
-                                        <div class="col">
-                                            <select id="inputLevel" class="custom-select">
-                                                <option value="1">Super Admin</option>
-                                                <option value="2">Admin</option>
-                                                <option value="3">Manager</option>
-                                                <option value="4" selected>User</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group row">
-                                        <label for="inputTeam" class="col-2 col-form-label">Team</label>
-                                        <div class="col">
-                                            <select id="inputTeam" class="custom-select">
-                                                <option value="0" selected>-- None --</option>
-                                                <?php
-                                                $teams = $db->query('SELECT `id`, `name`, `fullName` FROM `Team` ORDER BY `idx`;')->fetchAll();
-                                                foreach ($teams as $row){
-                                                    ?>
-                                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['name'].' : '.$row['fullName']; ?></option>
-                                                <?php }//foreach ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                             <!-- Level and Team-->
-
-
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <div class="form-group mb-3 row">
-                                        <label class="col-3 col-form-label" for="inputStartDate">StartDate</label>
-                                        <input type="date" class="form-control col" id="inputStartDate" placeholder="dd-mm-yyyy">
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                <div class="form-group mb-3 row">
-                                    <label class="col-3 col-form-label" for="inputEmployeeNumber">Emp No.</label>
-                                    <input type="text" class="form-control col" id="inputEmployeeNumber" maxlength="6" placeholder="e.g. LOC061">
-                                </div>
-                                </div>
-                            </div>
-                            <!-- StartDate and Emp No.-->
-
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputName">Full Name</label>
-                                        <input type="text" class="form-control" id="inputName" maxlength="255" placeholder="e.g. Peeraphat Malimongkhon">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputTname">Thai Name</label>
-                                        <input type="text" class="form-control" id="inputTname" maxlength="255" placeholder="e.g. พีรภัทร มะลิมงคล">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputNickName">Nick Name</label>
-                                        <input type="text" class="form-control" id="inputNickName" maxlength="50" placeholder="Enter Staff Nick Name">
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputBirthday">Birthday</label>
-                                        <input type="date" class="form-control" id="inputBirthday" placeholder="dd-mm-yyyy">
-                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputAddress">Address</label>
-                                        <textarea id="inputAddress" class="form-control" placeholder="Enter Address" rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputReligion">Religion</label>    
-                                        <select id="inputReligion" class="custom-select">
-                                            <option value="1" selected>-- ไม่ระบุ --</option>
-                                            <?php
-                                            $teams = $db->query('SELECT `rID`, `rThane` AS "thai" FROM `Religion` WHERE rID <> 1 ORDER BY `rThane`;')->fetchAll();
-                                            foreach ($teams as $row){
-                                                ?>
-                                                <option value="<?php echo $row['rID']; ?>"><?php echo $row['thai']; ?></option>
-                                            <?php }//foreach ?>
-                                        </select>        
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputNationality">Nationality</label>    
-                                        <select id="inputNationality" class="custom-select">
-                                            <option value="Thai" selected>Thai</option>
-                                            <option value="Foreign">Foreign</option>
-                                        </select>        
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputEmail">Email</label>
-                                        <input type="email" class="form-control" id="inputEmail" placeholder="Enter Staff Email">
-                                        <small id="emailHelp" class="form-text text-muted">e.g. mail@localforyou.com.</small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputPhone">Phone</label>
-                                        <input type="tel" class="form-control" id="inputPhone" placeholder="Enter Staff Phone" maxlength="10">
-                                        <small id="phoneHelp" class="form-text text-muted">e.g. 0891234567</small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="inputPassword">Password <small id="passwordNotAllow" class="text-danger" style="display: none;">Not allow to edit encrypted data.</small></label>
-                                        <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="<?php echo $password;?>">
-                                        <small id="passwordHelp" class="form-text text-muted">Default password is <?php echo $password;?>.</small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <input type="hidden" name="editID" id="editID" value="">
-                            <input type="hidden" name="formAction" id="formAction" value="add">
-                        </div> <!-- flex -->
-                    </div> <!-- modal-body -->
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit">Save changes</button>
+                <div class="card-body">
+                    <div class="card">
+                        <div class="card-body table-responsive p-4" style="height: 620px;">
+                            <table id="staffTable" class="table table-borderless table-striped table-hover" style="width:100%">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th style="width:5%;" class="text-center"><i class="bi bi-hash"></i></th>
+                                    <th><i class="bi bi-person-fill"></i> name</th>
+                                    <th style="width:13%;" class="text-center"><i class="bi bi-star-fill"></i> role</th>
+                                    <th style="width:15%;" class="text-center"><i class="bi bi-envelope-fill"></i> mail</th>
+                                    <th style="width:10%;" class="text-center"><i class="bi bi-telephone-fill"></i> mob</th>
+                                    <th style="width:8%;" class="text-center"><i class="bi bi-tools"></i></th>
+                                </tr>
+                                </thead>
+                                <tfoot class="thead-dark">
+                                <tr>
+                                    <th class="text-center"><i class="bi bi-hash"></i></th>
+                                    <th><i class="bi bi-person-fill"></i> name</th>
+                                    <th class="text-center"><i class="bi bi-star-fill"></i> role</th>
+                                    <th class="text-center"><i class="bi bi-envelope-fill"></i> mail</th>
+                                    <th class="text-center"><i class="bi bi-telephone-fill"></i> mob</th>
+                                    <th><i class="bi bi-tools"></i></th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
                     </div>
                 </div>
             </div>
-        </div>
+        </div><!-- /.col-md-12 -->
+    </div><!-- /.row -->
 
-    </div><!-- /.container-fluid -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="formModalLabel">Form Staff</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="d-flex flex-column px-5">
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group row">
+                                    <label>Status</label>
+                                    <div class="col">
+                                        <div class="form-group d-flex">
+                                            <div class="custom-control custom-radio mr-5">
+                                                <input class="custom-control-input" type="radio" id="statusOn" name="inputStatus" value="1" checked>
+                                                <label for="statusOn" class="custom-control-label">On</label>
+                                            </div>
+                                            <div class="custom-control custom-radio">
+                                                <input class="custom-control-input" type="radio" id="statusOff" name="inputStatus" value="0">
+                                                <label for="statusOff" class="custom-control-label">Off</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputStaffType">Type</label>
+                                    <div class="form-group d-flex">
+                                        <select id="inputStaffType" class="custom-select">
+                                            <option value="fullTime" selected>Full-time</option>
+                                            <option value="partTime">Part-time</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputEmployeeNumber">Emp No.</label>
+                                    <input type="text" class="form-control" id="inputEmployeeNumber" maxlength="6" placeholder="e.g. LOC061">
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputStartDate">Start</label>
+                                    <input type="date" class="form-control col" id="inputStartDate" placeholder="dd-mm-yyyy">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- StartDate and Emp No.-->
+
+                        <div class="row mb-5">
+                            <div class="col-6">
+                                <div class="form-group row">
+                                    <label for="inputLevel" class="col-2 col-form-label">Level</label>
+                                    <div class="col">
+                                        <select id="inputLevel" class="custom-select">
+                                            <option value="1">Super Admin</option>
+                                            <option value="2">Admin</option>
+                                            <option value="3">Manager</option>
+                                            <option value="4" selected>User</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group row">
+                                    <label for="inputTeam" class="col-2 col-form-label">Team</label>
+                                    <div class="col">
+                                        <select id="inputTeam" class="custom-select">
+                                            <option value="0" selected>-- None --</option>
+                                            <?php
+                                            $teams = $db->query('SELECT `id`, `name`, `fullName` FROM `Team` ORDER BY `idx`;')->fetchAll();
+                                            foreach ($teams as $row){
+                                                ?>
+                                                <option value="<?php echo $row['id']; ?>"><?php echo $row['name'].' : '.$row['fullName']; ?></option>
+                                            <?php }//foreach ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <!-- Level and Team-->
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputNickName">Nick Name</label>
+                                    <input type="text" class="form-control" id="inputNickName" maxlength="50" placeholder="Enter Staff Nick Name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputName">English Name</label>
+                                    <input type="text" class="form-control" id="inputName" maxlength="255" placeholder="e.g. Peeraphat Malimongkhon">
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputTname">Thai Name</label>
+                                    <input type="text" class="form-control" id="inputTname" maxlength="255" placeholder="e.g. พีรภัทร มะลิมงคล">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputAddress">Address</label>
+                                    <textarea id="inputAddress" class="form-control" placeholder="Enter Address" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputBirthday">Birthday</label>
+                                    <input type="date" class="form-control" id="inputBirthday" placeholder="dd-mm-yyyy">
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputReligion">Religion</label>    
+                                    <select id="inputReligion" class="custom-select">
+                                        <option value="1" selected>-- ไม่ระบุ --</option>
+                                        <?php
+                                        $teams = $db->query('SELECT `rID`, `rThane` AS "thai" FROM `Religion` WHERE rID <> 1 ORDER BY `rThane`;')->fetchAll();
+                                        foreach ($teams as $row){
+                                            ?>
+                                            <option value="<?php echo $row['rID']; ?>"><?php echo $row['thai']; ?></option>
+                                        <?php }//foreach ?>
+                                    </select>        
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputNationality">Nationality</label>    
+                                    <select id="inputNationality" class="custom-select">
+                                        <option value="Thai" selected>Thai</option>
+                                        <option value="Foreign">Foreign</option>
+                                    </select>        
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputEmail">Email</label>
+                                    <input type="email" class="form-control" id="inputEmail" placeholder="Enter Staff Email">
+                                    <small id="emailHelp" class="form-text text-muted">e.g. mail@localforyou.com.</small>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputPhone">Phone</label>
+                                    <input type="tel" class="form-control" id="inputPhone" placeholder="Enter Staff Phone" maxlength="10">
+                                    <small id="phoneHelp" class="form-text text-muted">e.g. 0891234567</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="inputPassword">Password <small id="passwordNotAllow" class="text-danger" style="display: none;">Not allow to edit encrypted data.</small></label>
+                                    <input type="text" class="form-control" id="inputPassword" placeholder="Enter Staff Password" value="<?php echo $password;?>">
+                                    <small id="passwordHelp" class="form-text text-muted">Default password is <?php echo $password;?>.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="inputZoomExt">Zoom Extension</label>
+                                    <input type="text" class="form-control" id="inputZoomExt" placeholder="Enter Zoom Extension" maxlength="10">
+                                </div>
+                            </div>
+
+                            <div class="col-8">
+                                <div class="form-group">
+                                    <label>License</label>
+                                    <div class="d-flex flex-row">
+                                        <div class="form-check form-check-inline d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseAU" value="AU">
+                                            <label class="form-check-label" for="inputZoomlicenseAU">AU</label>
+                                        </div>
+                                        <div class="form-check form-check-inline d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseNZ" value="NZ">
+                                            <label class="form-check-label" for="inputZoomlicenseNZ">NZ</label>
+                                        </div>
+                                        <div class="form-check form-check-inline d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseUK" value="UK">
+                                            <label class="form-check-label" for="inputZoomlicenseUK">UK</label>
+                                        </div>
+                                        <div class="form-check form-check-inline d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseUS" value="US">
+                                            <label class="form-check-label" for="inputZoomlicenseUS">US</label>
+                                        </div>
+                                        <div class="form-check form-check-inline d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseCA" value="CA">
+                                            <label class="form-check-label" for="inputZoomlicenseCA">CA</label>
+                                        </div>
+                                        <div class="form-check form-check-inline d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input zoom-license" id="inputZoomlicenseInter" value="Inter">
+                                            <label class="form-check-label" for="inputZoomlicenseInter">Inter</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="editID" id="editID" value="">
+                        <input type="hidden" name="formAction" id="formAction" value="add">
+                    </div> <!-- flex -->
+                </div> <!-- modal-body -->
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-circle"></i> Close</button>
+                    <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit"><i class="bi bi-floppy-fill"></i> Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- /.content -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
+<script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
 
 <script>
     const setStatus = (id, status) => {
@@ -350,6 +392,8 @@ $password = "Localeats#".date("Y");
         const inputReligion = $("#inputReligion");
         const inputNationality = $("#inputNationality");
         const inputTeam = $("#inputTeam");
+        const inputZoomExt = $("#inputZoomExt");
+        const zoomLicense = $(".zoom-license");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
         const editID = $("#editID");
@@ -392,6 +436,14 @@ $password = "Localeats#".date("Y");
                 statusOn.prop('checked', false);
                 statusOff.prop('checked', true);
             }
+            let zoomData = (typeof res.zoomExt === "string") ? JSON.parse(res.zoomExt) : res.zoomExt;
+            $("#inputZoomExt").val(zoomData.ext);
+            if(Array.isArray(zoomData.license)) {
+                zoomData.license.forEach(function(lic) {
+                    $(".zoom-license[value='" + lic + "']").prop('checked', true);
+                });
+            }
+            
             editID.val(res.id);
             formAction.val("edit");
             modalFormAction("open");
@@ -404,6 +456,7 @@ $password = "Localeats#".date("Y");
     }// const
 
     const formSave = () => {
+        const includeInactive = $("#includeInactive");
         const inputStaffType = $("#inputStaffType");
         const inputName = $("#inputName");
         const inputTname = $("#inputTname");
@@ -420,9 +473,15 @@ $password = "Localeats#".date("Y");
         const passwordNotAllow = $("#passwordNotAllow");
         const inputTeam = $("#inputTeam");
         const inputLevel = $("#inputLevel");
+        
+        const inputZoomExt = $("#inputZoomExt").val();
+        const licenses = [];
+        $(".zoom-license:checked").each(function() {
+            licenses.push($(this).val());
+        });
+
         const editID = $("#editID");
         const formAction = $("#formAction");
-
         let statusValue = $("input[name='inputStatus']:checked").val();
 
         let payload = {
@@ -442,6 +501,10 @@ $password = "Localeats#".date("Y");
                 inputNationality : inputNationality.val(),
                 inputTeam : inputTeam.val(),
                 inputLevel : inputLevel.val(),
+                zoomExt: {
+                    ext: inputZoomExt,
+                    license: licenses
+                },
                 inputStatus : statusValue,
                 editID : editID.val(),
                 formAction : formAction.val()
@@ -490,6 +553,8 @@ $password = "Localeats#".date("Y");
         const inputNationality = $("#inputNationality");
         const inputTeam = $("#inputTeam");
         const inputLevel = $("#inputLevel");
+        const inputZoomExt = $("#inputZoomExt");
+        const zoomLicense = $(".zoom-license");
         const statusOn = $("#statusOn");
         const statusOff = $("#statusOff");
         const editID = $("#editID");
@@ -519,6 +584,8 @@ $password = "Localeats#".date("Y");
         inputReligion.val('1');
         inputNationality.val('Thai');
         inputTeam.val('0');
+        inputZoomExt.val('');
+        zoomLicense.prop('checked', false);
         statusOn.prop('checked', true);
         statusOff.prop('checked', false);
         editID.val('');
@@ -560,10 +627,45 @@ $password = "Localeats#".date("Y");
                 console.log("ajax request fail!!");
                 console.log(status + ": " + error);
             });
-
         }//if
-
-
     }//setDel
+
+    function reloadTable_bs5() {
+        $('#staffTable').DataTable().ajax.reload();
+    }
+
+    $(() => {
+        $('#staffTable').DataTable(
+        {
+            pagingType: 'full_numbers',
+            pageLength: 10,
+            lengthMenu: [
+                [10, 25, 50, -1],
+                ['Fit', 25, 50, 'All']
+            ],
+            ajax: {
+                url: 'pages/tableRendering/dataStaffs.php',
+                type: 'POST',
+                dataSrc: 'data',
+                data: function (d) {
+                    d.includeInactive  = $("#includeInactive").is(":checked") ? 1 : 0;
+                }
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    className: 'dt-body-center'
+                },
+                {
+                    targets: -1,
+                    className: 'dt-body-right'
+                },
+                {
+                    targets: [5],
+                    orderable: false
+                }
+            ],
+        });
+    });
 
 </script>

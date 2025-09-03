@@ -117,42 +117,26 @@ function checkTime()
     }
 }//checkTime
 
-function calculateDueDate($startDate): string
+function addBusinessDays($startDate, $businessDays, $holidays = []): string
 {
-    $businessDays = 7; //fix ไว้ทีื 7 วันทำการ
     $currentDate = new DateTime($startDate);
-    $includeToday = checkTime();
-    $daysCounted = 0;
 
-    if ($includeToday) {
-        $currentDate->modify('+0 day'); // ถ้าสั่งงานก่อนเที่ยงจะ เริ่มนับวันจากวันนี้เลย
-    } else {
-        $currentDate->modify('+1 day'); // ถ้าสั่งงานหลังเที่ยง เริ่มนับจากวันถัดไป
-    }
-
-    while ($daysCounted < $businessDays) {
-        $weekday = $currentDate->format('N');
-
-        if ($weekday < 6) { //6 = เสาร์
-            $daysCounted++;
-        }
-
-        if ($daysCounted < $businessDays) {
-            $currentDate->modify('+1 day');
-        }
-    }
-
+    // Start counting from the next day
     $currentDate->modify('+1 day');
 
-    // ตรวจสอบวันส่งงาน หากตรงกับเสาร์-อาทิตย์ ให้เลื่อนออกไป
-    if ($currentDate->format('N') == 6) {
-        $currentDate->modify('+2 day');
-    }
-    if ($currentDate->format('N') == 7) {
-        $currentDate->modify('+1 day');
-    }
+    $daysAdded = 0;
 
+    while ($daysAdded < $businessDays) {
+        $weekday = $currentDate->format('N'); // 1 (Monday) to 7 (Sunday)
+
+        // Check if the day is not a weekend and not a holiday
+        if ($weekday < 6 && !in_array($currentDate->format('Y-m-d'), $holidays)) {
+            $daysAdded++;
+        }
+
+        $currentDate->modify('+1 day'); // Move to the next day
+    }
     return $currentDate->format('Y-m-d');
-}//calculateDueDate
+}//addBusinessDays
 
 ?>

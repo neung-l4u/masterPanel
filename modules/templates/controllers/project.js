@@ -105,125 +105,123 @@ const loadShopType = () => {
     });
 }//load Country
 
-const loadData = () => {
-    payload = {
-        act: 'read',
-        ownerID: inputLoginID.val(),
-        token: Math.random()
-    };
+// const loadData = () => {
+//     payload = {
+//         act: 'read',
+//         ownerID: inputLoginID.val(),
+//         token: Math.random()
+//     };
 
-    const readProject = $.ajax({
-        url: "../models/project.php",
-        method: 'POST',
-        async: false,
-        cache: false,
-        dataType: 'json',
-        data: payload
-    });
+//     const readProject = $.ajax({
+//         url: "../models/project.php",
+//         method: 'POST',
+//         async: false,
+//         cache: false,
+//         dataType: 'json',
+//         data: payload
+//     });
 
-    readProject.done(function(res) {
-        $('#projectData > tbody').empty();
-        let allData = res.data.length;
-        let row = res.data;
-        let i = 0;
-        const iconSendMailDraft = '<img src="../assets/img/sendMailGray.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
-        const iconSendMailReady = '<img src="../assets/img/sendMail.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
-        const iconSendMailSend = '<img src="../assets/img/sendMailGreen.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
-        const iconPageGray = '<img src="../assets/img/page_gray.svg" alt="Unsubmit page" class="action_icon page_icon">';
-        const iconPageGreen = '<img src="../assets/img/page_green.svg" alt="Submit page" class="action_icon page_icon">';
-        const iconNext = '<img src="../assets/img/next.svg" alt="detail" title="Detail" class="action_icon">';
-        const iconEdit = '<img src="../assets/img/edit.svg" alt="edit" title="Edit" class="action_icon">';
-        const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
-        const iconTemplate = '<img src="../assets/img/template.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
-        const iconTemplateGray = '<img src="../assets/img/template_gray.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
+//     readProject.done(function(res) {
+//         $('#projectData > tbody').empty();
+//         let allData = res.data.length;
+//         let row = res.data;
+//         let i = 0;
+//         const iconSendMailDraft = '<img src="../assets/img/sendMailGray.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
+//         const iconSendMailReady = '<img src="../assets/img/sendMail.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
+//         const iconSendMailSend = '<img src="../assets/img/sendMailGreen.svg" alt="Send Mail" title="Send Mail" class="action_icon">';
+//         const iconPageGray = '<img src="../assets/img/page_gray.svg" alt="Unsubmit page" class="action_icon page_icon">';
+//         const iconPageGreen = '<img src="../assets/img/page_green.svg" alt="Submit page" class="action_icon page_icon">';
+//         const iconNext = '<img src="../assets/img/next.svg" alt="detail" title="Detail" class="action_icon">';
+//         const iconEdit = '<img src="../assets/img/edit.svg" alt="edit" title="Edit" class="action_icon">';
+//         const iconDelete = '<img src="../assets/img/del.svg" alt="delete" title="Delete" class="action_icon">';
+//         const iconTemplate = '<img src="../assets/img/template.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
+//         const iconTemplateGray = '<img src="../assets/img/template_gray.svg" alt="Edit Template" title="Edit Template" class="action_icon">';
 
-        if (allData > 0) {
-            row.forEach(item => {
-                let { saveFlag, projectID: id, projectName: name, shopType, selectedTemplate, owner, countryName: country, countryCode, statusID: status, homePage, aboutPage, servicesPage, contactPage } = item;
-                let statusText = (status === 1) ? 'Draft' : 'Send';
-                let url = `main.php?m=detail&id=${id}`;
-                let temPage = (shopType === "Restaurant") ? 'res' : 'mas';
-                temPage = temPage + selectedTemplate;
-                let templateUrl = `main.php?m=${temPage}&id=${id}`;
+//         if (allData > 0) {
+//             row.forEach(item => {
+//                 let { saveFlag, projectID: id, projectName: name, shopType, selectedTemplate, owner, countryName: country, countryCode, statusID: status, homePage, aboutPage, servicesPage, contactPage } = item;
+//                 let statusText = (status === 1) ? 'Draft' : 'Send';
+//                 let url = `main.php?m=detail&id=${id}`;
+//                 let temPage = (shopType === "Restaurant") ? 'res' : 'mas';
+//                 temPage = temPage + selectedTemplate;
+//                 let templateUrl = `main.php?m=${temPage}&id=${id}`;
 
-                let iconTemplateUse = (saveFlag === 1) ? iconTemplate : iconTemplateGray;
-                let linkTemplate = (saveFlag === 1) ? `<a href="${templateUrl}">${iconTemplateUse}</a>` : `${iconTemplateUse}`;
+//                 let iconTemplateUse = (saveFlag === 1) ? iconTemplate : iconTemplateGray;
+//                 let linkTemplate = (saveFlag === 1) ? `<a href="${templateUrl}">${iconTemplateUse}</a>` : `${iconTemplateUse}`;
 
-                let iconPage;
-                if (shopType === 'Restaurant') {
-                    let iconPageHome = (homePage === null) ? `<span title="Home">${iconPageGray}</span>` : `<span title="Home">${iconPageGreen}</span>`;
-                    let iconPageAbout = (aboutPage === null) ? `<span title="About">${iconPageGray}</span>` : `<span title="About">${iconPageGreen}</span>`;
-                    let iconPageContact = (contactPage === null) ? `<span title="Contact">${iconPageGray}</span>` : `<span title="Contact">${iconPageGreen}</span>`;
-                    iconPage = `${iconPageHome} ${iconPageAbout} ${iconPageContact}`;
-                } else if (shopType === 'Massage') {
-                    let iconPageHome = (homePage === null) ? `<span title="Home">${iconPageGray}</span>` : `<span title="Home">${iconPageGreen}</span>`;
-                    let iconPageAbout = (aboutPage === null) ? `<span title="About">${iconPageGray}</span>` : `<span title="About">${iconPageGreen}</span>`;
-                    let iconPageServices = (servicesPage === null) ? `<span title="Services">${iconPageGray}</span>` : `<span title="Services">${iconPageGreen}</span>`;
-                    let iconPageContact = (contactPage === null) ? `<span title="Contact">${iconPageGray}</span>` : `<span title="Contact">${iconPageGreen}</span>`;
-                    iconPage = `${iconPageHome} ${iconPageAbout} ${iconPageServices} ${iconPageContact}`;
-                }
+//                 let iconPage;
+//                 if (shopType === 'Restaurant') {
+//                     let iconPageHome = (homePage === null) ? `<span title="Home">${iconPageGray}</span>` : `<span title="Home">${iconPageGreen}</span>`;
+//                     let iconPageAbout = (aboutPage === null) ? `<span title="About">${iconPageGray}</span>` : `<span title="About">${iconPageGreen}</span>`;
+//                     let iconPageContact = (contactPage === null) ? `<span title="Contact">${iconPageGray}</span>` : `<span title="Contact">${iconPageGreen}</span>`;
+//                     iconPage = `${iconPageHome} ${iconPageAbout} ${iconPageContact}`;
+//                 } else if (shopType === 'Massage') {
+//                     let iconPageHome = (homePage === null) ? `<span title="Home">${iconPageGray}</span>` : `<span title="Home">${iconPageGreen}</span>`;
+//                     let iconPageAbout = (aboutPage === null) ? `<span title="About">${iconPageGray}</span>` : `<span title="About">${iconPageGreen}</span>`;
+//                     let iconPageServices = (servicesPage === null) ? `<span title="Services">${iconPageGray}</span>` : `<span title="Services">${iconPageGreen}</span>`;
+//                     let iconPageContact = (contactPage === null) ? `<span title="Contact">${iconPageGray}</span>` : `<span title="Contact">${iconPageGreen}</span>`;
+//                     iconPage = `${iconPageHome} ${iconPageAbout} ${iconPageServices} ${iconPageContact}`;
+//                 }
 
-                let iconSendMail;
-                if (shopType === 'Restaurant') {
-                    if (homePage !== null && aboutPage !== null && contactPage !== null) 
-                        {
-                        iconSendMail = `<a href="#" onclick="sendProject(${id});">${iconSendMailReady}</a>`;
-                        if (status === 1) {
-                            statusText = "Ready";
-                        }
-                    } else {
-                        iconSendMail = `<a>${iconSendMailDraft}</a>`;
-                    }
-                } else if (shopType === 'Massage') {
-                    if (homePage !== null && aboutPage !== null && contactPage !== null && servicesPage !== null) {
-                        iconSendMail = `<a href="#" onclick="sendProject(${id});">${iconSendMailReady}</a>`;
-                        if (status === 1) {
-                            statusText = "Ready";
-                        }
-                    } else {
-                        iconSendMail = `<a>${iconSendMailDraft}</a>`;
-                    }
-                }
-                if (status === 2) { iconSendMail = `<a>${iconSendMailSend}</a>`; }
+//                 let iconSendMail;
+//                 if (shopType === 'Restaurant') {
+//                     if (homePage !== null && aboutPage !== null && contactPage !== null) 
+//                         {
+//                         iconSendMail = `<a href="#" onclick="sendProject(${id});">${iconSendMailReady}</a>`;
+//                         if (status === 1) {
+//                             statusText = "Ready";
+//                         }
+//                     } else {
+//                         iconSendMail = `<a>${iconSendMailDraft}</a>`;
+//                     }
+//                 } else if (shopType === 'Massage') {
+//                     if (homePage !== null && aboutPage !== null && contactPage !== null && servicesPage !== null) {
+//                         iconSendMail = `<a href="#" onclick="sendProject(${id});">${iconSendMailReady}</a>`;
+//                         if (status === 1) {
+//                             statusText = "Ready";
+//                         }
+//                     } else {
+//                         iconSendMail = `<a>${iconSendMailDraft}</a>`;
+//                     }
+//                 }
+//                 if (status === 2) { iconSendMail = `<a>${iconSendMailSend}</a>`; }
 
-                $('#projectData > tbody:last-child').append(
-                    `<tr>
-                        <td>${++i}</td>
-                        <td>${shopType} ${selectedTemplate}</td>
-                        <td>${countryCode} : ${name}</td>
-                        <td>${iconPage}</td>
-                        <td>${statusText}</td>
-                        <!--<td>${owner}</td>-->
-                        <td class="d-flex justify-content-end gap-2">
-                            ${iconSendMail}
-                            ${linkTemplate}
-                            <a href="${url}">${iconNext}</a>
-                            <a href="#" onclick="setEdit(${id});">${iconEdit}</a>
-                            <a href="#" onclick="setDel(${id});">${iconDelete}</a>
-                        </td>
-                    </tr>`
-                );
-            });//foreach
+//                 $('#projectData > tbody:last-child').append(
+//                     `<tr>
+//                         <td>${++i}</td>
+//                         <td>${shopType} ${selectedTemplate}</td>
+//                         <td>${countryCode} : ${name}</td>
+//                         <td>${iconPage}</td>
+//                         <td>${statusText}</td>
+//                         <!--<td>${owner}</td>-->
+//                         <td class="d-flex justify-content-end gap-2">
+//                             ${iconSendMail}
+//                             ${linkTemplate}
+//                             <a href="${url}">${iconNext}</a>
+//                             <a href="#" onclick="setEdit(${id});">${iconEdit}</a>
+//                             <a href="#" onclick="setDel(${id});">${iconDelete}</a>
+//                         </td>
+//                     </tr>`
+//                 );
+//             });//foreach
 
-        }else {
-            $('#projectData > tbody:last-child').append(
-                `<tr>
-                    <th colspan="6">No Data</th>
-                </tr>`
-            );
-        }
-        return true;
-    });
+//         }else {
+//             $('#projectData > tbody:last-child').append(
+//                 `<tr>
+//                     <th colspan="6">No Data</th>
+//                 </tr>`
+//             );
+//         }
+//         return true;
+//     });
 
-    readProject.fail(function(xhr, status, error) {
-        console.log("ajax call fail!!");
-        console.log(status + ": " + error);
-        return false;
-    });
+//     readProject.fail(function(xhr, status, error) {
+//         console.log("ajax call fail!!");
+//         console.log(status + ": " + error);
+//         return false;
+//     });
 
-}//load data
-
-
+// }//load data
 
 const setEdit = (id) => {
     console.log('Edit ID = ',id);
@@ -406,68 +404,66 @@ function updateTemplates() {
 }
 
 function sending(id) {
-    $("#processingTxt" + id).hide();
-    $("#savetoDBTxt" + id).hide();
-    $("#creatMondayTxt" + id).hide();
-    $("#sendMailTxt" + id).hide();
-
-    sendProject(id);
-    $("#actionDiv" + id).hide();
-    $("#sendingDiv" + id).show();
-
-    setTimeout(function() {
-        $("#processingTxt" + id).show();
-    }, 0);
-
-    setTimeout(function() {
-        $("#processingTxt" + id).hide();
-        $("#savetoDBTxt" + id).show();
-    }, 2000);
-
-    setTimeout(function() {
-        $("#savetoDBTxt" + id).hide();
-        $("#creatMondayTxt" + id).show();
-    }, 4000);
-
-    setTimeout(function() {
-        $("#creatMondayTxt" + id).hide();
-        $("#sendMailTxt" + id).show();
-    }, 6000);
-
-    setTimeout(function() {
-        $('#projectData').DataTable().ajax.reload();
-        $("#sendMailTxt" + id).hide();
-        $("#sendingDiv" + id).hide();
-        $("#actionDiv" + id).show();
-    }, 8000);
-
-}
-
-function sendProject(id) {
     let answer = confirm("Are you sure you want to submit this project?");
 
     if (answer) {
-        const sendProject = $.ajax({
-            url: "https://hook.us1.make.com/cc7a133uwkf3xaj5ehnfcfjv5qfag9ra",
-            method: "POST",
-            async: false,
-            cache: false,
-            dataType: "json",
-            data: {
-                "projectID": id,
-                "loginID": inputLoginID.val(),
-                "poEmail": $("#poEmail").val(),
-                "teamEmail": $("#teamEmail").val(),
-                "act": "sendProject"
-            }
-        });//ajax
-        sendProject.done(function (res) {
-            console.log(res);
-        });
-        sendProject.fail(function (xhr, status, error) {
-            console.log("ajax call fail!!");
-            console.log(status + ": " + error);
-        });
-    }//if
+        $("#processingTxt" + id).hide();
+        $("#savetoDBTxt" + id).hide();
+        $("#creatMondayTxt" + id).hide();
+        $("#sendMailTxt" + id).hide();
 
+        sendProject(id);
+        $("#actionDiv" + id).hide();
+        $("#sendingDiv" + id).show();
+
+        setTimeout(function() {
+            $("#processingTxt" + id).show();
+        }, 0);
+
+        setTimeout(function() {
+            $("#processingTxt" + id).hide();
+            $("#savetoDBTxt" + id).show();
+        }, 2000);
+
+        setTimeout(function() {
+            $("#savetoDBTxt" + id).hide();
+            $("#creatMondayTxt" + id).show();
+        }, 4000);
+
+        setTimeout(function() {
+            $("#creatMondayTxt" + id).hide();
+            $("#sendMailTxt" + id).show();
+        }, 6000);
+
+        setTimeout(function() {
+            $('#projectData').DataTable().ajax.reload();
+            $("#sendMailTxt" + id).hide();
+            $("#sendingDiv" + id).hide();
+            $("#actionDiv" + id).show();
+        }, 8000);
+    }//if
+}
+
+function sendProject(id) {
+    const sendProject = $.ajax({
+        url: "https://hook.us1.make.com/cc7a133uwkf3xaj5ehnfcfjv5qfag9ra",
+        method: "POST",
+        async: false,
+        cache: false,
+        dataType: "json",
+        data: {
+            "projectID": id,
+            "loginID": inputLoginID.val(),
+            "poEmail": $("#poEmail").val(),
+            "teamEmail": $("#teamEmail").val(),
+            "act": "sendProject"
+        }
+    });//ajax
+    sendProject.done(function (res) {
+        console.log(res);
+    });
+    sendProject.fail(function (xhr, status, error) {
+        console.log("ajax call fail!!");
+        console.log(status + ": " + error);
+    });
 }//sendEmail

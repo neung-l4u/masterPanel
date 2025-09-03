@@ -4,36 +4,50 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$params["filterShopType"] = !empty($_POST['shopType']) ? $_POST['shopType'] : '';
-$params["filterSystem"] = !empty($_POST['system']) ? $_POST['system'] : '';
-$params["filterStatus"] = !empty($_POST['fstatus']) ? $_POST['fstatus'] : '';
+$params = [
+    "shopType" => !empty($_POST['shopType']) ? $_POST['shopType'] : '',
+    "system"   => !empty($_POST['system'])   ? $_POST['system']   : '',
+    "liveStatus"   => !empty($_POST['liveStatus'])  ? $_POST['liveStatus']  : '',
+    "template" => !empty($_POST['template']) ? $_POST['template'] : '',
+    "country"  => !empty($_POST['country'])  ? $_POST['country']  : '',
+    "server"   => !empty($_POST['server'])   ? $_POST['server']   : '',
+];
 
-$sql = 'SELECT * FROM `websiteList` WHERE  delete_at IS NULL ';
-$where1 = "";
-$where2 = "";
-$where3 = "";
-$order = " ORDER BY wID DESC";
+$sql   = "SELECT *";
+$from = " FROM websiteList w LEFT JOIN L4UServers sv ON w.svID = sv.svID";
+$where = " WHERE delete_at IS NULL";
+$order = " ORDER BY w.wID DESC";
 
-// filter
-
-if (!empty($params["filterShopType"])){
-    $where1 = " AND wIndustry = '".$params["filterShopType"]."'";
+if ($params["shopType"] !== '') {
+    $where .= " AND w.wIndustry = '".$params["shopType"]."'";
 }
-if (!empty($params["filterSystem"])){
-    if ($params["filterSystem"] === "AM") {
-        $where2 = " AND wSystemAmelia = 1";
-    } else if ($params["filterSystem"] === "GF") {
-        $where2 = " AND wSystemGloriaFood = 1";
-    } else if ($params["filterSystem"] === "VC") {
-        $where2 = " AND wSystemVoucher = 1";
+
+if ($params["system"] !== '') {
+    if ($params["system"] === "AM") {
+        $where .= " AND w.wSystemAmelia = 1";
+    } elseif ($params["system"] === "GF") {
+        $where .= " AND w.wSystemGloriaFood = 1";
+    } elseif ($params["system"] === "VC") {
+        $where .= " AND w.wSystemVoucher = 1";
     }
 }
-if (!empty($params["filterStatus"])){
-    $where3 = " AND wLiveStatus = '".$params["filterStatus"]."'";
+if ($params["liveStatus"] !== '') {
+    $where .= " AND w.wLiveStatus = '".$params["liveStatus"]."'";
 }
 
+if ($params["template"] !== '') {
+    $where .= " AND w.wTemplateUsed = '".$params["template"]."'";
+}
 
-$sql = $sql . $where1 . $where2 . $where3 . $order;
+if ($params["country"] !== '') {
+    $where .= " AND w.countryID = '".$params["country"]."'";
+}
+
+if ($params["server"] !== '') {
+    $where .= " AND sv.svID = '".$params["server"]."'";
+}
+
+$sql = $sql . $from . $where . $order;
 $result = $db->query($sql)->fetchAll();
 
 $data = array("data"=> array());
@@ -41,6 +55,10 @@ $data = array("data"=> array());
 $i=1;
 foreach ($result as $row) {
     $No = $row["wID"];
+    $statusWebsite = !empty($row["wLiveStatus"]) ? $row["wLiveStatus"] : '-';
+    $url = '<a href="'.$row["wDomain"].'" target="_blank" title="WP-Link">'.$row["wDomain"].'</a>';
+    $link = !empty($row["wDomain"]) ? $url : '-';
+    $server = $row['svName'] ?? '-';
     $btn["URL"] = '<a href="'.$row["wWordpressURL"].'" target="_blank" title="WP-Admin"><i class="bi bi-box-arrow-up-right"></i></a>';
     $btn["detail"] = '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail"><i class="bi bi-file-earmark-text"></i></a>';
     $btn["edit"] = '<a href="#" onclick="setEdit('.$row["wID"].')" title="Edit"><i class="bi bi-pencil-square text-dark"></i></a>';
@@ -49,6 +67,9 @@ foreach ($result as $row) {
     $data["data"][] = array(
         $i,
         '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail" class="linkDetail">'.dash($row["wProject"]).'</a>',
+        $link,
+        $server,
+        $statusWebsite,
         $btn["URL"]." ".$btn["edit"]." ".$btn["delete"]
     );
     $i++;

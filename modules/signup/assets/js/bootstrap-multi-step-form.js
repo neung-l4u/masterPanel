@@ -1330,7 +1330,6 @@ function setEmailShoppingCart(email){
   if (formTypeJsonKey==="Restaurant"){ $("#emailBooking").val(""); }
   if (formTypeJsonKey==="Massage"){ $("#emailShoppingCart").val(""); }
 }
-
 //////
 
 /// open 1$ payment backup in new tab
@@ -1730,3 +1729,28 @@ $("#posSystem").change(function(){
     $("#datePOSBox").fadeOut(300);
   }
 })
+
+function checkEmailUsed(email) {
+  const checkEmail = email;
+  const emailunUsed = $("#emailunUsed");
+  const emailUsed = $("#emailUsed");
+
+  $.ajax({
+    url: "assets/function/checkEmail.php",
+    method: 'POST',
+    dataType: 'json',
+    data: {
+      "email": checkEmail,
+    },
+  }).done(function(res) {
+    if (res.result === "used") {
+      emailUsed.show();
+      emailunUsed.hide();
+    } else if (res.result === "unused") {
+      emailunUsed.show();
+      emailUsed.hide();
+    }
+  }).fail(function(xhr, status, error) {
+    console.error("Error checking email:", status, error);
+  });
+}

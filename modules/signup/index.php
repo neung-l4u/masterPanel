@@ -242,12 +242,19 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     maxlength="80"
                                                     onchange="ownerEmail(this.value);"
                                                     onkeyup="setEmailShoppingCart(this.value);"
+                                                    onblur="checkEmailUsed(this.value);"
                                                     autocomplete="off"
                                                     placeholder="mail@localforyou.com"
                                                     value="<?php echo $test["email"]; ?>"
                                             />
                                             <small id="emailHelp" class="form-text text-muted">
                                                 e.g. mail@localforyou.com
+                                            </small>
+                                            <small id="emailunUsed" class="form-text badge rounded-pill bg-success px-3" style="display: none;">
+                                                This email is available.
+                                            </small>
+                                            <small id="emailUsed" class="form-text  badge rounded-pill bg-danger px-3" style="display: none;">
+                                                This email is already in use.
                                             </small>
                                         </div>
                                         <div class="col-1 d-flex flex-row pb-4">
@@ -1969,7 +1976,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     withdraw monthly payments as agreed from this Credit Card.
                                                 </li>
                                                 <li class="fw-bold">I understand that no contract period applies and I can
-                                                    cancel at anytime (3-day Notice required).
+                                                    cancel at anytime (Service cancellation requires 30 days’ prior written notice).
                                                 </li>
                                                 <li class="fw-bold" id="policyNoThai">Your subscription for the purchased product will be automatically renewed after the specified promotion period at the product’s regular price. If you wish to unsubscribe, please notify our staff at least 3 days prior to your billing date.
                                                 </li>
