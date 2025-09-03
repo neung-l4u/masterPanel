@@ -23,24 +23,6 @@ $password = "Localeats#".date("Y");
         overflow: hidden;
         text-overflow: '...?';
     }
-    .colNo{
-            width: 50px;
-        }
-    /* .colProName{
-
-    } */
-    .colLocation{
-        width: 150px;
-    }
-    .colOwner{
-        width: 150px;
-    }
-    .colEmail{
-        width: 200px;
-    }
-    .colDetail{
-        width: 80px;
-    }
     .colInfo{
         width: 180px;
     }
@@ -53,12 +35,17 @@ $password = "Localeats#".date("Y");
     small{
         font-size: 0.7rem;
     }
+
+    .filterCol{
+        width: 30%;
+        max-width: 300px;
+    }
     .filterLabel{
         /*border: 1px solid black;*/
         width: 100px;
     }
     .filterSelect{
-        width: 300px !important;
+        width: 100% !important;
     }
     a.linkDetail:link {
         color: black;
@@ -77,6 +64,10 @@ $password = "Localeats#".date("Y");
     a.linkDetail:active {
         color: blue;
     }
+
+    .table .thead-dark th {
+        background-color: #212529 !important;
+    }
     ::placeholder {
         color: #DDDDDD !important;
         opacity: 1; /* Firefox */
@@ -85,9 +76,14 @@ $password = "Localeats#".date("Y");
     ::-ms-input-placeholder { /* Edge 12 -18 */
         color: #DDDDDD !important;
     }
+
+    div.dataTables_wrapper div.dataTables_length select {
+        width: 100%;
+    }
 </style>
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs5.min.css">
 
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -121,6 +117,9 @@ $password = "Localeats#".date("Y");
                             <h5>
                                 <i class="nav-icon mr-3 bi bi-funnel"></i>
                                 Filters
+                                <button class="btn btn-sm btn-outline-secondary px-2 pt-0 pb-1" onclick="filterAll()" title="Clear all filters">
+                                    <small><i class="bi bi-x-lg"></i> Clear</small>
+                                </button>
                             </h5>
                             <button id="btnModal" type="button" class="btn btn-primary" onclick="openFormModal()" data-toggle="modal" data-target="#formModal">
                                 <i class="bi bi-plus"></i> New Item
@@ -128,73 +127,81 @@ $password = "Localeats#".date("Y");
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col d-flex align-items-center gap-5">
-                            <div class="d-flex align-items-center gap-3">
+                        <div class="col d-flex flex-row gap-5">
+                            <div class="filterCol">
                                 <label for="filterShopType" class="form-label filterLabel">Shop Type</label>
-                                <select class="form-select filterSelect" id="filterShopType" onchange="filterChange()" aria-label="Default select example" disabled>
-                                    <option value="" selected >All</option>
-                                    <option value="1">Restaurant</option>
-                                    <option value="2" >Massage</option>
-                                    <option value="3">Grocery</option>
-                                    <option value="4">Internal</option>
-                                    <option value="5">Template</option>
-                                    <option value="6">Other</option>
+                                <select class="form-select filterSelect" id="filterShopType" onchange="filterChange()" aria-label="Default select example">
+                                    <option value="" selected>All</option>
+                                    <?php
+                                    $dbShoptype = $db->query('SELECT id, name FROM tb_shopType ORDER BY id;')->fetchAll();
+                                    foreach ($dbShoptype as $row){
+                                        ?>
+                                        <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                    <?php }//foreach ?>
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="filterCol">
                                 <label for="filterSystem" class="form-label filterLabel">System</label>
-                                <select class="form-select filterSelect" id="filterSystem" onchange="filterChange()"  aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterSystem" onchange="filterChange()"  aria-label="Default select example">
                                     <option value="" selected>All</option>
                                     <option value="GF">Gloria Food</option>
                                     <option value="AM">Amelia</option>
                                     <option value="VC">Voucher</option>
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="filterCol">
                                 <label for="filterStatus" class="form-label filterLabel">Status</label>
-                                <select class="form-select filterSelect" id="filterStatus" onchange="filterChange()" aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterStatus" onchange="filterChange()" aria-label="Default select example">
+                                    <?php
+                                        $row = $db->query("SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'websiteList' AND COLUMN_NAME = 'wLiveStatus'")->fetchArray();;
+                                        $enum = str_replace(["enum(", ")", "'"], "", $row['COLUMN_TYPE']);
+                                        $options = explode(",", $enum);
+                                    ?>
                                     <option value="" selected>All</option>
-                                    <option value="Live">Live</option>
-                                    <option value="Draft">Draft</option>
-                                    <option value="Transferred">Transferred</option>
-                                    <option value="Pre Live">Pre Live</option>
-                                    <option value="Subdomain">Subdomain</option>
-                                    <option value="Redirect">Redirect</option>
-                                    <option value="Unpublished">Unpublished</option>
+                                    <?php foreach($options as $liveStatus): ?>
+                                        <option value="<?php echo $liveStatus ?>"><?php echo $liveStatus ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col d-flex align-items-center gap-5">
-                            <div class="d-flex align-items-center gap-3">
+                        <div class="col d-flex flex-row gap-5">
+                            <div class="filterCol">
                                 <label for="filterTemplate" class="form-label filterLabel">Template</label>
-                                <select class="form-select filterSelect" id="filterTemplate" onchange="filterChange()" aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterTemplate" onchange="filterChange()" aria-label="Default select example">
                                     <option value="" selected>All</option>
-                                    <option value="1">Template 1</option>
-                                    <option value="2">Template 2</option>
-                                    <option value="3">Template 3</option>
+                                    <?php
+                                    $dbWebsiteTemplate = $db->query('SELECT id, template FROM WebsiteTemplate ORDER BY id;')->fetchAll();
+                                    foreach ($dbWebsiteTemplate as $row){
+                                        ?>
+                                        <option value="<?php echo $row['id']; ?>"><?php echo $row['template']; ?></option>
+                                    <?php }//foreach ?>
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="filterCol">
                                 <label for="filterCountry" class="form-label filterLabel">Country</label>
-                                <select class="form-select filterSelect" id="filterCountry" onchange="filterChange()" aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterCountry" onchange="filterChange()" aria-label="Default select example">
                                     <option value="" selected>All</option>
-                                    <option value="AU">Australia</option>
-                                    <option value="NZ">New Zealand</option>
-                                    <option value="UK">United Kingdom</option>
-                                    <option value="CA">Canada</option>
-                                    <option value="USA">United States</option>
-                                    <option value="TH">Thailand</option>
+                                    <?php
+                                    $dbCountries = $db->query('SELECT id, code, name FROM Countries ORDER BY id;')->fetchAll();
+                                    foreach ($dbCountries as $row){
+                                        ?>
+                                        <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                    <?php }//foreach ?>
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="filterCol">
                                 <label for="filterServer" class="form-label filterLabel">Server</label>
-                                <select class="form-select filterSelect" id="filterServer" onchange="filterChange()" aria-label="Default select example" disabled>
+                                <select class="form-select filterSelect" id="filterServer" onchange="filterChange()" aria-label="Default select example">
                                     <option value="" selected>All</option>
-                                    <option value="1">az1-tr102.supercp.com</option>
-                                    <option value="2">mi3-tr104.supercp.com</option>
-                                    <option value="3">nl1-cl9-atr1.supercp.com</option>
+                                    <?php
+                                    $dbl4uServers = $db->query('SELECT svID, svName FROM L4UServers ORDER BY svID;')->fetchAll();
+                                    foreach ($dbl4uServers as $row){
+                                        ?>
+                                        <option value="<?php echo $row['svID']; ?>"><?php echo $row['svName']; ?></option>
+                                    <?php }//foreach ?>
+                                    </select>
                                 </select>
                             </div>
                         </div>
@@ -204,14 +211,15 @@ $password = "Localeats#".date("Y");
                 <div>
                     <div class="card p-3">
                         <div class="card-body">
-                            <table id="datatable" class="table table-borderless table-striped table-hover" style="width:100%">
+                            <table id="websiteListTable" class="table table-borderless table-striped table-hover" style="width:100%">
                                 <thead class="thead-dark">
                                 <tr>
-                                    <th class="colNo">#</th>
-                                    <th class="colProName">Project name</th>
-                                    <th class="colURL">URL</th>
-                                    <th class="colStatus">Status</th>
-                                    <th class="colDetail"></th>
+                                    <th width="5%">#</th>
+                                    <th >Project name</th>
+                                    <th >URL</th>
+                                    <th width="16%">Server</th>
+                                    <th width="7%">Status</th>
+                                    <th width="7%"></th>
                                 </tr>
                                 </thead>
                             </table>
@@ -234,9 +242,23 @@ $password = "Localeats#".date("Y");
                     <div class="modal-body">
                         <div class="container py-4">
                             <form>
-                                <div class="form-group">
-                                    <label for="inputProject">Project</label>
-                                    <input type="text" class="form-control" id="inputProject" maxlength="255" placeholder="e.g. Hoon Hay">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputProject">Project</label>
+                                        <input type="text" class="form-control" id="inputProject" maxlength="255" placeholder="e.g. Hoon Hay">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="inputCountry">Country</label>
+                                        <select class="form-select inputCountry" id="inputCountry">
+                                            <option value="" selected>-- None --</option>
+                                            <?php
+                                            $dbCountries = $db->query('SELECT id, code, name FROM Countries ORDER BY id;')->fetchAll();
+                                            foreach ($dbCountries as $row){
+                                                ?>
+                                                <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                            <?php }//foreach ?>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
@@ -263,7 +285,7 @@ $password = "Localeats#".date("Y");
                                     <div class="form-group col-md-6">
                                         <label for="inputDomainProvider">Domain Provider</label>
                                         <select id="inputDomainProvider" class="form-control">
-                                            <option value="0" selected>-- None --</option>
+                                            <option value="" selected>-- None --</option>
                                             <?php
                                             $dbDomainProviders = $db->query('SELECT id, name FROM DomainProviders WHERE status=1 ORDER BY id;')->fetchAll();
                                             foreach ($dbDomainProviders as $row){
@@ -282,14 +304,15 @@ $password = "Localeats#".date("Y");
                                     <div class="form-group col-md-6">
                                         <label for="inputLiveStatus">Live Status</label>
                                         <select id="inputLiveStatus" class="form-control">
-                                            <option value="0" selected>-- None --</option>
-                                            <option value="Live">Live</option>
-                                            <option value="Draft">Draft</option>
-                                            <option value="Transferred">Transferred</option>
-                                            <option value="Pre Live">Pre Live</option>
-                                            <option value="Subdomain">Subdomain</option>
-                                            <option value="Redirect">Redirect</option>
-                                            <option value="Unpublished">Unpublished</option>
+                                            <?php
+                                                $row = $db->query("SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'websiteList' AND COLUMN_NAME = 'wLiveStatus'")->fetchArray();;
+                                                $enum = str_replace(["enum(", ")", "'"], "", $row['COLUMN_TYPE']);
+                                                $options = explode(",", $enum);
+                                            ?>
+                                            <option value="" selected>-- None --</option>
+                                            <?php foreach($options as $liveStatus): ?>
+                                                <option value="<?php echo $liveStatus ?>"><?php echo $liveStatus ?></option>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                 </div>
@@ -298,7 +321,7 @@ $password = "Localeats#".date("Y");
                                     <div class="form-group col-md-6">
                                         <label for="inputShopType">Shop Type</label>
                                         <select id="inputShopType" class="form-control">
-                                            <option value="0" selected>-- None --</option>
+                                            <option value="" selected>-- None --</option>
                                             <?php
                                             $dbShoptype = $db->query('SELECT id, name FROM tb_shopType WHERE status=1 ORDER BY id;')->fetchAll();
                                             foreach ($dbShoptype as $row){
@@ -310,7 +333,7 @@ $password = "Localeats#".date("Y");
                                     <div class="form-group col-md-6">
                                         <label for="inputTemplate">Template</label>
                                         <select id="inputTemplate" class="form-control">
-                                            <option value="0" selected>-- None --</option>
+                                            <option value="" selected>-- None --</option>
                                             <?php
                                             $dbWebsiteTemplate = $db->query('SELECT id, template FROM WebsiteTemplate ORDER BY id;')->fetchAll();
                                             foreach ($dbWebsiteTemplate as $row){
@@ -324,7 +347,7 @@ $password = "Localeats#".date("Y");
                                 <div class="form-group">
                                     <label for="inputServer">L4U Server</label>
                                     <select id="inputServer" class="form-control">
-                                        <option value="0" selected>-- None --</option>
+                                        <option value="" selected>-- None --</option>
                                         <?php
                                         $dbl4uServers = $db->query('SELECT svID, svName FROM L4UServers ORDER BY svID;')->fetchAll();
                                         foreach ($dbl4uServers as $row){
@@ -615,6 +638,8 @@ $password = "Localeats#".date("Y");
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
+<script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
+
 <script>
     function showCopy() {
         $("#alert").fadeIn(500);
@@ -632,6 +657,7 @@ $password = "Localeats#".date("Y");
 
     // Modal Form Action
     const inputProject = $("#inputProject");
+    const inputCountry = $("#inputCountry");
     const inputLocation = $("#inputLocation");
     const inputOwner = $("#inputOwner");
     const inputOwnerEmail = $("#inputOwnerEmail");
@@ -687,12 +713,18 @@ $password = "Localeats#".date("Y");
     const filterShopType = $("#filterShopType");
     const filterSystem = $("#filterSystem");
     const filterStatus = $("#filterStatus");
+    const filterTemplate = $("#filterTemplate");
+    const filterCountry = $("#filterCountry");
+    const filterServer = $("#filterServer");
 
     const newModalForm = new bootstrap.Modal(document.getElementById("formModal"), {});
 
     let shopType = filterShopType.val();
     let system = filterSystem.val();
     let fstatus = filterStatus.val();
+    let template = filterTemplate.val();
+    let country = filterCountry.val();
+    let server = filterServer.val();
 
     let txt = '';
     let txt2 = '';
@@ -785,7 +817,7 @@ $password = "Localeats#".date("Y");
         reqAjax.done(function (res) {
             console.log(res);
             inputProject.val(res.wProject);
-
+            inputCountry.val(res.countryID).prop("selected", true);
             inputDomain.val(res.wDomain);
             inputLocation.val(res.wLocation);
             inputOwner.val(res.wOwner);
@@ -825,6 +857,7 @@ $password = "Localeats#".date("Y");
         let payload = {
                 act: "save",
                 inputProject: inputProject.val(),
+                inputCountry: inputCountry.val(),
                 inputLocation: inputLocation.val(),
                 inputOwner: inputOwner.val(),
                 inputOwnerEmail: inputOwnerEmail.val(),
@@ -865,9 +898,7 @@ $password = "Localeats#".date("Y");
         });
             
         reqAjax.done(function (res) {
-            
             console.log(res);
-            reloadTable();
             resetForm();
             newModalFormAction("close");
         });
@@ -881,6 +912,7 @@ $password = "Localeats#".date("Y");
 
     const resetForm = () => {
         inputProject.val('');
+        inputCountry.val('');
         inputLocation.val('');
         inputOwner.val('');
         inputOwnerEmail.val('');
@@ -907,6 +939,7 @@ $password = "Localeats#".date("Y");
         inputVoucher.prop("checked", false);
         editID.val('');
         formAction.val('add');
+        reloadTable_bs5();
     }//resetForm
 
     const setDel = (delID) => {
@@ -933,7 +966,6 @@ $password = "Localeats#".date("Y");
             reqAjax.done(function (res) {
                 modalFormAction("close");
                 console.log(res);
-                reloadTable();
                 resetForm();
                 $("#formModal").modal('hide');
             });
@@ -946,14 +978,69 @@ $password = "Localeats#".date("Y");
         }//if
     }//setDel
 
-    function newModalFormAction(action) {
-    console.log("goNew = " + action);
-    if (action === "open") {
-        newModalForm.show();
-    } else {
-        newModalForm.hide();
-        $(".modal-backdrop").hide();
+    function reloadTable_bs5() {
+        $('#websiteListTable').DataTable().ajax.reload();
     }
-}
+
+    function newModalFormAction(action) {
+        console.log("goNew = " + action);
+        if (action === "open") {
+            newModalForm.show();
+        } else {
+            newModalForm.hide();
+            $(".modal-backdrop").hide();
+        }
+    }
+
+    function filterChange() {
+        reloadTable_bs5();
+    }
+
+    function filterAll() {
+        filterShopType.val('');
+        filterSystem.val('');
+        filterStatus.val('');
+        filterTemplate.val('');
+        filterCountry.val('');
+        filterServer.val('');
+        reloadTable_bs5();
+    }
+
+    $(() => {
+        $("#alert").hide();
+
+        $('#websiteListTable').DataTable(
+        {
+            pagingType: 'full_numbers',
+            pageLength: 14,
+            lengthMenu: [
+                [14, 25, 50, -1],
+                ['Fit', 25, 50, 'All']
+            ],
+            ajax: {
+                url: 'pages/tableRendering/dataWebsiteList.php',
+                type: 'POST',
+                dataSrc: 'data',
+                data: function (d) {
+                    d.shopType  = $("#filterShopType").val();
+                    d.system    = $("#filterSystem").val();
+                    d.liveStatus= $("#filterStatus").val();
+                    d.template  = $("#filterTemplate").val();
+                    d.country   = $("#filterCountry").val();
+                    d.server    = $("#filterServer").val();
+                }
+            },
+            columnDefs: [
+                {
+                    targets: -1,
+                    className: 'dt-body-right'
+                },
+                {
+                    targets: [5],
+                    orderable: false
+                }
+            ],
+        });
+    });
 
 </script>
