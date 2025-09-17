@@ -8,7 +8,8 @@ if (!$invoiceID) {
         "status" => [
             "code"       => "400",
             "message"    => "Bad Request",
-        ]
+        ],
+        "data" => null
     ];
     echo json_encode($respond);
     exit();
@@ -37,7 +38,8 @@ if ($data) {
         "status" => [
             "code"       => "404",
             "message"    => "Not found"
-        ]
+        ],
+        "data"=> null
     ];
 } 
 
