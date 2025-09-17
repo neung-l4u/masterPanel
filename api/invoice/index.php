@@ -42,5 +42,4 @@ if ($data) {
 } 
 
 echo json_encode($respond);
-
 ?>
