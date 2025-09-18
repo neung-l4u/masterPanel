@@ -2,46 +2,31 @@
 require_once '../../assets/db/db.php';
 require_once '../../assets/db/initDB.php';
 
-$invoiceID = $_GET['invoiceID'];
+header('Content-Type: application/json; charset=utf-8');
+
+$invoiceID = $_GET['invoiceID'] ?? null;
 if (!$invoiceID) {
-    $respond = [
+    echo json_encode([
         "status" => [
-            "code"       => "400",
-            "message"    => "Bad Request",
-        ],
-        "data" => null
-    ];
-    echo json_encode($respond);
-    exit();
+            "code" => 400, 
+            "message" => "Bad Request"
+        ], 
+        "data" => null]
+    );
+    exit;
 }
 
-$data = $db->query('SELECT * FROM quotation WHERE invoiceID = ?', $invoiceID)->fetchArray();
-
-if ($data) {
-    $stamp = date('Y-m-d H:i:s');
-
-    $respond = [
-        "data" => [
-            "id" => $data['id'],
-            "check" => $data['check'],
-            "type" => $data['type'],
-            "name" => $data['name'],
-            "address" => $data['address'],
-            "taxNumber" => $data['taxNumber'],
-            "invoiceID" => $data['invoiceID'],
-            "customerEmail" => $data['customerEmail'],
-            "createdAt" => $stamp
-        ]
-    ];
-} else {
-    $respond = [
+$row = $db->query('SELECT * FROM quotation WHERE invoiceID = ?', $invoiceID)->fetchArray();
+if (!$row) {
+    echo json_encode([
         "status" => [
-            "code"       => "404",
-            "message"    => "Not found"
-        ],
-        "data"=> null
-    ];
-} 
+            "code" => 404, 
+            "message" => "Not found"
+        ], 
+        "data" => null]
+    );
+    exit;
+}
 
-echo json_encode($respond);
-?>
+$row['createdAt'] = date('Y-m-d H:i:s');
+echo json_encode(["data" => $row], JSON_UNESCAPED_UNICODE);
