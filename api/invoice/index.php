@@ -2,8 +2,6 @@
 require_once '../../assets/db/db.php';
 require_once '../../assets/db/initDB.php';
 
-header('Content-Type: application/json; charset=utf-8');
-
 $invoiceID = $_GET['invoiceID'] ?? null;
 if (!$invoiceID) {
     echo json_encode([
