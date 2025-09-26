@@ -4,7 +4,7 @@ session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 
-$result = $db->query('SELECT s.sID, s.sName, s.sNickName, s.ext, t.name AS "team" FROM `staffs` s, `team` t WHERE s.sDeleteAt IS NULL AND s.teamID = t.id AND sStatus=1;')->fetchAll();
+$result = $db->query('SELECT s.sID, s.sName, s.sNickName, s.ext, t.name AS "team" FROM `staffs` s, `Team` t WHERE s.sDeleteAt IS NULL AND s.teamID = t.id AND sStatus=1;')->fetchAll();
 
 $data = array("data"=> array());
 

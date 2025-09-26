@@ -365,7 +365,7 @@ $password = "Localeats#".date("Y");
         });
 
         reqAjax.done(function (res) {
-            reloadTable();
+            reloadTable_bs5();
         });
 
         reqAjax.fail(function (xhr, status, error) {
@@ -524,7 +524,7 @@ $password = "Localeats#".date("Y");
         reqAjax.done(function (res) {
             modalFormAction("close");
             console.log(res);
-            reloadTable();
+            reloadTable_bs5();
             resetForm();
             $("#formModal").modal('hide');
         });
