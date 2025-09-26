@@ -17,6 +17,7 @@ const groupInitDriver = $(".initDriver");
 const initPackage = $("#initPackage");
 const initAddOnPrintedFlyers = $("#initAddOnPrintedFlyers");
 const initAddOnFridgeMagnet = $("#initAddOnFridgeMagnet");
+const initAddOnYelpAdSpend = $("#initAddOnYelpAdSpend");
 const initDineInTableOrdering = $("#initDineInTableOrdering");
 const initIHDDirectDelivery = $("#initIHDDirectDelivery");
 const initShopsOwnDriver = $("#initShopsOwnDriver");
