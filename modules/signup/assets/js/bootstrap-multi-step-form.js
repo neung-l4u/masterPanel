@@ -460,7 +460,7 @@ $('#formCountry').change(function() {
       routing_number_div.show();
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local Eats Co., Ltd" to withdraw monthly payments as agreed from this Credit Card.');
-      getProductList("US");
+      getProductList("TH");
       domainHelpAU.show();
       domainHelpUS.hide();
       iconDomain.hide();
@@ -940,6 +940,25 @@ function deleteAddOn(id) {
 ///add product to cart
 function addAddonCart(name, price, amount, special, product_id, checkID, checkClass){
 
+  let country = $("#formCountry").find(":selected").text();
+  console.log(country);
+
+  function calculateVAT(price) {
+    // 1. Price before VAT
+    let a = price;
+
+    // 2. VAT 7%
+    let b = parseFloat((a * 0.07).toFixed(2));
+
+    // 3. Price after VAT
+    let c = parseFloat((a + b).toFixed(2));
+
+    return { a, b, c };
+  }
+
+
+
+
   if (checkClass.length>0){
     let inputClass = $("."+checkClass);
     let inputID = $("#"+checkID);
@@ -950,6 +969,10 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
       inputClass.prop( "checked", false );
       inputID.prop( "checked", true );
 
+      if (country === "Thailand") {
+        let priceVAT = calculateVAT(price);
+        price = priceVAT.c;
+
       let initAddon = `${name} - $${price}${special}`;
       if ((checkClass==="isFlyer")||(checkClass==="isUSFlyer")||(checkClass==="isYelpAdSpend")) {
         initAddOnPrintedFlyers.val(initAddon);
@@ -957,6 +980,7 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
         initAddOnFridgeMagnet.val(initAddon);
       }else if (checkClass==="isYelpAdSpend") {
         initAddOnYelpAdSpend.val(initAddon);
+      }
       }
     }
     else if(inputID.is(":not(:checked)")){
@@ -970,6 +994,7 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
         initAddOnYelpAdSpend.val("");
       }
     }
+
 
   }
 
@@ -1687,9 +1712,17 @@ let chooseAddon = cart.add_on;
 
 
   //คำนวนราคารวม
-  Summary.SubTotal = (Summary.Product + Summary.Addon)-Summary.MainDiscount;
-  Summary.GST = Summary.SubTotal * gstMultiply;
-  Summary.GrandTotal = Summary.SubTotal +  Summary.GST;
+  if (formData.formCountry === "TH"){
+    let priceInclVAT = (Summary.Product + Summary.Addon) - Summary.MainDiscount;
+    Summary.SubTotal = priceInclVAT / (1 + gstMultiply); // แยกเป็นราคาก่อน VAT
+    Summary.GST = priceInclVAT - Summary.SubTotal;      // ส่วนต่างคือ VAT
+    Summary.GrandTotal = priceInclVAT;
+  }else{
+    Summary.SubTotal = (Summary.Product + Summary.Addon)-Summary.MainDiscount;
+    Summary.GST = Summary.SubTotal * gstMultiply;
+    Summary.GrandTotal = Summary.SubTotal +  Summary.GST;
+  }
+
 
   Price = {
     "SubTotal": Summary.SubTotal,
