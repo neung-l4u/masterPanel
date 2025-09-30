@@ -793,7 +793,7 @@ function requestToPay() {
                 setTimeout(function () {
                     genLinkPDF();
                     modalRespondAction('open', 'success');
-                    /*sendMailToL4UTeam();*/
+                    sendMailToL4UTeam();
                 }, 1000);
             } else {
                 result.empty();
