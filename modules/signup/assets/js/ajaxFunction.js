@@ -746,7 +746,7 @@ function requestToPay() {
 
 
     saveToDB(stripePayload);
-    saveTaxToDB(stripePayload)
+    if(formCountry === "TH"){saveTaxToDB(stripePayload)}
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -787,7 +787,8 @@ function requestToPay() {
                 }
 
                 stripeResToDB(stripeRes);
-                invoiceIDToDB(stripeRes)
+                if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
+
 
                 setTimeout(function () {
                     genLinkPDF();
@@ -802,7 +803,7 @@ function requestToPay() {
                 alert("Payment step is fail");
                 let stripeRes = "Ajax Fail : " + stripeRes;
                 stripeResToDB(stripeRes);
-                invoiceIDToDB(stripeRes)
+                if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
             }
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
 
@@ -821,12 +822,12 @@ function requestToPay() {
             let stripeRes = xhr.responseText;
 
             stripeResToDB(stripeRes);
-            invoiceIDToDB(stripeRes)
+            if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
             return res.message;
         });
     }else{ //submit without a charge
         let stripeRes = "Test Mode - No Charge";
-        invoiceIDToDB(stripeRes)
+        /*invoiceIDToDB(stripeRes)*/
         stripeResToDB(stripeRes);
         result.empty();
         let done = `<span class="badge bg-success">No Charge</span>`;

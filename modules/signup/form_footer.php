@@ -34,6 +34,6 @@
 <script src="assets/js/ajaxFunction.js?v=2.0.14"></script>
 <script src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
 <script src="assets/js/popper.2.11.5.min.js"></script>
-<script src="assets/js/bootstrap-multi-step-form.js?v=2.0.5"></script>
+<script src="assets/js/bootstrap-multi-step-form.js?v=2.0.7"></script>
 
 <input type="hidden" id="signupFormVersion" name="signupFormVersion" value="2.10.10" />
