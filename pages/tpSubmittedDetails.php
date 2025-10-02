@@ -199,6 +199,9 @@ if (!empty($project['tiktokURL'])){
 $topData .= '</tbody>';
 $topData .= '</table><br>';
 
+$project['orderURL'] = htmlspecialchars($project['orderURL'] ?? '', ENT_QUOTES, 'UTF-8'); 
+$project['tableURL'] = htmlspecialchars($project['tableURL'] ?? '', ENT_QUOTES, 'UTF-8');
+
 $topData .= '<table width="650px" border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px;">';
 if ($project['gloriaHave'] == 1){
     $topData .= '<thead><tr><th colspan="2" style="background-color: #1827B8; color: white; padding: 10px; text-align: left;">System: Gloria Food</th></tr></thead>';
