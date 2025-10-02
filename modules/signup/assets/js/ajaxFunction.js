@@ -7,21 +7,21 @@ function getProductList(country) {
     if (formData.formCountry === ""){
         $("#warn_form_country").show();
         return false;
-    }else { $("#warn_form_country").hide(); }
+    }else { $("#warn_form_country").hide(); }//ถ้าไม่เลือก span (Please select !!)จะโผล่
 
     if (formData.formType === ""){
         $("#warn_form_type").show();
         return false;
-    }else { $("#warn_form_type").hide(); }
+    }else { $("#warn_form_type").hide(); }//ถ้าไม่เลือก span (Please select !!)จะโผล่
     //////////////////
 
     let price_id = undefined;
     let product_id = undefined;
-    let formType = formData.formType;
-    let formCountry = formData.formCountry;
-    let formTypeJsonKey = typeJsonKey(formType);
-    let contractPeriod = $("input[name='contractPeriod']:checked").val();
-    setPeriodSelectBox(contractPeriod);
+    let formType = formData.formType;//รับค่าจากไฟล์ global_data.js Restaurant ,Massage
+    let formCountry = formData.formCountry;//รับค่าจากไฟล์ global_data.js AU ,US ,NZ ,UK ,CA ,TH
+    let formTypeJsonKey = typeJsonKey(formType);// เอามา return กลับว่าคำว่า Thai Massage ไหมถ้าใช่จะ return Massage ถ้าไม่ return Restaurant
+    let contractPeriod = $("input[name='contractPeriod']:checked").val();//รับค่า 0 ,3 ,12
+    setPeriodSelectBox(contractPeriod);//0 = No contract ,3 =
     const loadingAjax = $("#loadingAjax");
     const loadGif = "<img alt='Loading' src='assets/img/loading.gif'>";
     loadingAjax.html(loadGif);
@@ -392,11 +392,13 @@ function getProductList(country) {
                 }
                 /////////
 
+
+                if(formCountry==="US"){
                 return `${addText}<div class="form-check">
                     <input 
                         class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
                         type="checkbox" 
-                        name=${boxName[name]} 
+                        name=${boxName[name]}
                         id="addon-${product_id}" 
                         value="${name} - ${formData.formCurrency.charAt(0)}$ ${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
@@ -406,6 +408,37 @@ function getProductList(country) {
                         ${discountText}
                     </label>
                 </div>`;
+                }else if(formCountry==="UK"){
+                    return `${addText}<div class="form-check">
+                    <input 
+                        class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
+                        type="checkbox" 
+                        name=${boxName[name]} 
+                        id="addon-${product_id}" 
+                        value="${name} - ${formData.formCurrency.charAt(0)}£ ${price} ${special}"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                    >
+                    <label class="form-check-label" for="addon-${product_id}" >
+                        ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
+                        ${discountText}
+                    </label>
+                </div>`;
+                }else if(formCountry==="TH"){
+                    return `${addText}<div class="form-check">
+                    <input 
+                        class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
+                        type="checkbox" 
+                        name=${boxName[name]} 
+                        id="addon-${product_id}" 
+                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                    >
+                    <label class="form-check-label" for="addon-${product_id}" >
+                        ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
+                        ${discountText}
+                    </label>
+                </div>`;
+                }
 
             });
 
@@ -745,8 +778,8 @@ function requestToPay() {
     };
 
 
-    saveToDB(stripePayload);
-    if(formCountry === "TH"){saveTaxToDB(stripePayload)}
+    /*saveToDB(stripePayload);*/
+    /*if(formCountry === "TH"){saveTaxToDB(stripePayload)}*/
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -793,7 +826,7 @@ function requestToPay() {
                 setTimeout(function () {
                     genLinkPDF();
                     modalRespondAction('open', 'success');
-                    sendMailToL4UTeam();
+                    /*sendMailToL4UTeam();*/
                 }, 1000);
             } else {
                 result.empty();
@@ -802,8 +835,8 @@ function requestToPay() {
                 res.message = "Payment step is fail"
                 alert("Payment step is fail");
                 let stripeRes = "Ajax Fail : " + stripeRes;
-                stripeResToDB(stripeRes);
-                if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
+                /*stripeResToDB(stripeRes);
+                if(formCountry === "TH"){invoiceIDToDB(stripeRes)}*/
             }
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
 
@@ -821,8 +854,8 @@ function requestToPay() {
 
             let stripeRes = xhr.responseText;
 
-            stripeResToDB(stripeRes);
-            if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
+            /*stripeResToDB(stripeRes);
+            if(formCountry === "TH"){invoiceIDToDB(stripeRes)}*/
             return res.message;
         });
     }else{ //submit without a charge
@@ -835,7 +868,7 @@ function requestToPay() {
         $(done).appendTo(".paymentResult");
         $(cusID).appendTo(".paymentResult");
         genLinkPDF();
-        sendMailToL4UTeam();
+        /*sendMailToL4UTeam();*/
         modalRespondAction('open', 'success');
         cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }

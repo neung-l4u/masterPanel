@@ -941,8 +941,6 @@ function deleteAddOn(id) {
 function addAddonCart(name, price, amount, special, product_id, checkID, checkClass){
 
   let country = $("#formCountry").find(":selected").text();
-  console.log(country);
-
   function calculateVAT(price) {
     // 1. Price before VAT
     let a = price;
@@ -955,9 +953,6 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
 
     return { a, b, c };
   }
-
-
-
 
   if (checkClass.length>0){
     let inputClass = $("."+checkClass);
@@ -973,14 +968,14 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
         let priceVAT = calculateVAT(price);
         price = priceVAT.c;
 
-      let initAddon = `${name} - $${price}${special}`;
-      if ((checkClass==="isFlyer")||(checkClass==="isUSFlyer")||(checkClass==="isYelpAdSpend")) {
-        initAddOnPrintedFlyers.val(initAddon);
-      }else if (checkClass==="isFridge") {
-        initAddOnFridgeMagnet.val(initAddon);
-      }else if (checkClass==="isYelpAdSpend") {
-        initAddOnYelpAdSpend.val(initAddon);
-      }
+        let initAddon = `${name} - ${price}${special}`;
+        if ((checkClass==="isFlyer")||(checkClass==="isUSFlyer")||(checkClass==="isYelpAdSpend")) {
+          initAddOnPrintedFlyers.val(initAddon);
+        }else if (checkClass==="isFridge") {
+          initAddOnFridgeMagnet.val(initAddon);
+        }else if (checkClass==="isYelpAdSpend") {
+          initAddOnYelpAdSpend.val(initAddon);
+        }
       }
     }
     else if(inputID.is(":not(:checked)")){
