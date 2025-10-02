@@ -57,61 +57,155 @@ function save() {
     console.log(payload);
 }//function save
 
-$(".domainbox").hide();
-$(".hostingbox").hide();
-$(".gloriabox").hide();
-$(".resOtherSystem").hide();
-$(".masOtherSystem").hide();
-$("#masSystem").hide();
-$("#resSystem").hide();
-$("#openingBox").hide();
-$("#deliveryBox").hide();
-$("#pickupAndDelivery").hide();
+// Toggle Handler
+// ---------------------------------------
+// UI Config (แก้ตรงนี้ได้ ไม่ต้องไล่แก้ในโค้ดด้านล่าง)
+// ---------------------------------------
+const UI = {
+  HIDE_AT_START: [
+    ".domainbox",
+    ".hostingbox",
+    ".gloriabox",
+    ".resOtherSystem",
+    ".masOtherSystem",
+    "#masSystem",
+    "#resSystem",
+    "#openingBox",
+    "#deliveryBox",
+    "#pickupAndDelivery"
+  ],
 
-//toggleBox("CHECKBOX", "DIV");
-toggleBox(".domainHave", ".domainbox");
-toggleBox(".hostingHave", ".hostingbox");
-toggleBox(".gloriahave", ".gloriabox");
-toggleBox(".orderOther", ".resOtherSystem");
-toggleBox(".bookOther", ".masOtherSystem");
-toggleBox("#chkPickup", "#pickupAndDelivery");
+  // mapping: checkbox -> target box
+  TOGGLES: [
+    { control: ".domainHave",  target: ".domainbox" },
+    { control: ".hostingHave", target: ".hostingbox" },
+    { control: ".gloriahave",  target: ".gloriabox" },
+    { control: ".orderOther",  target: ".resOtherSystem" },
+    { control: ".bookOther",   target: ".masOtherSystem" },
+    { control: "#chkPickup",   target: "#pickupAndDelivery" },
+  ],
 
-$("#chkPickup").on("change", function () {
-    if ($(this).is(":checked")) {
-        $("#7dayDeliChk, #customDeliChk").prop("disabled", false);
-        if (!$("#7dayDeliChk").is(":checked") && !$("#customDeliChk").is(":checked")) {
-            $("#7dayDeliChk").prop("checked", true);
-        }
-    } else {
-        $("#7dayDeliChk, #customDeliChk").prop("disabled", true).prop("checked", false);
-    }
-});
+  // radio groups: value -> { show, hide }
+  OPENING_SWITCH: {
+    openChkBox: { show: "#openingBox",  hide: "#openingForm" },
+    openChkDay: { show: "#openingForm", hide: "#openingBox"  },
+  },
 
+  DELIVERY_SWITCH: {
+    deliChkBox: { show: "#deliveryBox",  hide: "#deliveryForm" },
+    deliChkDay: { show: "#deliveryForm", hide: "#deliveryBox"  },
+  },
 
+  // ตัวเลือกที่ต้อง enable/disable ตาม #chkPickup
+  PICKUP_OPTIONS: ["#7dayDeliChk", "#customDeliChk"],
 
-function toggleBox(checkbox, box) {
-    $(checkbox).change(function(){
-        $(box).toggle(300);
-    });
+  // ความไวแอนิเมชัน (ms) — ปรับได้ตามชอบ
+  ANIM: 300,
+};
+
+// ---------------------------------------
+// Helpers
+// ---------------------------------------
+function hideAll(selectors = []) {
+  if (!Array.isArray(selectors) || selectors.length === 0) return;
+  $(selectors.join(",")).hide();
 }
 
-$("input[name$='inputOpeningChk'], input[name$='inputDeliveryChk']").change(function() {
-    const checkVal = $(this).val();
+function slideToggleTo($el, show, duration = 0) {
+  if (duration > 0) {
+    $el.stop(true, true)[show ? "slideDown" : "slideUp"](duration);
+  } else {
+    $el.toggle(show);
+  }
+}
 
-    if (checkVal === "openChkBox") {
-        $("#openingBox").toggle(300);
-        $("#openingForm").hide();
-    } else if (checkVal === "openChkDay") {
-        $("#openingBox").hide();
-        $("#openingForm").toggle(300);
-    } else if (checkVal === "deliChkBox") {
-        $("#deliveryBox").toggle(300);
-        $("#deliveryForm").hide();
-    } else if (checkVal === "deliChkDay") {
-        $("#deliveryBox").hide();
-        $("#deliveryForm").toggle(300);
+/**
+ * bindToggle: ผูก checkbox กับกล่องปลายทาง + apply state ตอนโหลด
+ * @param {string} controlSel - selector ของ checkbox
+ * @param {string} targetSel  - selector ของกล่องที่จะแสดง/ซ่อน
+ * @param {object} opts       - { invert?: boolean, duration?: number }
+ */
+function bindToggle(controlSel, targetSel, { invert = false, duration = 0 } = {}) {
+  const apply = () => {
+    const checked = $(controlSel).is(":checked");
+    const shouldShow = invert ? !checked : checked;
+    slideToggleTo($(targetSel), shouldShow, duration);
+  };
+
+  $(document).on("change", controlSel, apply);
+  apply(); // init state
+}
+
+/**
+ * bindSwapByValue: สำหรับ radio/select ที่แต่ละค่าแสดง/ซ่อนต่างกัน
+ * @param {string} inputSel - selector ของ radio group (เช่น name$='inputOpeningChk')
+ * @param {object} map      - value -> { show, hide }
+ * @param {number} duration
+ */
+function bindSwapByValue(inputSel, map, duration = 0) {
+  const apply = () => {
+    // รองรับทั้ง radio (ใช้ :checked) และ select (ใช้ .val())
+    const $inputs = $(inputSel);
+    const val = $inputs.is(":radio") ? $(`${inputSel}:checked`).val() : $inputs.val();
+    const cfg = map[val];
+    if (!cfg) return;
+
+    slideToggleTo($(cfg.show), true, duration);
+    slideToggleTo($(cfg.hide), false, duration);
+  };
+
+  $(document).on("change", inputSel, apply);
+  apply(); // init state
+}
+
+/**
+ * bindPickup: เปิด/ปิดตัวเลือกจัดส่งตามสถานะ #chkPickup
+ */
+function bindPickup(chkSel, optionSels, duration = 0) {
+  const apply = () => {
+    const on = $(chkSel).is(":checked");
+    const $options = $(optionSels.join(","));
+
+    $options.prop("disabled", !on);
+
+    if (!on) {
+      $options.prop("checked", false);
+    } else {
+      // ถ้ายังไม่มีอันไหนถูกเลือก บังคับติ๊กตัวแรก
+      const anyChecked = optionSels.some(sel => $(sel).is(":checked"));
+      if (!anyChecked) $(optionSels[0]).prop("checked", true);
     }
+
+    // กล่องใหญ่ของ pickup/delivery
+    slideToggleTo($("#pickupAndDelivery"), on, duration);
+  };
+
+  $(document).on("change", chkSel, apply);
+  apply(); // init state
+}
+
+// ---------------------------------------
+// Boot (เรียกครั้งเดียวจบ)
+// ---------------------------------------
+$(function () {
+  // ซ่อนของที่ไม่อยากให้โชว์ตั้งแต่ต้น
+  hideAll(UI.HIDE_AT_START);
+
+  // ผูก checkbox toggles ทั่วไป
+  UI.TOGGLES.forEach(({ control, target }) =>
+    bindToggle(control, target, { duration: UI.ANIM })
+  );
+
+  // เปิด/ปิดตัวเลือกได้ตามสถานะ pickup
+  bindPickup("#chkPickup", UI.PICKUP_OPTIONS, UI.ANIM);
+
+  // กลุ่ม Opening
+  bindSwapByValue("input[name$='inputOpeningChk']", UI.OPENING_SWITCH, UI.ANIM);
+
+  // กลุ่ม Delivery
+  bindSwapByValue("input[name$='inputDeliveryChk']", UI.DELIVERY_SWITCH, UI.ANIM);
 });
+
 
 const setHex = (param,box) => { //for set text in span follow color picker
     const theme1Hex = $("#theme1Hex");

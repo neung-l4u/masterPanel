@@ -151,6 +151,18 @@ $(".next").on("click", function () {
   jumpTop();
 });
 
+function goToStep(n) {
+  const max = $(".step").length;
+  n = Math.max(1, Math.min(max, n)); // กันเลขเพี้ยน
+  step = n;
+
+  $(".step").show().not(":eq(" + (n - 1) + ")").hide();
+
+  stepProgress(step);
+  hideButtons(step);
+  jumpTop(); 
+}
+
 // ON CLICK BACK BUTTON
 $(".back").on("click", function () {
   if (step > 1) {
@@ -175,8 +187,25 @@ function checkAcceptAgreement() {
 
 // ON CLICK Submit BUTTON
 cmdSubmit.on("click", async function () {
-  let paymentResponse = await requestToPay();
+  if ($("#emailExist").val() === "used") {
+    alert("This email is already in use. The form cannot be submitted with this email.");
+
+    // กระโดดกลับไป Step 2 แล้วโฟกัสช่องอีเมล
+    goToStep(2);
+    const $email = $("#email");        // เปลี่ยน selector ให้ตรงกับฟอร์มจริงถ้า id ไม่ใช่ #email
+    $email.focus().addClass("is-invalid");
+
+    // เลื่อนหน้าไปให้ช่องอีเมลอยู่กลางจอ (กันกรณีฟอร์มสูง)
+    setTimeout(() => {
+      $email[0]?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
+
+    return false; // กัน submit ต่อ
+  } else {
+    let paymentResponse = await requestToPay();
+  }
 });
+
 
 // CALCULATE PROGRESS BAR
 stepProgress = function (currentStep) {
@@ -1731,9 +1760,11 @@ $("#posSystem").change(function(){
 })
 
 function checkEmailUsed(email) {
+  if (email.length<5){ return false; }
   const checkEmail = email;
   const emailunUsed = $("#emailunUsed");
   const emailUsed = $("#emailUsed");
+  const emailExist = $("#emailExist");
 
   $.ajax({
     url: "assets/function/checkEmail.php",
@@ -1744,9 +1775,11 @@ function checkEmailUsed(email) {
     },
   }).done(function(res) {
     if (res.result === "used") {
+      emailExist.val(res.result);
       emailUsed.show();
       emailunUsed.hide();
     } else if (res.result === "unused") {
+      emailExist.val(res.result);
       emailunUsed.show();
       emailUsed.hide();
     }

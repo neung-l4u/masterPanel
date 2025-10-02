@@ -249,14 +249,21 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             />
                                             <small id="emailHelp" class="form-text text-muted">
                                                 e.g. mail@localforyou.com
-                                            </small>
-                                            <small id="emailunUsed" class="form-text badge rounded-pill bg-success px-3" style="display: none;">
-                                                This email is available.
+                                            </small><br>
+                                            <small id="emailunUsed" class="form-text badge rounded-pill bg-success px-3" style="display: none; text-transform: capitalize !important;">
+                                                THIS EMAIL IS AVAILABLE.
                                             </small>
                                             <small id="emailUsed" class="form-text  badge rounded-pill bg-danger px-3" style="display: none;">
-                                                This email is already in use.
+                                                THIS EMAIL IS ALREADY IN USE. THE FORM CANNOT BE SUBMITTED WITH THIS EMAIL.
                                             </small>
+                                            <input type="hidden" name="emailExist" id="emailExist" value="">
                                         </div>
+                                        <!-- <div class="col-1 d-flex flex-row pb-4">
+                                            <button class="btn text-primary" type="button" onclick="clearGoogle('mainEmail');"
+                                                    tabindex="-1">    
+                                                <i class="fa-regular fa-x"></i>
+                                            </button>
+                                        </div> -->
                                         <div class="col-1 d-flex flex-row pb-4">
                                             <button class="btn text-primary" type="button" onclick="clearGoogle('mainEmail');"
                                                     tabindex="-1">
