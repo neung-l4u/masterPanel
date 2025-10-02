@@ -71,6 +71,7 @@ const sectionCuisineSelector = $(".sectionCuisineSelector");
 const input_first_name = $("#first_name");
 const input_last_name = $("#last_name");
 const input_credit_full_name = $("#creditFullName");
+const input_quotation_name = $("#quotationName");
 const optionDelivery = $(".optionDelivery");
 const inputExpireDate = $("#creditExpireDate");
 const inputFormType = $('#formType');
@@ -123,10 +124,10 @@ $(document).ready(function () {
   $(".firstStepForm").show();
   $("#datePOSBox").hide();
   $("#posBoxDate").hide();
-
+  $(".quotationDetail").hide();
   $("#boxPOScheck").hide();
-
-
+  $("#forIndividual").hide();
+  $("#nameQuotation").hide();
 
 });//ready
 
@@ -304,6 +305,7 @@ $('#formCountry').change(function() {
   const inputCurrency = $('input[name="currency"]');
   const textGST = $(".textGST");
   const fakeNumber = $(".fakeNumber");
+  const fakeQuotationNumber = $(".fakeQuotationNumber");
   const countryTextOnly = $("#countryTextOnly");
   const bsbDirectDebit_div = $(".bsbDirectDebit_div");
   const routing_number_div = $(".routing_number_div");
@@ -311,6 +313,8 @@ $('#formCountry').change(function() {
   const domainHelpUS = $("#domainHelpUS");
   const iconDomain = $("#iconDomain");
   const iconPlay = $("#iconPlay");
+
+
   countryValue.val($(this).val());
   inputBusinessNumber.removeClass("is-invalid");
   resetForm();
@@ -456,13 +460,13 @@ $('#formCountry').change(function() {
       routing_number_div.show();
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local Eats Co., Ltd" to withdraw monthly payments as agreed from this Credit Card.');
-      getProductList("US");
+      getProductList("TH");
       domainHelpAU.show();
       domainHelpUS.hide();
       iconDomain.hide();
       iconPlay.hide();
       break;
-    case "TH":
+/*    case "TH":
       inputBusinessNumber.attr('required', true);
       labelBusinessNumber.html("TTT");
       classBusinessNumber.show();
@@ -483,7 +487,7 @@ $('#formCountry').change(function() {
       getProductList("TH");
       // domainHelpAU.show();
       // domainHelpUS.hide();
-      break;
+      break;*/
     default:
       labelBusinessNumber.html("ABN");
       inputBusinessNumber.attr('required', true);
@@ -510,7 +514,45 @@ $('#formCountry').change(function() {
 //set selected Payment Method
 function setMethod(arg) {
   const paymentMethod = $("#paymentMethod");
+  const countryCheck = $("#formCountry").find(":selected").text();
+  const forIndividual = $("#forIndividual");
+  const forLegalEntity = $("#forLegalEntity");
+
+  forLegalEntity.show();
+
+
   paymentMethod.val(arg);
+
+  if (paymentMethod.val()==="Invoice" && countryCheck === "Thailand"){
+    $(".quotationDetail").show();
+  }else{
+    $(".quotationDetail").hide();
+  }
+
+}
+
+function quolegalEntity(){
+  const checkLeg = $("input:radio[name='taxType']:checked").val();
+
+ if (checkLeg === "นิติบุคคล"){
+   $('#forIndividual').show();
+   $('#nameQuotation').hide();
+ }else if(checkLeg === "บุคคลธรรมดา"){
+   $('#forIndividual').show();
+   $('#nameQuotation').show();
+ }
+}
+
+
+
+function wantTax(){
+  const checkTax = $("input:checkbox[id='quotationYes']:checked").val();
+
+  if (checkTax === "yes"){
+    $("#quotationContact").show();
+  }else{
+    $("#quotationContact").hide();
+  }
 }
 
 //add string @google.com
@@ -672,14 +714,17 @@ function serviceOption(){
 function formatMobile(param,place) {
   let mobileFormatted = $("."+place);
   const shopNumber = $(".shopNumber");
+  const quotationPhone = $(".quotationPhone");
   if (param.length>=1){
     let newNum = countryCode[formData.formCountry]+parseInt(param, 10);
     mobileFormatted.html(newNum);
     mobileFormatted.val(newNum);
     if (place==="mobileFormatted"){
       formData.owner.mobile = newNum;
-    }else if(place==="shopNumberFormatted"){
+    }else if(place==="shopNumberFormatted") {
       shopNumber.val(newNum);
+    }else if(place==="quotationPhoneFormatted") {
+      quotationPhone.val(newNum);
     }
   }else {
     mobileFormatted.html("Formatted number will show here.");
@@ -895,6 +940,20 @@ function deleteAddOn(id) {
 ///add product to cart
 function addAddonCart(name, price, amount, special, product_id, checkID, checkClass){
 
+  let country = $("#formCountry").find(":selected").text();
+  function calculateVAT(price) {
+    // 1. Price before VAT
+    let a = price;
+
+    // 2. VAT 7%
+    let b = parseFloat((a * 0.07).toFixed(2));
+
+    // 3. Price after VAT
+    let c = parseFloat((a + b).toFixed(2));
+
+    return { a, b, c };
+  }
+
   if (checkClass.length>0){
     let inputClass = $("."+checkClass);
     let inputID = $("#"+checkID);
@@ -905,22 +964,32 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
       inputClass.prop( "checked", false );
       inputID.prop( "checked", true );
 
-      let initAddon = `${name} - $${price}${special}`;
-      if ((checkClass==="isFlyer")||(checkClass==="isUSFlyer")) {
-        initAddOnPrintedFlyers.val(initAddon);
-      }else if (checkClass==="isFridge") {
-        initAddOnFridgeMagnet.val(initAddon);
+      if (country === "Thailand") {
+        let priceVAT = calculateVAT(price);
+        price = priceVAT.c;
+
+        let initAddon = `${name} - ${price}${special}`;
+        if ((checkClass==="isFlyer")||(checkClass==="isUSFlyer")||(checkClass==="isYelpAdSpend")) {
+          initAddOnPrintedFlyers.val(initAddon);
+        }else if (checkClass==="isFridge") {
+          initAddOnFridgeMagnet.val(initAddon);
+        }else if (checkClass==="isYelpAdSpend") {
+          initAddOnYelpAdSpend.val(initAddon);
+        }
       }
     }
     else if(inputID.is(":not(:checked)")){
       inputClass.prop( "disabled", false );
       inputClass.prop( "checked", false );
-      if ((checkClass==="isFlyer")||(checkClass==="isUSFlyer")) {
+      if ((checkClass==="isFlyer")||(checkClass==="isUSFlyer")||(checkClass==="isYelpAdSpend")) {
         initAddOnPrintedFlyers.val("");
       }else if (checkClass==="isFridge") {
         initAddOnFridgeMagnet.val("");
+      }else if (checkClass==="isYelpAdSpend") {
+        initAddOnYelpAdSpend.val("");
       }
     }
+
 
   }
 
@@ -1323,9 +1392,11 @@ function setEmailShoppingCart(email){
   const emailShoppingCart = $(".mainEmail");
   const mainOwnerEmail = $(".mainOwnerEmail");
   const customerStripeEmail = $("#customerStripeEmail");
+  const emailQuotation = $("#quotationEmail");
   emailShoppingCart.val(email);
   mainOwnerEmail.html(email);
   customerStripeEmail.val(email);
+  emailQuotation.val(email);
   let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
   if (formTypeJsonKey==="Restaurant"){ $("#emailBooking").val(""); }
   if (formTypeJsonKey==="Massage"){ $("#emailShoppingCart").val(""); }
@@ -1405,6 +1476,7 @@ function setRestaurantName(val) {
 
 const setCreditFullName = () =>{
   let text = input_first_name.val()+" "+input_last_name.val();
+  input_quotation_name.val(text.trim());
   input_credit_full_name.val(text.trim());
 }
 
@@ -1614,9 +1686,11 @@ let chooseAddon = cart.add_on;
       });
     });
 
-  let gstMultiply = 0.1;
-  if(formData.formCountry !== "AU"){
-    gstMultiply = 0;
+  let gstMultiply = 0;
+  if(formData.formCountry === "AU"){
+    gstMultiply = 0.1;
+  }else if(formData.formCountry === "TH"){
+    gstMultiply = 0.07;
   }
 
   //รวมราคาจากช่อง amount ของ addon ทุกตัวใน selectedAddOnList
@@ -1633,9 +1707,17 @@ let chooseAddon = cart.add_on;
 
 
   //คำนวนราคารวม
-  Summary.SubTotal = (Summary.Product + Summary.Addon)-Summary.MainDiscount;
-  Summary.GST = Summary.SubTotal * gstMultiply;
-  Summary.GrandTotal = Summary.SubTotal +  Summary.GST;
+  if (formData.formCountry === "TH"){
+    let priceInclVAT = (Summary.Product + Summary.Addon) - Summary.MainDiscount;
+    Summary.SubTotal = priceInclVAT / (1 + gstMultiply); // แยกเป็นราคาก่อน VAT
+    Summary.GST = priceInclVAT - Summary.SubTotal;      // ส่วนต่างคือ VAT
+    Summary.GrandTotal = priceInclVAT;
+  }else{
+    Summary.SubTotal = (Summary.Product + Summary.Addon)-Summary.MainDiscount;
+    Summary.GST = Summary.SubTotal * gstMultiply;
+    Summary.GrandTotal = Summary.SubTotal +  Summary.GST;
+  }
+
 
   Price = {
     "SubTotal": Summary.SubTotal,

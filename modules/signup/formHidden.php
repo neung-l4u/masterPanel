@@ -114,4 +114,5 @@
         <option value="12 months">12 months</option>
     </select>
     <input type="hidden" id="logID" name="logID" value="">
+    <input type="hidden" id="quotationID" name="quotationID" value="">
 </div>
