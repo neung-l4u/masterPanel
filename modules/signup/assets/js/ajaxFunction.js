@@ -778,8 +778,8 @@ function requestToPay() {
     };
 
 
-    /*saveToDB(stripePayload);*/
-    /*if(formCountry === "TH"){saveTaxToDB(stripePayload)}*/
+    saveToDB(stripePayload);
+    if(formCountry === "TH"){saveTaxToDB(stripePayload)}
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -826,7 +826,7 @@ function requestToPay() {
                 setTimeout(function () {
                     genLinkPDF();
                     modalRespondAction('open', 'success');
-                    /*sendMailToL4UTeam();*/
+                    sendMailToL4UTeam();
                 }, 1000);
             } else {
                 result.empty();
@@ -835,8 +835,8 @@ function requestToPay() {
                 res.message = "Payment step is fail"
                 alert("Payment step is fail");
                 let stripeRes = "Ajax Fail : " + stripeRes;
-                /*stripeResToDB(stripeRes);
-                if(formCountry === "TH"){invoiceIDToDB(stripeRes)}*/
+                stripeResToDB(stripeRes);
+                if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
             }
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
 
@@ -854,13 +854,13 @@ function requestToPay() {
 
             let stripeRes = xhr.responseText;
 
-            /*stripeResToDB(stripeRes);
-            if(formCountry === "TH"){invoiceIDToDB(stripeRes)}*/
+            stripeResToDB(stripeRes);
+            if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
             return res.message;
         });
     }else{ //submit without a charge
         let stripeRes = "Test Mode - No Charge";
-        /*invoiceIDToDB(stripeRes)*/
+        invoiceIDToDB(stripeRes)
         stripeResToDB(stripeRes);
         result.empty();
         let done = `<span class="badge bg-success">No Charge</span>`;
@@ -868,7 +868,7 @@ function requestToPay() {
         $(done).appendTo(".paymentResult");
         $(cusID).appendTo(".paymentResult");
         genLinkPDF();
-        /*sendMailToL4UTeam();*/
+        sendMailToL4UTeam();
         modalRespondAction('open', 'success');
         cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
