@@ -983,6 +983,8 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
     return { a, b, c };
   }
 
+
+
   if (checkClass.length>0){
     let inputClass = $("."+checkClass);
     let inputID = $("#"+checkID);
@@ -1189,6 +1191,7 @@ function listProductItems() {
   const mainSelectedPackage = $("#mainSelectedPackage");
   const mainSelectedAddOn = $("#mainSelectedAddOn");
 
+
   applyCoupon();
   setShowPrice();
 
@@ -1221,6 +1224,24 @@ function listProductItems() {
 
   setShowPrice();
 ////////
+}
+
+function updateSetupFee(name, price, amount, special, product_id, allSetupFeeIds) {
+  // Step 1: ล้าง Setup Fee เก่าทั้งหมดออกจากตัวแปรตะกร้าสินค้า
+  // โดยการกรอง (filter) ให้เหลือแต่ item ที่ไม่ใช่ Setup Fee
+  cart.add_on = cart.add_on.filter(id => !allSetupFeeIds.includes(id));
+  bag.add_on = bag.add_on.filter(item => !allSetupFeeIds.includes(item.key));
+
+  // Step 2: ล้าง Setup Fee เก่าออกจาก Array ที่ใช้แสดงผล (addonForShow)
+  addonForShow = addonForShow.filter(htmlString => {
+    // ตรวจสอบว่าในข้อความ HTML มี product_id ของ Setup Fee อยู่หรือไม่
+    // ถ้าไม่มี ให้เก็บไว้, ถ้ามี ให้ลบทิ้ง
+    return !allSetupFeeIds.some(id => htmlString.includes(id));
+  });
+
+  // Step 3: เพิ่ม Setup Fee ตัวใหม่ที่เพิ่งเลือกเข้ามา
+  // โดยเรียกใช้ฟังก์ชันเดิม แต่ตอนนี้ตะกร้าว่างจาก Setup Fee อื่นๆ แล้ว
+  addAddonCart(name, price, amount, special, product_id, '', '');
 }
 
 const loadCouponObject = () => {
