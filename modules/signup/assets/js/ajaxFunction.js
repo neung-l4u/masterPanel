@@ -1220,7 +1220,7 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
 
     ////addon////
     // แยกด้วย " - "
-    let partsAddon = addonSelect.split(" - T$ ");
+    let partsAddon = addonSelect.split(" - T฿ ");
     // ชื่อสินค้า
     let nameAddon = partsAddon[0]; // "Social Media Set Up"
     // ราคา

@@ -21,7 +21,7 @@ $teams = [
 ];
 
 $managers = [
-    1 => "Neung Sorasak",
+    100 => "Aunyarut Aunyarut",
     13 => "Aom Kunrisa",
     16 => "Bee Kevalee",
     17 => "Boom Piyakorn",
@@ -32,7 +32,7 @@ $managers = [
 ];
 
 $managers2 = [
-    1 => "57653825",
+    100 => "82961537",
     13 => "57652194",
     16 => "61031099",
     17 => "57649130",
