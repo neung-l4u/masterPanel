@@ -71,8 +71,8 @@ $password = "Localeats#".date("Y");
                                     <th style="width:5%;" class="text-center"><i class="bi bi-hash"></i></th>
                                     <th><i class="bi bi-person-fill"></i> name</th>
                                     <th style="width:13%;" class="text-center"><i class="bi bi-star-fill"></i> role</th>
-                                    <th style="width:15%;" class="text-center"><i class="bi bi-envelope-fill"></i> mail</th>
-                                    <th style="width:10%;" class="text-center"><i class="bi bi-telephone-fill"></i> mob</th>
+                                    <th style="width:18%;" class="text-center"><i class="bi bi-envelope-fill"></i> mail</th>
+                                    <th style="width:12%;" class="text-center"><i class="bi bi-telephone-fill"></i> mob</th>
                                     <th style="width:8%;" class="text-center"><i class="bi bi-tools"></i></th>
                                 </tr>
                                 </thead>
@@ -365,7 +365,7 @@ $password = "Localeats#".date("Y");
         });
 
         reqAjax.done(function (res) {
-            reloadTable();
+            reloadTable_bs5();
         });
 
         reqAjax.fail(function (xhr, status, error) {
@@ -524,7 +524,7 @@ $password = "Localeats#".date("Y");
         reqAjax.done(function (res) {
             modalFormAction("close");
             console.log(res);
-            reloadTable();
+            reloadTable_bs5();
             resetForm();
             $("#formModal").modal('hide');
         });

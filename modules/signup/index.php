@@ -249,14 +249,21 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             />
                                             <small id="emailHelp" class="form-text text-muted">
                                                 e.g. mail@localforyou.com
-                                            </small>
-                                            <small id="emailunUsed" class="form-text badge rounded-pill bg-success px-3" style="display: none;">
-                                                This email is available.
+                                            </small><br>
+                                            <small id="emailunUsed" class="form-text badge rounded-pill bg-success px-3" style="display: none; text-transform: capitalize !important;">
+                                                THIS EMAIL IS AVAILABLE.
                                             </small>
                                             <small id="emailUsed" class="form-text  badge rounded-pill bg-danger px-3" style="display: none;">
-                                                This email is already in use.
+                                                THIS EMAIL IS ALREADY IN USE. THE FORM CANNOT BE SUBMITTED WITH THIS EMAIL.
                                             </small>
+                                            <input type="hidden" name="emailExist" id="emailExist" value="">
                                         </div>
+                                        <!-- <div class="col-1 d-flex flex-row pb-4">
+                                            <button class="btn text-primary" type="button" onclick="clearGoogle('mainEmail');"
+                                                    tabindex="-1">    
+                                                <i class="fa-regular fa-x"></i>
+                                            </button>
+                                        </div> -->
                                         <div class="col-1 d-flex flex-row pb-4">
                                             <button class="btn text-primary" type="button" onclick="clearGoogle('mainEmail');"
                                                     tabindex="-1">
@@ -1951,6 +1958,8 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                     Please change if you want it to be sent to another email.
                                                                 </small>
                                                             </div>
+
+
                                                             <div class="form-check form-switch pt-3 pb-5">
                                                                 <input class="form-check-input" type="checkbox" role="switch" id="selectPayByEmail">
                                                                 <label class="form-check-label text-danger" for="selectPayByEmail">
@@ -1965,7 +1974,164 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         <img style="width: 24rem" class="mb-2" src="assets/img/stripe-badge-transparent.png" alt="">
                                     </div>
 
+
+                                    <div class="quotationDetail">
+                                        <hr class="row mt-2">
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="form-check mb-2">
+                                                            <input class="form-check-input" type="checkbox" value="yes"
+                                                                   id="quotationYes" onclick="wantTax();" checked>
+                                                            <label class="form-check-label quotationYes" for="quotationYes">
+                                                                ต้องการใบกำกับภาษี
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div id="quotationContact">
+
+                                                    <div class="mb-2">
+                                                        <label class="form-label fw-bold">
+                                                            ข้อมูลใบกำกับภาษี (ไม่ใช่ ภ.พ.20)
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-check">
+                                                                <input type="radio" id="individual" class="form-check-input" name="taxType" value="นิติบุคคล" onclick="quolegalEntity();">
+                                                                <label class="form-check-label" for="individual" >นิติบุคคล</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <div class="form-check">
+                                                                <input type="radio" id="legalEntity" class="form-check-input" name="taxType" value="บุคคลธรรมดา" onclick="quolegalEntity();">
+                                                                <label class="form-check-label" for="legalEntity">บุคคลธรรมดา</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="forIndividual">
+                                                        <div class="row mb-2">
+                                                            <div class="col">
+                                                                <label for="quotationShopName">
+                                                                    <span>ชื่อบริษัท</span>
+                                                                </label>
+                                                                <input
+                                                                        type="text"
+                                                                        id="quotationShopName"
+                                                                        class="quotationShopName form-control"
+                                                                        name="quotationShopName"
+                                                                        placeholder="ร้าน แซ่บตำนัว"
+                                                                >
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-2" id="nameQuotation">
+                                                            <div class="col">
+                                                                <label for="quotationName">
+                                                                    <span>ชื่อ</span>
+                                                                </label>
+                                                                <input
+                                                                        type="text"
+                                                                        id="quotationName"
+                                                                        class="quotationName form-control"
+                                                                        name="quotationName"
+                                                                        placeholder="สมศัก นามสมมุติ"
+                                                                >
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-2">
+                                                            <div class="col">
+                                                                <label for="quotationPhone">
+                                                                    <span>เบอร์โทร</span>
+                                                                </label>
+                                                                <input
+                                                                        type="text"
+                                                                        id="quotationPhone"
+                                                                        class="form-control"
+                                                                        name="quotationPhone"
+                                                                        maxlength="12"
+                                                                        onkeyup="formatMobile(this.value,'quotationPhoneFormatted');"
+                                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                                        placeholder="เฉพาะตัวเลขเท่านั้น ตัวอย่าง 0895117447"
+                                                                >
+                                                                <small id="quotationNumberHelp" class="form-text text-muted">หมายเลขที่จัดรูปแบบจะอยู่ตรงนี้ <span class="fakeQuotationNumber">0508084722</span> ||
+                                                                </small>
+                                                                <small class="form-text text-primary quotationPhoneFormatted">Formatted number will
+                                                                    show here.</small>
+                                                                <input type="hidden" name="phone" id="shopPhoneQuotationFormatted" class="quotationPhoneFormatted quotationPhone">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-2">
+                                                            <div class="col">
+                                                                <label for="quotationEmail">
+                                                                    <span>อีเมล</span>
+                                                                </label>
+                                                                <input
+                                                                        type="email"
+                                                                        id="quotationEmail"
+                                                                        class="quotationEmail form-control"
+                                                                        name="quotationEmail"
+                                                                        maxlength="80"
+                                                                        onchange="ownerEmail(this.value);"
+                                                                        onkeyup="setEmailShoppingCart(this.value);"
+                                                                        onblur="checkEmailUsed(this.value);"
+                                                                        autocomplete="off"
+                                                                        placeholder="mail@localforyou.com"
+                                                                >
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-2">
+                                                            <div class="col">
+                                                                <label for="quotationAddress">
+                                                                    <span>ที่อยู่</span>
+                                                                </label>
+                                                                <textarea
+                                                                        class="form-control w-100"
+                                                                        id="quotationAddress"
+                                                                        rows="3"
+                                                                        name="quotationAddress"
+
+                                                                ></textarea>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-2">
+                                                            <div class="col">
+                                                                <label for="quotationTaxNumber">
+                                                                    <span>เลขประจำตัวผู้เสียภาษี</span>
+                                                                </label>
+                                                                <input
+                                                                        type="text"
+                                                                        id="quotationTaxNumber"
+                                                                        class="quotationTaxNumber form-control"
+                                                                        name="quotationTaxNumber"
+                                                                >
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
                                     <hr class="row mt-2">
+
 
                                     <div id="paymentAgreement"
                                          class="d-flex flex-column align-items-center gap-2 justify-content-evenly">

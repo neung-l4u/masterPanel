@@ -33,6 +33,9 @@ $delivery = $row['deliveryCustom'] == 0 ? explode('__', $row['pickupAndDelivery'
 $row['colorTheme1'] = $row['colorTheme1'] ?: '#000000';
 $row['colorTheme2'] = $row['colorTheme2'] ?: '#FFFFFF';
 $row['colorTheme3'] = $row['colorTheme3'] ?: '#FFFFFF';
+
+$row['orderURL'] = htmlspecialchars($row['orderURL'] ?? '', ENT_QUOTES, 'UTF-8'); 
+$row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8');  
 ?>
 
 <!-- Google tag (gtag.js) -->
@@ -630,84 +633,8 @@ $socials = [
     const hostingBox = $("#hostingBox");
 
     $(()=>{ //ready
-        loadProjectData();
         showSystem();
     }); //ready
-
-    const loadProjectData = () => {
-        let payload = {
-            mode : "loadArray",
-            projectID : projectID
-        };
-
-        const callAjax = $.ajax({
-            url: "../models/loadArray.php",
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: payload
-        });
-
-        callAjax.done(function(res) {
-            console.log("loadProjectData = ",res)
-            res.domainHave === 1 ? domainBox.show() :  domainBox.hide();
-            res.hostingHave === 1 ? hostingBox.show() :  hostingBox.hide();
-            res.masOtherSystem === 1 ? inputMasOtherSystem.show() :  inputMasOtherSystem.hide();
-            if (res.openingCustom === 1) {
-                $("#openingBox").show();
-                $("#openingForm").hide();
-                $("#customOpenChk").prop("checked", true);
-                $("#7dayOpenChk").prop("checked", false);
-                $(".day-toggle").prop("checked", false);
-                $("#sunday-open").val("");
-                $("#monday-open").val("");
-                $("#tuesday-open").val("");
-                $("#wednesday-open").val("");
-                $("#thursday-open").val("");
-                $("#friday-open").val("");
-                $("#saturday-open").val("");
-            } else  {
-                $("#openingBox").hide();
-                $("#openingForm").show();
-                $("#customOpenChk").prop("checked", false);
-                $("#7dayOpenChk").prop("checked", true);
-                $("#openingCustom").val("");
-            }
-            if (res.pickupAndDelivery !== null) {
-                $("#chkPickup").prop("checked", true);
-                $("#pickupAndDelivery").show();
-                $("#7dayDeliChk, #customDeliChk").prop("disabled", false);
-                if (res.deliveryCustom === 1) {
-                    $("#deliveryBox").show();
-                    $("#deliveryForm").hide();
-                    $("#customDeliChk").prop("checked", true);
-                    $("#7dayDeliChk").prop("checked", false);
-                    $(".day-toggle").prop("checked", false);
-                    $("#sunday-deli").val("");
-                    $("#monday-deli").val("");
-                    $("#tuesday-deli").val("");
-                    $("#wednesday-deli").val("");
-                    $("#thursday-deli").val("");
-                    $("#friday-deli").val("");
-                    $("#saturday-deli").val("");
-                } else  {
-                    $("#deliveryBox").hide();
-                    $("#deliveryForm").show();
-
-                    $("#customDeliChk").prop("checked", false);
-                    $("#7dayDeliChk").prop("checked", true);
-                    $("#deliveryCustom").val("");
-                }
-            }
-        });
-
-        callAjax.fail(function(xhr, status, error) {
-            console.log("ajax fail!!");
-            console.log(status + ': ' + error);
-            return false;
-        });
-    }//const loadProjectData
 
     $("#cmdSubmit").click(function () {
         let payload = {

@@ -4,307 +4,382 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-LGKDYHL23T');
 </script>
+
 <?php
 global $db, $date;
 $timestamp = time();
 $coins["l4u"] = $_SESSION['L4UCoin'];
 $coins["ceo"] = $_SESSION['CEOCoin'];
 $loginID = $_SESSION['id'];
-
 ?>
 
-<!-- Content Header (Page header) -->
-<div class="content-header">
+<!-- ===== Content Header ===== -->
+<div class="content-header pb-0">
     <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h4 class="m-0">
-                    <svg class="nav-icon mr-2" height="1.5em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 512 512"><path d="M96 0C60.7 0 32 28.7 32 64l0 384c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-384c0-35.3-28.7-64-64-64L96 0zM208 288l64 0c44.2 0 80 35.8 80 80c0 8.8-7.2 16-16 16l-192 0c-8.8 0-16-7.2-16-16c0-44.2 35.8-80 80-80zm-32-96a64 64 0 1 1 128 0 64 64 0 1 1 -128 0zM512 80c0-8.8-7.2-16-16-16s-16 7.2-16 16l0 64c0 8.8 7.2 16 16 16s16-7.2 16-16l0-64zM496 192c-8.8 0-16 7.2-16 16l0 64c0 8.8 7.2 16 16 16s16-7.2 16-16l0-64c0-8.8-7.2-16-16-16zm16 144c0-8.8-7.2-16-16-16s-16 7.2-16 16l0 64c0 8.8 7.2 16 16 16s16-7.2 16-16l0-64z" /></svg>
-                    My Profile
-                </h4>
-            </div><!-- /.col -->
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="main.php?p=home">Home</a></li>
-                    <li class="breadcrumb-item active"><a href="main.php?p=myProfile">My Profile</a></li>
-                </ol>
-            </div><!-- /.col -->
-        </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
+        <div class="row align-items-center">
+            <div class="col-12">
+                <div class="profile-hero rounded-3 mb-3 p-4 text-white d-flex align-items-center gap-3">
+                    <div class="avatar-wrap me-3">
+                        <img class="profile-user-img img-fluid rounded-circle shadow"
+                             src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>"
+                             alt="User profile picture"
+                             style="width:84px;height:84px;object-fit:cover;">
+                    </div>
+                    <div class="flex-grow-1">
+                        <h3 class="m-0 fw-semibold"><?php echo $_SESSION['name']; ?></h3>
+                        <div class="text-white-50 small"><?php echo $_SESSION['levelName']; ?></div>
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+              <span class="coin-chip">
+                <i class="fas fa-coins me-1"></i> L4U:
+                <b><?php echo number_format($coins['l4u'],2); ?></b>
+              </span>
+                            <span class="coin-chip">
+                <i class="fas fa-coins me-1"></i> CEO:
+                <b><?php echo number_format($coins['ceo'],2); ?></b>
+              </span>
+                        </div>
+                    </div>
+                    <div class="ms-auto d-none d-md-block">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a class="text-white" href="main.php?p=home">Home</a></li>
+                            <li class="breadcrumb-item text-white-50 active" aria-current="page">My Profile</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<!-- /.content-header -->
 
-<!-- Main content -->
+<!-- ===== Main content ===== -->
 <div class="content">
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-3">
-
-                    <!-- Profile Image -->
-                    <div class="card card-primary card-outline">
-                        <div class="card-body box-profile">
-                            <div class="text-center">
-                                <img class="profile-user-img img-fluid img-circle"
+                <!-- Left -->
+                <div class="col-lg-4 col-xl-3 mb-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <img class="rounded-circle me-3"
                                      src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>"
-                                     alt="User profile picture">
+                                     alt="User profile picture"
+                                     style="width:56px;height:56px;object-fit:cover;">
+                                <div>
+                                    <div class="fw-semibold"><?php echo $_SESSION['name']; ?></div>
+                                    <div class="text-muted small"><?php echo $_SESSION['levelName']; ?></div>
+                                </div>
                             </div>
 
-                            <h3 class="profile-username text-center"><?php echo $_SESSION['name']; ?></h3>
+                            <hr>
 
-                            <p class="text-muted text-center"><?php echo $_SESSION['levelName']; ?></p>
-
-                            <ul class="list-group list-group-unbordered mb-3">
-                                <li class="list-group-item">
-                                    <b><i class="fas fa-coins"></i> L4U</b> <a class="float-right"><?php echo number_format($coins['l4u'],2); ?></a>
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <span class="text-muted small d-block"><i class="fas fa-tag me-1"></i> Name</span>
+                                    <span><?php echo $_SESSION['name']; ?></span>
                                 </li>
-                                <li class="list-group-item">
-                                    <b><i class="fas fa-coins"></i> CEO</b> <a class="float-right"><?php echo number_format($coins['ceo'],2); ?></a>
+                                <li class="mb-2">
+                                    <span class="text-muted small d-block"><i class="fas fa-mobile me-1"></i> Mobile</span>
+                                    <span><?php echo $_SESSION['phone']; ?></span>
+                                </li>
+                                <li class="mb-2">
+                                    <span class="text-muted small d-block"><i class="fas fa-star me-1"></i> Level</span>
+                                    <span class="badge bg-primary-subtle text-primary"><?php echo $_SESSION['levelName']; ?></span>
                                 </li>
                             </ul>
 
-                            <a href="#" class="btn btn-primary btn-block disabled"><b>Convert Coin</b> (soon)</a>
+                            <div class="mt-3 p-3 rounded-3 bg-warning-subtle">
+                                <?php
+                                $salt = "L4U";
+                                $passwordAddSalt = $salt . $_SESSION['password'];
+                                $data["passwordHash"] = md5($passwordAddSalt);
+                                $isDefault = in_array($data["passwordHash"], ["e30d60a4848903ed23c42a8d45eccdba","35d3f3a0f752f01118028849afdf3c08"]);
+                                ?>
+                                <strong class="d-flex align-items-center gap-2">
+                                    <i class="far fa-file-alt"></i>
+                                    Notes
+                                    <?php if($isDefault){ ?>
+                                        <span class="badge bg-warning text-dark">Important</span>
+                                    <?php } ?>
+                                </strong>
+                                <p class="mb-0 mt-1 small">
+                                    <?php if($isDefault){ ?>
+                                        <span class="text-danger">Your password is still the standard password. Please change it as soon as possible.</span>
+                                    <?php } else { ?>
+                                        <span class="text-success">You have changed your password. Your account is secure.</span>
+                                    <?php } ?>
+                                </p>
+                            </div>
+
+                            <a href="#" class="btn btn-primary w-100 mt-3 disabled">
+                                <i class="fas fa-exchange-alt me-1"></i> Convert Coin (soon)
+                            </a>
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
-
-                    <!-- About Me Box -->
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">About Me</h3>
-                        </div>
-                        <!-- /.card-header -->
-                        <div class="card-body">
-                            <strong><i class="fas fa-tag mr-1"></i> Name</strong>
-
-                            <p class="text-muted">
-                                <?php echo $_SESSION['name']; ?>
-                            </p>
-
-                            <hr>
-
-                            <strong><i class="fas fa-mobile mr-1"></i> Mobile</strong>
-
-                            <p class="text-muted">
-                                <?php echo $_SESSION['phone']; ?>
-                            </p>
-
-                            <hr>
-
-                            <strong><i class="fas fa-star mr-1"></i> Level</strong>
-
-                            <p class="text-muted">
-                                <span class="tag tag-danger">
-                                    <?php echo $_SESSION['levelName']; ?>
-                                </span>
-                            </p>
-
-                            <hr>
-                            <?php
-                            $salt = "L4U";
-                            $passwordAddSalt = $salt . $_SESSION['password'];
-                            $data["passwordHash"] = md5($passwordAddSalt);
-                            ?>
-                            <strong><i class="far fa-file-alt mr-1"></i> Notes <span class="badge badge-warning">Important</span> </strong>
-
-                            <p class="text-muted">
-                                <?php if(($data["passwordHash"] == "e30d60a4848903ed23c42a8d45eccdba") or ($data["passwordHash"] == "35d3f3a0f752f01118028849afdf3c08")){ ?>
-                                    <span class="text-danger">Your password is still the standard password set by the system. For security reasons, please change your password as soon as possible.</span>
-                                <?php }else{ ?>
-                                    <span class="text-success">You have changed your password. Your account is secure.</span>
-                                <?php }//else ?>
-                            </p>
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- /.card -->
                 </div>
-                <!-- /.col -->
-                <div class="col-md-9">
-                    <div class="card">
-                        <div class="card-header p-2">
+                <!-- /.Left -->
+
+                <!-- Right -->
+                <div class="col-lg-8 col-xl-9">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
                             <?php
                             $logs = $db->query('SELECT CL.`id`, CT.`name` AS "coin", CL.`ownerID`, CL.`amount`, ST.`sNickName` AS "nick",ST.`sName` AS "from", ST.`sPic` AS "pic", CL.`reason`, CL.`giveOn`, CL.`lastUpdate`, CL.`activityID`, CA.`aName` 
-                                                        FROM `CoinLogs` CL, `staffs` ST, `CoinType` CT, `CoinActivities` CA 
-                                                        WHERE CL.`ownerID`= ? AND CL.`status` = ? AND CL.`giveBy` = ST.`sID` AND CL.`coinType` = `CT`.`id` AND CL.`activityID` = CA.`aID`
-                                                        ORDER BY CL.`giveOn` DESC;'
-                                , $loginID, 1)->fetchAll();
+                                    FROM `CoinLogs` CL, `staffs` ST, `CoinType` CT, `CoinActivities` CA 
+                                    WHERE CL.`ownerID`= ? AND CL.`status` = ? AND CL.`giveBy` = ST.`sID` AND CL.`coinType` = `CT`.`id` AND CL.`activityID` = CA.`aID`
+                                    ORDER BY CL.`giveOn` DESC;', $loginID, 1)->fetchAll();
                             ?>
-                            <ul class="nav nav-pills">
+                            <ul class="nav nav-pills" id="profileTabs">
                                 <li class="nav-item">
                                     <a class="nav-link active" href="#activity" data-toggle="tab">
-                                        <i class="fas fa-list"></i> Activity (<?php echo number_format(count($logs)); ?> items)
+                                        <i class="fas fa-list me-1"></i> Activity (<?php echo number_format(count($logs)); ?>)
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#settings" data-toggle="tab">
-                                        <i class="fas fa-edit"></i> Settings
+                                        <i class="fas fa-user-cog me-1"></i> Settings
                                     </a>
                                 </li>
                             </ul>
-                        </div><!-- /.card-header -->
+                        </div>
+
                         <div class="card-body">
                             <div class="tab-content">
-                                <div class="active tab-pane" id="activity" style="max-height: 700px; overflow-y: scroll;">
-                                    <?php
-                                    if (count($logs)>=1) {
-                                        $i = count($logs);
-                                        foreach ($logs as $row) {
-                                            ?>
-                                    <!-- Post -->
-                                    <div class="post">
-                                        <div class="user-block">
-                                            <img class="img-circle img-bordered-sm" src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>" alt="user image">
-                                            <span class="username">
-                                              <a href="#">item <?php echo $i; ?>: <?php echo $row['aName']; ?></a>
-                                              <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                                            </span>
-                                            <span class="description">by <?php echo $row['nick']; ?> - <?php echo showDate($row['giveOn']); ?></span>
-                                        </div>
-                                        <!-- /.user-block -->
-                                        <p class="text-muted">
-                                            <?php echo $row['reason']; ?>
-                                        </p>
-
+                                <!-- Activity -->
+                                <div class="tab-pane fade show active" id="activity">
+                                    <div class="activity-scroll pe-1" style="max-height:680px;overflow:auto;">
+                                        <?php if(count($logs)>=1){ $i=count($logs); foreach($logs as $row){ ?>
+                                            <div class="activity-item d-flex align-items-start py-3 border-bottom">
+                                                <img class="rounded-circle me-3"
+                                                     src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>"
+                                                     alt="user"
+                                                     style="width:40px;height:40px;object-fit:cover;">
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <a class="fw-semibold text-decoration-none" href="#">
+                                                            <?php echo htmlspecialchars($row['aName']); ?>
+                                                        </a>
+                                                        <small class="text-muted">#<?php echo $i; ?></small>
+                                                    </div>
+                                                    <div class="text-muted small mb-1">
+                                                        by <?php echo htmlspecialchars($row['nick']); ?> · <?php echo showDate($row['giveOn']); ?>
+                                                    </div>
+                                                    <div class="text-secondary">
+                                                        <?php echo nl2br(htmlspecialchars($row['reason'])); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <?php $i--; } } else { ?>
+                                            <div class="text-center text-muted py-5">
+                                                <i class="far fa-folder-open fa-2x d-block mb-2"></i>
+                                                No activity yet.
+                                            </div>
+                                        <?php } ?>
                                     </div>
-                                    <!-- /.post -->
-                                            <?php
-                                            $i--;
-                                        }//foreach
-                                    }//if
-                                    ?>
-
                                 </div>
-                                <!-- /.tab-pane -->
+                                <!-- /.Activity -->
 
-                                <div class="tab-pane" id="settings">
-                                    <form class="form-horizontal">
-                                        <div class="form-group row">
-                                            <label for="inputName" class="col-sm-2 col-form-label">Name</label>
-                                            <div class="col-sm-10">
-                                                <?php echo $_SESSION['name']; ?>
+                                <!-- Settings -->
+                                <div class="tab-pane fade" id="settings">
+                                    <form class="form-horizontal" onsubmit="return false;">
+                                        <div class="row g-3">
+                                            <div class="col-sm-6">
+                                                <label class="form-label">Name</label>
+                                                <div class="form-control-plaintext"><?php echo $_SESSION['name']; ?></div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
-                                            <div class="col-sm-10">
-                                                <?php echo $_SESSION['email']; ?>
+                                            <div class="col-sm-6">
+                                                <label class="form-label">Email</label>
+                                                <div class="form-control-plaintext"><?php echo $_SESSION['email']; ?></div>
                                             </div>
-                                        </div>
-                                        
-                                        <div class="form-group row">
-                                            <label for="currentPassword" class="col-sm-2 col-form-label">Current Password</label>
-                                            <div class="col-sm-10 input-group" id="show_hide_password">
-                                                <input class="form-control pass" id="currentPassword" type="password" disabled value="<?php echo $_SESSION['password'];?>">
-                                                <div class="input-group-append">
-                                                    <i onclick="showHidePassword();" class="eyeIcon input-group-text fa fa-eye-slash" aria-hidden="true"></i>
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        <div class="form-group row">
-                                            <label for="inputNewPassword" class="col-sm-2 col-form-label">New Password</label>
-                                            <div class="col-sm-10 input-group">
-                                                <input type="password" autocomplete="new-password" class="form-control pass" id="inputNewPassword" placeholder="New Password">
-                                                <div class="input-group-append">
-                                                    <i onclick="showHidePassword();" class="eyeIcon input-group-text fa fa-eye-slash" aria-hidden="true"></i>
+                                            <div class="col-12">
+                                                <hr class="my-2">
+                                                <div class="text-muted small mb-2">Change Password</div>
+                                            </div>
+
+                                            <!-- Current Password (แสดงจริง + toggle ได้) -->
+                                            <div class="col-12">
+                                                <label for="currentPassword" class="form-label">Current Password</label>
+                                                <div class="input-group">
+                                                    <input class="form-control pass" id="currentPassword" type="password" disabled
+                                                           value="<?php echo $_SESSION['password'];?>">
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                            data-toggle="password" data-target="#currentPassword"
+                                                            aria-pressed="false" aria-label="Toggle password visibility">
+                                                        <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                    </button>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="inputRetype" class="col-sm-2 col-form-label">Retype</label>
-                                            <div class="col-sm-10 input-group">
-                                                <input type="password" autocomplete="new-password" class="form-control pass" id="inputRetype" placeholder="Retype password">
-                                                <div class="input-group-append">
-                                                    <i onclick="showHidePassword();" class="eyeIcon input-group-text fa fa-eye-slash" aria-hidden="true"></i>
+
+                                            <div class="col-md-6">
+                                                <label for="inputNewPassword" class="form-label">New Password</label>
+                                                <div class="input-group">
+                                                    <input type="password" autocomplete="new-password" class="form-control pass" id="inputNewPassword" placeholder="New Password">
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                            data-toggle="password" data-target="#inputNewPassword"
+                                                            aria-pressed="false" aria-label="Toggle password visibility">
+                                                        <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="form-text" id="pwStrength" aria-live="polite"></div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label for="inputRetype" class="form-label">Retype New Password</label>
+                                                <div class="input-group">
+                                                    <input type="password" autocomplete="new-password" class="form-control pass" id="inputRetype" placeholder="Retype password">
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                            data-toggle="password" data-target="#inputRetype"
+                                                            aria-pressed="false" aria-label="Toggle password visibility">
+                                                        <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                    </button>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <div class="offset-sm-2 col-sm-10">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox"> I agree, my password is encrypted. If I forget my password, I can only reset it to a new one.
+
+                                            <div class="col-12">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="ackConfirm">
+                                                    <label class="form-check-label" for="ackConfirm">
+                                                        I agree my password is encrypted. If I forget it, I can only reset to a new one.
                                                     </label>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <div class="offset-sm-2 col-sm-10">
-                                                <button type="button" class="btn btn-danger" onclick="cmdSubmit();">Save Change</button>
+
+                                            <div class="col-12">
+                                                <button type="button" class="btn btn-danger" onclick="cmdSubmit();" id="btnSave">Save Change</button>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
-                                <!-- /.tab-pane -->
+                                <!-- /.Settings -->
                             </div>
-                            <!-- /.tab-content -->
-                        </div><!-- /.card-body -->
+                        </div>
                     </div>
-                    <!-- /.card -->
                 </div>
-                <!-- /.col -->
+                <!-- /.Right -->
             </div>
-            <!-- /.row -->
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
 </div>
 <!-- /.content -->
+
+<style>
+    .profile-hero{
+        background-color:#0d6efd;
+    }
+    .coin-chip{
+        display:inline-flex; align-items:center; gap:.25rem;
+        background:#ffffff22; color:#fff;
+        border:1px solid rgba(255,255,255,.25);
+        padding:.25rem .6rem; border-radius:999px; font-size:.9rem;
+    }
+    .activity-item:last-child{ border-bottom:0; }
+    .activity-scroll{ scrollbar-width:thin; }
+    .activity-scroll::-webkit-scrollbar{ height:8px; width:8px; }
+    .activity-scroll::-webkit-scrollbar-thumb{ background:#d0d5dd; border-radius:8px; }
+</style>
+
 <script>
-    const showHidePassword = () => {
-        if($('#currentPassword').attr("type") === "text"){
-            $('.pass').attr('type', 'password');
-            $('.eyeIcon').addClass( "fa-eye-slash" );
-            $('.eyeIcon').removeClass( "fa-eye" );
-        }else if($('#currentPassword').attr("type") === "password"){
-            $('.pass').attr('type', 'text');
-            $('.eyeIcon').removeClass( "fa-eye-slash" );
-            $('.eyeIcon').addClass( "fa-eye" );
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-toggle="password"]');
+        if (!btn) return;
+
+        const targetSelector = btn.getAttribute('data-target');
+        if (!targetSelector) return;
+
+        const input = document.querySelector(targetSelector);
+        if (!input) return;
+
+        // สลับ type
+        input.type = (input.type === 'password') ? 'text' : 'password';
+
+        // สลับไอคอน (รองรับทั้ง fa และ fas)
+        const icon = btn.querySelector('i');
+        if (icon) {
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+            icon.classList.toggle('fas'); // เผื่อหน้าใช้ fas
+            icon.classList.add('fa');     // เผื่อหน้าใช้ fa
         }
+
+        // ARIA state
+        const pressed = btn.getAttribute('aria-pressed') === 'true';
+        btn.setAttribute('aria-pressed', (!pressed).toString());
+    });
+</script>
+<!-- ===== Scripts ===== -->
+<script>
+
+    // เบา ๆ: password strength hint
+    $('#inputNewPassword').on('input', function(){
+        const v = $(this).val();
+        let score = 0;
+        if(v.length >= 8) score++;
+        if(/[A-Z]/.test(v)) score++;
+        if(/[a-z]/.test(v)) score++;
+        if(/[0-9]/.test(v)) score++;
+        if(/[^A-Za-z0-9]/.test(v)) score++;
+        const map = ['Very weak','Weak','Okay','Good','Strong','Excellent'];
+        $('#pwStrength').text(v ? 'Strength: ' + map[score] : '');
+    });
+
+    // Submit + validations
+    const cmdSubmit = () => {
+        const newPassword = $('#inputNewPassword').val().trim();
+        const retypePassword = $('#inputRetype').val().trim();
+        const ack = $('#ackConfirm').is(':checked');
+
+        if(!newPassword || !retypePassword){
+            return toast('Please fill both password fields.','warning');
+        }
+        if(newPassword !== retypePassword){
+            return toast('Passwords do not match.','danger');
+        }
+        if(newPassword.length < 8){
+            return toast('Password must be at least 8 characters.','warning');
+        }
+        if(!ack){
+            return toast('Please confirm the acknowledgement.','info');
+        }
+
+        const payload = { act: "changePassword", password: newPassword, token: Math.random() };
+
+        $.ajax({
+            url: "assets/php/actionStaffs.php",
+            method: "POST",
+            dataType: "json",
+            data: payload,
+        }).done(function(res){
+            toast('Password changed successfully.','success');
+            setTimeout(()=>location.reload(), 700);
+        }).fail(function(xhr, status, error){
+            console.log(status + ": " + error);
+            toast('Request failed. Please try again.','danger');
+        });
     };
 
-    const cmdSubmit = () => {
-        const newPassword = $('#inputNewPassword').val();
-        const retypePassword = $('#inputRetype').val();
-
-        if(newPassword !== retypePassword){
-            alert('Passwords do not match.');
-        }else {
-            let payload = {
-                act: "changePassword",
-                password: newPassword,
-                token: Math.random()
-            };
-
-            console.log(payload);
-
-            const reqAjax = $.ajax({
-                url: "assets/php/actionStaffs.php",
-                method: "POST",
-                async: false,
-                cache: false,
-                dataType: "json",
-                data: payload,
-            });
-
-            reqAjax.done(function (res) {
-                console.log(res);
-                location.reload();
-            });
-
-            reqAjax.fail(function (xhr, status, error) {
-                console.log("ajax request fail!!");
-                console.log(status + ": " + error);
-            });
-        }//else
-    }//cmdSubmit
+    // Simple toast
+    const toast = (msg,type='primary')=>{
+        const id = 'to_'+Math.random().toString(36).slice(2);
+        const $t = $(`
+      <div id="${id}" class="position-fixed top-0 end-0 p-3" style="z-index:1080;">
+        <div class="toast align-items-center text-bg-${type} border-0 show" role="alert">
+          <div class="d-flex">
+            <div class="toast-body">${msg}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>
+        </div>
+      </div>
+    `);
+        $('body').append($t);
+        setTimeout(()=>{$t.remove();}, 2600);
+    };
 </script>
+
 <?php
 function showDate($data){
-    return date( "d/m/Y (H:i)", strtotime($data));
+    return date("d/m/Y (H:i)", strtotime($data));
 }
 ?>

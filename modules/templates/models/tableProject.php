@@ -18,7 +18,7 @@ $iconTemplateGray = '<i class="bi bi-file-earmark-richtext action_icon text-mute
 $param['ownerID'] = $_SESSION['id'];
 
     $ownerID = $param['ownerID'];
-    $showAll = in_array($ownerID, [1, 14, 60]);
+    $showAll = in_array($ownerID, [1, 14, 60, 100, 27, 48]);
     $where = '';
 
     $sql = 'SELECT pj.saveFlag, pj.projectID AS id, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, 

@@ -10,6 +10,7 @@ const settings = {
   url_authentication: "assets/API/authentication.php",
   url_logs: "assets/function/logs.php",
   url_saveToDB: "assets/function/saveToDB.php",
+  url_saveQuestionToDB: "assets/function/saveQuotationToDB.php",
   Payment_Module: {
     CreditCard: true,
     DirectDebit: true,

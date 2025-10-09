@@ -7,21 +7,21 @@ function getProductList(country) {
     if (formData.formCountry === ""){
         $("#warn_form_country").show();
         return false;
-    }else { $("#warn_form_country").hide(); }
+    }else { $("#warn_form_country").hide(); }//ถ้าไม่เลือก span (Please select !!)จะโผล่
 
     if (formData.formType === ""){
         $("#warn_form_type").show();
         return false;
-    }else { $("#warn_form_type").hide(); }
+    }else { $("#warn_form_type").hide(); }//ถ้าไม่เลือก span (Please select !!)จะโผล่
     //////////////////
 
     let price_id = undefined;
     let product_id = undefined;
-    let formType = formData.formType;
-    let formCountry = formData.formCountry;
-    let formTypeJsonKey = typeJsonKey(formType);
-    let contractPeriod = $("input[name='contractPeriod']:checked").val();
-    setPeriodSelectBox(contractPeriod);
+    let formType = formData.formType;//รับค่าจากไฟล์ global_data.js Restaurant ,Massage
+    let formCountry = formData.formCountry;//รับค่าจากไฟล์ global_data.js AU ,US ,NZ ,UK ,CA ,TH
+    let formTypeJsonKey = typeJsonKey(formType);// เอามา return กลับว่าคำว่า Thai Massage ไหมถ้าใช่จะ return Massage ถ้าไม่ return Restaurant
+    let contractPeriod = $("input[name='contractPeriod']:checked").val();//รับค่า 0 ,3 ,12
+    setPeriodSelectBox(contractPeriod);//0 = No contract ,3 =
     const loadingAjax = $("#loadingAjax");
     const loadGif = "<img alt='Loading' src='assets/img/loading.gif'>";
     loadingAjax.html(loadGif);
@@ -119,7 +119,7 @@ function getProductList(country) {
                     brBundle.status = true;
                 }
 
-                    return `${br}<div class="form-check">
+                return `${br}<div class="form-check">
                         <input 
                             class="form-check-input" 
                             type="radio" 
@@ -267,6 +267,8 @@ function getProductList(country) {
                     classType = "isDineIn";
                 }else if (name.search("Digital")>-1){
                     classType = "isDigitalMenu";
+                }else if (name.search("Yelp Ad Spend")>-1){
+                    classType = "isYelpAdSpend";
                 }else if (name.search("Website Makeover")>-1){
                     classType = "isWebsiteMakeOver";
                 }else if (name.search("Web Hosting")>-1){
@@ -349,10 +351,26 @@ function getProductList(country) {
                     'Flyers A6 (US 5` x 7`) x 2,000' : 'addonFlyers',
                     'Flyers A6 (US 5` x 7`) x 5,000' : 'addonFlyers',
                     'Flyers A6 (US 5` x 7`) x 10,000' : 'addonFlyers',
+                    'Flyers 5` x 7` x 1,000 pcs' : 'addonFlyers',
+                    'Flyers 5` x 7` x 2,000 pcs' : 'addonFlyers',
+                    'Flyers 5` x 7` x 5,000 pcs' : 'addonFlyers',
+                    'Flyers 5` x 7` x 10,000 pcs' : 'addonFlyers',
                     'Fridge Magnet x 500 pcs' : 'addonFridgeMagnet',
                     'Fridge Magnet x 1,000 pcs' : 'addonFridgeMagnet',
                     'Fridge Magnet x 2,000 pcs' : 'addonFridgeMagnet',
                     'Fridge Magnet x 4,000 pcs' : 'addonFridgeMagnet',
+                    'Yelp Ad Spend $10' : 'addonYelpAdSpend',
+                    'Yelp Ad Spend $20' : 'addonYelpAdSpend',
+                    'Yelp Ad Spend $30' : 'addonYelpAdSpend',
+                    'Yelp Ad Spend $40' : 'addonYelpAdSpend',
+                    'Yelp Ad Spend $50' : 'addonYelpAdSpend',
+                    'Yelp Ad Spend $100' : 'addonYelpAdSpend',
+                    'Yelp Ad Spend $200' : 'addonYelpAdSpend',
+                    'Yelp Ad Spend $300' : 'addonYelpAdSpend',
+                    'Yelp Ad Spend $400' : 'addonYelpAdSpend',
+                    'Yelp Ad Spend $500' : 'addonYelpAdSpend',
+                    'Yelp Ad Spend $1000' : 'addonYelpAdSpend',
+                    'POS System' : 'addonPOS',
                     'Menu / Massage Pricing Design' : 'addonPricingDesign',
                     'Dine-In Dual Online Ordering System' : 'addonDineInDual',
                     'Promotions Add-on' : 'addonAdvPromo',
@@ -361,7 +379,9 @@ function getProductList(country) {
                     'Social Media Management' : 'addonSocialMedia',
                     'Website Makeover/ Build template customize' : 'addWebsiteMakeoverTemplate',
                     'Website Makeover/ Build fully customize' : 'addWebsiteMakeoverFully',
-                    'Influencer Package' : 'addonInfluencer'
+                    'Google Review Respond' : 'addonGoogleReview',
+                    'Influencer Package' : 'addonInfluencer',
+                    'Social Media Set Up' : 'addonSocialMediaSetup'
                 }
 
                 // ถ้าเป็น Website Hosting ให้ใส่ class ไว้ จะเอาไว้เลือก Auto จาก package อื่น
@@ -372,11 +392,13 @@ function getProductList(country) {
                 }
                 /////////
 
-                    return `${addText}<div class="form-check">
+
+                if(formCountry==="US"){
+                return `${addText}<div class="form-check">
                     <input 
                         class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
                         type="checkbox" 
-                        name=${boxName[name]} 
+                        name=${boxName[name]}
                         id="addon-${product_id}" 
                         value="${name} - ${formData.formCurrency.charAt(0)}$ ${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
@@ -386,6 +408,37 @@ function getProductList(country) {
                         ${discountText}
                     </label>
                 </div>`;
+                }else if(formCountry==="UK"){
+                    return `${addText}<div class="form-check">
+                    <input 
+                        class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
+                        type="checkbox" 
+                        name=${boxName[name]} 
+                        id="addon-${product_id}" 
+                        value="${name} - ${formData.formCurrency.charAt(0)}£ ${price} ${special}"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                    >
+                    <label class="form-check-label" for="addon-${product_id}" >
+                        ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
+                        ${discountText}
+                    </label>
+                </div>`;
+                }else if(formCountry==="TH"){
+                    return `${addText}<div class="form-check">
+                    <input 
+                        class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
+                        type="checkbox" 
+                        name=${boxName[name]} 
+                        id="addon-${product_id}" 
+                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                    >
+                    <label class="form-check-label" for="addon-${product_id}" >
+                        ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
+                        ${discountText}
+                    </label>
+                </div>`;
+                }
 
             });
 
@@ -405,6 +458,7 @@ function getProductList(country) {
         const chkIsDigitalMenu = document.querySelector(".isDigitalMenu");
         const chkIsWebsiteMakeOver = document.querySelector(".isWebsiteMakeOver");
         const chkIsWebHosting = document.querySelector(".isWebHosting");
+        const chkIsYelpAdSpend = document.querySelector(".isYelpAdSpend");
 
         //set initial product value
         const initAddOnAdvPromo = $("#initAddOnAdvPromo");
@@ -414,6 +468,7 @@ function getProductList(country) {
         const initAddOnDigitalMenuDesign = $("#initAddOnDigitalMenuDesign");
         const initAddOnWebsiteMakeOver = $("#initAddOnWebsiteMakeOver");
         const initAddOnWebHosting = $("#initAddOnWebHosting");
+        const initAddOnYelpAdSpend = $("#initAddOnYelpAdSpend");
 
         //set value on checkbox is checked
         if (typeof(chkIsAdvPromo) != 'undefined' && chkIsAdvPromo != null) {
@@ -476,6 +531,15 @@ function getProductList(country) {
                     initAddOnWebHosting.val(chkIsWebHosting.value);
                 } else {
                     initAddOnWebHosting.val("");
+                }
+            });
+        }
+        if (typeof(chkIsYelpAdSpend) != 'undefined' && chkIsYelpAdSpend != null) {
+            chkIsYelpAdSpend.addEventListener("change", () => {
+                if (chkIsYelpAdSpend.checked) {
+                    initAddOnYelpAdSpend.val(chkIsYelpAdSpend.value);
+                } else {
+                    initAddOnYelpAdSpend.val("");
                 }
             });
         }
@@ -713,7 +777,9 @@ function requestToPay() {
         "account_number": account_number
     };
 
+
     saveToDB(stripePayload);
+    if(formCountry === "TH"){saveTaxToDB(stripePayload)}
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -752,8 +818,10 @@ function requestToPay() {
                 } else {
                     customerStripeID.val(res.customer_id);
                 }
-                
+
                 stripeResToDB(stripeRes);
+                if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
+
 
                 setTimeout(function () {
                     genLinkPDF();
@@ -768,6 +836,7 @@ function requestToPay() {
                 alert("Payment step is fail");
                 let stripeRes = "Ajax Fail : " + stripeRes;
                 stripeResToDB(stripeRes);
+                if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
             }
             cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
 
@@ -784,21 +853,24 @@ function requestToPay() {
             $("#paymentSubmit").prop('disabled', false);
 
             let stripeRes = xhr.responseText;
+
             stripeResToDB(stripeRes);
+            if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
             return res.message;
         });
     }else{ //submit without a charge
-            let stripeRes = "Test Mode - No Charge";
-            stripeResToDB(stripeRes);
-            result.empty();
-            let done = `<span class="badge bg-success">No Charge</span>`;
-            let cusID = `<span class="badge bg-info">No Stripe Connect</span>`;
-            $(done).appendTo(".paymentResult");
-            $(cusID).appendTo(".paymentResult");
-            genLinkPDF();
-            sendMailToL4UTeam();
-            modalRespondAction('open', 'success');
-            cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
+        let stripeRes = "Test Mode - No Charge";
+        invoiceIDToDB(stripeRes)
+        stripeResToDB(stripeRes);
+        result.empty();
+        let done = `<span class="badge bg-success">No Charge</span>`;
+        let cusID = `<span class="badge bg-info">No Stripe Connect</span>`;
+        $(done).appendTo(".paymentResult");
+        $(cusID).appendTo(".paymentResult");
+        genLinkPDF();
+        sendMailToL4UTeam();
+        modalRespondAction('open', 'success');
+        cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
 
     return res.message;
@@ -919,6 +991,10 @@ const sendMailToL4UTeam = () => {
         addonWebsiteMakeoverTemplate: $("input:checkbox[name='addWebsiteMakeoverTemplate']:checked").val(),
         addonWebsiteMakeoverFully: $("input:checkbox[name='addWebsiteMakeoverFully']:checked").val(),
         addonInfluencer: $("input:checkbox[name='addonInfluencer']:checked").val(),
+        addonGoogleReview: $("input:checkbox[name='addonGoogleReview']:checked").val(),
+        addonPOS: $("input:checkbox[name='addonPOS']:checked").val(),
+        addonYelpAdSpend: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
+        addonSocialMediaSetup: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
 
 
 
@@ -1006,10 +1082,7 @@ const sendMailToL4UTeam = () => {
         loginInfoRegistered: $("#ref_Domain_Name_Registered").val(),
 
         ///1st Order Discount///
-        firstOrderDiscount0: $("input[id='discount0']:checked").val(),
-        firstOrderDiscount10: $("input[id='discount10']:checked").val(),
-        firstOrderDiscount15: $("input[id='discount15']:checked").val(),
-        firstOrderDiscount20: $("input[id='discount20']:checked").val(),
+        firstOrderDiscount: $("input:checkbox[name='discount']:checked").val(),
         firstOrderDiscountOther: $("input[id='othersDiscount']:checked").val(),
         firstOrderDiscountOtherValue: $("#discountOther").val(),
 
@@ -1047,6 +1120,270 @@ const sendMailToL4UTeam = () => {
     });
 
 }//sendMail
+
+function calculateVAT(price) {
+    // 1. ราคาก่อน VAT
+    let a = price;
+
+    // 2. คำนวณ VAT 7%
+    let b = parseFloat((a * 0.07).toFixed(2));
+
+    // 3. ราคาหลังรวม VAT
+    let c = parseFloat((a - b).toFixed(2));
+
+    return { a, b, c };
+}
+const saveTaxToDB = (stripePayload, stripeRes) => {
+    let checkBoxWantTAX = $("input:checkbox[id='quotationYes']:checked").val();
+    let taxType = $("input:radio[name='taxType']:checked").val();
+    let nameQuotation = $("#quotationName").val();
+    let shopNameQuotation = $("#quotationShopName").val();
+    let phoneQuotation = $("#shopPhoneQuotationFormatted").val();
+    let emailQuotation = $("#quotationEmail").val();
+    let addressQuotation = $("#quotationAddress").val();
+    let taxNumberQuotation = $("#quotationTaxNumber").val();
+    let subTotal = $("#subTotal").val();
+    let tax = $("#GST").val();
+    let grandTotal = $("#grandTotal").val();
+    let realNameQuotation = "";
+    let invoiceID = "VCDSG290-0002";
+    let selectedInputId = $("input[name='product']:checked").attr("id")
+    let product = $("label[for='" + selectedInputId + "']").text().trim().replace(/\n/g, '');
+    let setupFee = $("input[name='setup']:checked").val();
+    let addonSelect = $("input[name='addonSocialMediaSetup']:checked").val();
+    let shopAgent = $("#byAgent").val();
+    let taxWithheld = (grandTotal * 0.015).toFixed(2)
+    let finalPrice = parseFloat((grandTotal - taxWithheld).toFixed(2));
+    let finalPriceFormatted = finalPrice.toFixed(2);
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
+
+    ////product/////
+    // แยกด้วย " - "
+    let partsPro = product.split(" - ");
+    // ชื่อสินค้า
+    let nameProduct = partsPro[0];  // "Social Media Marketing Solo"
+    // ราคา
+    let priceProduct = partsPro[1]; // "฿4900.00 /Month"
+    // ถ้าต้องการเอาแค่ตัวเลข
+    let priceOnly = priceProduct.match(/[\d,.]+/)[0]; // "4900.00"
+
+    let priceProductReal = parseFloat((priceOnly - taxWithheld).toFixed(2))
+
+    let productResult = calculateVAT(priceProductReal);
+
+    ////product/////
+
+    ////setupFee/////
+    // แยกด้วย " - "
+    let partsSetupFee = setupFee.split(" - ");
+    // ชื่อสินค้า
+    let nameSetup = partsSetupFee[0];  // "Setup Fee (No Contract)"
+    // ราคา
+    let priceSetup = partsSetupFee[1]; // "฿0.00 /Month"
+    // ถ้าต้องการเอาแค่ตัวเลข
+    let priceSetupOnly = priceSetup.match(/[\d,.]+/)[0]; // "0.00"
+
+    let setupFeeResult = calculateVAT(priceSetupOnly);
+    ////setupFee/////
+
+    ////addon////
+    // แยกด้วย " - "
+    let partsAddon = addonSelect.split(" - T$ ");
+    // ชื่อสินค้า
+    let nameAddon = partsAddon[0]; // "Social Media Set Up"
+    // ราคา
+    let priceAddon = partsAddon[1]; // "1999.00"
+    // ถ้าต้องการเอาแค่ตัวเลข
+    let priceAddonOnly = priceAddon.match(/[\d,.]+/)[0];   // "1999.00"
+
+    let addonResult = calculateVAT(priceAddonOnly);
+
+    ////addon/////
+
+    let today = new Date();
+
+// ดึงวัน เดือน ปี
+    let day = String(today.getDate()).padStart(2, '0');
+    let month = String(today.getMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
+    let year = today.getFullYear();
+
+// รวมเป็นฟอร์แมต dd/mm/yyyy
+    let currentDate = `${day}/${month}/${year}`;
+
+    if(taxType === "นิติบุคคล"){
+        realNameQuotation = shopNameQuotation;
+    }else{
+        realNameQuotation = shopNameQuotation + " โดย " + nameQuotation;
+    }
+
+    let subtotalReal = parseFloat((productResult.c + setupFeeResult.c + addonResult.c).toFixed(2));
+
+
+    let productQuotation = {
+        "table": [
+            { "product": nameProduct, "qyt": 1, "amount": productResult.c},
+            { "setupfee": nameSetup, "qyt": 1, "amount": setupFeeResult.c},
+            { "addon": nameAddon, "qyt": 1, "amount": addonResult.c}
+        ],
+        "summary": {
+            "subtotal": subtotalReal,
+            "tax": tax,
+            "grandtotal": subTotal
+        }
+    };
+
+    payload = {
+        "checkBoxWantTAX" : checkBoxWantTAX,
+        "taxType" : taxType,
+        "nameQuotation" : nameQuotation,
+        "shopNameQuotation" : shopNameQuotation,
+        "phoneQuotation" : phoneQuotation,
+        "emailQuotation" : emailQuotation,
+        "addressQuotation" : addressQuotation,
+        "taxNumberQuotation" : taxNumberQuotation,
+        "subTotal" : subtotalReal,
+        "tax" : tax,
+        "grandTotal" : subTotal,
+        "realNameQuotation" : realNameQuotation,
+        "invoiceID" : invoiceID,
+        "productQuotation" : productQuotation,
+        "shopAgent" : shopAgent,
+        "date" : currentDate
+    }
+
+
+    console.log(payload);
+    if (taxType === "นิติบุคคล") {
+        const ajaxSaveQuotationToDB = $.ajax({
+            url: settings.url_saveQuestionToDB,
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                "act": "add",
+                "checkBoxWantTAX" : checkBoxWantTAX,
+                "taxType" : taxType,
+                "nameQuotation" : shopNameQuotation,
+                "phoneQuotation" : phoneQuotation,
+                "emailQuotation" : emailQuotation,
+                "addressQuotation" : addressQuotation,
+                "taxNumberQuotation" : taxNumberQuotation,
+                "productQuotation" : productQuotation,
+                "finalPrice" : subTotal,
+                "shopAgent" : shopAgent,
+                "date" : currentDate
+            }
+        });
+
+        ajaxSaveQuotationToDB.done(function(res) {
+            console.log(res);
+            $("#quotationID").val(res.quotationID);
+            return true;
+        });
+
+        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
+            console.log("Save to DB fail!!");
+            console.log(status + ': ' + error);
+            return false;
+        });
+    }else if(taxType === "บุคคลธรรมดา"){
+        const ajaxSaveQuotationToDB = $.ajax({
+            url: settings.url_saveQuestionToDB,
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                "act": "add",
+                "checkBoxWantTAX" : checkBoxWantTAX,
+                "taxType" : taxType,
+                "nameQuotation" : realNameQuotation,
+                "phoneQuotation" : phoneQuotation,
+                "emailQuotation" : emailQuotation,
+                "addressQuotation" : addressQuotation,
+                "taxNumberQuotation" : taxNumberQuotation,
+                "productQuotation" : productQuotation,
+                "finalPrice" : subTotal,
+                "shopAgent" : shopAgent,
+                "date" : currentDate
+            }
+        });
+
+        ajaxSaveQuotationToDB.done(function(res) {
+            console.log(res);
+            $("#quotationID").val(res.quotationID);
+            return true;
+        });
+
+        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
+            console.log("Save to DB fail!!");
+            console.log(status + ': ' + error);
+            return false;
+        });
+    }else{
+        const ajaxSaveQuotationToDB = $.ajax({
+            url: settings.url_saveQuestionToDB,
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                "act": "add",
+                "checkBoxWantTAX" : "no",
+                "taxType" : "ไม่ต้องการ",
+                "date" : currentDate
+            }
+        });
+
+        ajaxSaveQuotationToDB.done(function(res) {
+            console.log(res);
+            $("#quotationID").val(res.quotationID);
+            return true;
+        });
+
+        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
+            console.log("Save to DB fail!!");
+            console.log(status + ': ' + error);
+            return false;
+        });
+    }
+
+
+}
+
+const invoiceIDToDB = (stripeRes) => {
+    let insertIDToInvoice = $("#quotationID").val()
+
+    const ajaxInvoiceIDToDB = $.ajax({
+        url: settings.url_saveQuestionToDB,
+        method: 'POST',
+        async: false,
+        cache: false,
+        dataType: 'json',
+        data: {
+            "act": "update",
+            "quotationID": insertIDToInvoice,
+            "invoiceID": stripeRes
+        }
+    });
+
+    ajaxInvoiceIDToDB.done(function(res) {
+        console.log(res);
+        return true;
+    });
+
+    ajaxInvoiceIDToDB.fail(function(xhr, status, error) {
+        console.log("Save Stripe Response to DB fail!!");
+        console.log(status + ': ' + error);
+        return false;
+    });
+}
+
+
+
 // TODO : Build Logs File to DB by Mark
 const saveToDB = (stripePayload, stripeRes) => {
     genLinkPDF();
@@ -1138,6 +1475,11 @@ const saveToDB = (stripePayload, stripeRes) => {
         AddOn5: $("input:checkbox[name='addonPricingDesign']:checked").val(),
         AddOn6: $("input:checkbox[name='addonWebsiteMakeover']:checked").val(),
         AddOn7: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
+        AddOn8: $("input:checkbox[name='addonMobApp']:checked").val(),
+        AddOn9: $("input:checkbox[name='addonGoogleReview']:checked").val(),
+        AddOn10: $("input:checkbox[name='addonPOS']:checked").val(),
+        AddOn11: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
+        AddOn12: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
         OrderDiscount: $("input[name='discount']:checked").val(),
         OtherDiscount: $("#discountOther").val(),
         mainDiscountCode: $("#couponCode").val(),
@@ -1318,6 +1660,11 @@ const createLogs = (stripePayload) => {
         AddOn5: $("input:checkbox[name='addonPricingDesign']:checked").val(),
         AddOn6: $("input:checkbox[name='addonWebsiteMakeover']:checked").val(),
         AddOn7: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
+        AddOn8: $("input:checkbox[name='addonMobApp']:checked").val(),
+        AddOn9: $("input:checkbox[name='addonGoogleReview']:checked").val(),
+        AddOn10: $("input:checkbox[name='addonPOS']:checked").val(),
+        AddOn11: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
+        AddOn12: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
         OrderDiscount: $("input[name='discount']:checked").val(),
         OtherDiscount: $("#discountOther").val(),
         mainDiscountCode: $("#couponCode").val(),
@@ -1383,9 +1730,9 @@ const createLogs = (stripePayload) => {
 
 /// ไว้ Set ตัวแปร setup fee ที่เป็น global
 const setSetupFee = (param) => {
-  setupFee = param;
-  let showSetupFeeAmount = (parseInt(param)*0.01);
-  const SetupFeeAmount = $(".SetupFeeAmount");
+    setupFee = param;
+    let showSetupFeeAmount = (parseInt(param)*0.01);
+    const SetupFeeAmount = $(".SetupFeeAmount");
     SetupFeeAmount.html(showSetupFeeAmount.toFixed(2)+" + GST");
     SetupFeeAmount.val(showSetupFeeAmount.toFixed(2));
     $("#setupFeeCharge").val(param);
@@ -1393,20 +1740,20 @@ const setSetupFee = (param) => {
 
 /// ไว้เปลี่ยน option contract period ตาม radio button ที่เลือก
 const setPeriodSelectBox = (month) => {
-  const boxContractPeriod = $("#ContractPeriod");
-  switch (month) {
-      case "0" :
-          boxContractPeriod.val('No contract');
-          break;
-      case "3" :
-          boxContractPeriod.val('3 months');
-          break;
-      case "12" :
-          boxContractPeriod.val('12 months');
-          break;
-      default :
-          boxContractPeriod.val('');
-  }
+    const boxContractPeriod = $("#ContractPeriod");
+    switch (month) {
+        case "0" :
+            boxContractPeriod.val('No contract');
+            break;
+        case "3" :
+            boxContractPeriod.val('3 months');
+            break;
+        case "12" :
+            boxContractPeriod.val('12 months');
+            break;
+        default :
+            boxContractPeriod.val('');
+    }
 }//setPeriodSelectBox
 
 /*const readForm = () => {
@@ -1463,4 +1810,5 @@ $('#formCountry').on('change', function () {
         $('#policyNoThai').show();
     }
 })
+
 

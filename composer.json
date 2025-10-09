@@ -24,7 +24,6 @@
   },
   "require": {
     "ext-json": "*",
-    "ext-openssl": "*",
-    "ext-mbstring": "*"
+    "ext-openssl": "*"
   }
 }
