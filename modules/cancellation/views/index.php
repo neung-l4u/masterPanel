@@ -399,8 +399,14 @@ $timestamps = date("H:i D ,d M Y") . " (BKK)";
             $("#lastDate").focus();
         }else if (email === ""){
             $("#smallShopName").hide();
-            $("#smallEmail").show();
+            $("#smallEmail").text("Please provide a valid email address.").show();
             $("#email").focus();
+
+        }else if (!validateEmail(email)){
+            $("#smallShopName").hide();
+            $("#smallEmail").text("Email format is invalid. Please include '@' and domain, e.g. mail@localforyou.com").show();
+            $("#email").focus();
+
         }else{
             $("#cancelBtn").hide();
             $("#loadingAjax").fadeIn(100);
@@ -487,6 +493,13 @@ $timestamps = date("H:i D ,d M Y") . " (BKK)";
             return false;
         });
     }//saveDB
+
+    function validateEmail(email) {
+        // ใช้ regex ตรวจรูปแบบอีเมล
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$/i;
+        return emailPattern.test(email);
+    }
+
 </script>
 
 </body>
