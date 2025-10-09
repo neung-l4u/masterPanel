@@ -21,10 +21,10 @@ function getProductList(country) {
     let formCountry = formData.formCountry;//รับค่าจากไฟล์ global_data.js AU ,US ,NZ ,UK ,CA ,TH
     let formTypeJsonKey = typeJsonKey(formType);// เอามา return กลับว่าคำว่า Thai Massage ไหมถ้าใช่จะ return Massage ถ้าไม่ return Restaurant
     let contractPeriod = $("input[name='contractPeriod']:checked").val();//รับค่า 0 ,3 ,12
-    setPeriodSelectBox(contractPeriod);//0 = No contract ,3 =
-    const loadingAjax = $("#loadingAjax");
+    setPeriodSelectBox(contractPeriod);//0 = No contract ,3 = 3 months = ,12 = 12 months
+    const loadingAjax = $("#loadingAjax"); 
     const loadGif = "<img alt='Loading' src='assets/img/loading.gif'>";
-    loadingAjax.html(loadGif);
+    loadingAjax.html(loadGif);//เอา gif ไปโหลด
     const reqProductList = $.ajax({
         url: settings.url_getProductList,
         method: 'POST',
@@ -36,14 +36,14 @@ function getProductList(country) {
             "country": formCountry,
             "period": contractPeriod
         }
-    });
+    });//เลือดหาไฟล์ Json Product ,env = prod ,country = AU ,US ,NZ ,UK ,TH ,period = 0 ,3 ,12
     /////
 
     reqProductList.done(function(res) {
-        let jsonData = res['data'][formCountry];
-        let jsonAddons = jsonData[formTypeJsonKey]['Addons'];
-        let jsonAll = jsonData['All'];
-        let jsonSetupFee = jsonData['All']['Special']['SetupFee'];
+        let jsonData = res['data'][formCountry];//data ของ country นั้นๆ
+        let jsonAddons = jsonData[formTypeJsonKey]['Addons'];//เอา json data มาเคย addon แล้วเช็คว่าร้านนวดหรือร้านอาหาร
+        let jsonAll = jsonData['All'];//เอาสินค้าที่อยู่ใน All
+        let jsonSetupFee = jsonData['All']['Special']['SetupFee'];// เอาสินค้าที่อยู่ใน All Special SetupFee
 
         let contractPeriodKeyIndex = 0;
         let contractPeriodKeyIndexSub = 'all';
@@ -63,33 +63,33 @@ function getProductList(country) {
                 contractPeriodKeyIndex = 0;
         }
 
-        let jsonMainProduct = jsonData[formTypeJsonKey]['Products'][contractPeriodKeyIndex]['items'].concat(jsonAll['Products'][0]['items']);
-        let jsonAddonsSubscriptions = jsonAddons['Subscriptions'][0]['items'].concat(jsonAll['Addons']['Subscriptions'][0]['items']);
-        let jsonAddonsOnetime = jsonAddons['Onetime'][0]['items'].concat(jsonAll['Addons']['Onetime'][0]['items']);
-        let jsonAddonsMaterials = jsonAddons['Materials'][0]['items'].concat(jsonAll['Addons']['Materials'][0]['items']);
-        let jsonAddonsOthers = jsonAddons['Others'][0]['items'].concat(jsonAll['Addons']['Others'][0]['items']);
+        let jsonMainProduct = jsonData[formTypeJsonKey]['Products'][contractPeriodKeyIndex]['items'].concat(jsonAll['Products'][0]['items']);//เอาข้อมูล Product ตาม contract ที่เลือกรวมกัน
+        let jsonAddonsSubscriptions = jsonAddons['Subscriptions'][0]['items'].concat(jsonAll['Addons']['Subscriptions'][0]['items']);//เอาข้อมูล Addons ที่เป็น Subscriptions ตาม contract ที่เลือกรวมกัน
+        let jsonAddonsOnetime = jsonAddons['Onetime'][0]['items'].concat(jsonAll['Addons']['Onetime'][0]['items']);//เอาข้อมูล Addons ที่เป็น one time ตาม contract ที่เลือกรวมกัน
+        let jsonAddonsMaterials = jsonAddons['Materials'][0]['items'].concat(jsonAll['Addons']['Materials'][0]['items']);//เอาข้อมูล Materials ที่เป็น one time ตาม contract ที่เลือกรวมกัน
+        let jsonAddonsOthers = jsonAddons['Others'][0]['items'].concat(jsonAll['Addons']['Others'][0]['items']);//เอาข้อมูล Addons Other ตาม contract ที่เลือกรวมกัน
         let checkIsOptionWebHosting = "";
         let bundleHeader = false;
 
         readMainProduct = jsonMainProduct;
-        readAddonProduct = jsonAddonsMaterials.concat(jsonAddonsSubscriptions).concat(jsonAddonsOnetime).concat(jsonAddonsOthers);
+        readAddonProduct = jsonAddonsMaterials.concat(jsonAddonsSubscriptions).concat(jsonAddonsOnetime).concat(jsonAddonsOthers);//เอา addon[sub,onetime,other] มารวมกัน
 
         let brBundle = {
             "type" : "",
             "status" : false
         }
 
-        let headText = "<div class='text-warning mt-4'>Bundle</div>";
-        if(readMainProduct.length > 0){
-            $("#products2").empty();
+        let headText = "<div class='text-warning mt-4'>Bundle</div>";//หัวข้อ Bundle
+        if(readMainProduct.length > 0){//ถ้าเลือก product
+            $("#products2").empty();//เคลียร์เนื้อหาใน id products2
             let productRadio2 = readMainProduct.map((item) => {
-                let ran = Math.random();
+                let ran = Math.random();//สุ่มเลข
                 let name = "";
                 let special = (item.gst)?" + GST ":"";
                 let price = 0;
                 let currency = "";
-                name = `${item.name}`;
-                price = addDotToPrice(item.amount);
+                name = `${item.name}`;//ชื่อสินค้า
+                price = addDotToPrice(item.amount);//ทศนิยม 2 จุด
                 currency = item.currency;
                 amount = item.amount;
                 let product_id = item.price_id;
@@ -110,14 +110,14 @@ function getProductList(country) {
                     default:
                         currencySign = "$";
                         currencySignPlace.html("$");
-                }
+                }//ตั้งค่าสัญลักษณ์เงินให้ตรงกับสกุล (เช่น THB → ฿, GBP → £, อื่น ๆ → $)
 
                 lap++;
                 if(brBundle.type!==item.type){
                     br = (brBundle.status)?"<div class='text-warning mt-2'>Solo</div>":"";
                     brBundle.type = item.type;
                     brBundle.status = true;
-                }
+                }//ถ้าสินค้าใหม่มี type ต่างจากสินค้าเดิมจะเพิ่มหัวข้อ “Solo” ก่อนหน้า เพื่อแยกหมวด เช่น “Bundle” กับ “Solo”
 
                 return `${br}<div class="form-check">
                         <input 
@@ -132,7 +132,7 @@ function getProductList(country) {
                             ${name} <b class="text-primary"> - ${currencySign}${price} ${special}${ext}</b>
                         </label>
                     </div>`;
-            });//return
+            });//return สร้างค่าใน input กับ label
 
             productRadio2.map((item) => {
                 if(!bundleHeader) {
@@ -140,14 +140,15 @@ function getProductList(country) {
                     bundleHeader = true;
                 }
                 $(item).appendTo( "#products2" );
-            });
+            });//หลังจากได้ array ของ HTML แล้ว (productRadio2)จะเพิ่มหัวข้อ "Bundle" ก่อนรายการแรก จากนั้น append แต่ละ item ลงใน #products2
         }else{
             let textMainProduct = `<small class="text-danger">Sorry we don't have any Package in this currency yet !!</small>`;
             $("#products2").html(textMainProduct);
-        }
+        }//ถ้าไม่มีสินค้าเลย
 
         if(jsonSetupFee.length > 0){
             $("#setUpFeeList").empty();
+            let allSetupFeeIds = jsonSetupFee.map(item => item.price_id);
             let setUpFeeList = jsonSetupFee.map((item) => {
                 let ran = Math.random();
                 let name = "";
@@ -187,7 +188,7 @@ function getProductList(country) {
                             name="setup" 
                             id="setup${ran}" 
                             value="${name} - ${currencySign}${price} ${special}${ext}"
-                            onclick="addAddonCart('${name}', '${price}', '${amount}', '${special}', '${product_id}', '', '');"
+                            onclick="updateSetupFee('${name}', '${price}', '${amount}', '${special}', '${product_id}', [${allSetupFeeIds.map(id => `'${id}'`).join(',')}]);"
                         >
                         <label class="form-check-label" for="setup${ran}" >
                             ${name} <b class="text-primary"> - ${currencySign}${price} ${special}${ext}</b>
@@ -342,7 +343,7 @@ function getProductList(country) {
                     cartPrice = amount;
                 }
 
-                const boxName = {
+                /*const boxName = {
                     'A6 Flyers x 1,000 pcs' : 'addonFlyers',
                     'A6 Flyers x 2,000 pcs' : 'addonFlyers',
                     'A6 Flyers x 5,000 pcs' : 'addonFlyers',
@@ -382,7 +383,7 @@ function getProductList(country) {
                     'Google Review Respond' : 'addonGoogleReview',
                     'Influencer Package' : 'addonInfluencer',
                     'Social Media Set Up' : 'addonSocialMediaSetup'
-                }
+                }*/
 
                 // ถ้าเป็น Website Hosting ให้ใส่ class ไว้ จะเอาไว้เลือก Auto จาก package อื่น
                 if (name.includes("Website Hosting")){
@@ -398,7 +399,7 @@ function getProductList(country) {
                     <input 
                         class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
                         type="checkbox" 
-                        name=${boxName[name]}
+                        name="${item.form_name}"
                         id="addon-${product_id}" 
                         value="${name} - ${formData.formCurrency.charAt(0)}$ ${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
@@ -413,7 +414,7 @@ function getProductList(country) {
                     <input 
                         class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
                         type="checkbox" 
-                        name=${boxName[name]} 
+                        name="${item.form_name}"
                         id="addon-${product_id}" 
                         value="${name} - ${formData.formCurrency.charAt(0)}£ ${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
@@ -428,7 +429,36 @@ function getProductList(country) {
                     <input 
                         class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
                         type="checkbox" 
-                        name=${boxName[name]} 
+                        name="${item.form_name}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                    >
+                    <label class="form-check-label" for="addon-${product_id}" >
+                        ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
+                        ${discountText}
+                    </label>
+                </div>`;
+                }else if(formCountry==="AU"){
+                    return `${addText}<div class="form-check">
+                    <input 
+                        class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
+                        type="checkbox" 
+                        name="${item.form_name}"
+                        id="addon-${product_id}" 
+                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                    >
+                    <label class="form-check-label" for="addon-${product_id}" >
+                        ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
+                        ${discountText}
+                    </label>
+                </div>`;
+                }else if(formCountry==="NZ"){
+                    return `${addText}<div class="form-check">
+                    <input 
+                        class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
+                        type="checkbox" 
+                        name="${item.form_name}"
                         id="addon-${product_id}" 
                         value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
@@ -1190,7 +1220,7 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
 
     ////addon////
     // แยกด้วย " - "
-    let partsAddon = addonSelect.split(" - T$ ");
+    let partsAddon = addonSelect.split(" - T฿ ");
     // ชื่อสินค้า
     let nameAddon = partsAddon[0]; // "Social Media Set Up"
     // ราคา
