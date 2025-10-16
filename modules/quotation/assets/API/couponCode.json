@@ -1,0 +1,206 @@
+{
+    "Coupon": {
+        "1TRIAL": {
+            "Restaurant": {
+                "AU": {
+                    "discount": 19800,
+                    "code": "AU1TRIAL198"
+                },
+                "NZ": {
+                    "discount": 19800,
+                    "code": "NZ1TRIAL198"
+                },
+                "UK": {
+                    "discount": 4900,
+                    "code": "GB1TRIAL49"
+                },
+                "US": {
+                    "discount": 4800,
+                    "code": "US1TRIAL48"
+                },
+                "CA": {
+                    "discount": 9600,
+                    "code": "1TrialRestCA"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "1TrialRest"
+                }
+            },
+            "Massage": {
+                "AU": {
+                    "discount": 11800,
+                    "code": "AU1TRIAL118"
+                },
+                "NZ": {
+                    "discount": 11800,
+                    "code": "NZ1TRIAL118"
+                },
+                "UK": {
+                    "discount": 9800,
+                    "code": "GB1TRIAL98"
+                },
+                "US": {
+                    "discount": 11800,
+                    "code": "US1TRIAL118"
+                },
+                "CA": {
+                    "discount": 9600,
+                    "code": "1TrialMass"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "1TrialMass"
+                }
+            }
+        },
+        "PARTNER96": {
+            "Massage": {
+                "US": {
+                    "discount": 9600,
+                    "code": "US1Partner96"
+                }
+            }
+        },
+        "PARTNER98": {
+            "Restaurant": {
+                "US": {
+                    "discount": 9800,
+                    "code": "US1Partner98"
+                }
+            },
+            "Massage": {
+                "US": {
+                    "discount": 9800,
+                    "code": "US1Partner98"
+                }
+            }
+        },
+        "PARTNER118": {
+            "Massage": {
+                "US": {
+                    "discount": 11800,
+                    "code": "US1Partner118"
+                }
+            }
+        },
+        "PARTNER195": {
+            "Massage": {
+                "US": {
+                    "discount": 19500,
+                    "code": "US1Partner195"
+                }
+            }
+        },
+        "PARTNER198": {
+            "Restaurant": {
+                "US": {
+                    "discount": 19800,
+                    "code": "US1Partner198"
+                }
+            },
+            "Massage": {
+                "US": {
+                    "discount": 19800,
+                    "code": "US1Partner198"
+                }
+            }
+        },
+        "PARTNER246": {
+            "Restaurant": {
+                "AU": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                },
+                "NZ": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                },
+                "UK": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                },
+                "US": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                },
+                "CA": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                },
+                "TH": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                }
+            },
+            "Massage": {
+                "US": {
+                    "discount": 24600,
+                    "code": "US1Partner246"
+                }
+            }
+        },
+        "PARTNER268": {
+            "Massage": {
+                "US": {
+                    "discount": 26800,
+                    "code": "US1Partner268"
+                }
+            }
+        },
+        "FREEWEB": {
+            "Restaurant": {
+                "AU": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "NZ": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "UK": {
+                    "discount": 29900,
+                    "code": "Freeweb"
+                },
+                "US": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "CA": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "Freeweb"
+                }
+            },
+            "Massage": {
+                "AU": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "NZ": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "UK": {
+                    "discount": 29900,
+                    "code": "Freeweb"
+                },
+                "US": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "CA": {
+                    "discount": 39900,
+                    "code": "Freeweb"
+                },
+                "TH": {
+                    "discount": 0,
+                    "code": "Freeweb"
+                }
+            }
+        }
+    }
+}

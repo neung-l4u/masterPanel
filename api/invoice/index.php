@@ -14,7 +14,7 @@ if (!$invoiceID) {
     exit;
 }
 
-$row = $db->query('SELECT * FROM quotation WHERE invoiceID = ?', $invoiceID)->fetchArray();
+$row = $db->query('SELECT * FROM invoice WHERE invoiceID = ?', $invoiceID)->fetchArray();
 if (!$row) {
     echo json_encode([
         "status" => [
