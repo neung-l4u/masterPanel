@@ -237,25 +237,40 @@ const handleFormSubmit = (button) => {
         fd.append('prefixId', newPrefix);
 
             $.ajax({
-                url: '../models/upload.php',
-                type: 'post',
-                data: fd,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response !== "0") {
-                        const splitPath = response.split("/");
-                        const newName = splitPath[splitPath.length - 1];
-                        $preview.attr("src", response);
-                        $form.find(".picname").val(newName);
-                    } else {
-                        alert("File not uploaded");
-                    }
-                },
-            error: function () {
-                alert("An error occurred while uploading the file.");
-            }
-        });
+              url: '../models/upload.php',
+              type: 'post',
+              data: fd,
+              contentType: false,
+              processData: false,
+              success: function (response) {
+                const res = (response || '').toString().trim();
+
+                if (res === 'Invalid file extension.') {
+                  alert('นามสกุลไฟล์ไม่ถูกต้อง กรุณาเลือกไฟล์ JPG, JPEG, PNG, หรือ SVG');
+                  return;
+                }
+
+                if (res === '0' || res === '') {
+                  alert('File not uploaded');
+                  return;
+                }
+
+                // อนุญาตเฉพาะผลลัพธ์ที่ดูเป็นพาธไฟล์
+                if (!/[\/\\]/.test(res)) {
+                  alert('Unexpected response from server.');
+                  return;
+                }
+
+                const splitPath = res.split('/');
+                const newName = splitPath[splitPath.length - 1];
+                $preview.attr('src', res);
+                $form.find('.picname').val(newName);
+              },
+              error: function () {
+                alert('An error occurred while uploading the file.');
+              }
+            });
+
     } else {
         alert("Please select a file.");
     }

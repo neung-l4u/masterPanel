@@ -108,7 +108,7 @@ $now = date("H:i");
 <script src="../assets/libs/flatpickr/flatpickr.js"></script>
 <script src="../assets/libs/select2/js/select2.min.js"></script>
 <script src="../assets/libs/moment-2.30.1/moment.min.js"></script>
-<script src="../controllers/timeOff.js?v=1.0.0"></script>
+<script src="../controllers/timeOff.js?v=1.0.1"></script>
 <script>
     const result = $('#result');
     const cmdSubmit = $('#cmdSubmit');

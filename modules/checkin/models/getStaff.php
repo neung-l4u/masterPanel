@@ -28,7 +28,8 @@ $managers = [
     42 => "San Papawadee",
     45 => "Steve Waterson",
     49 => "Yok Nattiya",
-    83 => "Patt Pattranit"
+    83 => "Patt Pattranit",
+    100 => "Aunya Aunyarut"
 ];
 
 $managers2 = [
@@ -39,7 +40,8 @@ $managers2 = [
     42 => "57717609",
     45 => "57647868",
     49 => "57650527",
-    83 => "75103676"
+    83 => "75103676",
+    100 => "82961537"
 ];
 
 //$data['staff'] = $staff;
