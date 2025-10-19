@@ -35,7 +35,7 @@
       background:var(--brand); border:none; color:#fff; box-shadow:var(--shadow);
       transition:.2s transform ease,.2s filter ease;
     }
-    .btn-brand:hover{ background:var(--brand-600); transform:translateY(-2px); filter:brightness(.95); }
+    .btn-brand:hover{ background:var(--brand-600); color: #fff; filter:brightness(.95); }
 
     /* Navbar */
     .navbar-blur{ backdrop-filter:saturate(180%) blur(10px); background:rgba(0,0,0,.55); }
@@ -443,7 +443,7 @@
 
   <color-control-panel
     storage-key="siteTheme-massage1"
-    controls="text,bg,cardBg,footerBg,button,link,linkHover,linkVisited,heading"
+    controls="text,bg,footerBg,button,link,linkHover,linkVisited,heading"
     position="bottom">
   </color-control-panel>
 

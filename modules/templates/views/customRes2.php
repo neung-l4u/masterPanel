@@ -49,7 +49,7 @@
 
     /* Info Icons Row */
     .info-icons .icon{ color: var(--brand); width:42px; height:42px; display:grid; place-items:center;}
-    .info-icons .card{ border:none; background:#fff; }
+    .info-icons .card{ border:none; background:var(--bg-color); }
     .info-icons .small{ color:var(--text-color); }
 
     /* Discover block (ครึ่งเหลือง ครึ่งรูป) */
@@ -438,7 +438,7 @@
   <script type="module" src="../controllers/colorPanel.js"></script>
   <color-control-panel
     storage-key="siteTheme-restaurant2"
-    controls="text,bg,cardBg,footerBg,button,link,linkHover,linkVisited,heading"
+    controls="text,bg,footerBg,button,link,linkHover,linkVisited,heading"
     position="bottom">
   </color-control-panel>
 

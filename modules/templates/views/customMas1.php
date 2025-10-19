@@ -23,7 +23,7 @@
       --soft:#faf7ff;
       --radius:10px;
       --shadow:0 10px 25px rgba(0,0,0,.12);
-      --cardBg:#851979;
+      --cardBg:#84398b;
       --footer-bg:#84398b;
     }
 
@@ -138,15 +138,11 @@
     /* ใช้ตัวแปรที่ map กับองค์ประกอบจริง */
     html, body{ color: var(--text-color); background: var(--bg-color); }
     h1, h2, h3, h4, h5, h6{ color: var(--heading-color); }
-    /* a{ color: var(--link); }
-    a:hover{ color: var(--link-hover); }
-    a:visited{ color: var(--link-visited); } */
-
     /* ให้ปุ่มหลักวิ่งตาม --btn-* */
     .btn-brand{ background: var(--btn-bg); color: var(--btn-text); }
     .btn.btn-light, .btn.btn-outline-light{ color:#111; }
     .btn.btn.btn-outline-light:hover{ color:#111 !important;}
-
+    .service-card::before{background-color: var(--cardBg);}
   </style>
 </head>
 <body>

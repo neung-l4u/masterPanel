@@ -16,7 +16,7 @@ class ColorControlPanel extends HTMLElement {
       heading:     ['--heading-color', '#111111'],
       text:        ['--text-color',    '#222222'],
       bg:          ['--bg-color',      '#ffffff'],
-      cardBg:      ['--card-bg',       '#ffffff'],
+      cardBg:      ['--cardBg',       '#84398b'],
       footerBg:    ['--footer-bg',     '#140a29'],
       btn:         ['--btn-bg',        '#0d6efd'],
       btnText:     ['--btn-text',      '#ffffff'],
