@@ -11,6 +11,11 @@ switch ($menu) {
         $view = 'project_detail.php';
         $menu = 'detail';
         break;
+    case 'preview':
+        $title = 'Preview';
+        $view = 'colorPreview.php';
+        $menu = 'preview';
+        break;
     case 'res1':
         $title = 'Template Restaurant 1';
         $view = 'res1.php';

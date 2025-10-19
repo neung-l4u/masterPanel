@@ -25,6 +25,9 @@ $level = $_SESSION['level'];
                     <li class="nav-item <?php echo (($menu == 'project') or ($menu == 'detail')) ? 'active':''; ?>">
                         <a class="nav-link" href="main.php?m=project"><i class="bi bi-cast"></i> Projects</a>
                     </li>
+                    <li class="nav-item <?php echo (($menu == 'preview') or ($menu == 'custom')) ? 'active':''; ?>">
+                        <a class="nav-link" href="main.php?m=preview"><i class="bi bi-palette"></i> Preview</a>
+                    </li>
                 </ul>
             <form class="d-flex gap-3" role="search">
             <?php if($level<=3){ ?>
