@@ -106,7 +106,7 @@
     .footer .right{margin-left: -40px;}
     .footer .link{ color:#ffffff; text-decoration:none; }
     .footer li i{ color:var(--brand); }
-    .footer li span{ color:var(--ink)}
+    .footer span{ color:var(--text-color)}
     .footer .copyright{ padding-left: 60px; padding-right: 40px;}
     .footer .copyright a{ color:var(--brand); text-decoration:none; }
 
