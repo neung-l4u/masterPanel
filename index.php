@@ -46,7 +46,7 @@
                                     <form>
                                         <div class="d-flex align-items-center mb-3 pb-1">
                                             <img src="assets/img/logo-login2.png" alt="logo"/>
-                                            <span class="h3 fw-light mb-0">L4U Master Panel</span>
+                                            <span class="h3 fw-light mb-0">L4U Master Panels</span>
                                         </div>
                                         <h5 class="fw-normal mb-3 pb-3 text-uppercase" style="letter-spacing: 1px;">
                                             Please Sign In
