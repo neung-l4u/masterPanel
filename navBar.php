@@ -19,6 +19,9 @@ $teamID = $_SESSION['teamID'];
             <a href="https://app.trainual.com/local-for-you/users/sign_in" target="_blank" class="nav-link">Trainual <i class="bi bi-box-arrow-up-right"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
+            <a href="modules/changeLog/changelog.php" target="_blank" class="nav-link">Change Log <i class="bi bi-box-arrow-up-right"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
             <a href="modules/mondayReport/views/index.php?id=<?php echo $myID; ?>" target="_blank" class="nav-link btn btn-outline-warning">
                 <i class="bi bi-exclamation-triangle-fill"></i>
                 <span>
