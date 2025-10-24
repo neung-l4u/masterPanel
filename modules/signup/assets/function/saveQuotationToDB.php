@@ -89,7 +89,7 @@ $thaiPrice = ThaiRead($finalPrice);
 
 
 if ($act === "add") {
-    $logsToDB =  $db->query('INSERT INTO `invoice`(`check`, `type`, `name`, `address`, `sale`,`thaiPrice`, `product`, `taxNumber`, `customerEmail`,`customerPhone`,`dateThai`) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
+    $logsToDB =  $db->query('INSERT INTO `invoice`(`checkdata`, `type`, `name`, `address`, `sale`,`thaiPrice`, `product`, `taxNumber`, `customerEmail`,`customerPhone`,`dateThai`) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
     , $checkBoxWantTAX, $taxType, $nameQuotation, $addressQuotation,$shopAgent, $thaiPrice,$productQuotation, $taxNumberQuotation, $emailQuotation, $phoneQuotation, $dateThai );
 } elseif ($act === "update") {
     $resToDB = $db->query('UPDATE `invoice` SET `invoiceID`=? WHERE id=?', $invID, $quotationID);
