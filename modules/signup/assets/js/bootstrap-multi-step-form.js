@@ -67,6 +67,7 @@ const formDebit = $(".formDebit");
 const formStripe = $(".formStripe");
 const formInvoice = $(".formInvoice");
 const methodDebit = $(".methodDebit");
+const methodCredit = $(".methodCredit");
 const sectionCuisineSelector = $(".sectionCuisineSelector");
 const input_first_name = $("#first_name");
 const input_last_name = $("#last_name");
@@ -124,7 +125,7 @@ $(document).ready(function () {
   $(".firstStepForm").show();
   $("#datePOSBox").hide();
   $("#posBoxDate").hide();
-  $(".quotationDetail").hide();
+  $(".quotationDetail").show();
   $("#boxPOScheck").hide();
   $("#forIndividual").hide();
   $("#nameQuotation").hide();
@@ -413,8 +414,8 @@ $('#formCountry').change(function() {
       textGST.html("VAT");
       fakeNumber.html("12345678");
       countryTextOnly.val("United Kingdom");
-      methodDebit.show();
-      routing_number_div.show();
+      methodDebit.hide();
+      routing_number_div.hide();
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("UK");
@@ -485,8 +486,11 @@ $('#formCountry').change(function() {
       textGST.html("VAT");
       fakeNumber.html("0895117447");
       countryTextOnly.val("Thailand");
-      methodDebit.show();
-      routing_number_div.show();
+      formCreditCard.hide();
+      formInvoice.show();
+      methodDebit.hide();
+      methodCredit.hide();
+      routing_number_div.hide();
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local Eats Co., Ltd" to withdraw monthly payments as agreed from this Credit Card.');
       getProductList("TH");
@@ -1306,7 +1310,7 @@ function applyCoupon() {
     $("#couponCode2").attr('disabled', 'disabled');
   }
 
-  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB", "PARTNER96", "PARTNER98", "PARTNER195", "PARTNER198", "PARTNER246", "PARTNER268", "PARTNER118"]);
+  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB", "PARTNER96", "PARTNER98", "PARTNER195", "PARTNER198", "PARTNER246", "PARTNER268", "PARTNER118","ONCE198","ONCE246","ONCE268"]);
 
 
   inputCode = inputCode.toUpperCase();

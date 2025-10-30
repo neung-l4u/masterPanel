@@ -1662,7 +1662,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 </div>
                                                 <!-- Tab menu -->
                                                 <ul class="nav nav-tabs mb-3 px-md-4 px-2" data-bs-tabs="tabs">
-                                                    <li class="nav-item formCreditCard">
+                                                    <li class="nav-item formCreditCard methodCredit">
                                                         <a
                                                                 class="nav-link px-2 active"
                                                                 aria-current="true"

@@ -1151,6 +1151,20 @@ const sendMailToL4UTeam = () => {
 
 }//sendMail
 
+/**
+ * คำนวณราคาก่อน VAT จากราคาที่รวม VAT แล้ว (สำหรับ VAT 7%)
+ * @param {number} priceInclVAT - ราคาที่รวม VAT 7% แล้ว
+ * @returns {number} - ราคาที่ไม่รวม VAT (ทศนิยม 2 ตำแหน่ง)
+ */
+function getPriceBeforeVAT(priceInclVAT) {
+    const gstMultiply = 0.07; // VAT 7%
+    if (priceInclVAT === 0 || isNaN(priceInclVAT)) {
+        return 0;
+    }
+    // คำนวณราคาก่อน VAT จากราคาที่รวม VAT
+    let priceBeforeVAT = priceInclVAT / (1 + gstMultiply);
+    return parseFloat(priceBeforeVAT.toFixed(2));
+}
 function calculateVAT(price) {
     // 1. ราคาก่อน VAT
     let a = price;
@@ -1163,6 +1177,8 @@ function calculateVAT(price) {
 
     return { a, b, c };
 }
+
+/*
 const saveTaxToDB = (stripePayload, stripeRes) => {
     let checkBoxWantTAX = $("input:checkbox[id='quotationYes']:checked").val();
     let taxType = $("input:radio[name='taxType']:checked").val();
@@ -1383,6 +1399,243 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
 
 
 }
+*/
+
+const saveTaxToDB = (stripePayload, stripeRes) => {
+    let checkBoxWantTAX = $("input:checkbox[id='quotationYes']:checked").val();
+    let taxType = $("input:radio[name='taxType']:checked").val();
+    let nameQuotation = $("#quotationName").val();
+    let shopNameQuotation = $("#quotationShopName").val();
+    let phoneQuotation = $("#shopPhoneQuotationFormatted").val();
+    let emailQuotation = $("#quotationEmail").val();
+    let addressQuotation = $("#quotationAddress").val();
+    let taxNumberQuotation = $("#quotationTaxNumber").val();
+    let subTotal = $("#subTotal").val();
+    let tax = $("#GST").val();
+    let grandTotal = $("#grandTotal").val();
+    let realNameQuotation = "";
+    let invoiceID = "VCDSG290-0002";
+    let selectedInputId = $("input[name='product']:checked").attr("id")
+    let product = $("label[for='" + selectedInputId + "']").text().trim().replace(/\n/g, '');
+    let setupFee = $("input[name='setup']:checked").val();
+    let addonSelect = $("input[name='addonSocialMediaSetup']:checked").val();
+    let shopAgent = $("#byAgent").val();
+    let taxWithheld = (grandTotal * 0.015).toFixed(2)
+    let finalPrice = parseFloat((grandTotal - taxWithheld).toFixed(2));
+    let finalPriceFormatted = finalPrice.toFixed(2);
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
+
+    ////product/////
+    // แยกด้วย " - "
+    let partsPro = product.split(" - ");
+    let nameProduct = partsPro[0];
+    let priceProduct = partsPro[1] || "฿0.00";
+    let priceOnly = parseFloat(priceProduct.match(/[\d,.]+/)[0].replace(/,/g, ''));
+    let productAmountBeforeVAT = getPriceBeforeVAT(priceOnly);
+
+    ////product/////
+
+    ////setupFee/////
+    let nameSetup = "Setup Fee (No Contract)";
+    let setupFeeAmountBeforeVAT = 0;
+    if (setupFee && setupFee.trim() !== "") {
+        let partsSetupFee = setupFee.split(" - ");
+        nameSetup = partsSetupFee[0];
+        let priceSetup = partsSetupFee[1] || "฿0.00";
+        let priceSetupOnly = parseFloat(priceSetup.match(/[\d,.]+/)[0].replace(/,/g, ''));
+        setupFeeAmountBeforeVAT = getPriceBeforeVAT(priceSetupOnly);
+    }
+    ////setupFee/////
+
+    ////addon////
+    let nameAddon = "No Addon";
+    let addonAmountBeforeVAT = 0;
+    if (addonSelect && addonSelect.trim() !== "") {
+        let partsAddon = addonSelect.split(" - T฿ ");
+        nameAddon = partsAddon[0];
+        let priceAddon = partsAddon[1] || "0.00";
+        let priceAddonOnly = parseFloat(priceAddon.match(/[\d,.]+/)[0].replace(/,/g, ''));
+        addonAmountBeforeVAT = getPriceBeforeVAT(priceAddonOnly);
+    }
+    ////addon/////
+
+    let today = new Date();
+
+// ดึงวัน เดือน ปี
+    let day = String(today.getDate()).padStart(2, '0');
+    let month = String(today.getMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
+    let year = today.getFullYear();
+
+// รวมเป็นฟอร์แมต dd/mm/yyyy
+    let currentDate = `${day}/${month}/${year}`;
+
+    if(taxType === "นิติบุคคล"){
+        realNameQuotation = shopNameQuotation;
+    }else{
+        realNameQuotation = shopNameQuotation + " โดย " + nameQuotation;
+    }
+
+
+    let tableData = [];
+    tableData.push({
+        "product": nameProduct,
+        "qyt": 1,
+        "amount": productAmountBeforeVAT
+    });
+
+    if (setupFeeAmountBeforeVAT > 0) {
+        tableData.push({ "setupfee": nameSetup, "qyt": 1, "amount": setupFeeAmountBeforeVAT });
+    }
+
+    if (addonAmountBeforeVAT > 0) {
+        tableData.push({ "addon": nameAddon, "qyt": 1, "amount": addonAmountBeforeVAT });
+    }
+
+    let productQuotation = {
+        "quotation": [
+            {
+                "date": currentDate,
+                "detail": [
+                    {
+                        "company": realNameQuotation,
+                        "address": addressQuotation,
+                        "tax_id": taxNumberQuotation,
+                        "email": emailQuotation,
+                        "phone": phoneQuotation
+                    }
+                ]
+            }
+        ],
+        "table": tableData,
+        "summary": {
+            "subtotal": subTotal,
+            "tax": tax,
+            "grandtotal": grandTotal
+        }
+    };
+
+    payload = {
+        "checkBoxWantTAX" : checkBoxWantTAX,
+        "taxType" : taxType,
+        "nameQuotation" : nameQuotation,
+        "shopNameQuotation" : shopNameQuotation,
+        "phoneQuotation" : phoneQuotation,
+        "emailQuotation" : emailQuotation,
+        "addressQuotation" : addressQuotation,
+        "taxNumberQuotation" : taxNumberQuotation,
+        "subTotal" : subTotal,
+        "tax" : tax,
+        "grandTotal" : grandTotal,
+        "realNameQuotation" : realNameQuotation,
+        "invoiceID" : invoiceID,
+        "productQuotation" : productQuotation,
+        "shopAgent" : shopAgent,
+        "date" : currentDate
+    }
+
+
+    console.log(payload);
+    if (taxType === "นิติบุคคล") {
+        const ajaxSaveQuotationToDB = $.ajax({
+            url: settings.url_saveQuestionToDB,
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                "act": "add",
+                "checkBoxWantTAX" : checkBoxWantTAX,
+                "taxType" : taxType,
+                "nameQuotation" : shopNameQuotation,
+                "phoneQuotation" : phoneQuotation,
+                "emailQuotation" : emailQuotation,
+                "addressQuotation" : addressQuotation,
+                "taxNumberQuotation" : taxNumberQuotation,
+                "productQuotation" : productQuotation,
+                "finalPrice" : subTotal,
+                "shopAgent" : shopAgent,
+                "date" : currentDate
+            }
+        });
+
+        ajaxSaveQuotationToDB.done(function(res) {
+            console.log(res);
+            $("#quotationID").val(res.quotationID);
+            return true;
+        });
+
+        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
+            console.log("Save to DB fail!!");
+            console.log(status + ': ' + error);
+            return false;
+        });
+    }else if(taxType === "บุคคลธรรมดา"){
+        const ajaxSaveQuotationToDB = $.ajax({
+            url: settings.url_saveQuestionToDB,
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                "act": "add",
+                "checkBoxWantTAX" : checkBoxWantTAX,
+                "taxType" : taxType,
+                "nameQuotation" : realNameQuotation,
+                "phoneQuotation" : phoneQuotation,
+                "emailQuotation" : emailQuotation,
+                "addressQuotation" : addressQuotation,
+                "taxNumberQuotation" : taxNumberQuotation,
+                "productQuotation" : productQuotation,
+                "finalPrice" : subTotal,
+                "shopAgent" : shopAgent,
+                "date" : currentDate
+            }
+        });
+
+        ajaxSaveQuotationToDB.done(function(res) {
+            console.log(res);
+            $("#quotationID").val(res.quotationID);
+            return true;
+        });
+
+        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
+            console.log("Save to DB fail!!");
+            console.log(status + ': ' + error);
+            return false;
+        });
+    }else{
+        const ajaxSaveQuotationToDB = $.ajax({
+            url: settings.url_saveQuestionToDB,
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                "act": "add",
+                "checkBoxWantTAX" : "no",
+                "taxType" : "ไม่ต้องการ",
+                "date" : currentDate
+            }
+        });
+
+        ajaxSaveQuotationToDB.done(function(res) {
+            console.log(res);
+            $("#quotationID").val(res.quotationID);
+            return true;
+        });
+
+        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
+            console.log("Save to DB fail!!");
+            console.log(status + ': ' + error);
+            return false;
+        });
+    }
+
+
+}
+
 
 const invoiceIDToDB = (stripeRes) => {
     let insertIDToInvoice = $("#quotationID").val()
@@ -1402,6 +1655,7 @@ const invoiceIDToDB = (stripeRes) => {
 
     ajaxInvoiceIDToDB.done(function(res) {
         console.log(res);
+        callWebhookInvoice()
         return true;
     });
 
@@ -1413,9 +1667,34 @@ const invoiceIDToDB = (stripeRes) => {
 }
 
 
+const callWebhookInvoice = (stripeRes) => {
+    let webhook = "https://hook.us1.make.com/ilpkidd9ve4cflfxoym5fka8fwdozhxt";
+    let idinvoice = $("#quotationID").val()
 
 
+    const callWebhookInvoice = $.ajax({
+        url: webhook,
+        method: 'POST',
+        async: false,
+        cache: false,
+        dataType: 'json',
+        data: {
+            "act": "callWebhookInvoice",
+            "id": idinvoice
+        }
+    });
 
+    callWebhookInvoice.done(function(res) {
+        console.log(res);
+        return true;
+    });
+
+    callWebhookInvoice.fail(function(xhr, status, error) {
+        console.log("Save Stripe Response to DB fail!!");
+        console.log(status + ': ' + error);
+        return false;
+    });
+}
 
 // TODO : Build Logs File to DB by Mark
 const saveToDB = (stripePayload, stripeRes) => {

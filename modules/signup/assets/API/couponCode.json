@@ -148,6 +148,36 @@
                 }
             }
         },
+        "ONCE198": {
+            "Restaurant": {
+                "US": {
+                    "discount": 19800,
+                    "code": "USONCE198"
+                }
+            },
+            "Massage": {
+                "US": {
+                    "discount": 19800,
+                    "code": "USONCE198"
+                }
+            }
+        },
+        "ONCE246": {
+            "Restaurant": {
+                "US": {
+                    "discount": 24600,
+                    "code": "USONCE246"
+                }
+            }
+        },
+        "ONCE268": {
+            "Massage": {
+                "US": {
+                    "discount": 26800,
+                    "code": "USONCE268"
+                }
+            }
+        },
         "FREEWEB": {
             "Restaurant": {
                 "AU": {
