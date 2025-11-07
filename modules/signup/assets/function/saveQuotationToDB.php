@@ -91,14 +91,43 @@ $thaiPrice = ThaiRead($finalPrice);
 if ($act === "add") {
     $logsToDB =  $db->query('INSERT INTO `invoice`(`checkdata`, `type`, `name`, `address`, `sale`,`thaiPrice`, `product`, `taxNumber`, `customerEmail`,`customerPhone`,`dateThai`) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
     , $checkBoxWantTAX, $taxType, $nameQuotation, $addressQuotation,$shopAgent, $thaiPrice,$productQuotation, $taxNumberQuotation, $emailQuotation, $phoneQuotation, $dateThai );
+
+    $lastInsertId = $db->lastInsertId();
+
 } elseif ($act === "update") {
     $resToDB = $db->query('UPDATE `invoice` SET `invoiceID`=? WHERE id=?', $invID, $quotationID);
+} elseif ($act === "callDataBase"){
+    $logsInDatabase =  $db->query('SELECT * FROM `invoice` WHERE `id` = ?', $quotationID)->fetchAll();
+    $dataInvoice = [];
+    foreach ($logsInDatabase as $row) {
+        $idInvoice = $row['id'];
+
+        $dataInvoice[] = [
+            'id' => $row['id'],
+            'checkdata' => $row['checkdata'],
+            'type' => $row['type'],
+            'name' => $row['name'],
+            'address' => $row['address'],
+            'country' => $row['country'],
+            'sale' => $row['sale'],
+            'thaiPrice' => $row['thaiPrice'],
+            'product' => $row['product'],
+            'taxNumber' => $row['taxNumber'],
+            'invoiceID' => $row['invoiceID'],
+            'customerEmail' => $row['customerEmail'],
+            'customerPhone' => $row['customerPhone'],
+            'dateThai' => $row['dateThai'],
+            'createAt' => $row['createAt'],
+        ];
+    }
 }
 
-$lastInsertId = $db->lastInsertId();
+
 
 $result["result"] = "success";
 $result["quotationID"] = $lastInsertId;
+$result["idInvoice"] = $idInvoice;
+$result["dataInvoice"] = $dataInvoice;
 $result["msg"] = "Save to DB Quotation successfully!";
 
 echo json_encode($result);

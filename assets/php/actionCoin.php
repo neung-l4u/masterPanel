@@ -7,7 +7,7 @@ $myID = $_SESSION['id'];
 
 //prod//
 $email["hr"] = "nattiya@localforyou.com";
-$email["admin1"] = "neung@localforyou.com";
+$email["admin1"] = "aunya.au@localforyou.com";
 $email["admin2"] = "bas@localforyou.com";
 $email["admin3"] = "mark@localforyou.com";
 //prod//

@@ -125,7 +125,13 @@ $(document).ready(function () {
   $(".firstStepForm").show();
   $("#datePOSBox").hide();
   $("#posBoxDate").hide();
-  $(".quotationDetail").show();
+  $("#formCountry").on("change", function() {
+    if ($(this).val() === "TH") {
+      $(".quotationDetail").show();
+    } else {
+      $(".quotationDetail").hide();
+    }
+  });
   $("#boxPOScheck").hide();
   $("#forIndividual").hide();
   $("#nameQuotation").hide();

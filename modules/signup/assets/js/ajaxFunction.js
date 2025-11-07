@@ -808,7 +808,7 @@ function requestToPay() {
     };
 
 
-    saveToDB(stripePayload);
+    /*saveToDB(stripePayload);*/
     if(formCountry === "TH"){saveTaxToDB(stripePayload)}
     createLogs(stripePayload);
     clonePayload = stripePayload;
@@ -1655,7 +1655,8 @@ const invoiceIDToDB = (stripeRes) => {
 
     ajaxInvoiceIDToDB.done(function(res) {
         console.log(res);
-        callWebhookInvoice()
+        $("#idInvoice").val(res.idInvoice);
+        callDatabaseInvoice(insertIDToInvoice)
         return true;
     });
 
@@ -1667,34 +1668,57 @@ const invoiceIDToDB = (stripeRes) => {
 }
 
 
-const callWebhookInvoice = (stripeRes) => {
-    let webhook = "https://hook.us1.make.com/ilpkidd9ve4cflfxoym5fka8fwdozhxt";
-    let idinvoice = $("#quotationID").val()
+const callDatabaseInvoice = (idInvoice) => {
 
+    /*let callInvoiceDB = $("#quotationID").val()*/
 
-    const callWebhookInvoice = $.ajax({
-        url: webhook,
+    $.ajax({
+        url: settings.url_saveQuestionToDB,
         method: 'POST',
-        async: false,
-        cache: false,
         dataType: 'json',
         data: {
-            "act": "callWebhookInvoice",
-            "id": idinvoice
+            act: "callDataBase",
+            quotationID: idInvoice
+        },
+        success: function(res) {
+            console.log("📦 Data from DB:", res);
+            // แปลง JSON เป็น string แล้วใส่ลง input
+            $("#dataInvoice").val(JSON.stringify(res.dataInvoice, null, 2));
+            callWebhookInvoice(idInvoice, res.dataInvoice);
+        },
+        error: function(xhr, status, error) {
+            console.error("❌ callDatabaseInvoice fail:", status, error);
         }
     });
+};
 
-    callWebhookInvoice.done(function(res) {
-        console.log(res);
-        return true;
-    });
 
-    callWebhookInvoice.fail(function(xhr, status, error) {
-        console.log("Save Stripe Response to DB fail!!");
-        console.log(status + ': ' + error);
-        return false;
-    });
-}
+const callWebhookInvoice = (idInvoice, invoiceObject) => {
+    let webhook = "https://hook.us1.make.com/nndneqmfibumrxctsr4b1pv117eb0q35";
+
+
+    if ($("#formCountry").val() === "TH") {
+        $.ajax({
+            url: webhook,
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                act: "callWebhookInvoice",
+                id: idInvoice,
+                data: invoiceObject
+            },
+            success: function(res) {
+                console.log("✅ Webhook response:", res);
+            },
+            error: function(xhr, status, error) {
+                console.log("❌ Webhook fail:", status + ': ' + error);
+            }
+        });
+    }
+};
+
 
 // TODO : Build Logs File to DB by Mark
 const saveToDB = (stripePayload, stripeRes) => {
