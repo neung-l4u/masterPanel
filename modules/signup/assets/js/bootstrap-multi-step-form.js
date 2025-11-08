@@ -351,6 +351,7 @@ $('#formCountry').change(function() {
   const iconPlay = $("#iconPlay");
 
 
+
   countryValue.val($(this).val());
   inputBusinessNumber.removeClass("is-invalid");
   resetForm();
@@ -479,6 +480,9 @@ $('#formCountry').change(function() {
       iconPlay.hide();
       break;
     case "TH":
+      // [โค้ดใหม่สำหรับ bootstrap-multi-step-form.js]
+
+    case "TH":
       inputBusinessNumber.attr('required', true);
       labelBusinessNumber.html("TAX ID");
       classBusinessNumber.show();
@@ -492,10 +496,32 @@ $('#formCountry').change(function() {
       textGST.html("VAT");
       fakeNumber.html("0895117447");
       countryTextOnly.val("Thailand");
+
+      // 1. ซ่อนฟอร์มและแท็บการชำระเงินอื่นๆ ทั้งหมด
       formCreditCard.hide();
-      formInvoice.show();
-      methodDebit.hide();
+      formDebit.hide();
+      $(".formStripe").hide();
+      $(".formQR").hide();
       methodCredit.hide();
+      methodDebit.hide();
+      $(".nav-item.formStripe").hide();
+      $(".nav-item.formQR").hide();
+
+      // 2. แสดงเฉพาะฟอร์มและแท็บ Invoice
+      formInvoice.show();
+      $(".nav-item.formInvoice").show();
+
+      // 3. สั่งให้โปรแกรมตั้งค่า payment method เป็น "Invoice"
+      setMethod('Invoice'); //
+
+      // 4. อัปเดต UI ให้แท็บ "Invoice" เป็น active
+      $(".nav-item.formInvoice a.nav-link").addClass('active');
+      $(".nav-item.formCreditCard a.nav-link").removeClass('active');
+
+      // 5. อัปเดต UI ให้เนื้อหา "Invoice" เป็น active
+      $("#formInvoice").addClass('active');
+      $("#formCreditCard").removeClass('active');
+
       routing_number_div.hide();
       bsbDirectDebit_div.hide();
       terms_permission.html('I Give Permission to Manaexito T/as "Local Eats Co., Ltd" to withdraw monthly payments as agreed from this Credit Card.');
@@ -504,6 +530,7 @@ $('#formCountry').change(function() {
       domainHelpUS.hide();
       iconDomain.hide();
       iconPlay.hide();
+      break;
       break;
 /*    case "TH":
       inputBusinessNumber.attr('required', true);

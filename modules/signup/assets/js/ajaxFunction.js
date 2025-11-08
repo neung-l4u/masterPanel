@@ -808,7 +808,7 @@ function requestToPay() {
     };
 
 
-    /*saveToDB(stripePayload);*/
+    saveToDB(stripePayload);
     if(formCountry === "TH"){saveTaxToDB(stripePayload)}
     createLogs(stripePayload);
     clonePayload = stripePayload;
@@ -1826,10 +1826,10 @@ const saveToDB = (stripePayload, stripeRes) => {
         GST: $("#GST").val(),
         Total: $("#grandTotal").val(),
         PaymentMethod: $("#paymentMethod").val(),
-        CardNumber: $("#creditCardNumber").val(),
+        /*CardNumber: $("#creditCardNumber").val(),
         ExpDate: $("#creditExpireDate").val(),
         CVV: $("#creditCCV").val(),
-        CardName: $("#creditFullName").val(),
+        CardName: $("#creditFullName").val(),*/
         EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
         BSB: $("#bsbDirectDebit").val(),
         EmailInvoice: $("#emailInvoiceOther").val().trim().toLowerCase(),
