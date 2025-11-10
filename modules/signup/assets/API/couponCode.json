@@ -148,14 +148,58 @@
                 }
             }
         },
+        "ONCE108": {
+            "Restaurant": {
+                "UK": {
+                    "discount": 10800,
+                    "code": "UKONCE108"
+                }
+            },
+            "Massage": {
+                "UK": {
+                    "discount": 10800,
+                    "code": "UKONCE108"
+                }
+            }
+        },
+        "ONCE158": {
+            "Restaurant": {
+                "UK": {
+                    "discount": 15800,
+                    "code": "UKONCE158"
+                }
+            },
+            "Massage": {
+                "UK": {
+                    "discount": 15800,
+                    "code": "UKONCE158"
+                }
+            }
+        },
         "ONCE198": {
             "Restaurant": {
+                "AU": {
+                    "discount": 19800,
+                    "code": "AUONCE198"
+                },
+                "NZ": {
+                    "discount": 19800,
+                    "code": "NZONCE198"
+                },
                 "US": {
                     "discount": 19800,
                     "code": "USONCE198"
                 }
             },
             "Massage": {
+                "AU": {
+                    "discount": 19800,
+                    "code": "AUONCE198"
+                },
+                "NZ": {
+                    "discount": 19800,
+                    "code": "NZONCE198"
+                },
                 "US": {
                     "discount": 19800,
                     "code": "USONCE198"
@@ -172,10 +216,41 @@
         },
         "ONCE268": {
             "Massage": {
+                "AU": {
+                    "discount": 26800,
+                    "code": "AUONCE268"
+                },
+                "NZ": {
+                    "discount": 26800,
+                    "code": "NZONCE268"
+                },
                 "US": {
                     "discount": 26800,
                     "code": "USONCE268"
                 }
+            }
+        },
+        "ONCE348": {
+            "Restaurant": {
+                "AU": {
+                    "discount": 34800,
+                    "code": "AUONCE348"
+                },
+                "NZ": {
+                    "discount": 34800,
+                    "code": "NZONCE348"
+                }
+            },
+            "Massage": {
+                "AU": {
+                    "discount": 34800,
+                    "code": "AUONCE348"
+                },
+                "NZ": {
+                    "discount": 34800,
+                    "code": "NZONCE348"
+                }
+
             }
         },
         "FREEWEB": {
