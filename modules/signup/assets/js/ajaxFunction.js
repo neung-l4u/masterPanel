@@ -698,7 +698,7 @@ function requestToPay() {
     }
 
     let addOnDiscountCode = {};
-    let materialDiscountCode = (formCountry==="US" || formCountry==="CA" || formCountry==="TH") ? "" : "suhgy7Fb";
+    let materialDiscountCode = (formCountry==="US" || formCountry==="CA" || formCountry==="TH") ? "" : "";
     let freewebDiscountCode = "Freeweb";
 
     let applyAddonCode = "";
@@ -809,7 +809,7 @@ function requestToPay() {
 
 
     saveToDB(stripePayload);
-    if(formCountry === "TH"){saveTaxToDB(stripePayload)}
+    if(formData.formCountry === "TH"){saveTaxToDB(stripePayload)}
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
