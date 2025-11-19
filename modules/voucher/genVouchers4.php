@@ -2,8 +2,8 @@
 date_default_timezone_set("Asia/Bangkok");
 $timestamp = time();
 $filename = date("Y-m-d-His", $timestamp);
-$image = ImageCreateFromJpeg("https://signup.localforyou.com/voucher/assets/img/Voucher4.2-frame.jpg"); // Path Images
-//$image = ImageCreateFromJpeg("assets/img/Voucher4.2-frame.jpg"); // Path Images
+$image = ImageCreateFromJpeg("https://report.localforyou.com/modules/voucher/assets/img/Voucher4.3-frame.jpg"); // Path Images
+/*$image = ImageCreateFromJpeg("assets/img/Voucher4.3-frame.jpg");*/ // Path Images
 $font = "./Roboto-Black.ttf";
 
 $code = !empty($_GET['code']) ? trim($_GET['code']) : '';
@@ -12,6 +12,9 @@ $discount = !empty($_GET['discount']) ? trim($_GET['discount']) : '';
 $url = !empty($_GET['url']) ? trim($_GET['url']) : '';
 $phone = !empty($_GET['phone']) ? trim($_GET['phone']) : '';
 $issueBy = !empty($_GET['issueBy']) ? trim($_GET['issueBy']) : '';
+$expires = !empty($_GET['expires']) ? trim($_GET['expires']) : '';
+
+
 
 $apiResponse = [
     'success' => true,
@@ -22,7 +25,8 @@ $apiResponse = [
             'valid' => $valid,
             'discount' => $discount,
             'url' => $url,
-            'phone' => $phone
+            'phone' => $phone,
+            'expires' => $expires
         ]
     ],
     'error' => [
@@ -37,6 +41,7 @@ if(
         or empty($apiResponse['data']['result']['discount'])
         or empty($apiResponse['data']['result']['url'])
         or empty($apiResponse['data']['result']['phone'])
+    or empty($apiResponse['data']['result']['expires'])
 ){
     $apiResponse['success'] = false;
     $apiResponse['data']['message'] = 'Missing params';
@@ -107,6 +112,15 @@ if ($apiResponse['success']) {
             "color" => $color["DarkGray"],
             "font" => $font
         ],
+        "expires" => [
+            "size" => 8,
+            "angle" => 0,
+            "value" => $expires,
+            "x" => Imagesx($image) - 893,
+            "y" => Imagesy($image) - 115,
+            "color" => $color["black"],
+            "font" => $font
+        ]
     ];
 
     imagettftext(
@@ -169,12 +183,22 @@ if ($apiResponse['success']) {
         $param["phone"]["font"],
         $param["phone"]["value"]
     );
+    imagettftext(
+        $image,
+        $param["expires"]["size"],
+        $param["expires"]["angle"],
+        $param["expires"]["x"],
+        $param["expires"]["y"],
+        $param["expires"]["color"],
+        $param["expires"]["font"],
+        $param["expires"]["value"]
+    );
 
     imagePng($image, "assets/genImg/" . $timestamp . ".jpg"); //save image
     ImageDestroy($image); // clear temp
 }
 ?>
 <?php if ($apiResponse['success']) { ?>
-                    <img src="https://signup.localforyou.com/voucher/assets/genImg/<?php echo $timestamp; ?>.jpg">
-<!--                    <img src="assets/genImg/--><?php //echo $timestamp; ?><!--.jpg">-->
+                    <img src="https://signup.localforyou.com/modules/voucher/assets/genImg/<?php echo $timestamp; ?>.jpg">
+                    <!--<img src="assets/genImg/<?php /*echo $timestamp; */?>.jpg">-->
 <?php }else{ echo json_encode($apiResponse); } ?>
