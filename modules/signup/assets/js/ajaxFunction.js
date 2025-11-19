@@ -809,7 +809,7 @@ function requestToPay() {
 
 
     saveToDB(stripePayload);
-    if(formData.formCountry === "TH"){saveTaxToDB(stripePayload)}
+    /*if(formData.formCountry === "TH"){saveTaxToDB(stripePayload)}*/
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -1121,6 +1121,9 @@ const sendMailToL4UTeam = () => {
         renovationTakePOS: $("#renovationTakePOS").val(),
         necessaryPermitsPOS: $("#necessaryPermitsPOS").val(),
 
+        ///AI ///
+        addonARAYA: $("input:checkbox[name='addonAI']:checked").val(),
+
         //END NEW//
         testMail: CheckedBoxTestmailValue,
         token: Math.random()
@@ -1130,7 +1133,7 @@ const sendMailToL4UTeam = () => {
 
     // TODO: Send Email To Staff
     const ajaxSendL4UMail = $.ajax({
-        url: "https://hook.us1.make.com/7r536tvdcr50jd77tvw5vo41yk61kygx",
+        url: "https://hook.us1.make.com/tj5min8b66a3mj5gyg78og7pn1cm5isx",
         method: 'POST',
         async: false,
         cache: false,
