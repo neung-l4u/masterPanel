@@ -809,7 +809,7 @@ function requestToPay() {
 
 
     saveToDB(stripePayload);
-    /*if(formData.formCountry === "TH"){saveTaxToDB(stripePayload)}*/
+    if(formData.formCountry === "TH"){saveTaxToDB(stripePayload)}
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -1438,30 +1438,44 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
     let priceOnly = parseFloat(priceProduct.match(/[\d,.]+/)[0].replace(/,/g, ''));
     let productAmountBeforeVAT = getPriceBeforeVAT(priceOnly);
 
+    const isProductValid = nameProduct && nameProduct.trim() !== "" && priceOnly > 0; // ตรวจสอบว่ามีชื่อสินค้าและราคา > 0 ด้วย
+
     ////product/////
 
     ////setupFee/////
     let nameSetup = "Setup Fee (No Contract)";
     let setupFeeAmountBeforeVAT = 0;
-    if (setupFee && setupFee.trim() !== "") {
+    // ประกาศ priceSetupOnly นอก if
+    let priceSetupOnly = 0;
+    const isSetupFeeSelected = setupFee && setupFee.trim() !== "";
+
+    if (isSetupFeeSelected) {
         let partsSetupFee = setupFee.split(" - ");
         nameSetup = partsSetupFee[0];
         let priceSetup = partsSetupFee[1] || "฿0.00";
-        let priceSetupOnly = parseFloat(priceSetup.match(/[\d,.]+/)[0].replace(/,/g, ''));
+        priceSetupOnly = parseFloat(priceSetup.match(/[\d,.]+/)[0].replace(/,/g, ''));
         setupFeeAmountBeforeVAT = getPriceBeforeVAT(priceSetupOnly);
     }
+    // ใช้ priceSetupOnly ที่ถูกประกาศด้านบนในการเช็คเงื่อนไข
+    const isRealSetupFeeSelected = isSetupFeeSelected && priceSetupOnly > 0;
     ////setupFee/////
 
     ////addon////
     let nameAddon = "No Addon";
     let addonAmountBeforeVAT = 0;
-    if (addonSelect && addonSelect.trim() !== "") {
+    // ประกาศ priceAddonOnly นอก if
+    let priceAddonOnly = 0;
+    const isAddonSelected = addonSelect && addonSelect.trim() !== "";
+
+    if (isAddonSelected) {
         let partsAddon = addonSelect.split(" - T฿ ");
         nameAddon = partsAddon[0];
         let priceAddon = partsAddon[1] || "0.00";
-        let priceAddonOnly = parseFloat(priceAddon.match(/[\d,.]+/)[0].replace(/,/g, ''));
+        priceAddonOnly = parseFloat(priceAddon.match(/[\d,.]+/)[0].replace(/,/g, ''));
         addonAmountBeforeVAT = getPriceBeforeVAT(priceAddonOnly);
     }
+    // ใช้ priceAddonOnly ที่ถูกประกาศด้านบนในการเช็คเงื่อนไข
+    const isRealAddonSelected = isAddonSelected && priceAddonOnly > 0;
     ////addon/////
 
     let today = new Date();
@@ -1482,19 +1496,55 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
 
 
     let tableData = [];
-    tableData.push({
-        "product": nameProduct,
-        "qyt": 1,
-        "amount": productAmountBeforeVAT
-    });
 
-    if (setupFeeAmountBeforeVAT > 0) {
-        tableData.push({ "setupfee": nameSetup, "qyt": 1, "amount": setupFeeAmountBeforeVAT });
+// *** เริ่มบล็อก IF/ELSE IF สำหรับการสร้าง tableData ตามเงื่อนไข ***
+
+    if (isProductValid && isRealSetupFeeSelected && isRealAddonSelected) {
+        // กรณี 1: มี product ไม่ว่าง, setupFee ไม่ว่าง, addonSelect ไม่ว่าง
+        console.log("CASE 1: Product, Setup Fee, and Addon are all selected.");
+        tableData.push({
+            "product": nameProduct,
+            "qyt": 1,
+            "amountProduct": productAmountBeforeVAT
+        });
+        tableData.push({ "setupfee": nameSetup, "qyt": 1, "amountSetup": setupFeeAmountBeforeVAT });
+        tableData.push({ "addon": nameAddon, "qyt": 1, "amountAddon": addonAmountBeforeVAT });
+
+    } else if (isProductValid && !isRealSetupFeeSelected && !isRealAddonSelected) {
+        // กรณี 2: product ไม่ว่างอย่างเดียว
+        console.log("CASE 2: Only Product is selected.");
+        tableData.push({
+            "product": nameProduct,
+            "qyt": 1,
+            "amountProduct": productAmountBeforeVAT
+        });
+
+    } else if (isProductValid && isRealSetupFeeSelected && !isRealAddonSelected) {
+        // กรณี 3: มี product ไม่ว่าง, setupFee ไม่ว่าง (addon ไม่ว่าง)
+        console.log("CASE 3: Product and Setup Fee are selected.");
+        tableData.push({
+            "product": nameProduct,
+            "qyt": 1,
+            "amountProduct": productAmountBeforeVAT
+        });
+        tableData.push({ "setupfee": nameSetup, "qyt": 1, "amountSetup": setupFeeAmountBeforeVAT });
+
+    } else if (isProductValid && !isRealSetupFeeSelected && isRealAddonSelected) {
+        // กรณี 4: product ไม่ว่าง, addonSelect ไม่ว่าง (setupFee ไม่ว่าง)
+        console.log("CASE 4: Product and Addon are selected.");
+        tableData.push({
+            "product": nameProduct,
+            "qyt": 1,
+            "amountProduct": productAmountBeforeVAT
+        });
+        tableData.push({ "addon": nameAddon, "qyt": 1, "amountAddon": addonAmountBeforeVAT });
+
+    } else {
+        // กรณี 5: อื่นๆ (เช่น product ไม่ถูกเลือก หรือไม่มีราคา)
+        console.log("CASE 5: Other combinations (e.g., Missing Product or only Addon/Setup Fee). The tableData will be empty.");
     }
 
-    if (addonAmountBeforeVAT > 0) {
-        tableData.push({ "addon": nameAddon, "qyt": 1, "amount": addonAmountBeforeVAT });
-    }
+    // *** สิ้นสุดบล็อก IF/ELSE IF ***
 
     let productQuotation = {
         "quotation": [
@@ -1697,7 +1747,7 @@ const callDatabaseInvoice = (idInvoice) => {
 
 
 const callWebhookInvoice = (idInvoice, invoiceObject) => {
-    let webhook = "https://hook.us1.make.com/nndneqmfibumrxctsr4b1pv117eb0q35";
+    let webhook = "https://hook.us1.make.com/rr57xo735byjgtomfcnobb73m54su23p";
 
 
     if ($("#formCountry").val() === "TH") {

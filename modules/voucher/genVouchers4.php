@@ -2,7 +2,7 @@
 date_default_timezone_set("Asia/Bangkok");
 $timestamp = time();
 $filename = date("Y-m-d-His", $timestamp);
-$image = ImageCreateFromJpeg("https://report.localforyou.com/modules/voucher/assets/img/Voucher4.3-frame.jpg"); // Path Images
+$image = ImageCreateFromJpeg("assets/img/Voucher4.3-frame.jpg"); // Path Images
 /*$image = ImageCreateFromJpeg("assets/img/Voucher4.3-frame.jpg");*/ // Path Images
 $font = "./Roboto-Black.ttf";
 
@@ -199,6 +199,6 @@ if ($apiResponse['success']) {
 }
 ?>
 <?php if ($apiResponse['success']) { ?>
-                    <img src="https://signup.localforyou.com/modules/voucher/assets/genImg/<?php echo $timestamp; ?>.jpg">
+                    <img src="assets/genImg/<?php echo $timestamp; ?>.jpg">
                     <!--<img src="assets/genImg/<?php /*echo $timestamp; */?>.jpg">-->
 <?php }else{ echo json_encode($apiResponse); } ?>
