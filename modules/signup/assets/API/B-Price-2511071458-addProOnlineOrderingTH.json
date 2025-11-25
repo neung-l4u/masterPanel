@@ -4304,6 +4304,18 @@
                   "gst": false
                 },
                 {
+                  "name": "Add on POS + Online Ordering",
+                  "product_id": "prod_RYcU4Dd1TMN474",
+                  "price_id": "price_1SXH0JI6vmxJT6OmankILzge",
+                  "form_name": "addonPOS",
+                  "currency": "usd",
+                  "amount": 140000,
+                  "type": "pos",
+                  "status": "show",
+                  "ext": "/Month",
+                  "gst": false
+                },
+                {
                   "name": "Promotions Add-on",
                   "product_id": "prod_R8TRGoJGpq74J4",
                   "price_id": "price_1QGCUXI6vmxJT6OmJUwGVlJz",
