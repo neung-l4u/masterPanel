@@ -221,74 +221,112 @@
 
 
 // ฟังก์ชันสำหรับตรวจสอบรูปแบบอีเมล
-function isValidEmail(email) {
+
+    // ตรวจสอบความพร้อมของ DOM และกำหนดให้ปุ่มถูก Disable ตั้งแต่เริ่มต้น
+    $(document).ready(function() {
+    // กำหนดให้ปุ่ม Check Email ถูก Disable ตั้งแต่เริ่มต้น
+    $("#sendEmail").prop("disabled", true).addClass("disabled");
+
+    // ซ่อนข้อความแสดงข้อผิดพลาดทั้งหมดในตอนเริ่มต้น (ถ้ายังไม่ได้ทำใน HTML หรือโค้ดเดิม)
+    $("#dangerEmail").hide();
+    $("#invalidEmailFormat").hide();
+    $("#emailNotFound").hide();
+
+    // เพิ่ม Event Listener เพื่อตรวจสอบการเปลี่ยนแปลงในช่องกรอกอีเมลแบบ Real-time
+    $("#inputForgotEmail").on("input", function() {
+    const email = $(this).val().trim(); // ดึงค่าและตัดช่องว่างหัวท้าย
+    const checkEmailButton = $("#sendEmail");
+
+    // ซ่อนข้อความแสดงข้อผิดพลาดที่แสดงอยู่ (ถ้ามี) เมื่อผู้ใช้เริ่มพิมพ์
+    $("#dangerEmail").hide();
+    $("#invalidEmailFormat").hide();
+    $("#emailNotFound").hide();
+
+    // ตรวจสอบเงื่อนไข 2 ข้อ: A. ไม่ว่าง (email.length > 0) และ B. รูปแบบถูกต้อง (isValidEmail(email))
+    if (email.length > 0 && isValidEmail(email)) {
+    // ผ่านการตรวจสอบทั้งสองข้อ: เปิดใช้งานปุ่ม
+    checkEmailButton.prop("disabled", false).removeClass("disabled");
+} else {
+    // ไม่ผ่านเงื่อนไข: ปิดใช้งานปุ่ม
+    checkEmailButton.prop("disabled", true).addClass("disabled");
+}
+});
+});
+
+
+    // ฟังก์ชันสำหรับตรวจสอบรูปแบบอีเมล
+    function isValidEmail(email) {
     // Regular Expression สำหรับการตรวจสอบรูปแบบอีเมลเบื้องต้น
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
 
-function checkEmail (){
-    const email = $("#inputForgotEmail").val();
+    // ฟังก์ชันหลักในการตรวจสอบอีเมลและเรียก AJAX
+    function checkEmail (){
+    const email = $("#inputForgotEmail").val().trim(); // ดึงค่าและตัดช่องว่างหัวท้าย
     const action = "checkEmail";
     const form = $("#formForgotPassword");
     const afterCheck = $("#afterCheckEmail");
     const loading = $("#loading");
 
-    // ซ่อนข้อความแสดงข้อผิดพลาดทั้งหมดก่อนเริ่มการตรวจสอบ
+    // ซ่อนข้อความแสดงข้อผิดพลาดทั้งหมดก่อนเริ่มการตรวจสอบ (เผื่อกรณีมีการกดปุ่มซ้ำ)
     $("#dangerEmail").hide();
     $("#invalidEmailFormat").hide();
     $("#emailNotFound").hide();
 
-    // 1. ตรวจสอบว่าช่องอีเมลว่างหรือไม่
+    // 1. ตรวจสอบว่าช่องอีเมลว่างหรือไม่ (Client-side validation ซ้ำอีกครั้ง)
     if (email === "" || email === null || email === undefined){
-        $("#dangerEmail").show(); // แสดงข้อความ "undefined" (จาก HTML เดิม)
-        return; // หยุดการทำงาน
-    }
-
-    // 2. ตรวจสอบรูปแบบอีเมล
-    if (!isValidEmail(email)) {
-        $("#invalidEmailFormat").show(); // แสดงข้อความ "invalid Email Format"
-        return; // หยุดการทำงาน
-    }
-
-
-    // ถ้าผ่านการตรวจสอบเบื้องต้นแล้ว จึงทำการ AJAX
-    $.ajax({
-        url: "assets/php/actionCheckPassword.php",
-        method: "POST",
-        dataType: "json",
-        data: {
-            act: action,
-            email: email
-        }
-    })
-        .done(function(res) {
-            console.log("Response:", res);
-            if (res.status === "Correct") {
-                form.hide();
-                loading.show();
-                setTimeout(function() {
-                    loading.hide();
-                    afterCheck.show();
-                }, 2000);
-
-
-                sendEncode(res);
-
-            }else if (res.status === "not_found"){
-                $("#emailNotFound").show(); // แสดงข้อความ "This user was not found."
-            }
-            // เพิ่มเงื่อนไขอื่นๆ ตามที่ actionCheckPassword.php อาจจะส่งกลับมา
-
-        })
-        .fail(function(xhr, status, error) {
-            alert("Failed to send email. Please try again.");
-            console.log("AJAX Error", status, error);
-        });
+    $("#dangerEmail").show();
+    return;
 }
 
-function sendEncode(res){
-    // alert("Password");
+    // 2. ตรวจสอบรูปแบบอีเมล (Client-side validation ซ้ำอีกครั้ง)
+    if (!isValidEmail(email)) {
+    $("#invalidEmailFormat").show();
+    return;
+}
+
+
+    // ถ้าผ่านการตรวจสอบเบื้องต้นแล้ว จึงทำการ AJAX ไปที่ Server
+    $.ajax({
+    url: "assets/php/actionCheckPassword.php",
+    method: "POST",
+    dataType: "json",
+    data: {
+    act: action,
+    email: email
+}
+})
+    .done(function(res) {
+    console.log("Response:", res);
+    if (res.status === "Correct") {
+    form.hide();
+    loading.show();
+
+    // รอ 2 วินาที ก่อนแสดงผลสำเร็จ
+    setTimeout(function() {
+    loading.hide();
+    afterCheck.show();
+}, 2000);
+
+    // ส่งข้อมูลต่อไปยัง make.com
+    sendEncode(res);
+
+}else if (res.status === "not_found"){
+    $("#emailNotFound").show(); // แสดงข้อความ "This user was not found."
+}
+    // จัดการ Status อื่น ๆ ที่ actionCheckPassword.php อาจจะส่งกลับมา (ถ้ามี)
+
+})
+    .fail(function(xhr, status, error) {
+    alert("Failed to send email. Please try again.");
+    console.log("AJAX Error", status, error);
+});
+}
+
+    // ฟังก์ชันสำหรับส่งข้อมูลไปยัง Make.com
+    function sendEncode(res){
+    // alert("Password"); // สามารถลบได้
 
     $.ajax({
             url: "https://hook.us1.make.com/63snt17f21kzx9hapt9d5lrcdb54hqbi",
@@ -302,16 +340,15 @@ function sendEncode(res){
             }
         }
     )
-        .done(function(res) { // เปลี่ยนจาก sendEncode.done เป็น .done
+        .done(function(res) {
             console.log("ajax Send to Make Done");
         })
 
-        .fail(function(xhr, status, error) { // เปลี่ยนจาก sendEncode.fail เป็น .fail
+        .fail(function(xhr, status, error) {
             console.log("ajax Send to Make fail!!");
             console.log(status + ': ' + error);
         });
 }
-
 
 
 
