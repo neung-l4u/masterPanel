@@ -140,6 +140,12 @@
     });//ready
 */
 
+/*function isValidEmail(email) {
+    // Regular Expression สำหรับการตรวจสอบรูปแบบอีเมลเบื้องต้น
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
      function checkEmail (){
          const email = $("#inputForgotEmail").val();
          const action = "checkEmail";
@@ -211,8 +217,100 @@
              console.log("ajax Send to Make fail!!");
              console.log(status + ': ' + error);
          });
-     }
+     }*/
 
+
+// ฟังก์ชันสำหรับตรวจสอบรูปแบบอีเมล
+function isValidEmail(email) {
+    // Regular Expression สำหรับการตรวจสอบรูปแบบอีเมลเบื้องต้น
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function checkEmail (){
+    const email = $("#inputForgotEmail").val();
+    const action = "checkEmail";
+    const form = $("#formForgotPassword");
+    const afterCheck = $("#afterCheckEmail");
+    const loading = $("#loading");
+
+    // ซ่อนข้อความแสดงข้อผิดพลาดทั้งหมดก่อนเริ่มการตรวจสอบ
+    $("#dangerEmail").hide();
+    $("#invalidEmailFormat").hide();
+    $("#emailNotFound").hide();
+
+    // 1. ตรวจสอบว่าช่องอีเมลว่างหรือไม่
+    if (email === "" || email === null || email === undefined){
+        $("#dangerEmail").show(); // แสดงข้อความ "undefined" (จาก HTML เดิม)
+        return; // หยุดการทำงาน
+    }
+
+    // 2. ตรวจสอบรูปแบบอีเมล
+    if (!isValidEmail(email)) {
+        $("#invalidEmailFormat").show(); // แสดงข้อความ "invalid Email Format"
+        return; // หยุดการทำงาน
+    }
+
+
+    // ถ้าผ่านการตรวจสอบเบื้องต้นแล้ว จึงทำการ AJAX
+    $.ajax({
+        url: "assets/php/actionCheckPassword.php",
+        method: "POST",
+        dataType: "json",
+        data: {
+            act: action,
+            email: email
+        }
+    })
+        .done(function(res) {
+            console.log("Response:", res);
+            if (res.status === "Correct") {
+                form.hide();
+                loading.show();
+                setTimeout(function() {
+                    loading.hide();
+                    afterCheck.show();
+                }, 2000);
+
+
+                sendEncode(res);
+
+            }else if (res.status === "not_found"){
+                $("#emailNotFound").show(); // แสดงข้อความ "This user was not found."
+            }
+            // เพิ่มเงื่อนไขอื่นๆ ตามที่ actionCheckPassword.php อาจจะส่งกลับมา
+
+        })
+        .fail(function(xhr, status, error) {
+            alert("Failed to send email. Please try again.");
+            console.log("AJAX Error", status, error);
+        });
+}
+
+function sendEncode(res){
+    // alert("Password");
+
+    $.ajax({
+            url: "https://hook.us1.make.com/63snt17f21kzx9hapt9d5lrcdb54hqbi",
+            method: 'POST',
+            async: false,
+            cache: false,
+            dataType: 'json',
+            data: {
+                email: res.email,
+                encode: res.en,
+            }
+        }
+    )
+        .done(function(res) { // เปลี่ยนจาก sendEncode.done เป็น .done
+            console.log("ajax Send to Make Done");
+        })
+
+        .fail(function(xhr, status, error) { // เปลี่ยนจาก sendEncode.fail เป็น .fail
+            console.log("ajax Send to Make fail!!");
+            console.log(status + ': ' + error);
+        });
+}
 
 
 
