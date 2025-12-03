@@ -1430,6 +1430,8 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
         shopAgent = $("#otherAgent").val();
     }
 
+    let withholdingTax = (subTotal * 0.03).toFixed(2);
+
     ////product/////
     // แยกด้วย " - "
     let partsPro = product.split(" - ");
@@ -1546,6 +1548,8 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
 
     // *** สิ้นสุดบล็อก IF/ELSE IF ***
 
+
+
     let productQuotation = {
         "quotation": [
             {
@@ -1565,6 +1569,7 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
         "summary": {
             "subtotal": subTotal,
             "tax": tax,
+            "withholdingTax": withholdingTax,
             "grandtotal": grandTotal
         }
     };
@@ -1608,6 +1613,7 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
                 "taxNumberQuotation" : taxNumberQuotation,
                 "productQuotation" : productQuotation,
                 "finalPrice" : subTotal,
+                "grandTotal" : grandTotal,
                 "shopAgent" : shopAgent,
                 "date" : currentDate
             }
@@ -1642,6 +1648,7 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
                 "taxNumberQuotation" : taxNumberQuotation,
                 "productQuotation" : productQuotation,
                 "finalPrice" : subTotal,
+                "grandTotal" : grandTotal,
                 "shopAgent" : shopAgent,
                 "date" : currentDate
             }

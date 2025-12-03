@@ -64,7 +64,7 @@ if ($apiResponse['success']) {
             "value" => $code,
             "x" => 260,
             "y" => Imagesy($image) - 160,
-            "color" => $color["yellow"],
+            "color" => $color["black"],
             "font" => $font
         ],
         "valid" => [
@@ -73,7 +73,7 @@ if ($apiResponse['success']) {
             "value" => $valid,
             "x" => 170,
             "y" => Imagesy($image) - 130,
-            "color" => $color["black"],
+            "color" => $color["white"],
             "font" => $font
         ],
         "discount" => [
@@ -91,7 +91,7 @@ if ($apiResponse['success']) {
             "value" => $url,
             "x" => 68,
             "y" => Imagesy($image) - 28,
-            "color" => $color["DarkGray"],
+            "color" => $color["white"],
             "font" => $font
         ],
         "issueBy" => [
@@ -100,7 +100,7 @@ if ($apiResponse['success']) {
             "value" => $issueBy,
             "x" => 152,
             "y" => Imagesy($image) - 218,
-            "color" => $color["black"],
+            "color" => $color["white"],
             "font" => $font
         ],
         "phone" => [
@@ -108,8 +108,8 @@ if ($apiResponse['success']) {
             "angle" => 0,
             "value" => $phone,
             "x" => Imagesx($image) - 248,
-            "y" => Imagesy($image) - 29,
-            "color" => $color["DarkGray"],
+            "y" => Imagesy($image) - 30,
+            "color" => $color["white"],
             "font" => $font
         ],
         "expires" => [
@@ -118,7 +118,7 @@ if ($apiResponse['success']) {
             "value" => $expires,
             "x" => Imagesx($image) - 893,
             "y" => Imagesy($image) - 115,
-            "color" => $color["black"],
+            "color" => $color["white"],
             "font" => $font
         ]
     ];

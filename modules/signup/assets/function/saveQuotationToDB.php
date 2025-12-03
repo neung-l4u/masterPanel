@@ -25,6 +25,7 @@ $finalPrice = !empty($_POST["finalPrice"]) ? $_POST["finalPrice"] : null;
 $shopAgent = !empty($_POST["shopAgent"]) ? $_POST["shopAgent"] : null;
 $quotationID = !empty($_POST["quotationID"]) ? $_POST["quotationID"] : null;
 $invoiceID = !empty($_POST["invoiceID"]) ? $_POST["invoiceID"] : null;
+$grandTotal = !empty($_POST["grandTotal"]) ? $_POST["grandTotal"] : null;
 
 $data = json_decode($invoiceID, true);
 $invID = $data['invoice_id'];
@@ -85,7 +86,7 @@ function ReadNumber($number)
     return $ret;
 }
 
-$thaiPrice = ThaiRead($finalPrice);
+$thaiPrice = ThaiRead($grandTotal);
 
 
 if ($act === "add") {
