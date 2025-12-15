@@ -113,7 +113,7 @@ $loginID = $_SESSION['id'];
                 </div>
             </div>
 
-        <div class="row">
+        <div class="row w-100">
             <div class="col-md-6">
                 <div>
                     <div class="card direct-chat direct-chat-warning">
@@ -355,10 +355,10 @@ $loginID = $_SESSION['id'];
                         </div>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body d-flex flex-row flex-wrap justify-content-center align-items-center" style="height: 65vh; overflow-y: auto; overflow-x: hidden; padding: 0 10px;">
+                    <div class="card-body d-flex flex-row flex-wrap " style="height: 65vh; overflow-y: auto; overflow-x: hidden; padding: 10px 10px;">
                         <?php
                         foreach ($spendLogs as $row){ ?>
-                            <div class="col-xl-4 col-lg-4 col-sm-4 col-md-4">
+                            <div class="col">
                                 <div class="d-flex flex-r info-box">
                                     <div class="col-xl-12 col-lg-12 col-sm-12 col-md-12 d-flex flex-row">
                                         <a href="assets/img/reward/<?php echo $row['rcPic']; ?>" target="_blank" title="<?php echo $row['rcTitle'].' : '.$row['rcReward']; ?>"><img class="bg-info elevation-1 rounded-lg" width="130px" src="assets/img/reward/<?php echo $row['rcPic']; ?>" alt="<?php echo $row['rcTitle'].' : '.$row['rcReward']; ?>"></a>
@@ -507,6 +507,7 @@ $loginID = $_SESSION['id'];
                                     <li>Please make an exchange transaction before the 20th of every month.</li>
                                     <li>If you make an exchange transaction after the 21st of the month, it will be carried over to the next month.</li>
                                     <li>The redeemed money will be credited to your account along with your salary. </li>
+                                    <li>Please redeem by the 20th of each month. Requests after the deadline will be processed in the following month.</li>
                                 </ol>
                             <div>
                                 <h5>Your coin : </h5>
