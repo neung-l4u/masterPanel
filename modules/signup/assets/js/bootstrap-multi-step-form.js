@@ -135,6 +135,8 @@ $(document).ready(function () {
   $("#boxPOScheck").hide();
   $("#forIndividual").hide();
   $("#nameQuotation").hide();
+  $("#forThaiBank").hide();
+
 
 });//ready
 
@@ -603,9 +605,12 @@ function quolegalEntity(){
  if (checkLeg === "นิติบุคคล"){
    $('#forIndividual').show();
    $('#nameQuotation').hide();
+   $('#forThaiBank').show();
  }else if(checkLeg === "บุคคลธรรมดา"){
    $('#forIndividual').show();
    $('#nameQuotation').show();
+   $('#forThaiBank').hide();
+
  }
 }
 
@@ -1661,8 +1666,8 @@ const genLinkPDF = () => {
     case "0":
       contractPeriod = 0;
       break;
-    case "3":
-      contractPeriod = 3;
+    case "6":
+      contractPeriod = 6;
       break;
     case "12":
       contractPeriod = 12;
@@ -1738,7 +1743,7 @@ let chooseAddon = cart.add_on;
       case "0":
         contractPeriodKeyIndex = 0;
         break;
-      case "3":
+      case "6":
         contractPeriodKeyIndex = 1;
         break;
       case "12":

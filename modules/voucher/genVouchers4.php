@@ -64,15 +64,15 @@ if ($apiResponse['success']) {
             "value" => $code,
             "x" => 260,
             "y" => Imagesy($image) - 160,
-            "color" => $color["black"],
+            "color" => $color["white"],
             "font" => $font
         ],
         "valid" => [
             "size" => 11,
             "angle" => 0,
             "value" => $valid,
-            "x" => 170,
-            "y" => Imagesy($image) - 130,
+            "x" => 168,
+            "y" => Imagesy($image) - 132,
             "color" => $color["white"],
             "font" => $font
         ],
@@ -107,17 +107,17 @@ if ($apiResponse['success']) {
             "size" => 11,
             "angle" => 0,
             "value" => $phone,
-            "x" => Imagesx($image) - 248,
-            "y" => Imagesy($image) - 30,
-            "color" => $color["white"],
+            "x" => Imagesx($image) - 243,
+            "y" => Imagesy($image) - 31,
+            "color" => $color["black"],
             "font" => $font
         ],
         "expires" => [
             "size" => 8,
             "angle" => 0,
             "value" => $expires,
-            "x" => Imagesx($image) - 893,
-            "y" => Imagesy($image) - 115,
+            "x" => Imagesx($image) - 902,
+            "y" => Imagesy($image) - 117,
             "color" => $color["white"],
             "font" => $font
         ]

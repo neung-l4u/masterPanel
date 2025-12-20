@@ -664,8 +664,8 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <label class="form-check-label" for="radioContract0">No contract</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="contractPeriod" id="radioContract3" value="3" onclick="getProductList();">
-                                                                <label class="form-check-label" for="radioContract3">3 Months</label>
+                                                                <input class="form-check-input" type="radio" name="contractPeriod" id="radioContract3" value="6" onclick="getProductList();">
+                                                                <label class="form-check-label" for="radioContract3">6 Months</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="radio" name="contractPeriod" id="radioContract12" value="12" onclick="getProductList();">
@@ -2089,6 +2089,10 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                             </div>
                                                         </div>
 
+                                                        <div class="forBankAccountThai">
+
+                                                        </div>
+
                                                         <div class="row mb-2">
                                                             <div class="col">
                                                                 <label for="quotationAddress">
@@ -2114,9 +2118,77 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                         id="quotationTaxNumber"
                                                                         class="quotationTaxNumber form-control"
                                                                         name="quotationTaxNumber"
+                                                                        maxlength="100"
+                                                                        required
+                                                                        pattern="[a-zA-Z0-9ก-๙\s\.\-&/]+"
+                                                                        title="โปรดใช้ตัวอักษร ตัวเลข และเครื่องหมายวรรคตอนพื้นฐานเท่านั้น"
                                                                 >
                                                             </div>
                                                         </div>
+
+
+
+
+                                                        <div class="forThaiBank" id="forThaiBank">
+                                                            <hr>
+                                                            <div class="row mb-2">
+                                                                <div class="col">
+                                                                    <label for="bankName">
+                                                                        <span>ธนาคาร</span>
+                                                                    </label>
+                                                                    <input
+                                                                            type="text"
+                                                                            id="bankName"
+                                                                            class="bankName form-control"
+                                                                            name="bankName"
+                                                                            pattern="[0-9]{10}"
+                                                                            maxlength="10"
+                                                                            required
+                                                                            title="โปรดกรอกเลขที่บัญชีเป็นตัวเลข 10 หลักเท่านั้น"
+                                                                            placeholder="เช่น ธนาคารกรุงเทพ หรือ Citi Bank"
+                                                                    >
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-2">
+                                                                <div class="col">
+                                                                    <label for="bankThaiNumber">
+                                                                        <span>เลขที่บัญชีธนาคาร</span>
+                                                                    </label>
+                                                                    <input
+                                                                            type="text"
+                                                                            id="bankThaiNumber"
+                                                                            class="bankThaiNumber form-control"
+                                                                            name="bankThaiNumber"
+                                                                            maxlength="100"
+                                                                            required
+                                                                            pattern="[a-zA-Zก-๙\s\.\-]+"
+                                                                            placeholder="เฉพาะตัวเลขเท่านั้น ตัวอย่าง 1234567890"
+                                                                            title="โปรดใช้ตัวอักษรไทย/อังกฤษ และเครื่องหมายวรรคตอนพื้นฐานเท่านั้น"
+                                                                    >
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-2">
+                                                                <div class="col">
+                                                                    <label for="bankThaiName">
+                                                                        <span>ชื่อบัญชี</span>
+                                                                    </label>
+                                                                    <input
+                                                                            type="text"
+                                                                            id="bankThaiName"
+                                                                            class="bankThaiName form-control"
+                                                                            name="bankThaiName"
+                                                                            maxlength="100"
+                                                                            required
+                                                                            pattern="[a-zA-Zก-๙\s\.\-&/]+"
+                                                                            title="โปรดใช้ตัวอักษรไทย/อังกฤษ และเครื่องหมายวรรคตอนพื้นฐานเท่านั้น"
+                                                                            placeholder="ชื่อ-นามสกุล หรือชื่อบริษัท"
+                                                                    >
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
 
 

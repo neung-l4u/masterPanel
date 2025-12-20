@@ -53,7 +53,7 @@ function getProductList(country) {
             case "0":
                 contractPeriodKeyIndex = 0;
                 break;
-            case "3":
+            case "6":
                 contractPeriodKeyIndex = 1;
                 break;
             case "12":
