@@ -26,6 +26,10 @@ $shopAgent = !empty($_POST["shopAgent"]) ? $_POST["shopAgent"] : null;
 $quotationID = !empty($_POST["quotationID"]) ? $_POST["quotationID"] : null;
 $invoiceID = !empty($_POST["invoiceID"]) ? $_POST["invoiceID"] : null;
 $grandTotal = !empty($_POST["grandTotal"]) ? $_POST["grandTotal"] : null;
+$bankName = !empty($_POST["bankName"]) ? $_POST["bankName"] : null;
+$bankThaiNumber = !empty($_POST["bankThaiNumber"]) ? $_POST["bankThaiNumber"] : null;
+$bankThaiName = !empty($_POST["bankThaiName"]) ? $_POST["bankThaiName"] : null;
+$test = !empty($_POST["test"]) ? $_POST["test"] : 0;
 
 $data = json_decode($invoiceID, true);
 $invID = $data['invoice_id'];
@@ -89,9 +93,11 @@ function ReadNumber($number)
 $thaiPrice = ThaiRead($grandTotal);
 
 
+
+
 if ($act === "add") {
-    $logsToDB =  $db->query('INSERT INTO `invoice`(`checkdata`, `type`, `name`, `address`, `sale`,`thaiPrice`, `product`, `taxNumber`, `customerEmail`,`customerPhone`,`dateThai`) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
-    , $checkBoxWantTAX, $taxType, $nameQuotation, $addressQuotation,$shopAgent, $thaiPrice,$productQuotation, $taxNumberQuotation, $emailQuotation, $phoneQuotation, $dateThai );
+    $logsToDB =  $db->query('INSERT INTO `invoice`(`checkdata`, `type`, `name`, `address`, `sale`,`thaiPrice`, `product`, `taxNumber`, `customerEmail`,`customerPhone`,`bankName`,`bankThaiNumber`,`bankThaiName`,`test`,`dateThai`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+    , $checkBoxWantTAX, $taxType, $nameQuotation, $addressQuotation,$shopAgent, $thaiPrice,$productQuotation, $taxNumberQuotation, $emailQuotation, $phoneQuotation, $bankName ,$bankThaiNumber ,$bankThaiName ,$test , $dateThai );
 
     $lastInsertId = $db->lastInsertId();
 
@@ -118,6 +124,10 @@ if ($act === "add") {
             'customerEmail' => $row['customerEmail'],
             'customerPhone' => $row['customerPhone'],
             'dateThai' => $row['dateThai'],
+            'bankName' => $row['bankName'],
+            'bankThaiNumber' => $row['bankThaiNumber'],
+            'bankThaiName' => $row['bankThaiName'],
+            'test' => $row['test'],
             'createAt' => $row['createAt'],
         ];
     }

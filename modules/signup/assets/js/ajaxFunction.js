@@ -1180,9 +1180,7 @@ function calculateVAT(price) {
 
     return { a, b, c };
 }
-
-/*
-const saveTaxToDB = (stripePayload, stripeRes) => {
+/*const saveTaxToDB = (stripePayload, stripeRes) => {
     let checkBoxWantTAX = $("input:checkbox[id='quotationYes']:checked").val();
     let taxType = $("input:radio[name='taxType']:checked").val();
     let nameQuotation = $("#quotationName").val();
@@ -1204,228 +1202,9 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
     let taxWithheld = (grandTotal * 0.015).toFixed(2)
     let finalPrice = parseFloat((grandTotal - taxWithheld).toFixed(2));
     let finalPriceFormatted = finalPrice.toFixed(2);
-    if (shopAgent === "Other") {
-        shopAgent = $("#otherAgent").val();
-    }
-
-    ////product/////
-    // แยกด้วย " - "
-    let partsPro = product.split(" - ");
-    // ชื่อสินค้า
-    let nameProduct = partsPro[0];  // "Social Media Marketing Solo"
-    // ราคา
-    let priceProduct = partsPro[1]; // "฿4900.00 /Month"
-    // ถ้าต้องการเอาแค่ตัวเลข
-    let priceOnly = priceProduct.match(/[\d,.]+/)[0]; // "4900.00"
-
-    let priceProductReal = parseFloat((priceOnly - taxWithheld).toFixed(2))
-
-    let productResult = calculateVAT(priceProductReal);
-
-    ////product/////
-
-    ////setupFee/////
-    // แยกด้วย " - "
-    let partsSetupFee = setupFee.split(" - ");
-    // ชื่อสินค้า
-    let nameSetup = partsSetupFee[0];  // "Setup Fee (No Contract)"
-    // ราคา
-    let priceSetup = partsSetupFee[1]; // "฿0.00 /Month"
-    // ถ้าต้องการเอาแค่ตัวเลข
-    let priceSetupOnly = priceSetup.match(/[\d,.]+/)[0]; // "0.00"
-
-    let setupFeeResult = calculateVAT(priceSetupOnly);
-    ////setupFee/////
-
-    ////addon////
-    // แยกด้วย " - "
-    let partsAddon = addonSelect.split(" - T฿ ");
-    // ชื่อสินค้า
-    let nameAddon = partsAddon[0]; // "Social Media Set Up"
-    // ราคา
-    let priceAddon = partsAddon[1]; // "1999.00"
-    // ถ้าต้องการเอาแค่ตัวเลข
-    let priceAddonOnly = priceAddon.match(/[\d,.]+/)[0];   // "1999.00"
-
-    let addonResult = calculateVAT(priceAddonOnly);
-
-    ////addon/////
-
-    let today = new Date();
-
-// ดึงวัน เดือน ปี
-    let day = String(today.getDate()).padStart(2, '0');
-    let month = String(today.getMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
-    let year = today.getFullYear();
-
-// รวมเป็นฟอร์แมต dd/mm/yyyy
-    let currentDate = `${day}/${month}/${year}`;
-
-    if(taxType === "นิติบุคคล"){
-        realNameQuotation = shopNameQuotation;
-    }else{
-        realNameQuotation = shopNameQuotation + " โดย " + nameQuotation;
-    }
-
-    let subtotalReal = parseFloat((productResult.c + setupFeeResult.c + addonResult.c).toFixed(2));
-
-
-    let productQuotation = {
-        "table": [
-            { "product": nameProduct, "qyt": 1, "amount": productResult.c},
-            { "setupfee": nameSetup, "qyt": 1, "amount": setupFeeResult.c},
-            { "addon": nameAddon, "qyt": 1, "amount": addonResult.c}
-        ],
-        "summary": {
-            "subtotal": subtotalReal,
-            "tax": tax,
-            "grandtotal": subTotal
-        }
-    };
-
-    payload = {
-        "checkBoxWantTAX" : checkBoxWantTAX,
-        "taxType" : taxType,
-        "nameQuotation" : nameQuotation,
-        "shopNameQuotation" : shopNameQuotation,
-        "phoneQuotation" : phoneQuotation,
-        "emailQuotation" : emailQuotation,
-        "addressQuotation" : addressQuotation,
-        "taxNumberQuotation" : taxNumberQuotation,
-        "subTotal" : subtotalReal,
-        "tax" : tax,
-        "grandTotal" : subTotal,
-        "realNameQuotation" : realNameQuotation,
-        "invoiceID" : invoiceID,
-        "productQuotation" : productQuotation,
-        "shopAgent" : shopAgent,
-        "date" : currentDate
-    }
-
-
-    console.log(payload);
-    if (taxType === "นิติบุคคล") {
-        const ajaxSaveQuotationToDB = $.ajax({
-            url: settings.url_saveQuestionToDB,
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                "act": "add",
-                "checkBoxWantTAX" : checkBoxWantTAX,
-                "taxType" : taxType,
-                "nameQuotation" : shopNameQuotation,
-                "phoneQuotation" : phoneQuotation,
-                "emailQuotation" : emailQuotation,
-                "addressQuotation" : addressQuotation,
-                "taxNumberQuotation" : taxNumberQuotation,
-                "productQuotation" : productQuotation,
-                "finalPrice" : subTotal,
-                "shopAgent" : shopAgent,
-                "date" : currentDate
-            }
-        });
-
-        ajaxSaveQuotationToDB.done(function(res) {
-            console.log(res);
-            $("#quotationID").val(res.quotationID);
-            return true;
-        });
-
-        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
-            console.log("Save to DB fail!!");
-            console.log(status + ': ' + error);
-            return false;
-        });
-    }else if(taxType === "บุคคลธรรมดา"){
-        const ajaxSaveQuotationToDB = $.ajax({
-            url: settings.url_saveQuestionToDB,
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                "act": "add",
-                "checkBoxWantTAX" : checkBoxWantTAX,
-                "taxType" : taxType,
-                "nameQuotation" : realNameQuotation,
-                "phoneQuotation" : phoneQuotation,
-                "emailQuotation" : emailQuotation,
-                "addressQuotation" : addressQuotation,
-                "taxNumberQuotation" : taxNumberQuotation,
-                "productQuotation" : productQuotation,
-                "finalPrice" : subTotal,
-                "shopAgent" : shopAgent,
-                "date" : currentDate
-            }
-        });
-
-        ajaxSaveQuotationToDB.done(function(res) {
-            console.log(res);
-            $("#quotationID").val(res.quotationID);
-            return true;
-        });
-
-        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
-            console.log("Save to DB fail!!");
-            console.log(status + ': ' + error);
-            return false;
-        });
-    }else{
-        const ajaxSaveQuotationToDB = $.ajax({
-            url: settings.url_saveQuestionToDB,
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                "act": "add",
-                "checkBoxWantTAX" : "no",
-                "taxType" : "ไม่ต้องการ",
-                "date" : currentDate
-            }
-        });
-
-        ajaxSaveQuotationToDB.done(function(res) {
-            console.log(res);
-            $("#quotationID").val(res.quotationID);
-            return true;
-        });
-
-        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
-            console.log("Save to DB fail!!");
-            console.log(status + ': ' + error);
-            return false;
-        });
-    }
-
-
-}
-*/
-
-const saveTaxToDB = (stripePayload, stripeRes) => {
-    let checkBoxWantTAX = $("input:checkbox[id='quotationYes']:checked").val();
-    let taxType = $("input:radio[name='taxType']:checked").val();
-    let nameQuotation = $("#quotationName").val();
-    let shopNameQuotation = $("#quotationShopName").val();
-    let phoneQuotation = $("#shopPhoneQuotationFormatted").val();
-    let emailQuotation = $("#quotationEmail").val();
-    let addressQuotation = $("#quotationAddress").val();
-    let taxNumberQuotation = $("#quotationTaxNumber").val();
-    let subTotal = $("#subTotal").val();
-    let tax = $("#GST").val();
-    let grandTotal = $("#grandTotal").val();
-    let realNameQuotation = "";
-    let invoiceID = "VCDSG290-0002";
-    let selectedInputId = $("input[name='product']:checked").attr("id")
-    let product = $("label[for='" + selectedInputId + "']").text().trim().replace(/\n/g, '');
-    let setupFee = $("input[name='setup']:checked").val();
-    let addonSelect = $("input[name='addonSocialMediaSetup']:checked").val();
-    let shopAgent = $("#byAgent").val();
-    let taxWithheld = (grandTotal * 0.015).toFixed(2)
-    let finalPrice = parseFloat((grandTotal - taxWithheld).toFixed(2));
-    let finalPriceFormatted = finalPrice.toFixed(2);
+    let bankName = $("#bankName").val();
+    let bankThaiNumber = $("#bankThaiNumber").val();
+    let bankThaiName = $("#bankThaiName").val();
     if (shopAgent === "Other") {
         shopAgent = $("#otherAgent").val();
     }
@@ -1550,6 +1329,7 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
 
 
 
+
     let productQuotation = {
         "quotation": [
             {
@@ -1615,6 +1395,9 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
                 "finalPrice" : subTotal,
                 "grandTotal" : grandTotal,
                 "shopAgent" : shopAgent,
+                "bankName" : bankName,
+                "bankThaiNumber" : bankThaiNumber,
+                "bankThaiName" : bankThaiName,
                 "date" : currentDate
             }
         });
@@ -1650,6 +1433,9 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
                 "finalPrice" : subTotal,
                 "grandTotal" : grandTotal,
                 "shopAgent" : shopAgent,
+                "bankName" : bankName,
+                "bankThaiNumber" : bankThaiNumber,
+                "bankThaiName" : bankThaiName,
                 "date" : currentDate
             }
         });
@@ -1694,6 +1480,192 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
     }
 
 
+}*/
+
+const saveTaxToDB = (stripePayload, stripeRes) => {
+    // 1. รับค่าจาก Form
+    let checkBoxWantTAX = $("input:checkbox[id='quotationYes']:checked").val();
+    let taxType = $("input:radio[name='taxType']:checked").val(); // 'นิติบุคคล' หรือ 'บุคคลธรรมดา'
+
+    // ข้อมูลลูกค้า
+    let nameQuotation = $("#quotationName").val();
+    let shopNameQuotation = $("#quotationShopName").val();
+    let phoneQuotation = $("#shopPhoneQuotationFormatted").val();
+    let emailQuotation = $("#quotationEmail").val();
+    let addressQuotation = $("#quotationAddress").val();
+    let taxNumberQuotation = $("#quotationTaxNumber").val();
+
+    // ข้อมูลธนาคารลูกค้า
+    let bankName = $("#bankName").val();
+    let bankThaiNumber = $("#bankThaiNumber").val();
+    let bankThaiName = $("#bankThaiName").val();
+
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") {
+        shopAgent = $("#otherAgent").val();
+    }
+
+    // 2. ดึงยอดเงินรวม
+    let grandTotalIncVAT = parseFloat($("#grandTotal").val().replace(/,/g, '')) || 0;
+
+    // 3. คำนวณถอด VAT และ หัก ณ ที่จ่าย
+    let priceExVAT = grandTotalIncVAT / 1.07;     // ราคาก่อน VAT
+    let vatAmount = grandTotalIncVAT - priceExVAT; // มูลค่า VAT 7%
+    let withholdingTax = 0;
+
+    if (taxType === "นิติบุคคล") {
+        withholdingTax = priceExVAT * 0.03;
+    } else {
+        withholdingTax = 0;
+    }
+
+    let netPayment = grandTotalIncVAT - withholdingTax;
+
+    // จัดรูปแบบทศนิยม 2 ตำแหน่ง
+    let subTotalFormatted = priceExVAT.toFixed(2);
+    let vatFormatted = vatAmount.toFixed(2);
+    let whtFormatted = withholdingTax.toFixed(2);
+    let grandTotalFormatted = grandTotalIncVAT.toFixed(2);
+    let finalPriceFormatted = netPayment.toFixed(2);
+
+    let CheckedBoxTestmailValue = $("#CheckedBoxTestmail").is(':checked') ? $("#CheckedBoxTestmail").val() : 0;
+
+    // 4. จัดการชื่อผู้ซื้อ
+    let realNameQuotation = "";
+    if(taxType === "นิติบุคคล"){
+        realNameQuotation = shopNameQuotation;
+    } else {
+        realNameQuotation = shopNameQuotation + " โดย " + nameQuotation;
+    }
+
+    // 5. สร้าง Table Data (Product / Setup / Addons)
+    let tableData = [];
+
+    // -- Product (Main Package) --
+    let selectedInputId = $("input[name='product']:checked").attr("id");
+    let productLabel = $("label[for='" + selectedInputId + "']").text().trim().replace(/\n/g, '');
+
+    if (productLabel) {
+        let parts = productLabel.split(" - ");
+        let nameProduct = parts[0];
+        let priceStr = parts[1] || "฿0.00";
+        let priceInc = parseFloat(priceStr.match(/[\d,.]+/)[0].replace(/,/g, '')) || 0;
+        let amountProductExVAT = getPriceBeforeVAT(priceInc);
+
+        if (amountProductExVAT > 0) {
+            tableData.push({ "product": nameProduct, "qyt": 1, "amount": amountProductExVAT });
+        }
+    }
+
+    // -- Setup Fee --
+    let setupFeeLabel = $("input[name='setup']:checked").val();
+    if (setupFeeLabel) {
+        let parts = setupFeeLabel.split(" - ");
+        let nameSetup = parts[0];
+        let priceStr = parts[1] || "฿0.00";
+        let priceInc = parseFloat(priceStr.match(/[\d,.]+/)[0].replace(/,/g, '')) || 0;
+        let amountSetupExVAT = getPriceBeforeVAT(priceInc);
+
+        if (amountSetupExVAT > 0) {
+            tableData.push({ "setupfee": nameSetup, "qyt": 1, "amount": amountSetupExVAT });
+        }
+    }
+
+    // -- Addons (Multiple Items) -- *ส่วนที่แก้ไข*
+    // วนลูปหา checkbox ทุกตัวใน #addon2 ที่ถูก check
+    $("#addon2 input:checked").each(function() {
+        let addonVal = $(this).val();
+        if (addonVal) {
+            // value format: "Name - T฿ 1,000.00 + GST"
+            let parts = addonVal.split(" - ");
+            let nameAddon = parts[0];
+            let priceStr = parts[1] || "0.00";
+            let priceInc = parseFloat(priceStr.match(/[\d,.]+/)[0].replace(/,/g, '')) || 0;
+            let amountAddonExVAT = getPriceBeforeVAT(priceInc);
+
+            if (amountAddonExVAT > 0) {
+                tableData.push({ "addon": nameAddon, "qyt": 1, "amount": amountAddonExVAT });
+            }
+        }
+    });
+
+    // 6. เตรียม Payload
+    let today = new Date();
+    let day = String(today.getDate()).padStart(2, '0');
+    let month = String(today.getMonth() + 1).padStart(2, '0');
+    let year = today.getFullYear();
+    let currentDate = `${day}/${month}/${year}`;
+
+    let productQuotation = {
+        "quotation": [
+            {
+                "date": currentDate,
+                "detail": [
+                    {
+                        "company": realNameQuotation,
+                        "address": addressQuotation,
+                        "tax_id": taxNumberQuotation,
+                        "email": emailQuotation,
+                        "phone": phoneQuotation,
+                        "tax_type": taxType
+                    }
+                ]
+            }
+        ],
+        "table": tableData,
+        "summary": {
+            "subtotal": subTotalFormatted,
+            "vat": vatFormatted,
+            "grandtotal_inc_vat": grandTotalFormatted,
+            "withholdingTax": whtFormatted,
+            "net_payment": finalPriceFormatted
+        }
+    };
+
+    // Payload ส่ง Ajax
+    let payload = {
+        "act": "add",
+        "checkBoxWantTAX" : checkBoxWantTAX,
+        "taxType" : taxType,
+        "nameQuotation" : (taxType === "นิติบุคคล") ? shopNameQuotation : realNameQuotation,
+        "phoneQuotation" : phoneQuotation,
+        "emailQuotation" : emailQuotation,
+        "addressQuotation" : addressQuotation,
+        "taxNumberQuotation" : taxNumberQuotation,
+        "productQuotation" : productQuotation,
+        "finalPrice" : finalPriceFormatted,
+        "grandTotal" : grandTotalFormatted,
+        "shopAgent" : shopAgent,
+        "bankName" : bankName,
+        "bankThaiNumber" : bankThaiNumber,
+        "bankThaiName" : bankThaiName,
+        "test" : CheckedBoxTestmailValue,
+        "date" : currentDate
+    };
+
+    console.log("Saving Tax/Quotation Payload:", payload);
+
+    // 7. ส่ง Ajax
+    const ajaxSaveQuotationToDB = $.ajax({
+        url: settings.url_saveQuestionToDB,
+        method: 'POST',
+        async: false,
+        cache: false,
+        dataType: 'json',
+        data: payload
+    });
+
+    ajaxSaveQuotationToDB.done(function(res) {
+        console.log("DB Response:", res);
+        $("#quotationID").val(res.quotationID);
+        return true;
+    });
+
+    ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
+        console.log("Save to DB fail!!");
+        console.log(status + ': ' + error);
+        return false;
+    });
 }
 
 
@@ -1754,7 +1726,7 @@ const callDatabaseInvoice = (idInvoice) => {
 
 
 const callWebhookInvoice = (idInvoice, invoiceObject) => {
-    let webhook = "https://hook.us1.make.com/rr57xo735byjgtomfcnobb73m54su23p";
+    let webhook = "https://hook.us1.make.com/ilpkidd9ve4cflfxoym5fka8fwdozhxt";
 
 
     if ($("#formCountry").val() === "TH") {

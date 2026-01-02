@@ -2120,7 +2120,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                         name="quotationTaxNumber"
                                                                         maxlength="100"
                                                                         required
-                                                                        pattern="[a-zA-Z0-9ก-๙\s\.\-&/]+"
+                                                                        pattern="[a-zA-Z0-9ก-๙\s\.\-&\/]+"
                                                                         title="โปรดใช้ตัวอักษร ตัวเลข และเครื่องหมายวรรคตอนพื้นฐานเท่านั้น"
                                                                 >
                                                             </div>
@@ -2162,7 +2162,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                             name="bankThaiNumber"
                                                                             maxlength="100"
                                                                             required
-                                                                            pattern="[a-zA-Zก-๙\s\.\-]+"
+                                                                            pattern="[a-zA-Z0-9ก-๙\s\.\-&\/]+"
                                                                             placeholder="เฉพาะตัวเลขเท่านั้น ตัวอย่าง 1234567890"
                                                                             title="โปรดใช้ตัวอักษรไทย/อังกฤษ และเครื่องหมายวรรคตอนพื้นฐานเท่านั้น"
                                                                     >
@@ -2181,7 +2181,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                             name="bankThaiName"
                                                                             maxlength="100"
                                                                             required
-                                                                            pattern="[a-zA-Zก-๙\s\.\-&/]+"
+                                                                            pattern="[a-zA-Z0-9ก-๙\s\.\-&\/]+"
                                                                             title="โปรดใช้ตัวอักษรไทย/อังกฤษ และเครื่องหมายวรรคตอนพื้นฐานเท่านั้น"
                                                                             placeholder="ชื่อ-นามสกุล หรือชื่อบริษัท"
                                                                     >
