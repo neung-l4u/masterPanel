@@ -2974,10 +2974,10 @@
                 {
                   "name": "POS System - 2 year contract",
                   "product_id": "prod_Td3xXvfRjgOf5i",
-                  "price_id": "price_1SfnpgI6vmxJT6Om2XCY31CT",
+                  "price_id": "price_1SlKTCI6vmxJT6OmThHNZ1tI",
                   "form_name": "addonPOS",
                   "currency": "usd",
-                  "amount": 4900,
+                  "amount": 0,
                   "type": "pos",
                   "status": "show",
                   "ext": "/Month",
@@ -3465,18 +3465,6 @@
                   "gst": false
                 },
                 {
-                  "name": "Domain Name Registration",
-                  "product_id": "prod_Td4FOl7iP8Pdjn",
-                  "price_id": "price_1Sfo7KI6vmxJT6OmFiYeTJHR",
-                  "form_name": "addonDomain",
-                  "currency": "usd",
-                  "amount": 2000,
-                  "type": "domain",
-                  "status": "show",
-                  "ext": "/Month",
-                  "gst": false
-                },
-                {
                   "name": "YelpBoost Pro",
                   "product_id": "prod_Td47gNLHlVDhdI",
                   "price_id": "price_1SfnzVI6vmxJT6OmTm329qn8",
@@ -3652,20 +3640,9 @@
               "gst": false
             },
             {
-              "name": "Setup Fee (12 months) - Restaurant",
+              "name": "Setup Fee (12 months)",
               "product_id": "prod_TdV1EVdpf7ZNmN",
               "price_id": "price_1SgE1WI6vmxJT6OmwGeUyg3l",
-              "currency": "usd",
-              "amount": 100,
-              "type": "setup",
-              "status": "show",
-              "ext": "",
-              "gst": false
-            },
-            {
-              "name": "Setup Fee (12 months) - Massage",
-              "product_id": "prod_TdV4aj0txAV8Aw",
-              "price_id": "price_1SgE4kI6vmxJT6Omreiai0kr",
               "currency": "usd",
               "amount": 0,
               "type": "setup",
@@ -4438,20 +4415,9 @@
               "gst": false
             },
             {
-              "name": "Setup Fee (12 months) - Restaurant",
+              "name": "Setup Fee (12 months)",
               "product_id": "prod_TdV1EVdpf7ZNmN",
               "price_id": "price_1SgE1WI6vmxJT6Om5raGK9ed",
-              "currency": "cad",
-              "amount": 100,
-              "type": "setup",
-              "status": "show",
-              "ext": "",
-              "gst": false
-            },
-            {
-              "name": "Setup Fee (12 months) - Massage",
-              "product_id": "prod_TdV4aj0txAV8Aw",
-              "price_id": "price_1SgE4kI6vmxJT6OmeimHiEA7",
               "currency": "cad",
               "amount": 0,
               "type": "setup",
