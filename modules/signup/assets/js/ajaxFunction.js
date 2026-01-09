@@ -79,47 +79,84 @@ function getProductList(country) {
             "status" : false
         }
 
-        let headText = "<div class='text-warning mt-4'>Bundle</div>";//หัวข้อ Bundle
-        if(readMainProduct.length > 0){//ถ้าเลือก product
-            $("#products2").empty();//เคลียร์เนื้อหาใน id products2
-            let productRadio2 = readMainProduct.map((item) => {
-                let ran = Math.random();//สุ่มเลข
-                let name = "";
-                let special = (item.gst)?" + GST ":"";
-                let price = 0;
-                let currency = "";
-                name = `${item.name}`;//ชื่อสินค้า
-                price = addDotToPrice(item.amount);//ทศนิยม 2 จุด
-                currency = item.currency;
-                amount = item.amount;
+        // ... (Code ก่อนหน้าส่วน products2) ...
+
+        let headText = "";
+        if(readMainProduct.length > 0){
+            $("#products2").empty();
+
+            // 1. ประกาศตัวแปร config ไว้ก่อน
+            let categoryConfig = {};
+
+            // 2. เช็คว่าเป็น Massage หรือ Restaurant (ใช้ formTypeJsonKey ที่มีอยู่แล้ว)
+            if (formTypeJsonKey === "Massage") {
+                // --- Config สำหรับร้านนวด (มี 4 หมวด) ---
+                categoryConfig = {
+                    "bundle":   { order: 1, label: "Booking Bundles" },
+                    "aibundle": { order: 2, label: "AI Bundles" },
+                    "solo":     { order: 3, label: "Marketing Solo" },
+                    "three":    { order: 4, label: "All Three" }
+
+
+
+                };
+            } else {
+                // --- Config สำหรับร้านอาหาร (หรืออื่นๆ) ---
+                // กำหนดแบบมาตรฐานไว้ก่อน เพื่อให้ Bundle ขึ้นก่อน Solo
+                categoryConfig = {
+                    "bundle":   { order: 1, label: "Bundle" },
+                    "solo":     { order: 2, label: "Solo" }
+                    // ถ้ามี type อื่นๆ ของร้านอาหาร เช่น 'pos' ก็เพิ่มตรงนี้ได้
+                };
+            }
+
+            // 3. เรียงลำดับสินค้าตาม Config ที่เลือกมา
+            readMainProduct.sort((a, b) => {
+                // ถ้า type ไม่มีใน config ให้ค่าเป็น 99 (ไปอยู่ท้ายสุด)
+                let orderA = categoryConfig[a.type] ? categoryConfig[a.type].order : 99;
+                let orderB = categoryConfig[b.type] ? categoryConfig[b.type].order : 99;
+                return orderA - orderB;
+            });
+
+            // 4. วนลูปแสดงผล (เหมือนเดิม)
+            let currentType = "";
+
+            readMainProduct.forEach((item) => {
+                let ran = Math.random();
+                let name = item.name;
+                let special = (item.gst) ? " + GST " : "";
+                let price = addDotToPrice(item.amount);
+                let currencySign = "";
                 let product_id = item.price_id;
                 let ext = item.ext;
-                let br = "";
+                let amount = item.amount;
+                let itemType = item.type; // รับค่า type จาก JSON
 
-                let currencySign = "";
                 let currencySignPlace = $(".currencySign");
                 switch(item.currency) {
-                    case "gbp":
-                        currencySign = "£";
-                        currencySignPlace.html("£");
-                        break;
-                    case "thb":
-                        currencySign = "฿";
-                        currencySignPlace.html("฿");
-                        break;
-                    default:
-                        currencySign = "$";
-                        currencySignPlace.html("$");
-                }//ตั้งค่าสัญลักษณ์เงินให้ตรงกับสกุล (เช่น THB → ฿, GBP → £, อื่น ๆ → $)
+                    case "gbp": currencySign = "£"; currencySignPlace.html("£"); break;
+                    case "thb": currencySign = "฿"; currencySignPlace.html("฿"); break;
+                    default:    currencySign = "$"; currencySignPlace.html("$");
+                }
 
-                lap++;
-                if(brBundle.type!==item.type){
-                    br = (brBundle.status)?"<div class='text-warning mt-2'>Solo</div>":"";
-                    brBundle.type = item.type;
-                    brBundle.status = true;
-                }//ถ้าสินค้าใหม่มี type ต่างจากสินค้าเดิมจะเพิ่มหัวข้อ “Solo” ก่อนหน้า เพื่อแยกหมวด เช่น “Bundle” กับ “Solo”
+                // --- Logic สร้าง Header (Dynamic) ---
+                if (currentType !== itemType) {
+                    // ดึงชื่อหัวข้อจาก Config ถ้าไม่มีให้ใช้ชื่อ Type ดิบๆ (เช่น 'pos')
+                    let headerLabel = categoryConfig[itemType] ? categoryConfig[itemType].label : itemType;
 
-                return `${br}<div class="form-check">
+                    // แปลงตัวอักษรแรกเป็นตัวใหญ่ (Capitalize) กรณีที่เป็น Type ดิบๆ ที่ไม่ได้ Set label ไว้
+                    if (!categoryConfig[itemType]) {
+                        headerLabel = headerLabel.charAt(0).toUpperCase() + headerLabel.slice(1);
+                    }
+
+                    // สร้าง Header
+                    $(`<div class='text-warning mt-4'>${headerLabel}</div>`).appendTo("#products2");
+
+                    currentType = itemType;
+                }
+                // -------------------------------------
+
+                let productHTML = `<div class="form-check">
                         <input 
                             class="form-check-input" 
                             type="radio" 
@@ -132,19 +169,14 @@ function getProductList(country) {
                             ${name} <b class="text-primary"> - ${currencySign}${price} ${special}${ext}</b>
                         </label>
                     </div>`;
-            });//return สร้างค่าใน input กับ label
 
-            productRadio2.map((item) => {
-                if(!bundleHeader) {
-                    $("<div class='text-warning mt-2'>Bundle</div>").appendTo("#products2");
-                    bundleHeader = true;
-                }
-                $(item).appendTo( "#products2" );
-            });//หลังจากได้ array ของ HTML แล้ว (productRadio2)จะเพิ่มหัวข้อ "Bundle" ก่อนรายการแรก จากนั้น append แต่ละ item ลงใน #products2
-        }else{
+                $(productHTML).appendTo("#products2");
+            });
+
+        } else {
             let textMainProduct = `<small class="text-danger">Sorry we don't have any Package in this currency yet !!</small>`;
             $("#products2").html(textMainProduct);
-        }//ถ้าไม่มีสินค้าเลย
+        }
 
         if(jsonSetupFee.length > 0){
             $("#setUpFeeList").empty();

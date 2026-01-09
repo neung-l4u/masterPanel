@@ -253,6 +253,19 @@
 
             }
         },
+        "AIUS": {
+            "Massage": {
+                "US": {
+                    "discount": 10000,
+                    "code": "AIUS100"
+                },
+                "CA": {
+                    "discount": 10000,
+                    "code": "AIUS100"
+                }
+
+            }
+        },
         "FREEWEB": {
             "Restaurant": {
                 "AU": {

@@ -248,9 +248,21 @@
                   "name": "POS System + Pro Online Ordering System",
                   "product_id": "prod_TcUhhYmm8HKsCI",
                   "price_id": "AUPOSP01M00O-20",
-                  "form_name": "addonPOSProOnlie",
+                  "form_name": "addonPOS",
                   "currency": "aud",
                   "amount": 29900,
+                  "type": "pos",
+                  "status": "show",
+                  "ext": "/Month",
+                  "gst": true
+                },
+                {
+                  "name": "POS System + Marketing",
+                  "product_id": "prod_TkdOqM73htU1sl",
+                  "price_id": "AUPOSM01M00O-20",
+                  "form_name": "addonPOS",
+                  "currency": "aud",
+                  "amount": 54900,
                   "type": "pos",
                   "status": "show",
                   "ext": "/Month",
@@ -296,44 +308,44 @@
                 "gst": true
               },
               {
-                "name": "AI Receptionist",
+                "name": "AI Receptionist - $199.00 /Month (USD $99) Until official announce to sell at",
                 "product_id": "prod_TcJ65297HW99bE",
                 "price_id": "AUAI02M00O-20",
                 "currency": "aud",
-                "amount": 19900,
-                "type": "bundle",
+                "amount": 24900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
               },
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcL7L6ZUXqHIyx",
                 "price_id": "AULSB02M00O-20",
                 "currency": "aud",
-                "amount": 36700,
+                "amount": 36900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcNjyaLqZe8z5X",
                 "price_id": "AULGB02M00O-20",
                 "currency": "aud",
-                "amount": 66700,
+                "amount": 66900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcQdDb5opqp8S3",
                 "price_id": "AULUB02M00O-20",
                 "currency": "aud",
-                "amount": 106700,
+                "amount": 106900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -344,8 +356,8 @@
                 "product_id": "prod_TcM1RXyLssci0D",
                 "price_id": "AUAIBO04M00O-20",
                 "currency": "aud",
-                "amount": 26900,
-                "type": "bundle",
+                "amount": 31900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -356,7 +368,7 @@
                 "price_id": "AUAILS04M00O-20",
                 "currency": "aud",
                 "amount": 49900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -366,8 +378,8 @@
                 "product_id": "prod_TcOv7mtkVAvCCl",
                 "price_id": "AUAILG04M00O-20",
                 "currency": "aud",
-                "amount": 74900,
-                "type": "bundle",
+                "amount": 79900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -377,8 +389,8 @@
                 "product_id": "prod_TcQtupR6v7Rxk8",
                 "price_id": "AUAILU04M00O-20",
                 "currency": "aud",
-                "amount": 114900,
-                "type": "bundle",
+                "amount": 119900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -426,6 +438,39 @@
                 "status": "show",
                 "ext": "",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkcizlROkAiL65",
+                "price_id": "AUALS02M00O-21",
+                "currency": "aud",
+                "amount": 61800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_TkcxP3uAkgHv8U",
+                "price_id": "AUALG02M00O-21",
+                "currency": "aud",
+                "amount": 91800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdCaLZc31vTfc",
+                "price_id": "AUALU02M00O-21",
+                "currency": "aud",
+                "amount": 131800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
               }
             ]
           },
@@ -433,33 +478,33 @@
             "period": 6,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLYE99QiLeROt",
                 "price_id": "AULSB02M06O-20",
                 "currency": "aud",
-                "amount": 33000,
+                "amount": 33200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcNyK6orAjJCoU",
                 "price_id": "AULGB02M06O-20",
                 "currency": "aud",
-                "amount": 60000,
+                "amount": 60200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcQi1Q9M9FCBDK",
                 "price_id": "AULUB02M06O-20",
                 "currency": "aud",
-                "amount": 96000,
+                "amount": 96200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -470,8 +515,8 @@
                 "product_id": "prod_TcMWjVA7XmzyLN",
                 "price_id": "AUAILS04M06O-20",
                 "currency": "aud",
-                "amount": 40400,
-                "type": "bundle",
+                "amount": 44900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -481,8 +526,8 @@
                 "product_id": "prod_TcPWB392tuZOQa",
                 "price_id": "AUAILG04M06O-20",
                 "currency": "aud",
-                "amount": 67400,
-                "type": "bundle",
+                "amount": 71900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -492,8 +537,8 @@
                 "product_id": "prod_TcQytJJEqvf5zY",
                 "price_id": "AUAILU04M06O-20",
                 "currency": "aud",
-                "amount": 103400,
-                "type": "bundle",
+                "amount": 107900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -530,6 +575,39 @@
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkcmyIvlPi57L1",
+                "price_id": "AUALS02M06O-21",
+                "currency": "aud",
+                "amount": 55600,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_Tkd0kzB8SMLkRx",
+                "price_id": "AUALG02M06O-21",
+                "currency": "aud",
+                "amount": 82600,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdHEecYcGUf9X",
+                "price_id": "AUALU02M06O-21",
+                "currency": "aud",
+                "amount": 118600,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
               }
             ]
           },
@@ -537,33 +615,33 @@
             "period": 12,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLp7LyA3Qucq4",
                 "price_id": "AULSB02M12O-20",
                 "currency": "aud",
-                "amount": 29400,
+                "amount": 29500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcOPThsHfjxqfM",
                 "price_id": "AULGB02M12O-20",
                 "currency": "aud",
-                "amount": 53400,
+                "amount": 53500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcQnbMZWAv01s5",
                 "price_id": "AULUB02M12O-20",
                 "currency": "aud",
-                "amount": 85400,
+                "amount": 85500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -574,8 +652,8 @@
                 "product_id": "prod_TcMhbsUZjrWHyy",
                 "price_id": "AUAILS04M12O-20",
                 "currency": "aud",
-                "amount": 35900,
-                "type": "bundle",
+                "amount": 39900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -585,8 +663,8 @@
                 "product_id": "prod_TcPoze6uVKySKK",
                 "price_id": "AUAILG04M12O-20",
                 "currency": "aud",
-                "amount": 59900,
-                "type": "bundle",
+                "amount": 63900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -596,8 +674,8 @@
                 "product_id": "prod_TcR23g4QS0Huvh",
                 "price_id": "AUAILU04M12O-20",
                 "currency": "aud",
-                "amount": 91900,
-                "type": "bundle",
+                "amount": 95900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -631,6 +709,39 @@
                 "currency": "aud",
                 "amount": 79900,
                 "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkcrkHNeV6HSUo",
+                "price_id": "AUALS02M12O-21",
+                "currency": "aud",
+                "amount": 49400,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_Tkd83pfcqGpYg6",
+                "price_id": "AUALG02M12O-21",
+                "currency": "aud",
+                "amount": 73400,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": true
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdKkhNNDkjKn7",
+                "price_id": "AUALU02M12O-21",
+                "currency": "aud",
+                "amount": 105400,
+                "type": "three",
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
@@ -745,7 +856,7 @@
                   "gst": true
                 },
                 {
-                  "name": "Wesbite Build - Fully Customised",
+                  "name": "Website Build - Fully Customised",
                   "product_id": "prod_TcVi9dJxGNf9HJ",
                   "price_id": "AUWBF03M00O-20",
                   "form_name": "addWebsiteMakeoverFully",
@@ -1280,40 +1391,40 @@
                 "product_id": "prod_TcJ65297HW99bE",
                 "price_id": "NZAI02M00O-20",
                 "currency": "nzd",
-                "amount": 19900,
+                "amount": 24900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcL7L6ZUXqHIyx",
                 "price_id": "NZLSB02M00O-20",
                 "currency": "nzd",
-                "amount": 36700,
+                "amount": 36900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcNjyaLqZe8z5X",
                 "price_id": "NZLGB02M00O-20",
                 "currency": "nzd",
-                "amount": 66700,
+                "amount": 66900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcQdDb5opqp8S3",
                 "price_id": "NZLUB02M00O-20",
                 "currency": "nzd",
-                "amount": 106700,
+                "amount": 106900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -1324,8 +1435,8 @@
                 "product_id": "prod_TcM1RXyLssci0D",
                 "price_id": "NZAIBO04M00O-20",
                 "currency": "nzd",
-                "amount": 26900,
-                "type": "bundle",
+                "amount": 31900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1335,8 +1446,8 @@
                 "product_id": "prod_TcML5MAaNexeEW",
                 "price_id": "NZAILS04M00O-20",
                 "currency": "nzd",
-                "amount": 44900,
-                "type": "bundle",
+                "amount": 49900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1346,8 +1457,8 @@
                 "product_id": "prod_TcOv7mtkVAvCCl",
                 "price_id": "NZAILG04M00O-20",
                 "currency": "nzd",
-                "amount": 74900,
-                "type": "bundle",
+                "amount": 79900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1357,8 +1468,8 @@
                 "product_id": "prod_TcQtupR6v7Rxk8",
                 "price_id": "NZAILU04M00O-20",
                 "currency": "nzd",
-                "amount": 114900,
-                "type": "bundle",
+                "amount": 119900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1406,6 +1517,39 @@
                 "status": "show",
                 "ext": "",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkcizlROkAiL65",
+                "price_id": "NZALS02M00O-21",
+                "currency": "nzd",
+                "amount": 61800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_TkcxP3uAkgHv8U",
+                "price_id": "NZALG02M00O-21",
+                "currency": "nzd",
+                "amount": 91800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdCaLZc31vTfc",
+                "price_id": "NZALU02M00O-21",
+                "currency": "nzd",
+                "amount": 131800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           },
@@ -1413,33 +1557,33 @@
             "period": 6,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLYE99QiLeROt",
                 "price_id": "NZLSB02M06O-20",
                 "currency": "nzd",
-                "amount": 33000,
+                "amount": 33200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcNyK6orAjJCoU",
                 "price_id": "NZLGB02M06O-20",
                 "currency": "nzd",
-                "amount": 60000,
+                "amount": 60200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcQi1Q9M9FCBDK",
                 "price_id": "NZLUB02M06O-20",
                 "currency": "nzd",
-                "amount": 96000,
+                "amount": 96200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -1450,8 +1594,8 @@
                 "product_id": "prod_TcMWjVA7XmzyLN",
                 "price_id": "NZAILS04M06O-20",
                 "currency": "nzd",
-                "amount": 40400,
-                "type": "bundle",
+                "amount": 44900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1461,8 +1605,8 @@
                 "product_id": "prod_TcPWB392tuZOQa",
                 "price_id": "NZAILG04M06O-20",
                 "currency": "nzd",
-                "amount": 67400,
-                "type": "bundle",
+                "amount": 71900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1472,8 +1616,8 @@
                 "product_id": "prod_TcQytJJEqvf5zY",
                 "price_id": "NZAILU04M06O-20",
                 "currency": "nzd",
-                "amount": 103400,
-                "type": "bundle",
+                "amount": 107900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1510,6 +1654,39 @@
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkcmyIvlPi57L1",
+                "price_id": "NZALS02M06O-21",
+                "currency": "nzd",
+                "amount": 55600,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_Tkd0kzB8SMLkRx",
+                "price_id": "NZALG02M06O-21",
+                "currency": "nzd",
+                "amount": 82600,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdHEecYcGUf9X",
+                "price_id": "NZALU02M06O-21",
+                "currency": "nzd",
+                "amount": 118600,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           },
@@ -1517,44 +1694,44 @@
             "period": 12,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLp7LyA3Qucq4",
                 "price_id": "NZLSB02M12O-20",
                 "currency": "nzd",
-                "amount": 29400,
+                "amount": 29500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcOPThsHfjxqfM",
                 "price_id": "NZLGB02M12O-20",
                 "currency": "nzd",
-                "amount": 53400,
+                "amount": 53500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcQnbMZWAv01s5",
                 "price_id": "NZLUB02M12O-20",
                 "currency": "nzd",
-                "amount": 85400,
+                "amount": 85500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcQnbMZWAv01s5",
                 "price_id": "NZLUB02M12O-20",
                 "currency": "nzd",
-                "amount": 85400,
+                "amount": 85500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -1565,8 +1742,8 @@
                 "product_id": "prod_TcMhbsUZjrWHyy",
                 "price_id": "NZAILS04M12O-20",
                 "currency": "nzd",
-                "amount": 35900,
-                "type": "solo",
+                "amount": 39900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1576,8 +1753,8 @@
                 "product_id": "prod_TcPoze6uVKySKK",
                 "price_id": "NZAILG04M12O-20",
                 "currency": "nzd",
-                "amount": 59900,
-                "type": "solo",
+                "amount": 63900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1587,8 +1764,8 @@
                 "product_id": "prod_TcR23g4QS0Huvh",
                 "price_id": "NZAILU04M12O-20",
                 "currency": "nzd",
-                "amount": 91900,
-                "type": "solo",
+                "amount": 95900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1611,6 +1788,39 @@
                 "currency": "nzd",
                 "amount": 79900,
                 "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkcrkHNeV6HSUo",
+                "price_id": "NZALS02M12O-21",
+                "currency": "nzd",
+                "amount": 49400,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_Tkd83pfcqGpYg6",
+                "price_id": "NZALG02M12O-21",
+                "currency": "nzd",
+                "amount": 73400,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdKkhNNDkjKn7",
+                "price_id": "NZALU02M12O-21",
+                "currency": "nzd",
+                "amount": 105400,
+                "type": "three",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -1701,7 +1911,7 @@
                   "gst": false
                 },
                 {
-                  "name": "Wesbite Build - Fully Customised",
+                  "name": "Website Build - Fully Customised",
                   "product_id": "prod_TcVi9dJxGNf9HJ",
                   "price_id": "NZWBF03M00O-20",
                   "form_name": "addWebsiteMakeoverFully",
@@ -2181,6 +2391,18 @@
                   "gst": false
                 },
                 {
+                  "name": "POS System + Marketing",
+                  "product_id": "prod_TkdOqM73htU1sl",
+                  "price_id": "UKPOSM01M00O-20",
+                  "form_name": "addonPOS",
+                  "currency": "gbp",
+                  "amount": 19900,
+                  "type": "pos",
+                  "status": "show",
+                  "ext": "/Month",
+                  "gst": false
+                },
+                {
                   "name": "Mob App",
                   "product_id": "prod_R87pFxjWntSErO",
                   "price_id": "UKMBA03M00O-02",
@@ -2238,13 +2460,13 @@
                 "price_id": "UKAI02M00O-20",
                 "currency": "gbp",
                 "amount": 9900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcL7L6ZUXqHIyx",
                 "price_id": "UKLSB02M00O-20",
                 "currency": "gbp",
@@ -2255,7 +2477,7 @@
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcNjyaLqZe8z5X",
                 "price_id": "UKLGB02M00O-20",
                 "currency": "gbp",
@@ -2266,7 +2488,7 @@
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcQdDb5opqp8S3",
                 "price_id": "UKLUB02M00O-20",
                 "currency": "gbp",
@@ -2282,7 +2504,7 @@
                 "price_id": "UKAIBO04M00O-20",
                 "currency": "gbp",
                 "amount": 15900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -2293,7 +2515,7 @@
                 "price_id": "UKAILS04M00O-20",
                 "currency": "gbp",
                 "amount": 19900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -2304,7 +2526,7 @@
                 "price_id": "UKAILG04M00O-20",
                 "currency": "gbp",
                 "amount": 34900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -2315,7 +2537,7 @@
                 "price_id": "UKAILU04M00O-20",
                 "currency": "gbp",
                 "amount": 54900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -2363,6 +2585,39 @@
                 "status": "show",
                 "ext": "",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkcizlROkAiL65",
+                "price_id": "UKALS02M00O-21",
+                "currency": "gbp",
+                "amount": 29800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_TkcxP3uAkgHv8U",
+                "price_id": "UKALG02M00O-21",
+                "currency": "gbp",
+                "amount": 44800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdCaLZc31vTfc",
+                "price_id": "UKALU02M00O-21",
+                "currency": "gbp",
+                "amount": 64800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           },
@@ -2370,7 +2625,7 @@
             "period": 6,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLYE99QiLeROt",
                 "price_id": "UKLSB02M06O-20",
                 "currency": "gbp",
@@ -2381,7 +2636,7 @@
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcNyK6orAjJCoU",
                 "price_id": "UKLGB02M06O-20",
                 "currency": "gbp",
@@ -2392,7 +2647,7 @@
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcQi1Q9M9FCBDK",
                 "price_id": "UKLUB02M06O-20",
                 "currency": "gbp",
@@ -2408,7 +2663,7 @@
                 "price_id": "UKAILS04M06O-20",
                 "currency": "gbp",
                 "amount": 17900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -2419,7 +2674,7 @@
                 "price_id": "UKAILG04M06O-20",
                 "currency": "gbp",
                 "amount": 31400,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -2430,7 +2685,7 @@
                 "price_id": "UKAILU04M06O-20",
                 "currency": "gbp",
                 "amount": 49400,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -2467,6 +2722,39 @@
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkcmyIvlPi57L1",
+                "price_id": "UKALS02M06O-21",
+                "currency": "gbp",
+                "amount": 26800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_Tkd0kzB8SMLkRx",
+                "price_id": "UKALG02M06O-21",
+                "currency": "gbp",
+                "amount": 40300,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdHEecYcGUf9X",
+                "price_id": "UKALU02M06O-21",
+                "currency": "gbp",
+                "amount": 58300,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           },
@@ -2474,7 +2762,7 @@
             "period": 12,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLp7LyA3Qucq4",
                 "price_id": "UKLSB02M12O-20",
                 "currency": "gbp",
@@ -2485,7 +2773,7 @@
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcOPThsHfjxqfM",
                 "price_id": "UKLGB02M12O-20",
                 "currency": "gbp",
@@ -2496,7 +2784,7 @@
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcQnbMZWAv01s5",
                 "price_id": "UKLUB02M12O-20",
                 "currency": "gbp",
@@ -2512,7 +2800,7 @@
                 "price_id": "UKAILS04M12O-20",
                 "currency": "gbp",
                 "amount": 15900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -2523,7 +2811,7 @@
                 "price_id": "UKAILG04M12O-20",
                 "currency": "gbp",
                 "amount": 27900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -2534,7 +2822,7 @@
                 "price_id": "UKAILU04M12O-20",
                 "currency": "gbp",
                 "amount": 43900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -2571,6 +2859,39 @@
                 "status": "show",
                 "ext": "/Month",
                 "gst": true
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkcrkHNeV6HSUo",
+                "price_id": "UKALS02M12O-21",
+                "currency": "gbp",
+                "amount": 23800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_Tkd83pfcqGpYg6",
+                "price_id": "UKALG02M12O-21",
+                "currency": "gbp",
+                "amount": 35800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdKkhNNDkjKn7",
+                "price_id": "UKALU02M12O-21",
+                "currency": "gbp",
+                "amount": 51800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           }
@@ -2648,7 +2969,7 @@
                   "gst": false
                 },
                 {
-                  "name": "Wesbite Build - Fully Customised",
+                  "name": "Website Build - Fully Customised",
                   "product_id": "prod_TcVi9dJxGNf9HJ",
                   "price_id": "UKWBF03M00O-20",
                   "form_name": "addWebsiteMakeoverFully",
@@ -3001,7 +3322,7 @@
                   "price_id": "price_1SfnxkI6vmxJT6OmXNj4kbOR",
                   "form_name": "addonPOS",
                   "currency": "usd",
-                  "amount": 24700,
+                  "amount": 34900,
                   "type": "pos",
                   "status": "show",
                   "ext": "/Month",
@@ -3076,39 +3397,39 @@
                 "price_id": "price_1Sf516I6vmxJT6OmVI1bPAxe",
                 "currency": "usd",
                 "amount": 19900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLSIq3nUKZK45",
                 "price_id": "price_1Sf6lTI6vmxJT6OmnLlopYgj",
                 "currency": "usd",
-                "amount": 36700,
+                "amount": 36900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcNs8AcSjRcYaR",
                 "price_id": "price_1Sf97BI6vmxJT6OmL8uWunHD",
                 "currency": "usd",
-                "amount": 66700,
+                "amount": 66900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcvqbtpCDx0Rc7",
                 "price_id": "price_1Sffz7I6vmxJT6OmWNqWJfBn",
                 "currency": "usd",
-                "amount": 106700,
+                "amount": 106900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -3120,7 +3441,7 @@
                 "price_id": "price_1Sf7OxI6vmxJT6OmvZ7KXFA1",
                 "currency": "usd",
                 "amount": 26900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -3131,7 +3452,7 @@
                 "price_id": "price_1Sf7iNI6vmxJT6OmyAgdFODx",
                 "currency": "usd",
                 "amount": 44900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -3142,7 +3463,7 @@
                 "price_id": "price_1SfAImI6vmxJT6OmqROYbkAF",
                 "currency": "usd",
                 "amount": 74900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -3153,7 +3474,7 @@
                 "price_id": "price_1SfgI3I6vmxJT6OmeqbYEeX2",
                 "currency": "usd",
                 "amount": 114900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -3201,6 +3522,39 @@
                 "status": "show",
                 "ext": "",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkdRfITQT84qvu",
+                "price_id": "price_1Sn8BOI6vmxJT6OmeXnhfibv",
+                "currency": "usd",
+                "amount": 56800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_Tkde28iT5xr8Ty",
+                "price_id": "price_1Sn8MzI6vmxJT6Om6t6lR4W5",
+                "currency": "usd",
+                "amount": 86800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdqjRwREY5d8l",
+                "price_id": "price_1Sn8YvI6vmxJT6OmXBQFJ51a",
+                "currency": "usd",
+                "amount": 126800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           },
@@ -3208,33 +3562,33 @@
             "period": 6,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLh96MF9cJebA",
                 "price_id": "price_1Sf70WI6vmxJT6OmBqdknrxA",
                 "currency": "usd",
-                "amount": 31200,
+                "amount": 33200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcOBZ0fhGfrbfC",
                 "price_id": "price_1Sf9P3I6vmxJT6OmEXhWlWRf",
                 "currency": "usd",
-                "amount": 60000,
+                "amount": 60200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_Tcvu5GpUb1xlKF",
                 "price_id": "price_1Sfg2OI6vmxJT6OmrXdNUgcz",
                 "currency": "usd",
-                "amount": 96000,
+                "amount": 96200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -3246,7 +3600,7 @@
                 "price_id": "price_1Sf7tmI6vmxJT6OmJPLQIvpD",
                 "currency": "usd",
                 "amount": 40400,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -3257,7 +3611,7 @@
                 "price_id": "price_1SfApXI6vmxJT6Om1lYxyNvR",
                 "currency": "usd",
                 "amount": 67400,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -3268,17 +3622,17 @@
                 "price_id": "price_1SfgMeI6vmxJT6OmDTOtBTam",
                 "currency": "usd",
                 "amount": 103400,
-                "type": "solo",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Starter Bundle",
-                "product_id": "prod_TcLSIq3nUKZK45",
-                "price_id": "price_1Sf6lTI6vmxJT6OmwSWB97tY",
+                "name": "Local Starter Solo",
+                "product_id": "prod_TcwWQnwyg9QQl5",
+                "price_id": "price_1SfgdkI6vmxJT6Om4x6In9uq",
                 "currency": "usd",
-                "amount": 36700,
+                "amount": 26900,
                 "type": "solo",
                 "status": "show",
                 "ext": "/Month",
@@ -3305,6 +3659,39 @@
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkdVocOvVU96Em",
+                "price_id": "price_1Sn8EjI6vmxJT6OmN34PQrBj",
+                "currency": "usd",
+                "amount": 51100,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_TkdjhHEf2QhFRD",
+                "price_id": "price_1Sn8RbI6vmxJT6Om3ELtdHPU",
+                "currency": "usd",
+                "amount": 78100,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_Tkdu0NfGF1tVsx",
+                "price_id": "price_1Sn8ccI6vmxJT6OmNqkP7VDr",
+                "currency": "usd",
+                "amount": 114100,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           },
@@ -3312,33 +3699,33 @@
             "period": 12,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLvoZlX64zVLc",
                 "price_id": "price_1Sf7DdI6vmxJT6OmGdnydcsY",
                 "currency": "usd",
-                "amount": 29400,
+                "amount": 29500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcOYAz62QCFcY4",
                 "price_id": "price_1Sf9liI6vmxJT6OmFPUI75bZ",
                 "currency": "usd",
-                "amount": 53400,
+                "amount": 53500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_Tcw71FOqgrNw1o",
                 "price_id": "price_1SfgEsI6vmxJT6OmPn4fwAIc",
                 "currency": "usd",
-                "amount": 85400,
+                "amount": 85500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -3350,7 +3737,7 @@
                 "price_id": "price_1Sf846I6vmxJT6OmoWHEt4PN",
                 "currency": "usd",
                 "amount": 35900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -3361,7 +3748,7 @@
                 "price_id": "price_1SfBFWI6vmxJT6OmR65VYxVW",
                 "currency": "usd",
                 "amount": 59900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -3372,7 +3759,7 @@
                 "price_id": "price_1SfgQ5I6vmxJT6OmPR3aMzi0",
                 "currency": "usd",
                 "amount": 91900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -3406,6 +3793,39 @@
                 "currency": "usd",
                 "amount": 79900,
                 "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_Tkdasm2irMj4Nk",
+                "price_id": "price_1Sn8JWI6vmxJT6OmSENeL5DU",
+                "currency": "usd",
+                "amount": 45400,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_TkdnvoRvNXD6vk",
+                "price_id": "price_1Sn8VWI6vmxJT6Om8KQSJQL2",
+                "currency": "usd",
+                "amount": 69400,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdztTfAve9e6W",
+                "price_id": "price_1Sn8hII6vmxJT6OmerccQcGN",
+                "currency": "usd",
+                "amount": 101400,
+                "type": "three",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -3532,7 +3952,7 @@
                   "gst": false
                 },
                 {
-                  "name": "Wesbite Build - Fully Customised",
+                  "name": "Website Build - Fully Customised",
                   "product_id": "prod_Td4DbxMHjOIAE1",
                   "price_id": "price_1Sfo5NI6vmxJT6OmEBy3QdGD",
                   "form_name": "addWebsiteMakeoverFully",
@@ -3954,39 +4374,39 @@
                 "price_id": "price_1Sf516I6vmxJT6Omxjnt0nVP",
                 "currency": "cad",
                 "amount": 19900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLSIq3nUKZK45",
                 "price_id": "price_1Sf6lTI6vmxJT6OmwSWB97tY",
                 "currency": "cad",
-                "amount": 36700,
+                "amount": 36900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcNs8AcSjRcYaR",
                 "price_id": "price_1Sf97BI6vmxJT6OmIoXmrOb0",
                 "currency": "cad",
-                "amount": 66700,
+                "amount": 66900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_TcvqbtpCDx0Rc7",
                 "price_id": "price_1Sffz7I6vmxJT6OmzCenGiZ9",
                 "currency": "usd",
-                "amount": 106700,
+                "amount": 106900,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -3998,7 +4418,7 @@
                 "price_id": "price_1Sf7OxI6vmxJT6Om8xJRAHoX",
                 "currency": "cad",
                 "amount": 26900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4009,7 +4429,7 @@
                 "price_id": "price_1Sf7iNI6vmxJT6OmrOkvuCtI",
                 "currency": "cad",
                 "amount": 44900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4020,7 +4440,7 @@
                 "price_id": "price_1SfAImI6vmxJT6OmfpH5zSo0",
                 "currency": "cad",
                 "amount": 74900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4031,7 +4451,7 @@
                 "price_id": "price_1SfgI3I6vmxJT6OmlE0l0rQh",
                 "currency": "cad",
                 "amount": 114900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4079,6 +4499,39 @@
                 "status": "show",
                 "ext": "",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkdRfITQT84qvu",
+                "price_id": "price_1Sn8AAI6vmxJT6OmbAGySdyn",
+                "currency": "cad",
+                "amount": 56800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_Tkde28iT5xr8Ty",
+                "price_id": "price_1Sn8MzI6vmxJT6OmzBSIlEMq",
+                "currency": "cad",
+                "amount": 86800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdqjRwREY5d8l",
+                "price_id": "price_1Sn8YvI6vmxJT6OmhWWf0cFX",
+                "currency": "cad",
+                "amount": 126800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           },
@@ -4086,33 +4539,33 @@
             "period": 6,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLh96MF9cJebA",
                 "price_id": "price_1Sf70WI6vmxJT6OmqHcaMIk3",
                 "currency": "cad",
-                "amount": 31200,
+                "amount": 33200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcOBZ0fhGfrbfC",
                 "price_id": "price_1Sf9P3I6vmxJT6OmQ5IV0qkP",
                 "currency": "cad",
-                "amount": 60000,
+                "amount": 60200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_Tcvu5GpUb1xlKF",
                 "price_id": "price_1Sfg2OI6vmxJT6OmrWuenQPE",
                 "currency": "usd",
-                "amount": 96000,
+                "amount": 96200,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -4124,7 +4577,7 @@
                 "price_id": "price_1Sf7tmI6vmxJT6Omu1JNwVKu",
                 "currency": "cad",
                 "amount": 40400,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4135,7 +4588,7 @@
                 "price_id": "price_1SfApXI6vmxJT6Omui46Ap7v",
                 "currency": "cad",
                 "amount": 67400,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4146,7 +4599,7 @@
                 "price_id": "price_1SfgMeI6vmxJT6Omv5AfA2Zs",
                 "currency": "cad",
                 "amount": 103400,
-                "type": "solo",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4183,6 +4636,39 @@
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkdVocOvVU96Em",
+                "price_id": "price_1Sn8EjI6vmxJT6OmiiQmTYZE",
+                "currency": "cad",
+                "amount": 51100,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_TkdjhHEf2QhFRD",
+                "price_id": "price_1Sn8RbI6vmxJT6Om1Gg1rJdc",
+                "currency": "cad",
+                "amount": 78100,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_Tkdu0NfGF1tVsx",
+                "price_id": "price_1Sn8ccI6vmxJT6Ombf1rcmOF",
+                "currency": "cad",
+                "amount": 114100,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           },
@@ -4190,33 +4676,33 @@
             "period": 12,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLvoZlX64zVLc",
                 "price_id": "price_1Sf7DdI6vmxJT6OmJebhe0fl",
                 "currency": "usd",
-                "amount": 29400,
+                "amount": 29500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcOYAz62QCFcY4",
                 "price_id": "price_1Sf9liI6vmxJT6OmGP4iLf4a",
                 "currency": "usd",
-                "amount": 53400,
+                "amount": 53500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_Tcw71FOqgrNw1o",
                 "price_id": "price_1SfgEsI6vmxJT6OmAtLdbHVC",
                 "currency": "usd",
-                "amount": 85400,
+                "amount": 85500,
                 "type": "bundle",
                 "status": "show",
                 "ext": "/Month",
@@ -4228,7 +4714,7 @@
                 "price_id": "price_1Sf846I6vmxJT6Om4e9e7g1D",
                 "currency": "usd",
                 "amount": 35900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4239,7 +4725,7 @@
                 "price_id": "price_1SfBFWI6vmxJT6OmvMfbRBGN",
                 "currency": "usd",
                 "amount": 59900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4250,7 +4736,7 @@
                 "price_id": "price_1SfgQ5I6vmxJT6OmC8TCjmZf",
                 "currency": "usd",
                 "amount": 91900,
-                "type": "bundle",
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4284,6 +4770,39 @@
                 "currency": "usd",
                 "amount": 79900,
                 "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_Tkdasm2irMj4Nk",
+                "price_id": "price_1Sn8JWI6vmxJT6OmRxivLEba",
+                "currency": "cad",
+                "amount": 45400,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_TkdnvoRvNXD6vk",
+                "price_id": "price_1Sn8VWI6vmxJT6OmCcR2NxzN",
+                "currency": "cad",
+                "amount": 69400,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkdztTfAve9e6W",
+                "price_id": "price_1Sn8hII6vmxJT6OmHAwWdMNW",
+                "currency": "cad",
+                "amount": 101400,
+                "type": "three",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4362,7 +4881,7 @@
                   "gst": false
                 },
                 {
-                  "name": "Wesbite Build - Fully Customised",
+                  "name": "Website Build - Fully Customised",
                   "product_id": "prod_Td4DbxMHjOIAE1",
                   "price_id": "price_1Sfo5NI6vmxJT6Om2p5yrMGq",
                   "form_name": "addWebsiteMakeoverFully",
@@ -4716,16 +5235,16 @@
               {
                 "name": "AI Receptionist",
                 "product_id": "prod_TcJuebWo6cwN5q",
-                "price_id": "THAI02M00O-20",
+                "price_id": "THAI02M00O-11",
                 "currency": "thb",
-                "amount": 399900,
-                "type": "bundle",
+                "amount": 490000,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
               },
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLPFAtlXWGUEN",
                 "price_id": "THLSB02M00O-20",
                 "currency": "thb",
@@ -4736,7 +5255,7 @@
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcNnqLnSeNeeje",
                 "price_id": "THLGB02M00O-20",
                 "currency": "thb",
@@ -4747,7 +5266,7 @@
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_Tct3tAKkR54xqW",
                 "price_id": "THLUB02M00O-20",
                 "currency": "thb",
@@ -4762,8 +5281,8 @@
                 "product_id": "prod_TcM4mcxuPjhcoN",
                 "price_id": "THAIBO04M00O-20",
                 "currency": "thb",
-                "amount": 549900,
-                "type": "bundle",
+                "amount": 649900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4773,8 +5292,8 @@
                 "product_id": "prod_TcMOrHwq9s0VLn",
                 "price_id": "THAILS04M00O-20",
                 "currency": "thb",
-                "amount": 799900,
-                "type": "bundle",
+                "amount": 949900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4784,8 +5303,8 @@
                 "product_id": "prod_TcOz7AutQVsmAp",
                 "price_id": "THAILG04M00O-20",
                 "currency": "thb",
-                "amount": 1299900,
-                "type": "bundle",
+                "amount": 1399900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4795,8 +5314,8 @@
                 "product_id": "prod_Tct9jcDSzQzrfA",
                 "price_id": "THAILU04M00O-20",
                 "currency": "thb",
-                "amount": 1599900,
-                "type": "bundle",
+                "amount": 1799900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4844,6 +5363,39 @@
                 "status": "show",
                 "ext": "",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_Tke9cJXiNctqpJ",
+                "price_id": "THALS02M00O-21",
+                "currency": "thb",
+                "amount": 1149800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_TkeIEnhj3N4JX6",
+                "price_id": "THALG02M00O-21",
+                "currency": "thb",
+                "amount": 1599800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkePzl2uqJYxQ5",
+                "price_id": "THALU02M00O-21",
+                "currency": "thb",
+                "amount": 1999800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           },
@@ -4851,7 +5403,7 @@
             "period": 6,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLbdxL27L950I",
                 "price_id": "THLSB02M06O-20",
                 "currency": "thb",
@@ -4862,7 +5414,7 @@
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
+                "name": "Booking + Local Growth Bundle",
                 "product_id": "prod_TcO4B4uVy1vPCe",
                 "price_id": "THLGB02M06O-20",
                 "currency": "thb",
@@ -4873,7 +5425,7 @@
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
+                "name": "Booking + Local Ultimate Bundle",
                 "product_id": "prod_Tcuzt5nfxFans0",
                 "price_id": "THLUB02M06O-20",
                 "currency": "thb",
@@ -4888,8 +5440,8 @@
                 "product_id": "prod_TcMBdYQ5aIhfJE",
                 "price_id": "THAIBO04M06O-20",
                 "currency": "thb",
-                "amount": 494900,
-                "type": "bundle",
+                "amount": 584900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4899,8 +5451,8 @@
                 "product_id": "prod_TcMaUxeOJY5rre",
                 "price_id": "THAILS04M06O-20",
                 "currency": "thb",
-                "amount": 719900,
-                "type": "bundle",
+                "amount": 854900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4910,8 +5462,8 @@
                 "product_id": "prod_TcPZcIyTEsCPp8",
                 "price_id": "THAILG04M06O-20",
                 "currency": "thb",
-                "amount": 1169900,
-                "type": "bundle",
+                "amount": 1259900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4921,8 +5473,8 @@
                 "product_id": "prod_TctBfEzt80r3Gt",
                 "price_id": "THAILU04M06O-20",
                 "currency": "thb",
-                "amount": 1439900,
-                "type": "bundle",
+                "amount": 1619900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -4959,6 +5511,39 @@
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkeDTLvIPml6C7",
+                "price_id": "THALS02M06O-21",
+                "currency": "thb",
+                "amount": 1034800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_TkeK9YE4onSsbB",
+                "price_id": "THALG02M06O-21",
+                "currency": "thb",
+                "amount": 1439800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkeR4e5v1mB8X5",
+                "price_id": "THALU02M06O-21",
+                "currency": "thb",
+                "amount": 1799800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
               }
             ]
           },
@@ -4966,7 +5551,7 @@
             "period": 12,
             "items": [
               {
-                "name": "Local Starter Bundle",
+                "name": "Booking + Local Starter Bundle",
                 "product_id": "prod_TcLreDJ9zjbQfC",
                 "price_id": "THLSB02M12O-20",
                 "currency": "thb",
@@ -4977,8 +5562,8 @@
                 "gst": false
               },
               {
-                "name": "Local Growth Bundle",
-                "product_id": "prod_TcOVeVeWMymnaY",
+                "name": "Booking + Local Growth Bundle",
+                "product_id": "prod_TcOLDdLZHxGMGT",
                 "price_id": "THLGB02M12O-20",
                 "currency": "thb",
                 "amount": 871900,
@@ -4988,8 +5573,8 @@
                 "gst": false
               },
               {
-                "name": "Local Ultimate Bundle",
-                "product_id": "prod_Tcv1kJACNH8k2o",
+                "name": "Booking + Local Ultimate Bundle",
+                "product_id": "prod_Tcv3NxMNJLLlKz",
                 "price_id": "THLUB02M12O-20",
                 "currency": "thb",
                 "amount": 1191900,
@@ -5003,8 +5588,8 @@
                 "product_id": "prod_TcMDHz5p8LSLuL",
                 "price_id": "THAIBO04M12O-20",
                 "currency": "thb",
-                "amount": 439900,
-                "type": "bundle",
+                "amount": 519900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -5014,8 +5599,8 @@
                 "product_id": "prod_TcMkvHuhFoyuJx",
                 "price_id": "THAILS04M12O-20",
                 "currency": "thb",
-                "amount": 639900,
-                "type": "bundle",
+                "amount": 759900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -5025,8 +5610,8 @@
                 "product_id": "prod_TcQ26IJr5cIVIi",
                 "price_id": "THAILG04M12O-20",
                 "currency": "thb",
-                "amount": 1039900,
-                "type": "bundle",
+                "amount": 1119900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -5036,8 +5621,8 @@
                 "product_id": "prod_TctHXo7K4hu0jw",
                 "price_id": "THAILU04M12O-20",
                 "currency": "thb",
-                "amount": 1279900,
-                "type": "bundle",
+                "amount": 1439900,
+                "type": "aibundle",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -5071,6 +5656,39 @@
                 "currency": "thb",
                 "amount": 1032000,
                 "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Starter Bundle",
+                "product_id": "prod_TkeF9XWtITueIp",
+                "price_id": "THALS02M12O-21",
+                "currency": "thb",
+                "amount": 919800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Growth Bundle",
+                "product_id": "prod_TkeNRmO9vtwJxJ",
+                "price_id": "THALG02M12O-21",
+                "currency": "thb",
+                "amount": 1279800,
+                "type": "three",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "AI + Booking + Local Ultimate Bundle",
+                "product_id": "prod_TkeTlLYMRvG7FY",
+                "price_id": "THALU02M12O-21",
+                "currency": "thb",
+                "amount": 1599800,
+                "type": "three",
                 "status": "show",
                 "ext": "/Month",
                 "gst": false
@@ -5163,7 +5781,7 @@
                   "gst": false
                 },
                 {
-                  "name": "Wesbite Build - Fully Customised",
+                  "name": "Website Build - Fully Customised",
                   "product_id": "prod_TcuepbyvFPUnyG",
                   "price_id": "THWBF03M00O-20",
                   "form_name": "addWebsiteMakeoverFully",
