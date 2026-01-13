@@ -15,9 +15,9 @@ $teamID = $_SESSION['teamID'];
         <li class="nav-item d-none d-sm-inline-block">
             <a href="https://app.respond.io/user/login" target="_blank" class="nav-link">Respond.io <i class="bi bi-box-arrow-up-right"></i></a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
+        <!-- <li class="nav-item d-none d-sm-inline-block">
             <a href="https://app.trainual.com/local-for-you/users/sign_in" target="_blank" class="nav-link">Trainual <i class="bi bi-box-arrow-up-right"></i></a>
-        </li>
+        </li> -->
         <li class="nav-item d-none d-sm-inline-block">
             <a href="modules/changeLog/changelog.php" target="_blank" class="nav-link">Change Log <i class="bi bi-box-arrow-up-right"></i></a>
         </li>

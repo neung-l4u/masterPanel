@@ -17,6 +17,81 @@ $loginID = $_SESSION['id'];
         cursor: help !important;
         text-decoration: none !important;
     }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .card-header .d-flex {
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .card-header .d-flex p {
+            flex: 1 1 100%;
+            margin-bottom: 0;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .modal-dialog .row .col-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        .modal-dialog .form-group.row {
+            flex-direction: column;
+        }
+        .modal-dialog .form-group.row label {
+            max-width: 100%;
+            margin-bottom: 0.25rem;
+        }
+        .modal-dialog .form-group.row .col {
+            max-width: 100%;
+        }
+        #datatable th, #datatable td {
+            font-size: 0.8rem;
+            padding: 0.5rem 0.25rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .card-header #btnModal {
+            width: 100%;
+        }
+        #datatable th, #datatable td {
+            font-size: 0.75rem;
+        }
+    }
+    
+    /* Fix icon and text overlap */
+    #datatable td {
+        white-space: nowrap;
+    }
+    #datatable td button {
+        padding: 2px;
+        margin-right: 2px;
+    }
+    #datatable td svg {
+        vertical-align: middle;
+    }
+    #datatable td a svg {
+        margin-right: 5px;
+    }
+    
+    @media (max-width: 992px) {
+        #datatable td {
+            white-space: normal;
+            word-break: break-word;
+        }
+        #datatable td button {
+            display: block;
+            margin-bottom: 3px;
+        }
+        #datatable td svg {
+            height: 1em;
+        }
+        #datatable td a svg.mr-3 {
+            margin-right: 0.5rem !important;
+        }
+    }
 </style>
 
 <!-- Content Header (Page header) -->

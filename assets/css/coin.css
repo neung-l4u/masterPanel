@@ -1,21 +1,24 @@
 div#placeCoinStat{
-    width: 80%;
+    width: 100%;
     margin: auto;
 }
 
 div#placeTeamsStat{
-    width: 80%;
+    width: 100%;
     margin: auto;
 }
 div.user_card{
-    width: 20rem;
+    width: 100%;
+    max-width: 20rem;
     cursor: pointer;
     border-radius: 2%;
+    margin-bottom: 1rem;
 }
 
 img.profile-coin-img{
     height: 8rem;
     width: 8rem;
+    min-width: 8rem;
     border: #ACACAC solid 1px;
     border-radius: 50%;
 }
@@ -34,7 +37,7 @@ img.profile-coin-img{
     color:#6E9FC0;
 }
 .user_team{
-
+    color: #6c757d;
 }
 .coin_l4u, .coin_ceo{
     font-size: 0.8rem;
@@ -44,7 +47,73 @@ img.profile-coin-img{
     font-size: 1.5rem;
 }
 .card_stat{
-    width: 30%;
+    width: auto;
+    min-width: 80px;
+    flex: 1;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+/* Statistic card wrapper - prevent overflow */
+#placeCoinStat .card-body.d-flex {
+    flex-wrap: wrap;
+    overflow-x: auto;
+}
+
+#placeCoinStat .card {
+    overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    div#placeCoinStat,
+    div#placeTeamsStat {
+        width: 100%;
+    }
+    .card_stat {
+        flex: 0 0 33%;
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    div.user_card {
+        max-width: 100%;
+    }
+    img.profile-coin-img {
+        height: 5rem;
+        width: 5rem;
+        min-width: 5rem;
+    }
+    .card_stat {
+        flex: 0 0 50%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .card_stat {
+        flex: 0 0 100%;
+        margin-bottom: 0.5rem;
+    }
+    img.profile-coin-img {
+        height: 4rem;
+        width: 4rem;
+        min-width: 4rem;
+    }
+    .user_name {
+        width: 100%;
+        max-width: 120px;
+    }
+    div.user_card {
+        padding: 1rem !important;
+    }
+    div.user_card .d-flex {
+        flex-wrap: nowrap;
+    }
+    div.user_card img.profile-coin-img {
+        margin-right: 0.5rem !important;
+    }
 }
 div#coinHistory{
     border: #EEEEEE 1px solid;

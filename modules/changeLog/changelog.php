@@ -78,10 +78,10 @@
         </div>
         <h2>Change Log</h2>
         <ul>
-            <li data-page="signup" class="active">Signup Form</li>
+            <li data-page="signup" class="active">Signup Form<span style="color: #dd0000;">NEW!</span></li>
             <li data-page="website">Website Submission </li>
             <li data-page="websitelist">Website List</li>
-            <li data-page="voucher">Gift Voucher <span style="color: #dd0000;">NEW!</span></li>
+            <li data-page="voucher">Gift Voucher </li>
             <li data-page="unsubscribe">Unsubscribe Form</li>
             <li data-page="masterpanal">Master Panel <span style="color: #dd0000;">NEW!</span></li>
             <li data-page="policy">Policy</li>

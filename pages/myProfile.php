@@ -21,17 +21,22 @@ $loginID = $_SESSION['id'];
         <div class="row align-items-center">
             <div class="col-12">
                 <div class="profile-hero rounded-3 mb-3 p-4 text-white d-flex align-items-center gap-3">
-                    <div class="avatar-wrap me-3">
-                        <img class="profile-user-img img-fluid rounded-circle shadow"
+                    <div class="avatar-wrap me-3 position-relative" style="cursor:pointer;" onclick="document.getElementById('profilePicInput').click();">
+                        <img id="profilePicPreview" class="profile-user-img img-fluid rounded-circle shadow mr-3 profile-pic-update"
                              src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>"
                              alt="User profile picture"
                              style="width:84px;height:84px;object-fit:cover;">
+                        <div class="profile-pic-overlay position-absolute d-flex align-items-center justify-content-center" 
+                             style="top:0;left:0;width:84px;height:84px;border-radius:50%;background:rgba(0,0,0,0.5);opacity:0;transition:opacity 0.3s;">
+                            <i class="fas fa-camera text-white"></i>
+                        </div>
+                        <input type="file" id="profilePicInput" accept="image/*" style="display:none;" onchange="uploadProfilePic(this);">
                     </div>
                     <div class="flex-grow-1">
                         <h3 class="m-0 fw-semibold"><?php echo $_SESSION['name']; ?></h3>
                         <div class="text-white-50 small"><?php echo $_SESSION['levelName']; ?></div>
                         <div class="d-flex flex-wrap gap-2 mt-2">
-              <span class="coin-chip">
+              <span class="coin-chip mr-1">
                 <i class="fas fa-coins me-1"></i> L4U:
                 <b><?php echo number_format($coins['l4u'],2); ?></b>
               </span>
@@ -63,7 +68,7 @@ $loginID = $_SESSION['id'];
                     <div class="card border-0 shadow-sm">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
-                                <img class="rounded-circle me-3"
+                                <img class="rounded-circle me-3 mr-2 profile-pic-update"
                                      src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>"
                                      alt="User profile picture"
                                      style="width:56px;height:56px;object-fit:cover;">
@@ -152,7 +157,7 @@ $loginID = $_SESSION['id'];
                                     <div class="activity-scroll pe-1" style="max-height:680px;overflow:auto;">
                                         <?php if(count($logs)>=1){ $i=count($logs); foreach($logs as $row){ ?>
                                             <div class="activity-item d-flex align-items-start py-3 border-bottom">
-                                                <img class="rounded-circle me-3"
+                                                <img class="rounded-circle me-3 profile-pic-update"
                                                      src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>"
                                                      alt="user"
                                                      style="width:40px;height:40px;object-fit:cover;">
@@ -279,6 +284,7 @@ $loginID = $_SESSION['id'];
     .activity-scroll{ scrollbar-width:thin; }
     .activity-scroll::-webkit-scrollbar{ height:8px; width:8px; }
     .activity-scroll::-webkit-scrollbar-thumb{ background:#d0d5dd; border-radius:8px; }
+    .avatar-wrap:hover .profile-pic-overlay{ opacity:1 !important; }
 </style>
 
 <script>
@@ -311,6 +317,50 @@ $loginID = $_SESSION['id'];
 </script>
 <!-- ===== Scripts ===== -->
 <script>
+    // Upload profile picture
+    const uploadProfilePic = (input) => {
+        if (!input.files || !input.files[0]) return;
+        
+        const file = input.files[0];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        
+        if (file.size > maxSize) {
+            toast('File too large. Max 5MB.', 'warning');
+            return;
+        }
+        
+        // Preview image immediately
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Update all profile images on page using class
+            document.querySelectorAll('.profile-pic-update').forEach(img => {
+                img.src = e.target.result;
+            });
+        };
+        reader.readAsDataURL(file);
+        
+        // Upload to server
+        const formData = new FormData();
+        formData.append('act', 'uploadProfilePic');
+        formData.append('profilePic', file);
+        
+        $.ajax({
+            url: 'assets/php/actionStaffs.php',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json'
+        }).done(function(res) {
+            if (res.status === 'success') {
+                toast('Profile picture updated!', 'success');
+            } else {
+                toast(res.message || 'Upload failed.', 'danger');
+            }
+        }).fail(function() {
+            toast('Upload failed. Please try again.', 'danger');
+        });
+    };
 
     // เบา ๆ: password strength hint
     $('#inputNewPassword').on('input', function(){

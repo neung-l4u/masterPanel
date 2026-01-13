@@ -6,17 +6,17 @@ include "../../assets/db/initDB.php";
 $myID = $_SESSION['id'];
 
 //prod//
-$email["hr"] = "nattiya@localforyou.com";
-$email["admin1"] = "aunya.au@localforyou.com";
-$email["admin2"] = "bas@localforyou.com";
-$email["admin3"] = "mark@localforyou.com";
+// $email["hr"] = "nattiya@localforyou.com";
+// $email["admin1"] = "aunya.au@localforyou.com";
+// $email["admin2"] = "bas@localforyou.com";
+// $email["admin3"] = "mark@localforyou.com";
 //prod//
 
 //test//
-//$email["hr"] = "malimongcon@gmail.com";
-//$email["admin1"] = "bas@localforyou.com";
-//$email["admin2"] = "bas+2@localforyou.com";
-//$email["admin3"] = "bas+3@localforyou.com";
+$email["hr"] = "malimongcon@gmail.com";
+$email["admin1"] = "bas@localforyou.com";
+$email["admin2"] = "bas+2@localforyou.com";
+$email["admin3"] = "bas+3@localforyou.com";
 //test//
 
 $users = $db->query('SELECT `sEmail`,`sName`,`sNickName` FROM `staffs` WHERE `sID` = ?;', $myID)->fetchArray();
@@ -38,14 +38,14 @@ $params["activityID"] = !empty($_POST['activityID']) ? $_POST['activityID'] : ""
 $params["coinReason"] = !empty($_POST['coinReason']) ? $_POST['coinReason'] : "";
 $params["giveBy"] = $_SESSION['id'];
 $params["coinTypeNum"] = 0;
-$params["selectedTeam"] = !empty($_POST['selectedTeam']) ? $_POST['selectedTeam'] : "0";;
+$params["selectedTeam"] = !empty($_POST['selectedTeam']) ? $_POST['selectedTeam'] : "0";
 
 if($params["coinType"]=="l4u"){ $params["coinTypeNum"] = 1; }
 elseif($params["coinType"]=="ceo"){ $params["coinTypeNum"] = 2; }
 
 //for convert coin //
-$params["sourceCoin"] = !empty($_POST['sourceCoin']) ? $_POST['sourceCoin'] : "";;
-$params["input"] = !empty($_POST['input']) ? $_POST['input'] : "0";;
+$params["sourceCoin"] = !empty($_POST['sourceCoin']) ? $_POST['sourceCoin'] : "";
+$params["input"] = !empty($_POST['input']) ? $_POST['input'] : "0";
 ////////
 
 if ($params ["act"] == "load"){
@@ -325,12 +325,6 @@ if ($params ["act"] == "load"){
 
     //// send mail ////
 
-    $result = [
-        'result' => 0,
-        'msg' => "",
-        'email' => $data['email']
-    ];
-
     $data = [
         'userEmail' => $email["my"],
         'name' => $myNickName.' '.$myName,
@@ -371,7 +365,11 @@ if ($params ["act"] == "load"){
     
 
 
-        $result['email'] = $data['email'];
+        $result = [
+            'result' => 0,
+            'msg' => "",
+            'email' => $data['userEmail']
+        ];
         $result['payload'] = $data;
 
 

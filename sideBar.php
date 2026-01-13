@@ -205,8 +205,18 @@ include ('assets/api/checkSession.php');
 
                 } //Super Admin Menu ?>
 
-                <?php if($_SESSION['level']<=3){ ?>
+                <?php 
+                    if($teamID == 4 OR $teamID == 5){
+                    ?>
                     <li class="nav-item mt-5">
+                        <a href="main.php?p=rewardCoin" class="nav-link <?php echo $activeMenu["lv1"] == "rewardCoin" ? "active":""; ?>">
+                            <i class="nav-icon mr-2 bi bi-gem"></i>
+                            <p>
+                                Reward Coin
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="main.php?p=coin" class="nav-link <?php echo $activeMenu["lv2"] == "coin" ? "active":""; ?>">
                             <i class="nav-icon mr-2 bi bi-coin"></i>
                             <p>
@@ -214,7 +224,17 @@ include ('assets/api/checkSession.php');
                             </p>
                         </a>
                     </li>
-                <?php } //Super Admin Menu ?>
+                    <li class="nav-item">
+                        <a href="main.php?p=checkinLogs" class="nav-link <?php echo $activeMenu["lv1"] == "checkinLogs" ? "active":""; ?>">
+                            <i class="nav-icon mr-2 bi bi-clock-history"></i>
+                            <p>
+                                Check-in Logs
+                            </p>
+                        </a>
+                    </li>
+                <?php } //Super Admin Menu 
+                
+                ?>
 
                 <?php /*if($_SESSION['level']>=4){ */?><!--
                     <li class="nav-item">

@@ -36,6 +36,65 @@ $loginID = $_SESSION['id'];
     .red{
         color: red !important;
     }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .info-box-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1rem;
+            line-height: 50px;
+        }
+        .info-box-content {
+            padding: 5px 10px;
+        }
+        .info-box-text {
+            font-size: 0.75rem;
+        }
+        .info-box-number {
+            font-size: 0.9rem;
+        }
+        .linkBTN {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem !important;
+        }
+        .direct-chat-text {
+            font-size: 0.85rem;
+        }
+        .direct-chat-img {
+            width: 30px;
+            height: 30px;
+        }
+        .card-body.d-flex.flex-row.flex-wrap .col {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+        .card-body.d-flex.flex-row.flex-wrap .info-box img {
+            width: 80px !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .info-box {
+            min-height: auto;
+        }
+        .info-box-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 0.8rem;
+            line-height: 40px;
+        }
+        .info-box-text small {
+            display: none;
+        }
+        .linkBTN i {
+            font-size: 1rem;
+        }
+        .card-body.d-flex.flex-row.flex-wrap .col {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
 </style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -62,7 +121,7 @@ $loginID = $_SESSION['id'];
     <div class="container-fluid">
 
         <div class="row">
-            <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <div class="col-6 col-md-3">
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-success elevation-1">L4U</span>
 
@@ -79,7 +138,7 @@ $loginID = $_SESSION['id'];
             <!-- fix for small devices only -->
             <div class="clearfix hidden-md-up"></div>
 
-            <div class="col-3 col-sm-3 col-md-3">
+            <div class="col-6 col-md-3">
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-primary elevation-1">CEO</span>
                     <div class="info-box-content">
@@ -92,7 +151,7 @@ $loginID = $_SESSION['id'];
             </div>
             <!-- /.col -->
 
-            <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+            <div class="col-12 col-md-6 mt-2 mt-md-0">
                 <div class="info-box align-items-center">
                     <div class="card-body p-0 ">
                             <div class="d-flex flex-row justify-content-around">
@@ -114,7 +173,7 @@ $loginID = $_SESSION['id'];
             </div>
 
         <div class="row w-100">
-            <div class="col-md-6">
+            <div class="col-12 col-lg-6 mb-3">
                 <div>
                     <div class="card direct-chat direct-chat-warning">
                     <div class="card-header" >
@@ -140,7 +199,7 @@ $loginID = $_SESSION['id'];
                         </div>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body" style="height: 28vh; overflow-y: auto; overflow-x: hidden; padding: 0 10px;">
+                    <div class="card-body" style="height: 65vh; overflow-y: auto; overflow-x: hidden; padding: 0 10px;">
                         <!-- Conversations are loaded here -->
                         <div class="direct-chat-messages">
                             <!-- Message. Default to the left -->
@@ -243,93 +302,10 @@ $loginID = $_SESSION['id'];
                     <!-- /.card-footer-->
                 </div>
                 </div>
-                <div>
-                    <!-- Change log -->
-                    <div class="card">
-                        <div class="card-header" >
-                            <h3 class="card-title"><i class="bi bi-journal-text"></i> Change Logs</h3>
-                            <div class="card-tools">
-                                <!-- <span title="0 items" class="badge badge-warning">0 items</span>-->
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div><!-- /.card-header -->
-                        <div class="card-body" style="height: 25vh; overflow-y: auto; overflow-x: hidden; padding: 0 10px;">
-                            <div class="direct-chat-messages">
-                                <div class="direct-chat-msg">
-                                    <div class="direct-chat-infos clearfix">
-                                        <span class="float-left">
-                                            <h6>v 1.2.3 - 16 June 2025</h6>
-                                            <ul>
-                                                <li>Update UI.</li>
-                                            </ul>
-                                            <h6>17 May 2025</h6>
-                                            <ul>
-                                                <li>Fixed issue with the email unsubscribe form.</li>
-                                            </ul>
-                                            <h6>16 May 2025</h6>
-                                            <ul>
-                                                <li>Fixed the email signup form integration with Make.com.</li>
-                                            </ul>
-                                            <h6>14 May 2025</h6>
-                                            <ul>
-                                                <li>Created voucher logs module and data database.</li>
-                                                <li>Connected API with Make.com.</li>
-                                            </ul>
-                                            <h6>01 May 2025</h6>
-                                            <ul>
-                                                <li>Added data table for website lists.</li>
-                                            </ul>
-                                            <h6>03 March 2025</h6>
-                                            <ul>
-                                                <li>Created mini signup form and connected to Make.com > Leads Monday.</li>
-                                            </ul>
-                                            <h6>01 March 2025</h6>
-                                            <ul>
-                                                <li>Added "POS" field to the signup form.</li>
-                                            </ul>
-                                            <h6>20 February 2025</h6>
-                                            <ul>
-                                                <li>Saved contract links to the database.</li>
-                                                <li>Created module for generating agreements.</li>
-                                                <li>Updated policy to version 1.3.0.</li>
-                                                <li>Fixed the email signup form.</li>
-                                            </ul>
-                                            <h6>19 February 2025</h6>
-                                            <ul>
-                                                <li>Created page to view signup form logs, Stripe logs, and contract links.</li>
-                                                <li>Changed "State" field in signup form to "Street Address".</li>
-                                            </ul>
-                                            <h6>17 February 2025</h6>
-                                            <ul>
-                                                <li>Fixed payment-related issues.</li>
-                                                <li>Saved Stripe logs to the database.</li>
-                                            </ul>
-                                            <h6>15 February 2025</h6>
-                                            <ul>
-                                                <li>Managed email notification settings.</li>
-                                            </ul>
-                                            <h6>24 December 2024</h6>
-                                            <ul>
-                                                <li>Fixed layout of Master Panel, Gift List, and Convert Coin.</li>
-                                                <li>Fixed example website for sales team.</li>
-                                            </ul>
-                                        </span>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div><!-- /.card-body -->
-                    </div><!--card-->
-                </div> <!-- Change log -->
             </div>
             <!-- /.col -->
 
-            <div class="col-md-6">
+            <div class="col-12 col-lg-6 mb-3">
                 <!-- USERS LIST -->
                 <div class="card gift-list gift-list-warning">
                     <div class="card-header">

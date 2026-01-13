@@ -40,6 +40,7 @@ switch ($menuPage){
         $activeMenu["lv2"] = "restaurant";
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataRestaurant.php";
+        $title = "Master panel : Revenue Restaurant";
         break;
     case "revMassage":
         $showPage = "revenueMassage.php";
@@ -47,6 +48,7 @@ switch ($menuPage){
         $activeMenu["lv2"] = "massage";
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataMassage.php";
+        $title = "Master panel : Revenue Massage";
         break;
     case "revIHD":
         $showPage = "revenueIHD.php";
@@ -57,6 +59,7 @@ switch ($menuPage){
         $datatable2["show"] = "false";
         $datatable2["src"] = "";
         $datatable["showDatatableStats"] = "false";
+        $title = "Master panel : Revenue IHD";
         break;
     case "revStreams":
         $showPage = "revenueStreams.php";
@@ -67,6 +70,7 @@ switch ($menuPage){
         $datatable2["show"] = "false";
         $datatable2["src"] = "";
         $datatable["showDatatableStats"] = "false";
+        $title = "Master panel : Revenue Streams";
         break;
     case "revStats":
         $showPage = "revenueStats.php";
@@ -74,6 +78,7 @@ switch ($menuPage){
         $activeMenu["lv2"] = "stats";
         $datatable["showDatatableStats"] = "true";
         $datatable["src"] = "pages/tableRendering/dataStats.php";
+        $title = "Master panel : Revenue Stats";
         break;
     case "revSubscription":
         $showPage = "revenueSubscription.php";
@@ -85,11 +90,13 @@ switch ($menuPage){
         $datatable2["src"] = "pages/tableRendering/dataCostYearly.php";
         $loadTotal["totalMonthly"] = "true";
         $loadTotal["totalYearly"] = "true";
+        $title = "Master panel : Revenue Subscription";
         break;
     case "revCompany"://หน้านี้เหมาะเอาไปทำสถิติหรือสรุปจำนวนพนักงาน
         $showPage = "revenueCompany.php";
         $activeMenu["lv1"] = "revenueTracking";
         $activeMenu["lv2"] = "company";
+        $title = "Master panel : Revenue Company";
         break;
     case "setStaff":
         $showPage = "setStaffs.php";
@@ -189,5 +196,21 @@ switch ($menuPage){
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataZoomExt.php";
         $title = "Master panel : Zoom Extension";
+        break;
+    case "rewardCoin":
+        $showPage = "rewardCoin.php";
+        $activeMenu["lv1"] = "rewardCoin";
+        $activeMenu["lv2"] = "rewardCoin";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataRewardCoin.php";
+        $title = "Master panel : Reward Coin History";
+        break;
+    case "checkinLogs":
+        $showPage = "checkinLogs.php";
+        $activeMenu["lv1"] = "checkinLogs";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataCheckinLogs.php";
+        $title = "Master panel : Check-in Logs";
         break;
 }

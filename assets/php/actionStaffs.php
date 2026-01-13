@@ -105,6 +105,52 @@ if ($params ["action"] == "setStatus"){
 
     $delete = $db->query('UPDATE `staffs` SET `sDeleteAt` = NOW(),`sStatus` = 0, `sDeleteBy` = ? WHERE sID = ?;', $_SESSION['id'], $params ["id"]);
     $params["affected"] = $delete->affectedRows();
+
+}elseif ($params ["action"] == "uploadProfilePic"){
+    $targetDir = "../../dist/img/crews/";
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    $maxSize = 5 * 1024 * 1024; // 5MB
+    
+    if (!isset($_FILES['profilePic']) || $_FILES['profilePic']['error'] !== UPLOAD_ERR_OK) {
+        $params["status"] = "error";
+        $params["message"] = "No file uploaded or upload error.";
+    } else {
+        $file = $_FILES['profilePic'];
+        $fileType = $file['type'];
+        $fileSize = $file['size'];
+        
+        if (!in_array($fileType, $allowedTypes)) {
+            $params["status"] = "error";
+            $params["message"] = "Invalid file type. Only JPG, PNG, GIF, WEBP allowed.";
+        } elseif ($fileSize > $maxSize) {
+            $params["status"] = "error";
+            $params["message"] = "File too large. Max 5MB.";
+        } else {
+            // Get staff info for filename
+            $staff = $db->query('SELECT sNickName, teamID FROM staffs WHERE sID = ?;', $myID)->fetchArray();
+            $team = $db->query('SELECT name FROM Team WHERE id = ?;', $staff['teamID'])->fetchArray();
+            
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $newFileName = $team['name'] . '-' . str_pad($myID, 2, '0', STR_PAD_LEFT) . '-' . $staff['sNickName'] . '.' . $ext;
+            $targetPath = $targetDir . $newFileName;
+            
+            if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                // Update database
+                $update = $db->query('UPDATE staffs SET sPic = ? WHERE sID = ?;', $newFileName, $myID);
+                $params["affected"] = $update->affectedRows();
+                
+                // Update session
+                $_SESSION['userPic'] = $newFileName;
+                
+                $params["status"] = "success";
+                $params["message"] = "Profile picture updated.";
+                $params["newPic"] = $newFileName;
+            } else {
+                $params["status"] = "error";
+                $params["message"] = "Failed to save file.";
+            }
+        }
+    }
 }
 
 echo json_encode($params);
