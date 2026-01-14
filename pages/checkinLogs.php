@@ -99,14 +99,15 @@ global $db;
                                 <thead class="thead-dark">
                                     <tr>
                                         <th style="width:4%">#</th>
-                                        <th style="width:6%">Status</th>
+                                        <th style="width:5%">Status</th>
                                         <th style="width:14%">Employee</th>
                                         <th style="width:10%">Department</th>
-                                        <th style="width:10%">Type</th>
-                                        <th style="width:12%">Check In</th>
-                                        <th style="width:12%">Check Out</th>
-                                        <th style="width:10%">Total</th>
-                                        <th style="width:22%">Notes</th>
+                                        <th style="width:8%">Type</th>
+                                        <th style="width:10%">Check In</th>
+                                        <th style="width:10%">Check Out</th>
+                                        <th style="width:8%">Total</th>
+                                        <th style="width:5%">Attach</th>
+                                        <th style="width:20%">Notes</th>
                                     </tr>
                                 </thead>
                                 <tfoot class="thead-dark">
@@ -119,6 +120,7 @@ global $db;
                                         <th>Check In</th>
                                         <th>Check Out</th>
                                         <th>Total</th>
+                                        <th>Attach</th>
                                         <th>Notes</th>
                                     </tr>
                                 </tfoot>
@@ -173,10 +175,11 @@ function initDataTable() {
             { "data": 5 },
             { "data": 6 },
             { "data": 7 },
-            { "data": 8 }
+            { "data": 8, "className": "text-center" },
+            { "data": 9 }
         ],
         "columnDefs": [
-            { "targets": [0, 1], "className": "text-center" }
+            { "targets": [0, 1, 8], "orderable": false, "searchable": false }
         ],
         "order": [],
         "pageLength": 10,

@@ -52,8 +52,8 @@ try {
     if ($result) {
         $i = 1;
         foreach ($result as $row) {
-            $ownerPic = !empty($row["ownerPic"]) ? $row["ownerPic"] : 'default.png';
-            $userImg = '<img src="dist/img/crews/'.$ownerPic.'" class="rounded-circle mr-2" style="width:30px;height:30px;object-fit:cover;" alt="">';
+            $ownerPic = (!empty($row["ownerPic"]) && $row["ownerPic"] != 'no_pic.png') ? $row["ownerPic"] : 'no_pic.png';
+            $userImg = '<img src="dist/img/crews/'.$ownerPic.'" class="rounded-circle mr-2" style="width:30px;height:30px;object-fit:cover;" onerror="this.src=\'dist/img/crews/no_pic.png\'" alt="">';
             $userName = $userImg . showName($row["ownerNick"], $row["ownerName"]);
             $teamName = $row["teamName"];
             

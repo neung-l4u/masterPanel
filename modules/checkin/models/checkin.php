@@ -24,6 +24,18 @@ $data['manager2'] = !empty($_POST['manager2']) ? $_POST['manager2'] : "-";
 $data['activeSQL'] = !empty($_POST['activeSQL']) ? $_POST['activeSQL'] : "-";
 $id = $_POST['staff'];
 
+// Handle file upload
+$data['picCheckin'] = "-";
+if (!empty($_FILES['attachCheckin']['name'])) {
+    $uploadDir = '../upload/';
+    $fileName = time() . '_' . basename($_FILES['attachCheckin']['name']);
+    $targetPath = $uploadDir . $fileName;
+    
+    if (move_uploaded_file($_FILES['attachCheckin']['tmp_name'], $targetPath)) {
+        $data['picCheckin'] = $fileName;
+    }
+}
+
 
 
 
@@ -38,8 +50,8 @@ $result["msg"] = "";
 
 
 if ($data['actionType'] == 'Clock In'){
-    $logsToDB = $db->query('INSERT INTO `checkin` (`employee`, `status`, `department`, `workShiftTimeLogging`, `checkinDate`, `checkIn`,`dayCheckIn`, `noteCheckIn`, `createBy`) 
-VALUES (?, ?, ? ,? ,? ,? ,?,? ,?)' ,$data['staffName'],$status,$data['Department'], $data['actionType'], $issueDate,$data['checkinTime'],$data['workDate'],$data['noteCheckin'],$id );
+    $logsToDB = $db->query('INSERT INTO `checkin` (`employee`, `status`, `department`, `workShiftTimeLogging`, `checkinDate`, `checkIn`,`dayCheckIn`, `noteCheckIn`, `picCheckin`, `createBy`) 
+VALUES (?, ?, ? ,? ,? ,? ,?,?, ?,?)' ,$data['staffName'],$status,$data['Department'], $data['actionType'], $issueDate,$data['checkinTime'],$data['workDate'],$data['noteCheckin'],$data['picCheckin'],$id );
 }
 
 

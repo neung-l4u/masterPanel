@@ -89,6 +89,12 @@ $now = date("H:i");
                 <textarea id="noteCheckin" name="noteCheckin" class="form-control" rows="3" placeholder="Short description (check-in)"></textarea>
             </div>
 
+            <div class="mb-3" id="attachCheckinDiv" style="display: none;">
+                <label for="attachCheckin" class="form-label"><i class="bi bi-paperclip"></i> Attach Documents (if any)</label>
+                <input type="file" id="attachCheckin" name="attachCheckin" class="form-control" accept="image/*,.pdf,.doc,.docx">
+                <small class="text-muted">Supported: Images, PDF, Word documents</small>
+            </div>
+
             <div class="mb-3" id="noteCheckoutDiv" style="display: none;">
                 <label for="noteCheckout" class="form-label"><i class="bi bi-card-list"></i> Note (Check-out)</label>
                 <textarea id="noteCheckout" name="noteCheckout" class="form-control" rows="3" placeholder="Short description (check-out)"></textarea>
@@ -127,18 +133,20 @@ $now = date("H:i");
             if (action === 'checkin') {
             $('#workDateDiv').show();
             $('#workDateDivOut').hide();
-            $('#checkinTimeDiv, #checkoutTimeDiv, #noteCheckinDiv, #noteCheckoutDiv').hide();
+            $('#checkinTimeDiv, #checkoutTimeDiv, #noteCheckinDiv, #noteCheckoutDiv, #attachCheckinDiv').hide();
             } else if (action === 'checkout') {
                 $('#workDateDivOut').show();
                 $('#workDateDiv').hide();
-                $('#checkinTimeDiv, #checkoutTimeDiv, #noteCheckinDiv, #noteCheckoutDiv').hide();
+                $('#checkinTimeDiv, #checkoutTimeDiv, #noteCheckinDiv, #noteCheckoutDiv, #attachCheckinDiv').hide();
             }
 
             if (action === 'checkin') {
                 $('#checkinTimeDiv').show();
                 $('#noteCheckinDiv').show();
+                $('#attachCheckinDiv').show();
                 $('input[name="checkinTime"]').val(now.format("HH:mm"));
                 $('textarea[name="noteCheckin"]').val('');
+                $('#attachCheckin').val('');
             } else if (action === 'checkout') {
                 $('#checkoutTimeDiv').show();
                 $('#noteCheckoutDiv').show();
@@ -233,9 +241,26 @@ $now = date("H:i");
              if (formData.actionType === 'checkin'){
                  const dataBase2 = "../models/checkin.php";
                  const dataToSend = { ...formData, ...payload };
+                 
+                 // Use FormData for file upload
+                 const formDataObj = new FormData();
+                 for (const key in dataToSend) {
+                     formDataObj.append(key, dataToSend[key]);
+                 }
+                 
+                 // Add file if selected
+                 const fileInput = $('#attachCheckin')[0];
+                 if (fileInput.files.length > 0) {
+                     formDataObj.append('attachCheckin', fileInput.files[0]);
+                 }
 
-                 $.post(dataBase2, dataToSend)
-                     .done(() => {
+                 $.ajax({
+                     url: dataBase2,
+                     type: 'POST',
+                     data: formDataObj,
+                     processData: false,
+                     contentType: false,
+                     success: function() {
                          result.html(`<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Data calculate successfully</div>
                   <div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">1</span>...</div>`);
 
@@ -248,10 +273,11 @@ $now = date("H:i");
                                  window.location.reload();
                              }
                          }, 1000);
-                     })
-                     .fail(function(error) {
+                     },
+                     error: function(error) {
                          console.log('fail', error);
-                     });
+                     }
+                 });
 
 
              }else if (formData.actionType === 'checkout') {

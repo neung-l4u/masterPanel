@@ -27,9 +27,7 @@ global $db, $showPage;
         .breadcrumb li a{
             text-decoration: none;
         }
-        .active{
 
-        }
         ul.navbar-nav li.nav-item a.active{
 
             text-decoration: underline !important;

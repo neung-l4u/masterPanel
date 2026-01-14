@@ -30,11 +30,11 @@ if (!empty($params["dateTo"])) {
 
 try {
     $sql = "SELECT C.`id`, C.`employee`, C.`status`, C.`department`, C.`workShiftTimeLogging`,
-                   C.`checkinDate`, C.`checkIn`, C.`dayCheckIn`, C.`noteCheckIn`,
+                   C.`checkinDate`, C.`checkIn`, C.`dayCheckIn`, C.`noteCheckIn`, C.`picCheckin`,
                    C.`checkOut`, C.`dayCheckOut`, C.`noteCheckOut`, C.`total`,
                    C.`createBy`, C.`updateAt`, S.`sPic` AS 'employeePic'
             FROM `checkin` C
-            LEFT JOIN `staffs` S ON C.`employee` = S.`sNickName`
+            LEFT JOIN `staffs` S ON C.`employee` = S.`sName`
             WHERE 1=1" . $where . " ORDER BY C.`dayCheckIn` DESC, C.`id` DESC";
     
     $result = $db->query($sql)->fetchAll();
@@ -42,8 +42,8 @@ try {
     if ($result) {
         $i = 1;
         foreach ($result as $row) {
-            $employeePic = !empty($row["employeePic"]) ? $row["employeePic"] : 'default.png';
-            $employeeImg = '<img src="dist/img/crews/'.$employeePic.'" class="rounded-circle mr-2" style="width:30px;height:30px;object-fit:cover;" alt="">';
+            $employeePic = (!empty($row["employeePic"]) && $row["employeePic"] != 'no_pic.png') ? $row["employeePic"] : 'no_pic.png';
+            $employeeImg = '<img src="dist/img/crews/'.$employeePic.'" class="rounded-circle mr-2" style="width:30px;height:30px;object-fit:cover;" onerror="this.src=\'dist/img/crews/no_pic.png\'" alt="">';
             $employeeName = $employeeImg . ($row["employee"] ?: '-');
             $department = $row["department"] ?: '-';
             
@@ -89,6 +89,19 @@ try {
             }
             if (empty($notes)) $notes = '-';
             
+            // Attachment link
+            $attachment = '-';
+            $picCheckin = $row["picCheckin"] ?? '';
+            if (!empty($picCheckin) && $picCheckin != '-') {
+                $fileExt = strtolower(pathinfo($picCheckin, PATHINFO_EXTENSION));
+                $isImage = in_array($fileExt, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                if ($isImage) {
+                    $attachment = '<a href="modules/checkin/upload/'.$picCheckin.'" target="_blank" data-lightbox="checkin-'.$row["id"].'"><i class="bi bi-image text-primary" style="font-size:1.2rem;"></i></a>';
+                } else {
+                    $attachment = '<a href="modules/checkin/upload/'.$picCheckin.'" target="_blank"><i class="bi bi-file-earmark-arrow-down text-primary" style="font-size:1.2rem;"></i></a>';
+                }
+            }
+            
             // Status icon: loading if only check-in, checkmark if complete
             $statusIcon = '';
             if (!empty($row["checkIn"]) && (empty($row["checkOut"]) || $row["checkOut"] == '-')) {
@@ -108,6 +121,7 @@ try {
                 $checkInDisplay,
                 $checkOutDisplay,
                 $totalHours,
+                $attachment,
                 $notes
             );
             $i++;
