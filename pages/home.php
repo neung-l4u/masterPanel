@@ -1077,17 +1077,42 @@ $loginID = $_SESSION['id'];
             });
 
             reqAjax.done(function (res) {
-                console.log(res);
-                location.reload();
+                console.log('Redeem Response:', res);
+                
+                // Send email via webhook if emailData exists
+                if (res.emailData) {
+                    sendEmailWebhook(res.emailData);
+                }
+                
+                
             });
 
             reqAjax.fail(function (xhr, status, error) {
                 console.log("ajax request fail!!");
                 console.log(status + ": " + error);
+                alert('Request Failed: ' + status + ' - ' + error);
             });
         }
 
     }//makeRedeem
+
+    const sendEmailWebhook = (emailData) => {
+        const webhookUrl = 'https://hook.us1.make.com/8rugbc9g9qh3ihcfbkpy8wwx7wgtwyby';
+        
+        $.ajax({
+            url: webhookUrl,
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(emailData),
+            success: function(response) {
+                console.log('Webhook sent successfully:', response);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.log('Webhook error:', status, error);
+            }
+        });
+    }//sendEmailWebhook
 </script>
 <?php
 function showDate($data){

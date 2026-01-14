@@ -32,8 +32,9 @@ try {
     $sql = "SELECT C.`id`, C.`employee`, C.`status`, C.`department`, C.`workShiftTimeLogging`,
                    C.`checkinDate`, C.`checkIn`, C.`dayCheckIn`, C.`noteCheckIn`,
                    C.`checkOut`, C.`dayCheckOut`, C.`noteCheckOut`, C.`total`,
-                   C.`createBy`, C.`updateAt`
+                   C.`createBy`, C.`updateAt`, S.`sPic` AS 'employeePic'
             FROM `checkin` C
+            LEFT JOIN `staffs` S ON C.`employee` = S.`sNickName`
             WHERE 1=1" . $where . " ORDER BY C.`dayCheckIn` DESC, C.`id` DESC";
     
     $result = $db->query($sql)->fetchAll();
@@ -41,7 +42,9 @@ try {
     if ($result) {
         $i = 1;
         foreach ($result as $row) {
-            $employeeName = $row["employee"] ?: '-';
+            $employeePic = !empty($row["employeePic"]) ? $row["employeePic"] : 'default.png';
+            $employeeImg = '<img src="dist/img/crews/'.$employeePic.'" class="rounded-circle mr-2" style="width:30px;height:30px;object-fit:cover;" alt="">';
+            $employeeName = $employeeImg . ($row["employee"] ?: '-');
             $department = $row["department"] ?: '-';
             
             // Status badge

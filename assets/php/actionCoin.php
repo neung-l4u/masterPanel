@@ -1,4 +1,8 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+header('Content-Type: application/json');
+
 global $db;
 session_start();
 include '../../assets/db/db.php';
@@ -234,35 +238,30 @@ if ($params ["act"] == "load"){
 
         if (!empty($data['userEmail'])) {
             $data['subject'] = "Transfer Coin by " . $myNickName;
-            $headers = [
-                'From' => 'Coin System <administator@localforyou.com>',
-                'Cc' => $data['userEmail'].','.$receiverEmail.','.$email["hr"],
-                'Bcc' => $data['admin1'].",".$data['admin2'] .",". $data['admin3'],
-                'Reply-To' => $data['admin1'],
-                'X-Sender' => $myNickName.' <'.$data['userEmail'].'>',
-                'X-Mailer' => 'PHP/' . phpversion(),
-                'X-Priority' => '1',
-                'Return-Path' => $data['admin1'], //for error
-                'MIME-Version' => '1.0',
-                'Content-Type' => 'text/html; charset=utf-8'
-            ];
+            $headers = "From: Coin System <administrator@localforyou.com>\r\n";
+            $headers .= "Cc: ".$data['userEmail'].",".$receiverEmail.",".$email["hr"]."\r\n";
+            $headers .= "Bcc: ".$data['admin1'].",".$data['admin2'].",".$data['admin3']."\r\n";
+            $headers .= "Reply-To: ".$data['admin1']."\r\n";
+            $headers .= "X-Sender: ".$myNickName." <".$data['userEmail'].">\r\n";
+            $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+            $headers .= "X-Priority: 1\r\n";
+            $headers .= "Return-Path: ".$data['admin1']."\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=utf-8\r\n";
 
             $moneyValue = $transferAmount*50;
 
-
-                $message = $usersName." ".$reason['name']." amount ".$coinAmount.' L4U coin to '.$receiverName.'.'.
-
-                    '<br><br><strong>Request Date:</strong> '.$date["today"].
-                    '<br><strong> Token </strong> : CEX-'.$token;
-
-
-
+            $message = $usersName." ".$reason['name']." amount ".$coinAmount.' L4U coin to '.$receiverName.'.'.
+                '<br><br><strong>Request Date:</strong> '.$date["today"].
+                '<br><strong> Token </strong> : CEX-'.$token;
 
             $result['email'] = $email["my"];
             $result['payload'] = $data;
 
-
-            if (mail($data['hr'], $data['subject'], $message, $headers)) {
+            $mailResult = mail($data['hr'], $data['subject'], $message, $headers);
+            $lastError = error_get_last();
+            
+            if ($mailResult) {
                 $result = [
                     'result' => 1,
                     'msg' => "Send email successful",
@@ -271,10 +270,13 @@ if ($params ["act"] == "load"){
             } else {
                 $result = [
                     'result' => 0,
-                    'msg' => "Send email fail!!",
-                    'email' => $data['userEmail']
+                    'msg' => "Send email fail!! Error: " . ($lastError ? $lastError['message'] : 'Unknown'),
+                    'email' => $data['userEmail'],
+                    'to' => $data['hr'],
+                    'subject' => $data['subject']
                 ];
             }
+            $params['mailResult'] = $result;
         }
         ///end send mail///
 
@@ -323,70 +325,101 @@ if ($params ["act"] == "load"){
         ,$coinType, $myID, $coinAmount, 4, $reason, $myID
     );
 
-    //// send mail ////
+    //// prepare email data for webhook ////
+    $moneyValue = $params["input"]*50;
 
-    $data = [
-        'userEmail' => $email["my"],
-        'name' => $myNickName.' '.$myName,
-        'hr' => $email["hr"],
-        'admin1' => $email["admin1"],
-        'admin2' => $email["admin2"],
-        'admin3' => $email["admin3"],
-    ];
-
-    if (!empty($data['userEmail'])) {
-        $data['subject'] = "L4U coin redeem request : " . $myNickName;
-        $headers = [
-            'From' => 'Coin System <administator@localforyou.com>',
-            'Cc' => $data['userEmail'].",".$email["hr"],
-            'Bcc' => $data['admin1'].",".$data['admin2'] .",". $data['admin3'],
-            'Reply-To' => $data['admin1'],
-            'X-Sender' => $myNickName.' <'.$data['userEmail'].'>',
-            'X-Mailer' => 'PHP/' . phpversion(),
-            'X-Priority' => '1',
-            'Return-Path' => $data['admin1'], //for error
-            'MIME-Version' => '1.0',
-            'Content-Type' => 'text/html; charset=utf-8'
-        ];
-
-        $moneyValue = $params["input"]*50;
-
-        if ($redeemType == "Money"){
-            $message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin for '.number_format($moneyValue).' Baht. '.
-                '<br><br><strong>Request Date:</strong> '.$date["today"].
-                '<br><strong> Token </strong> : CEX-'.$token;
-        }else{
-            $message = $myNickName." Spend ".$params["input"]." L4U coin to ".$reason.
-                '<br><br> Token : CEX-'.$token.
-                '<br><strong>request date:</strong> '.$date["today"];
-        };
-//        $message = $myNickName." Spend ".$params["input"]." L4U coin to ".$reason.
-//        $message = $myNickName." ".$reason." amount ".$params["input"].' L4U coin for. '.$moneyValue.' Baht. '.
-    
-
-
-        $result = [
-            'result' => 0,
-            'msg' => "",
-            'email' => $data['userEmail']
-        ];
-        $result['payload'] = $data;
-
-
-        if (mail($data['hr'], $data['subject'], $message, $headers)) {
-            $result = [
-                'result' => 1,
-                'msg' => "Send email successful",
-                'email' => $data['userEmail']
-            ];
-        } else {
-            $result = [
-                'result' => 0,
-                'msg' => "Send email fail!!",
-                'email' => $data['userEmail']
-            ];
-        }
+    if ($redeemType == "Money"){
+        $message = '
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">💰 L4U Coin Redeem Request</h2>
+                
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <h3 style="color: #27ae60; margin-top: 0;">Exchange for Cash</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Requester:</strong></td>
+                            <td style="padding: 8px 0;">'.$myNickName.' ('.$myName.')</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Email:</strong></td>
+                            <td style="padding: 8px 0;">'.$email["my"].'</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Coin Amount:</strong></td>
+                            <td style="padding: 8px 0; font-size: 18px; color: #e74c3c;"><strong>'.$params["input"].' L4U</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Cash Value:</strong></td>
+                            <td style="padding: 8px 0; font-size: 18px; color: #27ae60;"><strong>'.number_format($moneyValue).' Baht</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Request Date:</strong></td>
+                            <td style="padding: 8px 0;">'.$date["today"].'</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Token:</strong></td>
+                            <td style="padding: 8px 0; font-family: monospace; background: #ecf0f1; padding: 5px 10px; border-radius: 4px;">CEX-'.$token.'</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <p style="color: #95a5a6; font-size: 12px; text-align: center;">This is an automated message from L4U Coin System</p>
+            </div>';
+    }else{
+        $message = '
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #2c3e50; border-bottom: 2px solid #9b59b6; padding-bottom: 10px;">🎁 L4U Coin Spend Request</h2>
+                
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <h3 style="color: #9b59b6; margin-top: 0;">'.$reason.'</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Requester:</strong></td>
+                            <td style="padding: 8px 0;">'.$myNickName.' ('.$myName.')</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Email:</strong></td>
+                            <td style="padding: 8px 0;">'.$email["my"].'</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Redeem Type:</strong></td>
+                            <td style="padding: 8px 0;">'.$redeemType.'</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Coin Spent:</strong></td>
+                            <td style="padding: 8px 0; font-size: 18px; color: #e74c3c;"><strong>'.$params["input"].' L4U</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Request Date:</strong></td>
+                            <td style="padding: 8px 0;">'.$date["today"].'</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #7f8c8d;"><strong>Token:</strong></td>
+                            <td style="padding: 8px 0; font-family: monospace; background: #ecf0f1; padding: 5px 10px; border-radius: 4px;">CEX-'.$token.'</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <p style="color: #95a5a6; font-size: 12px; text-align: center;">This is an automated message from L4U Coin System</p>
+            </div>';
     }
+
+    $params['emailData'] = [
+        'to' => $email["hr"],
+        'cc' => $email["my"].",".$email["hr"],
+        'bcc' => $email["admin1"].",".$email["admin2"].",".$email["admin3"],
+        'subject' => "L4U coin redeem request : " . $myNickName,
+        'message' => $message,
+        'from' => 'Coin System <administrator@localforyou.com>',
+        'userEmail' => $email["my"],
+        'userName' => $myNickName,
+        'token' => 'CEX-'.$token,
+        'amount' => $params["input"],
+        'moneyValue' => $moneyValue,
+        'redeemType' => $redeemType,
+        'reason' => $reason,
+        'requestDate' => $date["today"]
+    ];
 
 }elseif ($params ["act"] == "x2"){
     $users = $db->query('SELECT `sId`, `sNickName`, `sL4U` FROM `staffs` WHERE `sStatus` = ?;', 1)->fetchAll();

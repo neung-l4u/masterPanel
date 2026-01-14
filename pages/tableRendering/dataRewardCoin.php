@@ -52,7 +52,9 @@ try {
     if ($result) {
         $i = 1;
         foreach ($result as $row) {
-            $userName = showName($row["ownerNick"], $row["ownerName"]);
+            $ownerPic = !empty($row["ownerPic"]) ? $row["ownerPic"] : 'default.png';
+            $userImg = '<img src="dist/img/crews/'.$ownerPic.'" class="rounded-circle mr-2" style="width:30px;height:30px;object-fit:cover;" alt="">';
+            $userName = $userImg . showName($row["ownerNick"], $row["ownerName"]);
             $teamName = $row["teamName"];
             
             $amount = $row["amount"];
