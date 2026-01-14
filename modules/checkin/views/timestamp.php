@@ -41,7 +41,7 @@ $now = date("H:i");
                     <select id="staffName" name="staffName" class="form-select" required>
                         <option value="">-- Select --</option>
                         <?php
-                        $staff = $db->query('SELECT * FROM `staffs` WHERE sStaffType = "partTime" ORDER BY sNickName')->fetchAll();
+                        $staff = $db->query('SELECT * FROM `staffs` WHERE sStaffType = "partTime" AND sStatus = 1 ORDER BY sNickName')->fetchAll();
                         foreach ($staff as $row) {
                             ?>
                             <option value="<?php echo $row['sID']; ?>"><?php echo showName($row['sNickName'],$row['sName'],$row['sNationality']); ?></option>
