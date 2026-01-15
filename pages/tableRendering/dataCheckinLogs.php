@@ -34,7 +34,7 @@ try {
                    C.`checkOut`, C.`dayCheckOut`, C.`noteCheckOut`, C.`total`,
                    C.`createBy`, C.`updateAt`, S.`sPic` AS 'employeePic'
             FROM `checkin` C
-            LEFT JOIN `staffs` S ON C.`employee` = S.`sName`
+            LEFT JOIN `staffs` S ON C.`createBy` = S.`sID`
             WHERE 1=1" . $where . " ORDER BY C.`dayCheckIn` DESC, C.`id` DESC";
     
     $result = $db->query($sql)->fetchAll();
