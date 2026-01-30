@@ -36,4 +36,4 @@
 <script src="assets/js/popper.2.11.5.min.js"></script>
 <script src="assets/js/bootstrap-multi-step-form.js?v=2.0.16"></script>
 
-<input type="hidden" id="signupFormVersion" name="signupFormVersion" value="2.10.22" />
+<input type="hidden" id="signupFormVersion" name="signupFormVersion" value="2.10.23" />

@@ -206,7 +206,8 @@ include ('assets/api/checkSession.php');
                 } //Super Admin Menu ?>
 
                 <?php 
-                    if($teamID == 4 OR $teamID == 5){
+                    
+                    if($userLevel<=3){
                     ?>
                     <li class="nav-item mt-5">
                         <a href="main.php?p=rewardCoin" class="nav-link <?php echo $activeMenu["lv1"] == "rewardCoin" ? "active":""; ?>">
@@ -232,7 +233,7 @@ include ('assets/api/checkSession.php');
                             </p>
                         </a>
                     </li>
-                <?php } //Super Admin Menu 
+                <?php  } //Super Admin Menu 
                 
                 ?>
 
