@@ -1,10 +1,14 @@
-let projects = []; // เก็บร้านทั้งหมดของ country ที่เลือก
+let projects = [];
+let loadingProjects = false;
 
+// ================= FETCH WITH FALLBACK =================
 async function fetchWithFallback(country) {
-    try {
-        const controller = new AbortController();
-        setTimeout(() => controller.abort(), 5000); // timeout 5 วิ
+    loadingProjects = true;
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    try {
         const res = await fetch(
             `http://localhost/masterPanel/api/monday/selectProjectCountry/index.php?country=${country}`,
             { signal: controller.signal }
@@ -18,50 +22,62 @@ async function fetchWithFallback(country) {
         }
 
         console.log('✅ Loaded from API');
-        return data;
+        return normalizeProjects(data);
 
     } catch (err) {
-        console.warn('⚠️ API failed, fallback to file', err.message);
+        console.warn('⚠️ API failed, fallback to file:', err.message);
 
-        try {
-            const fileRes = await fetch(
-                `http://localhost/masterPanel/api/monday/selectProjectCountry/index.php?country=${country}`
-            );
+        const fileRes = await fetch(
+            `http://localhost/masterPanel/api/monday/selectProjectCountry/file/${country}`
+        );
 
-            if (!fileRes.ok) throw new Error('File fallback not ok');
-
-            const fileData = await fileRes.json();
-            console.log('📁 Loaded from file');
-            return fileData;
-        } catch (fileErr) {
-            console.error('❌ Both API and file fallback failed', fileErr.message);
-            return [];
-        }
+        const fileData = await fileRes.json();
+        console.log('📁 Loaded from file');
+        return fileData;
     }
 }
 
-// ===== 1. เมื่อเลือกประเทศ =====
-document.getElementById('projectCountry').addEventListener('change', async function () {
+// ================= NORMALIZE DATA =================
+function normalizeProjects(data) {
+    return data.map(p => ({
+        shop_id: p.shop_id ?? '',
+        shop_name: p.shop_name ?? '',
+        shop_type: p.shop_type ?? '',
+        owner_name: p.owner_name ?? '',
+        phone: p.phone ?? '',
+        country: p.country ?? ''
+    }));
+}
+
+// ================= COUNTRY CHANGE =================
+document.getElementById('projectCountry')
+    .addEventListener('change', async function () {
+
     const country = this.value;
     if (!country) return;
+
+    projects = [];
+    document.getElementById('shopSuggest').innerHTML = '';
 
     projects = await fetchWithFallback(country);
 });
 
-// ===== 2. autocomplete ตอนพิมพ์ shop_id =====
+// ================= AUTOCOMPLETE =================
 const shopInput = document.getElementById('shop_id');
 const suggestBox = document.getElementById('shopSuggest');
 
 shopInput.addEventListener('input', function () {
-    const keyword = this.value.toLowerCase();
+    const keyword = this.value.trim().toLowerCase();
     suggestBox.innerHTML = '';
 
-    if (!keyword || projects.length === 0) return;
+    if (!keyword || loadingProjects || projects.length === 0) return;
 
-    const matches = projects.filter(p =>
-        p.shop_name.toLowerCase().includes(keyword) ||
-        p.shop_id.toLowerCase().includes(keyword)
-    ).slice(0, 5); // จำกัด 5 รายการ
+    const matches = projects
+        .filter(p =>
+            p.shop_name.toLowerCase().includes(keyword) ||
+            p.shop_id.toLowerCase().includes(keyword)
+        )
+        .slice(0, 5);
 
     matches.forEach(p => {
         const item = document.createElement('button');
@@ -69,26 +85,31 @@ shopInput.addEventListener('input', function () {
         item.className = 'list-group-item list-group-item-action';
         item.textContent = `${p.shop_name} (${p.shop_id})`;
 
-        item.onclick = () => selectShop(p);
+        item.addEventListener('mousedown', () => selectShop(p));
         suggestBox.appendChild(item);
     });
 });
 
-// ===== 3. เลือกร้าน → fill ข้อมูล =====
+// ================= SELECT SHOP =================
 function selectShop(p) {
     shopInput.value = p.shop_id;
     suggestBox.innerHTML = '';
 
-    document.querySelector('[name="shop_name"]').value = p.shop_name;
-    document.querySelector('[name="shop_type"]').value = p.shop_type;
-    document.querySelector('[name="owner_name"]').value = p.owner_name;
-    document.querySelector('[name="phone"]').value = p.phone;
-    document.querySelector('[name="country"]').value = p.country;
+    setValue('shop_name', p.shop_name);
+    setValue('shop_type', p.shop_type);
+    setValue('owner_name', p.owner_name);
+    setValue('phone', p.phone);
+    setValue('country', p.country);
 }
 
-// ===== 4. คลิกนอก → ปิด dropdown =====
+function setValue(name, value) {
+    const el = document.querySelector(`[name="${name}"]`);
+    if (el) el.value = value;
+}
+
+// ================= CLICK OUTSIDE =================
 document.addEventListener('click', e => {
-    if (!shopInput.contains(e.target)) {
+    if (!shopInput.contains(e.target) && !suggestBox.contains(e.target)) {
         suggestBox.innerHTML = '';
     }
 });
