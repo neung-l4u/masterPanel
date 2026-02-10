@@ -21,7 +21,8 @@ $data['reason'] = !empty($_POST['reason']) ? $_POST['reason'] : null;
 $data['other'] = !empty($_POST['other']) ? $_POST['other'] : null;
 $data['lastDate'] = !empty($_POST['lastDate']) ? $_POST['lastDate'] : null;
 $data['feedback'] = !empty($_POST['feedback']) ? $_POST['feedback'] : null;
-$date['testMode'] = !empty($_POST['testMode']) ? $_POST['testMode'] : 0;
+$data['testMode'] = !empty($_POST['testMode']) ? $_POST['testMode'] : 0;
+$data['industrial'] = !empty($_POST['industrial']) ? $_POST['industrial'] : null;
 
 $params['result'] = "Default Text";
 $params['timestamp'] = date("Y-m-d H:i:s");
@@ -47,9 +48,9 @@ if ($data['mode'] == "save"){
 
     try {
         $insert = $db->query(
-            'INSERT INTO `Cancellation` (`county`, `city`, `shopname`, `trading`, `address`, `state`, `zip`, `firstname`, `lastname`, `mobile`, `email`, `other`, `reason`, `lastdate`, `feedback`, `test`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            $data['country'], $data['city'], $data['shopName'], $data['tradingName'], $data['streetAddress'], $data['state'], $data['zip'], $data['first_name'], $data['last_name'], $data['mobile'], $data['email'], $data['other'], $data['reason'], $data['lastDate'], $data['feedback'], $date['testMode']
+            'INSERT INTO `Cancellation` (`industrial`,`county`, `city`, `shopname`, `trading`, `address`, `state`, `zip`, `firstname`, `lastname`, `mobile`, `email`, `other`, `reason`, `lastdate`, `feedback`, `test`) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            $data['industrial'], $data['country'], $data['city'], $data['shopName'], $data['tradingName'], $data['streetAddress'], $data['state'], $data['zip'], $data['first_name'], $data['last_name'], $data['mobile'], $data['email'], $data['other'], $data['reason'], $data['lastDate'], $data['feedback'], $data['testMode']
         );
 
 

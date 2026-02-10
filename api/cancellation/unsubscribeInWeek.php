@@ -38,46 +38,73 @@ if ($act == 'newPerWeek') {
     $updateQue = $db->query('UPDATE Cancellation SET reported_at = NOW(), gen_report = 1  WHERE timestamp BETWEEN ? AND ? ;',$startDayForWeek ,$lastDayForWeek);
     $selectQue = $db->query('SELECT * FROM Cancellation WHERE timestamp BETWEEN ? AND ? ORDER BY county ASC ;',$startDayForWeek ,$lastDayForWeek)->fetchAll();
     $totalUnsubscribes = count($selectQue);
+    
+    // Group data by country
+    $groupedByCountry = [];
+    $processedShops = [];
+    foreach ($selectQue as $row) {
+        $country = $row["county"] ?: "Unknown";
+        $shopname = $row["shopname"];
+        
+        // Skip duplicate shopnames
+        if (in_array($shopname, $processedShops)) {
+            continue;
+        }
+        $processedShops[] = $shopname;
+        
+        if (!isset($groupedByCountry[$country])) {
+            $groupedByCountry[$country] = [];
+        }
+        $groupedByCountry[$country][] = $row;
+    }
 }
 ?>
 
-</p>
-<table cellpadding="10" cellspacing="0" border="1" style="font: 14px roboto, sans-serif;">
+<?php
+$totalRow = 0;
+if (!empty($groupedByCountry)) {
+    // Calculate total first
+    foreach ($groupedByCountry as $rows) {
+        $totalRow += count($rows);
+    }
+?>
+<p style="font: 18px roboto, sans-serif; margin-top: 20px;"><b>**Unsubscribe Requests**</b> <span style="color: red;">(Customer: -<?php echo $totalRow; ?>)</span></p>
+<?php
+    foreach ($groupedByCountry as $country => $rows) {
+        $countryCount = count($rows);
+?>
+<p style="font: 14px roboto, sans-serif; margin-top: 20px;"><b>Country: <?php echo $country; ?></b> (<?php echo $countryCount; ?> shops)</p>
+<table cellpadding="10" cellspacing="0" border="1" style="font: 14px roboto, sans-serif; margin-bottom: 20px;">
     <tr style="background-color: #d6e6f4; border: 1px solid;">
         <th>#</th>
         <th>Shop Name</th>
+        <th>Type</th>
         <th>Reason</th>
-        <th>Country</th>
     </tr>
     <?php
     $index = 1;
-    $totalRow = 0;
-    if (!empty($selectQue)) {
-        $dup = "";
-        foreach ($selectQue as $row) { 
-            if ($dup !== $row["shopname"]) {
-                $dup = $row["shopname"];
-                $totalRow++;
-            ?>
-            <tr style="border: 1px solid;">
-                <td><?php echo $index++; ?></td>
-                <td><?php echo $row["shopname"] ?: "-"; ?></td>
-                <td><?php if ($row["reason"] == "other"){
-                    echo $row["other"];
-                    }elseif ( empty($row["other"])){
-                     echo "-";
-                    }else {
-                     echo "-";
-                    }
-                 ?></td>
-                <td><?php echo $row["county"] ?: "-"; ?></td>
-            </tr>
-        <?php 
-            }//if
-        }//foreach
-    } else {
-        echo "<tr><td colspan='4'>ไม่พบข้อมูลในสัปดาห์นี้</td></tr>";
-    }//if
+    foreach ($rows as $row) { 
     ?>
-<caption style="font: 14px roboto, sans-serif; text-align: left; margin-bottom: 10px;"><b>**Unsubscribe Requests**</b> (Total:<?php echo $totalRow; ?> )</caption>
+        <tr style="border: 1px solid;">
+            <td><?php echo $index++; ?></td>
+            <td><?php echo $row["shopname"] ?: "-"; ?></td>
+            <td><?php echo $row["industrial"] ?: "-"; ?></td>
+            <td><?php if ($row["reason"] == "other"){
+                echo $row["other"] ?: "-";
+                }elseif (!empty($row["reason"])){
+                 echo $row["reason"];
+                }else {
+                 echo "-";
+                }
+             ?></td>
+        </tr>
+    <?php 
+    }//foreach rows
+    ?>
 </table>
+<?php
+    }//foreach country
+} else {
+    echo "<p>ไม่พบข้อมูลในสัปดาห์นี้</p>";
+}//if
+?>

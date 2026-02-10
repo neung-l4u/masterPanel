@@ -13,7 +13,7 @@ date_default_timezone_set('Asia/Bangkok');
 $id = !empty($_GET['id']) ? strtolower(trim($_GET['id'])): '';
 $testMode = ($id == "test") ? 1 : 0;
 $leadSource = "Unsubscribe Form";
-$formVersion = "1.5.3";
+$formVersion = "1.5.4";
 $emailVersion = "1.0";
 $timestamps = date("H:i D ,d M Y") . " (BKK)";
 
@@ -54,10 +54,21 @@ $timestamps = date("H:i D ,d M Y") . " (BKK)";
                                 <div class="text-center">
                                     <h5 class="card-title font-weight-bold py-4">Business information</h5>
                                 </div>
+                                <div class="form-group pt-2">
+                                    <label for="FormIndustrial">
+                                        <span>Industrial Type<b class="red">*</b><small class="text-danger warningText" id="smallIndustrial">Please Select Industrial.</small></span>
+                                    </label>
+                                    <select id="formIndustrial" class="form-select" name="industrial">
+                                        <option selected value="" disabled>--None--</option>
+                                        <option value="Thai Restaurants &amp; Takeaways">Thai Restaurants &amp; Takeaways</option>
+                                        <option value="Thai Massage">Thai Massage</option>
+                                        <option value="Restaurants &amp; Takeaways">Restaurants &amp; Takeaways</option>
+                                    </select>
+                                </div>
 
                                 <div class="form-group pt-2">
                                     <label for="formCountry">
-                                        <span>Country <b class="red">*</b><small class="text-danger warningText" id="smallCountry">Please Select County.</small></span>
+                                        <span>Country <b class="red">*</b><small class="text-danger warningText" id="smallCountry">Please Select Country.</small></span>
                                     </label>
                                     <select id="formCountry" class="form-select" name="country">
                                         <option selected value="" disabled>Please select Country</option>
@@ -141,7 +152,7 @@ $timestamps = date("H:i D ,d M Y") . " (BKK)";
                                 <div class="pt-2 selectState">
                                     <label for="state" class="control-label">State</label>
                                     <div>
-                                        <select id="state" class="form-select optionState">
+                                        <select id="state" class="form-select optionState" name="state">
                                             <option value="">Please select Country</option>
                                         </select>
                                     </div>
@@ -236,6 +247,7 @@ $timestamps = date("H:i D ,d M Y") . " (BKK)";
                                         <label for="formReason">
                                             What is the Main Reason you wish to cancel?
                                             <b class="red">*</b>
+                                            <small class="text-danger warningText" id="smallReason">Please select a reason.</small>
                                         </label>
                                         <select id="formReason" class="form-select" name="reason" onchange="superbas()">
                                             <option selected value=""> --- Please select your reason --- </option>
@@ -362,10 +374,10 @@ $timestamps = date("H:i D ,d M Y") . " (BKK)";
 </footer>
 <script src="../assets/js/jquery.3.6.0.min.js"></script>
 <script src="../assets/js/bootstrap5.0.2.bundle.min.js"></script>
-<script src="../assets/js/global_data.js?v=1.5.2"></script>
+<script src="../assets/js/global_data.js?v=1.5.4"></script>
 <script src="../assets/js/date_format.js"></script>
 <script src="../assets/js/popper.2.11.5.min.js"></script>
-<script src="../assets/js/unsubData.js?v=1.5.2"></script>
+<script src="../assets/js/unsubData.js?v=1.5.3"></script>
 <script>
     let payload = {};
 
@@ -382,28 +394,42 @@ $timestamps = date("H:i D ,d M Y") . " (BKK)";
 
     function validateForm(){
         let country = $("#formCountry").val();
+        let industrial = $("#formIndustrial").val();
         let shopName = $("#shopName").val();
         let lastDate = $("#lastDate").val();
         let email = $("#email").val();
+        let reason = $("#formReason").val();
 
-        if (country === ""){
+        if (industrial === "" || industrial === null){
+            $("#smallIndustrial").show();
+            $("#formIndustrial").focus();
+        }else if (country === "" || country === null){
+            $("#smallIndustrial").hide();
             $("#smallCountry").show();
             $("#formCountry").focus();
         }else if (shopName.length < 1){
             $("#smallCountry").hide();
             $("#smallShopName").show();
             $("#shopName").focus();
-        }else if (lastDate === ""){
+        }else if (reason === "" || reason === null){
             $("#smallShopName").hide();
+            $("#smallReason").show();
+            $("#formReason").focus();
+        }else if (reason === "other" && $("#boxother").val().trim() === ""){
+            $("#smallReason").hide();
+            $("#smallOther").show();
+            $("#boxother").focus();
+        }else if (lastDate === ""){
+            $("#smallReason").hide();
             $("#smallDate").show();
             $("#lastDate").focus();
         }else if (email === ""){
-            $("#smallShopName").hide();
+            $("#smallDate").hide();
             $("#smallEmail").text("Please provide a valid email address.").show();
             $("#email").focus();
 
         }else if (!validateEmail(email)){
-            $("#smallShopName").hide();
+            $("#smallDate").hide();
             $("#smallEmail").text("Email format is invalid. Please include '@' and domain, e.g. mail@localforyou.com").show();
             $("#email").focus();
 
