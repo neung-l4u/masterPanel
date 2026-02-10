@@ -31,9 +31,18 @@ async function fetchWithFallback(country) {
             `http://localhost/masterPanel/api/monday/selectProjectCountry/file/${country}`
         );
 
+        if (!fileRes.ok) {
+            console.error('❌ File fallback failed');
+            return [];
+        }
+
         const fileData = await fileRes.json();
         console.log('📁 Loaded from file');
-        return fileData;
+        return normalizeProjects(fileData);
+
+    } finally {
+        clearTimeout(timeoutId);
+        loadingProjects = false;
     }
 }
 
