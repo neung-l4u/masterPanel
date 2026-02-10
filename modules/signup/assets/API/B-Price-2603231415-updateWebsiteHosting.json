@@ -1056,14 +1056,14 @@
                 },
                 {
                   "name": "Website Hosting + Email included",
-                  "product_id": "prod_TyAuTAY7YCADCm",
-                  "price_id": "AUWHY03M12O-21",
+                  "product_id": "prod_R7hB7F0ZxruMuO",
+                  "price_id": "AUWHT03M00O-02",
                   "form_name": "webEmail",
                   "currency": "aud",
                   "amount": 4900,
                   "type": "webmail",
                   "status": "show",
-                  "ext": "/Year",
+                  "ext": "/Month",
                   "gst": true
                 },
                 {
@@ -2389,14 +2389,14 @@
               "items": [
                 {
                   "name": "Website Hosting + Email included",
-                  "product_id": "prod_TyAuTAY7YCADCm",
-                  "price_id": "NZWHY03M12O-21",
+                  "product_id": "prod_R7hB7F0ZxruMuO",
+                  "price_id": "NZWHT03M00O-02",
                   "form_name": "addonWebsiteHosting",
                   "currency": "nzd",
                   "amount": 4900,
                   "type": "email",
                   "status": "show",
-                  "ext": "/Year",
+                  "ext": "/Month",
                   "gst": false
                 },
                 {
@@ -3737,14 +3737,14 @@
                 },
                 {
                   "name": "Website Hosting + Email included",
-                  "product_id": "prod_TyAuTAY7YCADCm",
-                  "price_id": "UKWHY03M12O-21",
+                  "product_id": "prod_R7hB7F0ZxruMuO",
+                  "price_id": "UKWHT03M00O-02",
                   "form_name": "addonWebsiteHosting",
                   "currency": "gbp",
-                  "amount": 4900,
+                  "amount": 2900,
                   "type": "email",
                   "status": "show",
-                  "ext": "/Year",
+                  "ext": "/Month",
                   "gst": false
                 }
               ]
@@ -4950,14 +4950,14 @@
               "items": [
                 {
                   "name": "Website Hosting + Email included",
-                  "product_id": "prod_TyC6KxTgCXeSfK",
-                  "price_id": "price_1T0FiSI6vmxJT6OmZFSvKquR",
+                  "product_id": "prod_R88I1dIZa30tNq",
+                  "price_id": "price_1QFs2GI6vmxJT6Om878pzea5",
                   "form_name": "addonWebsiteHosting",
                   "currency": "usd",
                   "amount": 4900,
                   "type": "email",
                   "status": "show",
-                  "ext": "/Year",
+                  "ext": "/Monthly",
                   "gst": false
                 },
                 {
@@ -6183,14 +6183,14 @@
               "items": [
                 {
                   "name": "Website Hosting + Email included",
-                  "product_id": "prod_TyC6KxTgCXeSfK",
-                  "price_id": "price_1T0FiSI6vmxJT6Omr4sM5B0L",
+                  "product_id": "prod_R88I1dIZa30tNq",
+                  "price_id": "price_1QFs2GI6vmxJT6OmJ2og0UJa",
                   "form_name": "addonWebsiteHosting",
                   "currency": "cad",
                   "amount": 4900,
                   "type": "email",
                   "status": "show",
-                  "ext": "/Year",
+                  "ext": "/Month",
                   "gst": false
                 }
               ]
@@ -7355,15 +7355,15 @@
                   "gst": false
                 },
                 {
-                  "name": "Website Hosting + Email included (Yearly)",
-                  "product_id": "prod_TyB8yjee0rRGV5",
-                  "price_id": "THWHY03M12O-21",
+                  "name": "Website Hosting + Email included",
+                  "product_id": "prod_TcuYMPwbi4ST6Y",
+                  "price_id": "THWHT03M00O-20",
                   "form_name": "addonWebsiteHosting",
                   "currency": "thb",
                   "amount": 100000,
                   "type": "email",
                   "status": "show",
-                  "ext": "",
+                  "ext": "/Month",
                   "gst": false
                 },
                 {

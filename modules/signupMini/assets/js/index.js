@@ -51,26 +51,26 @@ function shopTypeForLeadManagement() {
 
 function getPayload(form) {
     return {
-        first_name: form.find("[name='first_name']").val(),
-        last_name: form.find("[name='last_name']").val(),
-        email: form.find("[name='email']").val(),
-        mobile: form.find("[name='mobile']").val(),
-        contactTime: form.find("[name='contactTime']").val(),
-        company: form.find("[name='company']").val(),
-        shopName: form.find("[name='shopName']").val(),
-        country: form.find("[name='country']").val(),
+        first_name: decodeURIComponent(form.find("[name='first_name']").val()),
+        last_name: decodeURIComponent(form.find("[name='last_name']").val()),
+        email: decodeURIComponent(form.find("[name='email']").val()),
+        mobile: decodeURIComponent(form.find("[name='mobile']").val()),
+        contactTime: decodeURIComponent(form.find("[name='contactTime']").val()),
+        company: decodeURIComponent(form.find("[name='company']").val()),
+        shopName: decodeURIComponent(form.find("[name='shopName']").val()),
+        country: decodeURIComponent(form.find("[name='country']").val()),
         countryCode: shortCountry(),
-        shopType: form.find("[name='shopType']").val(),
+        shopType: decodeURIComponent(form.find("[name='shopType']").val()),
         shopTypeForLeadManagement: shopTypeForLeadManagement(),
-        url: form.find("[name='url']").val(),
-        city: form.find("[name='city']").val(),
-        currency: form.find("[name='currency']").val(),
-        interest: form.find("[name='interest']").val(),
-        comments: form.find("[name='comments']").val(),
-        SignupFormVersion: form.find("[name='SignupFormVersion']").val(),
-        formType: form.find("[name='formType']").val(),
-        leadSource: form.find("[name='leadSource']").val(),
-        leadRecordType: form.find("[name='leadRecordType']").val()
+        url: decodeURIComponent(form.find("[name='url']").val()),
+        city: decodeURIComponent(form.find("[name='city']").val()),
+        currency: decodeURIComponent(form.find("[name='currency']").val()),
+        interest: decodeURIComponent(form.find("[name='interest']").val()),
+        comments: decodeURIComponent(form.find("[name='comments']").val()),
+        SignupFormVersion: decodeURIComponent(form.find("[name='SignupFormVersion']").val()),
+        formType: decodeURIComponent(form.find("[name='formType']").val()),
+        leadSource: decodeURIComponent(form.find("[name='leadSource']").val()),
+        leadRecordType: decodeURIComponent(form.find("[name='leadRecordType']").val())
     };
 }
 

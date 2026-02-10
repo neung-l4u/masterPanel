@@ -354,7 +354,7 @@
                   "amount": 22500,
                   "type": "printer",
                   "status": "show",
-                  "ext": "/Month",
+                  "ext": "",
                   "gst": true
                 },
                 {
@@ -366,7 +366,7 @@
                   "amount": 52500,
                   "type": "printer",
                   "status": "show",
-                  "ext": "/Month",
+                  "ext": "",
                   "gst": true
                 }
               ]
@@ -1735,7 +1735,7 @@
                   "amount": 22500,
                   "type": "printer",
                   "status": "show",
-                  "ext": "/Month",
+                  "ext": "",
                   "gst": true
                 },
                 {
@@ -1747,7 +1747,7 @@
                   "amount": 52500,
                   "type": "printer",
                   "status": "show",
-                  "ext": "/Month",
+                  "ext": "",
                   "gst": true
                 }
               ]

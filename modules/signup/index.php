@@ -1269,7 +1269,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 /> 
                                                             </span>
                                                             <small id="domainHelpAU" class="form-text">
-                                                                <a href="https://usadomains.localforyou.com/" target="_blank" tabindex="-1" class="text-decoration-none">
+                                                                <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
                                                                     Check Availability
                                                                 </a>
                                                             </small>

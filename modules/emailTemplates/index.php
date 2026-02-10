@@ -14,5 +14,6 @@
     <button onclick="location.href='views/confirmSignup.php'">Confirm Signup</button>
     <button onclick="location.href='views/unsubscribe.php'">Unsubscribe</button>
     <button onclick="location.href='views/oldConfirmSignup.php'">Old Confirm Signup</button>
+    <button onclick="location.href='views/upgradeForm.php'">Upgrade Form</button>
 </body>
 </html>

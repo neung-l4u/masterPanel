@@ -1,7 +1,39 @@
 <?php
 date_default_timezone_set("Asia/Bangkok");
 $currentDate = date('d/m/Y');
-?>
+
+// Fetch shop types from Monday.com API
+$shopTypes = [];
+$apiUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/api/monday/selectBoardLeads/getShopType.php';
+
+$ch = curl_init($apiUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+if ($httpCode === 200 && $response) {
+    $result = json_decode($response, true);
+    if (isset($result['success']) && $result['success'] === true && isset($result['data'])) {
+        $shopTypes = $result['data'];
+    }
+}
+
+// Fallback to default options if API fails
+if (empty($shopTypes)) {
+    $shopTypes = [
+        ['id' => '1', 'label' => 'Thai Restaurants & Takeaways'],
+        ['id' => '2', 'label' => 'Thai Massage'],
+        ['id' => '3', 'label' => 'Restaurants & Takeaways']
+    ];
+}
+
+// Filter out "empty" option
+$shopTypes = array_filter($shopTypes, function($shopType) {
+    return $shopType['label'] !== '';
+});
+?> 
 <!DOCTYPE html>
 <html lang="en">
 
@@ -117,9 +149,11 @@ $currentDate = date('d/m/Y');
                             <select id="shopType" name="shopType" title="Customer_Type"
                                 class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition appearance-none">
                                 <option value="" selected>-- Please select --</option>
-                                <option value="Thai Restaurants &amp; Takeaways">Thai Restaurants &amp; Takeaways</option>
-                                <option value="Thai Massage">Thai Massage</option>
-                                <option value="Restaurants &amp; Takeaways">Restaurants &amp; Takeaways</option>
+                                <?php foreach ($shopTypes as $shopType): ?>
+                                    <option value="<?php echo htmlspecialchars($shopType['label'], ENT_QUOTES, 'UTF-8'); ?>">
+                                        <?php echo htmlspecialchars($shopType['label'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
@@ -266,5 +300,5 @@ $currentDate = date('d/m/Y');
 
 </script>
 </body>
-
+<!-- test -->
 </html>
