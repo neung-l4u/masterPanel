@@ -29,6 +29,10 @@ $currencyMapping = [
     'CAD' => 'CA'
 ];
 
+// Increase limits for large data
+ini_set('memory_limit', '512M');
+set_time_limit(300);
+
 // Helper function to make API call
 function callMondayAPI($url, $headers, $query) {
     $data = json_encode(['query' => $query]);
@@ -50,16 +54,12 @@ function callMondayAPI($url, $headers, $query) {
     return json_decode($response, true);
 }
 
-// Function to fetch all items with pagination (per-group)
-function fetchAllItems($url, $headers, $boardIds) {
+// Fetch all items from a SINGLE board with pagination
+function fetchSingleBoard($url, $headers, $boardId) {
     $allItems = [];
     
-    // Build board IDs string (e.g. [123,456,...])
-    $idsString = implode(',', $boardIds);
-    
-    // Step 1: Get all groups with first page of items
     $query = 'query {
-  boards (ids: [' . $idsString . ']) {
+  boards (ids: [' . $boardId . ']) {
     name
     id
     groups {
@@ -86,41 +86,35 @@ function fetchAllItems($url, $headers, $boardIds) {
         return $result;
     }
     
-    if (!isset($result['data']['boards'])) {
-        return ['items' => [], 'boards' => []];
+    if (!isset($result['data']['boards'][0])) {
+        return ['items' => [], 'board' => null];
     }
     
-    // Step 2: Collect items from each board/group and track cursors
+    $board = $result['data']['boards'][0];
+    $boardName = $board['name'];
     $groupCursors = [];
-    $boardsData = $result['data']['boards'];
     
-    foreach ($boardsData as $board) {
-        $boardName = $board['name'];
+    foreach ($board['groups'] as $group) {
+        $groupTitle = $group['title'];
         
-        foreach ($board['groups'] as $group) {
-            $groupTitle = $group['title'];
-            
-            foreach ($group['items_page']['items'] as $item) {
-                $item['group_title'] = $groupTitle;
-                $item['board_name'] = $boardName;
-                $allItems[] = $item;
-            }
-            
-            if (!empty($group['items_page']['cursor'])) {
-                $groupCursors[] = [
-                    'title' => $groupTitle,
-                    'board_name' => $boardName,
-                    'cursor' => $group['items_page']['cursor']
-                ];
-            }
+        foreach ($group['items_page']['items'] as $item) {
+            $item['group_title'] = $groupTitle;
+            $item['board_name'] = $boardName;
+            $allItems[] = $item;
+        }
+        
+        if (!empty($group['items_page']['cursor'])) {
+            $groupCursors[] = [
+                'title' => $groupTitle,
+                'cursor' => $group['items_page']['cursor']
+            ];
         }
     }
     
-    // Step 3: Paginate remaining items for each group that has a cursor
+    // Paginate remaining items
     foreach ($groupCursors as $groupInfo) {
         $cursor = $groupInfo['cursor'];
         $groupTitle = $groupInfo['title'];
-        $boardName = $groupInfo['board_name'];
         
         while ($cursor) {
             $nextQuery = 'query {
@@ -156,7 +150,28 @@ function fetchAllItems($url, $headers, $boardIds) {
         }
     }
     
-    return ['items' => $allItems, 'boards' => $boardsData];
+    return ['items' => $allItems, 'board' => $board];
+}
+
+// Fetch multiple boards ONE AT A TIME and merge results
+function fetchAllBoards($url, $headers, $boardIds) {
+    $allItems = [];
+    $allBoards = [];
+    
+    foreach ($boardIds as $boardId) {
+        $result = fetchSingleBoard($url, $headers, $boardId);
+        
+        if (isset($result['error'])) {
+            return $result;
+        }
+        
+        $allItems = array_merge($allItems, $result['items']);
+        if ($result['board']) {
+            $allBoards[] = $result['board'];
+        }
+    }
+    
+    return ['items' => $allItems, 'boards' => $allBoards];
 }
 
 
@@ -167,7 +182,7 @@ $headers = [
 ];
 
 // 3. Determine which board IDs to fetch
-if (!empty($countryFilter)) {
+if (!empty($countryFilter) && !(count($countryFilter) === 1 && $countryFilter[0] === 'ALL')) {
     // Fetch only selected country boards
     $boardIds = [];
     foreach ($countryFilter as $c) {
@@ -179,29 +194,32 @@ if (!empty($countryFilter)) {
         die("Error: No valid country codes provided. Valid codes: " . implode(', ', array_keys($countryBoards)));
     }
 } else {
-    // No filter: fetch from main board (all countries)
-    $boardIds = [$mainBoardId];
+    // No filter or ?country=ALL: fetch all country boards
+    $boardIds = array_values($countryBoards);
+    $countryFilter = []; // Reset so output goes to ALL path
 }
 
-$result = fetchAllItems($url, $headers, $boardIds);
+$result = fetchAllBoards($url, $headers, $boardIds);
 
-// 4. Validate and save to file
+// 4. Validate and output
 date_default_timezone_set('Asia/Bangkok');
-$timestamp = date('ymd-Hi'); // format: 260205-1126 (Bangkok time)
+$timestamp = date('ymd-Hi');
 
 if (isset($result['error'])) {
-    echo "Error: " . $result['error'];
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['error' => $result['error']], JSON_UNESCAPED_UNICODE);
 } else {
     if (!empty($countryFilter)) {
-        // Save per-country files
+        // Per-country filter: output JSON to browser
+        header('Content-Type: application/json; charset=utf-8');
+        
+        $allOutput = [];
         foreach ($countryFilter as $filterCountry) {
             $countryBoardId = isset($countryBoards[$filterCountry]) ? $countryBoards[$filterCountry] : null;
             if (!$countryBoardId) continue;
             
-            // Filter items belonging to this country's board
             $filteredItems = [];
             foreach ($result['items'] as $item) {
-                // Match by board_name containing country code
                 if (isset($item['board_name'])) {
                     $bn = $item['board_name'];
                     $matchCountry = null;
@@ -218,27 +236,18 @@ if (isset($result['error'])) {
                 }
             }
             
-            $fileDir = __DIR__ . '/file/' . $filterCountry;
-            $filePath = $fileDir . '/' . $filterCountry . '_monday_data' . $timestamp . '.json';
-            
-            if (!is_dir($fileDir)) {
-                mkdir($fileDir, 0755, true);
-            }
-            
-            $output = [
-                'data' => [
-                    'items' => $filteredItems,
-                    'total_count' => count($filteredItems),
-                    'currency_mapping' => $currencyMapping,
-                    'country' => $filterCountry
-                ]
+            $allOutput[$filterCountry] = [
+                'items' => $filteredItems,
+                'total_count' => count($filteredItems)
             ];
-            
-            file_put_contents($filePath, json_encode($output, JSON_UNESCAPED_UNICODE));
-            echo "Saved " . count($filteredItems) . " items for $filterCountry\n";
         }
+        
+        echo json_encode([
+            'data' => $allOutput,
+            'currency_mapping' => $currencyMapping
+        ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     } else {
-        // No filter: save all items to file/ALL/
+        // No filter / ALL: save to file
         $fileDir = __DIR__ . '/file/ALL';
         $filePath = $fileDir . '/ALL_monday_data' . $timestamp . '.json';
         
@@ -255,7 +264,7 @@ if (isset($result['error'])) {
         ];
         
         file_put_contents($filePath, json_encode($output, JSON_UNESCAPED_UNICODE));
-        echo "Saved " . count($result['items']) . " items for ALL countries\n";
+        echo "Saved " . count($result['items']) . " items for ALL countries to $filePath\n";
     }
 }
 ?>
