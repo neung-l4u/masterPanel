@@ -53,7 +53,7 @@ function fetchAllItems($url, $headers, $boardId) {
         items {
           id
           name
-          column_values (ids: ["status", "lookup_mkwh1gcr", "text9", "creation_log", "status0"]) {
+          column_values (ids: ["status", "lookup_mkwh1gcr", "text9", "creation_log", "status0", "date"]) {
             id
             text
             ... on MirrorValue {
