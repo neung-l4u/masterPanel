@@ -54,6 +54,7 @@ function callMondayAPI($url, $headers, $query) {
     return json_decode($response, true);
 }
 
+
 // Fetch all items from a SINGLE board with pagination
 function fetchSingleBoard($url, $headers, $boardId) {
     $allItems = [];
@@ -174,6 +175,11 @@ function fetchAllBoards($url, $headers, $boardIds) {
     return ['items' => $allItems, 'boards' => $allBoards];
 }
 
+// 2. Set Headers
+header('Access-Control-Allow-Origin: http://localhost');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Content-Type: application/json; charset=utf-8');
 
 // 2. Set Headers
 $headers = [

@@ -51,6 +51,8 @@ $currencyMapping = [
 
 $mondayData = [];
 $processedAccounts = []; // Track counted Account Names (by country)
+$activeByType = []; // Customer Type from mirror column
+$activeByTypeAccounts = []; // Track unique accounts per type
 
 // Check JSON structure (supports both old and new format)
 if (isset($jsonData['data']['items'])) {
@@ -60,6 +62,7 @@ if (isset($jsonData['data']['items'])) {
         $activeStatus = '';
         $projectStage = '';
         $accountName = '';
+        $customerType = '';
         
         // Extract values from column_values
         // status = Active Subscription, status0 = Currency, lookup_mkwh1gcr = Project Stage, text9 = Account Name
@@ -76,6 +79,9 @@ if (isset($jsonData['data']['items'])) {
             }
             if ($col['id'] === 'text9') {
                 $accountName = $col['text'] ?? '';
+            }
+            if ($col['id'] === 'mirror') {
+                $customerType = !empty($col['display_value']) ? $col['display_value'] : ($col['text'] ?? '');
             }
         }
         
@@ -106,8 +112,18 @@ if (isset($jsonData['data']['items'])) {
             if (!empty($accountName) && !in_array($accountName, $processedAccounts[$country])) {
                 $mondayData[$country]['active']++;
                 $processedAccounts[$country][] = $accountName;
+                // Track Customer Type
+                $type = !empty($customerType) ? $customerType : 'Unknown';
+                if (!isset($activeByType[$type])) { $activeByType[$type] = 0; $activeByTypeAccounts[$type] = []; }
+                if (!in_array($accountName, $activeByTypeAccounts[$type])) {
+                    $activeByType[$type]++;
+                    $activeByTypeAccounts[$type][] = $accountName;
+                }
             } elseif (empty($accountName)) {
                 $mondayData[$country]['active']++;
+                $type = !empty($customerType) ? $customerType : 'Unknown';
+                if (!isset($activeByType[$type])) $activeByType[$type] = 0;
+                $activeByType[$type]++;
             }
         }
         
@@ -146,15 +162,19 @@ if (isset($jsonData['data']['items'])) {
 }
 
 // ========== 3. Get Cancellation data from Database (Weekly Drop) ==========
-$cancellations = $db->query('SELECT county FROM Cancellation WHERE timestamp BETWEEN ? AND ?', $startDate, $endDate)->fetchAll();
+$cancellations = $db->query('SELECT county, industrial FROM Cancellation WHERE timestamp BETWEEN ? AND ?', $startDate, $endDate)->fetchAll();
 
 $weeklyDrop = [];
+$unsubByType = [];
 foreach ($cancellations as $row) {
     $country = $row['county'] ?: 'Unknown';
     if (!isset($weeklyDrop[$country])) {
         $weeklyDrop[$country] = 0;
     }
     $weeklyDrop[$country]++;
+    $type = !empty($row['industrial']) ? $row['industrial'] : 'Unknown';
+    if (!isset($unsubByType[$type])) $unsubByType[$type] = 0;
+    $unsubByType[$type]++;
 }
 
 // ========== 4. Get Signup data from Database (Weekly Signup) ==========
@@ -163,11 +183,13 @@ $signups = $db->query('SELECT dataLogs FROM logssignup WHERE createAt BETWEEN ? 
 $weeklySignup = [];
 $productPopularity = [];
 $processedShops = [];
+$signupByType = [];
 foreach ($signups as $row) {
     $dataLogs = json_decode($row['dataLogs'], true);
     $shopName = $dataLogs['ShopName'];
     $country = $dataLogs['Country'] ?: 'Unknown';
     $product = $dataLogs['MainProduct'] ?: 'Unknown';
+    $custType = $dataLogs['CustomerType'] ?? 'Unknown';
     
     if (in_array($shopName, $processedShops)) {
         continue;
@@ -178,6 +200,11 @@ foreach ($signups as $row) {
         $weeklySignup[$country] = 0;
     }
     $weeklySignup[$country]++;
+    
+    // Track signup by Customer Type
+    $ct = !empty($custType) ? $custType : 'Unknown';
+    if (!isset($signupByType[$ct])) $signupByType[$ct] = 0;
+    $signupByType[$ct]++;
     
     // Track product data by country
     $key = $product . '|' . $country;
@@ -194,15 +221,19 @@ usort($productPopularity, function($a, $b) {
 
 // ========== 5. Get previous week data ==========
 // Previous week cancellations
-$prevCancellations = $db->query('SELECT county FROM Cancellation WHERE timestamp BETWEEN ? AND ?', $prevStartDate, $prevEndDate)->fetchAll();
+$prevCancellations = $db->query('SELECT county, industrial FROM Cancellation WHERE timestamp BETWEEN ? AND ?', $prevStartDate, $prevEndDate)->fetchAll();
 
 $prevWeeklyDrop = [];
+$prevUnsubByType = [];
 foreach ($prevCancellations as $row) {
     $country = $row['county'] ?: 'Unknown';
     if (!isset($prevWeeklyDrop[$country])) {
         $prevWeeklyDrop[$country] = 0;
     }
     $prevWeeklyDrop[$country]++;
+    $type = !empty($row['industrial']) ? $row['industrial'] : 'Unknown';
+    if (!isset($prevUnsubByType[$type])) $prevUnsubByType[$type] = 0;
+    $prevUnsubByType[$type]++;
 }
 
 // Previous week signups
@@ -210,10 +241,12 @@ $prevSignups = $db->query('SELECT dataLogs FROM logssignup WHERE createAt BETWEE
 
 $prevWeeklySignup = [];
 $processedShops = [];
+$prevSignupByType = [];
 foreach ($prevSignups as $row) {
     $dataLogs = json_decode($row['dataLogs'], true);
     $shopName = $dataLogs['ShopName'];
     $country = $dataLogs['Country'] ?: 'Unknown';
+    $custType = $dataLogs['CustomerType'] ?? 'Unknown';
     
     if (in_array($shopName, $processedShops)) {
         continue;
@@ -224,6 +257,10 @@ foreach ($prevSignups as $row) {
         $prevWeeklySignup[$country] = 0;
     }
     $prevWeeklySignup[$country]++;
+    
+    $ct = !empty($custType) ? $custType : 'Unknown';
+    if (!isset($prevSignupByType[$ct])) $prevSignupByType[$ct] = 0;
+    $prevSignupByType[$ct]++;
 }
 
 // ========== 6. Aggregate data and calculate ==========
@@ -326,6 +363,56 @@ if ($totalPercentChange >= 5) {
     </tr>
 </table>
 
+<?php
+$allTypes = array_unique(array_merge(
+    array_keys($activeByType),
+    array_keys($signupByType),
+    array_keys($unsubByType),
+    array_keys($prevSignupByType),
+    array_keys($prevUnsubByType)
+));
+$allTypes = array_filter($allTypes, function($t) { return $t !== 'Unknown'; });
+sort($allTypes);
+?>
+<p style="font: 14px roboto, sans-serif; margin-top: 30px; margin-bottom: 10px;">
+    <b>Customer Type</b><br>
+    <small>Active from Monday.com (Board Active Subscription), Signup and unsub from Database</small>
+</p>
+
+<table cellpadding="8" cellspacing="0" border="1" style="font: 13px roboto, sans-serif; border-collapse: collapse;">
+    <tr style="background-color: #d6e6f4;">
+        <th>Customer Type</th>
+        <th>Active</th>
+        <th>New Signup</th>
+        <th>Unsubscribe</th>
+    </tr>
+    <?php 
+    $totalTypeActive = 0;
+    $totalTypeSignup = 0;
+    $totalTypeUnsub = 0;
+    foreach ($allTypes as $type): 
+        $tActive = isset($activeByType[$type]) ? $activeByType[$type] : 0;
+        $tSignup = isset($signupByType[$type]) ? $signupByType[$type] : 0;
+        $tUnsub = isset($unsubByType[$type]) ? $unsubByType[$type] : 0;
+        $totalTypeActive += $tActive;
+        $totalTypeSignup += $tSignup;
+        $totalTypeUnsub += $tUnsub;
+    ?>
+    <tr>
+        <td><b><?php echo $type; ?></b></td>
+        <td style="text-align: center;"><?php echo number_format($tActive); ?></td>
+        <td style="text-align: center; color: green;"><?php echo $tSignup > 0 ? '+' . $tSignup : '0'; ?></td>
+        <td style="text-align: center; color: red;"><?php echo $tUnsub > 0 ? '-' . $tUnsub : '0'; ?></td>
+    </tr>
+    <?php endforeach; ?>
+    <tr style="background-color: #f0f0f0; font-weight: bold;">
+        <td>Total</td>
+        <td style="text-align: center;"><?php echo number_format($totalTypeActive); ?></td>
+        <td style="text-align: center; color: green;"><?php echo $totalTypeSignup > 0 ? '+' . $totalTypeSignup : '0'; ?></td>
+        <td style="text-align: center; color: red;"><?php echo $totalTypeUnsub > 0 ? '-' . $totalTypeUnsub : '0'; ?></td>
+    </tr>
+</table>
+
 <!-- Week-over-Week Comparison Table -->
 <p style="font: 14px roboto, sans-serif; margin-top: 30px; margin-bottom: 10px;">
     <b>Week-over-Week Comparison</b><br>
@@ -393,6 +480,62 @@ if ($totalPercentChange >= 5) {
     </tr>
 </table>
 
+<!-- Customer Type Week-over-Week Comparison Table -->
+<p style="font: 14px roboto, sans-serif; margin-top: 30px; margin-bottom: 10px;">
+    <b>Customer Type Week-over-Week</b><br>
+    <small>Previous Week: <?php echo date('Y-m-d', strtotime($prevStartDate)); ?> - <?php echo date('Y-m-d', strtotime($prevEndDate)); ?></small><br>
+    <small>This Week: <?php echo date('Y-m-d', strtotime($startDate)); ?> - <?php echo date('Y-m-d', strtotime($endDate)); ?></small>
+</p>
+
+<table cellpadding="8" cellspacing="0" border="1" style="font: 13px roboto, sans-serif; border-collapse: collapse;">
+    <tr style="background-color: #d6e6f4;">
+        <th rowspan="2">Customer Type</th>
+        <th colspan="2">Previous Week</th>
+        <th colspan="2">This Week</th>
+        <th colspan="2">Change</th>
+    </tr>
+    <tr style="background-color: #e8f0f8;">
+        <th>Signup</th>
+        <th>Unsub</th>
+        <th>Signup</th>
+        <th>Unsub</th>
+        <th>Signup</th>
+        <th>Unsub</th>
+    </tr>
+    <?php 
+    $tPrevSignup = 0; $tPrevUnsub = 0; $tCurrSignup = 0; $tCurrUnsub = 0;
+    foreach ($allTypes as $type):
+        $pSignup = isset($prevSignupByType[$type]) ? $prevSignupByType[$type] : 0;
+        $pUnsub = isset($prevUnsubByType[$type]) ? $prevUnsubByType[$type] : 0;
+        $cSignup = isset($signupByType[$type]) ? $signupByType[$type] : 0;
+        $cUnsub = isset($unsubByType[$type]) ? $unsubByType[$type] : 0;
+        $sDiff = $cSignup - $pSignup;
+        $uDiff = $cUnsub - $pUnsub;
+        $tPrevSignup += $pSignup; $tPrevUnsub += $pUnsub;
+        $tCurrSignup += $cSignup; $tCurrUnsub += $cUnsub;
+    ?>
+    <tr>
+        <td><b><?php echo $type; ?></b></td>
+        <td style="text-align: center;"><?php echo $pSignup; ?></td>
+        <td style="text-align: center;"><?php echo $pUnsub; ?></td>
+        <td style="text-align: center;"><?php echo $cSignup; ?></td>
+        <td style="text-align: center;"><?php echo $cUnsub; ?></td>
+        <td style="text-align: center; color: <?php echo $sDiff >= 0 ? 'green' : 'red'; ?>;"><?php echo ($sDiff >= 0 ? '+' : '') . $sDiff; ?></td>
+        <td style="text-align: center; color: <?php echo $uDiff <= 0 ? 'green' : 'red'; ?>;"><?php echo ($uDiff >= 0 ? '+' : '') . $uDiff; ?></td>
+    </tr>
+    <?php endforeach; ?>
+    <tr style="background-color: #f0f0f0; font-weight: bold;">
+        <td>Total Balance</td>
+        <td style="text-align: center;"><?php echo $tPrevSignup; ?></td>
+        <td style="text-align: center;"><?php echo $tPrevUnsub; ?></td>
+        <td style="text-align: center;"><?php echo $tCurrSignup; ?></td>
+        <td style="text-align: center;"><?php echo $tCurrUnsub; ?></td>
+        <?php $tsDiff = $tCurrSignup - $tPrevSignup; $tuDiff = $tCurrUnsub - $tPrevUnsub; ?>
+        <td style="text-align: center; color: <?php echo $tsDiff >= 0 ? 'green' : 'red'; ?>;"><?php echo ($tsDiff >= 0 ? '+' : '') . $tsDiff; ?></td>
+        <td style="text-align: center; color: <?php echo $tuDiff <= 0 ? 'green' : 'red'; ?>;"><?php echo ($tuDiff >= 0 ? '+' : '') . $tuDiff; ?></td>
+    </tr>
+</table>
+
 <!-- Product Popularity Table -->
 <p style="font: 14px roboto, sans-serif; margin-top: 30px; margin-bottom: 10px;">
     <b>Product Popularity This Week</b><br>
@@ -426,3 +569,5 @@ if ($totalPercentChange >= 5) {
         <td style="text-align: center;"><?php echo $totalProducts; ?></td>
     </tr>
 </table>
+
+

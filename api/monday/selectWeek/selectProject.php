@@ -53,7 +53,7 @@ function fetchAllItems($url, $headers, $boardId) {
         items {
           id
           name
-          column_values (ids: ["status", "lookup_mkwh1gcr", "text9", "creation_log", "status0", "date"]) {
+          column_values (ids: ["status", "lookup_mkwh1gcr", "text9", "creation_log", "status0", "date", "mirror"]) {
             id
             text
             ... on MirrorValue {
@@ -107,7 +107,7 @@ function fetchAllItems($url, $headers, $boardId) {
     items {
       id
       name
-      column_values (ids: ["status", "lookup_mkwh1gcr", "text9", "creation_log", "status0"]) {
+      column_values (ids: ["status", "lookup_mkwh1gcr", "text9", "creation_log", "status0", "date", "mirror"]) {
         id
         text
         ... on MirrorValue {
@@ -140,7 +140,6 @@ function fetchAllItems($url, $headers, $boardId) {
 }
 
 
-// 2. Set Headers
 $headers = [
     "Content-Type: application/json",
     "Authorization: " . $token
