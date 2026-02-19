@@ -3,12 +3,14 @@
  * Signup Store API
  * Endpoint: /api/signup/signupFormData.php
  *
- * GET    ?act=getAll                        — ดึงข้อมูลทั้งหมด
- * GET    ?act=getOne&id={id}                — ดึงข้อมูลตาม id
- * GET    ?act=getByCountry&country={code}   — ดึงข้อมูลตาม countryCode
- * POST   act=insert                         — เพิ่มข้อมูลใหม่
- * PUT    (body JSON) act=update, id={id}    — แก้ไขข้อมูล
- * DELETE ?id={id}                           — ลบข้อมูล
+ * GET    ?type=customer                 — ดึงเฉพาะ customer fields (page=1, limit=20 default)
+ * GET    ?type=store                    — ดึงเฉพาะ store fields (page=1, limit=20 default)
+ * GET    ?id={id}&type=customer         — ดึงตาม id
+ * GET    ?country={code}&type=customer  — ดึงตาม countryCode
+ * หมายเหตุ: type เป็น required ทุก request
+ * POST   act=insert         — เพิ่มข้อมูลใหม่
+ * PUT    (body JSON) id={id} — แก้ไขข้อมูล
+ * DELETE ?id={id}           — ลบข้อมูล (soft delete)
  */
 
 header("Content-Type: application/json; charset=UTF-8");
@@ -43,33 +45,55 @@ function getBody() {
     return $data;
 }
 
+function filterCustomerFields($dataLogs) {
+    $keys = ['CustomerID', 'FirstName', 'LastName', 'Mobile', 'Email', 'BestTimeToContact'];
+    return array_intersect_key($dataLogs, array_flip($keys));
+}
+
+function filterStoreFields($dataLogs) {
+    $keys = [
+        'storeID', 'ShopName', 'ABN', 'TradingName', 'ShopNumber', 'Website',
+        'Language', 'ShopNumber2', 'Address1', 'City', 'State', 'PostelCode',
+        'ShipNumber', 'ShippingAddress', 'MainProduct', 'Service', 'Payment',
+        'TableNumber', 'TableSize', 'Facebook', 'TikTok', 'Instagram', 'Yelp',
+        'WebsiteURL', 'OwnDomain', 'NewDomain', 'KeepWebsite', 'domainUser',
+        'domainPass', 'domainComment', 'domainRegister', 'Flyer', 'FridgeMagnet',
+        'AddOn1', 'AddOn2', 'AddOn3', 'AddOn4', 'AddOn5', 'AddOn6', 'AddOn7',
+        'AddOn8', 'AddOn9', 'AddOn10', 'AddOn11', 'AddOn12', 'AddOn13',
+        'OrderDiscount', 'OtherDiscount', 'mainDiscountCode', 'addonDiscountCode',
+        'SubTotal', 'GST', 'Total', 'PaymentMethod', 'AdditionNote',
+        'ShopAgent', 'ReferredByPerson', 'formRefPartner', 'ReferredByShop',
+        'formstartProjectAs', 'formstartProjectOther', 'formstartprojectNote',
+        'formPOSUsing', 'formPOSUsingOther', 'formNoPOSProvider', 'formYesPOSProvider',
+    ];
+    return array_intersect_key($dataLogs, array_flip($keys));
+}
+
+function decodeRow(&$row, $type = '') {
+    $row['dataLogs']     = json_decode($row['dataLogs'], true);
+    $row['dataStripe']   = json_decode($row['dataStripe'], true);
+    $row['stripeResult'] = json_decode($row['stripeResult'], true);
+
+    if ($type === 'customer') {
+        $row['dataLogs'] = filterCustomerFields($row['dataLogs'] ?? []);
+        unset($row['dataStripe'], $row['stripeResult'], $row['dataContract']);
+    } elseif ($type === 'store') {
+        $row['dataLogs'] = filterStoreFields($row['dataLogs'] ?? []);
+        unset($row['dataStripe'], $row['stripeResult']);
+    }
+}
+
 // ==================== GET ====================
 if ($method === 'GET') {
-    $act = $_GET['act'] ?? 'getAll';
+    $id      = isset($_GET['id'])      ? (int)$_GET['id'] : 0;
+    $country = $_GET['country'] ?? '';
+    $type    = strtolower($_GET['type'] ?? '');
 
-    if ($act === 'getAll') {
-        global $db;
-        $rows = $db->query(
-            'SELECT l.id, l.dataLogs, l.dataStripe, l.stripeResult, l.dataContract,
-                    l.countryCode, l.status, l.test, l.createAt, l.createBy,
-                    l.gen_report, l.reported_at
-             FROM logssignup l
-             WHERE l.deleteStatus = 0
-             ORDER BY l.createAt DESC'
-        )->fetchAll();
+    if (!in_array($type, ['customer', 'store'])) {
+        respond(["success" => false, "message" => "type is required: use 'customer' or 'store'"], 400);
+    }
 
-        foreach ($rows as &$row) {
-            $row['dataLogs']    = json_decode($row['dataLogs'], true);
-            $row['dataStripe']  = json_decode($row['dataStripe'], true);
-            $row['stripeResult'] = json_decode($row['stripeResult'], true);
-        }
-
-        respond(["success" => true, "total" => count($rows), "data" => $rows]);
-
-    } elseif ($act === 'getOne') {
-        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-        if ($id <= 0) respond(["success" => false, "message" => "id is required"], 400);
-
+    if ($id > 0) {
         global $db;
         $rows = $db->query(
             'SELECT id, dataLogs, dataStripe, stripeResult, dataContract,
@@ -80,16 +104,11 @@ if ($method === 'GET') {
         if (empty($rows)) respond(["success" => false, "message" => "Not found"], 404);
 
         $row = $rows[0];
-        $row['dataLogs']    = json_decode($row['dataLogs'], true);
-        $row['dataStripe']  = json_decode($row['dataStripe'], true);
-        $row['stripeResult'] = json_decode($row['stripeResult'], true);
+        decodeRow($row, $type);
 
         respond(["success" => true, "data" => $row]);
 
-    } elseif ($act === 'getByCountry') {
-        $country = $_GET['country'] ?? '';
-        if (empty($country)) respond(["success" => false, "message" => "country is required"], 400);
-
+    } elseif (!empty($country)) {
         global $db;
         $rows = $db->query(
             'SELECT id, dataLogs, dataStripe, stripeResult, dataContract,
@@ -97,16 +116,42 @@ if ($method === 'GET') {
              FROM logssignup WHERE countryCode = ? AND deleteStatus = 0 ORDER BY createAt DESC', $country
         )->fetchAll();
 
-        foreach ($rows as &$row) {
-            $row['dataLogs']    = json_decode($row['dataLogs'], true);
-            $row['dataStripe']  = json_decode($row['dataStripe'], true);
-            $row['stripeResult'] = json_decode($row['stripeResult'], true);
-        }
+        foreach ($rows as &$row) { decodeRow($row, $type); }
 
         respond(["success" => true, "total" => count($rows), "data" => $rows]);
 
     } else {
-        respond(["success" => false, "message" => "Unknown act: $act"], 400);
+        $page  = max(1, isset($_GET['page'])  ? (int)$_GET['page']  : 1);
+        $limit = max(1, isset($_GET['limit']) ? (int)$_GET['limit'] : 20);
+        $offset = ($page - 1) * $limit;
+
+        global $db;
+        $totalResult = $db->query(
+            'SELECT COUNT(*) as cnt FROM logssignup WHERE deleteStatus = 0'
+        )->fetchAll();
+        $total = (int)($totalResult[0]['cnt'] ?? 0);
+
+        $rows = $db->query(
+            'SELECT l.id, l.dataLogs, l.dataStripe, l.stripeResult, l.dataContract,
+                    l.countryCode, l.status, l.test, l.createAt, l.createBy,
+                    l.gen_report, l.reported_at
+             FROM logssignup l
+             WHERE l.deleteStatus = 0
+             ORDER BY l.createAt DESC
+             LIMIT ? OFFSET ?',
+            $limit, $offset
+        )->fetchAll();
+
+        foreach ($rows as &$row) { decodeRow($row, $type); }
+
+        respond([
+            "success"    => true,
+            "total"      => $total,
+            "page"       => $page,
+            "limit"      => $limit,
+            "totalPages" => (int)ceil($total / $limit),
+            "data"       => $rows,
+        ]);
     }
 }
 
