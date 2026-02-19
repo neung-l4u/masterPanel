@@ -249,7 +249,7 @@ function getProductList(country) {
                 let addText = "";
                 let discountValue = Math.round((item.amount*15)/100)/100;
                 let cartPrice = (item.amount-Math.round((item.amount*15)/100));
-                if(formCountry==="US"){
+                if(formCountry==="US" || formCountry==="CA"){
                     cartPrice = item.amount;
                 }
                 let realPrice = cartPrice/100;
@@ -426,7 +426,7 @@ function getProductList(country) {
                 /////////
 
 
-                if(formCountry==="US"){
+                if(formCountry==="US" || formCountry==="CA"){
                 return `${addText}<div class="form-check">
                     <input 
                         class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
@@ -462,6 +462,7 @@ function getProductList(country) {
                         class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
                         type="checkbox" 
                         name="${item.form_name}"
+                        id="addon-${product_id}"
                         value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
@@ -715,15 +716,27 @@ function requestToPay() {
 
     let codeDiscount = {};
 
+    // Fallback price_id for "Add-on Only" per country (used when no main product is selected)
+    const addonOnlyPriceId = {
+        "AU": "AUADO03M00O-02",
+        "NZ": "NZADO03M00O-02",
+        "UK": "UKADO03M00O-02",
+        "US": "price_1QFbe6I6vmxJT6Om7TLtoA5z",
+        "CA": "price_1QFbeiI6vmxJT6OmyLLNLXcq",
+        "TH": "THADO03M00O-03"
+    };
+
     if (typeof Payment_Coupon_Obj !== "undefined" && Payment_Coupon_Obj !== null) { // check if Payment_Coupon_Obj exists
         console.log("เจอส่วนลดแล้ว");
 
         let pid = cloneCart["subscription"][0]; // read main product ID
+        if (!pid) { pid = addonOnlyPriceId[formCountry] || "ADDON_ONLY"; } // fallback to Add-on Only
         let cid = Payment_Coupon_Obj.code ?? ""; // use empty string if null or undefined
 
         codeDiscount = { [pid]: cid }; // set the main coupon code
     } else {
         let pid = cloneCart["subscription"][0]; // read main product ID
+        if (!pid) { pid = addonOnlyPriceId[formCountry] || "ADDON_ONLY"; } // fallback to Add-on Only
         let cid = ""; // force empty string if Payment_Coupon_Obj is undefined or null
 
         codeDiscount = { [pid]: cid }; // set the main coupon code
@@ -841,7 +854,14 @@ function requestToPay() {
 
 
     saveToDB(stripePayload);
-    if(formData.formCountry === "TH"){saveTaxToDB(stripePayload)}
+    if(formData.formCountry === "TH"){
+        if(saveTaxToDB(stripePayload) === false){
+            $("#cmdSubmit").removeClass("btn-outline-info").addClass("btn-outline-success").prop("disabled", false);
+            $("#paymentSubmit").prop('disabled', false);
+            result.html('<span class="badge bg-warning">กรุณากรอกข้อมูลใบเสนอราคาให้ครบ</span>');
+            return;
+        }
+    }
     createLogs(stripePayload);
     clonePayload = stripePayload;
 
@@ -896,11 +916,11 @@ function requestToPay() {
                 $(fail).appendTo(".paymentResult");
                 res.message = "Payment step is fail"
                 alert("Payment step is fail");
-                let stripeRes = "Ajax Fail : " + stripeRes;
+                stripeRes = "Ajax Fail : " + stripeRes;
                 stripeResToDB(stripeRes);
                 if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
             }
-            cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
+            $("#cmdSubmit").removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
 
             return res.message;
         });
@@ -932,14 +952,14 @@ function requestToPay() {
         genLinkPDF();
         sendMailToL4UTeam();
         modalRespondAction('open', 'success');
-        cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
+        $("#cmdSubmit").removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
 
     return res.message;
 
 }//function
 
-/*const sendMail = () => {
+const sendMail = () => {
 
     let sendMailPayload = {
         "mode" : "confirm",
@@ -968,8 +988,8 @@ function requestToPay() {
         console.log(status + ': ' + error);
         return false;
     });
-}*/
-//sendMail
+}
+//sendMail กลับมาเปิดคอมเม้นด้วย
 
 const sendMailToL4UTeam = () => {
 
@@ -1006,7 +1026,9 @@ const sendMailToL4UTeam = () => {
     let checkProduct = $("input[name='product']:checked").val();
     let toTeam = "";
 
-    if(checkProduct.includes("Bundle")){
+    if(!checkProduct){
+        toTeam = "All";
+    }else if(checkProduct.includes("Bundle")){
         toTeam = "All";
     }else if(checkProduct.includes("Solo") || checkProduct.includes("Yelp")){
         toTeam = "AM";
@@ -1163,26 +1185,26 @@ const sendMailToL4UTeam = () => {
 
 
 
-    // TODO: Send Email To Staff
-    const ajaxSendL4UMail = $.ajax({
-        url: "https://hook.us1.make.com/tj5min8b66a3mj5gyg78og7pn1cm5isx",
-        method: 'POST',
-        async: false,
-        cache: false,
-        dataType: 'json',
-        data: payload
-    });
+    // TODO: Send Email To Staff กลับมาเปิดคอมเม้นด้วย
+     const ajaxSendL4UMail = $.ajax({
+         url: "https://hook.us1.make.com/tj5min8b66a3mj5gyg78og7pn1cm5isx",
+         method: 'POST',
+         async: false,
+         cache: false,
+         dataType: 'json',
+         data: payload
+     });
 
-    ajaxSendL4UMail.done(function(res) {
-        console.log(res);
-        return true;
-    });
+     ajaxSendL4UMail.done(function(res) {
+         console.log(res);
+         return true;
+     });
 
-    ajaxSendL4UMail.fail(function(xhr, status, error) {
-        console.log("ajax Send L4U Mail alert fail!!");
+     ajaxSendL4UMail.fail(function(xhr, status, error) {
+         console.log("ajax Send L4U Mail alert fail!!");
         console.log(status + ': ' + error);
         return false;
-    });
+     });
 
 }//sendMail
 
@@ -1527,6 +1549,81 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
     let addressQuotation = $("#quotationAddress").val();
     let taxNumberQuotation = $("#quotationTaxNumber").val();
 
+    // Validate quotation fields
+    $(".tax-validate-error").remove();
+    let hasError = false;
+    if (checkBoxWantTAX) {
+        // ต้องเลือกนิติบุคคลหรือบุคคลธรรมดา
+        if (!taxType) {
+            $("input[name='taxType']").last().closest(".form-check").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณาเลือกนิติบุคคลหรือบุคคลธรรมดา</span>');
+            hasError = true;
+        }
+
+        // ชื่อบริษัท
+        if (!shopNameQuotation || shopNameQuotation.trim() === "") {
+            $("#quotationShopName").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกชื่อบริษัท</span>');
+            if (!hasError) { $("#quotationShopName").focus(); }
+            hasError = true;
+        }
+
+        // ชื่อ (บุคคลธรรมดา ต้องกรอก)
+        if (taxType === "บุคคลธรรมดา") {
+            if (!nameQuotation || nameQuotation.trim() === "") {
+                $("#quotationName").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกชื่อ</span>');
+                if (!hasError) { $("#quotationName").focus(); }
+                hasError = true;
+            }
+        }
+
+        // เบอร์โทร
+        if (!phoneQuotation || phoneQuotation.trim() === "") {
+            $("#quotationPhone").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกเบอร์โทร</span>');
+            if (!hasError) { $("#quotationPhone").focus(); }
+            hasError = true;
+        }
+
+        // อีเมล
+        if (!emailQuotation || emailQuotation.trim() === "") {
+            $("#quotationEmail").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกอีเมล</span>');
+            if (!hasError) { $("#quotationEmail").focus(); }
+            hasError = true;
+        }
+
+        // ที่อยู่
+        if (!addressQuotation || addressQuotation.trim() === "") {
+            $("#quotationAddress").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกที่อยู่</span>');
+            if (!hasError) { $("#quotationAddress").focus(); }
+            hasError = true;
+        }
+
+        // เลขประจำตัวผู้เสียภาษี
+        if (!taxNumberQuotation || taxNumberQuotation.trim() === "") {
+            $("#quotationTaxNumber").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกเลขประจำตัวผู้เสียภาษี</span>');
+            if (!hasError) { $("#quotationTaxNumber").focus(); }
+            hasError = true;
+        }
+
+        // ธนาคาร (เฉพาะนิติบุคคล)
+        if (taxType === "นิติบุคคล") {
+            if (!$("#bankName").val() || $("#bankName").val().trim() === "") {
+                $("#bankName").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกชื่อธนาคาร</span>');
+                if (!hasError) { $("#bankName").focus(); }
+                hasError = true;
+            }
+            if (!$("#bankThaiNumber").val() || $("#bankThaiNumber").val().trim() === "") {
+                $("#bankThaiNumber").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกเลขที่บัญชีธนาคาร</span>');
+                if (!hasError) { $("#bankThaiNumber").focus(); }
+                hasError = true;
+            }
+            if (!$("#bankThaiName").val() || $("#bankThaiName").val().trim() === "") {
+                $("#bankThaiName").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกชื่อบัญชี</span>');
+                if (!hasError) { $("#bankThaiName").focus(); }
+                hasError = true;
+            }
+        }
+        if (hasError) return false;
+    }
+
     // ข้อมูลธนาคารลูกค้า
     let bankName = $("#bankName").val();
     let bankThaiNumber = $("#bankThaiNumber").val();
@@ -1748,7 +1845,7 @@ const callDatabaseInvoice = (idInvoice) => {
             console.log("📦 Data from DB:", res);
             // แปลง JSON เป็น string แล้วใส่ลง input
             $("#dataInvoice").val(JSON.stringify(res.dataInvoice, null, 2));
-            callWebhookInvoice(idInvoice, res.dataInvoice);
+            // callWebhookInvoice(idInvoice, res.dataInvoice); กลับมาเปิดคอมเม้นด้วย
         },
         error: function(xhr, status, error) {
             console.error("❌ callDatabaseInvoice fail:", status, error);
@@ -1757,31 +1854,31 @@ const callDatabaseInvoice = (idInvoice) => {
 };
 
 
-const callWebhookInvoice = (idInvoice, invoiceObject) => {
-    let webhook = "https://hook.us1.make.com/ilpkidd9ve4cflfxoym5fka8fwdozhxt";
+// const callWebhookInvoice = (idInvoice, invoiceObject) => {
+//     let webhook = "https://hook.us1.make.com/ilpkidd9ve4cflfxoym5fka8fwdozhxt";
 
 
-    if ($("#formCountry").val() === "TH") {
-        $.ajax({
-            url: webhook,
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                act: "callWebhookInvoice",
-                id: idInvoice,
-                data: invoiceObject
-            },
-            success: function(res) {
-                console.log("✅ Webhook response:", res);
-            },
-            error: function(xhr, status, error) {
-                console.log("❌ Webhook fail:", status + ': ' + error);
-            }
-        });
-    }
-};
+//     if ($("#formCountry").val() === "TH") {
+//         $.ajax({
+//             url: webhook,
+//             method: 'POST',
+//             async: false,
+//             cache: false,
+//             dataType: 'json',
+//             data: {
+//                 act: "callWebhookInvoice",
+//                 id: idInvoice,
+//                 data: invoiceObject
+//             },
+//             success: function(res) {
+//                 console.log("✅ Webhook response:", res);
+//             },
+//             error: function(xhr, status, error) {
+//                 console.log("❌ Webhook fail:", status + ': ' + error);
+//             }
+//         });
+//     }
+// };กลับมาเปิดคอมเม้นด้วย
 
 
 // TODO : Build Logs File to DB by Mark
@@ -2075,9 +2172,9 @@ const createLogs = (stripePayload) => {
         GST: $("#GST").val(),
         Total: $("#grandTotal").val(),
         PaymentMethod: $("#paymentMethod").val(),
-        CardNumber: $("#creditCardNumber").val(),
-        ExpDate: $("#creditExpireDate").val(),
-        CVV: $("#creditCCV").val(),
+        // CardNumber: $("#creditCardNumber").val(),
+        // ExpDate: $("#creditExpireDate").val(),
+        // CVV: $("#creditCCV").val(),
         CardName: $("#creditFullName").val(),
         EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
         BSB: $("#bsbDirectDebit").val(),

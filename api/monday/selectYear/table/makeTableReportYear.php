@@ -20,6 +20,11 @@ $jsonDir = __DIR__ . '/../file/ALL/';
 $files = glob($jsonDir . 'ALL_monday_data*.json');
 
 if (empty($files)) {
+    $jsonDir = __DIR__ . '/../../selectWeek/file/ALL/';
+    $files = glob($jsonDir . 'ALL_monday_data*.json');
+}
+
+if (empty($files)) {
     die("JSON file not found");
 }
 
@@ -30,6 +35,14 @@ usort($files, function($a, $b) {
 
 $latestFile = $files[0];
 $jsonData = json_decode(file_get_contents($latestFile), true);
+
+$jsonDir2 = __DIR__ . '/../../selectWeek/file/ALL_COUNTRY/';
+$files2 = glob($jsonDir2 . 'ALL_monday_data_ALL_COUNTRY*.json');
+$jsonData2 = null;
+if (!empty($files2)) {
+    usort($files2, function($a, $b) { return filemtime($b) - filemtime($a); });
+    $jsonData2 = json_decode(file_get_contents($files2[0]), true);
+}
 
 // ========== 2. Parse Monday data by country ==========
 // Currency to Country mapping (lowercase)
@@ -302,9 +315,97 @@ $allCountries = array_unique(array_merge(
     array_keys($yearlySignup)
 ));
 sort($allCountries);
-?>
 
-<?php
+// ========== Building Project Table (from ALL_COUNTRY JSON) ==========
+$buildingBoardMap = [
+    'Projects | TH'  => 'TH',
+    'Projects | CA'  => 'CA',
+    'Projects | UK'  => 'UK',
+    'Projects | USA' => 'US',
+    'Projects | NZ'  => 'NZ',
+    'Projects | AU'  => 'AU'
+];
+
+$buildingGroups = ['New Projects', 'Building', 'Ready to Go Live', 'Final Check Pending', 'Completed Projects', 'Pause', 'Suspend', 'Cancelled Projects', 'Test Projects'];
+$buildingData = [];
+$buildingCountries = [];
+
+$bkk = new DateTimeZone('Asia/Bangkok');
+$utc = new DateTimeZone('UTC');
+$buildingStart = (new DateTime($startDate, $bkk))->setTimezone($utc);
+$buildingEnd   = (new DateTime($endDate,   $bkk))->setTimezone($utc);
+$buildingLabel = date('Y', strtotime($day));
+
+if ($jsonData2 && isset($jsonData2['data']['items'])) {
+    foreach ($jsonData2['data']['items'] as $item) {
+        $board   = $item['board_name'] ?? '';
+        $group   = $item['group_title'] ?? '';
+        $country = isset($buildingBoardMap[$board]) ? $buildingBoardMap[$board] : null;
+        if (!$country) continue;
+
+        $creationLog = null;
+        foreach ($item['column_values'] as $cv) {
+            if ($cv['id'] === 'creation_log' && !empty($cv['text'])) {
+                $creationLog = $cv['text'];
+                break;
+            }
+        }
+        if (empty($creationLog)) continue;
+
+        $createdAt = DateTime::createFromFormat('Y-m-d H:i:s \U\T\C', $creationLog, new DateTimeZone('UTC'));
+        if (!$createdAt) continue;
+        if ($createdAt < $buildingStart || $createdAt > $buildingEnd) continue;
+
+        if (!isset($buildingData[$country])) $buildingData[$country] = [];
+        if (!isset($buildingData[$country][$group])) $buildingData[$country][$group] = 0;
+        $buildingData[$country][$group]++;
+        $buildingCountries[$country] = true;
+
+        if (!in_array($group, $buildingGroups) && !empty($group)) $buildingGroups[] = $group;
+    }
+}
+
+$buildingGroups = array_values(array_filter($buildingGroups, function($g) use ($buildingData) {
+    foreach ($buildingData as $cData) { if (isset($cData[$g]) && $cData[$g] > 0) return true; }
+    return false;
+}));
+$buildingCountriesSorted = array_keys($buildingCountries);
+sort($buildingCountriesSorted);
+
+// ========== Product Popularity Grouped (ALL/System/Marketing) ==========
+$productGroups = [
+    'System'    => ['label' => 'System',    'keywords' => ['System'], 'byCountry' => [], 'subtotal' => 0],
+    'Marketing' => ['label' => 'Marketing', 'keywords' => ['Solo', 'Yelp'], 'byCountry' => [], 'subtotal' => 0],
+    'ALL'       => ['label' => 'ALL',       'keywords' => ['Bundle'], 'byCountry' => [], 'subtotal' => 0],
+];
+
+foreach ($productPopularity as $item) {
+    $matched = false;
+    foreach ($productGroups as $gKey => &$group) {
+        foreach ($group['keywords'] as $kw) {
+            if (stripos($item['product'], $kw) !== false) {
+                $c = $item['country'];
+                if (!isset($group['byCountry'][$c])) $group['byCountry'][$c] = ['items' => [], 'subtotal' => 0];
+                $group['byCountry'][$c]['items'][] = $item;
+                $group['byCountry'][$c]['subtotal'] += $item['count'];
+                $group['subtotal'] += $item['count'];
+                $matched = true;
+                break 2;
+            }
+        }
+    }
+    unset($group);
+    if (!$matched) {
+        $c = $item['country'];
+        if (!isset($productGroups['ALL']['byCountry'][$c])) $productGroups['ALL']['byCountry'][$c] = ['items' => [], 'subtotal' => 0];
+        $productGroups['ALL']['byCountry'][$c]['items'][] = $item;
+        $productGroups['ALL']['byCountry'][$c]['subtotal'] += $item['count'];
+        $productGroups['ALL']['subtotal'] += $item['count'];
+    }
+}
+$grandTotalProducts = 0;
+foreach ($productGroups as $g) { $grandTotalProducts += $g['subtotal']; }
+
 $allTypes = array_unique(array_merge(
     array_keys($activeByType),
     array_keys($signupByType),
@@ -353,6 +454,9 @@ sort($allTypes);
         <td style="text-align: center; color: red;"><?php echo $totalTypeUnsub > 0 ? '-' . $totalTypeUnsub : '0'; ?></td>
     </tr>
 </table> -->
+
+
+
 
 <!-- Year-over-Year Comparison Table -->
 <p style="font: 14px roboto, sans-serif; margin-bottom: 10px;">
@@ -495,6 +599,51 @@ sort($allTypes);
     </tr>
 </table>
 
+<!-- Building Project -->
+<p style="font: 14px roboto, sans-serif; margin-top: 30px; margin-bottom: 10px;">
+    <b>Building Project</b><br>
+    <small>New projects created: <?php echo htmlspecialchars($buildingLabel); ?> (Year)</small>
+</p>
+
+<table cellpadding="8" cellspacing="0" border="1" style="font: 13px roboto, sans-serif; border-collapse: collapse;">
+    <tr style="background-color: #d6e6f4;">
+        <th>Country</th>
+        <?php foreach ($buildingGroups as $grp): ?>
+        <th><?php echo htmlspecialchars($grp); ?></th>
+        <?php endforeach; ?>
+        <th>Total</th>
+    </tr>
+    <?php
+    $groupTotals = array_fill_keys($buildingGroups, 0);
+    $grandTotal = 0;
+    foreach ($buildingCountriesSorted as $bc):
+        $rowTotal = 0;
+    ?>
+    <tr>
+        <td><b><?php echo $bc; ?></b></td>
+        <?php foreach ($buildingGroups as $grp):
+            $val = isset($buildingData[$bc][$grp]) ? $buildingData[$bc][$grp] : 0;
+            $rowTotal += $val;
+            $groupTotals[$grp] += $val;
+        ?>
+        <td style="text-align: center;"><?php echo $val > 0 ? $val : '-'; ?></td>
+        <?php endforeach; ?>
+        <td style="text-align: center; font-weight: bold;"><?php echo $rowTotal; ?></td>
+    </tr>
+    <?php
+        $grandTotal += $rowTotal;
+    endforeach;
+    ?>
+    <tr style="background-color: #f0f0f0; font-weight: bold;">
+        <td>Total</td>
+        <?php foreach ($buildingGroups as $grp): ?>
+        <td style="text-align: center;"><?php echo $groupTotals[$grp]; ?></td>
+        <?php endforeach; ?>
+        <td style="text-align: center;"><?php echo $grandTotal; ?></td>
+    </tr>
+</table>
+<!-- Building Project End -->
+
 <!-- Product Popularity This Year (Grouped by Country) -->
 <p style="font: 14px roboto, sans-serif; margin-top: 30px; margin-bottom: 10px;">
     <b>Product Popularity This Year (Top 3 in each country)</b><br>
@@ -599,3 +748,33 @@ ksort($prevByCountry);
     </tr> -->
 </table>
 
+<!-- Product Popularity This Year (ALL/System/Marketing grouped) -->
+<p style="font: 14px roboto, sans-serif; margin-top: 30px; margin-bottom: 10px;">
+    <b>Product Popularity This Year (Grouped)</b><br>
+    <small>Products signed up by customers this year (<?php echo date('Y-m-d', strtotime($startDate)); ?> - <?php echo date('Y-m-d', strtotime($endDate)); ?>)</small>
+</p>
+
+<table cellpadding="8" cellspacing="0" border="1" style="font: 13px roboto, sans-serif; border-collapse: collapse;">
+    <tr style="background-color: #d6e6f4;">
+        <th>Group</th>
+        <th>Countries</th>
+        <th>Total</th>
+    </tr>
+    <?php foreach ($productGroups as $gKey => $group):
+        if (empty($group['byCountry'])) continue;
+        $countryParts = [];
+        foreach ($group['byCountry'] as $c => $cData) {
+            $countryParts[] = $c . ' (' . $cData['subtotal'] . ')';
+        }
+    ?>
+    <tr>
+        <td style="font-weight: bold;"><?php echo $group['label']; ?></td>
+        <td><?php echo implode(', ', $countryParts); ?></td>
+        <td style="text-align: center; font-weight: bold;"><?php echo $group['subtotal']; ?></td>
+    </tr>
+    <?php endforeach; ?>
+    <tr style="background-color: #f0f0f0; font-weight: bold;">
+        <td colspan="2">Grand Total</td>
+        <td style="text-align: center;"><?php echo $grandTotalProducts; ?></td>
+    </tr>
+</table>

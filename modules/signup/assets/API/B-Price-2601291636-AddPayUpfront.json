@@ -1056,14 +1056,14 @@
                 },
                 {
                   "name": "Website Hosting + Email included",
-                  "product_id": "prod_R7hB7F0ZxruMuO",
-                  "price_id": "AUWHT03M00O-02",
+                  "product_id": "prod_TyAuTAY7YCADCm",
+                  "price_id": "AUWHY03M12O-21",
                   "form_name": "webEmail",
                   "currency": "aud",
-                  "amount": 4900,
+                  "amount": 9900,
                   "type": "webmail",
                   "status": "show",
-                  "ext": "/Month",
+                  "ext": "/Year",
                   "gst": true
                 },
                 {
@@ -1116,6 +1116,30 @@
                   "form_name": "addWebsiteMakeoverFully",
                   "currency": "aud",
                   "amount": 99500,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": true
+                },
+                {
+                  "name": "Minor Change Website / job",
+                  "product_id": "prod_TyAzwgBz8jqfEP",
+                  "price_id": "AUMINOR03M00O-21",
+                  "form_name": "addonMinorChangeWebsite",
+                  "currency": "aud",
+                  "amount": 2000,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": true
+                },
+                {
+                  "name": "Major Change Website / job",
+                  "product_id": "prod_TyB3CJ9hWQv4HP",
+                  "price_id": "AUMAJOR03M00O-21",
+                  "form_name": "addonMajorChangeWebsite",
+                  "currency": "aud",
+                  "amount": 5000,
                   "type": "website",
                   "status": "show",
                   "ext": "",
@@ -2365,14 +2389,14 @@
               "items": [
                 {
                   "name": "Website Hosting + Email included",
-                  "product_id": "prod_R7hB7F0ZxruMuO",
-                  "price_id": "NZWHT03M00O-02",
+                  "product_id": "prod_TyAuTAY7YCADCm",
+                  "price_id": "NZWHY03M12O-21",
                   "form_name": "addonWebsiteHosting",
                   "currency": "nzd",
-                  "amount": 4900,
+                  "amount": 9900,
                   "type": "email",
                   "status": "show",
-                  "ext": "/Month",
+                  "ext": "/Year",
                   "gst": false
                 },
                 {
@@ -2413,6 +2437,30 @@
                   "form_name": "addWebsiteMakeoverFully",
                   "currency": "nzd",
                   "amount": 99500,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Minor Change Website / job",
+                  "product_id": "prod_TyAzwgBz8jqfEP",
+                  "price_id": "NZMINOR03M00O-21",
+                  "form_name": "addonMinorChangeWebsite",
+                  "currency": "nzd",
+                  "amount": 2000,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Major Change Website / job",
+                  "product_id": "prod_TyB3CJ9hWQv4HP",
+                  "price_id": "NZMAJOR03M00O-21",
+                  "form_name": "addonMajorChangeWebsite",
+                  "currency": "nzd",
+                  "amount": 5000,
                   "type": "website",
                   "status": "show",
                   "ext": "",
@@ -3689,14 +3737,14 @@
                 },
                 {
                   "name": "Website Hosting + Email included",
-                  "product_id": "prod_R7hB7F0ZxruMuO",
-                  "price_id": "UKWHT03M00O-20",
+                  "product_id": "prod_TyAuTAY7YCADCm",
+                  "price_id": "UKWHY03M12O-21",
                   "form_name": "addonWebsiteHosting",
                   "currency": "gbp",
-                  "amount": 2000,
+                  "amount": 4900,
                   "type": "email",
                   "status": "show",
-                  "ext": "/Month",
+                  "ext": "/Year",
                   "gst": false
                 }
               ]
@@ -3725,6 +3773,30 @@
                   "form_name": "addWebsiteMakeoverFully",
                   "currency": "gbp",
                   "amount": 59900,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Minor Change Website / job",
+                  "product_id": "prod_TyAzwgBz8jqfEP",
+                  "price_id": "UKMINOR03M00O-21",
+                  "form_name": "addonMinorChangeWebsite",
+                  "currency": "gbp",
+                  "amount": 1000,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Major Change Website / job",
+                  "product_id": "prod_TyB3CJ9hWQv4HP",
+                  "price_id": "UKMAJOR03M00O-21",
+                  "form_name": "addonMajorChangeWebsite",
+                  "currency": "gbp",
+                  "amount": 2500,
                   "type": "website",
                   "status": "show",
                   "ext": "",
@@ -4878,14 +4950,14 @@
               "items": [
                 {
                   "name": "Website Hosting + Email included",
-                  "product_id": "prod_R88I1dIZa30tNq",
-                  "price_id": "price_1QFs2GI6vmxJT6Om878pzea5",
+                  "product_id": "prod_TyC6KxTgCXeSfK",
+                  "price_id": "price_1T0FiSI6vmxJT6OmZFSvKquR",
                   "form_name": "addonWebsiteHosting",
                   "currency": "usd",
-                  "amount": 3900,
+                  "amount": 9900,
                   "type": "email",
                   "status": "show",
-                  "ext": "/Month",
+                  "ext": "/Year",
                   "gst": false
                 },
                 {
@@ -4962,6 +5034,30 @@
                   "form_name": "addWebsiteMakeoverFully",
                   "currency": "usd",
                   "amount": 99500,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Minor Change Website / job",
+                  "product_id": "prod_TyCGx4UiWZ4GbH",
+                  "price_id": "price_1T0FryI6vmxJT6Om7xhvwOqx",
+                  "form_name": "addonMinorChangeWebsite",
+                  "currency": "usd",
+                  "amount": 2000,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Major Change Website / job",
+                  "product_id": "prod_TyCK08v1CzaqD9",
+                  "price_id": "price_1T0FwDI6vmxJT6Omu1IdzRT1",
+                  "form_name": "addonMajorChangeWebsite",
+                  "currency": "usd",
+                  "amount": 5000,
                   "type": "website",
                   "status": "show",
                   "ext": "",
@@ -5562,7 +5658,7 @@
               {
                 "name": "Add-on Only",
                 "product_id": "prod_R7rLIiNbRW0iLh",
-                "price_id": "price_1QFbe6I6vmxJT6Om7TLtoA5z",
+                "price_id": "price_1QFbeiI6vmxJT6OmyLLNLXcq",
                 "currency": "cad",
                 "amount": 0,
                 "type": "solo",
@@ -6087,14 +6183,14 @@
               "items": [
                 {
                   "name": "Website Hosting + Email included",
-                  "product_id": "prod_R88I1dIZa30tNq",
-                  "price_id": "price_1QFs2GI6vmxJT6OmJ2og0UJa",
+                  "product_id": "prod_TyC6KxTgCXeSfK",
+                  "price_id": "price_1T0FiSI6vmxJT6Omr4sM5B0L",
                   "form_name": "addonWebsiteHosting",
                   "currency": "cad",
-                  "amount": 3900,
+                  "amount": 9900,
                   "type": "email",
                   "status": "show",
-                  "ext": "/Month",
+                  "ext": "/Year",
                   "gst": false
                 }
               ]
@@ -6123,6 +6219,30 @@
                   "form_name": "addWebsiteMakeoverFully",
                   "currency": "cad",
                   "amount": 99500,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Minor Change Website / job",
+                  "product_id": "prod_TyCGx4UiWZ4GbH",
+                  "price_id": "price_1T0FryI6vmxJT6OmK9VNN2CA",
+                  "form_name": "addonMinorChangeWebsite",
+                  "currency": "cad",
+                  "amount": 2000,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Major Change Website / job",
+                  "product_id": "prod_TyCK08v1CzaqD9",
+                  "price_id": "price_1T0FwDI6vmxJT6Om3GAYDrm8",
+                  "form_name": "addonMajorChangeWebsite",
+                  "currency": "cad",
+                  "amount": 5000,
                   "type": "website",
                   "status": "show",
                   "ext": "",
@@ -6395,7 +6515,7 @@
                 "amount": 2099160,
                 "type": "bundle",
                 "status": "show",
-                "ext": "/Month",
+                "ext": "/Year",
                 "gst": false
               },
               {
@@ -6406,7 +6526,7 @@
                 "amount": 6215160,
                 "type": "bundle",
                 "status": "show",
-                "ext": "/Month",
+                "ext": "/Year",
                 "gst": false
               },
               {
@@ -6417,7 +6537,7 @@
                 "amount": 9575160,
                 "type": "bundle",
                 "status": "show",
-                "ext": "/Month",
+                "ext": "/Year",
                 "gst": false
               },
               {
@@ -6428,7 +6548,7 @@
                 "amount": 12935160,
                 "type": "bundle",
                 "status": "show",
-                "ext": "/Month",
+                "ext": "/Year",
                 "gst": false
               },
               {
@@ -6472,7 +6592,7 @@
                 "amount": 4116000,
                 "type": "solo",
                 "status": "show",
-                "ext": "/Month",
+                "ext": "/Year",
                 "gst": false
               },
               {
@@ -6483,7 +6603,7 @@
                 "amount": 7476000,
                 "type": "solo",
                 "status": "show",
-                "ext": "/Month",
+                "ext": "/Year",
                 "gst": false
               },
               {
@@ -6494,7 +6614,7 @@
                 "amount": 10836000,
                 "type": "solo",
                 "status": "show",
-                "ext": "/Month",
+                "ext": "/Year",
                 "gst": false
               }
             ]
@@ -7235,12 +7355,12 @@
                   "gst": false
                 },
                 {
-                  "name": "Website Hosting + Email included",
-                  "product_id": "prod_TcuYMPwbi4ST6Y",
-                  "price_id": "THWHT03M00O-20",
+                  "name": "Website Hosting + Email included (Yearly)",
+                  "product_id": "prod_TyB8yjee0rRGV5",
+                  "price_id": "THWHY03M12O-21",
                   "form_name": "addonWebsiteHosting",
                   "currency": "thb",
-                  "amount": 100000,
+                  "amount": 200000,
                   "type": "email",
                   "status": "show",
                   "ext": "",
@@ -7265,6 +7385,30 @@
                   "form_name": "addWebsiteMakeoverFully",
                   "currency": "thb",
                   "amount": 2900000,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Minor Change Website / job",
+                  "product_id": "prod_TyBEPz5ris2Pbg",
+                  "price_id": "THMINOR03M00O-21",
+                  "form_name": "addonMinorChangeWebsite",
+                  "currency": "thb",
+                  "amount": 50000,
+                  "type": "website",
+                  "status": "show",
+                  "ext": "",
+                  "gst": false
+                },
+                {
+                  "name": "Major Change Website / job",
+                  "product_id": "prod_TyBHHeyT7r0eg4",
+                  "price_id": "THMAJOR03M00O-21",
+                  "form_name": "addonMajorChangeWebsite",
+                  "currency": "thb",
+                  "amount": 100000,
                   "type": "website",
                   "status": "show",
                   "ext": "",
