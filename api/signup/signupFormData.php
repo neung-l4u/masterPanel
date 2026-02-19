@@ -121,37 +121,19 @@ if ($method === 'GET') {
         respond(["success" => true, "total" => count($rows), "data" => $rows]);
 
     } else {
-        $page  = max(1, isset($_GET['page'])  ? (int)$_GET['page']  : 1);
-        $limit = max(1, isset($_GET['limit']) ? (int)$_GET['limit'] : 20);
-        $offset = ($page - 1) * $limit;
-
         global $db;
-        $totalResult = $db->query(
-            'SELECT COUNT(*) as cnt FROM logssignup WHERE deleteStatus = 0'
-        )->fetchAll();
-        $total = (int)($totalResult[0]['cnt'] ?? 0);
-
         $rows = $db->query(
             'SELECT l.id, l.dataLogs, l.dataStripe, l.stripeResult, l.dataContract,
                     l.countryCode, l.status, l.test, l.createAt, l.createBy,
                     l.gen_report, l.reported_at
              FROM logssignup l
              WHERE l.deleteStatus = 0
-             ORDER BY l.createAt DESC
-             LIMIT ? OFFSET ?',
-            $limit, $offset
+             ORDER BY l.createAt DESC'
         )->fetchAll();
 
         foreach ($rows as &$row) { decodeRow($row, $type); }
 
-        respond([
-            "success"    => true,
-            "total"      => $total,
-            "page"       => $page,
-            "limit"      => $limit,
-            "totalPages" => (int)ceil($total / $limit),
-            "data"       => $rows,
-        ]);
+        respond(["success" => true, "total" => count($rows), "data" => $rows]);
     }
 }
 
