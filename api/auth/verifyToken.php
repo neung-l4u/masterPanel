@@ -15,7 +15,7 @@ use Firebase\JWT\Key;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\SignatureInvalidException;
 
-$JWT_SECRET = 'CHANGE_THIS_TO_A_STRONG_RANDOM_SECRET_KEY';
+$JWT_SECRET = 'LOCAL_FOR_YOU_STRONG_RANDOM_SECRET_KEY_BY_MARK';
 
 function getAuthToken() {
     $headers = getallheaders();
@@ -40,9 +40,10 @@ if (empty($token)) {
 try {
     $decoded    = JWT::decode($token, new Key($JWT_SECRET, 'HS256'));
     $authPartner = [
-        'partner_id' => $decoded->partner_id,
-        'client_id'  => $decoded->client_id,
-        'scopes'     => (array)$decoded->scopes,
+        'partnerID'   => $decoded->partnerID,
+        'partnerName' => $decoded->partnerName,
+        'partner_id'  => $decoded->partner_id,
+        'scopes'      => (array)$decoded->scopes,
     ];
 } catch (ExpiredException $e) {
     http_response_code(401);

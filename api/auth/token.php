@@ -34,7 +34,7 @@ use Firebase\JWT\JWT;
 
 date_default_timezone_set("Asia/Bangkok");
 
-$JWT_SECRET  = 'CHANGE_THIS_TO_A_STRONG_RANDOM_SECRET_KEY';
+$JWT_SECRET  = 'LOCAL_FOR_YOU_STRONG_RANDOM_SECRET_KEY_BY_MARK';
 $JWT_EXPIRES = 3600; // 1 hour
 
 $raw  = file_get_contents("php://input");
@@ -50,7 +50,7 @@ if (empty($clientId) || empty($clientSecret)) {
 }
 
 $rows = $db->query(
-    "SELECT partner_id, client_secret, scopes, status FROM partner WHERE client_id = ? LIMIT 1",
+    "SELECT partnerID, partnerName, partner_secret, scopes, status FROM partner WHERE partner_id = ? LIMIT 1",
     $clientId
 )->fetchAll();
 
@@ -68,7 +68,7 @@ if ($partner['status'] !== 'active') {
     exit();
 }
 
-if (!password_verify($clientSecret, $partner['client_secret'])) {
+if (!password_verify($clientSecret, $partner['partner_secret'])) {
     http_response_code(401);
     echo json_encode(["error" => "Invalid credentials"]);
     exit();
@@ -78,12 +78,13 @@ $scopes = json_decode($partner['scopes'], true) ?? [];
 $now    = time();
 
 $payload = [
-    'iss'        => 'masterPanel',
-    'iat'        => $now,
-    'exp'        => $now + $JWT_EXPIRES,
-    'partner_id' => $partner['partner_id'],
-    'client_id'  => $clientId,
-    'scopes'     => $scopes,
+    'iss'         => 'masterPanel',
+    'iat'         => $now,
+    'exp'         => $now + $JWT_EXPIRES,
+    'partnerID'   => $partner['partnerID'],
+    'partnerName' => $partner['partnerName'],
+    'partner_id'  => $clientId,
+    'scopes'      => $scopes,
 ];
 
 $token = JWT::encode($payload, $JWT_SECRET, 'HS256');
