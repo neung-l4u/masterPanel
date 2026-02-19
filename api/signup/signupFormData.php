@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once '../../assets/db/db.php';
 require_once '../../assets/db/initDB.php';
+require_once '../auth/verifyToken.php';
 
 date_default_timezone_set("Asia/Bangkok");
 
