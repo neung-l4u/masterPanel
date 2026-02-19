@@ -81,6 +81,8 @@ function decodeRow(&$row, $type = '') {
         $row['dataLogs'] = filterStoreFields($row['dataLogs'] ?? []);
         unset($row['dataStripe'], $row['stripeResult']);
     }
+
+    unset($row['status'], $row['test'], $row['createAt'], $row['createBy'], $row['gen_report'], $row['reported_at']);
 }
 
 // ==================== GET ====================
