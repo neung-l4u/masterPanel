@@ -3,7 +3,7 @@ date_default_timezone_set("Asia/Bangkok");
 $timestamp = time();
 $filename = date("Y-m-d-His", $timestamp);
 $image = ImageCreateFromJpeg("https://report.localforyou.com/modules/voucher/assets/img/Voucher4.3-frame.jpg"); // Path Images
-/*$image = ImageCreateFromJpeg("assets/img/Voucher4.3-frame.jpg");*/ // Path Images
+// $image = ImageCreateFromJpeg("assets/img/Voucher4.4-frame.jpg"); // Path Images
 $font = "./Roboto-Black.ttf";
 
 $code = !empty($_GET['code']) ? trim($_GET['code']) : '';
@@ -53,27 +53,28 @@ if ($apiResponse['success']) {
     $color["white"] = ImageColorAllocate($image, 255, 255, 255); // Text Color
     $color["gray"] = ImageColorAllocate($image, 237, 237, 237); // Text Color
     $color["DarkGray"] = ImageColorAllocate($image, 153, 153, 153); // Text Color
-    $color["black"] = ImageColorAllocate($image, 77, 77, 77); // Text Color
+    $color["black"] = ImageColorAllocate($image, 0, 0, 0); // Text Color
     $color["yellow"] = ImageColorAllocate($image, 250, 255, 153); // Text Color
     $color["DarkYellow"] = ImageColorAllocate($image, 219, 165, 19); // Text Color
+    $color["red"] = ImageColorAllocate($image, 101, 57, 22); // Text Color
 
     $param = [
         "code" => [
             "size" => 14,
             "angle" => 0,
             "value" => $code,
-            "x" => 260,
-            "y" => Imagesy($image) - 160,
+            "x" => 250,
+            "y" => Imagesy($image) - 162,
             "color" => $color["white"],
             "font" => $font
         ],
         "valid" => [
-            "size" => 11,
+            "size" => 10,
             "angle" => 0,
             "value" => $valid,
-            "x" => 168,
+            "x" => 170,
             "y" => Imagesy($image) - 132,
-            "color" => $color["white"],
+            "color" => $color["red"],
             "font" => $font
         ],
         "discount" => [
@@ -82,7 +83,7 @@ if ($apiResponse['success']) {
             "value" => $discount,
             "x" => Imagesx($image) - 400,
             "y" => 245,
-            "color" => $color["DarkYellow"],
+            "color" => $color["red"],
             "font" => $font
         ],
         "url" => [
@@ -91,7 +92,7 @@ if ($apiResponse['success']) {
             "value" => $url,
             "x" => 68,
             "y" => Imagesy($image) - 28,
-            "color" => $color["white"],
+            "color" => $color["red"],
             "font" => $font
         ],
         "issueBy" => [
@@ -100,7 +101,7 @@ if ($apiResponse['success']) {
             "value" => $issueBy,
             "x" => 152,
             "y" => Imagesy($image) - 218,
-            "color" => $color["white"],
+            "color" => $color["red"],
             "font" => $font
         ],
         "phone" => [
@@ -116,9 +117,9 @@ if ($apiResponse['success']) {
             "size" => 8,
             "angle" => 0,
             "value" => $expires,
-            "x" => Imagesx($image) - 902,
-            "y" => Imagesy($image) - 117,
-            "color" => $color["white"],
+            "x" => Imagesx($image) - 890,
+            "y" => Imagesy($image) - 116,
+            "color" => $color["red"],
             "font" => $font
         ]
     ];
@@ -200,5 +201,5 @@ if ($apiResponse['success']) {
 ?>
 <?php if ($apiResponse['success']) { ?>
                     <img src="https://report.localforyou.com/modules/voucher/assets/genImg/<?php echo $timestamp; ?>.jpg">
-                    <!--<img src="assets/genImg/<?php /*echo $timestamp; */?>.jpg">-->
+                    <!-- <img src="assets/genImg/ /*<?php echo $timestamp; ?>*/ .jpg"> -->
 <?php }else{ echo json_encode($apiResponse); } ?>
