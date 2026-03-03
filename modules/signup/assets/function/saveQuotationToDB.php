@@ -31,8 +31,8 @@ $bankThaiNumber = !empty($_POST["bankThaiNumber"]) ? $_POST["bankThaiNumber"] : 
 $bankThaiName = !empty($_POST["bankThaiName"]) ? $_POST["bankThaiName"] : null;
 $test = !empty($_POST["test"]) ? $_POST["test"] : 0;
 
-$data = json_decode($invoiceID, true);
-$invID = $data['invoice_id'];
+$data = !empty($invoiceID) ? json_decode($invoiceID, true) : null;
+$invID = isset($data['invoice_id']) ? $data['invoice_id'] : null;
 
 $productQuotation = json_encode($productQuotation);
 function ThaiRead($amount_number)
@@ -96,6 +96,9 @@ $thaiPrice = ThaiRead($grandTotal);
 
 
 if ($act === "add") {
+    error_log("[saveQuotationToDB] taxNumberQuotation = " . var_export($taxNumberQuotation, true));
+    error_log("[saveQuotationToDB] all POST keys = " . implode(', ', array_keys($_POST)));
+
     $logsToDB =  $db->query('INSERT INTO `invoice`(`checkdata`, `type`, `name`, `address`, `sale`,`thaiPrice`, `product`, `taxNumber`, `customerEmail`,`customerPhone`,`bankName`,`bankThaiNumber`,`bankThaiName`,`test`,`dateThai`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
     , $checkBoxWantTAX, $taxType, $nameQuotation, $addressQuotation,$shopAgent, $thaiPrice,$productQuotation, $taxNumberQuotation, $emailQuotation, $phoneQuotation, $bankName ,$bankThaiNumber ,$bankThaiName ,$test , $dateThai );
 

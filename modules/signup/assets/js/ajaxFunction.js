@@ -853,16 +853,21 @@ function requestToPay() {
     };
 
 
-    saveToDB(stripePayload);
+    let safePayload = JSON.parse(JSON.stringify(stripePayload));
+    safePayload.card = {
+        "number": cardDetail.number ? cardDetail.number.slice(-4) : ""
+    };
+
+    saveToDB(safePayload);
     if(formData.formCountry === "TH"){
-        if(saveTaxToDB(stripePayload) === false){
+        if(saveTaxToDB(safePayload) === false){
             $("#cmdSubmit").removeClass("btn-outline-info").addClass("btn-outline-success").prop("disabled", false);
             $("#paymentSubmit").prop('disabled', false);
             result.html('<span class="badge bg-warning">กรุณากรอกข้อมูลใบเสนอราคาให้ครบ</span>');
             return;
         }
     }
-    createLogs(stripePayload);
+    createLogs(safePayload);
     clonePayload = stripePayload;
 
     setTimeout(function (){
