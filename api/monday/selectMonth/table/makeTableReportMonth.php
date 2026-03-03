@@ -2,7 +2,9 @@
 require_once '../../../../assets/db/db.php';
 require_once '../../../../assets/db/initDB.php';
 
-$day = !empty($_GET['day']) ? $_GET['day'] : date('Y-m-d');
+// Default to previous month (auto -1 month)
+$defaultDay = (new DateTime())->modify('-1 month')->format('Y-m-d');
+$day = !empty($_GET['day']) ? $_GET['day'] : $defaultDay;
 
 // Calculate month range
 $obj_day = new DateTime($day);
