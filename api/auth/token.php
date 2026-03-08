@@ -4,7 +4,7 @@
  * POST /api/auth/token.php
  *
  * Body (JSON):
- *   { "client_id": "...", "client_secret": "..." }
+ *   { "partner_id": "...", "partner_secret": "..." }
  *
  * Response:
  *   { "access_token": "...", "token_type": "Bearer", "expires_in": 3600 }
@@ -40,12 +40,12 @@ $JWT_EXPIRES = 3600; // 1 hour
 $raw  = file_get_contents("php://input");
 $body = json_decode($raw, true);
 
-$clientId     = trim($body['client_id']     ?? '');
-$clientSecret = trim($body['client_secret'] ?? '');
+$clientId     = trim($body['partner_id']     ?? '');
+$clientSecret = trim($body['partner_secret'] ?? '');
 
 if (empty($clientId) || empty($clientSecret)) {
     http_response_code(400);
-    echo json_encode(["error" => "client_id and client_secret are required"]);
+    echo json_encode(["error" => "partner_id and partner_secret are required"]);
     exit();
 }
 
