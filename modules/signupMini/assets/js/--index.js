@@ -14,8 +14,6 @@ function setMoney() {
         currencyBox.val("USD");
     }else if(country === "Thailand"){
         currencyBox.val("THB");
-    }else{
-        currencyBox.val("");
     }
 }//setMoney
 
@@ -33,8 +31,6 @@ function shortCountry() {
         return "US";
     }else if(country === "Thailand"){
         return "TH";
-    }else{
-        return "";
     }
 }
 
@@ -76,35 +72,25 @@ function getPayload(form) {
 
 function validateForm(form) {
     let isValid = true;
-    form.find(".field-error").remove(); // Clear previous errors
-    form.find(".border-red-400").removeClass("border-red-400");
+    form.find(".text-danger").remove(); // Clear previous errors
 
     const firstName = form.find('[name="first_name"]');
     const email     = form.find('[name="email"]');
     const mobile    = form.find('[name="mobile"]');
-    const lastName  = form.find('[name="last_name"]');
-    const shopName  = form.find('[name="shopName"]');
-    const shopType  = form.find('[name="shopType"]');
+    const shopType   = form.find('[name="shopType"]');
     const country   = form.find('[name="country"]');
-    const currency  = form.find('[name="currency"]');
-    const interest  = form.find('[name="interest"]');
 
     function showError(input, message) {
-        const error = $('<p class="field-error text-red-500 text-xs mt-1"></p>').text(message);
-        input.addClass("border-red-400");
-        input.closest('.form-group').append(error);
+        const error = $('<small class="text-danger d-block mt-1"></small>').text(message);
+        input.after(error);
         isValid = false;
     }
 
-    if (!firstName.val() || !firstName.val().trim()) showError(firstName, "First name is required.");
-    if (!lastName.val() || !lastName.val().trim()) showError(lastName, "Last name is required.");
-    if (!email.val() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.val())) showError(email, "Invalid email.");
-    if (!mobile.val() || !/^\+?[0-9\s\-]{8,15}$/.test(mobile.val())) showError(mobile, "Invalid mobile number.");
-    if (!shopName.val() || !shopName.val().trim()) showError(shopName, "Shop name is required.");
-    if (!shopType.val() || shopType.val() === "") showError(shopType, "Please select a business type.");
-    if (!country.val() || country.val() === "") showError(country, "Please select a country.");
-    if (!currency.val() || currency.val() === "") showError(currency, "Please select a currency.");
-    if (!interest.val() || interest.val() === "") showError(interest, "Please select your interest.");
+    if (!firstName.val().trim()) showError(firstName, "First name is required.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.val())) showError(email, "Invalid email.");
+    if (!/^\+?[0-9\s\-]{8,15}$/.test(mobile.val())) showError(mobile, "Invalid mobile number.");
+    if (!shopType.val()) showError(shopType, "Please select a business type.");
+    if (!country.val()) showError(country, "Please select a country.");
 
     return isValid;
 }
