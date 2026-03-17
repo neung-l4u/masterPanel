@@ -9,6 +9,7 @@ const settings = {
   url_getStates: "assets/statics/states.json",
   url_authentication: "assets/API/authentication.php",
   url_logs: "assets/function/logs.php",
+  url_generateID: "assets/function/generateID.php",
   url_saveToDB: "assets/function/saveToDB.php",
   url_saveQuestionToDB: "assets/function/saveQuotationToDB.php",
   Payment_Module: {

@@ -1,27 +1,43 @@
 <?php
-function fetchApi($url)
+function fetchApi($url, $body = null)
 {
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST           => true,
         CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-        CURLOPT_POSTFIELDS     => json_encode(new stdClass()),
+        CURLOPT_POSTFIELDS     => $body ? json_encode($body) : json_encode(new stdClass()),
     ]);
     $response = curl_exec($ch);
     curl_close($ch);
     return json_decode($response, true);
 }
 
+function fetchAllProducts($base)
+{
+    $allProducts = [];
+    $page = 1;
+    $totalPages = 1;
+
+    do {
+        $data = fetchApi($base . '/api/get_website_products', ["page" => $page, "limit" => 500]);
+        $totalPages = $data['result']['total_pages'] ?? 1;
+        $products = $data['result']['products'] ?? [];
+        $allProducts = array_merge($allProducts, $products);
+        $page++;
+    } while ($page <= $totalPages);
+
+    return $allProducts;
+}
+
 $base = 'https://' . ($_GET['domain'] ?? 'staging.core.wooshfood.com');
 
 $dataCompanyInfo       = fetchApi($base . '/api/get_company_info');
 $dataProductCategories = fetchApi($base . '/api/get_website_products_category');
-$dataProduct           = fetchApi($base . '/api/get_website_products');
 
 $companyInfo       = $dataCompanyInfo['result'][0] ?? [];
 $productCategories = $dataProductCategories['result']['categories'] ?? [];
-$products          = $dataProduct['result']['products'] ?? [];
+$products          = fetchAllProducts($base);
 
 // กรอง products ที่มี category เท่านั้น
 $products = array_filter($products, function ($p) {
@@ -247,7 +263,7 @@ $showcaseProducts = array_slice($productsWithImage, 0, min(6, count($productsWit
             <div class="product-grid">
                 <?php foreach ($products as $p): ?>
                     <?php
-                    $image = !empty($p['image_url']) ? $p['image_url'] : 'images/no-image.svg';
+                    $image = !empty($p['image_url']) ? $p['image_url'] : 'images/no-image-white.svg';
                     $categoryName = $p['product_category_id'][0]['name'] ?? 'Uncategorized';
                     $categoryId = (int)($p['product_category_id'][0]['id'] ?? 0);
                     ?>

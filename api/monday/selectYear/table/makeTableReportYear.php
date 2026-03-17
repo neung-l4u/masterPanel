@@ -28,10 +28,8 @@ if (empty($files)) {
     die("JSON file not found");
 }
 
-// Sort by latest modified time
-usort($files, function($a, $b) {
-    return filemtime($b) - filemtime($a);
-});
+// Sort by filename descending (filename contains timestamp)
+rsort($files);
 
 $latestFile = $files[0];
 $jsonData = json_decode(file_get_contents($latestFile), true);
@@ -40,7 +38,7 @@ $jsonDir2 = __DIR__ . '/../../selectWeek/file/ALL_COUNTRY/';
 $files2 = glob($jsonDir2 . 'ALL_monday_data_ALL_COUNTRY*.json');
 $jsonData2 = null;
 if (!empty($files2)) {
-    usort($files2, function($a, $b) { return filemtime($b) - filemtime($a); });
+    rsort($files2);
     $jsonData2 = json_decode(file_get_contents($files2[0]), true);
 }
 
@@ -315,6 +313,50 @@ $allCountries = array_unique(array_merge(
     array_keys($yearlySignup)
 ));
 sort($allCountries);
+
+$reportData = [];
+$totalActive = 0;
+$totalDrop = 0;
+$totalSignup = 0;
+
+foreach ($allCountries as $country) {
+    $active = isset($mondayData[$country]) ? $mondayData[$country]['active'] : 0;
+    $drop = isset($yearlyDrop[$country]) ? $yearlyDrop[$country] : 0;
+    $signup = isset($yearlySignup[$country]) ? $yearlySignup[$country] : 0;
+    $netChange = $signup - $drop;
+    $percentChange = $active > 0 ? round(($netChange / $active) * 100, 2) : 0;
+    if ($percentChange >= 5) { $status = 'High'; }
+    elseif ($percentChange >= 0) { $status = 'Mid'; }
+    elseif ($percentChange >= -10) { $status = 'Low'; }
+    else { $status = 'Very Low'; }
+    $reportData[] = ['country' => $country, 'active' => $active, 'signup' => $signup, 'drop' => $drop, 'percentChange' => $percentChange, 'status' => $status];
+    $totalActive += $active;
+    $totalDrop += $drop;
+    $totalSignup += $signup;
+}
+
+$totalNetChange = $totalSignup - $totalDrop;
+$totalPercentChange = $totalActive > 0 ? round(($totalNetChange / $totalActive) * 100, 2) : 0;
+if ($totalPercentChange >= 5) { $totalStatus = 'High'; }
+elseif ($totalPercentChange >= 0) { $totalStatus = 'Mid'; }
+elseif ($totalPercentChange >= -10) { $totalStatus = 'Low'; }
+else { $totalStatus = 'Very Low'; }
+
+// JSON mode: return data for charts
+if (isset($_GET['format']) && $_GET['format'] === 'json') {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'period' => ['start' => $startDate, 'end' => $endDate],
+        'prevPeriod' => ['start' => $prevStartDate, 'end' => $prevEndDate],
+        'reportData' => $reportData,
+        'totals' => ['active' => $totalActive, 'signup' => $totalSignup, 'drop' => $totalDrop, 'percentChange' => $totalPercentChange, 'status' => $totalStatus],
+        'customerType' => $activeByType ?? [],
+        'signupByType' => $signupByType ?? [],
+        'unsubByType' => $unsubByType ?? [],
+        'productPopularity' => $productPopularity ?? []
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
 
 // ========== Building Project Table (from ALL_COUNTRY JSON) ==========
 $buildingBoardMap = [

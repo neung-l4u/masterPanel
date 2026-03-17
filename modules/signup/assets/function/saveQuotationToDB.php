@@ -96,9 +96,6 @@ $thaiPrice = ThaiRead($grandTotal);
 
 
 if ($act === "add") {
-    error_log("[saveQuotationToDB] taxNumberQuotation = " . var_export($taxNumberQuotation, true));
-    error_log("[saveQuotationToDB] all POST keys = " . implode(', ', array_keys($_POST)));
-
     $logsToDB =  $db->query('INSERT INTO `invoice`(`checkdata`, `type`, `name`, `address`, `sale`,`thaiPrice`, `product`, `taxNumber`, `customerEmail`,`customerPhone`,`bankName`,`bankThaiNumber`,`bankThaiName`,`test`,`dateThai`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
     , $checkBoxWantTAX, $taxType, $nameQuotation, $addressQuotation,$shopAgent, $thaiPrice,$productQuotation, $taxNumberQuotation, $emailQuotation, $phoneQuotation, $bankName ,$bankThaiNumber ,$bankThaiName ,$test , $dateThai );
 

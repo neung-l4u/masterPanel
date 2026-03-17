@@ -145,3 +145,5 @@ out
 /modules/templates/views/server/uploads
 /modules/feedback/upload
 /modules/feedback/assets/db/initDB.php
+/api/stripe/stripe_config.php
+/vendor/

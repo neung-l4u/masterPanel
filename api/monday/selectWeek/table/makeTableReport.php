@@ -33,15 +33,11 @@ if (empty($files)) {
     die("JSON file not found");
 }
 
-// Sort by latest modified time
-usort($files, function($a, $b) {
-    return filemtime($b) - filemtime($a);
-});
+// Sort by filename descending (filename contains timestamp)
+rsort($files);
 
 if (!empty($files2)) {
-    usort($files2, function($a, $b) {
-        return filemtime($b) - filemtime($a);
-    });
+    rsort($files2);
 }
 
 $latestFile = $files[0];
@@ -346,6 +342,22 @@ if ($totalPercentChange >= 5) {
 } else {
     $totalStatus = 'Very Low';
     $totalStatusColor = 'darkred';
+}
+
+// JSON mode: return data for charts
+if (isset($_GET['format']) && $_GET['format'] === 'json') {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'period' => ['start' => $startDate, 'end' => $endDate],
+        'prevPeriod' => ['start' => $prevStartDate, 'end' => $prevEndDate],
+        'reportData' => $reportData,
+        'totals' => ['active' => $totalActive, 'signup' => $totalSignup, 'drop' => $totalDrop, 'percentChange' => $totalPercentChange, 'status' => $totalStatus],
+        'customerType' => $activeByType,
+        'signupByType' => $signupByType ?? [],
+        'unsubByType' => $unsubByType ?? [],
+        'productPopularity' => $productPopularity ?? []
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
 }
 ?>
 

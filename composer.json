@@ -24,6 +24,8 @@
   },
   "require": {
     "ext-json": "*",
-    "ext-openssl": "*"
+    "ext-openssl": "*",
+    "google/analytics-data": "^0.23.2",
+    "stripe/stripe-php": "^19.4"
   }
 }

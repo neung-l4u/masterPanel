@@ -1269,7 +1269,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 /> 
                                                             </span>
                                                             <small id="domainHelpAU" class="form-text">
-                                                                <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
+                                                                <a href="https://usadomains.localforyou.com/" target="_blank" tabindex="-1" class="text-decoration-none">
                                                                     Check Availability
                                                                 </a>
                                                             </small>
@@ -1983,13 +1983,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             <div class="col-md-8">
                                                 <div class="row">
                                                     <div class="col">
-                                                        <div class="form-check mb-2">
-                                                            <input class="form-check-input" type="checkbox" value="yes"
-                                                                   id="quotationYes" onclick="wantTax();" checked>
-                                                            <label class="form-check-label quotationYes" for="quotationYes">
-                                                                ต้องการใบกำกับภาษี
-                                                            </label>
-                                                        </div>
+                                                        <input type="hidden" value="yes" id="quotationYes">
                                                     </div>
                                                 </div>
 

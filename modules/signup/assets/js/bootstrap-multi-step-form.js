@@ -638,13 +638,7 @@ function quolegalEntity(){
 
 
 function wantTax(){
-  const checkTax = $("input:checkbox[id='quotationYes']:checked").val();
-
-  if (checkTax === "yes"){
-    $("#quotationContact").show();
-  }else{
-    $("#quotationContact").hide();
-  }
+  $("#quotationContact").show();
 }
 
 //add string @google.com

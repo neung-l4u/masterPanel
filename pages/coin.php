@@ -148,7 +148,7 @@ $teamIDHardcode = array(
                                         ['L4U', '', number_format($allCoins['allL4U'], 2)],
                                         ['CEO', '', number_format($allCoins['allCEO'], 2)],
                                         ['Top L4U', showName($top['L4U']['nickName'], $top['L4U']['fullName']), number_format($top['L4U']['L4U'], 2)],
-                                        ['Top CEO', showName($top['CEO']['nickName'], $top['CEO']['fullName']), number_format($top['CEO']['CEO'], 2)]
+                                        ['Top GM', showName($top['CEO']['nickName'], $top['CEO']['fullName']), number_format($top['CEO']['CEO'], 2)]
                                     ];
                                     unset($row); ?>
 
@@ -212,7 +212,7 @@ $teamIDHardcode = array(
                                                          title="<?php echo $row['fteam']; ?>"><?php echo $row['team']; ?></div>
                                                     <div class="coin_l4u">L4U
                                                         : <?php echo number_format($row['L4U'], 2); ?></div>
-                                                    <div class="coin_ceo">CEO
+                                                    <div class="coin_ceo">GM
                                                         : <?php echo number_format($row['CEO'], 2); ?></div>
                                                 </div>
                                             </div>
@@ -251,7 +251,7 @@ $teamIDHardcode = array(
                                             <span id="l4uCoin" class="text-primary">0.00</span>
                                         </div>
                                         <div class="coin_ceo_big">
-                                            <strong>CEO :</strong>
+                                            <strong>GM :</strong>
                                             <span id="ceoCoin" class="text-primary">0.00</span>
                                         </div>
                                     </div>
@@ -281,7 +281,7 @@ $teamIDHardcode = array(
                                                    class="col-3 col-form-label">Type</label>
                                             <select id="coinType" class="custom-select col">
                                                 <option value="l4u">L4U Coin</option>
-                                                <option value="ceo">CEO Coin</option>
+                                                <option value="ceo">GM Coin</option>
                                             </select>
                                         </div>
                                     </div>

@@ -6,9 +6,10 @@ include "assets/db/initDB.php";
 
 $myID = $_SESSION['id'];
 if (isset($_COOKIE['id'])){ $myID = $_COOKIE['id']; }
-$users = $db->query('SELECT `sL4U` AS "L4U", `sCEO` AS "CEO" FROM `staffs` WHERE `sID` = ?;', $myID)->fetchArray();
+$users = $db->query('SELECT `sL4U` AS "L4U", `sCEO` AS "CEO", `sNickName` FROM `staffs` WHERE `sID` = ?;', $myID)->fetchArray();
 $_SESSION['L4UCoin'] = $users['L4U'];
 $_SESSION['CEOCoin'] = $users['CEO'];
+if (!empty($users['sNickName'])) { $_SESSION['nickName'] = $users['sNickName']; }
 
 require ("assets/php/page_navigate.php");
 date_default_timezone_set("Asia/Bangkok");
@@ -31,15 +32,16 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?php echo $title;?></title>
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Icon libraries -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" media="screen" />
+  <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+  <!-- Framework CSS -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
-    <!-- datatable styles -->
-    <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap4.min.css">
-  <!-- datepicker styles -->
-    <link rel="stylesheet" href="assets/css/jquery-ui-v1.13.2.css">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" media="screen" />
-    <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="assets/css/jquery-ui-v1.13.2.css">
+  <!-- Custom theme (loads last = highest priority) -->
+  <link rel="stylesheet" href="assets/css/master-panel.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -56,21 +58,10 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
       <?php include("modalRespond.php"); ?>
       <?php include("modalConfirm.php"); ?>
       <?php include "pages/".$showPage; ?>
+      <!-- Main Footer (inside content-wrapper so it scrolls together) -->
+      
   </div>
   <!-- /.content-wrapper -->
-
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-    <div class="p-3">
-      <h5>Title</h5>
-      <p>Sidebar content</p>
-    </div>
-  </aside>
-  <!-- /.control-sidebar -->
-
-  <!-- Main Footer -->
-  <?php include "footer.php"; ?>
 </div>
 <!-- ./wrapper -->
 
@@ -86,6 +77,12 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
 <script>
+    const latestActivityId = '<?php echo isset($navActivities) ? (count($navActivities) > 0 ? $navActivities[0]["id"] : 0) : 0; ?>';
+    function markActivityRead(){
+        const badge = document.getElementById('activityBadge');
+        if(badge) badge.style.display = 'none';
+        $.post('assets/api/markActivityRead.php', { latestId: latestActivityId });
+    }
     let showPage = "<?php echo $showPage; ?>";
     const showDatatable = <?php echo isset($datatable["show"]) ? $datatable["show"] : false; ?>;
     const srcDatatable = '<?php echo $datatable["src"]; ?>';

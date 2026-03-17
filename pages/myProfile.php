@@ -41,7 +41,7 @@ $loginID = $_SESSION['id'];
                 <b><?php echo number_format($coins['l4u'],2); ?></b>
               </span>
                             <span class="coin-chip">
-                <i class="fas fa-coins me-1"></i> CEO:
+                <i class="fas fa-coins me-1"></i> GM:
                 <b><?php echo number_format($coins['ceo'],2); ?></b>
               </span>
                         </div>
@@ -71,7 +71,7 @@ $loginID = $_SESSION['id'];
                                 <img class="rounded-circle me-3 mr-2 profile-pic-update"
                                      src="dist/img/crews/<?php echo $_SESSION['userPic']; ?>"
                                      alt="User profile picture"
-                                     style="width:56px;height:56px;object-fit:cover;">
+                                     style="width:36px;height:36px;object-fit:cover;">
                                 <div>
                                     <div class="fw-semibold"><?php echo $_SESSION['name']; ?></div>
                                     <div class="text-muted small"><?php echo $_SESSION['levelName']; ?></div>

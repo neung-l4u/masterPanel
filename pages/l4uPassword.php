@@ -150,8 +150,8 @@ $loginID = $_SESSION['id'];
                                             <th style="width:17%">User</th>
                                             <th style="width:17%">Password</th>
                                             <th style="width:5%">Link</th>
-                                            <th style="width:5%">Note</th>
-                                            <th style="width:8%"></th>
+                                            <th style="width:6%">Note</th>
+                                            <th style="width:7%"></th>
                                         </tr>
                                     </thead>
                                     <tfoot class="thead-dark">
