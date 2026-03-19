@@ -44,14 +44,19 @@ $navDisplayName = $navNickName ? $navNickName . ' ' . $navFirstName : $navFirstN
         <!-- Activity Dropdown -->
         <?php
         global $db;
+        // Get all recent activities for display (max 5)
         $navActivities = $db->query('SELECT CL.`id`, CT.`name` AS "coin", CL.`amount`, ST.`sNickName` AS "nick", ST.`sPic` AS "pic", CL.`reason`, CL.`giveOn`, CA.`aName` 
                 FROM `CoinLogs` CL, `staffs` ST, `CoinType` CT, `CoinActivities` CA 
                 WHERE CL.`ownerID`= ? AND CL.`status` = ? AND CL.`giveBy` = ST.`sID` AND CL.`coinType` = `CT`.`id` AND CL.`activityID` = CA.`aID`
                 ORDER BY CL.`giveOn` DESC LIMIT 5;', $myID, 1)->fetchAll();
-        $navActivityCount = count($navActivities);
-        $latestActivityId = $navActivityCount > 0 ? $navActivities[0]['id'] : 0;
-        $lastReadId = isset($_SESSION['activityReadId']) ? $_SESSION['activityReadId'] : 0;
-        $showBadge = ($navActivityCount > 0 && $latestActivityId != $lastReadId);
+        
+        // Count only unread activities for badge (using is_read column)
+        $unreadCount = $db->query('SELECT COUNT(*) as count FROM CoinLogs WHERE ownerID = ? AND is_read = 0', $myID)->fetchAll();
+        $navActivityCount = $unreadCount[0]['count'];
+        
+        // Show badge if there are any unread activities
+        $showBadge = ($navActivityCount > 0);
+        $latestActivityId = count($navActivities) > 0 ? $navActivities[0]['id'] : 0;
         ?>
         <li class="nav-item dropdown" id="activityDropdown">
             <a class="nav-link" data-toggle="dropdown" href="#" style="position:relative;" onclick="markActivityRead()">
@@ -63,10 +68,10 @@ $navDisplayName = $navNickName ? $navNickName . ' ' . $navFirstName : $navFirstN
             <div class="dropdown-menu dropdown-menu-right" style="min-width:340px;max-width:380px;border:none;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:0;overflow:hidden;">
                 <div style="padding:0.85rem 1.25rem;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-weight:700;font-size:0.9rem;color:#0f172a;">Activity</span>
-                    <span style="font-size:0.7rem;color:#94a3b8;background:#f1f5f9;padding:0.15rem 0.5rem;border-radius:8px;"><?php echo $navActivityCount; ?> recent</span>
+                    <span style="font-size:0.7rem;color:#94a3b8;background:#f1f5f9;padding:0.15rem 0.5rem;border-radius:8px;"><?php echo $navActivityCount; ?> unread</span>
                 </div>
                 <div style="max-height:320px;overflow-y:auto;">
-                    <?php if($navActivityCount >= 1){ foreach($navActivities as $act){ ?>
+                    <?php if(count($navActivities) >= 1){ foreach($navActivities as $act){ ?>
                         <div class="d-flex align-items-start gap-2" style="padding:0.75rem 1.25rem;border-bottom:1px solid #f8fafc;transition:background 0.2s;cursor:pointer;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
                             <img src="dist/img/crews/<?php echo $act['pic']; ?>" class="rounded-circle" style="width:32px;height:32px;object-fit:cover;flex-shrink:0;margin-top:2px;">
                             <div style="flex:1;min-width:0;">

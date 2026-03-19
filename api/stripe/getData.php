@@ -84,6 +84,7 @@ $sk = $accounts[$account]['sk'];
 $currency = $accounts[$account]['currency'];
 $primaryCur = strtolower($currency);
 $stripe = new \Stripe\StripeClient($sk);
+$isConnect = ($account === 'connect');
 
 $now = time();
 $todayStart = strtotime('today 00:00:00');
@@ -104,20 +105,30 @@ $result = [];
 
 try {
 
-// 1. Balance
+// 1. Balance (multi-currency for Connect)
 $balance = $stripe->balance->retrieve();
 $availableAmount = 0; $pendingAmount = 0;
-foreach ($balance->available as $b) { if (strtolower($b->currency) === $primaryCur) $availableAmount += $b->amount; }
-foreach ($balance->pending as $b) { if (strtolower($b->currency) === $primaryCur) $pendingAmount += $b->amount; }
-$result['balance'] = ['available' => $availableAmount / 100, 'pending' => $pendingAmount / 100, 'currency' => $currency];
+$balanceByCurrency = [];
+foreach ($balance->available as $b) {
+    $cur = strtoupper($b->currency);
+    if (!isset($balanceByCurrency[$cur])) $balanceByCurrency[$cur] = ['available' => 0, 'pending' => 0];
+    $balanceByCurrency[$cur]['available'] += $b->amount / 100;
+    $availableAmount += $b->amount;
+}
+foreach ($balance->pending as $b) {
+    $cur = strtoupper($b->currency);
+    if (!isset($balanceByCurrency[$cur])) $balanceByCurrency[$cur] = ['available' => 0, 'pending' => 0];
+    $balanceByCurrency[$cur]['pending'] += $b->amount / 100;
+    $pendingAmount += $b->amount;
+}
+$result['balance'] = ['available' => $availableAmount / 100, 'pending' => $pendingAmount / 100, 'currency' => $currency, 'by_currency' => $balanceByCurrency];
 
-// 2. Payouts — ดึง upcoming + recent
-$upcomingPayouts = $stripe->payouts->all(['limit' => 10, 'arrival_date' => ['gte' => strtotime('today')]]);
-$recentPayouts = $stripe->payouts->all(['limit' => 10]);
+// 2. Payouts — ดึงตามช่วงเวลาที่เลือก + upcoming
 $result['payouts'] = [];
 $seenIds = [];
-$allPayoutsList = array_merge($upcomingPayouts->data ?? [], $recentPayouts->data ?? []);
-foreach ($allPayoutsList as $p) {
+
+$upcomingPayouts = $stripe->payouts->all(['limit' => 100, 'arrival_date' => ['gte' => strtotime('today')]]);
+foreach ($upcomingPayouts->data as $p) {
     if (isset($seenIds[$p->id])) continue;
     $seenIds[$p->id] = true;
     $result['payouts'][] = [
@@ -125,6 +136,20 @@ foreach ($allPayoutsList as $p) {
         'status' => $p->status, 'arrival_date' => date('Y-m-d', $p->arrival_date), 'created' => date('Y-m-d H:i', $p->created)
     ];
 }
+
+$periodPayouts = $stripe->payouts->all(['limit' => 100, 'created' => ['gte' => $periodStart, 'lt' => $periodEnd + 86400]]);
+foreach ($periodPayouts->autoPagingIterator() as $p) {
+    if (isset($seenIds[$p->id])) continue;
+    $seenIds[$p->id] = true;
+    $result['payouts'][] = [
+        'id' => $p->id, 'amount' => $p->amount / 100, 'currency' => strtoupper($p->currency),
+        'status' => $p->status, 'arrival_date' => date('Y-m-d', $p->arrival_date), 'created' => date('Y-m-d H:i', $p->created)
+    ];
+}
+
+usort($result['payouts'], function($a, $b) {
+    return strtotime($b['created']) - strtotime($a['created']);
+});
 // หา next payout จาก upcoming (arrival_date เร็วที่สุด)
 $nextExpectedPayout = 0; $payoutExpectedDate = '';
 $nearestArrival = PHP_INT_MAX;
@@ -136,10 +161,10 @@ foreach ($upcomingPayouts->data as $p) {
     }
 }
 if ($nextExpectedPayout === 0) {
-    foreach ($recentPayouts->data as $p) {
-        if (in_array($p->status, ['in_transit', 'pending'])) {
-            $nextExpectedPayout = $p->amount / 100;
-            $payoutExpectedDate = date('M j', $p->arrival_date);
+    foreach ($result['payouts'] as $po) {
+        if (in_array($po['status'], ['in_transit', 'pending'])) {
+            $nextExpectedPayout = $po['amount'];
+            $payoutExpectedDate = date('M j', strtotime($po['arrival_date']));
             break;
         }
     }
@@ -173,15 +198,17 @@ foreach ($txnList->autoPagingIterator() as $tx) {
     $txnCount++;
     $amt = $tx->amount / 100; $net = $tx->net / 100; $fee = $tx->fee / 100;
     $ts = $tx->created; $type = $tx->type;
+    // Include transfer type for Connect accounts (revenue shares)
+    $isGrossType = ($type === 'charge' || $type === 'payment' || $type === 'transfer');
     if ($ts >= $periodStart) {
-        if ($type === 'charge' || $type === 'payment') {
+        if ($isGrossType) {
             $grossTotal += $amt; $netTotal += $net; $feeTotal += $fee;
             if (!$skipDaily) { $day = date('M j', $ts); if (isset($dailyGross[$day])) $dailyGross[$day] += $amt; if (isset($dailyNet[$day])) $dailyNet[$day] += $net; }
         } elseif ($type === 'refund') { $refundTotal += abs($amt); }
-        if ($ts >= $todayStart && ($type === 'charge' || $type === 'payment')) $todayGross += $amt;
-        if ($ts >= $yesterdayStart && $ts < $todayStart && ($type === 'charge' || $type === 'payment')) $yesterdayGross += $amt;
+        if ($ts >= $todayStart && $isGrossType) $todayGross += $amt;
+        if ($ts >= $yesterdayStart && $ts < $todayStart && $isGrossType) $yesterdayGross += $amt;
     } elseif ($ts >= $prevPeriodStart && $ts < $periodStart) {
-        if ($type === 'charge' || $type === 'payment') { $prevGross += $amt; $prevNet += $net; }
+        if ($isGrossType) { $prevGross += $amt; $prevNet += $net; }
     }
 }
 unset($txnList, $tx);
@@ -207,22 +234,20 @@ foreach ($periodCharges->autoPagingIterator() as $c) {
     if ($c->status === 'succeeded') {
         $isDupe = false;
         if ($pi) { if (isset($seenPISucc[$pi])) $isDupe = true; else $seenPISucc[$pi] = true; }
-        if (!$isDupe && $chargeCur === $primaryCur) {
+        if (!$isDupe && ($isConnect || $chargeCur === $primaryCur)) {
             if ($c->captured) { $succeededTotal += $amt; if ($c->refunded) $refundedTotal2 += ($c->amount_refunded ?? 0) / 100; }
             else $uncapturedTotal += $amt;
-            if ($days <= 90) {
-                $custId = $c->customer ?: '';
-                if ($custId) {
-                    $custName = $c->billing_details->name ?: '';
-                    if (!isset($customerSpend[$custId])) $customerSpend[$custId] = ['email' => $custEmail, 'name' => $custName, 'amount' => 0];
-                    $customerSpend[$custId]['amount'] += $amt;
-                }
+            $custId = $c->customer ?: '';
+            if ($custId) {
+                $custName = $c->billing_details->name ?: '';
+                if (!isset($customerSpend[$custId])) $customerSpend[$custId] = ['email' => $custEmail, 'name' => $custName, 'amount' => 0];
+                $customerSpend[$custId]['amount'] += $amt;
             }
         }
     } elseif ($c->status === 'failed') {
         $isDupe = false;
         if ($pi) { if (isset($seenPIFail[$pi])) $isDupe = true; else $seenPIFail[$pi] = true; }
-        if (!$isDupe && $chargeCur === $primaryCur) {
+        if (!$isDupe && ($isConnect || $chargeCur === $primaryCur)) {
             $failedTotal += $amt;
             if (count($failedPayments) < 4) {
                 $failedPayments[] = ['id' => $c->id, 'amount' => round($amt, 2), 'created' => date('M j, Y', $c->created), 'description' => $c->description ?: 'Payment'];
@@ -236,7 +261,7 @@ $result['failedPayments'] = array_slice($failedPayments, 0, 4);
 
 // Top customers
 $result['topCustomers'] = [];
-if ($days <= 90 && !empty($customerSpend)) {
+if (!empty($customerSpend)) {
     uasort($customerSpend, function($a, $b) { return $b['amount'] <=> $a['amount']; });
     $i = 0;
     foreach ($customerSpend as $cid => $info) {
@@ -278,19 +303,41 @@ $prevMrr = $mrr - $newSubMrr; if ($prevMrr < 0) $prevMrr = 0;
 $mrrChange = $prevMrr > 0 ? round(($mrr - $prevMrr) / $prevMrr * 100, 1) : 0;
 $result['mrr'] = ['total' => round($mrr, 2), 'previous' => round($prevMrr, 2), 'change' => $mrrChange];
 
-// 6. Customers
+// 6. Customers / Connected Accounts
 $newCustCount = 0; $dailyNewCust = [];
 if (!$skipDaily) { for ($t = $periodStart; $t <= $periodEnd; $t += 86400) { $d = date('M j', $t); $dailyNewCust[$d] = 0; } }
-$custList = $stripe->customers->all(['limit' => 100, 'created' => ['gte' => $periodStart, 'lt' => $periodEnd + 86400]]);
-foreach ($custList->autoPagingIterator() as $cu) { $newCustCount++; if (!$skipDaily) { $d = date('M j', $cu->created); if (isset($dailyNewCust[$d])) $dailyNewCust[$d]++; } }
-unset($custList, $cu);
-$prevCustCount = 0;
-$prevCustList = $stripe->customers->all(['limit' => 100, 'created' => ['gte' => $prevPeriodStart, 'lt' => $periodStart]]);
-foreach ($prevCustList->autoPagingIterator() as $cu) { $prevCustCount++; }
-unset($prevCustList, $cu);
+
+if ($isConnect) {
+    // For Connect: count connected accounts instead of customers
+    // Fetch all accounts and filter by created date manually using toArray()
+    $acctList = $stripe->accounts->all(['limit' => 100]);
+    $prevCustCount = 0;
+    foreach ($acctList->autoPagingIterator() as $acct) {
+        $acctArr = $acct->toArray();
+        $acctCreated = $acctArr['created'] ?? 0;
+        if ($acctCreated >= $periodStart && $acctCreated < $periodEnd + 86400) {
+            $newCustCount++;
+            if (!$skipDaily) { $d = date('M j', $acctCreated); if (isset($dailyNewCust[$d])) $dailyNewCust[$d]++; }
+        } elseif ($acctCreated >= $prevPeriodStart && $acctCreated < $periodStart) {
+            $prevCustCount++;
+        }
+    }
+    unset($acctList, $acct, $acctArr);
+} else {
+    $custList = $stripe->customers->all(['limit' => 100, 'created' => ['gte' => $periodStart, 'lt' => $periodEnd + 86400]]);
+    foreach ($custList->autoPagingIterator() as $cu) { $newCustCount++; if (!$skipDaily) { $d = date('M j', $cu->created); if (isset($dailyNewCust[$d])) $dailyNewCust[$d]++; } }
+    unset($custList, $cu);
+    $prevCustCount = 0;
+    $prevCustList = $stripe->customers->all(['limit' => 100, 'created' => ['gte' => $prevPeriodStart, 'lt' => $periodStart]]);
+    foreach ($prevCustList->autoPagingIterator() as $cu) { $prevCustCount++; }
+    unset($prevCustList, $cu);
+}
 $newCustChange = $prevCustCount > 0 ? round(($newCustCount - $prevCustCount) / $prevCustCount * 100, 0) : 0;
 $result['newCustomers'] = ['count' => $newCustCount, 'previous' => $prevCustCount, 'change' => $newCustChange, 'daily' => $dailyNewCust];
 
+$curSymbolMap = ['usd'=>'$','aud'=>'A$','thb'=>'฿','gbp'=>'£','eur'=>'€','nzd'=>'NZ$'];
+$result['currencySymbol'] = $curSymbolMap[$primaryCur] ?? strtoupper($currency);
+$result['currencyCode'] = strtoupper($currency);
 $result['period'] = ['days' => $days, 'start' => date('M j', $periodStart), 'end' => date('M j', $periodEnd), 'timezone' => $timezone];
 $result['debug'] = [
     'balance_txns_fetched' => $txnCount, 'charges_fetched' => $pcCount,
