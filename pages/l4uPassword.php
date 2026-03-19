@@ -138,7 +138,7 @@ $loginID = $_SESSION['id'];
 
                     <div class="card-body">
                         <div class="card">
-                            <div class="card-body table-responsive p-4" style="height: 620px;">
+                            <div class="card-body table-responsive p-4" style="height: 820px;">
                                 <table id="datatable" class="table table-borderless table-striped table-hover"
                                     style="width:100%">
                                     <thead class="thead-dark">

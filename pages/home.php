@@ -445,45 +445,78 @@ $ovDataJson = json_encode([
                     </div>
                     <div class="card-body py-2">
                         <!-- Summary numbers (centered) -->
-                        <div class="d-flex justify-content-center mb-3" style="gap:10px;">
-                            <div class="ov-home-num ov-home-green">
+                        <div class="d-flex justify-content-center mb-4" style="gap:18px;">
+                            <div class="ov-home-num ov-home-num-lg ov-home-green">
                                 <span>+<?php echo $ovTotalSignup; ?></span>
                                 <small>Signup</small>
                             </div>
-                            <div class="ov-home-num ov-home-red">
+                            <div class="ov-home-num ov-home-num-lg ov-home-red">
                                 <span>-<?php echo $ovTotalUnsub; ?></span>
                                 <small>Unsub</small>
                             </div>
-                            <div class="ov-home-num <?php echo $ovNet >= 0 ? 'ov-home-warn' : 'ov-home-gray'; ?>">
+                            <div class="ov-home-num ov-home-num-lg <?php echo $ovNet >= 0 ? 'ov-home-warn' : 'ov-home-gray'; ?>">
                                 <span><?php echo ($ovNet >= 0 ? '+' : '') . $ovNet; ?></span>
                                 <small>Net</small>
                             </div>
                         </div>
-                        <!-- Charts: Signup (left) | Unsub (right) -->
-                        <div class="row">
-                            <!-- Signup Column -->
-                            <div class="col-md-6 ov-chart-col">
-                                <h5 class="text-center mb-3" style="font-size:13px;font-weight:700;color:#10b981;"><i class="bi bi-plus-circle"></i> Signup</h5>
-                                <div class="mb-4">
-                                    <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Country</h6>
-                                    <div style="height:220px; "><canvas id="chartSignupCountry"></canvas></div>
-                                </div>
-                                <div>
-                                    <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Type</h6>
-                                    <div style="height:220px;" ><canvas id="chartSignupType"></canvas></div>
-                                </div>
+
+                        <!-- ── Signup Section (top) ── -->
+                        <h5 class="mb-3" style="font-size:14px;font-weight:700;color:#10b981;"><i class="bi bi-plus-circle"></i> Signup</h5>
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Country</h6>
+                                <div style="height:220px;"><canvas id="chartSignupCountry"></canvas></div>
+                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                    <tbody>
+                                    <?php foreach(array_slice($ovSignupByCountry, 0, 10, true) as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-success"><?php echo $v; ?></td></tr>
+                                    <?php endforeach; ?>
+                                    <?php if(empty($ovSignupByCountry)): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    </tbody>
+                                </table>
                             </div>
-                            <!-- Unsub Column -->
-                            <div class="col-md-6 ov-chart-col" style="border-left:2px solid #e2e8f0;">
-                                <h5 class="text-center mb-3" style="font-size:13px;font-weight:700;color:#ef4444;"><i class="bi bi-dash-circle"></i> Unsubscribe</h5>
-                                <div class="mb-4">
-                                    <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Country</h6>
-                                    <div style="height:220px;"><canvas id="chartUnsubCountry"></canvas></div>
-                                </div>
-                                <div>
-                                    <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Type</h6>
-                                    <div style="height:220px;"><canvas id="chartUnsubType"></canvas></div>
-                                </div>
+                            <div class="col-md-6">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Type</h6>
+                                <div style="height:220px;"><canvas id="chartSignupType"></canvas></div>
+                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                    <tbody>
+                                    <?php foreach(array_slice($ovSignupByType, 0, 10, true) as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-success"><?php echo $v; ?></td></tr>
+                                    <?php endforeach; ?>
+                                    <?php if(empty($ovSignupByType)): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr style="border-color:#e2e8f0;margin:0 0 16px 0;">
+
+                        <!-- ── Unsubscribe Section (bottom) ── -->
+                        <h5 class="mb-3" style="font-size:14px;font-weight:700;color:#ef4444;"><i class="bi bi-dash-circle"></i> Unsubscribe</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Country</h6>
+                                <div style="height:220px;"><canvas id="chartUnsubCountry"></canvas></div>
+                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                    <tbody>
+                                    <?php foreach(array_slice($ovUnsubByCountry, 0, 10, true) as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-danger"><?php echo $v; ?></td></tr>
+                                    <?php endforeach; ?>
+                                    <?php if(empty($ovUnsubByCountry)): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Type</h6>
+                                <div style="height:220px;"><canvas id="chartUnsubType"></canvas></div>
+                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                    <tbody>
+                                    <?php foreach(array_slice($ovUnsubByType, 0, 10, true) as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-danger"><?php echo $v; ?></td></tr>
+                                    <?php endforeach; ?>
+                                    <?php if(empty($ovUnsubByType)): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -1285,11 +1318,17 @@ function nameOnly($fullName){
 .ov-home-num { display:flex; flex-direction:column; align-items:center; border-radius:8px; padding:6px 14px; min-width:64px; background:#f1f5f9; }
 .ov-home-num span { font-size:1.4rem; font-weight:700; line-height:1; }
 .ov-home-num small { font-size:0.7rem; color:#64748b; margin-top:2px; }
+.ov-home-num-lg { padding:14px 28px; min-width:100px; border-radius:12px; }
+.ov-home-num-lg span { font-size:2.2rem; }
+.ov-home-num-lg small { font-size:0.85rem; margin-top:4px; }
 .ov-home-green span { color:#10b981; }
 .ov-home-red   span { color:#ef4444; }
 .ov-home-warn  span { color:#f59e0b; }
 .ov-home-gray  span { color:#64748b; }
 .ov-chart-col { padding-top:10px; padding-bottom:10px; }
+.ov-num-table { font-size:11px; margin-bottom:0; }
+.ov-num-table td { padding:2px 6px; }
+.ov-num-table td:first-child { color:#475569; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 @media (max-width:767px) { .ov-chart-col { border-left:none!important; border-top:2px solid #e2e8f0; margin-top:10px; } }
 </style>
 
@@ -1300,31 +1339,7 @@ function nameOnly($fullName){
         var COLORS = ['#0361D1','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16','#f97316','#6366f1'];
         var ovData = <?php echo $ovDataJson ?: '{}'; ?>;
 
-        // Plugin: draw data values on each slice
-        Chart.pluginService.register({
-            afterDatasetsDraw: function(chart) {
-                if (chart.config.type !== 'doughnut') return;
-                var ctx = chart.ctx;
-                chart.data.datasets.forEach(function(dataset, di) {
-                    var meta = chart.getDatasetMeta(di);
-                    if (meta.hidden) return;
-                    meta.data.forEach(function(element, index) {
-                        var val = dataset.data[index];
-                        if (!val || val === 0) return;
-                        var pos = element.tooltipPosition();
-                        ctx.save();
-                        ctx.fillStyle = '#fff';
-                        ctx.font = 'bold 11px sans-serif';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(val, pos.x, pos.y);
-                        ctx.restore();
-                    });
-                });
-            }
-        });
-
-        function makeDoughnut(canvasId, dataObj) {
+        function makeBar(canvasId, dataObj, barColor) {
             if (!dataObj) return;
             var labels = Object.keys(dataObj);
             var values = [];
@@ -1335,32 +1350,41 @@ function nameOnly($fullName){
             var canvas = document.querySelector(canvasId);
             if (!canvas) return;
             new Chart(canvas.getContext('2d'), {
-                type: 'doughnut',
+                type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
                         data: values,
-                        backgroundColor: COLORS.slice(0, labels.length),
-                        borderWidth: 2,
-                        borderColor: '#fff'
+                        backgroundColor: barColor || COLORS.slice(0, labels.length),
+                        borderWidth: 0,
+                        barPercentage: 0.65,
+                        categoryPercentage: 0.8
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutoutPercentage: 50,
-                    legend: {
-                        position: 'bottom',
-                        labels: { usePointStyle: true, padding: 8, fontSize: 10 }
+                    legend: { display: false },
+                    scales: {
+                        yAxes: [{ ticks: { beginAtZero: true, stepSize: 1, fontSize: 10 }, gridLines: { color: '#f1f5f9' } }],
+                        xAxes: [{ ticks: { fontSize: 9, maxRotation: 45, minRotation: 0 }, gridLines: { display: false } }]
+                    },
+                    tooltips: {
+                        callbacks: { label: function(t) { return t.yLabel; } }
                     }
                 }
             });
         }
 
-        makeDoughnut('#chartSignupCountry', ovData.signup ? ovData.signup.byCountry : {});
-        makeDoughnut('#chartSignupType',    ovData.signup ? ovData.signup.byType : {});
-        makeDoughnut('#chartUnsubCountry',  ovData.unsub  ? ovData.unsub.byCountry : {});
-        makeDoughnut('#chartUnsubType',     ovData.unsub  ? ovData.unsub.byType : {});
+        var greenBars = ovData.signup ? Object.keys(ovData.signup.byCountry||{}).map(function(){ return '#10b981'; }) : [];
+        var greenBars2 = ovData.signup ? Object.keys(ovData.signup.byType||{}).map(function(){ return '#34d399'; }) : [];
+        var redBars = ovData.unsub ? Object.keys(ovData.unsub.byCountry||{}).map(function(){ return '#ef4444'; }) : [];
+        var redBars2 = ovData.unsub ? Object.keys(ovData.unsub.byType||{}).map(function(){ return '#f87171'; }) : [];
+
+        makeBar('#chartSignupCountry', ovData.signup ? ovData.signup.byCountry : {}, greenBars);
+        makeBar('#chartSignupType',    ovData.signup ? ovData.signup.byType : {},    greenBars2);
+        makeBar('#chartUnsubCountry',  ovData.unsub  ? ovData.unsub.byCountry : {}, redBars);
+        makeBar('#chartUnsubType',     ovData.unsub  ? ovData.unsub.byType : {},    redBars2);
     } catch(e) {
         console.error('Overview chart error:', e);
     }

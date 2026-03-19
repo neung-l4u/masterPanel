@@ -166,6 +166,12 @@ include ('assets/api/checkSession.php');
                                 <p>Revenue</p>
                             </a>
                         </li>
+                        <li class="nav-item pl-2">
+                            <a href="modules/mondayReport/views/index.php?id=<?php echo $_SESSION['id']; ?>" target="_blank" class="nav-link">
+                                <i class="nav-icon mr-3 bi bi-kanban"></i>
+                                <p>Monday Report &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <?php } ?>
