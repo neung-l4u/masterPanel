@@ -1,4 +1,8 @@
 <?php
+ob_start();
+error_reporting(0);
+ini_set('display_errors', 0);
+
 require_once '../../../../assets/db/db.php';
 require_once '../../../../assets/db/initDB.php';
 
@@ -381,7 +385,11 @@ if ($totalPercentChange >= 5) {
 }
 
 // JSON mode: return data for charts
-if (isset($_GET['format']) && $_GET['format'] === 'json') {
+$isJson = (isset($_GET['format']) && $_GET['format'] === 'json')
+    || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)
+    || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest');
+if ($isJson) {
+    ob_end_clean();
     header('Content-Type: application/json');
     echo json_encode([
         'period' => ['start' => $startDate, 'end' => $endDate],

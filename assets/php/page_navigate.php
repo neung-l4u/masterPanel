@@ -165,6 +165,14 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Tools Management & Logs";
         break;
+    case "feedbackMonday":
+        $showPage = "feedbackMonday.php";
+        $activeMenu["lv1"] = "sysSettings";
+        $activeMenu["lv2"] = "feedbackMonday";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataFeedbackMonday.php";
+        $title = "Master panel : Feedback Monday";
+        break;
     case "unsub":
         $showPage = "unSubmitted.php";
         $activeMenu["lv1"] = "";

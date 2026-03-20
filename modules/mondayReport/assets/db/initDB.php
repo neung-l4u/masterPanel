@@ -4,7 +4,7 @@ error_reporting(E_ERROR | E_PARSE);
 
 $dbHost = 'localhost';
 $dbUser = 'root';
-$dbPass = '';
-$dbName = 'db_localforyou';
+$dbPass = 'root';
+$dbName = 'DB_localforyou';
 
 $db = new db($dbHost, $dbUser, $dbPass, $dbName);

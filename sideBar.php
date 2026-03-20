@@ -240,6 +240,12 @@ include ('assets/api/checkSession.php');
                             </a>
                         </li>
                         <li class="nav-item pl-2">
+                            <a href="main.php?p=feedbackMonday" class="nav-link <?php echo $activeMenu["lv2"] == "feedbackMonday" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-chat-left-text"></i>
+                                <p>Feedback Monday</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
                             <a href="main.php?p=l4uPassword" class="nav-link <?php echo $activeMenu["lv2"] == "l4uPassword" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-key"></i>
                                 <p>Password</p>

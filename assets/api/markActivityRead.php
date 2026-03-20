@@ -10,8 +10,8 @@ if (isset($_POST['latestId'])) {
     
     try {
         // Mark all activities up to latestId as read for this user
-        $result = $db->query('UPDATE CoinLogs SET is_read = 1, read_by_user = ? WHERE ownerID = ? AND id <= ?', 
-            $userID, $userID, $latestId);
+        $result = $db->query('UPDATE CoinLogs SET is_read = 1 WHERE ownerID = ? AND id <= ?', 
+            $userID, $latestId);
         
         echo json_encode(['status' => 'ok']);
     } catch (Exception $e) {

@@ -23,10 +23,8 @@ $person = $db->query('SELECT st.sNickName AS "nick", st.sName AS "name", te.name
 $stat = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo WHERE mo.staffID = ? GROUP BY mo.staffID;',$_SESSION['id'])->fetchArray();
 $stat['count'] = !empty($stat['count']) ? number_format($stat['count']) : 0;
 
-//$sumAll = $db->query('SELECT COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo')->fetchArray();
 $sumAll = $db->query('SELECT COUNT(DISTINCT mo.id) AS count FROM mondayslowreportlogs mo;')->fetchArray();
 
-//$sumDate = $db->query('SELECT DATE(whenTime) AS "day",COUNT(mo.id) AS "count" FROM mondayslowreportlogs mo GROUP BY DATE(whenTime) ORDER BY DATE(whenTime) DESC LIMIT 0,10;')->fetchAll();
 $sumDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FROM mondayslowreportlogs mo GROUP BY DATE(mo.whenTime) ORDER BY day DESC LIMIT 10;')->fetchAll();
 $topDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FROM mondayslowreportlogs mo GROUP BY DATE(mo.whenTime) ORDER BY count DESC LIMIT 1;')->fetchArray();
 $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FROM mondayslowreportlogs mo GROUP BY DATE(mo.whenTime) ORDER BY count ASC LIMIT 1;')->fetchArray();
@@ -40,189 +38,262 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-LGKDYHL23T');
     </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
-    <link rel="stylesheet" href="../assets/css/index.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="../assets/js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="../assets/css/bootstrap5.3.3.min.css">
     <script src="../assets/js/bootstrap.bundle.5.3.3.min.js"></script>
     <title>Monday Report</title>
     <style>
-        .dt-right{
-            padding-right: 1.5rem !important;
-        }
-        .avatar{
-            height: 8rem;
-            border-radius: 10px;
-        }
-        .clickAble{
-            cursor: pointer;
-            height: 1rem;
-        }
-        .underPicBlock{
-            display: inline-block;
-            width: 110px;
-        }
-        .dayBlock{
-            display: inline-block;
-            width: 110px;
-            border: 1px solid black;
-        }
+        /* 3D Button base */
+        button { position: relative; display: inline-block; cursor: pointer; outline: none; border: 0; text-decoration: none; font-family: inherit; }
+        /* Send Report btn */
+        button.sendReport { font-weight: 600; color: #382b22; text-transform: uppercase; padding: 1em 2em; background: #fff0f0; border: 2px solid #b18597; border-radius: 0.75em; transform-style: preserve-3d; transition: transform 150ms cubic-bezier(0,0,.58,1), background 150ms cubic-bezier(0,0,.58,1); }
+        button.sendReport::before { position: absolute; content: ''; width: 100%; height: 100%; top: 0; left: 0; background: #f9c4d2; border-radius: inherit; box-shadow: 0 0 0 2px #b18597, 0 0.625em 0 0 #ffe3e2; transform: translate3d(0, 0.75em, -1em); transition: transform 150ms cubic-bezier(0,0,.58,1), box-shadow 150ms cubic-bezier(0,0,.58,1); }
+        button.sendReport:hover { background: #ffe9e9; transform: translate(0, 0.25em); }
+        button.sendReport:hover::before { box-shadow: 0 0 0 2px #b18597, 0 0.5em 0 0 #ffe3e2; transform: translate3d(0, 0.5em, -1em); }
+        button.sendReport:active { background: #ffe9e9; transform: translate(0, 0.75em); }
+        button.sendReport:active::before { box-shadow: 0 0 0 2px #b18597, 0 0 #ffe3e2; transform: translate3d(0, 0, -1em); }
+        /* Advanced Report btn */
+        button.advancedReport { font-weight: 600; color: #1b2e4b; text-transform: uppercase; padding: 1em 2em; background: #e8f0fe; border: 2px solid #5b86c5; border-radius: 0.75em; transform-style: preserve-3d; transition: transform 150ms cubic-bezier(0,0,.58,1), background 150ms cubic-bezier(0,0,.58,1); }
+        button.advancedReport::before { position: absolute; content: ''; width: 100%; height: 100%; top: 0; left: 0; background: #b6d4fe; border-radius: inherit; box-shadow: 0 0 0 2px #5b86c5, 0 0.625em 0 0 #d6e4f7; transform: translate3d(0, 0.75em, -1em); transition: transform 150ms cubic-bezier(0,0,.58,1), box-shadow 150ms cubic-bezier(0,0,.58,1); }
+        button.advancedReport:hover { background: #dce8fa; transform: translate(0, 0.25em); }
+        button.advancedReport:hover::before { box-shadow: 0 0 0 2px #5b86c5, 0 0.5em 0 0 #d6e4f7; transform: translate3d(0, 0.5em, -1em); }
+        button.advancedReport:active { background: #dce8fa; transform: translate(0, 0.75em); }
+        button.advancedReport:active::before { box-shadow: 0 0 0 2px #5b86c5, 0 0 #d6e4f7; transform: translate3d(0, 0, -1em); }
     </style>
 </head>
-<body>
-<div class="container pt-5">
-    <div class="row mb-3">
-        <div class="col text-center">
-            <img src="../assets/images/mondayLogo.png" alt="monday" style="width: 8rem;">
-            <h4 class="text-center">Report slow loading issues</h4>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+
+<div class="max-w-7xl mx-auto px-4 py-10">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <img src="../assets/images/mondayLogo.png" alt="monday" class="w-24 mx-auto mb-3">
+        <h1 class="text-2xl font-bold text-gray-800">Report Slow Loading Issues</h1>
+        <p class="text-gray-500 text-sm mt-1">Help us track and fix Monday.com performance</p>
+    </div>
+
+    <?php if(empty($_SESSION['id'])){ ?>
+    <!-- Not logged in -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+        <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        <p class="text-gray-600 mb-4">Please log in before using this service.</p>
+        <a href="https://report.localforyou.com/" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium">Login</a>
+    </div>
+    <?php exit(); } else { ?>
+
+    <!-- Action Bar -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-gray-600 leading-relaxed">
+                The IT team is collecting statistics to fix Monday.com slow loading problem for everyone.<br>
+                <span class="text-red-500 font-medium">Whenever you notice that Monday.com is slower than 1 minute,</span><br>
+                please click the report button once.
+            </div>
+            <div class="flex items-center gap-4 flex-shrink-0">
+                <button type="button" class="sendReport" onclick="sendReport()">Send Report</button>
+                <span class="text-alert hidden">
+                    <span class="text-green-600 font-bold text-sm">DONE !!</span>
+                </span>
+                <button type="button" class="advancedReport" data-bs-toggle="modal" data-bs-target="#advancedReportModal">Advanced Report</button>
+            </div>
         </div>
     </div>
-    <?php if(empty($_SESSION['id'])){ ?>
-        <div class="row mb-5">
-            <div class="col">
-                Please <a href="https://report.localforyou.com/">Login</a> before use this service.
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Left: My Report Statistics -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <h2 class="text-lg font-semibold text-blue-600 mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                My Report Statistics
+            </h2>
+
+            <!-- Profile Card -->
+            <div class="flex items-start gap-4 mb-6">
+                <img src="https://report.localforyou.com/dist/img/crews/<?php echo $person['pic'];?>" 
+                     class="w-20 h-20 rounded-xl object-cover shadow-sm" alt="me">
+                <div class="space-y-1">
+                    <p class="text-gray-800"><span class="font-semibold">Reporter:</span> <?php echo showName($person['nick'],$person['name']); ?></p>
+                    <p class="text-gray-800"><span class="font-semibold">Team:</span> <?php echo firstOnly($person['team']); ?></p>
+                    <p class="text-gray-800"><span class="font-semibold">Total reported:</span> <span id="counterNum" class="text-blue-600 font-bold"><?php echo number_format($stat['count']); ?></span> times</p>
+                    <a href="calendar.php" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm mt-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        View Calendar
+                    </a>
+                </div>
             </div>
-        </div>
-        <?php
-        exit();
-    }else{
-        ?>
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-8">
-                        <p>
-                            <small>
-                                The IT team is collecting statistics to fix Monday.com slow loading problem for everyone. <br>
-                                <span class="text-danger">Whenever you notice that Monday.com is slower than 1 minute,</span><br>
-                                please click the report button once.
-                            </small>
-                        </p>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-3 gap-3 mb-5">
+                <div class="bg-blue-50 rounded-xl p-3 text-center">
+                    <p class="text-xs text-gray-500">Start counting</p>
+                    <p class="text-sm font-semibold text-gray-700"><?php echo formatDate($startCountDate); ?></p>
+                    <p class="text-xs text-gray-400"><?php echo timeAgoInDays($startCountDate); ?></p>
+                </div>
+                <div class="bg-green-50 rounded-xl p-3 text-center">
+                    <p class="text-xs text-gray-500">Most reported</p>
+                    <p class="text-sm font-semibold text-gray-700"><?php echo formatDate($topDate['day']); ?></p>
+                    <p class="text-xs text-green-600 font-medium"><?php echo number_format($topDate['count']); ?> times</p>
+                </div>
+                <div class="bg-orange-50 rounded-xl p-3 text-center">
+                    <p class="text-xs text-gray-500">Least reported</p>
+                    <p class="text-sm font-semibold text-gray-700"><?php echo formatDate($lowDate['day']); ?></p>
+                    <p class="text-xs text-orange-600 font-medium"><?php echo number_format($lowDate['count']); ?> times</p>
+                </div>
+            </div>
+
+            <!-- Summary + Last 10 days -->
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-gray-700">Summary All:</span>
+                    <span class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-full"><?php echo number_format($sumAll['count']); ?></span>
+                </div>
+                <button onclick="reloadPage();" class="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    Reload
+                </button>
+            </div>
+
+            <div id="divStat">
+                <p class="text-xs text-gray-400 mb-2">Last 10 days</p>
+                <div class="space-y-1.5">
+                    <?php $i=1; foreach ($sumDate as $row){ ?>
+                    <div class="flex items-center justify-between bg-gray-50 hover:bg-blue-50 rounded-lg px-3 py-2 transition group">
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="text-gray-400 w-5 text-right"><?php echo $i; ?>.</span>
+                            <a href="viewDateDetail.php?date=<?php echo $row['day']; ?>" target="_blank" class="text-blue-500 hover:text-blue-700 opacity-0 group-hover:opacity-100 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </a>
+                            <span class="text-gray-700"><?php echo formatDate($row['day']); ?></span>
+                        </div>
+                        <span class="bg-blue-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full"><?php echo number_format($row['count']); ?></span>
                     </div>
-                    <div class="col">
-                        <button type="button" class="btn sendReport" onclick="sendReport()">Send Report</button>
-                        <span class="text-alert pl-3">
-                        <b class="text-success">DONE !!</b>
-                    </span>
-                    </div>
+                    <?php $i++; } ?>
                 </div>
             </div>
         </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-6 p-3">
-                        <h6 class="card-subtitle mb-4 text-primary">My Report Statistics.</h6>
-                        <div class="d-flex gap-2">
-                            <div style="width: 10rem">
-                                <img src="https://report.localforyou.com/dist/img/crews/<?php echo $person['pic'];?>" class="avatar" alt="me">
-                            </div>
-                            <div style="width: 100%" class="d-flex flex-column pl-3">
-                                <span><b>Reporter: </b> <?php echo showName($person['nick'],$person['name']); ?></span>
-                                <span><b>Team: </b> <?php echo firstOnly($person['team']); ?></span>
-                                <span><b>The total I reported: </b> <span id="counterNum"><?php echo number_format($stat['count']); ?></span> times.</span>
-                                <span><a href="calendar.php" target="_blank">
-                                        <svg  height="1.3rem"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#0d6efd" d="M128 0c17.7 0 32 14.3 32 32l0 32 128 0 0-32c0-17.7 14.3-32 32-32s32 14.3 32 32l0 32 48 0c26.5 0 48 21.5 48 48l0 48L0 160l0-48C0 85.5 21.5 64 48 64l48 0 0-32c0-17.7 14.3-32 32-32zM0 192l448 0 0 272c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 192zm64 80l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm128 0l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM64 400l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zm112 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16z"/></svg></a></span>
-                            </div>
-                        </div>
 
-
-                        <div class="mt-3">
-                            <div class="d-flex justify-content-between">
-                                <small>
-                                    <b class="underPicBlock">Start counting: </b> <?php echo formatDate($startCountDate).' ('.timeAgoInDays($startCountDate).')'; ?>
-                                </small>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <small>
-                                    <b class="underPicBlock">Most reported: </b> <?php echo formatDate($topDate['day']).' = '.number_format($topDate['count']); ?> times.
-                                </small>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <small>
-                                    <b class="underPicBlock">Least reported: </b> <?php echo formatDate($lowDate['day']).' = '.number_format($lowDate['count']); ?> times.
-                                </small>
-                                <div class="d-flex justify-content-end align-items-baseline gap-1 mb-3 pr-3">
-                                    <small class="clickAble" onclick="reloadPage();"><b>reload</b></small>
-                                    <img class="clickAble" onclick="reloadPage();" src="../assets/images/reload.png" alt="reload">
-                                </div>
-                            </div>
-                            <div class="border rounded" id="divStat">
-                                <table class="table table-hover table-borderless">
-                                    <tr>
-                                        <th style="width: 120px;">Summary All</th>
-                                        <td style="text-align: right; padding-right: 1rem;">
-                                            <?php echo number_format($sumAll['count']); ?> times.
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td colspan="2" style="text-align: left; padding-left: 1rem;">
-                                            <b>Date: </b><small class="text-muted">(Last 10 days)</small>
-                                            <ul class="list-group">
-                                                <?php $i=1;
-                                                foreach ($sumDate as $row){ ?>
-                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                        <div>
-                                                            <?php echo $i;?>.
-                                                            <a href="viewDateDetail.php?date=<?php echo $row['day']; ?>" target="_blank"><svg height="1rem" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="#0d6efd" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/></svg></a>
-                                                            <?php echo formatDate($row['day']); ?>
-                                                        </div>
-                                                        <span class="badge bg-primary rounded-pill"><?php echo number_format($row['count']); ?></span>
-                                                    </li>
-                                                    <?php
-                                                    $i++;
-                                                }//foreach
-                                                ?>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 border rounded p-3">
-                        <h6 class="card-subtitle mb-4 text-primary">Other user report statistics.</h6>
-                        <table id="reportData" class="table table-striped table-hover">
-                            <thead class="table-dark thead-dark">
-                            <tr>
-                                <th style="width:5%;">Top</th>
-                                <th>Name</th>
-                                <th class="dt-right">Total</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <!-- Right: Other Users -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <h2 class="text-lg font-semibold text-blue-600 mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                Other User Report Statistics
+            </h2>
+            <div class="overflow-x-auto">
+                <table id="reportData" class="table table-striped table-hover w-full">
+                    <thead class="table-dark thead-dark">
+                    <tr>
+                        <th style="width:5%;">Top</th>
+                        <th>Name</th>
+                        <th style="text-align:right; padding-right:1rem;">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
         </div>
+
+    </div>
     <?php }//else ?>
 </div>
 
+<!-- Advanced Report Modal -->
+<div class="modal fade" id="advancedReportModal" tabindex="-1" aria-labelledby="advancedReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-xl" style="border-radius: 1rem;">
+            <div class="modal-header bg-blue-600 text-white" style="border-radius: 1rem 1rem 0 0;">
+                <h5 class="modal-title flex items-center gap-2" id="advancedReportModalLabel">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Advanced Report
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="advancedReportForm" enctype="multipart/form-data">
+                <div class="modal-body p-6 space-y-5">
+
+                    <div>
+                        <label for="advBoard" class="block text-sm font-semibold text-gray-700 mb-1">Board <span class="text-red-500">*</span></label>
+                        <input type="text" class="form-control" id="advBoard" name="board" placeholder="e.g. Projects | TH, CRM" required>
+                    </div>
+
+                    <div>
+                        <label for="advSubject" class="block text-sm font-semibold text-gray-700 mb-1">Subject <span class="text-red-500">*</span></label>
+                        <input type="text" class="form-control" id="advSubject" name="subject" placeholder="e.g. Board loading very slow when opening items" required>
+                    </div>
+
+                    <div>
+                        <label for="advDetail" class="block text-sm font-semibold text-gray-700 mb-1">Detail</label>
+                        <textarea class="form-control" id="advDetail" name="detail" rows="4" placeholder="Describe the issue in detail..."></textarea>
+                    </div>
+
+                    <div>
+                        <label for="advAttachment" class="block text-sm font-semibold text-gray-700 mb-1">Attach file <span class="text-gray-400 font-normal">(picture only, optional)</span></label>
+                        <input type="file" class="form-control" id="advAttachment" name="attachment" accept="image/*">
+                        <p class="text-xs text-gray-400 mt-1">Supported: JPG, PNG, GIF, WEBP (max 5MB)</p>
+                    </div>
+
+                    <hr class="border-gray-200">
+
+                    <div>
+                        <label for="advScreenInternet" class="block text-sm font-semibold text-gray-700 mb-1">
+                            Screenshot Internet Speed Test <span class="text-red-500">*</span>
+                        </label>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5 mb-2 text-xs text-blue-700 flex items-start gap-2">
+                            <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span>Please run a speed test at <a href="https://fiber.google.com/speedtest/" target="_blank" class="font-bold underline">fiber.google.com/speedtest</a> and take a screenshot of the result.</span>
+                        </div>
+                        <input type="file" class="form-control" id="advScreenInternet" name="screenshot_internet" accept="image/*" required>
+                    </div>
+
+                    <div>
+                        <label for="advScreenComputer" class="block text-sm font-semibold text-gray-700 mb-1">
+                            Screenshot My Computer Info <span class="text-red-500">*</span>
+                        </label>
+                        <div class="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 mb-2 text-xs text-amber-700">
+                            <b>macOS:</b> Click <b></b> → <b>About This Mac</b> → <b>More Info</b> → Screenshot<br>
+                            <b>Windows:</b> Right-click <b>This PC</b> → <b>Properties</b> → Screenshot
+                        </div>
+                        <input type="file" class="form-control" id="advScreenComputer" name="screenshot_computer" accept="image/*" required>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitAdvanced">
+                        <span class="spinner-border spinner-border-sm d-none me-1" id="advSpinner" role="status"></span>
+                        Submit Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Session Expired Modal -->
 <div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
+        <div class="modal-content border-0 shadow-xl" style="border-radius: 1rem;">
+            <div class="modal-header bg-red-500 text-white" style="border-radius: 1rem 1rem 0 0;">
                 <h5 class="modal-title" id="loginModalLabel">Session Expired</h5>
             </div>
-            <div class="modal-body text-center" style="display: flex; align-items: center; justify-content: center; height: 200px;">
-                <p class="lead">ไม่สามารถดำเนินการได้เนื่องจาก Session หมดอายุ <br> กรุณา Log in ใหม่</p>
+            <div class="modal-body flex items-center justify-center" style="height: 200px;">
+                <p class="text-lg text-center text-gray-600">ไม่สามารถดำเนินการได้เนื่องจาก Session หมดอายุ <br> กรุณา Log in ใหม่</p>
             </div>
             <div class="modal-footer">
-                <a href="https://report.localforyou.com/" target="_blank">
-                    <button id="redirectButton" class="btn btn-primary btn-lg w-100">Go to Login</button>
+                <a href="https://report.localforyou.com/" target="_blank" class="w-full">
+                    <button class="btn btn-primary btn-lg w-100">Go to Login</button>
                 </a>
             </div>
         </div>
     </div>
 </div>
-
 
 <script src="../assets/js/datatables-bs5.min.js"></script>
 <script>
@@ -311,7 +382,6 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
         });
 
         readAjax.done(function (response) {
-            //counterNum.text(response);
             divStat.html(response);
         });
 
@@ -322,6 +392,53 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
         });
     }//reloadStat
 
+    // Advanced Report form submit
+    $('#advancedReportForm').on('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        const btn = $('#btnSubmitAdvanced');
+        const spinner = $('#advSpinner');
+
+        const maxSize = 5 * 1024 * 1024;
+        const fileInputs = ['advAttachment', 'advScreenInternet', 'advScreenComputer'];
+        for (let i = 0; i < fileInputs.length; i++) {
+            const input = document.getElementById(fileInputs[i]);
+            if (input.files.length > 0 && input.files[0].size > maxSize) {
+                alert('File "' + input.files[0].name + '" exceeds 5MB limit.');
+                return;
+            }
+        }
+
+        btn.prop('disabled', true);
+        spinner.removeClass('d-none');
+
+        const formData = new FormData(form);
+
+        $.ajax({
+            url: '../models/submitAdvancedReport.php',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            processData: false,
+            contentType: false
+        }).done(function(res) {
+            if (res.status === 'success') {
+                alert('Advanced report submitted successfully!');
+                $('#advancedReportModal').modal('hide');
+                form.reset();
+            } else if (res.status === 'sessionExp') {
+                $('#loginModal').modal('show');
+            } else {
+                alert('Error: ' + (res.message || 'Unknown error'));
+            }
+        }).fail(function(xhr, status, error) {
+            console.error('Advanced report submit failed:', status, error);
+            alert('Failed to submit report. Please try again.');
+        }).always(function() {
+            btn.prop('disabled', false);
+            spinner.addClass('d-none');
+        });
+    });
 
     $(() => {
         $('.text-alert').hide();
@@ -333,20 +450,20 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
                 async: false,
                 cache: false,
                 dataType: "json",
-            }); //const
+            });
 
             reqHeartbeat.done(function (data) {
                 if (data.status === 'expired') {
                     alert('Your session has expired. Please log in again.');
                     window.location = '../../../chkLogin.php?act=expired';
                 }
-            }); //done
+            });
 
             reqHeartbeat.fail(function (xhr, status, error) {
                 console.log("check heart beat fail!!");
                 console.log(status + ": " + error);
-            }); //fail
-        }, 60000); //check heartbeat every 1 minute
+            });
+        }, 60000);
     });//ready
 </script>
 

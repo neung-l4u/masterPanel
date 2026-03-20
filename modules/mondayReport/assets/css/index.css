@@ -75,6 +75,65 @@ button.sendReport:active::before {
     transform: translate3d(0, 0, -1em);
 }
 
+button.advancedReport {
+    font-weight: 600;
+    color: #1b2e4b;
+    text-transform: uppercase;
+    padding: 1.25em 2em;
+    background: #e8f0fe;
+    border: 2px solid #5b86c5;
+    border-radius: 0.75em;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-transition: background 150ms cubic-bezier(0, 0, 0.58, 1), -webkit-transform 150ms cubic-bezier(0, 0, 0.58, 1);
+    transition: transform 150ms cubic-bezier(0, 0, 0.58, 1), background 150ms cubic-bezier(0, 0, 0.58, 1), -webkit-transform 150ms cubic-bezier(0, 0, 0.58, 1);
+}
+
+button.advancedReport::before {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #b6d4fe;
+    border-radius: inherit;
+    -webkit-box-shadow: 0 0 0 2px #5b86c5, 0 0.625em 0 0 #d6e4f7;
+    box-shadow: 0 0 0 2px #5b86c5, 0 0.625em 0 0 #d6e4f7;
+    -webkit-transform: translate3d(0, 0.75em, -1em);
+    transform: translate3d(0, 0.75em, -1em);
+    transition: transform 150ms cubic-bezier(0, 0, 0.58, 1), box-shadow 150ms cubic-bezier(0, 0, 0.58, 1), -webkit-transform 150ms cubic-bezier(0, 0, 0.58, 1), -webkit-box-shadow 150ms cubic-bezier(0, 0, 0.58, 1);
+}
+
+button.advancedReport:hover {
+    background: #dce8fa;
+    border: 2px solid #5b86c5;
+    -webkit-transform: translate(0, 0.25em);
+    transform: translate(0, 0.25em);
+}
+
+button.advancedReport:hover::before {
+    -webkit-box-shadow: 0 0 0 2px #5b86c5, 0 0.5em 0 0 #d6e4f7;
+    box-shadow: 0 0 0 2px #5b86c5, 0 0.5em 0 0 #d6e4f7;
+    -webkit-transform: translate3d(0, 0.5em, -1em);
+    transform: translate3d(0, 0.5em, -1em);
+}
+
+button.advancedReport:active {
+    background: #dce8fa;
+    -webkit-transform: translate(0em, 0.75em);
+    transform: translate(0em, 0.75em);
+}
+
+button.advancedReport:active::before {
+    -webkit-box-shadow: 0 0 0 2px #5b86c5, 0 0 #d6e4f7;
+    box-shadow: 0 0 0 2px #5b86c5, 0 0 #d6e4f7;
+    -webkit-transform: translate3d(0, 0, -1em);
+    transform: translate3d(0, 0, -1em);
+}
+
 .dt-right {
     text-align: right;
 }
