@@ -13,7 +13,7 @@ include ('assets/api/checkSession.php');
     </a>
 
     <!-- Sidebar -->
-    <div class="sidebar text-xs" style="display:flex;flex-direction:column;min-height:calc(100vh - 57px);">
+    <div class="sidebar text-xs" style="display:flex;flex-direction:column;height:calc(100vh - 57px);overflow-y:auto;">
         <!-- Sidebar user panel moved to navbar dropdown -->
 
 
@@ -45,24 +45,25 @@ include ('assets/api/checkSession.php');
                         <p>Website Management <i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview">
+                        <?php if(in_array($teamID, [1,2,8,10,11])){ ?>
                         <li class="nav-item pl-2">
                             <a href="https://report.localforyou.com/modules/websiteList/views/websiteList.php#" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-list-check"></i>
                                 <p>Website Lists &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
                             </a>
                         </li>
-                        <?php if($userLevel<=4 && ($teamID == 3 || $teamID == 5)){ ?>
+                        <?php } ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=websiteTemplate" class="nav-link <?php echo $activeMenu["lv2"] == "websiteTemplate" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-browser-chrome"></i>
                                 <p>Website Template</p>
                             </a>
                         </li>
-                        <?php } ?>
                     </ul>
                 </li>
 
                 <!-- System -->
+                <?php if($teamID == 3){ ?>
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "system" ? "menu-is-opening menu-open":""; ?>">
                     <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "system" ? "active":""; ?>">
                         <i class="nav-icon mr-2 bi bi-hdd-stack"></i>
@@ -77,9 +78,9 @@ include ('assets/api/checkSession.php');
                         </li>
                     </ul>
                 </li>
+                <?php } ?>
 
                 <!-- Form Management -->
-                <?php if($userLevel<=4){ ?>
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "formMgmt" ? "menu-is-opening menu-open":""; ?>">
                     <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "formMgmt" ? "active":""; ?>">
                         <i class="nav-icon mr-2 bi bi-file-earmark-medical"></i>
@@ -92,7 +93,6 @@ include ('assets/api/checkSession.php');
                                 <p>Signup Form &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
                             </a>
                         </li>
-                        <?php if($teamID != 3){ ?>
                         <li class="nav-item pl-2">
                             <a href="modules/unsub2/views/index.php?id=123" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-file-earmark-excel"></i>
@@ -105,25 +105,24 @@ include ('assets/api/checkSession.php');
                                 <p>Template Submissions &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
                             </a>
                         </li>
-                        <?php } ?>
                     </ul>
                 </li>
-                <?php } ?>
 
                 <!-- Rewards & Coins -->
-                <?php if($userLevel<=3){ ?>
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "rewardsCoin" ? "menu-is-opening menu-open":""; ?>">
                     <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "rewardsCoin" ? "active":""; ?>">
                         <i class="nav-icon mr-2 bi bi-gem"></i>
                         <p>Rewards & Coins <i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview">
+                        <?php if($userLevel<=3){ ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=rewardCoin" class="nav-link <?php echo $activeMenu["lv2"] == "rewardCoin" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-gem"></i>
                                 <p>Reward Coin</p>
                             </a>
                         </li>
+                        <?php } ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=coin" class="nav-link <?php echo $activeMenu["lv2"] == "coin" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-coin"></i>
@@ -138,16 +137,15 @@ include ('assets/api/checkSession.php');
                         </li>
                     </ul>
                 </li>
-                <?php } ?>
 
                 <!-- Reports & Analytics -->
-                <?php if($userLevel<=3){ ?>
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "report" ? "menu-is-opening menu-open":""; ?>">
                     <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "report" ? "active":""; ?>">
                         <i class="nav-icon mr-2 bi bi-bar-chart-line"></i>
                         <p>Reports & Analytics <i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview">
+                        <?php if($userLevel<=3){ ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=reportWeekly" class="nav-link <?php echo in_array($activeMenu["lv2"], ['reportWeekly','reportMonthly','reportYearly']) ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-clipboard-data"></i>
@@ -166,6 +164,7 @@ include ('assets/api/checkSession.php');
                                 <p>Revenue</p>
                             </a>
                         </li>
+                        <?php } ?>
                         <li class="nav-item pl-2">
                             <a href="modules/mondayReport/views/index.php?id=<?php echo $_SESSION['id']; ?>" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-kanban"></i>
@@ -174,7 +173,6 @@ include ('assets/api/checkSession.php');
                         </li>
                     </ul>
                 </li>
-                <?php } ?>
 
                 <!-- Logs -->
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "logs" ? "menu-is-opening menu-open":""; ?>">
@@ -182,7 +180,14 @@ include ('assets/api/checkSession.php');
                         <i class="nav-icon mr-2 bi bi-journal-text"></i>
                         <p>Logs <i class="right fas fa-angle-left"></i></p>
                     </a>
+                    
                     <ul class="nav nav-treeview">
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=feedbackMonday" class="nav-link <?php echo $activeMenu["lv2"] == "feedbackMonday" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-chat-left-text"></i>
+                                <p>Feedback Monday</p>
+                            </a>
+                        </li>
                         <li class="nav-item pl-2">
                             <a href="modules/changeLog/changelog.php" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-clock-history"></i>
@@ -193,14 +198,13 @@ include ('assets/api/checkSession.php');
                 </li>
 
                 <!-- User Management -->
-                <?php if($userLevel<=3){ ?>
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "userMgmt" ? "menu-is-opening menu-open":""; ?>">
                     <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "userMgmt" ? "active":""; ?>">
                         <i class="nav-icon mr-2 bi bi-people"></i>
                         <p>User Management <i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <?php if($userLevel<=2){ ?>
+                        <?php if($userLevel<=3){ ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=setStaff" class="nav-link <?php echo $activeMenu["lv2"] == "staffs" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-person-gear"></i>
@@ -216,7 +220,6 @@ include ('assets/api/checkSession.php');
                         </li>
                     </ul>
                 </li>
-                <?php } ?>
 
                 <!-- System Settings -->
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "sysSettings" ? "menu-is-opening menu-open":""; ?>">
@@ -233,18 +236,14 @@ include ('assets/api/checkSession.php');
                             </a>
                         </li> -->
                         <?php } ?>
-                        <li class="nav-item pl-2">
-                            <a href="main.php?p=tools" class="nav-link <?php echo $activeMenu["lv2"] == "tools" ? "active":""; ?>">
-                                <i class="nav-icon mr-3 bi bi-tools"></i>
-                                <p>Tools</p>
+                        
+                        <!-- <li class="nav-item pl-2">
+                            <a href="modules/mondayReport/views/index.php?id=<?php echo $_SESSION['id']; ?>" target="_blank" class="nav-link">
+                                <i class="nav-icon mr-3 bi bi-kanban"></i>
+                                <p>Monday Report &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
                             </a>
-                        </li>
-                        <li class="nav-item pl-2">
-                            <a href="main.php?p=feedbackMonday" class="nav-link <?php echo $activeMenu["lv2"] == "feedbackMonday" ? "active":""; ?>">
-                                <i class="nav-icon mr-3 bi bi-chat-left-text"></i>
-                                <p>Feedback Monday</p>
-                            </a>
-                        </li>
+                        </li> -->
+                        
                         <li class="nav-item pl-2">
                             <a href="main.php?p=l4uPassword" class="nav-link <?php echo $activeMenu["lv2"] == "l4uPassword" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-key"></i>

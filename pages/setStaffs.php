@@ -57,7 +57,7 @@ $password = "Localeats#".date("Y");
                                 Include inactive staffs.
                             </label>
                         </div>
-                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal" data-ga="click_add_staff" data-ga-label="Add New Staff">
                             <i class="bi bi-plus-circle-fill"></i> Add new
                         </button>
                     </div>
@@ -336,7 +336,7 @@ $password = "Localeats#".date("Y");
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-circle"></i> Close</button>
-                    <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit"><i class="bi bi-floppy-fill"></i> Save</button>
+                    <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit" data-ga="click_save_staff" data-ga-label="Save Staff"><i class="bi bi-floppy-fill"></i> Save</button>
                 </div>
             </div>
         </div>

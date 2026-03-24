@@ -702,7 +702,7 @@ $ovDataJson = json_encode([
                                                 <td><small class="text-muted"><?php echo $row['title'].'</small> >> '.$row['reward']; ?></td>
                                                 <td class="text-right">
                                                     <?php if($row['spend'] <= $coins["l4u"]){ ?>
-                                                        <a href="#" onclick="makeRedeem(<?php echo $row['spend']; ?>, '<?php echo $row['type']; ?>');" class="btn btn-primary" >Redeem</a>
+                                                        <a href="#" onclick="makeRedeem(<?php echo $row['spend']; ?>, '<?php echo $row['type']; ?>');" class="btn btn-primary" data-ga="click_redeem_coin" data-ga-label="Redeem Coin">Redeem</a>
                                                     <?php }else{ ?>
                                                     <a href="#" class="btn btn-secondary disabled" >Not enough</a>
                                                     <?php } ?>
@@ -793,7 +793,7 @@ $ovDataJson = json_encode([
                                         <input id="CEOSource" onchange="calConvert('ceo');" onkeyup="calConvert('ceo');" class="form-control w-25 mr-sm-2" <?php echo ($coins["ceo"]>=0)?'':'disabled' ?> type="number" value="<?php echo $coins["ceo"]; ?>" step="1" min="0" max="<?php echo $coins["ceo"]; ?>">
                                         <span class="mr-sm-2">=</span>
                                         <span class="text-success mr-3" id="calCEO"><?php echo ceoToL4u($coins["ceo"]); ?></span>
-                                        <a href="#" onclick="convertCoin('ceo');" id="btnConvertCEO" class="btn <?php echo ($coins["ceo"]>=0)?'btn-primary':'btn-secondary disabled' ?>">Convert</a>
+                                        <a href="#" onclick="convertCoin('ceo');" id="btnConvertCEO" class="btn <?php echo ($coins["ceo"]>=0)?'btn-primary':'btn-secondary disabled' ?>" data-ga="click_convert_ceo_coin" data-ga-label="Convert CEO Coin">Convert</a>
                                     </div>
                                 </div>
                             </div>
@@ -810,7 +810,7 @@ $ovDataJson = json_encode([
                                         <input id="L4USource" onchange="calConvert('l4u');" onkeyup="calConvert('l4u');" class="form-control w-25 mr-sm-2" <?php echo ($coins["l4u"]>10)?'':'disabled' ?> type="number" value="<?php echo $coins["l4u"]; ?>" step="1" min="0" max="<?php echo $coins["l4u"]; ?>">
                                         <span class="mr-sm-2">=</span>
                                         <span class="text-success mr-3" id="calL4U"><?php echo l4uToCEO($coins["l4u"]); ?></span>
-                                        <a href="#" onclick="convertCoin('l4u');" id="btnConvertL4U" class="btn <?php echo ($coins["l4u"]>10)?'btn-primary':'btn-secondary disabled' ?>">Convert</a>
+                                        <a href="#" onclick="convertCoin('l4u');" id="btnConvertL4U" class="btn <?php echo ($coins["l4u"]>10)?'btn-primary':'btn-secondary disabled' ?>" data-ga="click_convert_l4u_coin" data-ga-label="Convert L4U Coin">Convert</a>
                                     </div>
                                     <small class="text-muted">* minimum 10</small>
                                 </div>
@@ -906,7 +906,7 @@ $ovDataJson = json_encode([
                                             </div>
 
                                             <?php if("#transferAmount" <= $coins["l4u"]){ ?>
-                                                <a href="#" type="button" class="btn btn-primary" onclick="transferCoin()" class="btn btn-primary" >Transfer</a>
+                                                <a href="#" type="button" class="btn btn-primary" onclick="transferCoin()" data-ga="click_transfer_coin" data-ga-label="Transfer Coin">Transfer</a>
                                             <?php }else{ ?>
                                                 <a href="#" class="btn btn-secondary disabled" >Not enough</a>
                                             <?php }//else ?>
@@ -1005,7 +1005,7 @@ $ovDataJson = json_encode([
                                                 <td><?php echo '<strong>'.$row['title'].'</strong> >> <small class="text-muted">'.$row['reward'].'</small>'; ?></td>
                                                 <td>
                                                     <?php if($row['spend'] <= $coins["l4u"]){ ?>
-                                                        <a href="#" onclick="makeRedeem(<?php echo $row['spend']; ?>, '<?php echo $row['type']; ?>');" class="btn btn-primary" >Redeem</a>
+                                                        <a href="#" onclick="makeRedeem(<?php echo $row['spend']; ?>, '<?php echo $row['type']; ?>');" class="btn btn-primary" data-ga="click_redeem_coin" data-ga-label="Redeem Coin">Redeem</a>
                                                     <?php }else{ ?>
                                                     <a href="#" class="btn btn-secondary disabled" >Not enough</a>
                                                     <?php } ?>

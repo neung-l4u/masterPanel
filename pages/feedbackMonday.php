@@ -105,6 +105,7 @@
 
     // View detail — fetch from DB then show modal
     $(document).on('click', '.btn-view-detail', function() {
+        gtag('event', 'click_view_feedback_detail', { event_category: 'button', event_label: 'View Feedback Detail' });
         var reportId = $(this).attr('data-id');
         $('#detailModalBody').html('<div class="text-center p-5">Loading...</div>');
         $('#detailModal').modal('show');
@@ -158,6 +159,7 @@
 
     // Resolve button
     $(document).on('click', '.btn-resolve', function() {
+        gtag('event', 'click_resolve_report', { event_category: 'button', event_label: 'Resolve Report' });
         var id = $(this).attr('data-id');
         if (!confirm('Mark this report as Resolved?')) return;
         $.post('assets/php/resolveAdvancedReport.php', { id: id }, function(res) {

@@ -39,6 +39,15 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-LGKDYHL23T');
+        document.addEventListener('click', function(e) {
+            var el = e.target.closest('[data-ga]');
+            if (el) {
+                gtag('event', el.getAttribute('data-ga'), {
+                    event_category: el.getAttribute('data-ga-category') || 'button',
+                    event_label: el.getAttribute('data-ga-label') || el.textContent.trim().substring(0, 50)
+                });
+            }
+        });
     </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -95,11 +104,11 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
                 please click the report button once.
             </div>
             <div class="flex items-center gap-4 flex-shrink-0">
-                <button type="button" class="sendReport" onclick="sendReport()">Send Report</button>
+                <button type="button" class="sendReport" onclick="sendReport()" data-ga="click_send_report" data-ga-label="Send Report">Send Report</button>
                 <span class="text-alert hidden">
                     <span class="text-green-600 font-bold text-sm">DONE !!</span>
                 </span>
-                <button type="button" class="advancedReport" data-bs-toggle="modal" data-bs-target="#advancedReportModal">Advanced Report</button>
+                <button type="button" class="advancedReport" data-bs-toggle="modal" data-bs-target="#advancedReportModal" data-ga="click_open_advanced_report" data-ga-label="Advanced Report">Advanced Report</button>
             </div>
         </div>
     </div>
@@ -154,7 +163,7 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
                     <span class="text-sm font-semibold text-gray-700">Summary All:</span>
                     <span class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-full"><?php echo number_format($sumAll['count']); ?></span>
                 </div>
-                <button onclick="reloadPage();" class="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
+                <button onclick="reloadPage();" class="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium" data-ga="click_reload_report" data-ga-label="Reload">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     Reload
                 </button>
@@ -266,7 +275,7 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="btnSubmitAdvanced">
+                    <button type="submit" class="btn btn-primary" id="btnSubmitAdvanced" data-ga="click_submit_advanced_report" data-ga-label="Submit Advanced Report">
                         <span class="spinner-border spinner-border-sm d-none me-1" id="advSpinner" role="status"></span>
                         Submit Report
                     </button>

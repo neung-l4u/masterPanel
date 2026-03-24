@@ -9,6 +9,15 @@
         gtag('js', new Date());
 
         gtag('config', 'G-LGKDYHL23T');
+        document.addEventListener('click', function(e) {
+            var el = e.target.closest('[data-ga]');
+            if (el) {
+                gtag('event', el.getAttribute('data-ga'), {
+                    event_category: el.getAttribute('data-ga-category') || 'button',
+                    event_label: el.getAttribute('data-ga-label') || el.textContent.trim().substring(0, 50)
+                });
+            }
+        });
     </script>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -161,7 +170,7 @@
                     </div>
 
                     <!-- Sign In Button -->
-                    <button type="button" id="cmdLogin"
+                    <button type="button" id="cmdLogin" data-ga="click_login" data-ga-label="Sign In"
                             class="w-full bg-gradient-to-r from-[#0619B6] to-[#00BCF4] hover:from-[#0514a0] hover:to-[#009dd4] text-white font-semibold py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2">
                         <span>Sign In</span>
                         <!-- <i class="fa-solid fa-fingerprint text-sm"></i> -->

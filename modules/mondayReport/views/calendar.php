@@ -49,6 +49,15 @@ $avgPerDay = $activeDays > 0 ? round($total_reports / $activeDays, 1) : 0;
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-LGKDYHL23T');
+        document.addEventListener('click', function(e) {
+            var el = e.target.closest('[data-ga]');
+            if (el) {
+                gtag('event', el.getAttribute('data-ga'), {
+                    event_category: el.getAttribute('data-ga-category') || 'button',
+                    event_label: el.getAttribute('data-ga-label') || el.textContent.trim().substring(0, 50)
+                });
+            }
+        });
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

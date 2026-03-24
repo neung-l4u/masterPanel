@@ -106,6 +106,14 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataStaffs.php";
         $title = "Master panel : Staffs Management";
         break;
+    case "tools":
+        $showPage = "tools.php";
+        $activeMenu["lv1"] = "sysSettings";
+        $activeMenu["lv2"] = "tools";
+        $datatable["show"] = "true";
+        $datatable["src"] = "";
+        $title = "Master panel : Tools Management & Logs";
+        break;
     case "coin":
         $showPage = "coin.php";
         $activeMenu["lv1"] = "rewardsCoin";
@@ -157,17 +165,9 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Logs Website Template Submission";
         break;
-    case "tools":
-        $showPage = "tools.php";
-        $activeMenu["lv1"] = "sysSettings";
-        $activeMenu["lv2"] = "tools";
-        $datatable["show"] = "true";
-        $datatable["src"] = "";
-        $title = "Master panel : Tools Management & Logs";
-        break;
     case "feedbackMonday":
         $showPage = "feedbackMonday.php";
-        $activeMenu["lv1"] = "sysSettings";
+        $activeMenu["lv1"] = "logs";
         $activeMenu["lv2"] = "feedbackMonday";
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataFeedbackMonday.php";

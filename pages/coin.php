@@ -70,7 +70,7 @@ $teamIDHardcode = array(
                         </svg>
                         Coin Rewards
                         <?php if ($_SESSION['level'] <= 2) { ?>
-                            <button type="button" class="btn btn-success" onclick="goX2();">coin x2 to everyone</button>
+                            <button type="button" class="btn btn-success" onclick="goX2();" data-ga="click_coin_x2" data-ga-label="Coin x2 Everyone">coin x2 to everyone</button>
                         <?php } ?>
                     </h4>
                 </div><!-- /.col -->
@@ -337,7 +337,7 @@ $teamIDHardcode = array(
                                 <input type="hidden" name="formAction" id="formAction" value="add">
                                 <input type="hidden" name="userID" id="userID" value="0">
                                 <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit"
-                                        id="cmdSubmit">Add
+                                        id="cmdSubmit" data-ga="click_give_coin" data-ga-label="Give Coin">Add
                                 </button>
                             </div>
                         </div> <!-- modal-body -->

@@ -253,7 +253,7 @@ $loginID = $_SESSION['id'];
                                             </div>
 
                                             <div class="col-12">
-                                                <button type="button" class="btn btn-danger" onclick="cmdSubmit();" id="btnSave">Save Change</button>
+                                                <button type="button" class="btn btn-danger" onclick="cmdSubmit();" id="btnSave" data-ga="click_save_profile" data-ga-label="Save Profile">Save Change</button>
                                             </div>
                                         </div>
                                     </form>

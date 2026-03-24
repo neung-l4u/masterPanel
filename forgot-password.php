@@ -19,6 +19,15 @@ if(empty($decode)){ exit("Invalid Code"); }
         gtag('js', new Date());
 
         gtag('config', 'G-LGKDYHL23T');
+        document.addEventListener('click', function(e) {
+            var el = e.target.closest('[data-ga]');
+            if (el) {
+                gtag('event', el.getAttribute('data-ga'), {
+                    event_category: el.getAttribute('data-ga-category') || 'button',
+                    event_label: el.getAttribute('data-ga-label') || el.textContent.trim().substring(0, 50)
+                });
+            }
+        });
     </script>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -154,12 +163,12 @@ if(empty($decode)){ exit("Invalid Code"); }
 
                     <!-- Buttons -->
                     <div class="space-y-3">
-                        <button type="button" id="resetPassword" onclick="updatePassword();"
+                        <button type="button" id="resetPassword" onclick="updatePassword();" data-ga="click_reset_password" data-ga-label="Change Password"
                                 class="w-full bg-gradient-to-r from-[#0619B6] to-[#00BCF4] hover:from-[#0514a0] hover:to-[#009dd4] text-white font-semibold py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2">
                             <span>Change Password</span>
                             <i class="fa-solid fa-key text-sm"></i>
                         </button>
-                        <button type="button" id="backToLogin" onclick="login();"
+                        <button type="button" id="backToLogin" onclick="login();" data-ga="click_back_to_login" data-ga-label="Back to Login"
                                 class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2.5 rounded-lg transition-all duration-200">
                             Back to Login
                         </button>
