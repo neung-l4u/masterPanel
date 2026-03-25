@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-$result = ["result" => "", "msg" => "", "projectID" => "", "customerID" => ""];
+$result = ["result" => "", "msg" => "", "storeID" => "", "customerID" => ""];
 
 $country = !empty($_POST["country"]) ? trim($_POST["country"]) : null;
 $formType = !empty($_POST["formType"]) ? trim($_POST["formType"]) : null;
@@ -76,7 +76,7 @@ if (flock($fp, LOCK_EX)) {
     // Generate IDs
     // Project ID format: {CountryCode}{ProjectType}{RunningNo 6-digits}
     // Example: AU01000987
-    $projectID = $countryCode . $projectTypeCode . str_pad($newProjectNo, 6, '0', STR_PAD_LEFT);
+    $storeID = $countryCode . $projectTypeCode . str_pad($newProjectNo, 6, '0', STR_PAD_LEFT);
 
     // Customer ID format: L4U{CountryCode}{RunningNo 6-digits}
     // Example: L4UAU000993
@@ -91,7 +91,7 @@ if (flock($fp, LOCK_EX)) {
 
     $result["result"] = "success";
     $result["msg"] = "ID generated successfully.";
-    $result["projectID"] = $projectID;
+    $result["storeID"] = $storeID;
     $result["customerID"] = $customerID;
     $result["projectNo"] = $newProjectNo;
     $result["customerNo"] = $newCustomerNo;

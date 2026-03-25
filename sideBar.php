@@ -152,12 +152,7 @@ include ('assets/api/checkSession.php');
                                 <p>Subscription Report</p>
                             </a>
                         </li>
-                        <li class="nav-item pl-2">
-                            <a href="main.php?p=reportGA" class="nav-link <?php echo $activeMenu["lv2"] == "reportGA" ? "active":""; ?>">
-                                <i class="nav-icon mr-3 bi bi-google"></i>
-                                <p>Google Analytics</p>
-                            </a>
-                        </li>
+                        
                         <li class="nav-item pl-2">
                             <a href="main.php?p=reportRevenue" class="nav-link <?php echo $activeMenu["lv2"] == "reportRevenue" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-cash-stack"></i>
@@ -165,6 +160,12 @@ include ('assets/api/checkSession.php');
                             </a>
                         </li>
                         <?php } ?>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=reportGA" class="nav-link <?php echo $activeMenu["lv2"] == "reportGA" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-google"></i>
+                                <p>Google Analytics</p>
+                            </a>
+                        </li>
                         <li class="nav-item pl-2">
                             <a href="modules/mondayReport/views/index.php?id=<?php echo $_SESSION['id']; ?>" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-kanban"></i>

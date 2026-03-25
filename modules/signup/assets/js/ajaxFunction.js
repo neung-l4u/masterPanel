@@ -1,4 +1,4 @@
-let generatedProjectID = "";
+let generatedStoreID = "";
 let generatedCustomerID = "";
 
 const typeJsonKey = (txt) => {
@@ -763,9 +763,7 @@ function requestToPay() {
         let tpid = addonArray[x];
         let tcid = applyAddonCode;
 
-        if (tcid && tcid.trim() !== "") {
-            data.push( {[tpid]: tcid} );
-        }
+        data.push( {[tpid]: tcid || ""} );
     }
 
     allAddon = data.reduce(function(result, currentObject) {
@@ -1008,7 +1006,7 @@ const sendMail = () => {
 }
 //sendMail กลับมาเปิดคอมเม้นด้วย
 
-/*const sendMailToL4UTeam = () => {
+const sendMailToL4UTeam = () => {
 
 
     let today = new Date();
@@ -1222,300 +1220,302 @@ const sendMail = () => {
         return false;
      });
 
-}*/ //sendMail
+} //sendMail
 
-const signupToCustomerProjectID = () => {
-    let formCountryText = $("#formCountry option:selected").text();
-    let formTypeText = formData.formType;
+//*Comeback Change*
+// const signupToCustomerProjectID = () => {
+//     let formCountryText = $("#formCountry option:selected").text();
+//     let formTypeText = formData.formType;
 
-    let codeShopNumber = ""
-    if (formCountryText === "Australia") {
-        codeShopNumber = "ABN"
-    }else if(formCountryText === "New Zealand"){
-        codeShopNumber = "NZBN"
-    }else if(formCountryText === "United Kingdom"){
-        codeShopNumber = "CRN (Company Registration Number)"
-    }else if(formCountryText === "United States"){
-        codeShopNumber = "EIN"
-    }else if(formCountryText === "Canada"){
-        codeShopNumber = "BN"
-    }else if(formCountryText === "Thailand"){
-        codeShopNumber = "TAX ID"
-    }else{
-        codeShopNumber = ""
-    }
+//     let codeShopNumber = ""
+//     if (formCountryText === "Australia") {
+//         codeShopNumber = "ABN"
+//     }else if(formCountryText === "New Zealand"){
+//         codeShopNumber = "NZBN"
+//     }else if(formCountryText === "United Kingdom"){
+//         codeShopNumber = "CRN (Company Registration Number)"
+//     }else if(formCountryText === "United States"){
+//         codeShopNumber = "EIN"
+//     }else if(formCountryText === "Canada"){
+//         codeShopNumber = "BN"
+//     }else if(formCountryText === "Thailand"){
+//         codeShopNumber = "TAX ID"
+//     }else{
+//         codeShopNumber = ""
+//     }
 
-    let currencyShop = ""
-    if (formCountryText === "Australia") {
-        currencyShop = "AUD"
-    }else if(formCountryText === "New Zealand"){
-        currencyShop = "NZD"
-    }else if(formCountryText === "United Kingdom"){
-        currencyShop = "GBP"
-    }else if(formCountryText === "United States"){
-        currencyShop = "USD"
-    }else if(formCountryText === "Canada"){
-        currencyShop = "CAD"
-    }else if(formCountryText === "Thailand"){
-        currencyShop = "THB"
-    }else{
-        currencyShop = ""
-    }
+//     let currencyShop = ""
+//     if (formCountryText === "Australia") {
+//         currencyShop = "AUD"
+//     }else if(formCountryText === "New Zealand"){
+//         currencyShop = "NZD"
+//     }else if(formCountryText === "United Kingdom"){
+//         currencyShop = "GBP"
+//     }else if(formCountryText === "United States"){
+//         currencyShop = "USD"
+//     }else if(formCountryText === "Canada"){
+//         currencyShop = "CAD"
+//     }else if(formCountryText === "Thailand"){
+//         currencyShop = "THB"
+//     }else{
+//         currencyShop = ""
+//     }
 
-    let storeType = ""
-    if (formTypeText === "Thai Restaurants & Takeaways") {
-        storeType = "Thai restaurants"
-    }else if(formTypeText === "Thai Massage"){
-        storeType = "Thai Massage"
-    }else if(formTypeText === "Restaurants & Takeaways"){
-        storeType = "Restaurants"
-    }else{
-        storeType = ""
-    }
+//     let storeType = ""
+//     if (formTypeText === "Thai Restaurants & Takeaways") {
+//         storeType = "Thai restaurants"
+//     }else if(formTypeText === "Thai Massage"){
+//         storeType = "Thai Massage"
+//     }else if(formTypeText === "Restaurants & Takeaways"){
+//         storeType = "Restaurants"
+//     }else{
+//         storeType = ""
+//     }
 
-    let codeCountry = ""
-    if (formCountryText === "Australia") {
-        codeCountry = "AU"
-    }else if(formCountryText === "New Zealand"){
-        codeCountry = "NZ"
-    }else if(formCountryText === "United Kingdom"){
-        codeCountry = "UK"
-    }else if(formCountryText === "United States"){
-        codeCountry = "USA"
-    }else if(formCountryText === "Canada"){
-        codeCountry = "CA"
-    }else if(formCountryText === "Thailand"){
-        codeCountry = "TH"
-    }else{
-        codeCountry = ""
-    }
+//     let codeCountry = ""
+//     if (formCountryText === "Australia") {
+//         codeCountry = "AU"
+//     }else if(formCountryText === "New Zealand"){
+//         codeCountry = "NZ"
+//     }else if(formCountryText === "United Kingdom"){
+//         codeCountry = "UK"
+//     }else if(formCountryText === "United States"){
+//         codeCountry = "USA"
+//     }else if(formCountryText === "Canada"){
+//         codeCountry = "CA"
+//     }else if(formCountryText === "Thailand"){
+//         codeCountry = "TH"
+//     }else{
+//         codeCountry = ""
+//     }
 
-    console.log("signupToCustomerProjectID - Using global Project ID:", generatedProjectID);
-    console.log("signupToCustomerProjectID - Using global Customer ID:", generatedCustomerID);
-
-
-    let today = new Date();
-    let dd = String(today.getDate()).padStart(2, '0');
-    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    let yyyy = today.getFullYear();
-
-    today = dd + '/' + mm + '/' + yyyy;
-
-    ////////if checked on a submitted form will send test mail to IT only/////
-    const CheckedBoxTestmail = $("#CheckedBoxTestmail");
-    let CheckedBoxTestmailValue = 2;
-
-    if ($(CheckedBoxTestmail).prop('checked')) {
-        CheckedBoxTestmailValue = $(CheckedBoxTestmail).val();
-    } else {
-        CheckedBoxTestmailValue = 0;
-    }
-
-    let shopAgent = $("#byAgent").val();
-    if (shopAgent === "Other") {
-        shopAgent = $("#otherAgent").val();
-    }
-
-    let cuisineSelected = [];
-
-    $("input:checkbox[name='cuisinesOther']:checked").each(function(){
-        cuisineSelected.push($(this).val());
-    });
-    let txtCuisine = cuisineSelected.join();
-
-    let checkProduct = $("input[name='product']:checked").val();
-    let toTeam = "";
-
-    if(!checkProduct){
-        toTeam = "All";
-    }else if(checkProduct.includes("Bundle")){
-        toTeam = "All";
-    }else if(checkProduct.includes("Solo") || checkProduct.includes("Yelp")){
-        toTeam = "AM";
-    }else if(checkProduct.includes("System")){
-        toTeam = "CS";
-    }else{
-        toTeam = "All";
-    }
-
-    console.log(toTeam);
+//     console.log("signupToCustomerProjectID - Using global Store ID:", generatedStoreID);
+//     console.log("signupToCustomerProjectID - Using global Customer ID:", generatedCustomerID);
 
 
-    ///////////////////////////////
+//     let today = new Date();
+//     let dd = String(today.getDate()).padStart(2, '0');
+//     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+//     let yyyy = today.getFullYear();
 
-    //formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
-    let payload = {
-        mode : "alert",
-        formDate: today,
-        leadSource: 'Signup Form',
-        formVersion: $("#signupFormVersion").val(),
-        formMessage: 'Hi, Team <br>There are new sign-up customers coming in now. Below are brief details. You can check full information on CRM.',
-        formProduct: $("#currentlyPackage option:selected").text(),
-        MainProduct: $("input[name='product']:checked").val(),
-        formInitialProductOffering: $("#initialProductOffering").val(),
-        formSalesAgent: shopAgent,
-        formContractPeriod: $("#ContractPeriod").val(),
-        formRefPerson: $("#byPerson").val(),
-        formRefPartner: $("#byPartner").val(),
-        formCoupon: $("#couponCode").val(),
-        formRefShop: $("#byRestaurant").val(),
-        formFirstTimePayment: $("#firstTimePayment").val(),
-        formPaymentMethod: $("#paymentMethod").val(),
+//     today = dd + '/' + mm + '/' + yyyy;
 
-        toTeam: toTeam,
+//     ////////if checked on a submitted form will send test mail to IT only/////
+//     const CheckedBoxTestmail = $("#CheckedBoxTestmail");
+//     let CheckedBoxTestmailValue = 2;
 
-        addonFlyer: $("input:checkbox[name='addonFlyers']:checked").val(),
-        addonFridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
-        addonDigitalMenu: $("input:checkbox[name='addonPricingDesign']:checked").val(),
-        addonDineInDual: $("input:checkbox[name='addonDineInDual']:checked").val(),
-        addonAdvPromo: $("input:checkbox[name='addonAdvPromo']:checked").val(),
-        addonMobApp: $("input:checkbox[name='addonMobApp']:checked").val(),
-        addonWebsiteHosting: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
-        addonSocialMedia: $("input:checkbox[name='addonSocialMedia']:checked").val(),
-        addonWebsiteMakeoverTemplate: $("input:checkbox[name='addWebsiteMakeoverTemplate']:checked").val(),
-        addonWebsiteMakeoverFully: $("input:checkbox[name='addWebsiteMakeoverFully']:checked").val(),
-        addonInfluencer: $("input:checkbox[name='addonInfluencer']:checked").val(),
-        addonGoogleReview: $("input:checkbox[name='addonGoogleReview']:checked").val(),
-        addonPOS: $("input:checkbox[name='addonPOS']:checked").val(),
-        addonYelpAdSpend: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
-        addonSocialMediaSetup: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
+//     if ($(CheckedBoxTestmail).prop('checked')) {
+//         CheckedBoxTestmailValue = $(CheckedBoxTestmail).val();
+//     } else {
+//         CheckedBoxTestmailValue = 0;
+//     }
 
+//     let shopAgent = $("#byAgent").val();
+//     if (shopAgent === "Other") {
+//         shopAgent = $("#otherAgent").val();
+//     }
 
+//     let cuisineSelected = [];
 
-        formCustomerType: $("#formType option:selected").text(),
-        formShopName: $("#shopName").val(),
-        formCountry: $("#formCountry option:selected").text(),
-        formCountryCode: codeCountry,
-        ShippingAddress: $("#shipAddress1").val(),
-        formFullName: $("#first_name").val().trim() + " " + $("#last_name").val().trim(),
-        formFristName: $("#first_name").val().trim(),
-        formLastName: $("#last_name").val().trim(),
-        formEmail: $("#email").val().toLowerCase(),
-        formMobile: $("#ownerMobile").val(),
-        formBestTime: $("#bestTimeContact").val(),
-        formNote: $("#additionComment").val(),
-        formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
-        formstartProjectOther: $("#dateproject").val(),
-        formstartprojectNote: $("#startprojectNote").val(),
-        formPOSUsing: $("#posSystem").val(),
-        formPOSUsingOther: $("#posOtherDate").val(),
-        formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
-        formYesPOSProvider: $("#endDatePOS").val(),
-        acceptAutoPilotAI: $("input[name='acknowledgeAI']:checked").val(),
+//     $("input:checkbox[name='cuisinesOther']:checked").each(function(){
+//         cuisineSelected.push($(this).val());
+//     });
+//     let txtCuisine = cuisineSelected.join();
+
+//     let checkProduct = $("input[name='product']:checked").val();
+//     let toTeam = "";
+
+//     if(!checkProduct){
+//         toTeam = "All";
+//     }else if(checkProduct.includes("Bundle")){
+//         toTeam = "All";
+//     }else if(checkProduct.includes("Solo") || checkProduct.includes("Yelp")){
+//         toTeam = "AM";
+//     }else if(checkProduct.includes("System")){
+//         toTeam = "CS";
+//     }else{
+//         toTeam = "All";
+//     }
+
+//     console.log(toTeam);
 
 
-        //NEW//
-        formShopNumber: $("#businessNumber").val(),
-        formTradingName: $("#company").val(),
-        formShopPhoneNumber: $("#shopPhoneFormatted").val(),
-        formShopWebsite: $("#webURL").val(),
-        formOwnerFirstLanguage: $("input[name='supportLanguage']:checked").val(),
+//     ///////////////////////////////
 
+//     //formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
+//     let payload = {
+//         mode : "alert",
+//         formDate: today,
+//         leadSource: 'Signup Form',
+//         formVersion: $("#signupFormVersion").val(),
+//         formMessage: 'Hi, Team <br>There are new sign-up customers coming in now. Below are brief details. You can check full information on CRM.',
+//         formProduct: $("#currentlyPackage option:selected").text(),
+//         MainProduct: $("input[name='product']:checked").val(),
+//         formInitialProductOffering: $("#initialProductOffering").val(),
+//         formSalesAgent: shopAgent,
+//         formContractPeriod: $("#ContractPeriod").val(),
+//         formRefPerson: $("#byPerson").val(),
+//         formRefPartner: $("#byPartner").val(),
+//         formCoupon: $("#couponCode").val(),
+//         formRefShop: $("#byRestaurant").val(),
+//         formFirstTimePayment: $("#firstTimePayment").val(),
+//         formPaymentMethod: $("#paymentMethod").val(),
 
-        ///Cuisine///
-        cuisinesOther: txtCuisine,
-        formCuisineOther: $("#cuisinesOther").val(),
-        formSetupFee: $("input[name='setup']:checked").val(),
+//         toTeam: toTeam,
 
-
-        //Booking System//
-        formLoginEmailBookingSystem: $("#emailBooking").val(),
-        formPasswordBookingSystem: $("#passwordBooking").val(),
-
-        //Online Ordering System//
-        formLoginEmailOnlineOrderingSystem: $("#emailShoppingCart").val(),
-        formPasswordOnlineOrderingSystem: $("#passwordShoppingCart").val(),
-
-        //Services//
-        formPinkUp: $("input[id='pickup']:checked").val(),
-        formTableReservation: $("input[id='tableReservation']:checked").val(),
-
-        formDineInTableOrdering: $("input[id='DineIn']:checked").val(),
-        dineInTable: $("#tableNumber").val(),
-        dineInSize: $("#sizeOption").val(),
-
-        delivery: $("input[id='delivery']:checked").val(),
-        deliveryYourOwn: $("input[id='ownDriver']:checked").val(),
-        deliverySystemDriver: $("input[id='systemDriver']:checked").val(),
-        ihdEmail: $("#ref_IHD_Email").val(),
-        ihdPw: $("#ref_IHD_Password").val(),
-        ihdToken: $("#ref_IHD_Token").val(),
-
-        //Payment Options//
-        cash: $("input[id='cash']:checked").val(),
-        cardCounter: $("input[id='cardCounter']:checked").val(),
-        callBack: $("input[id='callBack']:checked").val(),
-        payOnline: $("input[id='payOnline']:checked").val(),
-
-        //Social Networks//
-        facebook: $("#box_Facebook").val(),
-        tiktok: $("#box_TikTok").val(),
-        instagram: $("#box_Instagram").val(),
-        yelp: $("#box_Yelp").val(),
-
-        //Domain Name//
-        ///Old///
-        websiteDomainName: $("#websiteDomainName").val(),
-        keepWebsite: $("input[id='keepWebsite']:checked").val(),
-        ownDomain: $("input[id='ownDomain']:checked").val(),
-
-        ///New///
-        websiteNewDomain: $("#newDomain").val(),
-
-        ///Domain Name Login info///
-        loginInfoU: $("#ref_Domain_U").val(),
-        loginInfoP: $("#ref_Domain_P").val(),
-        loginInfoComments: $("#ref_Domain_Comments").val(),
-        loginInfoRegistered: $("#ref_Domain_Name_Registered").val(),
-
-        ///1st Order Discount///
-        firstOrderDiscount: $("input:checkbox[name='discount']:checked").val(),
-        firstOrderDiscountOther: $("input[id='othersDiscount']:checked").val(),
-        firstOrderDiscountOtherValue: $("#discountOther").val(),
-
-        ///POS Check Box///
-        posCheck: $("#posCheck").val(),
-        renovationTakePOS: $("#renovationTakePOS").val(),
-        necessaryPermitsPOS: $("#necessaryPermitsPOS").val(),
-
-        ///AI ///
-        addonARAYA: $("input:checkbox[name='addonAI']:checked").val(),
-
-        //Customer ID & Store ID
-        customerID: generatedCustomerID,
-        storeID: generatedProjectID,
-        codeShopNumber: codeShopNumber,
-        currencyShop: currencyShop,
-        storeType: storeType,
-
-        //END NEW//
-        testMail: CheckedBoxTestmailValue,
-        token: Math.random()
-    };
+//         addonFlyer: $("input:checkbox[name='addonFlyers']:checked").val(),
+//         addonFridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
+//         addonDigitalMenu: $("input:checkbox[name='addonPricingDesign']:checked").val(),
+//         addonDineInDual: $("input:checkbox[name='addonDineInDual']:checked").val(),
+//         addonAdvPromo: $("input:checkbox[name='addonAdvPromo']:checked").val(),
+//         addonMobApp: $("input:checkbox[name='addonMobApp']:checked").val(),
+//         addonWebsiteHosting: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
+//         addonSocialMedia: $("input:checkbox[name='addonSocialMedia']:checked").val(),
+//         addonWebsiteMakeoverTemplate: $("input:checkbox[name='addWebsiteMakeoverTemplate']:checked").val(),
+//         addonWebsiteMakeoverFully: $("input:checkbox[name='addWebsiteMakeoverFully']:checked").val(),
+//         addonInfluencer: $("input:checkbox[name='addonInfluencer']:checked").val(),
+//         addonGoogleReview: $("input:checkbox[name='addonGoogleReview']:checked").val(),
+//         addonPOS: $("input:checkbox[name='addonPOS']:checked").val(),
+//         addonYelpAdSpend: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
+//         addonSocialMediaSetup: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
 
 
 
-    // TODO: Send Email To Staff กลับมาเปิดคอมเม้นด้วย
-     const ajaxsignupToCustomerProjectID = $.ajax({
-         url: "https://hook.us1.make.com/d8virx5jtrqq0h6vr5gwdgmd9ia68qdv",
-         method: 'POST',
-         async: true,
-         cache: false,
-         data: payload
-     });
+//         formCustomerType: $("#formType option:selected").text(),
+//         formShopName: $("#shopName").val(),
+//         formCountry: $("#formCountry option:selected").text(),
+//         formCountryCode: codeCountry,
+//         ShippingAddress: $("#shipAddress1").val(),
+//         formFullName: $("#first_name").val().trim() + " " + $("#last_name").val().trim(),
+//         formFristName: $("#first_name").val().trim(),
+//         formLastName: $("#last_name").val().trim(),
+//         formEmail: $("#email").val().toLowerCase(),
+//         formMobile: $("#ownerMobile").val(),
+//         formBestTime: $("#bestTimeContact").val(),
+//         formNote: $("#additionComment").val(),
+//         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
+//         formstartProjectOther: $("#dateproject").val(),
+//         formstartprojectNote: $("#startprojectNote").val(),
+//         formPOSUsing: $("#posSystem").val(),
+//         formPOSUsingOther: $("#posOtherDate").val(),
+//         formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
+//         formYesPOSProvider: $("#endDatePOS").val(),
+//         acceptAutoPilotAI: $("input[name='acknowledgeAI']:checked").val(),
 
-     ajaxsignupToCustomerProjectID.done(function(res) {
-         console.log(res);
-         return true;
-     });
 
-     ajaxsignupToCustomerProjectID.fail(function(xhr, status, error) {
-         console.log("ajax Send L4U Mail alert fail!!");
-        console.log(status + ': ' + error);
-        return false;
-     });
+//         //NEW//
+//         formShopNumber: $("#businessNumber").val(),
+//         formTradingName: $("#company").val(),
+//         formShopPhoneNumber: $("#shopPhoneFormatted").val(),
+//         formShopWebsite: $("#webURL").val(),
+//         formOwnerFirstLanguage: $("input[name='supportLanguage']:checked").val(),
 
-}//sendMail
+
+//         ///Cuisine///
+//         cuisinesOther: txtCuisine,
+//         formCuisineOther: $("#cuisinesOther").val(),
+//         formSetupFee: $("input[name='setup']:checked").val(),
+
+
+//         //Booking System//
+//         formLoginEmailBookingSystem: $("#emailBooking").val(),
+//         formPasswordBookingSystem: $("#passwordBooking").val(),
+
+//         //Online Ordering System//
+//         formLoginEmailOnlineOrderingSystem: $("#emailShoppingCart").val(),
+//         formPasswordOnlineOrderingSystem: $("#passwordShoppingCart").val(),
+
+//         //Services//
+//         formPinkUp: $("input[id='pickup']:checked").val(),
+//         formTableReservation: $("input[id='tableReservation']:checked").val(),
+
+//         formDineInTableOrdering: $("input[id='DineIn']:checked").val(),
+//         dineInTable: $("#tableNumber").val(),
+//         dineInSize: $("#sizeOption").val(),
+
+//         delivery: $("input[id='delivery']:checked").val(),
+//         deliveryYourOwn: $("input[id='ownDriver']:checked").val(),
+//         deliverySystemDriver: $("input[id='systemDriver']:checked").val(),
+//         ihdEmail: $("#ref_IHD_Email").val(),
+//         ihdPw: $("#ref_IHD_Password").val(),
+//         ihdToken: $("#ref_IHD_Token").val(),
+
+//         //Payment Options//
+//         cash: $("input[id='cash']:checked").val(),
+//         cardCounter: $("input[id='cardCounter']:checked").val(),
+//         callBack: $("input[id='callBack']:checked").val(),
+//         payOnline: $("input[id='payOnline']:checked").val(),
+
+//         //Social Networks//
+//         facebook: $("#box_Facebook").val(),
+//         tiktok: $("#box_TikTok").val(),
+//         instagram: $("#box_Instagram").val(),
+//         yelp: $("#box_Yelp").val(),
+
+//         //Domain Name//
+//         ///Old///
+//         websiteDomainName: $("#websiteDomainName").val(),
+//         keepWebsite: $("input[id='keepWebsite']:checked").val(),
+//         ownDomain: $("input[id='ownDomain']:checked").val(),
+
+//         ///New///
+//         websiteNewDomain: $("#newDomain").val(),
+
+//         ///Domain Name Login info///
+//         loginInfoU: $("#ref_Domain_U").val(),
+//         loginInfoP: $("#ref_Domain_P").val(),
+//         loginInfoComments: $("#ref_Domain_Comments").val(),
+//         loginInfoRegistered: $("#ref_Domain_Name_Registered").val(),
+
+//         ///1st Order Discount///
+//         firstOrderDiscount: $("input:checkbox[name='discount']:checked").val(),
+//         firstOrderDiscountOther: $("input[id='othersDiscount']:checked").val(),
+//         firstOrderDiscountOtherValue: $("#discountOther").val(),
+
+//         ///POS Check Box///
+//         posCheck: $("#posCheck").val(),
+//         renovationTakePOS: $("#renovationTakePOS").val(),
+//         necessaryPermitsPOS: $("#necessaryPermitsPOS").val(),
+
+//         ///AI ///
+//         addonARAYA: $("input:checkbox[name='addonAI']:checked").val(),
+
+//         // Customer ID & Store ID for Monday.com integration **Comebank Change**
+//         // customerID: generatedCustomerID,
+//         // storeID: generatedStoreID, // Use projectID as storeID
+//         // codeShopNumber: codeShopNumber,
+//         // currencyShop: currencyShop,
+//         // storeType: storeType,
+
+//         //END NEW//
+//         testMail: CheckedBoxTestmailValue,
+//         token: Math.random()
+//     };
+
+
+
+//     // TODO: Send Email To Staff กลับมาเปิดคอมเม้นด้วย
+//      // Send data to Make.com webhook with Customer ID & Store ID
+//      const ajaxsignupToCustomerProjectID = $.ajax({
+//          url: "https://hook.us1.make.com/d8virx5jtrqq0h6vr5gwdgmd9ia68qdv",
+//          method: 'POST',
+//          async: true,
+//          cache: false,
+//          data: payload
+//      });
+
+//      ajaxsignupToCustomerProjectID.done(function(res) {
+//          console.log(res);
+//          return true;
+//      });
+
+//      ajaxsignupToCustomerProjectID.fail(function(xhr, status, error) {
+//          console.log("ajax Send L4U Mail alert fail!!");
+//         console.log(status + ': ' + error);
+//         return false;
+//      });
+
+// }//sendMail
 
 /**
  * คำนวณราคาก่อน VAT จากราคาที่รวม VAT แล้ว (สำหรับ VAT 7%)
@@ -1891,35 +1891,40 @@ const callDatabaseInvoice = (idInvoice) => {
 
 // TODO : Build Logs File to DB by Mark
 const saveToDB = (stripePayload, stripeRes) => {
-    generatedProjectID = "";
-    generatedCustomerID = "";
+    
 
-    try {
-        const idResponse = $.ajax({
-            url: settings.url_generateID,
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                country: formData.formCountry,
-                formType: formData.formType
-            }
-        });
+     // Generate Customer ID & Store ID from backend API **Comeback Change**
+    //  generatedStoreID = "";
+    // generatedCustomerID = "";
+    // try {
+    //     const idResponse = $.ajax({
+    //         url: settings.url_generateID,
+    //         method: 'POST',
+    //         async: false,
+    //         cache: false,
+    //         dataType: 'json',
+    //         data: {
+    //             country: formData.formCountry,
+    //             formType: formData.formType
+    //         }
+    //     });
 
-        if (idResponse.responseJSON && idResponse.responseJSON.result === "success") {
-            generatedProjectID = idResponse.responseJSON.projectID;
-            generatedCustomerID = idResponse.responseJSON.customerID;
-        } else if (idResponse.result === "success") {
-            generatedProjectID = idResponse.projectID;
-            generatedCustomerID = idResponse.customerID;
-        }
-    } catch (e) {
-        console.error('generateID error:', e);
-    }
+    //     // Store generated IDs globally for use in other functions
+    //     if (idResponse.responseJSON && idResponse.responseJSON.result === "success") {
+    //         generatedStoreID = idResponse.responseJSON.storeID; // Store ID
+    //         generatedCustomerID = idResponse.responseJSON.customerID; // Customer ID
+    //     } else if (idResponse.result === "success") {
+    //         generatedStoreID = idResponse.storeID; // Store ID
+    //         generatedCustomerID = idResponse.customerID; // Customer ID
+    //     }
+    // } catch (e) {
+    //     console.error('generateID error:', e);
+    // }
 
-    console.log("Generated Project ID:", generatedProjectID);
-    console.log("Generated Customer ID:", generatedCustomerID);
+    // // Log generated IDs for debugging
+    // console.log("Generated Store ID:", generatedStoreID);
+    // console.log("Generated Customer ID:", generatedCustomerID);
+    // Generate Customer ID & Store ID from backend API **Comeback Change**
 
 
     genLinkPDF();
@@ -2054,8 +2059,9 @@ const saveToDB = (stripePayload, stripeRes) => {
         formPOSUsingOther: $("#posOtherDate").val(),
         formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
         formYesPOSProvider: $("#endDatePOS").val(),
-        customerID: generatedCustomerID,
-        projectID: generatedProjectID,
+        // Attach Customer ID & Store ID to payload for database storage **Comebank Change**
+        // customerID: generatedCustomerID,
+        // storeID: generatedStoreID,
     };
 
     // TODO : Save To Database
@@ -2240,8 +2246,9 @@ const createLogs = (stripePayload) => {
         formPOSUsing: $("#posSystem").val(),
         formPOSUsingOther: $("#posOtherDate").val(),
         formYesPOSProvider: $("#endDatePOS").val(),
-        ProjectID: generatedProjectID,
-        CustomerID: generatedCustomerID
+        // Attach Customer ID & Store ID to logs **Comebank Change**
+        // StoreID: generatedStoreID,
+        // CustomerID: generatedCustomerID
     };
 // TODO : Build Logs File
     const ajaxSendLog = $.ajax({
