@@ -10,12 +10,29 @@ $api = new DreamscapeAPI();
 
 // Get date range from request or use defaults
 $period = isset($_GET['period']) ? $_GET['period'] : 'month';
-$startDate = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d', strtotime('-30 days'));
-$endDate = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
 
-// Fetch real-time data from Dreamscape API
+// Calculate date range based on period
+if ($period === 'custom') {
+    $startDate = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d', strtotime('-30 days'));
+    $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
+} elseif ($period === 'week') {
+    $startDate = date('Y-m-d', strtotime('monday this week'));
+    $endDate = date('Y-m-d');
+} elseif ($period === 'month') {
+    $startDate = date('Y-m-01');
+    $endDate = date('Y-m-d');
+} elseif ($period === 'year') {
+    $startDate = date('Y-01-01');
+    $endDate = date('Y-m-d');
+} else {
+    // Default to month
+    $startDate = date('Y-m-01');
+    $endDate = date('Y-m-d');
+}
+
+// Fetch real-time data from Dreamscape API with date range
 try {
-    $dashboardData = $api->getDashboardSummary();
+    $dashboardData = $api->getDashboardSummary($startDate, $endDate);
     
     // Debug: Log the response
     error_log('Dashboard Data Response: ' . print_r($dashboardData, true));
@@ -27,9 +44,14 @@ try {
     
     $dashboardData = $dashboardData['data'];
     
+    // Use period_total for the selected date range
+    $periodSales = $dashboardData['sales']['period_total'];
+    
 } catch (Exception $e) {
     // Fallback to mock data if API fails
     error_log('Dreamscape API Error: ' . $e->getMessage());
+    
+    $periodSales = 0.00;
     
     $dashboardData = [
         'domains' => [
@@ -77,20 +99,6 @@ if (!isset($dashboardData['orders'])) {
             <div class="col-sm-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <h1 class="m-0"><i class="bi bi-graph-up-arrow"></i> Dreamscape Report</h1>
-                    <div class="d-flex align-items-center">
-                        <select id="periodSelector" class="form-control mr-2" style="width: 150px;">
-                            <option value="week" <?php echo $period === 'week' ? 'selected' : ''; ?>>This Week</option>
-                            <option value="month" <?php echo $period === 'month' ? 'selected' : ''; ?>>This Month</option>
-                            <option value="year" <?php echo $period === 'year' ? 'selected' : ''; ?>>This Year</option>
-                            <option value="custom" <?php echo $period === 'custom' ? 'selected' : ''; ?>>Custom Range</option>
-                        </select>
-                        <div id="dateRangeContainer" style="display: <?php echo $period === 'custom' ? 'flex' : 'none'; ?>;">
-                            <input type="date" id="startDate" class="form-control mr-2" value="<?php echo $startDate; ?>" style="width: 150px;">
-                            <span class="mr-2">to</span>
-                            <input type="date" id="endDate" class="form-control mr-2" value="<?php echo $endDate; ?>" style="width: 150px;">
-                            <button id="applyDateRange" class="btn btn-primary">Apply</button>
-                        </div>
-                    </div>
                 </div>
                 <ol class="breadcrumb mt-2">
                     <li class="breadcrumb-item"><a href="main.php?p=home">Home</a></li>
@@ -159,11 +167,11 @@ if (!isset($dashboardData['orders'])) {
                             <div class="col-12">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="mb-0">Sales Summary</h5>
-                                    <select class="form-control" style="width: 200px;" id="chartPeriod">
+                                    <!-- <select class="form-control" style="width: 200px;" id="chartPeriod">
                                         <option value="monthly">Monthly Sales</option>
                                         <option value="weekly">Weekly Sales</option>
                                         <option value="daily">Daily Sales</option>
-                                    </select>
+                                    </select> -->
                                 </div>
                                 
                                 <div class="row">
@@ -180,7 +188,7 @@ if (!isset($dashboardData['orders'])) {
                                             </tr>
                                             <tr>
                                                 <td>This Month</td>
-                                                <td class="text-right font-weight-bold">$<?php echo number_format($dashboardData['sales']['this_month'], 2); ?></td>
+                                                <td class="text-right font-weight-bold">$<?php echo number_format($periodSales, 2); ?></td>
                                             </tr>
                                             <tr>
                                                 <td>Account Balance</td>

@@ -115,14 +115,16 @@ class DreamscapeAPI {
     
     /**
      * Get dashboard summary
+     * @param string $startDate Start date for period calculation (Y-m-d format)
+     * @param string $endDate End date for period calculation (Y-m-d format)
      * @return array
      */
-    public function getDashboardSummary() {
+    public function getDashboardSummary($startDate = null, $endDate = null) {
         $domains = $this->getDomainsSummary();
         $hosting = $this->getHostingSummary();
         $products = $this->getProductsSummary();
         $packages = $this->getPackagesSummary();
-        $sales = $this->getSalesSummary();
+        $sales = $this->getSalesSummary($startDate, $endDate);
         
         // Get recent orders from invoices
         $orders = [];
@@ -308,9 +310,11 @@ class DreamscapeAPI {
     
     /**
      * Get sales summary
+     * @param string $startDate Start date for period calculation (Y-m-d format)
+     * @param string $endDate End date for period calculation (Y-m-d format)
      * @return array
      */
-    public function getSalesSummary() {
+    public function getSalesSummary($startDate = null, $endDate = null) {
         // Get account balance
         $balanceResult = $this->makeRequest('/finances/balance', 'GET');
         
@@ -346,10 +350,15 @@ class DreamscapeAPI {
         $today = 0.00;
         $thisWeek = 0.00;
         $thisMonth = 0.00;
+        $periodTotal = 0.00;
         
         $todayDate = date('Y-m-d');
         $weekStart = date('Y-m-d', strtotime('monday this week'));
         $monthStart = date('Y-m-01');
+        
+        // Use provided date range or defaults
+        $periodStart = $startDate ? $startDate : $monthStart;
+        $periodEnd = $endDate ? $endDate : $todayDate;
         
         foreach ($allInvoices as $invoice) {
             if (!isset($invoice['order_date']) || !isset($invoice['total_amount'])) {
@@ -373,12 +382,18 @@ class DreamscapeAPI {
             if ($orderDate >= $monthStart) {
                 $thisMonth += $amount;
             }
+            
+            // Custom period
+            if ($orderDate >= $periodStart && $orderDate <= $periodEnd) {
+                $periodTotal += $amount;
+            }
         }
         
         return [
             'today' => $today,
             'this_week' => $thisWeek,
             'this_month' => $thisMonth,
+            'period_total' => $periodTotal,
             'account_balance' => $balance,
             'withdrawal_pending' => 'NONE'
         ];
