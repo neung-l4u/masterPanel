@@ -138,6 +138,7 @@ $password = "Localeats#".date("Y");
                                         <select id="inputStaffType" class="custom-select">
                                             <option value="fullTime" selected>Full-time</option>
                                             <option value="partTime">Part-time</option>
+                                            <option value="intern">Intern</option>
                                         </select>
                                     </div>
                                 </div>

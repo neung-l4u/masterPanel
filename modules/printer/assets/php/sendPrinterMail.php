@@ -19,7 +19,7 @@ $data = [
     'price' => getRequestData('price', 'undefined price'),
     'country' => getRequestData('country', 'undefined country'),
     'l4uStaff' => "bas@localforyou.com",
-    'l4uSuperAdmin' => "neung@localforyou.com",
+    'l4uSuperAdmin' => "notification@localforyou.com",
 ];
 
 $data['fullName'] = $data['firstName'] . ' ' . $data['lastName'];
@@ -28,7 +28,8 @@ $data['customerEmail'] = $data['email'];
 if ($isDevMode) {
     $data['supplierEmail'] = "iamatomix@gmail.com";
 } else {
-    $data['supplierEmail'] = "andrew@aussiepos.com.au";
+$data['supplierEmail'] = "andrew@aussiepos.com.au";
+
 }
 
 $data['adminEmail'] = "admin@localforyou.com";

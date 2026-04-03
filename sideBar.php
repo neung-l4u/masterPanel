@@ -4,6 +4,7 @@ $coins["l4u"] = $_SESSION['L4UCoin'];
 $coins["ceo"] = $_SESSION['CEOCoin'];
 $userLevel = $_SESSION['level'];
 $teamID = $_SESSION['teamID'];
+$staffType = $_SESSION['staffType'] ?? 'fullTime';
 include ('assets/api/checkSession.php');
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -79,6 +80,14 @@ include ('assets/api/checkSession.php');
                     </ul>
                 </li>
                 <?php } ?>
+
+                <!-- L4U Task -->
+                <!-- <li class="nav-item">
+                    <a href="main.php?p=l4utaskBoards" class="nav-link <?php echo $activeMenu["lv1"] == "l4utask" ? "active":""; ?>">
+                        <i class="nav-icon mr-2 bi bi-kanban"></i>
+                        <p>L4U Task</p>
+                    </a>
+                </li> -->
 
                 <!-- Form Management -->
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "formMgmt" ? "menu-is-opening menu-open":""; ?>">
@@ -190,6 +199,18 @@ include ('assets/api/checkSession.php');
                             </a>
                         </li>
                         <li class="nav-item pl-2">
+                            <a href="main.php?p=printersLog" class="nav-link <?php echo $activeMenu["lv2"] == "printersLog" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-printer"></i>
+                                <p>Printers Log</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=signupLogs" class="nav-link <?php echo $activeMenu["lv2"] == "signupLogs" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-person-plus"></i>
+                                <p>SignUp Logs (Staff)</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
                             <a href="modules/changeLog/changelog.php" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-clock-history"></i>
                                 <p>Change Logs &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
@@ -245,6 +266,8 @@ include ('assets/api/checkSession.php');
                             </a>
                         </li> -->
                         
+                        
+                        
                         <li class="nav-item pl-2">
                             <a href="main.php?p=l4uPassword" class="nav-link <?php echo $activeMenu["lv2"] == "l4uPassword" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-key"></i>
@@ -253,6 +276,15 @@ include ('assets/api/checkSession.php');
                         </li>
                     </ul>
                 </li>
+
+                <?php if(in_array($staffType, ['partTime', 'intern']) || $userLevel <= 2){ ?>
+                        <li class="nav-item pl-2">
+                            <a href="https://report.localforyou.com/modules/checkin/views/main.php" target="_blank" class="nav-link">
+                                <i class="nav-icon mr-3 bi bi-clock-history"></i>
+                                <p>Check-in &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
+                            </a>
+                        </li>
+                        <?php } ?>
 
             </ul>
         </nav>

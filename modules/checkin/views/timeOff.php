@@ -39,7 +39,7 @@ $now = date("H:i");
             <div class="row mb-3">
                 <div class="col-6">
                     <label for="staffID" class="form-label"><i class="bi bi-person-fill"></i> Staff name <span class="red">*</span></label>
-                    <?php $staff = $db->query("SELECT * FROM `staffs` WHERE `sStaffType` = 'partTime' AND `sStatus` = 1 ORDER BY `sNickName`;")->fetchAll(); ?>
+                    <?php $staff = $db->query("SELECT * FROM `staffs` WHERE `sStaffType` IN ('partTime', 'intern') AND `sStatus` = 1 ORDER BY `sNickName`;")->fetchAll(); ?>
                     <select id="staffID" name="staffID" class="form-select" onchange="getStaffTeam(this.value);" required>
                         <option value="">-- Select --</option>
                         <?php foreach ($staff as $row): ?>

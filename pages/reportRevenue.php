@@ -225,6 +225,7 @@
                                         <option value="">-- Select billing file --</option>
                                     </select>
                                     <button class="btn btn-sm btn-primary" id="yelpFileLoad" style="font-size:11px;padding:2px 10px;white-space:nowrap;">Load</button>
+                                    <button class="btn btn-sm btn-outline-danger" id="yelpFileDelete" style="font-size:11px;padding:2px 8px;white-space:nowrap;" title="Delete selected file"><i class="bi bi-trash"></i></button>
                                 </div>
                                 <div id="yelpBillingLoading" style="display:none;" class="text-center py-4">
                                     <div class="spinner-border spinner-border-sm" style="color:#d32323;" role="status"></div>
@@ -494,9 +495,13 @@
                     <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
                         <div class="card h-100" style="border-left:4px solid #635bff;">
                             <div class="card-body py-2">
-                                <div class="rc-type-label"><i class="bi bi-diagram-3 mr-1" style="color:#635bff;"></i> Stripe Connect</div>
+                                <div class="rc-type-label"><i class="bi bi-diagram-3 mr-1" style="color:#635bff;"></i> Stripe Connect <span class="rc-label" id="sum_connect_period"></span></div>
                                 <div class="rc-big" id="sum_connect">—</div>
+                                <div class="rc-sub"><span class="rc-label">Revenue:</span> <span id="sum_connect_rev">—</span></div>
+                                <div class="rc-sub"><span class="rc-label">Fee:</span> <span id="sum_connect_fee">—</span></div>
                                 <div class="rc-sub"><span class="rc-label">Net:</span> <span id="sum_connect_net">—</span></div>
+                                <div class="rc-sub"><span class="rc-label">Charges:</span> <span id="sum_connect_charges">—</span></div>
+                                <div class="rc-sub"><span class="rc-label">Items:</span> <span id="sum_connect_items">—</span></div>
                             </div>
                         </div>
                     </div>
@@ -1556,6 +1561,62 @@ window.addEventListener('load', function(){
         document.getElementById('tabMonthlyBody').innerHTML = html;
     }
 
+    // ===== GRAND TOTAL (client-side) =====
+    function updateGrandTotal() {
+        var rates = DATA.exchange_rates_to_aud || {};
+        var rUSD = rates.stripe_us || 1.55;
+        var rTHB = rates.stripe_th || 0.045;
+        var rGBP = rates.sms_uk || 1.95;
+
+        var rev = DATA.revenue || {};
+        var totalAud = 0;
+        var totalRevAud = 0;
+
+        // Stripe AU (AUD)
+        totalAud    += ((rev.stripe_au||{}).amount||0) * 1;
+        totalRevAud += ((rev.stripe_au||{}).revenue||0) * 1;
+        // Stripe US (USD)
+        totalAud    += ((rev.stripe_us||{}).amount||0) * rUSD;
+        totalRevAud += ((rev.stripe_us||{}).revenue||0) * rUSD;
+        // Stripe TH (THB)
+        totalAud    += ((rev.stripe_th||{}).amount||0) * rTHB;
+        totalRevAud += ((rev.stripe_th||{}).revenue||0) * rTHB;
+
+        // Stripe Connect — from Stripe API (currency from API response)
+        if (CON_DATA) {
+            var conCur = (CON_DATA.currencyCode||'AUD').toUpperCase();
+            var conRate = conCur === 'AUD' ? 1 : conCur === 'USD' ? rUSD : conCur === 'THB' ? rTHB : conCur === 'GBP' ? rGBP : 1;
+            var conGross = (CON_DATA.grossVolume||{}).total||0;
+            var conNet   = (CON_DATA.netVolume||{}).total||0;
+            totalAud    += conGross * conRate;
+            totalRevAud += conNet * conRate;
+        }
+
+        // SMS AU (AUD) — from TransmitSMS API
+        if (SMS_DATA.au) {
+            totalAud    += ((SMS_DATA.au.totals||{}).revenue||0) * 1;
+            totalRevAud += ((SMS_DATA.au.totals||{}).cost||0) * 1;
+        }
+        // SMS US (USD)
+        if (SMS_DATA.us) {
+            totalAud    += ((SMS_DATA.us.totals||{}).revenue||0) * rUSD;
+            totalRevAud += ((SMS_DATA.us.totals||{}).cost||0) * rUSD;
+        }
+        // SMS UK (GBP)
+        if (SMS_DATA.uk) {
+            totalAud    += ((SMS_DATA.uk.totals||{}).revenue||0) * rGBP;
+            totalRevAud += ((SMS_DATA.uk.totals||{}).cost||0) * rGBP;
+        }
+
+        // Yelp (USD) — uses revenue field
+        totalAud    += ((rev.yelp||{}).revenue||0) * rUSD;
+        totalRevAud += ((rev.yelp||{}).revenue||0) * rUSD;
+
+        document.getElementById('sum_grand').textContent = fmt(totalAud, 'A$');
+        document.getElementById('sum_grand_rev').textContent = fmt(totalRevAud, 'A$');
+        document.getElementById('sumMetaGrand').textContent = 'Converted to AUD (1 USD=' + rUSD + ', 1 THB=' + rTHB + ', 1 GBP=' + rGBP + ')';
+    }
+
     // ===== RENDER SUMMARY TAB =====
     var sumTypeOrder = ['stripe_au','stripe_us','stripe_th','sms_au','sms_us','sms_uk','yelp'];
     var smsSumCurMap = { au:'A$', us:'$', uk:'£' };
@@ -1615,23 +1676,27 @@ window.addEventListener('load', function(){
             renderConnectCard();
         } else {
             document.getElementById('sum_connect').textContent = '...';
+            document.getElementById('sum_connect_rev').textContent = '...';
+            document.getElementById('sum_connect_fee').textContent = '...';
             document.getElementById('sum_connect_net').textContent = '...';
+            document.getElementById('sum_connect_charges').textContent = '...';
+            document.getElementById('sum_connect_items').textContent = '...';
+            document.getElementById('sum_connect_period').textContent = '';
             $.ajax({ url:'api/stripe/getData.php', data:{ account:'connect', days:28 }, dataType:'json', timeout:120000 })
             .done(function(d) {
                 if (d.error) { document.getElementById('sum_connect').textContent = 'Error'; return; }
                 CON_DATA = d;
                 renderConnectCard();
+                updateGrandTotal();
             })
             .fail(function() { document.getElementById('sum_connect').textContent = '—'; });
         }
 
-        // Yelp + Grand Total (in AUD)
+        // Yelp
         document.getElementById('sum_yelp').textContent = fmt((rev.yelp||{}).revenue, '$');
-        var gtAud = DATA.grand_total_aud || gt;
-        document.getElementById('sum_grand').textContent = fmt(gtAud.amount, 'A$');
-        document.getElementById('sum_grand_rev').textContent = fmt(gtAud.revenue, 'A$');
-        var rates = DATA.exchange_rates_to_aud || {};
-        document.getElementById('sumMetaGrand').textContent = 'Converted to AUD (1 USD=' + (rates.stripe_us||'?') + ', 1 THB=' + (rates.stripe_th||'?') + ', 1 GBP=' + (rates.sms_uk||'?') + ')';
+
+        // Grand Total — computed client-side after all sources loaded
+        updateGrandTotal();
 
         // Active users
         var auC = (rev.stripe_au||{}).charge_count||0;
@@ -1689,10 +1754,36 @@ window.addEventListener('load', function(){
     }
 
     function renderConnectCard() {
-        var gv = CON_DATA.grossVolume || {};
-        var nv = CON_DATA.netVolume || {};
-        document.getElementById('sum_connect').textContent = fmt(gv.total, '$');
-        document.getElementById('sum_connect_net').textContent = fmt(nv.total, '$');
+        var d = CON_DATA;
+        var cs = d.currencySymbol || '$';
+        var gv = d.grossVolume || {};
+        var nv = d.netVolume || {};
+        var pay = d.payments || {};
+        var fee = d.feeTotal || 0;
+        var chargeCount = (pay.succeeded_count || 0);
+        var itemCount = (pay.succeeded_count || 0) + (pay.failed_count || 0);
+
+        document.getElementById('sum_connect').textContent = fmt(gv.total, cs);
+        document.getElementById('sum_connect_rev').textContent = fmt(gv.total, cs);
+        document.getElementById('sum_connect_fee').textContent = fmt(fee, cs);
+        document.getElementById('sum_connect_net').textContent = fmt(nv.total, cs);
+        document.getElementById('sum_connect_charges').textContent = fmtInt(chargeCount);
+        document.getElementById('sum_connect_items').textContent = fmtInt(itemCount);
+
+        // Period subtitle
+        var p = d.period || {};
+        var periodText = '';
+        var sel = document.getElementById('conPeriod').value;
+        if (sel === 'custom') {
+            var s = document.getElementById('conDateStart').value;
+            var e = document.getElementById('conDateEnd').value;
+            if (s && e) periodText = s + ' — ' + e;
+        }
+        if (!periodText) {
+            var labelMap = {'7':'Last 7 days','28':'Last 28 days','90':'Last 90 days','180':'Last 180 days','365':'Last 365 days','9999':'All time','custom':'Custom'};
+            periodText = labelMap[sel] || ((p.start||'') + ' — ' + (p.end||''));
+        }
+        document.getElementById('sum_connect_period').textContent = periodText;
     }
 
     function checkAllSmsLoaded() {
@@ -1717,6 +1808,8 @@ window.addEventListener('load', function(){
         document.getElementById('sumMetaSms').textContent = metaText;
         // Rebuild MoM/YoY with SMS data included
         renderMomYoy();
+        // Recalculate Grand Total with SMS data
+        updateGrandTotal();
     }
 
     function renderMomYoy() {
@@ -1953,10 +2046,18 @@ window.addEventListener('load', function(){
         var curCodeMap = {'USD':'$','AUD':'A$','THB':'฿','GBP':'£','EUR':'€','NZD':'NZ$'};
         document.getElementById('conContent').style.display = '';
 
-        // Period info
+        // Period info — show selected label + date range + debug
         var p = d.period || {};
         var dbg = d.debug || {};
-        document.getElementById('conPeriodInfo').textContent = (p.start||'') + ' — ' + (p.end||'') + ' (' + (p.days||'') + ' days) | ' + (dbg.source||'') + (dbg.time_seconds ? ' ' + dbg.time_seconds + 's' : '');
+        var sel = document.getElementById('conPeriod');
+        var selLabel = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
+        var periodStr = (p.start||'') + ' — ' + (p.end||'') + ' (' + (p.days||'') + ' days)';
+        if (sel.value === 'custom') {
+            var cs2 = document.getElementById('conDateStart').value;
+            var ce2 = document.getElementById('conDateEnd').value;
+            if (cs2 && ce2) periodStr = cs2 + ' — ' + ce2 + ' (' + (p.days||'') + ' days)';
+        }
+        document.getElementById('conPeriodInfo').textContent = periodStr + ' | ' + (dbg.source||'') + (dbg.time_seconds ? ' ' + dbg.time_seconds + 's' : '');
 
         // Balance (multi-currency breakdown)
         var bal = d.balance || {};
@@ -2034,6 +2135,10 @@ window.addEventListener('load', function(){
                 document.getElementById('conTopCustBody').innerHTML = '<tr><td colspan="4" class="text-center text-danger">Failed to load</td></tr>';
             });
         }
+
+        // Update Summary Connect card + Grand Total when Connect data changes
+        renderConnectCard();
+        updateGrandTotal();
     }
 
     function renderConTopCust(cs) {
@@ -2169,6 +2274,8 @@ window.addEventListener('load', function(){
         var isCustom = this.value === 'custom';
         document.getElementById('conDateRange').style.display = isCustom ? 'flex' : 'none';
         if (!isCustom) {
+            var labelMap = {'7':'Last 7 days','28':'Last 28 days','90':'Last 90 days','180':'Last 180 days','365':'Last 365 days','9999':'All time'};
+            document.getElementById('conPeriodInfo').textContent = (labelMap[this.value] || '') + ' — loading...';
             CON_DATA = null;
             loadConnect();
         }
@@ -2176,6 +2283,11 @@ window.addEventListener('load', function(){
 
     // Connect custom date Go button
     document.getElementById('conDateGo').addEventListener('click', function() {
+        var s = document.getElementById('conDateStart').value;
+        var e = document.getElementById('conDateEnd').value;
+        if (s && e) {
+            document.getElementById('conPeriodInfo').textContent = s + ' — ' + e + ' — loading...';
+        }
         CON_DATA = null;
         loadConnect();
     });
@@ -2458,6 +2570,23 @@ window.addEventListener('load', function(){
     document.getElementById('yelpFileLoad').addEventListener('click', function() {
         var filename = document.getElementById('yelpFileSelect').value;
         if (filename) loadYelpBilling(filename);
+    });
+
+    // --- Yelp file delete ---
+    document.getElementById('yelpFileDelete').addEventListener('click', function() {
+        var filename = document.getElementById('yelpFileSelect').value;
+        if (!filename) { alert('Please select a file to delete'); return; }
+        if (!confirm('Delete file "' + filename + '"?\nThis cannot be undone.')) return;
+        var btn = this;
+        btn.disabled = true;
+        $.ajax({ url:'api/yelp/getAdsData.php', data:{ action:'excel_delete', file: filename }, dataType:'json' })
+        .done(function(d) {
+            if (d.error) { alert('Delete error: ' + d.error); return; }
+            initYelpFileList();
+            document.getElementById('yelpBillingContent').style.display = 'none';
+        })
+        .fail(function(xhr, st, err) { alert('Delete failed: ' + (err || st)); })
+        .always(function() { btn.disabled = false; });
     });
 
     // --- Yelp file upload ---

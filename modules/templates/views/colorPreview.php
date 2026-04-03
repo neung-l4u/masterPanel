@@ -74,9 +74,9 @@
     </div>
 </div>
 
-<div class="template-hero d-flex">
-    <div class="py-3 w-100">
-        <div id="templates" class="row row-cols-2 row-cols-md-4 g-3 g-lg-4 mt-2">
+<div class="template-hero d-flex align-items-center justify-content-center" style="height: 60vh;">
+    <div class="w-100" style="max-width: 1200px;">
+        <div id="templates" class="row row-cols-2 row-cols-md-4 g-3 g-lg-4 justify-content-center">
         <div class="col">
             <a href="customRes1.php" class="template-card" aria-label="Open Restaurant Template 1">
             <div class=" template-thumb">
@@ -88,7 +88,7 @@
             </a>
         </div>
 
-        <div class="col pt-5">
+        <!-- <div class="col pt-5">
             <a href="customRes2.php" class="template-card" aria-label="Open Restaurant Template 2">
             <div class=" template-thumb">
                 <img src="../assets/img/Res2Home-min.png" alt="Restaurant 2 preview" loading="lazy" decoding="async">
@@ -108,9 +108,9 @@
                 <span class="template-title">Restaurant - 3</span>
             </div>
             </a>
-        </div>
+        </div> -->
 
-        <div class="col pt-5">
+        <div class="col ">
             <a href="customMas1.php" class="template-card" aria-label="Open Massage Template 1">
             <div class=" template-thumb">
                 <img src="../assets/img/Mas1Home-min.png" alt="Massage 1 preview" loading="lazy" decoding="async">
@@ -123,4 +123,6 @@
         </div>
     </div>
 </div>
+
+
 <script src="../assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>

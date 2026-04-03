@@ -59,6 +59,26 @@ if ($action === 'excel_upload') {
     exit;
 }
 
+// ========== EXCEL DELETE ==========
+if ($action === 'excel_delete') {
+    $filename = $_GET['file'] ?? $_POST['file'] ?? '';
+    if (!$filename) {
+        echo json_encode(['error' => 'Provide file parameter']);
+        exit;
+    }
+    $filepath = $uploadDir . basename($filename);
+    if (!file_exists($filepath)) {
+        echo json_encode(['error' => 'File not found: ' . basename($filename)]);
+        exit;
+    }
+    if (unlink($filepath)) {
+        echo json_encode(['success' => true, 'deleted' => basename($filename)]);
+    } else {
+        echo json_encode(['error' => 'Failed to delete file']);
+    }
+    exit;
+}
+
 // ========== EXCEL DATA ==========
 if ($action === 'excel_data') {
     $filename = $_GET['file'] ?? '';

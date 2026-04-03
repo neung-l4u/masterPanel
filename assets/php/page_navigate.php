@@ -173,6 +173,22 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataFeedbackMonday.php";
         $title = "Master panel : Feedback Monday";
         break;
+    case "printersLog":
+        $showPage = "printersLog.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "printersLog";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataPrintersLog.php";
+        $title = "Master panel : Printers Log";
+        break;
+    case "signupLogs":
+        $showPage = "signupLogs.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "signupLogs";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataSignupLogs.php";
+        $title = "Master panel : SignUp Logs (Staff)";
+        break;
     case "unsub":
         $showPage = "unSubmitted.php";
         $activeMenu["lv1"] = "";
@@ -276,5 +292,21 @@ switch ($menuPage){
         $datatable["show"] = "false";
         $datatable["src"] = "";
         $title = "Master panel : Revenue Report";
+        break;
+    case "l4utaskBoards":
+        $showPage = "l4utaskBoards.php";
+        $activeMenu["lv1"] = "l4utask";
+        $activeMenu["lv2"] = "l4utaskBoards";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : L4U Task Boards";
+        break;
+    case "l4utaskBoard":
+        $showPage = "l4utaskBoard.php";
+        $activeMenu["lv1"] = "l4utask";
+        $activeMenu["lv2"] = "l4utaskBoard";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : L4U Task Board";
         break;
 }

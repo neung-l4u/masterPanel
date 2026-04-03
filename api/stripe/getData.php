@@ -190,6 +190,7 @@ if (!$skipDaily) {
 $todayGross = 0; $yesterdayGross = 0;
 $grossTotal = 0; $netTotal = 0; $feeTotal = 0; $refundTotal = 0;
 $prevGross = 0; $prevNet = 0; $txnCount = 0;
+$debugTypes = []; // DEBUG: track transaction types and amounts
 
 $txnList = $stripe->balanceTransactions->all([
     'limit' => 100, 'created' => ['gte' => $prevPeriodStart, 'lt' => $periodEnd + 86400]
@@ -198,8 +199,19 @@ foreach ($txnList->autoPagingIterator() as $tx) {
     $txnCount++;
     $amt = $tx->amount / 100; $net = $tx->net / 100; $fee = $tx->fee / 100;
     $ts = $tx->created; $type = $tx->type;
-    // Include transfer type for Connect accounts (revenue shares)
-    $isGrossType = ($type === 'charge' || $type === 'payment' || $type === 'transfer');
+
+    // DEBUG: track all types
+    if ($ts >= $periodStart) {
+        if (!isset($debugTypes[$type])) $debugTypes[$type] = ['count' => 0, 'amount' => 0, 'net' => 0, 'fee' => 0];
+        $debugTypes[$type]['count']++;
+        $debugTypes[$type]['amount'] += $amt;
+        $debugTypes[$type]['net'] += $net;
+        $debugTypes[$type]['fee'] += $fee;
+    }
+
+    // Include transfer/revenue_share/application_fee for Connect accounts
+    $isGrossType = ($type === 'charge' || $type === 'payment' || $type === 'transfer'
+        || ($isConnect && ($type === 'revenue_share' || $type === 'application_fee')));
     if ($ts >= $periodStart) {
         if ($isGrossType) {
             $grossTotal += $amt; $netTotal += $net; $feeTotal += $fee;
@@ -218,10 +230,12 @@ $netChange = $prevNet > 0 ? round(($netTotal - $prevNet) / $prevNet * 100, 1) : 
 $result['today'] = ['gross' => round($todayGross, 2), 'yesterday' => round($yesterdayGross, 2), 'time' => date('g:i A')];
 $result['grossVolume'] = ['total' => round($grossTotal, 2), 'previous' => round($prevGross, 2), 'change' => $grossChange, 'daily' => $dailyGross];
 $result['netVolume'] = ['total' => round($netTotal, 2), 'previous' => round($prevNet, 2), 'change' => $netChange, 'daily' => $dailyNet];
+$result['feeTotal'] = round($feeTotal, 2);
+$result['refundTotal'] = round($refundTotal, 2);
 
 // 4. Charges
 $failedPayments = []; $succeededTotal = 0; $failedTotal = 0; $blockedTotal = 0;
-$uncapturedTotal = 0; $refundedTotal2 = 0;
+$uncapturedTotal = 0; $refundedTotal2 = 0; $succeededCount = 0; $failedCount = 0;
 $seenPISucc = []; $seenPIFail = []; $customerSpend = [];
 $periodCharges = $stripe->charges->all(['limit' => 100, 'created' => ['gte' => $periodStart, 'lt' => $periodEnd + 86400]]);
 $pcCount = 0;
@@ -235,7 +249,7 @@ foreach ($periodCharges->autoPagingIterator() as $c) {
         $isDupe = false;
         if ($pi) { if (isset($seenPISucc[$pi])) $isDupe = true; else $seenPISucc[$pi] = true; }
         if (!$isDupe && ($isConnect || $chargeCur === $primaryCur)) {
-            if ($c->captured) { $succeededTotal += $amt; if ($c->refunded) $refundedTotal2 += ($c->amount_refunded ?? 0) / 100; }
+            if ($c->captured) { $succeededTotal += $amt; $succeededCount++; if ($c->refunded) $refundedTotal2 += ($c->amount_refunded ?? 0) / 100; }
             else $uncapturedTotal += $amt;
             $custId = $c->customer ?: '';
             if ($custId) {
@@ -248,7 +262,7 @@ foreach ($periodCharges->autoPagingIterator() as $c) {
         $isDupe = false;
         if ($pi) { if (isset($seenPIFail[$pi])) $isDupe = true; else $seenPIFail[$pi] = true; }
         if (!$isDupe && ($isConnect || $chargeCur === $primaryCur)) {
-            $failedTotal += $amt;
+            $failedTotal += $amt; $failedCount++;
             if (count($failedPayments) < 4) {
                 $failedPayments[] = ['id' => $c->id, 'amount' => round($amt, 2), 'created' => date('M j, Y', $c->created), 'description' => $c->description ?: 'Payment'];
             }
@@ -256,7 +270,7 @@ foreach ($periodCharges->autoPagingIterator() as $c) {
     }
 }
 unset($periodCharges, $c, $seenPISucc, $seenPIFail);
-$result['payments'] = ['succeeded' => round($succeededTotal, 2), 'failed' => round($failedTotal, 2), 'blocked' => round($blockedTotal, 2), 'uncaptured' => round($uncapturedTotal, 2), 'refunded' => round($refundedTotal2, 2)];
+$result['payments'] = ['succeeded' => round($succeededTotal, 2), 'failed' => round($failedTotal, 2), 'blocked' => round($blockedTotal, 2), 'uncaptured' => round($uncapturedTotal, 2), 'refunded' => round($refundedTotal2, 2), 'succeeded_count' => $succeededCount, 'failed_count' => $failedCount];
 $result['failedPayments'] = array_slice($failedPayments, 0, 4);
 
 // Top customers
@@ -339,12 +353,19 @@ $curSymbolMap = ['usd'=>'$','aud'=>'A$','thb'=>'฿','gbp'=>'£','eur'=>'€','n
 $result['currencySymbol'] = $curSymbolMap[$primaryCur] ?? strtoupper($currency);
 $result['currencyCode'] = strtoupper($currency);
 $result['period'] = ['days' => $days, 'start' => date('M j', $periodStart), 'end' => date('M j', $periodEnd), 'timezone' => $timezone];
+// Round debug type amounts
+foreach ($debugTypes as &$dt) { $dt['amount'] = round($dt['amount'], 2); $dt['net'] = round($dt['net'], 2); $dt['fee'] = round($dt['fee'], 2); }
+unset($dt);
 $result['debug'] = [
     'balance_txns_fetched' => $txnCount, 'charges_fetched' => $pcCount,
     'subscriptions_fetched' => $subCount, 'customers_fetched' => $newCustCount + $prevCustCount,
     'memory_peak' => round(memory_get_peak_usage(true) / 1024 / 1024, 1) . 'MB',
     'time_seconds' => round(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 1),
-    'source' => 'realtime'
+    'source' => 'realtime',
+    'txn_types' => $debugTypes,
+    'period_start' => date('Y-m-d H:i:s', $periodStart),
+    'period_end' => date('Y-m-d H:i:s', $periodEnd),
+    'prev_period_start' => date('Y-m-d H:i:s', $prevPeriodStart)
 ];
 
 // Save cache for future use
