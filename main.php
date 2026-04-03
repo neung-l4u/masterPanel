@@ -40,6 +40,8 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
   <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="assets/css/jquery-ui-v1.13.2.css">
+  <!-- Daterangepicker for deliveries report -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
   <!-- Custom theme (loads last = highest priority) -->
   <link rel="stylesheet" href="assets/css/master-panel.css">
 </head>
@@ -75,6 +77,8 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>
 
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 <script>
     const latestActivityId = '<?php echo isset($navActivities) ? (count($navActivities) > 0 ? $navActivities[0]["id"] : 0) : 0; ?>';
@@ -98,9 +102,15 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
     let myTable = {};
     let myTable2 = {};
     let datatableStats = {};
-    const modalResponse = new bootstrap.Modal(document.getElementById("modalResponse"), {});
-    const modalForm = new bootstrap.Modal(document.getElementById("formModal"), {});
-    const modalConfirm = new bootstrap.Modal(document.getElementById("modalConfirm"), {});
+    
+    // Initialize modals only if elements exist
+    const modalResponseEl = document.getElementById("modalResponse");
+    const modalFormEl = document.getElementById("formModal");
+    const modalConfirmEl = document.getElementById("modalConfirm");
+    
+    const modalResponse = modalResponseEl ? new bootstrap.Modal(modalResponseEl, {}) : null;
+    const modalForm = modalFormEl ? new bootstrap.Modal(modalFormEl, {}) : null;
+    const modalConfirm = modalConfirmEl ? new bootstrap.Modal(modalConfirmEl, {}) : null;
 
     const datepickerOption = {
         dateFormat: 'dd-mm-yy',

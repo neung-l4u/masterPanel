@@ -293,6 +293,22 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Revenue Report";
         break;
+    case "reportDeliveries":
+        $showPage = "reportDeliveries.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportDeliveries";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Deliveries Report";
+        break;
+    case "reportDreamscape":
+        $showPage = "reportDreamscape.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportDreamscape";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Dreamscape Report";
+        break;
     case "l4utaskBoards":
         $showPage = "l4utaskBoards.php";
         $activeMenu["lv1"] = "l4utask";

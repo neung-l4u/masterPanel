@@ -1,9 +1,0 @@
-title	description	list	priority	due_date	stage	assignee
-Design new homepage	Create mockups for the new homepage design with modern UI elements	Design	High	2025-04-15	In Progress	John Doe
-Implement user authentication	Add login/logout functionality with JWT tokens	Development	Urgent	2025-03-30	In Progress	Jane Smith
-Database optimization	Optimize database queries for better performance	Backend	Medium	2025-04-10	Review	Mike Johnson
-Write API documentation	Document all REST API endpoints with examples	Documentation	Low	2025-04-20	Draft	Sarah Wilson
-Setup CI/CD pipeline	Configure GitHub Actions for automated testing and deployment	DevOps	High	2025-04-05	In Progress	Tom Brown
-User testing session	Conduct usability testing with 10 users	Testing	Medium	2025-04-12	Review	Emily Davis
-Fix mobile responsive issues	Fix layout problems on mobile devices	Development	Medium	2025-04-08	Need Fix	Chris Lee
-Create marketing materials	Design brochures and social media graphics	Marketing	Low	2025-04-25	Draft	Lisa Anderson

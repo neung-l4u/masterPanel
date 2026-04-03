@@ -22,7 +22,7 @@ include ('assets/api/checkSession.php');
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
+                <?php if($staffType !== 'guest'){ ?>
                 <!-- Home -->
                 <li class="nav-item">
                     <a href="main.php?p=home" class="nav-link <?php echo $activeMenu["lv1"] == "home" ? "active":""; ?>">
@@ -168,13 +168,26 @@ include ('assets/api/checkSession.php');
                                 <p>Revenue</p>
                             </a>
                         </li>
-                        <?php } ?>
+                        
                         <li class="nav-item pl-2">
                             <a href="main.php?p=reportGA" class="nav-link <?php echo $activeMenu["lv2"] == "reportGA" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-google"></i>
                                 <p>Google Analytics</p>
                             </a>
                         </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=reportDeliveries" class="nav-link <?php echo $activeMenu["lv2"] == "reportDeliveries" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-truck"></i>
+                                <p>Deliveries Report</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=reportDreamscape" class="nav-link <?php echo $activeMenu["lv2"] == "reportDreamscape" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-cloud"></i>
+                                <p>Dreamscape Report</p>
+                            </a>
+                        </li>
+                        <?php } ?>
                         <li class="nav-item pl-2">
                             <a href="modules/mondayReport/views/index.php?id=<?php echo $_SESSION['id']; ?>" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-kanban"></i>
@@ -183,6 +196,7 @@ include ('assets/api/checkSession.php');
                         </li>
                     </ul>
                 </li>
+                
 
                 <!-- Logs -->
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "logs" ? "menu-is-opening menu-open":""; ?>">
@@ -192,12 +206,14 @@ include ('assets/api/checkSession.php');
                     </a>
                     
                     <ul class="nav nav-treeview">
+                        
                         <li class="nav-item pl-2">
                             <a href="main.php?p=feedbackMonday" class="nav-link <?php echo $activeMenu["lv2"] == "feedbackMonday" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-chat-left-text"></i>
                                 <p>Feedback Monday</p>
                             </a>
                         </li>
+                        
                         <li class="nav-item pl-2">
                             <a href="main.php?p=printersLog" class="nav-link <?php echo $activeMenu["lv2"] == "printersLog" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-printer"></i>
@@ -218,7 +234,21 @@ include ('assets/api/checkSession.php');
                         </li>
                     </ul>
                 </li>
+                <?php } ?> <!-- End Role = Guest -->
 
+                <?php if($staffType == 'guest'){ ?>
+                <!-- Logs -->                       
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=feedbackMonday" class="nav-link <?php echo $activeMenu["lv2"] == "feedbackMonday" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-chat-left-text"></i>
+                                <p>Feedback Monday</p>
+                            </a>
+                        </li>
+                
+                <?php } ?>
+
+
+                <?php if($staffType !== 'guest'){ ?>
                 <!-- User Management -->
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "userMgmt" ? "menu-is-opening menu-open":""; ?>">
                     <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "userMgmt" ? "active":""; ?>">
@@ -285,6 +315,7 @@ include ('assets/api/checkSession.php');
                             </a>
                         </li>
                         <?php } ?>
+                <?php } ?>
 
             </ul>
         </nav>
