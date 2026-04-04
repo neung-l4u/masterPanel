@@ -80,45 +80,52 @@
     </div>
 </div>
 
-<script src="plugins/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    let printersTable = $('#datatable').DataTable({
-        pagingType: 'full_numbers',
-        ajax: {
-            url: 'pages/tableRendering/dataPrintersLog.php',
-            dataSrc: 'data'
-        },
-        "pageLength": 10,
-        order: [[0, 'desc']],
-        lengthMenu: [
-            [10, 25, 50, -1],
-            [10, 25, 50, 'All']
-        ],
-        columnDefs: [
-            { targets: [4, 5, 6, 7, 8], className: 'dt-center' },
-            { targets: [8], orderable: false }
-        ]
-    });
+window.addEventListener('load', function() {
+    // Check if DataTable is already initialized
+    if (jQuery.fn.DataTable.isDataTable('#datatable')) {
+        var printersTable = jQuery('#datatable').DataTable();
+    } else {
+        var printersTable = jQuery('#datatable').DataTable({
+            pagingType: 'full_numbers',
+            ajax: {
+                url: 'pages/tableRendering/dataPrintersLog.php',
+                dataSrc: 'data'
+            },
+            "pageLength": 10,
+            order: [[0, 'desc']],
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, 'All']
+            ],
+            columnDefs: [
+                { targets: [4, 5, 6, 7, 8], className: 'dt-center' },
+                { targets: [8], orderable: false }
+            ],
+            dom: 'lfrtip'
+        });
+    }
 
     // Country filter
-    $('#filterCountry').on('change', function() {
+    jQuery('#filterCountry').on('change', function() {
         printersTable.column(4).search(this.value).draw();
     });
 
     // Printer model filter
-    $('#filterPrinter').on('change', function() {
+    jQuery('#filterPrinter').on('change', function() {
         printersTable.column(5).search(this.value).draw();
     });
 
     // View detail — fetch from DB then show modal
-    $(document).on('click', '.btn-view-detail', function() {
-        var orderId = $(this).attr('data-id');
-        $('#detailModalBody').html('<div class="text-center p-5">Loading...</div>');
-        $('#detailModal').modal('show');
+    jQuery(document).on('click', '.btn-view-detail', function() {
+        var orderId = jQuery(this).attr('data-id');
+        jQuery('#detailModalBody').html('<div class="text-center p-5">Loading...</div>');
+        
+        const modalEl = document.getElementById('detailModal');
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
 
-        $.ajax({
+        jQuery.ajax({
             url: 'pages/tableRendering/getPrinterOrderDetail.php?id=' + orderId,
             dataType: 'json'
         }).done(function(res) {
@@ -158,12 +165,13 @@
                 html += '  </div>';
                 html += '</div>';
 
-                $('#detailModalBody').html(html);
+                jQuery('#detailModalBody').html(html);
             } else {
-                $('#detailModalBody').html('<div class="alert alert-danger">Error: ' + res.message + '</div>');
+                jQuery('#detailModalBody').html('<div class="alert alert-danger">Error: ' + res.message + '</div>');
             }
         }).fail(function() {
-            $('#detailModalBody').html('<div class="alert alert-danger">Failed to load order data.</div>');
+            jQuery('#detailModalBody').html('<div class="alert alert-danger">Failed to load order data.</div>');
         });
     });
+});
 </script>

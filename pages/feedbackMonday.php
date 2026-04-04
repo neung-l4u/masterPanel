@@ -73,44 +73,51 @@
     </div>
 </div>
 
-<script src="plugins/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    let feedbackTable = $('#datatable').DataTable({
-        pagingType: 'full_numbers',
-        ajax: {
-            url: 'pages/tableRendering/dataFeedbackMonday.php',
-            dataSrc: 'data'
-        },
-        "pageLength": 8,
-        order: [[0, 'desc']],
-        lengthMenu: [
-            [8, 25, 50, -1],
-            ['Fit', 25, 50, 'All']
-        ],
-        columnDefs: [
-            { targets: [5, 6], className: 'dt-center' },
-            { targets: [6], orderable: false }
-        ]
-    });
+window.addEventListener('load', function() {
+    // Check if DataTable is already initialized
+    if (jQuery.fn.DataTable.isDataTable('#datatable')) {
+        var feedbackTable = jQuery('#datatable').DataTable();
+    } else {
+        var feedbackTable = jQuery('#datatable').DataTable({
+            pagingType: 'full_numbers',
+            ajax: {
+                url: 'pages/tableRendering/dataFeedbackMonday.php',
+                dataSrc: 'data'
+            },
+            "pageLength": 8,
+            order: [[0, 'desc']],
+            lengthMenu: [
+                [8, 25, 50, -1],
+                ['Fit', 25, 50, 'All']
+            ],
+            columnDefs: [
+                { targets: [5, 6], className: 'dt-center' },
+                { targets: [6], orderable: false }
+            ],
+            dom: 'lfrtip'
+        });
+    }
 
     // Status filter
-    $('#filterStatus').on('change', function() {
+    jQuery('#filterStatus').on('change', function() {
         feedbackTable.column(5).search(this.value).draw();
     });
     feedbackTable.on('init', function() {
-        $('#filterStatus').trigger('change');
+        jQuery('#filterStatus').trigger('change');
     });
 
     // View detail — fetch from DB then show modal
-    $(document).on('click', '.btn-view-detail', function() {
+    jQuery(document).on('click', '.btn-view-detail', function() {
         gtag('event', 'click_view_feedback_detail', { event_category: 'button', event_label: 'View Feedback Detail' });
-        var reportId = $(this).attr('data-id');
-        $('#detailModalBody').html('<div class="text-center p-5">Loading...</div>');
-        $('#detailModal').modal('show');
+        var reportId = jQuery(this).attr('data-id');
+        jQuery('#detailModalBody').html('<div class="text-center p-5">Loading...</div>');
+        
+        const modalEl = document.getElementById('detailModal');
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
 
-        $.ajax({
+        jQuery.ajax({
             url: 'assets/php/getAdvancedReport.php?id=' + reportId,
             dataType: 'json'
         }).done(function(res) {
@@ -148,21 +155,21 @@
                 html += '  <div class="col-md-4"><h6 class="text-center"><i class="bi bi-laptop"></i> Computer Info</h6><div class="text-center">' + imgBlock(d.screenshot_computer, 'Computer') + '</div></div>';
                 html += '</div>';
 
-                $('#detailModalBody').html(html);
+                jQuery('#detailModalBody').html(html);
             } else {
-                $('#detailModalBody').html('<div class="alert alert-danger">Error: ' + res.message + '</div>');
+                jQuery('#detailModalBody').html('<div class="alert alert-danger">Error: ' + res.message + '</div>');
             }
         }).fail(function() {
-            $('#detailModalBody').html('<div class="alert alert-danger">Failed to load report data.</div>');
+            jQuery('#detailModalBody').html('<div class="alert alert-danger">Failed to load report data.</div>');
         });
     });
 
     // Resolve button
-    $(document).on('click', '.btn-resolve', function() {
+    jQuery(document).on('click', '.btn-resolve', function() {
         gtag('event', 'click_resolve_report', { event_category: 'button', event_label: 'Resolve Report' });
-        var id = $(this).attr('data-id');
+        var id = jQuery(this).attr('data-id');
         if (!confirm('Mark this report as Resolved?')) return;
-        $.post('assets/php/resolveAdvancedReport.php', { id: id }, function(res) {
+        jQuery.post('assets/php/resolveAdvancedReport.php', { id: id }, function(res) {
             if (res.status === 'success') {
                 feedbackTable.ajax.reload(null, false);
             } else {
@@ -170,4 +177,5 @@
             }
         }, 'json');
     });
+});
 </script>
