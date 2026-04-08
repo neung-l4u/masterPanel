@@ -145,3 +145,12 @@ out
 /modules/templates/views/server/uploads
 /modules/feedback/upload
 /modules/feedback/assets/db/initDB.php
+/api/stripe/stripe_config.php
+/api/sms/sms_config.php
+/api/sms/cache/
+/api/yelp/yelp_config.php
+/api/yelp/billing_uploads/
+/api/yelp/cache/
+/modules/printer/assets/php/config.php
+/vendor/
+/vendor/stripe/stripe-php/README.md
