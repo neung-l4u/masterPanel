@@ -1,4 +1,8 @@
 <?php
+ob_start();
+error_reporting(0);
+ini_set('display_errors', 0);
+
 require_once '../../../../assets/db/db.php';
 require_once '../../../../assets/db/initDB.php';
 
@@ -26,17 +30,28 @@ $prevEndDate = $obj_prevEndDate->modify('-7 days')->format('Y-m-d 23:59:59');
 $jsonDir = __DIR__ . '/../file/ALL/';
 $files = glob($jsonDir . 'ALL_monday_data*.json');
 
+$jsonDir2 = __DIR__ . '/../file/ALL_COUNTRY/';
+$files2 = glob($jsonDir2 . 'ALL_monday_data_ALL_COUNTRY*.json');
+
 if (empty($files)) {
     die("JSON file not found");
 }
 
-// Sort by latest modified time
-usort($files, function($a, $b) {
-    return filemtime($b) - filemtime($a);
-});
+// Sort by filename descending (filename contains timestamp)
+rsort($files);
+
+if (!empty($files2)) {
+    rsort($files2);
+}
 
 $latestFile = $files[0];
 $jsonData = json_decode(file_get_contents($latestFile), true);
+
+$jsonData2 = null;
+if (!empty($files2)) {
+    $latestFile2 = $files2[0];
+    $jsonData2 = json_decode(file_get_contents($latestFile2), true);
+}
 
 // ========== 2. Parse Monday data by country ==========
 // Currency to Country mapping (lowercase)
@@ -332,6 +347,26 @@ if ($totalPercentChange >= 5) {
     $totalStatus = 'Very Low';
     $totalStatusColor = 'darkred';
 }
+
+// JSON mode: return data for charts
+$isJson = (isset($_GET['format']) && $_GET['format'] === 'json')
+    || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)
+    || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest');
+if ($isJson) {
+    ob_end_clean();
+    header('Content-Type: application/json');
+    echo json_encode([
+        'period' => ['start' => $startDate, 'end' => $endDate],
+        'prevPeriod' => ['start' => $prevStartDate, 'end' => $prevEndDate],
+        'reportData' => $reportData,
+        'totals' => ['active' => $totalActive, 'signup' => $totalSignup, 'drop' => $totalDrop, 'percentChange' => $totalPercentChange, 'status' => $totalStatus],
+        'customerType' => $activeByType,
+        'signupByType' => $signupByType ?? [],
+        'unsubByType' => $unsubByType ?? [],
+        'productPopularity' => $productPopularity ?? []
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
 ?>
 
 <table cellpadding="8" cellspacing="0" border="1" style="font: 13px roboto, sans-serif; border-collapse: collapse;">
@@ -410,6 +445,122 @@ sort($allTypes);
         <td style="text-align: center;"><?php echo number_format($totalTypeActive); ?></td>
         <td style="text-align: center; color: green;"><?php echo $totalTypeSignup > 0 ? '+' . $totalTypeSignup : '0'; ?></td>
         <td style="text-align: center; color: red;"><?php echo $totalTypeUnsub > 0 ? '-' . $totalTypeUnsub : '0'; ?></td>
+    </tr>
+</table>
+
+<?php
+// ========== Building Project Table (from ALL_COUNTRY JSON) ==========
+$buildingBoardMap = [
+    'Projects | TH' => 'TH',
+    'Projects | CA' => 'CA',
+    'Projects | UK' => 'UK',
+    'Projects | USA' => 'US',
+    'Projects | NZ' => 'NZ',
+    'Projects | AU' => 'AU'
+];
+
+$buildingGroups = ['New Projects', 'Building', 'Ready to Go Live', 'Final Check Pending', 'Completed Projects', 'Pause', 'Suspend', 'Cancelled Projects', 'Test Projects'];
+
+$buildingData = []; // [country][group] => count
+$buildingCountries = [];
+
+if ($jsonData2 && isset($jsonData2['data']['items'])) {
+    $bkk = new DateTimeZone('Asia/Bangkok');
+    $utc = new DateTimeZone('UTC');
+    $weekStart = (new DateTime($startDate, $bkk))->setTimezone($utc);
+    $weekEnd   = (new DateTime($endDate,   $bkk))->setTimezone($utc);
+
+    foreach ($jsonData2['data']['items'] as $item) {
+        $board = $item['board_name'] ?? '';
+        $group = $item['group_title'] ?? '';
+        $country = isset($buildingBoardMap[$board]) ? $buildingBoardMap[$board] : null;
+        if (!$country) continue;
+
+        // Filter by creation_log within this week
+        $creationLog = null;
+        foreach ($item['column_values'] as $cv) {
+            if ($cv['id'] === 'creation_log' && !empty($cv['text'])) {
+                $creationLog = $cv['text'];
+                break;
+            }
+        }
+        if (empty($creationLog)) continue;
+
+        // Parse UTC time and convert to Bangkok
+        $createdAt = DateTime::createFromFormat('Y-m-d H:i:s \U\T\C', $creationLog, new DateTimeZone('UTC'));
+        if (!$createdAt) continue;
+        $createdAt->setTimezone(new DateTimeZone('Asia/Bangkok'));
+
+        if ($createdAt < $weekStart || $createdAt > $weekEnd) continue;
+
+        if (!isset($buildingData[$country])) {
+            $buildingData[$country] = [];
+        }
+        if (!isset($buildingData[$country][$group])) {
+            $buildingData[$country][$group] = 0;
+        }
+        $buildingData[$country][$group]++;
+        $buildingCountries[$country] = true;
+
+        // Collect any group not in predefined list
+        if (!in_array($group, $buildingGroups) && !empty($group)) {
+            $buildingGroups[] = $group;
+        }
+    }
+}
+
+// Remove groups with zero total across all countries
+$buildingGroups = array_values(array_filter($buildingGroups, function($g) use ($buildingData) {
+    foreach ($buildingData as $cData) {
+        if (isset($cData[$g]) && $cData[$g] > 0) return true;
+    }
+    return false;
+}));
+
+$buildingCountriesSorted = array_keys($buildingCountries);
+sort($buildingCountriesSorted);
+?>
+
+<p style="font: 14px roboto, sans-serif; margin-top: 30px; margin-bottom: 10px;">
+    <b>Building Project</b><br>
+    <small>Project stages by country from Monday.com (ALL_COUNTRY)</small>
+</p>
+
+<table cellpadding="8" cellspacing="0" border="1" style="font: 13px roboto, sans-serif; border-collapse: collapse;">
+    <tr style="background-color: #d6e6f4;">
+        <th>Country</th>
+        <?php foreach ($buildingGroups as $grp): ?>
+        <th><?php echo htmlspecialchars($grp); ?></th>
+        <?php endforeach; ?>
+        <th>Total</th>
+    </tr>
+    <?php
+    $groupTotals = array_fill_keys($buildingGroups, 0);
+    $grandTotal = 0;
+    foreach ($buildingCountriesSorted as $bc):
+        $rowTotal = 0;
+    ?>
+    <tr>
+        <td><b><?php echo $bc; ?></b></td>
+        <?php foreach ($buildingGroups as $grp):
+            $val = isset($buildingData[$bc][$grp]) ? $buildingData[$bc][$grp] : 0;
+            $rowTotal += $val;
+            $groupTotals[$grp] += $val;
+        ?>
+        <td style="text-align: center;"><?php echo $val > 0 ? $val : '-'; ?></td>
+        <?php endforeach; ?>
+        <td style="text-align: center; font-weight: bold;"><?php echo $rowTotal; ?></td>
+    </tr>
+    <?php
+        $grandTotal += $rowTotal;
+    endforeach;
+    ?>
+    <tr style="background-color: #f0f0f0; font-weight: bold;">
+        <td>Total</td>
+        <?php foreach ($buildingGroups as $grp): ?>
+        <td style="text-align: center;"><?php echo $groupTotals[$grp]; ?></td>
+        <?php endforeach; ?>
+        <td style="text-align: center;"><?php echo $grandTotal; ?></td>
     </tr>
 </table>
 
@@ -542,6 +693,48 @@ sort($allTypes);
     <small>Products signed up by customers this week</small>
 </p>
 
+<?php
+// Group products: System, Marketing (Solo/Yelp), ALL (Bundle)
+$productGroups = [
+    'System'    => ['label' => 'System', 'keywords' => ['System'], 'byCountry' => [], 'subtotal' => 0],
+    'Marketing' => ['label' => 'Marketing', 'keywords' => ['Solo', 'Yelp'], 'byCountry' => [], 'subtotal' => 0],
+    'ALL'       => ['label' => 'ALL', 'keywords' => ['Bundle'], 'byCountry' => [], 'subtotal' => 0],
+];
+
+foreach ($productPopularity as $item) {
+    $matched = false;
+    foreach ($productGroups as $gKey => &$group) {
+        foreach ($group['keywords'] as $kw) {
+            if (stripos($item['product'], $kw) !== false) {
+                $country = $item['country'];
+                if (!isset($group['byCountry'][$country])) {
+                    $group['byCountry'][$country] = ['items' => [], 'subtotal' => 0];
+                }
+                $group['byCountry'][$country]['items'][] = $item;
+                $group['byCountry'][$country]['subtotal'] += $item['count'];
+                $group['subtotal'] += $item['count'];
+                $matched = true;
+                break 2;
+            }
+        }
+    }
+    unset($group);
+    if (!$matched) {
+        // Products that don't match any group go to ALL
+        $country = $item['country'];
+        if (!isset($productGroups['ALL']['byCountry'][$country])) {
+            $productGroups['ALL']['byCountry'][$country] = ['items' => [], 'subtotal' => 0];
+        }
+        $productGroups['ALL']['byCountry'][$country]['items'][] = $item;
+        $productGroups['ALL']['byCountry'][$country]['subtotal'] += $item['count'];
+        $productGroups['ALL']['subtotal'] += $item['count'];
+    }
+}
+
+$grandTotalProducts = 0;
+foreach ($productGroups as $g) { $grandTotalProducts += $g['subtotal']; }
+?>
+
 <table cellpadding="8" cellspacing="0" border="1" style="font: 13px roboto, sans-serif; border-collapse: collapse;">
     <tr style="background-color: #d6e6f4;">
         <th>#</th>
@@ -549,14 +742,21 @@ sort($allTypes);
         <th>Country</th>
         <th>Signups</th>
     </tr>
-    <?php 
+    <?php
     $rank = 1;
-    $totalProducts = 0;
-    foreach ($productPopularity as $item) {
-        $totalProducts += $item['count'];
-    }
-    foreach ($productPopularity as $item): 
+    foreach ($productGroups as $gKey => $group):
+        if (empty($group['byCountry'])) continue;
     ?>
+    <tr style="background-color: #e8f0fe;">
+        <td colspan="4" style="font-weight: bold;"><?php echo $group['label']; ?></td>
+    </tr>
+    <?php 
+    foreach ($group['byCountry'] as $country => $cData):
+    ?>
+    <tr style="background-color: #f0f8ff;">
+        <td colspan="4" style="padding-left: 20px; font-style: italic;"><?php echo $country; ?></td>
+    </tr>
+    <?php foreach ($cData['items'] as $item): ?>
     <tr>
         <td style="text-align: center;"><?php echo $rank++; ?></td>
         <td><b><?php echo $item['product']; ?></b></td>
@@ -564,9 +764,19 @@ sort($allTypes);
         <td style="text-align: center;"><?php echo $item['count']; ?></td>
     </tr>
     <?php endforeach; ?>
+    <tr style="background-color: #fafafa;">
+        <td colspan="3" style="text-align: right; padding-right: 10px; font-size: 12px;"><?php echo $country; ?> Subtotal</td>
+        <td style="text-align: center; font-size: 12px;"><?php echo $cData['subtotal']; ?></td>
+    </tr>
+    <?php endforeach; ?>
+    <tr style="background-color: #f5f5f5; font-weight: bold;">
+        <td colspan="3" style="text-align: right;"><?php echo $group['label']; ?> Total</td>
+        <td style="text-align: center;"><?php echo $group['subtotal']; ?></td>
+    </tr>
+    <?php endforeach; ?>
     <tr style="background-color: #f0f0f0; font-weight: bold;">
-        <td colspan="3">Total</td>
-        <td style="text-align: center;"><?php echo $totalProducts; ?></td>
+        <td colspan="3">Grand Total</td>
+        <td style="text-align: center;"><?php echo $grandTotalProducts; ?></td>
     </tr>
 </table>
 

@@ -153,4 +153,3 @@ out
 /api/yelp/cache/
 /modules/printer/assets/php/config.php
 /vendor/
-/vendor/stripe/stripe-php/README.md

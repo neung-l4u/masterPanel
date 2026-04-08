@@ -192,7 +192,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             <b class="red">*</b>
                                         </label>
                                         <div class="col-8">
-                                                <span class="input-group">
+                                                <span class="input-group gap-2">
                                                     <label for="mobile" class="input-group-text">+</label>
                                                     <input
                                                             type="tel"
@@ -204,6 +204,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                             placeholder="Number only e.g.0895117447"
                                                             autocomplete="off"
                                                             value="<?php echo $test["mobile"]; ?>"
+                                                            required
                                                     />
                                                 </span>
                                             <small id="MobileHelp" class="form-text text-muted">
@@ -396,12 +397,12 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         </div>
                                     </div>
 
-                                    <div class="form-group row pt-2">
+                                    <div class="form-group row pt-2 ">
                                         <label for="shopNumber" class="col-2 control-label col-form-label">
                                             Shop Phone Number
                                         </label>
                                         <div class="col-8">
-                                            <span class="input-group">
+                                            <span class="input-group gap-2">
                                                 <label for="shopNumber" class="input-group-text">+</label>
                                                 <input
                                                         type="text"
@@ -413,6 +414,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         placeholder="Number only e.g.0895117447"
                                                         autocomplete="off"
                                                         value="<?php echo $test["shopnumber"]; ?>"
+                                                        required
                                                 />
                                             </span>
                                             <small id="shopNumberHelp" class="form-text text-muted">
@@ -1267,7 +1269,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 /> 
                                                             </span>
                                                             <small id="domainHelpAU" class="form-text">
-                                                                <a href="https://localforyoudomains.com/" target="_blank" tabindex="-1" class="text-decoration-none">
+                                                                <a href="https://usadomains.localforyou.com/" target="_blank" tabindex="-1" class="text-decoration-none">
                                                                     Check Availability
                                                                 </a>
                                                             </small>
@@ -1981,13 +1983,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             <div class="col-md-8">
                                                 <div class="row">
                                                     <div class="col">
-                                                        <div class="form-check mb-2">
-                                                            <input class="form-check-input" type="checkbox" value="yes"
-                                                                   id="quotationYes" onclick="wantTax();" checked>
-                                                            <label class="form-check-label quotationYes" for="quotationYes">
-                                                                ต้องการใบกำกับภาษี
-                                                            </label>
-                                                        </div>
+                                                        <input type="hidden" value="yes" id="quotationYes">
                                                     </div>
                                                 </div>
 
@@ -2141,10 +2137,10 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                             id="bankName"
                                                                             class="bankName form-control"
                                                                             name="bankName"
-                                                                            pattern="[0-9]{10}"
-                                                                            maxlength="10"
+                                                                            pattern="[a-zA-Zก-๙\s\.\-&\/]+"
+                                                                            maxlength="100"
                                                                             required
-                                                                            title="โปรดกรอกเลขที่บัญชีเป็นตัวเลข 10 หลักเท่านั้น"
+                                                                            title="โปรดกรอกชื่อธนาคารของท่าน"
                                                                             placeholder="เช่น ธนาคารกรุงเทพ หรือ Citi Bank"
                                                                     >
                                                                 </div>
@@ -2160,11 +2156,11 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                             id="bankThaiNumber"
                                                                             class="bankThaiNumber form-control"
                                                                             name="bankThaiNumber"
-                                                                            maxlength="100"
+                                                                            maxlength="20"
                                                                             required
                                                                             pattern="[a-zA-Z0-9ก-๙\s\.\-&\/]+"
                                                                             placeholder="เฉพาะตัวเลขเท่านั้น ตัวอย่าง 1234567890"
-                                                                            title="โปรดใช้ตัวอักษรไทย/อังกฤษ และเครื่องหมายวรรคตอนพื้นฐานเท่านั้น"
+                                                                            title="โปรดกรอกเลขที่บัญชีของท่าน"
                                                                     >
                                                                 </div>
                                                             </div>
@@ -2263,13 +2259,16 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         <div class="col d-flex justify-content-between">
                                                             <select class="form-select" name="byAgent" id="byAgent" style="min-width: 50%">
                                                                 <option value="">--None--</option>
-                                                                <option value="Boom Piyakorn">Boom Piyakorn</option>
+                                                                <option value="Aon Pornnapa">Aon Pornnapa</option>
                                                                 <option value="Ball Anirut">Ball Anirut</option>
-                                                                <option value="Gun Orana">Gun Orana</option>
+                                                                <option value="Bell Akkharima">Bell Akkharima</option>
+                                                                <option value="Boom Piyakorn">Boom Piyakorn</option>
+                                                                <option value="Fern Paweena">Fern Paweena</option>
                                                                 <option value="Honey Tummaput">Honey Tummaput</option>
                                                                 <option value="Nan Chompunuch">Nan Chompunuch</option>
                                                                 <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
                                                                 <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
+                                                                <option value="Yok Napatsorn">Yok Napatsorn</option>
                                                                 <option value="Other">Other</option>
                                                             </select>
                                                             <input

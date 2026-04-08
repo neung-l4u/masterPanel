@@ -100,9 +100,7 @@ if (in_array($loginPerson['sEmail'], $CSemail)){
                     <label for="selectedTemplate">Template</label>
                     <?php
                     $templates = [
-                        1 => "Template no. 1",
-                        2 => "Template no. 2",
-                        3 => "Template no. 3",
+                        1 => "Template no. 1"
                     ];
                     ?>
                     <select class="form-control" id="selectedTemplate">

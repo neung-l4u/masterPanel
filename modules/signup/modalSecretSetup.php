@@ -18,6 +18,12 @@
                     <label class="form-check-label" for="CheckedBoxTestmail">Test mode</label>
                 </div>
             </div>
+            <div class="modal-body">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" value="1" type="checkbox" id="CheckedBoxSkipEmailCheck">
+                    <label class="form-check-label" for="CheckedBoxSkipEmailCheck">Skip email check</label>
+                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>

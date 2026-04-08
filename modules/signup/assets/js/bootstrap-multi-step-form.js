@@ -104,7 +104,7 @@ let xSubtotal = 0;
 let xGST = 0;
 let xTotal = 0;
 
-testMode = true;
+let testMode = true;
 ///////////
 
 $(document).ready(function () {
@@ -146,6 +146,28 @@ $(".next").on("click", function () {
   if (step === 1){
     addCuisines();
     $("#firstName").focus();
+  }
+
+  // Validate required fields in Step 2 before moving to Step 3
+  if (step === 2) {
+    $(".step2-validate-error").remove();
+    let hasError = false;
+
+    if (!$("#mobile").val() || $("#mobile").val().trim() === "") {
+      $("#mobile").after('<span class="step2-validate-error padding-right-2" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your mobile number</span>');
+      if (!hasError) { $("#mobile").focus(); }
+      hasError = true;
+    }
+
+    if (!$("#shopNumber").val() || $("#shopNumber").val().trim() === "") {
+      $("#shopNumber").after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your shop phone number</span>');
+      if (!hasError) { $("#shopNumber").focus(); }
+      hasError = true;
+    }
+
+    if (hasError) {
+      nextstep = false;
+    }
   }
 
   if (nextstep === true) {
@@ -482,9 +504,6 @@ $('#formCountry').change(function() {
       iconPlay.hide();
       break;
     case "TH":
-      // [โค้ดใหม่สำหรับ bootstrap-multi-step-form.js]
-
-    case "TH":
       inputBusinessNumber.attr('required', true);
       labelBusinessNumber.html("TAX ID");
       classBusinessNumber.show();
@@ -533,29 +552,6 @@ $('#formCountry').change(function() {
       iconDomain.hide();
       iconPlay.hide();
       break;
-      break;
-/*    case "TH":
-      inputBusinessNumber.attr('required', true);
-      labelBusinessNumber.html("TTT");
-      classBusinessNumber.show();
-      countryName.html("Thailand");
-      selectState.show();
-      currency.html("THB");
-      formData.formCurrency = "THB";
-      inputCurrency.val("THB");
-      lookup.hide();
-      zipLabel.html("Zip Code")
-      textGST.html("VAT");
-      fakeNumber.html("2056847201");
-      countryTextOnly.val("Thailand");
-      methodDebit.show();
-      routing_number_div.show();
-      bsbDirectDebit_div.hide();
-      terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
-      getProductList("TH");
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
-      break;*/
     default:
       labelBusinessNumber.html("ABN");
       inputBusinessNumber.attr('required', true);
@@ -593,8 +589,16 @@ function setMethod(arg) {
 
   if (paymentMethod.val()==="Invoice" && countryCheck === "Thailand"){
     $(".quotationDetail").show();
+    // ลบ required จาก credit card fields ที่ถูกซ่อน เพื่อไม่ให้ browser validate
+    $("#creditExpireDate").removeAttr("required");
+    $("#creditCCV").removeAttr("required");
+    $("#emailBooking").removeAttr("required");
   }else{
     $(".quotationDetail").hide();
+    // คืน required กลับเมื่อไม่ใช่ Invoice
+    $("#creditExpireDate").attr("required", true);
+    $("#creditCCV").attr("required", true);
+    $("#emailBooking").attr("required", true);
   }
 
 }
@@ -606,24 +610,35 @@ function quolegalEntity(){
    $('#forIndividual').show();
    $('#nameQuotation').hide();
    $('#forThaiBank').show();
+   $('label[for="quotationShopName"] span').text('ชื่อบริษัท');
  }else if(checkLeg === "บุคคลธรรมดา"){
    $('#forIndividual').show();
    $('#nameQuotation').show();
    $('#forThaiBank').hide();
-
+   $('label[for="quotationShopName"] span').text('ชื่อร้าน');
  }
+
+  // Auto-fill quotation fields from main form
+  $('#quotationShopName').val($('#shopName').val());
+  $('#quotationName').val($('#first_name').val() + ' ' + $('#last_name').val());
+  $('#quotationPhone').val($('#shopNumber').val());
+  formatMobile($('#shopNumber').val().replace(/[^0-9]/g, ''), 'quotationPhoneFormatted');
+
+  // Build address from source fields directly
+  var addrParts = [
+    $('#streetAddress1').val().trim(),
+    $('#city').val().trim(),
+    $('#state').find(':selected').text().trim(),
+    $('#zip').val().trim(),
+    $('#formCountry').find(':selected').text().trim()
+  ].filter(Boolean);
+  $('#quotationAddress').val(addrParts.join(' ,'));
 }
 
 
 
 function wantTax(){
-  const checkTax = $("input:checkbox[id='quotationYes']:checked").val();
-
-  if (checkTax === "yes"){
-    $("#quotationContact").show();
-  }else{
-    $("#quotationContact").hide();
-  }
+  $("#quotationContact").show();
 }
 
 //add string @google.com
@@ -1348,7 +1363,7 @@ function applyCoupon() {
     $("#couponCode2").attr('disabled', 'disabled');
   }
 
-  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB", "PARTNER96", "PARTNER98", "PARTNER195", "PARTNER198", "PARTNER246", "PARTNER268", "PARTNER118","ONCE108","ONCE158","ONCE198","ONCE246","ONCE268","ONCE348","AIUS"]);
+  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB", "PARTNER96", "PARTNER98", "PARTNER195", "PARTNER198", "PARTNER246", "PARTNER268", "PARTNER118","PARTNER298","PARTNER368","ONCE108","ONCE158","ONCE198","ONCE246","ONCE268","ONCE348","AIUS","ARAYAAI"]);
 
 
   inputCode = inputCode.toUpperCase();
@@ -1628,7 +1643,7 @@ if(!settings.Payment_Module.Invoice) { formInvoice.hide(); }
 //open url in new tab
 function readAgreement() {
   let inputAccept = $("#acceptTerms");
-  inputAccept.prop("disabled", false);``
+  inputAccept.prop("disabled", false);
   modalTermsAction("open");
   inputAccept.prop("checked", true);
   checkAcceptAgreement();
@@ -1788,7 +1803,7 @@ let chooseAddon = cart.add_on;
   //รวมราคาจากช่อง amount ของ addon ทุกตัวใน selectedAddOnList
   let Summary = {};
   //ราคา product หลัก
-  Summary.Product = selectedProductList[0].amount;
+  Summary.Product = (selectedProductList.length > 0 && selectedProductList[0]) ? selectedProductList[0].amount : 0;
 
   //ราคารวมของ addon ทั้งหมด
   Summary.Addon = selectedAddOnList.reduce((accumulator, object) => {
@@ -1904,7 +1919,16 @@ $("#posSystem").change(function(){
   }
 })
 
+$("#CheckedBoxSkipEmailCheck").on("change", function() {
+  if ($(this).is(":checked")) {
+    $("#emailUsed").hide();
+    $("#emailunUsed").hide();
+    $("#emailExist").val("");
+  }
+});
+
 function checkEmailUsed(email) {
+  if ($("#CheckedBoxSkipEmailCheck").is(":checked")) { return false; }
   if (email.length<5){ return false; }
   const checkEmail = email;
   const emailunUsed = $("#emailunUsed");

@@ -70,7 +70,7 @@ $teamIDHardcode = array(
                         </svg>
                         Coin Rewards
                         <?php if ($_SESSION['level'] <= 2) { ?>
-                            <button type="button" class="btn btn-success" onclick="goX2();">coin x2 to everyone</button>
+                            <button type="button" class="btn btn-success" onclick="goX2();" data-ga="click_coin_x2" data-ga-label="Coin x2 Everyone">coin x2 to everyone</button>
                         <?php } ?>
                     </h4>
                 </div><!-- /.col -->
@@ -148,7 +148,7 @@ $teamIDHardcode = array(
                                         ['L4U', '', number_format($allCoins['allL4U'], 2)],
                                         ['CEO', '', number_format($allCoins['allCEO'], 2)],
                                         ['Top L4U', showName($top['L4U']['nickName'], $top['L4U']['fullName']), number_format($top['L4U']['L4U'], 2)],
-                                        ['Top CEO', showName($top['CEO']['nickName'], $top['CEO']['fullName']), number_format($top['CEO']['CEO'], 2)]
+                                        ['Top GM', showName($top['CEO']['nickName'], $top['CEO']['fullName']), number_format($top['CEO']['CEO'], 2)]
                                     ];
                                     unset($row); ?>
 
@@ -212,7 +212,7 @@ $teamIDHardcode = array(
                                                          title="<?php echo $row['fteam']; ?>"><?php echo $row['team']; ?></div>
                                                     <div class="coin_l4u">L4U
                                                         : <?php echo number_format($row['L4U'], 2); ?></div>
-                                                    <div class="coin_ceo">CEO
+                                                    <div class="coin_ceo">GM
                                                         : <?php echo number_format($row['CEO'], 2); ?></div>
                                                 </div>
                                             </div>
@@ -251,7 +251,7 @@ $teamIDHardcode = array(
                                             <span id="l4uCoin" class="text-primary">0.00</span>
                                         </div>
                                         <div class="coin_ceo_big">
-                                            <strong>CEO :</strong>
+                                            <strong>GM :</strong>
                                             <span id="ceoCoin" class="text-primary">0.00</span>
                                         </div>
                                     </div>
@@ -281,7 +281,7 @@ $teamIDHardcode = array(
                                                    class="col-3 col-form-label">Type</label>
                                             <select id="coinType" class="custom-select col">
                                                 <option value="l4u">L4U Coin</option>
-                                                <option value="ceo">CEO Coin</option>
+                                                <option value="ceo">GM Coin</option>
                                             </select>
                                         </div>
                                     </div>
@@ -337,7 +337,7 @@ $teamIDHardcode = array(
                                 <input type="hidden" name="formAction" id="formAction" value="add">
                                 <input type="hidden" name="userID" id="userID" value="0">
                                 <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit"
-                                        id="cmdSubmit">Add
+                                        id="cmdSubmit" data-ga="click_give_coin" data-ga-label="Give Coin">Add
                                 </button>
                             </div>
                         </div> <!-- modal-body -->

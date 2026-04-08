@@ -20,7 +20,7 @@ if (!empty(trim($_POST["p"]))){
 
 if(isset($_POST['act'])){
     if ($data["action"]=="login"){
-        $account = $db->query('SELECT s.sID, s.sEmail, s.sMobile, s.sName, s.sLevel, l.lName, s.teamID ,s.sPic, s.sL4U, s.sCEO
+        $account = $db->query('SELECT s.sID, s.sEmail, s.sMobile, s.sName, s.sNickName, s.sLevel, l.lName, s.teamID ,s.sPic, s.sL4U, s.sCEO, s.sStaffType
                                      FROM `staffs` s , `userLevel` l
                                      WHERE s.sDeleteAt IS NULL 
                                      AND s.sStatus = ? 
@@ -40,12 +40,14 @@ if(isset($_POST['act'])){
             $_SESSION['password'] = $data["password"];
             $_SESSION['teamID'] = $account["teamID"];
             $_SESSION['name'] = $account['sName'];
+            $_SESSION['nickName'] = $account['sNickName'];
             $_SESSION['tName'] = $account['sTName'];
             $_SESSION['userPic'] = $account['sPic'];
             $_SESSION['L4UCoin'] = $account['sL4U'];
             $_SESSION['CEOCoin'] = $account['sCEO'];
             $_SESSION['level'] = $account['sLevel'];
             $_SESSION['levelName'] = $account['lName'];
+            $_SESSION['staffType'] = $account['sStaffType'];
             $_SESSION['token'] = $token;
 
             if ($data["remember"]){

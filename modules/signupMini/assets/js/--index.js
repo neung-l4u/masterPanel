@@ -1,3 +1,4 @@
+
 function setMoney() {
     let country = $("#country").val();
     let currencyBox = $("#currency");
@@ -10,7 +11,7 @@ function setMoney() {
         currencyBox.val("NZD");
     }else if(country === "United Kingdom"){
         currencyBox.val("GBP");
-    }else if(country === "United States"){
+    }else if(country === "USA"){
         currencyBox.val("USD");
     }else if(country === "Thailand"){
         currencyBox.val("THB");
@@ -36,11 +37,11 @@ function shortCountry() {
 
 function shopTypeForLeadManagement() {
     let shopType = $("#shopType").val();
-    if (shopType === "Thai Restaurants &amp; Takeaways"){
+    if (shopType === "Thai Restaurants & Takeaways"){
         return "Thai Restaurant";
     }else if (shopType === "Thai Massage"){
         return "Thai Massage";
-    }else if (shopType === "Restaurants &amp; Takeaways"){
+    }else if (shopType === "Restaurants & Takeaways"){
         return "Restaurant";
     }
 }
@@ -70,6 +71,28 @@ function getPayload(form) {
     };
 }
 
+function sendPayload(payload) {
+    console.log("🚀 Sending Payload:", payload);
+    $.ajax({
+        url: "https://hook.us1.make.com/47ue45ij7fhm7sol8rldp6dxpag2ldjl",
+        method: "POST",
+        dataType: "json",
+        data: payload,
+        success: function (response) {
+            console.log("✅ Webhook Success:", response);
+            if (response.result === "Leads to Monday successfully") {
+                $("#successMessage").show();
+                setTimeout(() => {
+                    window.location.href = "https://localforyou.com/thank-you/";
+                }, 1500);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("❌ Webhook Failed:", status, error);
+        }
+    });
+}
+
 function validateForm(form) {
     let isValid = true;
     form.find(".text-danger").remove(); // Clear previous errors
@@ -94,31 +117,3 @@ function validateForm(form) {
 
     return isValid;
 }
-
-function getUTMParams() {
-    const params = new URLSearchParams(window.location.search);
-    return {
-        utm_source: params.get("utm_source") || "",
-        utm_medium: params.get("utm_medium") || "",
-        utm_campaign: params.get("utm_campaign") || "",
-        utm_content: params.get("utm_content") || "",
-        utm_term: params.get("utm_term") || ""
-    };
-}
-
-sendPayload = function(payload) {
-    console.log("🚀 Sending Payload with UTM:", payload);
-
-    try {
-        fbq("track", "Lead", {
-            content_name: "Thai Demo Signup Form",
-            currency: payload.currency || "THB",
-            value: 0,
-            utm_source: payload.utm_source,
-            utm_medium: payload.utm_medium,
-            utm_campaign: payload.utm_campaign
-        });
-    } catch (e) {
-        console.warn("⚠️ FB Pixel not loaded yet:", e);
-    }
-};

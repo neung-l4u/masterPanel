@@ -4,11 +4,12 @@ const settings = {
     card: "https://payments.localforyou.com/api/payment",
     invoice: "https://payments.localforyou.com/api/invoice",
   },
-  url_getProductList: "assets/API/B-Price-2601291636-AddPayUpfront.json",
+  url_getProductList: "assets/API/B-Price-2604041028-updateNewWebsiteHosting.json",
   url_getPrice: "assets/API/price.php",
   url_getStates: "assets/statics/states.json",
   url_authentication: "assets/API/authentication.php",
   url_logs: "assets/function/logs.php",
+  url_generateID: "assets/function/generateID.php",
   url_saveToDB: "assets/function/saveToDB.php",
   url_saveQuestionToDB: "assets/function/saveQuotationToDB.php",
   Payment_Module: {

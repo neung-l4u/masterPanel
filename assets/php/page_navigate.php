@@ -100,15 +100,23 @@ switch ($menuPage){
         break;
     case "setStaff":
         $showPage = "setStaffs.php";
-        $activeMenu["lv1"] = "settings";
+        $activeMenu["lv1"] = "userMgmt";
         $activeMenu["lv2"] = "staffs";
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataStaffs.php";
         $title = "Master panel : Staffs Management";
         break;
+    case "tools":
+        $showPage = "tools.php";
+        $activeMenu["lv1"] = "sysSettings";
+        $activeMenu["lv2"] = "tools";
+        $datatable["show"] = "true";
+        $datatable["src"] = "";
+        $title = "Master panel : Tools Management & Logs";
+        break;
     case "coin":
         $showPage = "coin.php";
-        $activeMenu["lv1"] = "coin";
+        $activeMenu["lv1"] = "rewardsCoin";
         $activeMenu["lv2"] = "coin";
         $datatable["show"] = "false";
         $datatable["src"] = "";
@@ -116,7 +124,7 @@ switch ($menuPage){
         break;
     case "websiteTemplate":
         $showPage = "websiteTemplate.php";
-        $activeMenu["lv1"] = "websiteTemplate";
+        $activeMenu["lv1"] = "websiteMgmt";
         $activeMenu["lv2"] = "websiteTemplate";
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataWebsiteTemplate.php";
@@ -135,8 +143,8 @@ switch ($menuPage){
         break;
     case "l4uPassword":
         $showPage = "l4uPassword.php";
-        $activeMenu["lv1"] = "l4uPassword";
-        $activeMenu["lv2"] = "";
+        $activeMenu["lv1"] = "sysSettings";
+        $activeMenu["lv2"] = "l4uPassword";
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataPassword.php";
         $title = "Master panel : L4U Password Management";
@@ -157,13 +165,29 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Logs Website Template Submission";
         break;
-    case "tools":
-        $showPage = "tools.php";
-        $activeMenu["lv1"] = "";
-        $activeMenu["lv2"] = "";
+    case "feedbackMonday":
+        $showPage = "feedbackMonday.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "feedbackMonday";
         $datatable["show"] = "true";
-        $datatable["src"] = "";
-        $title = "Master panel : Tools Management & Logs";
+        $datatable["src"] = "pages/tableRendering/dataFeedbackMonday.php";
+        $title = "Master panel : Feedback Monday";
+        break;
+    case "printersLog":
+        $showPage = "printersLog.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "printersLog";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataPrintersLog.php";
+        $title = "Master panel : Printers Log";
+        break;
+    case "signupLogs":
+        $showPage = "signupLogs.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "signupLogs";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataSignupLogs.php";
+        $title = "Master panel : SignUp Logs (Staff)";
         break;
     case "unsub":
         $showPage = "unSubmitted.php";
@@ -199,7 +223,7 @@ switch ($menuPage){
         break;
     case "rewardCoin":
         $showPage = "rewardCoin.php";
-        $activeMenu["lv1"] = "rewardCoin";
+        $activeMenu["lv1"] = "rewardsCoin";
         $activeMenu["lv2"] = "rewardCoin";
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataRewardCoin.php";
@@ -207,10 +231,98 @@ switch ($menuPage){
         break;
     case "checkinLogs":
         $showPage = "checkinLogs.php";
-        $activeMenu["lv1"] = "checkinLogs";
-        $activeMenu["lv2"] = "";
+        $activeMenu["lv1"] = "userMgmt";
+        $activeMenu["lv2"] = "checkinLogs";
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataCheckinLogs.php";
         $title = "Master panel : Check-in Logs";
+        break;
+    case "report":
+        $showPage = "report.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Report";
+        break;
+    case "reportWeekly":
+        $showPage = "report.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportWeekly";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Report Weekly";
+        break;
+    case "reportMonthly":
+        $showPage = "report.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportMonthly";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Report Monthly";
+        break;
+    case "reportYearly":
+        $showPage = "report.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportYearly";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Report Yearly";
+        break;
+    case "reportOverview":
+        $showPage = "reportOverview.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportOverview";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Report Overview";
+        break;
+    case "reportGA":
+        $showPage = "reportGA.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportGA";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Google Analytics";
+        break;
+    case "reportRevenue":
+        $showPage = "reportRevenue.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportRevenue";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Revenue Report";
+        break;
+    case "reportDeliveries":
+        $showPage = "reportDeliveries.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportDeliveries";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Deliveries Report";
+        break;
+    case "reportDreamscape":
+        $showPage = "reportDreamscape.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportDreamscape";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Dreamscape Report";
+        break;
+    case "l4utaskBoards":
+        $showPage = "l4utaskBoards.php";
+        $activeMenu["lv1"] = "l4utask";
+        $activeMenu["lv2"] = "l4utaskBoards";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : L4U Task Boards";
+        break;
+    case "l4utaskBoard":
+        $showPage = "l4utaskBoard.php";
+        $activeMenu["lv1"] = "l4utask";
+        $activeMenu["lv2"] = "l4utaskBoard";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : L4U Task Board";
         break;
 }

@@ -31,8 +31,8 @@ $bankThaiNumber = !empty($_POST["bankThaiNumber"]) ? $_POST["bankThaiNumber"] : 
 $bankThaiName = !empty($_POST["bankThaiName"]) ? $_POST["bankThaiName"] : null;
 $test = !empty($_POST["test"]) ? $_POST["test"] : 0;
 
-$data = json_decode($invoiceID, true);
-$invID = $data['invoice_id'];
+$data = !empty($invoiceID) ? json_decode($invoiceID, true) : null;
+$invID = isset($data['invoice_id']) ? $data['invoice_id'] : null;
 
 $productQuotation = json_encode($productQuotation);
 function ThaiRead($amount_number)

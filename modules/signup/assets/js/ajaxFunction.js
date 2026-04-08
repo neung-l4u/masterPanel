@@ -1,3 +1,6 @@
+let generatedStoreID = "";
+let generatedCustomerID = "";
+
 const typeJsonKey = (txt) => {
     return txt === "Thai Massage" ? "Massage" : "Restaurant";
 }
@@ -249,7 +252,7 @@ function getProductList(country) {
                 let addText = "";
                 let discountValue = Math.round((item.amount*15)/100)/100;
                 let cartPrice = (item.amount-Math.round((item.amount*15)/100));
-                if(formCountry==="US"){
+                if(formCountry==="US" || formCountry==="CA"){
                     cartPrice = item.amount;
                 }
                 let realPrice = cartPrice/100;
@@ -426,7 +429,7 @@ function getProductList(country) {
                 /////////
 
 
-                if(formCountry==="US"){
+                if(formCountry==="US" || formCountry==="CA"){
                 return `${addText}<div class="form-check">
                     <input 
                         class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
@@ -462,6 +465,7 @@ function getProductList(country) {
                         class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
                         type="checkbox" 
                         name="${item.form_name}"
+                        id="addon-${product_id}"
                         value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
@@ -666,7 +670,7 @@ function requestToPay() {
     let month = parseInt(single[0],10);
     let year = parseInt(single[1],10)+2000;
     let formCountry = formData.formCountry;
-    cloneCart = cart;
+    cloneCart = JSON.parse(JSON.stringify(cart));
 
     let res = {
         "message": "Dummy message",
@@ -682,16 +686,14 @@ function requestToPay() {
     paymentTimestamp();
     /////
 
-    if (requestedTime<=0){
-        cloneCart.subscription = cloneCart.subscription.reduce(function(acc, cur, i) { //convert an array to object
-            acc[i] = cur;
-            return acc;
-        }, {});
-        cloneCart.add_on = cloneCart.add_on.reduce(function(acc, cur, i) { //convert an array to object
-            acc[i] = cur;
-            return acc;
-        }, {});
-    }
+    cloneCart.subscription = cloneCart.subscription.reduce(function(acc, cur, i) { //convert an array to object
+        acc[i] = cur;
+        return acc;
+    }, {});
+    cloneCart.add_on = cloneCart.add_on.reduce(function(acc, cur, i) { //convert an array to object
+        acc[i] = cur;
+        return acc;
+    }, {});
     /////
     if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
     const objCode = $("#couponCode");
@@ -715,15 +717,27 @@ function requestToPay() {
 
     let codeDiscount = {};
 
+    // Fallback price_id for "Add-on Only" per country (used when no main product is selected)
+    const addonOnlyPriceId = {
+        "AU": "AUADO03M00O-02",
+        "NZ": "NZADO03M00O-02",
+        "UK": "UKADO03M00O-02",
+        "US": "price_1QFbe6I6vmxJT6Om7TLtoA5z",
+        "CA": "price_1QFbeiI6vmxJT6OmyLLNLXcq",
+        "TH": "THADO03M00O-03"
+    };
+
     if (typeof Payment_Coupon_Obj !== "undefined" && Payment_Coupon_Obj !== null) { // check if Payment_Coupon_Obj exists
         console.log("เจอส่วนลดแล้ว");
 
         let pid = cloneCart["subscription"][0]; // read main product ID
+        if (!pid) { pid = addonOnlyPriceId[formCountry] || "ADDON_ONLY"; } // fallback to Add-on Only
         let cid = Payment_Coupon_Obj.code ?? ""; // use empty string if null or undefined
 
         codeDiscount = { [pid]: cid }; // set the main coupon code
     } else {
         let pid = cloneCart["subscription"][0]; // read main product ID
+        if (!pid) { pid = addonOnlyPriceId[formCountry] || "ADDON_ONLY"; } // fallback to Add-on Only
         let cid = ""; // force empty string if Payment_Coupon_Obj is undefined or null
 
         codeDiscount = { [pid]: cid }; // set the main coupon code
@@ -749,7 +763,7 @@ function requestToPay() {
         let tpid = addonArray[x];
         let tcid = applyAddonCode;
 
-        data.push( {[tpid]: tcid} );
+        data.push( {[tpid]: tcid || ""} );
     }
 
     allAddon = data.reduce(function(result, currentObject) {
@@ -840,9 +854,21 @@ function requestToPay() {
     };
 
 
-    saveToDB(stripePayload);
-    if(formData.formCountry === "TH"){saveTaxToDB(stripePayload)}
-    createLogs(stripePayload);
+    let safePayload = JSON.parse(JSON.stringify(stripePayload));
+    safePayload.card = {
+        "number": cardDetail.number ? cardDetail.number.slice(-4) : ""
+    };
+
+    saveToDB(safePayload);
+    if(formData.formCountry === "TH"){
+        if(saveTaxToDB(safePayload) === false){
+            $("#cmdSubmit").removeClass("btn-outline-info").addClass("btn-outline-success").prop("disabled", false);
+            $("#paymentSubmit").prop('disabled', false);
+            result.html('<span class="badge bg-warning">กรุณากรอกข้อมูลใบเสนอราคาให้ครบ</span>');
+            return;
+        }
+    }
+    createLogs(safePayload);
     clonePayload = stripePayload;
 
     setTimeout(function (){
@@ -886,9 +912,18 @@ function requestToPay() {
 
 
                 setTimeout(function () {
-                    genLinkPDF();
-                    modalRespondAction('open', 'success');
-                    sendMailToL4UTeam();
+                    try {
+                        genLinkPDF();
+                    } catch (e) { console.error('genLinkPDF error:', e); }
+                    try {
+                        modalRespondAction('open', 'success');
+                    } catch (e) { console.error('modalRespondAction error:', e); }
+                    try {
+                        sendMailToL4UTeam();
+                    } catch (e) { console.error('sendMailToL4UTeam error:', e); }
+                    try {
+                        signupToCustomerProjectID();
+                    } catch (e) { console.error('signupToCustomerProjectID error:', e); }
                 }, 1000);
             } else {
                 result.empty();
@@ -896,11 +931,11 @@ function requestToPay() {
                 $(fail).appendTo(".paymentResult");
                 res.message = "Payment step is fail"
                 alert("Payment step is fail");
-                let stripeRes = "Ajax Fail : " + stripeRes;
+                stripeRes = "Ajax Fail : " + stripeRes;
                 stripeResToDB(stripeRes);
                 if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
             }
-            cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
+            $("#cmdSubmit").removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
 
             return res.message;
         });
@@ -929,17 +964,18 @@ function requestToPay() {
         let cusID = `<span class="badge bg-info">No Stripe Connect</span>`;
         $(done).appendTo(".paymentResult");
         $(cusID).appendTo(".paymentResult");
-        genLinkPDF();
-        sendMailToL4UTeam();
-        modalRespondAction('open', 'success');
-        cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
+        try { genLinkPDF(); } catch (e) { console.error('genLinkPDF error:', e); }
+        try { sendMailToL4UTeam(); } catch (e) { console.error('sendMailToL4UTeam error:', e); }
+        try { signupToCustomerProjectID(); } catch (e) { console.error('signupToCustomerProjectID error:', e); }
+        try { modalRespondAction('open', 'success'); } catch (e) { console.error('modalRespondAction error:', e); }
+        $("#cmdSubmit").removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
 
     return res.message;
 
 }//function
 
-/*const sendMail = () => {
+const sendMail = () => {
 
     let sendMailPayload = {
         "mode" : "confirm",
@@ -952,9 +988,8 @@ function requestToPay() {
     const ajaxMailToCustomer = $.ajax({
         url: "https://hook.us1.make.com/2nm9tihm27otcavx7ftvafpmjlmasigo",
         method: 'POST',
-        async: false,
+        async: true,
         cache: false,
-        dataType: 'json',
         data: sendMailPayload
     });
 
@@ -968,8 +1003,8 @@ function requestToPay() {
         console.log(status + ': ' + error);
         return false;
     });
-}*/
-//sendMail
+}
+//sendMail กลับมาเปิดคอมเม้นด้วย
 
 const sendMailToL4UTeam = () => {
 
@@ -1006,7 +1041,9 @@ const sendMailToL4UTeam = () => {
     let checkProduct = $("input[name='product']:checked").val();
     let toTeam = "";
 
-    if(checkProduct.includes("Bundle")){
+    if(!checkProduct){
+        toTeam = "All";
+    }else if(checkProduct.includes("Bundle")){
         toTeam = "All";
     }else if(checkProduct.includes("Solo") || checkProduct.includes("Yelp")){
         toTeam = "AM";
@@ -1163,28 +1200,322 @@ const sendMailToL4UTeam = () => {
 
 
 
-    // TODO: Send Email To Staff
-    const ajaxSendL4UMail = $.ajax({
-        url: "https://hook.us1.make.com/tj5min8b66a3mj5gyg78og7pn1cm5isx",
-        method: 'POST',
-        async: false,
-        cache: false,
-        dataType: 'json',
-        data: payload
-    });
+    // TODO: Send Email To Staff กลับมาเปิดคอมเม้นด้วย
+     const ajaxSendL4UMail = $.ajax({
+         url: "https://hook.us1.make.com/tj5min8b66a3mj5gyg78og7pn1cm5isx",
+         method: 'POST',
+         async: true,
+         cache: false,
+         data: payload
+     });
 
-    ajaxSendL4UMail.done(function(res) {
-        console.log(res);
-        return true;
-    });
+     ajaxSendL4UMail.done(function(res) {
+         console.log(res);
+         return true;
+     });
 
-    ajaxSendL4UMail.fail(function(xhr, status, error) {
-        console.log("ajax Send L4U Mail alert fail!!");
+     ajaxSendL4UMail.fail(function(xhr, status, error) {
+         console.log("ajax Send L4U Mail alert fail!!");
         console.log(status + ': ' + error);
         return false;
-    });
+     });
 
-}//sendMail
+} //sendMail
+
+//*Comeback Change*
+// const signupToCustomerProjectID = () => {
+//     let formCountryText = $("#formCountry option:selected").text();
+//     let formTypeText = formData.formType;
+
+//     let codeShopNumber = ""
+//     if (formCountryText === "Australia") {
+//         codeShopNumber = "ABN"
+//     }else if(formCountryText === "New Zealand"){
+//         codeShopNumber = "NZBN"
+//     }else if(formCountryText === "United Kingdom"){
+//         codeShopNumber = "CRN (Company Registration Number)"
+//     }else if(formCountryText === "United States"){
+//         codeShopNumber = "EIN"
+//     }else if(formCountryText === "Canada"){
+//         codeShopNumber = "BN"
+//     }else if(formCountryText === "Thailand"){
+//         codeShopNumber = "TAX ID"
+//     }else{
+//         codeShopNumber = ""
+//     }
+
+//     let currencyShop = ""
+//     if (formCountryText === "Australia") {
+//         currencyShop = "AUD"
+//     }else if(formCountryText === "New Zealand"){
+//         currencyShop = "NZD"
+//     }else if(formCountryText === "United Kingdom"){
+//         currencyShop = "GBP"
+//     }else if(formCountryText === "United States"){
+//         currencyShop = "USD"
+//     }else if(formCountryText === "Canada"){
+//         currencyShop = "CAD"
+//     }else if(formCountryText === "Thailand"){
+//         currencyShop = "THB"
+//     }else{
+//         currencyShop = ""
+//     }
+
+//     let storeType = ""
+//     if (formTypeText === "Thai Restaurants & Takeaways") {
+//         storeType = "Thai restaurants"
+//     }else if(formTypeText === "Thai Massage"){
+//         storeType = "Thai Massage"
+//     }else if(formTypeText === "Restaurants & Takeaways"){
+//         storeType = "Restaurants"
+//     }else{
+//         storeType = ""
+//     }
+
+//     let codeCountry = ""
+//     if (formCountryText === "Australia") {
+//         codeCountry = "AU"
+//     }else if(formCountryText === "New Zealand"){
+//         codeCountry = "NZ"
+//     }else if(formCountryText === "United Kingdom"){
+//         codeCountry = "UK"
+//     }else if(formCountryText === "United States"){
+//         codeCountry = "USA"
+//     }else if(formCountryText === "Canada"){
+//         codeCountry = "CA"
+//     }else if(formCountryText === "Thailand"){
+//         codeCountry = "TH"
+//     }else{
+//         codeCountry = ""
+//     }
+
+//     console.log("signupToCustomerProjectID - Using global Store ID:", generatedStoreID);
+//     console.log("signupToCustomerProjectID - Using global Customer ID:", generatedCustomerID);
+
+
+//     let today = new Date();
+//     let dd = String(today.getDate()).padStart(2, '0');
+//     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+//     let yyyy = today.getFullYear();
+
+//     today = dd + '/' + mm + '/' + yyyy;
+
+//     ////////if checked on a submitted form will send test mail to IT only/////
+//     const CheckedBoxTestmail = $("#CheckedBoxTestmail");
+//     let CheckedBoxTestmailValue = 2;
+
+//     if ($(CheckedBoxTestmail).prop('checked')) {
+//         CheckedBoxTestmailValue = $(CheckedBoxTestmail).val();
+//     } else {
+//         CheckedBoxTestmailValue = 0;
+//     }
+
+//     let shopAgent = $("#byAgent").val();
+//     if (shopAgent === "Other") {
+//         shopAgent = $("#otherAgent").val();
+//     }
+
+//     let cuisineSelected = [];
+
+//     $("input:checkbox[name='cuisinesOther']:checked").each(function(){
+//         cuisineSelected.push($(this).val());
+//     });
+//     let txtCuisine = cuisineSelected.join();
+
+//     let checkProduct = $("input[name='product']:checked").val();
+//     let toTeam = "";
+
+//     if(!checkProduct){
+//         toTeam = "All";
+//     }else if(checkProduct.includes("Bundle")){
+//         toTeam = "All";
+//     }else if(checkProduct.includes("Solo") || checkProduct.includes("Yelp")){
+//         toTeam = "AM";
+//     }else if(checkProduct.includes("System")){
+//         toTeam = "CS";
+//     }else{
+//         toTeam = "All";
+//     }
+
+//     console.log(toTeam);
+
+
+//     ///////////////////////////////
+
+//     //formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
+//     let payload = {
+//         mode : "alert",
+//         formDate: today,
+//         leadSource: 'Signup Form',
+//         formVersion: $("#signupFormVersion").val(),
+//         formMessage: 'Hi, Team <br>There are new sign-up customers coming in now. Below are brief details. You can check full information on CRM.',
+//         formProduct: $("#currentlyPackage option:selected").text(),
+//         MainProduct: $("input[name='product']:checked").val(),
+//         formInitialProductOffering: $("#initialProductOffering").val(),
+//         formSalesAgent: shopAgent,
+//         formContractPeriod: $("#ContractPeriod").val(),
+//         formRefPerson: $("#byPerson").val(),
+//         formRefPartner: $("#byPartner").val(),
+//         formCoupon: $("#couponCode").val(),
+//         formRefShop: $("#byRestaurant").val(),
+//         formFirstTimePayment: $("#firstTimePayment").val(),
+//         formPaymentMethod: $("#paymentMethod").val(),
+
+//         toTeam: toTeam,
+
+//         addonFlyer: $("input:checkbox[name='addonFlyers']:checked").val(),
+//         addonFridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
+//         addonDigitalMenu: $("input:checkbox[name='addonPricingDesign']:checked").val(),
+//         addonDineInDual: $("input:checkbox[name='addonDineInDual']:checked").val(),
+//         addonAdvPromo: $("input:checkbox[name='addonAdvPromo']:checked").val(),
+//         addonMobApp: $("input:checkbox[name='addonMobApp']:checked").val(),
+//         addonWebsiteHosting: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
+//         addonSocialMedia: $("input:checkbox[name='addonSocialMedia']:checked").val(),
+//         addonWebsiteMakeoverTemplate: $("input:checkbox[name='addWebsiteMakeoverTemplate']:checked").val(),
+//         addonWebsiteMakeoverFully: $("input:checkbox[name='addWebsiteMakeoverFully']:checked").val(),
+//         addonInfluencer: $("input:checkbox[name='addonInfluencer']:checked").val(),
+//         addonGoogleReview: $("input:checkbox[name='addonGoogleReview']:checked").val(),
+//         addonPOS: $("input:checkbox[name='addonPOS']:checked").val(),
+//         addonYelpAdSpend: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
+//         addonSocialMediaSetup: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
+
+
+
+//         formCustomerType: $("#formType option:selected").text(),
+//         formShopName: $("#shopName").val(),
+//         formCountry: $("#formCountry option:selected").text(),
+//         formCountryCode: codeCountry,
+//         ShippingAddress: $("#shipAddress1").val(),
+//         formFullName: $("#first_name").val().trim() + " " + $("#last_name").val().trim(),
+//         formFristName: $("#first_name").val().trim(),
+//         formLastName: $("#last_name").val().trim(),
+//         formEmail: $("#email").val().toLowerCase(),
+//         formMobile: $("#ownerMobile").val(),
+//         formBestTime: $("#bestTimeContact").val(),
+//         formNote: $("#additionComment").val(),
+//         formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
+//         formstartProjectOther: $("#dateproject").val(),
+//         formstartprojectNote: $("#startprojectNote").val(),
+//         formPOSUsing: $("#posSystem").val(),
+//         formPOSUsingOther: $("#posOtherDate").val(),
+//         formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
+//         formYesPOSProvider: $("#endDatePOS").val(),
+//         acceptAutoPilotAI: $("input[name='acknowledgeAI']:checked").val(),
+
+
+//         //NEW//
+//         formShopNumber: $("#businessNumber").val(),
+//         formTradingName: $("#company").val(),
+//         formShopPhoneNumber: $("#shopPhoneFormatted").val(),
+//         formShopWebsite: $("#webURL").val(),
+//         formOwnerFirstLanguage: $("input[name='supportLanguage']:checked").val(),
+
+
+//         ///Cuisine///
+//         cuisinesOther: txtCuisine,
+//         formCuisineOther: $("#cuisinesOther").val(),
+//         formSetupFee: $("input[name='setup']:checked").val(),
+
+
+//         //Booking System//
+//         formLoginEmailBookingSystem: $("#emailBooking").val(),
+//         formPasswordBookingSystem: $("#passwordBooking").val(),
+
+//         //Online Ordering System//
+//         formLoginEmailOnlineOrderingSystem: $("#emailShoppingCart").val(),
+//         formPasswordOnlineOrderingSystem: $("#passwordShoppingCart").val(),
+
+//         //Services//
+//         formPinkUp: $("input[id='pickup']:checked").val(),
+//         formTableReservation: $("input[id='tableReservation']:checked").val(),
+
+//         formDineInTableOrdering: $("input[id='DineIn']:checked").val(),
+//         dineInTable: $("#tableNumber").val(),
+//         dineInSize: $("#sizeOption").val(),
+
+//         delivery: $("input[id='delivery']:checked").val(),
+//         deliveryYourOwn: $("input[id='ownDriver']:checked").val(),
+//         deliverySystemDriver: $("input[id='systemDriver']:checked").val(),
+//         ihdEmail: $("#ref_IHD_Email").val(),
+//         ihdPw: $("#ref_IHD_Password").val(),
+//         ihdToken: $("#ref_IHD_Token").val(),
+
+//         //Payment Options//
+//         cash: $("input[id='cash']:checked").val(),
+//         cardCounter: $("input[id='cardCounter']:checked").val(),
+//         callBack: $("input[id='callBack']:checked").val(),
+//         payOnline: $("input[id='payOnline']:checked").val(),
+
+//         //Social Networks//
+//         facebook: $("#box_Facebook").val(),
+//         tiktok: $("#box_TikTok").val(),
+//         instagram: $("#box_Instagram").val(),
+//         yelp: $("#box_Yelp").val(),
+
+//         //Domain Name//
+//         ///Old///
+//         websiteDomainName: $("#websiteDomainName").val(),
+//         keepWebsite: $("input[id='keepWebsite']:checked").val(),
+//         ownDomain: $("input[id='ownDomain']:checked").val(),
+
+//         ///New///
+//         websiteNewDomain: $("#newDomain").val(),
+
+//         ///Domain Name Login info///
+//         loginInfoU: $("#ref_Domain_U").val(),
+//         loginInfoP: $("#ref_Domain_P").val(),
+//         loginInfoComments: $("#ref_Domain_Comments").val(),
+//         loginInfoRegistered: $("#ref_Domain_Name_Registered").val(),
+
+//         ///1st Order Discount///
+//         firstOrderDiscount: $("input:checkbox[name='discount']:checked").val(),
+//         firstOrderDiscountOther: $("input[id='othersDiscount']:checked").val(),
+//         firstOrderDiscountOtherValue: $("#discountOther").val(),
+
+//         ///POS Check Box///
+//         posCheck: $("#posCheck").val(),
+//         renovationTakePOS: $("#renovationTakePOS").val(),
+//         necessaryPermitsPOS: $("#necessaryPermitsPOS").val(),
+
+//         ///AI ///
+//         addonARAYA: $("input:checkbox[name='addonAI']:checked").val(),
+
+//         // Customer ID & Store ID for Monday.com integration **Comebank Change**
+//         // customerID: generatedCustomerID,
+//         // storeID: generatedStoreID, // Use projectID as storeID
+//         // codeShopNumber: codeShopNumber,
+//         // currencyShop: currencyShop,
+//         // storeType: storeType,
+
+//         //END NEW//
+//         testMail: CheckedBoxTestmailValue,
+//         token: Math.random()
+//     };
+
+
+
+//     // TODO: Send Email To Staff กลับมาเปิดคอมเม้นด้วย
+//      // Send data to Make.com webhook with Customer ID & Store ID
+//      const ajaxsignupToCustomerProjectID = $.ajax({
+//          url: "https://hook.us1.make.com/d8virx5jtrqq0h6vr5gwdgmd9ia68qdv",
+//          method: 'POST',
+//          async: true,
+//          cache: false,
+//          data: payload
+//      });
+
+//      ajaxsignupToCustomerProjectID.done(function(res) {
+//          console.log(res);
+//          return true;
+//      });
+
+//      ajaxsignupToCustomerProjectID.fail(function(xhr, status, error) {
+//          console.log("ajax Send L4U Mail alert fail!!");
+//         console.log(status + ': ' + error);
+//         return false;
+//      });
+
+// }//sendMail
 
 /**
  * คำนวณราคาก่อน VAT จากราคาที่รวม VAT แล้ว (สำหรับ VAT 7%)
@@ -1212,311 +1543,10 @@ function calculateVAT(price) {
 
     return { a, b, c };
 }
-/*const saveTaxToDB = (stripePayload, stripeRes) => {
-    let checkBoxWantTAX = $("input:checkbox[id='quotationYes']:checked").val();
-    let taxType = $("input:radio[name='taxType']:checked").val();
-    let nameQuotation = $("#quotationName").val();
-    let shopNameQuotation = $("#quotationShopName").val();
-    let phoneQuotation = $("#shopPhoneQuotationFormatted").val();
-    let emailQuotation = $("#quotationEmail").val();
-    let addressQuotation = $("#quotationAddress").val();
-    let taxNumberQuotation = $("#quotationTaxNumber").val();
-    let subTotal = $("#subTotal").val();
-    let tax = $("#GST").val();
-    let grandTotal = $("#grandTotal").val();
-    let realNameQuotation = "";
-    let invoiceID = "VCDSG290-0002";
-    let selectedInputId = $("input[name='product']:checked").attr("id")
-    let product = $("label[for='" + selectedInputId + "']").text().trim().replace(/\n/g, '');
-    let setupFee = $("input[name='setup']:checked").val();
-    let addonSelect = $("input[name='addonSocialMediaSetup']:checked").val();
-    let shopAgent = $("#byAgent").val();
-    let taxWithheld = (grandTotal * 0.015).toFixed(2)
-    let finalPrice = parseFloat((grandTotal - taxWithheld).toFixed(2));
-    let finalPriceFormatted = finalPrice.toFixed(2);
-    let bankName = $("#bankName").val();
-    let bankThaiNumber = $("#bankThaiNumber").val();
-    let bankThaiName = $("#bankThaiName").val();
-    if (shopAgent === "Other") {
-        shopAgent = $("#otherAgent").val();
-    }
-
-    let withholdingTax = (subTotal * 0.03).toFixed(2);
-
-    ////product/////
-    // แยกด้วย " - "
-    let partsPro = product.split(" - ");
-    let nameProduct = partsPro[0];
-    let priceProduct = partsPro[1] || "฿0.00";
-    let priceOnly = parseFloat(priceProduct.match(/[\d,.]+/)[0].replace(/,/g, ''));
-    let productAmountBeforeVAT = getPriceBeforeVAT(priceOnly);
-
-    const isProductValid = nameProduct && nameProduct.trim() !== "" && priceOnly > 0; // ตรวจสอบว่ามีชื่อสินค้าและราคา > 0 ด้วย
-
-    ////product/////
-
-    ////setupFee/////
-    let nameSetup = "Setup Fee (No Contract)";
-    let setupFeeAmountBeforeVAT = 0;
-    // ประกาศ priceSetupOnly นอก if
-    let priceSetupOnly = 0;
-    const isSetupFeeSelected = setupFee && setupFee.trim() !== "";
-
-    if (isSetupFeeSelected) {
-        let partsSetupFee = setupFee.split(" - ");
-        nameSetup = partsSetupFee[0];
-        let priceSetup = partsSetupFee[1] || "฿0.00";
-        priceSetupOnly = parseFloat(priceSetup.match(/[\d,.]+/)[0].replace(/,/g, ''));
-        setupFeeAmountBeforeVAT = getPriceBeforeVAT(priceSetupOnly);
-    }
-    // ใช้ priceSetupOnly ที่ถูกประกาศด้านบนในการเช็คเงื่อนไข
-    const isRealSetupFeeSelected = isSetupFeeSelected && priceSetupOnly > 0;
-    ////setupFee/////
-
-    ////addon////
-    let nameAddon = "No Addon";
-    let addonAmountBeforeVAT = 0;
-    // ประกาศ priceAddonOnly นอก if
-    let priceAddonOnly = 0;
-    const isAddonSelected = addonSelect && addonSelect.trim() !== "";
-
-    if (isAddonSelected) {
-        let partsAddon = addonSelect.split(" - T฿ ");
-        nameAddon = partsAddon[0];
-        let priceAddon = partsAddon[1] || "0.00";
-        priceAddonOnly = parseFloat(priceAddon.match(/[\d,.]+/)[0].replace(/,/g, ''));
-        addonAmountBeforeVAT = getPriceBeforeVAT(priceAddonOnly);
-    }
-    // ใช้ priceAddonOnly ที่ถูกประกาศด้านบนในการเช็คเงื่อนไข
-    const isRealAddonSelected = isAddonSelected && priceAddonOnly > 0;
-    ////addon/////
-
-    let today = new Date();
-
-// ดึงวัน เดือน ปี
-    let day = String(today.getDate()).padStart(2, '0');
-    let month = String(today.getMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
-    let year = today.getFullYear();
-
-// รวมเป็นฟอร์แมต dd/mm/yyyy
-    let currentDate = `${day}/${month}/${year}`;
-
-    if(taxType === "นิติบุคคล"){
-        realNameQuotation = shopNameQuotation;
-    }else{
-        realNameQuotation = shopNameQuotation + " โดย " + nameQuotation;
-    }
-
-
-    let tableData = [];
-
-// *** เริ่มบล็อก IF/ELSE IF สำหรับการสร้าง tableData ตามเงื่อนไข ***
-
-    if (isProductValid && isRealSetupFeeSelected && isRealAddonSelected) {
-        // กรณี 1: มี product ไม่ว่าง, setupFee ไม่ว่าง, addonSelect ไม่ว่าง
-        console.log("CASE 1: Product, Setup Fee, and Addon are all selected.");
-        tableData.push({
-            "product": nameProduct,
-            "qyt": 1,
-            "amountProduct": productAmountBeforeVAT
-        });
-        tableData.push({ "setupfee": nameSetup, "qyt": 1, "amountSetup": setupFeeAmountBeforeVAT });
-        tableData.push({ "addon": nameAddon, "qyt": 1, "amountAddon": addonAmountBeforeVAT });
-
-    } else if (isProductValid && !isRealSetupFeeSelected && !isRealAddonSelected) {
-        // กรณี 2: product ไม่ว่างอย่างเดียว
-        console.log("CASE 2: Only Product is selected.");
-        tableData.push({
-            "product": nameProduct,
-            "qyt": 1,
-            "amountProduct": productAmountBeforeVAT
-        });
-
-    } else if (isProductValid && isRealSetupFeeSelected && !isRealAddonSelected) {
-        // กรณี 3: มี product ไม่ว่าง, setupFee ไม่ว่าง (addon ไม่ว่าง)
-        console.log("CASE 3: Product and Setup Fee are selected.");
-        tableData.push({
-            "product": nameProduct,
-            "qyt": 1,
-            "amountProduct": productAmountBeforeVAT
-        });
-        tableData.push({ "setupfee": nameSetup, "qyt": 1, "amountSetup": setupFeeAmountBeforeVAT });
-
-    } else if (isProductValid && !isRealSetupFeeSelected && isRealAddonSelected) {
-        // กรณี 4: product ไม่ว่าง, addonSelect ไม่ว่าง (setupFee ไม่ว่าง)
-        console.log("CASE 4: Product and Addon are selected.");
-        tableData.push({
-            "product": nameProduct,
-            "qyt": 1,
-            "amountProduct": productAmountBeforeVAT
-        });
-        tableData.push({ "addon": nameAddon, "qyt": 1, "amountAddon": addonAmountBeforeVAT });
-
-    } else {
-        // กรณี 5: อื่นๆ (เช่น product ไม่ถูกเลือก หรือไม่มีราคา)
-        console.log("CASE 5: Other combinations (e.g., Missing Product or only Addon/Setup Fee). The tableData will be empty.");
-    }
-
-    // *** สิ้นสุดบล็อก IF/ELSE IF ***
-
-
-
-
-    let productQuotation = {
-        "quotation": [
-            {
-                "date": currentDate,
-                "detail": [
-                    {
-                        "company": realNameQuotation,
-                        "address": addressQuotation,
-                        "tax_id": taxNumberQuotation,
-                        "email": emailQuotation,
-                        "phone": phoneQuotation
-                    }
-                ]
-            }
-        ],
-        "table": tableData,
-        "summary": {
-            "subtotal": subTotal,
-            "tax": tax,
-            "withholdingTax": withholdingTax,
-            "grandtotal": grandTotal
-        }
-    };
-
-    payload = {
-        "checkBoxWantTAX" : checkBoxWantTAX,
-        "taxType" : taxType,
-        "nameQuotation" : nameQuotation,
-        "shopNameQuotation" : shopNameQuotation,
-        "phoneQuotation" : phoneQuotation,
-        "emailQuotation" : emailQuotation,
-        "addressQuotation" : addressQuotation,
-        "taxNumberQuotation" : taxNumberQuotation,
-        "subTotal" : subTotal,
-        "tax" : tax,
-        "grandTotal" : grandTotal,
-        "realNameQuotation" : realNameQuotation,
-        "invoiceID" : invoiceID,
-        "productQuotation" : productQuotation,
-        "shopAgent" : shopAgent,
-        "date" : currentDate
-    }
-
-
-    console.log(payload);
-    if (taxType === "นิติบุคคล") {
-        const ajaxSaveQuotationToDB = $.ajax({
-            url: settings.url_saveQuestionToDB,
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                "act": "add",
-                "checkBoxWantTAX" : checkBoxWantTAX,
-                "taxType" : taxType,
-                "nameQuotation" : shopNameQuotation,
-                "phoneQuotation" : phoneQuotation,
-                "emailQuotation" : emailQuotation,
-                "addressQuotation" : addressQuotation,
-                "taxNumberQuotation" : taxNumberQuotation,
-                "productQuotation" : productQuotation,
-                "finalPrice" : subTotal,
-                "grandTotal" : grandTotal,
-                "shopAgent" : shopAgent,
-                "bankName" : bankName,
-                "bankThaiNumber" : bankThaiNumber,
-                "bankThaiName" : bankThaiName,
-                "date" : currentDate
-            }
-        });
-
-        ajaxSaveQuotationToDB.done(function(res) {
-            console.log(res);
-            $("#quotationID").val(res.quotationID);
-            return true;
-        });
-
-        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
-            console.log("Save to DB fail!!");
-            console.log(status + ': ' + error);
-            return false;
-        });
-    }else if(taxType === "บุคคลธรรมดา"){
-        const ajaxSaveQuotationToDB = $.ajax({
-            url: settings.url_saveQuestionToDB,
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                "act": "add",
-                "checkBoxWantTAX" : checkBoxWantTAX,
-                "taxType" : taxType,
-                "nameQuotation" : realNameQuotation,
-                "phoneQuotation" : phoneQuotation,
-                "emailQuotation" : emailQuotation,
-                "addressQuotation" : addressQuotation,
-                "taxNumberQuotation" : taxNumberQuotation,
-                "productQuotation" : productQuotation,
-                "finalPrice" : subTotal,
-                "grandTotal" : grandTotal,
-                "shopAgent" : shopAgent,
-                "bankName" : bankName,
-                "bankThaiNumber" : bankThaiNumber,
-                "bankThaiName" : bankThaiName,
-                "date" : currentDate
-            }
-        });
-
-        ajaxSaveQuotationToDB.done(function(res) {
-            console.log(res);
-            $("#quotationID").val(res.quotationID);
-            return true;
-        });
-
-        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
-            console.log("Save to DB fail!!");
-            console.log(status + ': ' + error);
-            return false;
-        });
-    }else{
-        const ajaxSaveQuotationToDB = $.ajax({
-            url: settings.url_saveQuestionToDB,
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                "act": "add",
-                "checkBoxWantTAX" : "no",
-                "taxType" : "ไม่ต้องการ",
-                "date" : currentDate
-            }
-        });
-
-        ajaxSaveQuotationToDB.done(function(res) {
-            console.log(res);
-            $("#quotationID").val(res.quotationID);
-            return true;
-        });
-
-        ajaxSaveQuotationToDB.fail(function(xhr, status, error) {
-            console.log("Save to DB fail!!");
-            console.log(status + ': ' + error);
-            return false;
-        });
-    }
-
-
-}*/
 
 const saveTaxToDB = (stripePayload, stripeRes) => {
     // 1. รับค่าจาก Form
-    let checkBoxWantTAX = $("input:checkbox[id='quotationYes']:checked").val();
+    let checkBoxWantTAX = $("#quotationYes").val();
     let taxType = $("input:radio[name='taxType']:checked").val(); // 'นิติบุคคล' หรือ 'บุคคลธรรมดา'
 
     // ข้อมูลลูกค้า
@@ -1526,6 +1556,81 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
     let emailQuotation = $("#quotationEmail").val();
     let addressQuotation = $("#quotationAddress").val();
     let taxNumberQuotation = $("#quotationTaxNumber").val();
+
+    // Validate quotation fields
+    $(".tax-validate-error").remove();
+    let hasError = false;
+    if (checkBoxWantTAX) {
+        // ต้องเลือกนิติบุคคลหรือบุคคลธรรมดา
+        if (!taxType) {
+            $("input[name='taxType']").last().closest(".form-check").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณาเลือกนิติบุคคลหรือบุคคลธรรมดา</span>');
+            hasError = true;
+        }
+
+        // ชื่อบริษัท
+        if (!shopNameQuotation || shopNameQuotation.trim() === "") {
+            $("#quotationShopName").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกชื่อบริษัท</span>');
+            if (!hasError) { $("#quotationShopName").focus(); }
+            hasError = true;
+        }
+
+        // ชื่อ (บุคคลธรรมดา ต้องกรอก)
+        if (taxType === "บุคคลธรรมดา") {
+            if (!nameQuotation || nameQuotation.trim() === "") {
+                $("#quotationName").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกชื่อ</span>');
+                if (!hasError) { $("#quotationName").focus(); }
+                hasError = true;
+            }
+        }
+
+        // เบอร์โทร
+        if (!phoneQuotation || phoneQuotation.trim() === "") {
+            $("#quotationPhone").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกเบอร์โทร</span>');
+            if (!hasError) { $("#quotationPhone").focus(); }
+            hasError = true;
+        }
+
+        // อีเมล
+        if (!emailQuotation || emailQuotation.trim() === "") {
+            $("#quotationEmail").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกอีเมล</span>');
+            if (!hasError) { $("#quotationEmail").focus(); }
+            hasError = true;
+        }
+
+        // ที่อยู่
+        if (!addressQuotation || addressQuotation.trim() === "") {
+            $("#quotationAddress").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกที่อยู่</span>');
+            if (!hasError) { $("#quotationAddress").focus(); }
+            hasError = true;
+        }
+
+        // เลขประจำตัวผู้เสียภาษี
+        if (!taxNumberQuotation || taxNumberQuotation.trim() === "") {
+            $("#quotationTaxNumber").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกเลขประจำตัวผู้เสียภาษี</span>');
+            if (!hasError) { $("#quotationTaxNumber").focus(); }
+            hasError = true;
+        }
+
+        // ธนาคาร (เฉพาะนิติบุคคล)
+        if (taxType === "นิติบุคคล") {
+            if (!$("#bankName").val() || $("#bankName").val().trim() === "") {
+                $("#bankName").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกชื่อธนาคาร</span>');
+                if (!hasError) { $("#bankName").focus(); }
+                hasError = true;
+            }
+            if (!$("#bankThaiNumber").val() || $("#bankThaiNumber").val().trim() === "") {
+                $("#bankThaiNumber").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกเลขที่บัญชีธนาคาร</span>');
+                if (!hasError) { $("#bankThaiNumber").focus(); }
+                hasError = true;
+            }
+            if (!$("#bankThaiName").val() || $("#bankThaiName").val().trim() === "") {
+                $("#bankThaiName").after('<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกชื่อบัญชี</span>');
+                if (!hasError) { $("#bankThaiName").focus(); }
+                hasError = true;
+            }
+        }
+        if (hasError) return false;
+    }
 
     // ข้อมูลธนาคารลูกค้า
     let bankName = $("#bankName").val();
@@ -1748,7 +1853,7 @@ const callDatabaseInvoice = (idInvoice) => {
             console.log("📦 Data from DB:", res);
             // แปลง JSON เป็น string แล้วใส่ลง input
             $("#dataInvoice").val(JSON.stringify(res.dataInvoice, null, 2));
-            callWebhookInvoice(idInvoice, res.dataInvoice);
+            // callWebhookInvoice(idInvoice, res.dataInvoice); กลับมาเปิดคอมเม้นด้วย
         },
         error: function(xhr, status, error) {
             console.error("❌ callDatabaseInvoice fail:", status, error);
@@ -1757,35 +1862,71 @@ const callDatabaseInvoice = (idInvoice) => {
 };
 
 
-const callWebhookInvoice = (idInvoice, invoiceObject) => {
-    let webhook = "https://hook.us1.make.com/ilpkidd9ve4cflfxoym5fka8fwdozhxt";
+// const callWebhookInvoice = (idInvoice, invoiceObject) => {
+//     let webhook = "https://hook.us1.make.com/ilpkidd9ve4cflfxoym5fka8fwdozhxt";
 
 
-    if ($("#formCountry").val() === "TH") {
-        $.ajax({
-            url: webhook,
-            method: 'POST',
-            async: false,
-            cache: false,
-            dataType: 'json',
-            data: {
-                act: "callWebhookInvoice",
-                id: idInvoice,
-                data: invoiceObject
-            },
-            success: function(res) {
-                console.log("✅ Webhook response:", res);
-            },
-            error: function(xhr, status, error) {
-                console.log("❌ Webhook fail:", status + ': ' + error);
-            }
-        });
-    }
-};
+//     if ($("#formCountry").val() === "TH") {
+//         $.ajax({
+//             url: webhook,
+//             method: 'POST',
+//             async: false,
+//             cache: false,
+//             dataType: 'json',
+//             data: {
+//                 act: "callWebhookInvoice",
+//                 id: idInvoice,
+//                 data: invoiceObject
+//             },
+//             success: function(res) {
+//                 console.log("✅ Webhook response:", res);
+//             },
+//             error: function(xhr, status, error) {
+//                 console.log("❌ Webhook fail:", status + ': ' + error);
+//             }
+//         });
+//     }
+// };กลับมาเปิดคอมเม้นด้วย
 
 
 // TODO : Build Logs File to DB by Mark
 const saveToDB = (stripePayload, stripeRes) => {
+    
+
+     // Generate Customer ID & Store ID from backend API **Comeback Change**
+    //  generatedStoreID = "";
+    // generatedCustomerID = "";
+    // try {
+    //     const idResponse = $.ajax({
+    //         url: settings.url_generateID,
+    //         method: 'POST',
+    //         async: false,
+    //         cache: false,
+    //         dataType: 'json',
+    //         data: {
+    //             country: formData.formCountry,
+    //             formType: formData.formType
+    //         }
+    //     });
+
+    //     // Store generated IDs globally for use in other functions
+    //     if (idResponse.responseJSON && idResponse.responseJSON.result === "success") {
+    //         generatedStoreID = idResponse.responseJSON.storeID; // Store ID
+    //         generatedCustomerID = idResponse.responseJSON.customerID; // Customer ID
+    //     } else if (idResponse.result === "success") {
+    //         generatedStoreID = idResponse.storeID; // Store ID
+    //         generatedCustomerID = idResponse.customerID; // Customer ID
+    //     }
+    // } catch (e) {
+    //     console.error('generateID error:', e);
+    // }
+
+    // // Log generated IDs for debugging
+    // console.log("Generated Store ID:", generatedStoreID);
+    // console.log("Generated Customer ID:", generatedCustomerID);
+    // Generate Customer ID & Store ID from backend API **Comeback Change**
+
+
     genLinkPDF();
     const agreementGenerated = $("#agreementGenerated");
     let contractURL = agreementGenerated.val();
@@ -1918,6 +2059,9 @@ const saveToDB = (stripePayload, stripeRes) => {
         formPOSUsingOther: $("#posOtherDate").val(),
         formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
         formYesPOSProvider: $("#endDatePOS").val(),
+        // Attach Customer ID & Store ID to payload for database storage **Comebank Change**
+        // customerID: generatedCustomerID,
+        // storeID: generatedStoreID,
     };
 
     // TODO : Save To Database
@@ -2075,9 +2219,9 @@ const createLogs = (stripePayload) => {
         GST: $("#GST").val(),
         Total: $("#grandTotal").val(),
         PaymentMethod: $("#paymentMethod").val(),
-        CardNumber: $("#creditCardNumber").val(),
-        ExpDate: $("#creditExpireDate").val(),
-        CVV: $("#creditCCV").val(),
+        // CardNumber: $("#creditCardNumber").val(),
+        // ExpDate: $("#creditExpireDate").val(),
+        // CVV: $("#creditCCV").val(),
         CardName: $("#creditFullName").val(),
         EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
         BSB: $("#bsbDirectDebit").val(),
@@ -2101,8 +2245,10 @@ const createLogs = (stripePayload) => {
         formstartprojectNote: $("#startprojectNote").val().trim(),
         formPOSUsing: $("#posSystem").val(),
         formPOSUsingOther: $("#posOtherDate").val(),
-        formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
-        formYesPOSProvider: $("#endDatePOS").val()
+        formYesPOSProvider: $("#endDatePOS").val(),
+        // Attach Customer ID & Store ID to logs **Comebank Change**
+        // StoreID: generatedStoreID,
+        // CustomerID: generatedCustomerID
     };
 // TODO : Build Logs File
     const ajaxSendLog = $.ajax({

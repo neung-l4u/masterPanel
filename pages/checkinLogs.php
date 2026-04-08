@@ -82,12 +82,12 @@ global $db;
                                     <input type="date" id="filterDateTo" class="form-control form-control-sm">
                                 </div>
                                 <div class="col-12 col-md-2 d-flex align-items-end">
-                                    <button id="btnFilter" class="btn btn-primary btn-sm w-100">
+                                    <button id="btnFilter" class="btn btn-primary btn-sm w-100" data-ga="click_filter_checkin" data-ga-label="Filter Check-in">
                                         <i class="bi bi-search"></i> Filter
                                     </button>
                                 </div>
                                 <div class="col-12 col-md-2 d-flex align-items-end mt-2 mt-md-0">
-                                    <button id="btnReset" class="btn btn-secondary btn-sm w-100">
+                                    <button id="btnReset" class="btn btn-secondary btn-sm w-100" data-ga="click_reset_checkin_filter" data-ga-label="Reset Filter">
                                         <i class="bi bi-arrow-counterclockwise"></i> Reset
                                     </button>
                                 </div>

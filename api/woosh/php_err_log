@@ -1,0 +1,2 @@
+[23-Feb-2026 22:29:48 America/New_York] PHP Warning:  Undefined array key "domain" in /home/localfor/report.localforyou.com/api/woosh/getProduct.php on line 4
+[23-Feb-2026 22:30:08 America/New_York] PHP Warning:  Undefined array key "domain" in /home/localfor/report.localforyou.com/api/woosh/getProductCategories.php on line 4

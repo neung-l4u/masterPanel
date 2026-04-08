@@ -99,7 +99,7 @@ $teams = $db->query('SELECT `id`, `name`, `fullName` FROM `Team` ORDER BY `idx`;
                     <div class="card-body">
                         <div class="table-responsive">
                         <table id="rewardCoinTable" class="table table-bordered table-striped table-hover">
-                            <thead>
+                            <thead class="thead-dark">
                                 <tr>
                                     <th class="text-center" style="width: 50px;">#</th>
                                     <th style="width: 80px;">User</th>

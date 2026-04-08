@@ -44,7 +44,7 @@ $teamID = $_SESSION['teamID'];
                     <div class="card-header d-flex justify-content-end">
                         <!-- Button trigger modal -->
                         <?php if($userLevel<=2){ ?>
-                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                        <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal" data-ga="click_add_template" data-ga-label="Add New Template">
                             <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
                         </button>
                         <?php } ?>
@@ -125,7 +125,7 @@ $teamID = $_SESSION['teamID'];
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit">Save changes</button>
+                        <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit" data-ga="click_save_template" data-ga-label="Save Template">Save changes</button>
                     </div>
                 </div>
             </div>

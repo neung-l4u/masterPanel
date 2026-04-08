@@ -129,7 +129,7 @@ $loginID = $_SESSION['id'];
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="text-danger">You will only be able to see your own team passwords and passwords shared by others.</p>
                             <!-- Button trigger modal -->
-                            <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                            <button id="btnModal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal" data-ga="click_add_password" data-ga-label="Add New Password">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" fill="#FFFFFF" /></svg> Add new
                             </button>
                             <!-- Modal -->
@@ -137,8 +137,53 @@ $loginID = $_SESSION['id'];
                     </div>
 
                     <div class="card-body">
+                        <!-- Filters -->
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-3 mb-2 mb-md-0">
+                                <label for="filterShare" class="form-label small font-weight-bold">Share</label>
+                                <select id="filterShare" class="custom-select custom-select-sm">
+                                    <option value="">All</option>
+                                    <option value="Yes">Shared</option>
+                                    <option value="No">Not Shared</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-4 mb-2 mb-md-0">
+                                <label for="filterTeam" class="form-label small font-weight-bold">Team</label>
+                                <select id="filterTeam" class="custom-select custom-select-sm">
+                                    <option value="">All Teams</option>
+                                    <?php
+                                    $filterTeams = $db->query('SELECT `id`, `fullName` FROM `Team` ORDER BY `idx`;')->fetchAll();
+                                    $amAdded = false;
+                                    foreach ($filterTeams as $ft) {
+                                        if (in_array($ft['id'], [2,8,10,11])) {
+                                            if (!$amAdded) {
+                                                echo '<option value="Account Manager">Account Manager</option>';
+                                                $amAdded = true;
+                                            }
+                                        } else {
+                                            echo '<option value="' . $ft['fullName'] . '">' . $ft['fullName'] . '</option>';
+                                        }
+                                    } ?>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-3 mb-2 mb-md-0">
+                                <label for="filterLevel" class="form-label small font-weight-bold">Level</label>
+                                <select id="filterLevel" class="custom-select custom-select-sm">
+                                    <option value="">All Levels</option>
+                                    <option value="Super Admin">Super Admin</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="User">User</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-2 d-flex align-items-end">
+                                <button id="btnResetFilter" class="btn btn-outline-secondary btn-sm w-100" data-ga="click_reset_password_filter" data-ga-label="Reset Password Filter">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Reset
+                                </button>
+                            </div>
+                        </div>
                         <div class="card">
-                            <div class="card-body table-responsive p-4" style="height: 620px;">
+                            <div class="card-body table-responsive p-4" style="height: 820px;">
                                 <table id="datatable" class="table table-borderless table-striped table-hover"
                                     style="width:100%">
                                     <thead class="thead-dark">
@@ -146,12 +191,12 @@ $loginID = $_SESSION['id'];
                                             <th style="width:5%">Share</th>
                                             <th style="width:10%">Team:Type</th>
                                             <th style="width:5%">Level</th>
-                                            <th style="width:28%">Name</th>
-                                            <th style="width:17%">User</th>
-                                            <th style="width:17%">Password</th>
+                                            <th style="width:20%">Name</th>
+                                            <th style="width:21%">User</th>
+                                            <th style="width:21%">Password</th>
                                             <th style="width:5%">Link</th>
-                                            <th style="width:5%">Note</th>
-                                            <th style="width:8%"></th>
+                                            <th style="width:6%">Note</th>
+                                            <th style="width:7%"></th>
                                         </tr>
                                     </thead>
                                     <tfoot class="thead-dark">
@@ -298,7 +343,7 @@ $loginID = $_SESSION['id'];
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit"
-                            id="cmdSubmit">Save changes</button>
+                            id="cmdSubmit" data-ga="click_save_password" data-ga-label="Save Password">Save changes</button>
                     </div> <!-- modal-footer -->
                 </div> <!-- modal-content -->
             </div> <!-- modal-dialog -->
@@ -481,4 +526,38 @@ $loginID = $_SESSION['id'];
             console.error("Error copying text: ", error);
         });
     }
+
+    // Password table filters (use 'load' because jQuery loads at bottom of main.php)
+    window.addEventListener('load', function() {
+        function getTable() {
+            try { return $('#datatable').DataTable(); } catch(e) { return null; }
+        }
+
+        function applyFilters() {
+            var table = getTable();
+            if (!table) return;
+
+            var shareVal = $('#filterShare').val();
+            var teamVal  = $('#filterTeam').val();
+            var levelVal = $('#filterLevel').val();
+
+            // col 0 = Share (hidden text Yes/No)
+            table.column(0).search(shareVal, false, false);
+            // col 1 = Team:Type (e.g. "CS: Internal") — use "CS:" prefix for exact team match
+            table.column(1).search(teamVal ? (teamVal + ': ') : '', false, false);
+            // col 2 = Level
+            table.column(2).search(levelVal, false, false);
+
+            table.draw();
+        }
+
+        $('#filterShare, #filterTeam, #filterLevel').on('change', applyFilters);
+
+        $('#btnResetFilter').on('click', function() {
+            $('#filterShare').val('');
+            $('#filterTeam').val('');
+            $('#filterLevel').val('');
+            applyFilters();
+        });
+    });
 </script>
