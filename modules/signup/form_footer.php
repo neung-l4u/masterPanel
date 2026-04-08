@@ -27,7 +27,7 @@
 <script src="assets/js/jquery.3.6.0.min.js"></script>
 <script src="assets/js/bootstrap5.0.2.bundle.min.js"></script>
 <script src="assets/js/global_data.js?v=2.0.10"></script>
-<script src="assets/js/settings.js?v=2.0.24"></script>
+<script src="assets/js/settings.js?v=2.0.25"></script>
 <script src="assets/js/date_format.js"></script>
 <script src="assets/js/getUserAgent.js"></script>
 <script src="assets/js/util.js?v=2.0.10"></script>
@@ -36,4 +36,4 @@
 <script src="assets/js/popper.2.11.5.min.js"></script>
 <script src="assets/js/bootstrap-multi-step-form.js?v=2.0.28"></script>
 
-<input type="hidden" id="signupFormVersion" name="signupFormVersion" value="2.10.32" />
+<input type="hidden" id="signupFormVersion" name="signupFormVersion" value="2.10.33" />
