@@ -2436,6 +2436,18 @@
               "period": "all",
               "items": [
                 {
+                  "name": "AI Receptionist",
+                  "product_id": "prod_TcJ65297HW99bE",
+                  "price_id": "NZAI02M00O-22",
+                  "form_name": "addonAI",
+                  "currency": "aud",
+                  "amount": 14900,
+                  "type": "ai",
+                  "status": "show",
+                  "ext": "/Month",
+                  "gst": false
+                },
+                {
                   "name": "Website Hosting + Email included",
                   "product_id": "prod_R7hB7F0ZxruMuO",
                   "price_id": "NZWHT03M00O-02",
