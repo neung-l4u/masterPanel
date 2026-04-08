@@ -73,6 +73,13 @@ $lowDate = $db->query('SELECT DATE(mo.whenTime) AS day, COUNT(mo.id) AS count FR
         button.advancedReport:hover::before { box-shadow: 0 0 0 2px #5b86c5, 0 0.5em 0 0 #d6e4f7; transform: translate3d(0, 0.5em, -1em); }
         button.advancedReport:active { background: #dce8fa; transform: translate(0, 0.75em); }
         button.advancedReport:active::before { box-shadow: 0 0 0 2px #5b86c5, 0 0 #d6e4f7; transform: translate3d(0, 0, -1em); }
+        
+        /* Custom Scrollbar for Modal */
+        .modal-body::-webkit-scrollbar { width: 8px; }
+        .modal-body::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .modal-body::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #3b82f6, #2563eb); border-radius: 10px; }
+        .modal-body::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #2563eb, #1d4ed8); }
+        .modal-body { scrollbar-width: thin; scrollbar-color: #3b82f6 #f1f5f9; max-height: 70vh; overflow-y: auto; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
