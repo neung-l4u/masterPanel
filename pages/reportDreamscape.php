@@ -2,16 +2,8 @@
 global $db;
 $loginID = $_SESSION['id'];
 
-// Load Dreamscape API
-require_once __DIR__ . '/../assets/php/DreamscapeAPI.php';
-
-// Initialize API
-$api = new DreamscapeAPI();
-
-// Get date range from request or use defaults
 $period = isset($_GET['period']) ? $_GET['period'] : 'month';
 
-// Calculate date range based on period
 if ($period === 'custom') {
     $startDate = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d', strtotime('-30 days'));
     $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
@@ -25,70 +17,8 @@ if ($period === 'custom') {
     $startDate = date('Y-01-01');
     $endDate = date('Y-m-d');
 } else {
-    // Default to month
     $startDate = date('Y-m-01');
     $endDate = date('Y-m-d');
-}
-
-// Fetch real-time data from Dreamscape API with date range
-try {
-    $dashboardData = $api->getDashboardSummary($startDate, $endDate);
-    
-    // Debug: Log the response
-    error_log('Dashboard Data Response: ' . print_r($dashboardData, true));
-    
-    // If API call fails, use fallback mock data
-    if (!$dashboardData['success']) {
-        throw new Exception('API call failed: ' . print_r($dashboardData, true));
-    }
-    
-    $dashboardData = $dashboardData['data'];
-    
-    // Use period_total for the selected date range
-    $periodSales = $dashboardData['sales']['period_total'];
-    
-} catch (Exception $e) {
-    // Fallback to mock data if API fails
-    error_log('Dreamscape API Error: ' . $e->getMessage());
-    
-    $periodSales = 0.00;
-    
-    $dashboardData = [
-        'domains' => [
-            'total' => 0,
-            'pending_approval' => 0,
-            'transfers' => 0,
-            'renewal_due' => 0
-        ],
-        'hosting' => [
-            'total' => 0,
-            'pending_setup' => 0,
-            'renewal_due' => 0
-        ],
-        'products' => [
-            'total' => 0,
-            'pending_setup' => 0,
-            'renewal_due' => 0
-        ],
-        'packages' => [
-            'total' => 0,
-            'pending_setup' => 0,
-            'renewal_due' => 0
-        ],
-        'sales' => [
-            'today' => 0.00,
-            'this_week' => 0.00,
-            'this_month' => 0.00,
-            'account_balance' => 0.00,
-            'withdrawal_pending' => 'NONE'
-        ],
-        'orders' => []
-    ];
-}
-
-// Ensure new_orders key exists
-if (!isset($dashboardData['orders'])) {
-    $dashboardData['orders'] = [];
 }
 ?>
 
@@ -110,6 +40,17 @@ if (!isset($dashboardData['orders'])) {
     </div>
 </div>
 
+<!-- Loading Overlay -->
+<div id="dreamscapeLoading" class="dreamscape-loading-overlay">
+    <div class="dreamscape-loading-content">
+        <div class="spinner-border text-info" role="status" style="width: 3rem; height: 3rem;">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted font-weight-bold">Loading Dreamscape Data...</p>
+        <small class="text-muted">Fetching domains, invoices & sales data</small>
+    </div>
+</div>
+
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">
@@ -120,7 +61,7 @@ if (!isset($dashboardData['orders'])) {
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h3 class="card-title font-weight-bold mb-0">Summary</h3>
-                        <small class="text-muted">
+                        <small class="text-muted" id="summaryDateRange">
                             <?php 
                             if ($period === 'custom') {
                                 echo date('d M Y', strtotime($startDate)) . ' - ' . date('d M Y', strtotime($endDate));
@@ -139,22 +80,22 @@ if (!isset($dashboardData['orders'])) {
                                     <div class="row">
                                         <div class="col-lg-4 col-12">
                                             <div class="text-center">
-                                                <h1 class="display-3 font-weight-bold"><?php echo $dashboardData['domains']['total']; ?></h1>
+                                                <h1 class="display-3 font-weight-bold" id="domainTotal"><span class="skeleton-text">---</span></h1>
                                                 <h5 class="text-uppercase">DOMAINS</h5>
                                             </div>
                                         </div>
                                         <div class="col-lg-8 col-12">
                                             <div class="d-flex justify-content-between mb-2">
                                                 <span>Pending Approval</span>
-                                                <span class="font-weight-bold"><?php echo $dashboardData['domains']['pending_approval']; ?></span>
+                                                <span class="font-weight-bold" id="domainPending"><span class="skeleton-text">--</span></span>
                                             </div>
                                             <div class="d-flex justify-content-between mb-2">
                                                 <span>Transfers</span>
-                                                <span class="font-weight-bold"><?php echo $dashboardData['domains']['transfers']; ?></span>
+                                                <span class="font-weight-bold" id="domainTransfers"><span class="skeleton-text">--</span></span>
                                             </div>
                                             <div class="d-flex justify-content-between">
                                                 <span>Renewal Due</span>
-                                                <span class="font-weight-bold"><?php echo $dashboardData['domains']['renewal_due']; ?></span>
+                                                <span class="font-weight-bold" id="domainRenewal"><span class="skeleton-text">--</span></span>
                                             </div>
                                         </div>
                                     </div>
@@ -178,25 +119,25 @@ if (!isset($dashboardData['orders'])) {
                                     <!-- Sales Info -->
                                     <div class="col-lg-4 col-12">
                                         <div class="text-center mb-4">
-                                            <h1 class="display-4 font-weight-bold text-info">$<?php echo number_format($dashboardData['sales']['today'], 2); ?></h1>
+                                            <h1 class="display-4 font-weight-bold text-info" id="salesToday"><span class="skeleton-text-dark">$---.--</span></h1>
                                             <p class="text-info text-uppercase font-weight-bold">TODAY SALES</p>
                                         </div>
                                         <table class="table table-borderless">
                                             <tr>
                                                 <td>This Week</td>
-                                                <td class="text-right font-weight-bold">$<?php echo number_format($dashboardData['sales']['this_week'], 2); ?></td>
+                                                <td class="text-right font-weight-bold" id="salesWeek"><span class="skeleton-text-dark">$---.--</span></td>
                                             </tr>
                                             <tr>
                                                 <td>This Month</td>
-                                                <td class="text-right font-weight-bold">$<?php echo number_format($periodSales, 2); ?></td>
+                                                <td class="text-right font-weight-bold" id="salesMonth"><span class="skeleton-text-dark">$---.--</span></td>
                                             </tr>
                                             <tr>
                                                 <td>Account Balance</td>
-                                                <td class="text-right font-weight-bold">$<?php echo number_format($dashboardData['sales']['account_balance'], 2); ?></td>
+                                                <td class="text-right font-weight-bold" id="salesBalance"><span class="skeleton-text-dark">$---.--</span></td>
                                             </tr>
                                             <tr>
                                                 <td>Withdrawal Pending</td>
-                                                <td class="text-right font-weight-bold"><?php echo $dashboardData['sales']['withdrawal_pending']; ?></td>
+                                                <td class="text-right font-weight-bold" id="salesWithdrawal"><span class="skeleton-text-dark">---</span></td>
                                             </tr>
                                         </table>
                                     </div>
@@ -231,22 +172,13 @@ if (!isset($dashboardData['orders'])) {
                                     <th class="text-right">Amount</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <?php if (!empty($dashboardData['orders'])): ?>
-                                    <?php foreach (array_slice($dashboardData['orders'], 0, 10) as $order): ?>
-                                    <tr>
-                                        <td><i class="bi bi-plus-circle text-muted"></i></td>
-                                        <td><?php echo isset($order['date']) ? date('d M Y', strtotime($order['date'])) : '-'; ?></td>
-                                        <td>#<?php echo isset($order['order_id']) ? $order['order_id'] : '-'; ?></td>
-                                        <td><a href="#" class="text-info"><?php echo isset($order['product_name']) ? $order['product_name'] : '-'; ?></a></td>
-                                        <td class="text-right">$<?php echo isset($order['amount']) ? number_format($order['amount'], 2) : '0.00'; ?></td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted">No orders available</td>
-                                    </tr>
-                                <?php endif; ?>
+                            <tbody id="ordersTableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <div class="spinner-border spinner-border-sm text-info mr-2" role="status"></div>
+                                        Loading orders...
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -262,8 +194,153 @@ if (!isset($dashboardData['orders'])) {
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
-// Wait for jQuery to be loaded
 (function() {
+    var currentPeriod = '<?php echo $period; ?>';
+    var currentStartDate = '<?php echo $startDate; ?>';
+    var currentEndDate = '<?php echo $endDate; ?>';
+    var salesChart = null;
+
+    function formatNumber(num) {
+        return parseFloat(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        var d = new Date(dateStr);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return ('0' + d.getDate()).slice(-2) + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    function populateData(data, periodSales) {
+        // Domains
+        document.getElementById('domainTotal').textContent = data.domains.total;
+        document.getElementById('domainPending').textContent = data.domains.pending_approval;
+        document.getElementById('domainTransfers').textContent = data.domains.transfers;
+        document.getElementById('domainRenewal').textContent = data.domains.renewal_due;
+
+        // Sales
+        document.getElementById('salesToday').textContent = '$' + formatNumber(data.sales.today);
+        document.getElementById('salesWeek').textContent = '$' + formatNumber(data.sales.this_week);
+        document.getElementById('salesMonth').textContent = '$' + formatNumber(periodSales);
+        document.getElementById('salesBalance').textContent = '$' + formatNumber(data.sales.account_balance);
+        document.getElementById('salesWithdrawal').textContent = data.sales.withdrawal_pending;
+
+        // Orders table
+        var tbody = document.getElementById('ordersTableBody');
+        var orders = data.orders || [];
+        var rows = '';
+
+        if (orders.length > 0) {
+            var showOrders = orders.slice(0, 10);
+            for (var i = 0; i < showOrders.length; i++) {
+                var o = showOrders[i];
+                rows += '<tr>' +
+                    '<td><i class="bi bi-plus-circle text-muted"></i></td>' +
+                    '<td>' + formatDate(o.date) + '</td>' +
+                    '<td>#' + (o.order_id || '-') + '</td>' +
+                    '<td><a href="#" class="text-info">' + (o.product_name || '-') + '</a></td>' +
+                    '<td class="text-right">$' + formatNumber(o.amount || 0) + '</td>' +
+                    '</tr>';
+            }
+        } else {
+            rows = '<tr><td colspan="5" class="text-center text-muted">No orders available</td></tr>';
+        }
+        tbody.innerHTML = rows;
+    }
+
+    function showError() {
+        document.getElementById('domainTotal').textContent = '0';
+        document.getElementById('domainPending').textContent = '0';
+        document.getElementById('domainTransfers').textContent = '0';
+        document.getElementById('domainRenewal').textContent = '0';
+        document.getElementById('salesToday').textContent = '$0.00';
+        document.getElementById('salesWeek').textContent = '$0.00';
+        document.getElementById('salesMonth').textContent = '$0.00';
+        document.getElementById('salesBalance').textContent = '$0.00';
+        document.getElementById('salesWithdrawal').textContent = 'NONE';
+        document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed to load data. Please try refreshing the page.</td></tr>';
+    }
+
+    function hideLoading() {
+        var overlay = document.getElementById('dreamscapeLoading');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(function() { overlay.style.display = 'none'; }, 300);
+        }
+    }
+
+    function initChart() {
+        var ctx = document.getElementById('salesChart');
+        if (ctx) {
+            ctx = ctx.getContext('2d');
+            var monthlyData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+                datasets: [{
+                    label: 'Sales',
+                    data: [2800, 1900, 2900, 524.17],
+                    borderColor: '#17a2b8',
+                    backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#17a2b8',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }]
+            };
+            salesChart = new Chart(ctx, {
+                type: 'line',
+                data: monthlyData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) { return '$' + value.toLocaleString(); }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    function loadDashboard() {
+        var url = 'api/dreamscape/getDashboard.php?period=' + encodeURIComponent(currentPeriod);
+        if (currentPeriod === 'custom') {
+            url += '&start_date=' + encodeURIComponent(currentStartDate) + '&end_date=' + encodeURIComponent(currentEndDate);
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                hideLoading();
+                if (xhr.status === 200) {
+                    try {
+                        var resp = JSON.parse(xhr.responseText);
+                        if (resp.success) {
+                            populateData(resp.data, resp.periodSales);
+                        } else {
+                            console.error('Dreamscape API error:', resp.error);
+                            showError();
+                        }
+                    } catch (e) {
+                        console.error('Parse error:', e);
+                        showError();
+                    }
+                } else {
+                    console.error('HTTP error:', xhr.status);
+                    showError();
+                }
+            }
+        };
+        xhr.send();
+    }
+
     function initDreamscapeReport() {
         if (typeof jQuery === 'undefined') {
             console.error('jQuery is not loaded');
@@ -271,68 +348,16 @@ if (!isset($dashboardData['orders'])) {
         }
         
         jQuery(document).ready(function($) {
-            // Initialize Sales Chart
-            var ctx = document.getElementById('salesChart');
-            if (ctx) {
-                ctx = ctx.getContext('2d');
-                
-                // Mock monthly sales data (TODO: Get from API when available)
-                var monthlyData = {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
-                    datasets: [{
-                        label: 'Sales',
-                        data: [2800, 1900, 2900, 524.17], // Last value is current month from API
-                        borderColor: '#17a2b8',
-                        backgroundColor: 'rgba(23, 162, 184, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 5,
-                        pointBackgroundColor: '#17a2b8',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    }]
-                };
-                
-                var salesChart = new Chart(ctx, {
-                    type: 'line',
-                    data: monthlyData,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value) {
-                                        return '$' + value.toLocaleString();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-                
-                // Chart period selector
-                $('#chartPeriod').on('change', function() {
-                    // TODO: Update chart data based on selected period
-                    console.log('Chart period changed to:', $(this).val());
-                });
-            }
-            
+            initChart();
+            loadDashboard();
+
             // Period selector change handler
             $('#periodSelector').on('change', function() {
                 var period = $(this).val();
-                
                 if (period === 'custom') {
                     $('#dateRangeContainer').show();
                 } else {
                     $('#dateRangeContainer').hide();
-                    // Auto-apply for preset periods
                     window.location.href = 'main.php?p=reportDreamscape&period=' + period;
                 }
             });
@@ -341,31 +366,16 @@ if (!isset($dashboardData['orders'])) {
             $('#applyDateRange').on('click', function() {
                 var startDate = $('#startDate').val();
                 var endDate = $('#endDate').val();
-                
-                if (!startDate || !endDate) {
-                    alert('Please select both start and end dates');
-                    return;
-                }
-                
-                if (new Date(startDate) > new Date(endDate)) {
-                    alert('Start date must be before end date');
-                    return;
-                }
-                
+                if (!startDate || !endDate) { alert('Please select both start and end dates'); return; }
+                if (new Date(startDate) > new Date(endDate)) { alert('Start date must be before end date'); return; }
                 window.location.href = 'main.php?p=reportDreamscape&period=custom&start_date=' + startDate + '&end_date=' + endDate;
             });
-            
-            // Show current period info
-            var period = '<?php echo $period; ?>';
-            var startDate = '<?php echo $startDate; ?>';
-            var endDate = '<?php echo $endDate; ?>';
-            
-            console.log('Current Period:', period);
-            console.log('Date Range:', startDate, 'to', endDate);
+
+            console.log('Current Period:', currentPeriod);
+            console.log('Date Range:', currentStartDate, 'to', currentEndDate);
         });
     }
     
-    // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initDreamscapeReport);
     } else {
@@ -401,5 +411,44 @@ if (!isset($dashboardData['orders'])) {
 .table-borderless td {
     border: none;
     padding: 0.5rem 0;
+}
+
+/* Loading overlay */
+.dreamscape-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.85);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+.dreamscape-loading-content {
+    text-align: center;
+}
+
+/* Skeleton placeholder animation */
+.skeleton-text,
+.skeleton-text-dark {
+    display: inline-block;
+    animation: skeletonPulse 1.2s ease-in-out infinite;
+}
+
+.skeleton-text {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.skeleton-text-dark {
+    color: rgba(23, 162, 184, 0.3);
+}
+
+@keyframes skeletonPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
 }
 </style>
