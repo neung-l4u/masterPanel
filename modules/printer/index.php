@@ -15,6 +15,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="assets/css/formStyle.css">
     <title>Printer</title>
+    <style>
+        .printer-card img { max-width: 120px; height: auto; }
+        @media (max-width: 575.98px) {
+            .printer-card img { max-width: 80px; }
+            .printer-card .card-body { padding: 1rem !important; }
+            .display-6 { font-size: 1.75rem; }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -50,72 +58,76 @@
         </div>
 
         <div class="itemAU">
-            <div class="d-flex mt-3 justify-content-between">
-                <div class="card" style="width: 40rem;">
-                    <div class="card-body p-5">
-                        <div class="d-flex">
-                            <div>
-                                <img src="assets/images/TM-T82IIIL.png" class="card-img-top" alt="Ethernet Connected Printer">
-                            </div>
-                            <div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" value="TM-T82IIIL" type="radio" name="printer" id="lan_AU" checked>
-                                    <label class="form-check-label text-primary" for="lan_AU">
-                                        Ethernet Connected Printer
-                                    </label>
+            <div class="row mt-3 g-3">
+                <div class="col-12 col-lg-6">
+                    <div class="card printer-card h-100">
+                        <div class="card-body p-3 p-md-5">
+                            <div class="d-flex flex-column flex-sm-row">
+                                <div>
+                                    <img src="assets/images/TM-T82IIIL.png" class="card-img-top" alt="Ethernet Connected Printer">
                                 </div>
-                                <h6 class="card-title">
-                                    <strong>Model: <br>EPSON TM-T82IIIL ETH PSU BLK INC IEC CBL</strong>
-                                </h6>
-                                <p class="card-text mt-3 text-secondary">
-                                    <strong>NOTE:</strong> <br>
-                                    <small>Must be able to be connected directly to your modem to function
-                                        Ethernet cable not supplied</small>
-                                </p>
-                                <div class="d-flex align-items-center justify-content-end">
-                                    <span class="badge rounded-pill bg-info">FREE Shipping</span>
-                                    <span class="badge rounded-pill bg-info mx-1">Inc GST</span>
-                                    <h1 class="display-6 text-success">$299</h1>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-end">
-                                    <small class="text-warning">* Standard 12 Month Warranty</small>
+                                <div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" value="TM-T82IIIL" type="radio" name="printer" id="lan_AU" checked>
+                                        <label class="form-check-label text-primary" for="lan_AU">
+                                            Ethernet Connected Printer
+                                        </label>
+                                    </div>
+                                    <h6 class="card-title">
+                                        <strong>Model: <br>EPSON TM-T82IIIL ETH PSU BLK INC IEC CBL</strong>
+                                    </h6>
+                                    <p class="card-text mt-3 text-secondary">
+                                        <strong>NOTE:</strong> <br>
+                                        <small>Must be able to be connected directly to your modem to function
+                                            Ethernet cable not supplied</small>
+                                    </p>
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <span class="badge rounded-pill bg-info">FREE Shipping</span>
+                                        <span class="badge rounded-pill bg-info mx-1">Inc GST</span>
+                                        <h1 class="display-6 text-success">$299</h1>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <small class="text-warning">* Standard 12 Month Warranty</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card" style="width: 40rem;">
-                    <div class="card-body p-5">
-                        <div class="d-flex">
-                            <div>
-                                <img src="assets/images/TM-M30.png" class="card-img-top" alt="Bluetooth Connected Printer">
-                            </div>
-                            <div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" value="TM-M30" type="radio" name="printer" id="blue_AU">
-                                    <label class="form-check-label text-primary" for="blue_AU">
-                                        Bluetooth Connected Printer
-                                    </label>
+                <div class="col-12 col-lg-6">
+                    <div class="card printer-card h-100">
+                        <div class="card-body p-3 p-md-5">
+                            <div class="d-flex flex-column flex-sm-row">
+                                <div class="mb-3 mb-sm-0">
+                                    <img src="assets/images/TM-M30.png" class="card-img-top" alt="Bluetooth Connected Printer">
                                 </div>
-                                <h6 class="card-title">
-                                    <strong>Model: <br>EPSON TM-M30 BLUETOOTH <br>RECEIPT PRINTER</strong>
-                                </h6>
-                                <div class="card-text mt-3 text-secondary">
-                                    <strong>Ideal When:</strong>
-                                    <ul class="list-group">
-                                        <li class="list-group-item"><small class="text-secondary">Unable to connect to the network</small></li>
-                                        <li class="list-group-item"><small class="text-secondary">Modem is not close to where you want printer</small></li>
-                                        <li class="list-group-item"><small class="text-secondary">If you want your printer in a specific location
-                                                <br>i.e kitchen.</small></li>
-                                    </ul>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-end">
-                                    <span class="badge rounded-pill bg-info">FREE Shipping</span>
-                                    <span class="badge rounded-pill bg-info mx-1">Inc GST</span>
-                                    <h1 class="display-6 text-success">$489</h1>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-end">
-                                    <small class="text-warning">* Standard 12 Month Warranty</small>
+                                <div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" value="TM-M30" type="radio" name="printer" id="blue_AU">
+                                        <label class="form-check-label text-primary" for="blue_AU">
+                                            Bluetooth Connected Printer
+                                        </label>
+                                    </div>
+                                    <h6 class="card-title">
+                                        <strong>Model: <br>EPSON TM-M30 BLUETOOTH <br>RECEIPT PRINTER</strong>
+                                    </h6>
+                                    <div class="card-text mt-3 text-secondary">
+                                        <strong>Ideal When:</strong>
+                                        <ul class="list-group">
+                                            <li class="list-group-item"><small class="text-secondary">Unable to connect to the network</small></li>
+                                            <li class="list-group-item"><small class="text-secondary">Modem is not close to where you want printer</small></li>
+                                            <li class="list-group-item"><small class="text-secondary">If you want your printer in a specific location
+                                                    <br>i.e kitchen.</small></li>
+                                        </ul>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <span class="badge rounded-pill bg-info">FREE Shipping</span>
+                                        <span class="badge rounded-pill bg-info mx-1">Inc GST</span>
+                                        <h1 class="display-6 text-success">$489</h1>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <small class="text-warning">* Standard 12 Month Warranty</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -125,71 +137,74 @@
         </div>
 
         <div class="itemNZ none">
-            <div class="itemNZ d-flex mt-3 justify-content-between">
-                <div class="card" style="width: 40rem;">
-                    <div class="card-body p-5">
-                        <div class="d-flex">
-                            <div>
-                                <img src="assets/images/TM-T82IIIL.png" class="card-img-top" alt="Ethernet Connected Printer">
-                            </div>
-                            <div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" value="TM-T82IIIL" type="radio" name="printer" id="lan_NZ">
-                                    <label class="form-check-label text-primary" for="lan_NZ">
-                                        Ethernet Connected Printer
-                                    </label>
+            <div class="row mt-3 g-3">
+                <div class="col-12 col-lg-6">
+                    <div class="card printer-card h-100">
+                        <div class="card-body p-3 p-md-5">
+                            <div class="d-flex flex-column flex-sm-row">
+                                <div>
+                                    <img src="assets/images/TM-T82IIIL.png" class="card-img-top" alt="Ethernet Connected Printer">
                                 </div>
-                                <h6 class="card-title">
-                                    <strong>Model: <br>EPSON TM-T82IIIL ETH PSU BLK INC IEC CBL</strong>
-                                </h6>
-                                <p class="card-text mt-3 text-secondary">
-                                    <strong>NOTE:</strong> <br>
-                                    <small>Must be able to be connected directly to your modem to function
-                                        Ethernet cable not supplied</small>
-                                </p>
-                                <div class="d-flex align-items-center justify-content-end">
-                                    <span class="badge rounded-pill bg-info">FREE Shipping</span>
-                                    <span class="badge rounded-pill bg-info mx-1">Inc GST</span>
-                                    <h1 class="display-6 text-success">$359</h1>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-end">
-                                    <small class="text-warning">* Standard 12 Month Warranty</small>
+                                <div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" value="TM-T82IIIL" type="radio" name="printer" id="lan_NZ">
+                                        <label class="form-check-label text-primary" for="lan_NZ">
+                                            Ethernet Connected Printer
+                                        </label>
+                                    </div>
+                                    <h6 class="card-title">
+                                        <strong>Model: <br>EPSON TM-T82IIIL ETH PSU BLK INC IEC CBL</strong>
+                                    </h6>
+                                    <p class="card-text mt-3 text-secondary">
+                                        <strong>NOTE:</strong> <br>
+                                        <small>Must be able to be connected directly to your modem to function
+                                            Ethernet cable not supplied</small>
+                                    </p>
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <span class="badge rounded-pill bg-info">FREE Shipping - NZ</span>
+                                        <h1 class="display-6 text-success">$359</h1>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <small class="text-warning">* Standard 12 Month Warranty</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card" style="width: 40rem;">
-                    <div class="card-body p-5">
-                        <div class="d-flex">
-                            <div>
-                                <img src="assets/images/TM-M30.png" class="card-img-top" alt="Bluetooth Connected Printer">
-                            </div>
-                            <div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" value="TM-M30" type="radio" name="printer" id="blue_NZ">
-                                    <label class="form-check-label text-primary" for="blue_NZ">
-                                        Bluetooth Connected Printer
-                                    </label>
+                <div class="col-12 col-lg-6">
+                    <div class="card printer-card h-100">
+                        <div class="card-body p-3 p-md-5">
+                            <div class="d-flex flex-column flex-sm-row">
+                                <div class="mb-3 mb-sm-0">
+                                    <img src="assets/images/TM-M30.png" class="card-img-top" alt="Bluetooth Connected Printer">
                                 </div>
-                                <h6 class="card-title">
-                                    <strong>Model: <br>EPSON TM-M30 BLUETOOTH <br>RECEIPT PRINTER</strong>
-                                </h6>
-                                <div class="card-text mt-3 text-secondary">
-                                    <strong>Ideal When:</strong>
-                                    <ul class="list-group">
-                                        <li class="list-group-item"><small class="text-secondary">Unable to connect to the network</small></li>
-                                        <li class="list-group-item"><small class="text-secondary">Modem is not close to where you want printer</small></li>
-                                        <li class="list-group-item"><small class="text-secondary">If you want your printer in a specific location
-                                                <br>i.e kitchen.</small></li>
-                                    </ul>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-end">
-                                    <span class="badge rounded-pill bg-info">FREE Shipping - NZ</span>
-                                    <h1 class="display-6 text-success">$699</h1>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-end">
-                                    <small class="text-warning">* Standard 12 Month Warranty</small>
+                                <div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" value="TM-M30" type="radio" name="printer" id="blue_NZ">
+                                        <label class="form-check-label text-primary" for="blue_NZ">
+                                            Bluetooth Connected Printer
+                                        </label>
+                                    </div>
+                                    <h6 class="card-title">
+                                        <strong>Model: <br>EPSON TM-M30 BLUETOOTH <br>RECEIPT PRINTER</strong>
+                                    </h6>
+                                    <div class="card-text mt-3 text-secondary">
+                                        <strong>Ideal When:</strong>
+                                        <ul class="list-group">
+                                            <li class="list-group-item"><small class="text-secondary">Unable to connect to the network</small></li>
+                                            <li class="list-group-item"><small class="text-secondary">Modem is not close to where you want printer</small></li>
+                                            <li class="list-group-item"><small class="text-secondary">If you want your printer in a specific location
+                                                    <br>i.e kitchen.</small></li>
+                                        </ul>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <span class="badge rounded-pill bg-info">FREE Shipping - NZ</span>
+                                        <h1 class="display-6 text-success">$699</h1>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <small class="text-warning">* Standard 12 Month Warranty</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -203,28 +218,28 @@
                 <h5 class="text-primary">
                     Your Information
                 </h5>
-                <div class="mb-3 row">
-                    <div class="col">
+                <div class="mb-3 row g-3">
+                    <div class="col-12 col-md-6">
                         <div class="form-floating">
                             <input type="text" class="form-control" id="inputFirstName" placeholder="First name" maxlength="50" autocomplete="off">
                             <label id="labelFirstName" for="inputFirstName" class="form-label formLabel">First name</label>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col-12 col-md-6">
                         <div class="form-floating">
                         <input type="text" class="form-control" id="inputLastName" placeholder="Last name" maxlength="50" autocomplete="off">
                             <label id="labelLastName" for="inputLastName" class="form-label formLabel">Last name</label>
                         </div>
                     </div>
                 </div>
-                <div class="mb-3 row">
-                    <div class="col">
+                <div class="mb-3 row g-3">
+                    <div class="col-12 col-md-6">
                         <div class="form-floating">
                             <input type="email" class="form-control" id="inputEmail" placeholder="Email address" maxlength="50" autocomplete="off">
                             <label id="labelEmail" for="inputEmail" class="form-label formLabel">Email address</label>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col-12 col-md-6">
                         <div class="form-floating">
                             <input type="tel" class="form-control" id="inputMobile" maxlength="30" placeholder="Mobile" autocomplete="off">
                             <label id="labelMobile" for="inputMobile" class="form-label formLabel">Mobile number</label>
