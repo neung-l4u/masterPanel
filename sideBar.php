@@ -187,6 +187,12 @@ include ('assets/api/checkSession.php');
                                 <p>Dreamscape Report</p>
                             </a>
                         </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=reportLifeSpan" class="nav-link <?php echo $activeMenu["lv2"] == "reportLifeSpan" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-hourglass-split"></i>
+                                <p>Life Span Report</p>
+                            </a>
+                        </li>
                         <?php } ?>
                         <li class="nav-item pl-2">
                             <a href="modules/mondayReport/views/index.php?id=<?php echo $_SESSION['id']; ?>" target="_blank" class="nav-link">

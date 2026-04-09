@@ -309,6 +309,14 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Dreamscape Report";
         break;
+    case "reportLifeSpan":
+        $showPage = "reportLifeSpan.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportLifeSpan";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Life Span Report";
+        break;
     case "l4utaskBoards":
         $showPage = "l4utaskBoards.php";
         $activeMenu["lv1"] = "l4utask";
