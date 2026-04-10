@@ -10,6 +10,7 @@ include "../../assets/db/initDB.php";
 $data = array("data" => array());
 
 $params["department"] = !empty($_POST['department']) ? $_POST['department'] : '';
+$params["employee"] = !empty($_POST['employee']) ? $_POST['employee'] : '';
 $params["status"] = !empty($_POST['status']) ? $_POST['status'] : '';
 $params["dateFrom"] = !empty($_POST['dateFrom']) ? $_POST['dateFrom'] : '';
 $params["dateTo"] = !empty($_POST['dateTo']) ? $_POST['dateTo'] : '';
@@ -17,6 +18,9 @@ $params["dateTo"] = !empty($_POST['dateTo']) ? $_POST['dateTo'] : '';
 $where = "";
 if (!empty($params["department"])) {
     $where .= " AND C.`department` = '" . $params["department"] . "'";
+}
+if (!empty($params["employee"])) {
+    $where .= " AND C.`employee` = '" . $params["employee"] . "'";
 }
 if (!empty($params["status"])) {
     $where .= " AND C.`workShiftTimeLogging` = '" . $params["status"] . "'";
