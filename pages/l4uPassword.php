@@ -9,6 +9,7 @@
 </script>
 <?php
 global $db, $date;
+require_once 'assets/security/Sanitizer.php';
 $loginID = $_SESSION['id'];
 ?>
 <style>

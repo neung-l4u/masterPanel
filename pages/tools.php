@@ -9,7 +9,7 @@
 </script>
 <?php
 global $db, $date;
-
+require_once 'assets/security/Sanitizer.php';
 ?>
 
 <!-- Content Header (Page header) -->
@@ -70,8 +70,8 @@ global $db, $date;
                                             ?>
                                             <tr>
                                                 <td><?php echo $num++; ?></td>
-                                                <td><a href="<?php echo $row["link"];?>"><?php echo $row["name"];?></a></td>
-                                                <td><?php echo $row["detail"];?> </td>
+                                                <td><a href="<?php echo escUrl($row["link"]);?>"><?php echo esc($row["name"]);?></a></td>
+                                                <td><?php echo esc($row["detail"]);?> </td>
                                             </tr>
                                         <?php  }//end foreach
                                     }else{ ?>
@@ -108,8 +108,8 @@ global $db, $date;
                                             ?>
                                             <tr>
                                                 <td><?php echo $numb++;?></td>
-                                                <td><a href="<?php echo $row["link"];?>"><?php echo $row["name"];?></a></td>
-                                                <td><?php echo $row["detail"];?> </td>
+                                                <td><a href="<?php echo escUrl($row["link"]);?>"><?php echo esc($row["name"]);?></a></td>
+                                                <td><?php echo esc($row["detail"]);?> </td>
                                             </tr>
                                         <?php  }//end foreach
                                     }else{ ?>

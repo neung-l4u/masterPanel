@@ -9,7 +9,7 @@
 </script>
 <?php
 global $db, $date;
-
+require_once 'assets/security/Sanitizer.php';
 $password = "Localeats#".date("Y");
 ?>
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">

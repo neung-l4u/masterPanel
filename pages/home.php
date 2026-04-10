@@ -8,6 +8,7 @@
 </script>
 <?php
 global $db, $date;
+require_once 'assets/security/Sanitizer.php';
 $timestamp = time();
 $coins["l4u"] = $_SESSION['L4UCoin'];
 $coins["ceo"] = $_SESSION['CEOCoin'];
@@ -563,9 +564,9 @@ $ovDataJson = json_encode([
                                             ?>
                                             <tr>
                                                 <td><?php echo $i; ?></td>
-                                                <td><?php echo $row['amount'].' '.$row['coin']; ?></td>
+                                                <td><?php echo esc($row['amount'].' '.$row['coin']); ?></td>
                                                 <td><?php echo showName($row['nick'],$row['from']); ?></td>
-                                                <td><?php echo $row['reason']; ?></td>
+                                                <td><?php echo esc($row['reason']); ?></td>
                                                 <td><?php echo showDate($row['giveOn']); ?></td>
                                             </tr>
                                             <?php
@@ -602,9 +603,9 @@ $ovDataJson = json_encode([
                                         foreach ($spendLogs as $row){ ?>
                                             <tr>
                                                 <td><?php echo $i; ?></td>
-                                                <td><?php echo $row['amount'].' '.$row['coin']; ?></td>
-                                                <td><?php echo $row['SpendType']; ?></td>
-                                                <td><?php echo $row['reason']; ?></td>
+                                                <td><?php echo esc($row['amount'].' '.$row['coin']); ?></td>
+                                                <td><?php echo esc($row['SpendType']); ?></td>
+                                                <td><?php echo esc($row['reason']); ?></td>
                                                 <td><?php echo showDate($row['spendOn']); ?></td>
                                             </tr>
                                             <?php
@@ -699,7 +700,7 @@ $ovDataJson = json_encode([
                                         foreach ($rewards as $row){ ?>
                                             <tr>
                                                 <td class="text-right"><?php echo number_format($row['spend']); ?></td>
-                                                <td><small class="text-muted"><?php echo $row['title'].'</small> >> '.$row['reward']; ?></td>
+                                                <td><small class="text-muted"><?php echo esc($row['title']).'</small> >> '.esc($row['reward']); ?></td>
                                                 <td class="text-right">
                                                     <?php if($row['spend'] <= $coins["l4u"]){ ?>
                                                         <a href="#" onclick="makeRedeem(<?php echo $row['spend']; ?>, '<?php echo $row['type']; ?>');" class="btn btn-primary" data-ga="click_redeem_coin" data-ga-label="Redeem Coin">Redeem</a>
@@ -1002,7 +1003,7 @@ $ovDataJson = json_encode([
                                         foreach ($rewards as $row){ ?>
                                             <tr>
                                                 <td class="text-right"><?php echo number_format($row['spend']); ?></td>
-                                                <td><?php echo '<strong>'.$row['title'].'</strong> >> <small class="text-muted">'.$row['reward'].'</small>'; ?></td>
+                                                <td><?php echo '<strong>'.esc($row['title']).'</strong> >> <small class="text-muted">'.esc($row['reward']).'</small>'; ?></td>
                                                 <td>
                                                     <?php if($row['spend'] <= $coins["l4u"]){ ?>
                                                         <a href="#" onclick="makeRedeem(<?php echo $row['spend']; ?>, '<?php echo $row['type']; ?>');" class="btn btn-primary" data-ga="click_redeem_coin" data-ga-label="Redeem Coin">Redeem</a>
