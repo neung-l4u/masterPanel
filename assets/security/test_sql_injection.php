@@ -4,7 +4,11 @@
  * ทดสอบว่า QueryBuilder ป้องกัน SQL Injection ได้จริงหรือไม่
  * 
  * วิธีรัน: php assets/security/test_sql_injection.php
+ * หรือเปิดผ่าน browser ได้เลย
  */
+if (php_sapi_name() !== 'cli') {
+    header('Content-Type: text/plain; charset=UTF-8');
+}
 
 require_once __DIR__ . '/QueryBuilder.php';
 require_once __DIR__ . '/Sanitizer.php';

@@ -220,6 +220,13 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
             resetForm();
         });
 
+        // Fix aria-hidden warning: blur focus before hiding any modal
+        $('.modal').on('hide.bs.modal', function () {
+            if (document.activeElement && this.contains(document.activeElement)) {
+                document.activeElement.blur();
+            }
+        });
+
         $("#alert").hide();
 
         setInterval(function() {
