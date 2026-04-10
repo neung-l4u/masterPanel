@@ -6,6 +6,8 @@ header('Content-Type: application/json');
 
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
+include '../../assets/security/Sanitizer.php';
+include '../../assets/security/QueryBuilder.php';
 
 $data = array("data" => array());
 
@@ -15,33 +17,23 @@ $params["status"] = !empty($_POST['status']) ? $_POST['status'] : '';
 $params["dateFrom"] = !empty($_POST['dateFrom']) ? $_POST['dateFrom'] : '';
 $params["dateTo"] = !empty($_POST['dateTo']) ? $_POST['dateTo'] : '';
 
-$where = "";
-if (!empty($params["department"])) {
-    $where .= " AND C.`department` = '" . $params["department"] . "'";
-}
-if (!empty($params["employee"])) {
-    $where .= " AND C.`employee` = '" . $params["employee"] . "'";
-}
-if (!empty($params["status"])) {
-    $where .= " AND C.`workShiftTimeLogging` = '" . $params["status"] . "'";
-}
-if (!empty($params["dateFrom"])) {
-    $where .= " AND DATE(C.`dayCheckIn`) >= '" . $params["dateFrom"] . "'";
-}
-if (!empty($params["dateTo"])) {
-    $where .= " AND DATE(C.`dayCheckIn`) <= '" . $params["dateTo"] . "'";
-}
+$qb = new QueryBuilder();
+$qb->eq('C.`department`', $params["department"])
+   ->eq('C.`employee`', $params["employee"])
+   ->eq('C.`workShiftTimeLogging`', $params["status"])
+   ->gte('DATE(C.`dayCheckIn`)', $params["dateFrom"])
+   ->lte('DATE(C.`dayCheckIn`)', $params["dateTo"]);
 
 try {
-    $sql = "SELECT C.`id`, C.`employee`, C.`status`, C.`department`, C.`workShiftTimeLogging`,
+    $baseSql = "SELECT C.`id`, C.`employee`, C.`status`, C.`department`, C.`workShiftTimeLogging`,
                    C.`checkinDate`, C.`checkIn`, C.`dayCheckIn`, C.`noteCheckIn`, C.`picCheckin`,
                    C.`checkOut`, C.`dayCheckOut`, C.`noteCheckOut`, C.`total`,
                    C.`createBy`, C.`updateAt`, S.`sPic` AS 'employeePic'
             FROM `checkin` C
             LEFT JOIN `staffs` S ON C.`createBy` = S.`sID`
-            WHERE 1=1" . $where . " ORDER BY C.`dayCheckIn` DESC, C.`id` DESC";
+            WHERE 1=1";
     
-    $result = $db->query($sql)->fetchAll();
+    $result = $qb->execute($db, $baseSql, 'ORDER BY C.`dayCheckIn` DESC, C.`id` DESC')->fetchAll();
 
     if ($result) {
         $i = 1;
@@ -58,7 +50,7 @@ try {
             } elseif ($statusType == 'Clock Out') {
                 $statusBadge = '<span class="badge badge-danger">Clock Out</span>';
             } else {
-                $statusBadge = '<span class="badge badge-secondary">' . $statusType . '</span>';
+                $statusBadge = '<span class="badge badge-secondary">' . esc($statusType) . '</span>';
             }
             
             // Check In time
@@ -85,11 +77,11 @@ try {
             $noteOut = $row["noteCheckOut"] ?: '';
             $notes = '';
             if (!empty($noteIn) && $noteIn != '-') {
-                $notes .= '<small><strong>In:</strong> ' . $noteIn . '</small>';
+                $notes .= '<small><strong>In:</strong> ' . esc($noteIn) . '</small>';
             }
             if (!empty($noteOut) && $noteOut != '-') {
                 if (!empty($notes)) $notes .= '<br>';
-                $notes .= '<small><strong>Out:</strong> ' . $noteOut . '</small>';
+                $notes .= '<small><strong>Out:</strong> ' . esc($noteOut) . '</small>';
             }
             if (empty($notes)) $notes = '-';
             

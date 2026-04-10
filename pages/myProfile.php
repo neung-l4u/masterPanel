@@ -209,7 +209,7 @@ $loginID = $_SESSION['id'];
                                                 <label for="currentPassword" class="form-label">Current Password</label>
                                                 <div class="input-group">
                                                     <input class="form-control pass" id="currentPassword" type="password" disabled
-                                                           value="<?php echo $_SESSION['password'];?>">
+                                                           value="<?php echo htmlspecialchars($_SESSION['password'] ?? '', ENT_QUOTES, 'UTF-8');?>">
                                                     <button type="button" class="btn btn-outline-secondary"
                                                             data-toggle="password" data-target="#currentPassword"
                                                             aria-pressed="false" aria-label="Toggle password visibility">
@@ -317,6 +317,7 @@ $loginID = $_SESSION['id'];
 </script>
 <!-- ===== Scripts ===== -->
 <script>
+    function initMyProfileScripts(){
     // Upload profile picture
     const uploadProfilePic = (input) => {
         if (!input.files || !input.files[0]) return;
@@ -426,6 +427,20 @@ $loginID = $_SESSION['id'];
         $('body').append($t);
         setTimeout(()=>{$t.remove();}, 2600);
     };
+
+    // Expose functions globally so inline handlers work
+    window.uploadProfilePic = uploadProfilePic;
+    window.cmdSubmit = cmdSubmit;
+    }// end initMyProfileScripts
+
+    // Wait for jQuery (loaded after this page in main.php)
+    (function waitForJQuery(){
+        if(typeof window.jQuery !== 'undefined'){
+            initMyProfileScripts();
+        } else {
+            setTimeout(waitForJQuery, 50);
+        }
+    })();
 </script>
 
 <?php

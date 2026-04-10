@@ -5,6 +5,8 @@ error_reporting(E_ALL);
 
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
+include '../../assets/security/Sanitizer.php';
+include '../../assets/security/QueryBuilder.php';
 
 $format = isset($_GET['format']) ? strtolower($_GET['format']) : 'csv';
 $params["department"] = !empty($_GET['department']) ? $_GET['department'] : '';
@@ -13,31 +15,21 @@ $params["status"] = !empty($_GET['status']) ? $_GET['status'] : '';
 $params["dateFrom"] = !empty($_GET['dateFrom']) ? $_GET['dateFrom'] : '';
 $params["dateTo"] = !empty($_GET['dateTo']) ? $_GET['dateTo'] : '';
 
-$where = "";
-if (!empty($params["department"])) {
-    $where .= " AND C.`department` = '" . $params["department"] . "'";
-}
-if (!empty($params["employee"])) {
-    $where .= " AND C.`employee` = '" . $params["employee"] . "'";
-}
-if (!empty($params["status"])) {
-    $where .= " AND C.`workShiftTimeLogging` = '" . $params["status"] . "'";
-}
-if (!empty($params["dateFrom"])) {
-    $where .= " AND DATE(C.`dayCheckIn`) >= '" . $params["dateFrom"] . "'";
-}
-if (!empty($params["dateTo"])) {
-    $where .= " AND DATE(C.`dayCheckIn`) <= '" . $params["dateTo"] . "'";
-}
+$qb = new QueryBuilder();
+$qb->eq('C.`department`', $params["department"])
+   ->eq('C.`employee`', $params["employee"])
+   ->eq('C.`workShiftTimeLogging`', $params["status"])
+   ->gte('DATE(C.`dayCheckIn`)', $params["dateFrom"])
+   ->lte('DATE(C.`dayCheckIn`)', $params["dateTo"]);
 
 $result = [];
 try {
-    $sql = "SELECT C.`id`, C.`employee`, C.`department`, C.`workShiftTimeLogging`,
+    $baseSql = "SELECT C.`id`, C.`employee`, C.`department`, C.`workShiftTimeLogging`,
                    C.`checkIn`, C.`dayCheckIn`, C.`noteCheckIn`,
                    C.`checkOut`, C.`dayCheckOut`, C.`noteCheckOut`, C.`total`
             FROM `checkin` C
-            WHERE 1=1" . $where . " ORDER BY C.`dayCheckIn` DESC, C.`id` DESC";
-    $result = $db->query($sql)->fetchAll();
+            WHERE 1=1";
+    $result = $qb->execute($db, $baseSql, 'ORDER BY C.`dayCheckIn` DESC, C.`id` DESC')->fetchAll();
 } catch (Exception $e) {
     $result = [];
 }

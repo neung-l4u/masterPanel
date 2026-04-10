@@ -133,7 +133,7 @@
                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#00BCF4] focus:border-transparent transition"
                                    placeholder="mail@localforyou.com | 0891234567"
                                    autocomplete="off"
-                                   value="<?php echo $_COOKIE['user'] ?? ''; ?>"
+                                   value="<?php echo htmlspecialchars($_COOKIE['user'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                             />
                             <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                                 <i class="fa-solid fa-envelope text-sm"></i>
@@ -149,7 +149,7 @@
                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#00BCF4] focus:border-transparent transition"
                                    placeholder="your password here"
                                    autocomplete="off"
-                                   value="<?php echo $_COOKIE['pass'] ?? ''; ?>"
+                                   value="<?php echo htmlspecialchars($_COOKIE['pass'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                             />
                             <a href="#" id="linkViewPassword" onclick="showPass(); return false;"
                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition no-underline">

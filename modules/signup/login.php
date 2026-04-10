@@ -38,7 +38,7 @@
                                                    class="form-control form-control-lg"
                                                    placeholder="mail@localforyou.com | 0891234567"
                                                    autocomplete="off"
-                                                   value="<?php echo isset($_COOKIE['user'])?$_COOKIE['user']:''; ?>"
+                                                   value="<?php echo htmlspecialchars($_COOKIE['user'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                                             />
                                             <label class="form-label" for="formUser">Email or Mobile</label>
                                         </div>
@@ -47,7 +47,7 @@
                                                    class="form-control form-control-lg"
                                                    placeholder="your password here"
                                                    autocomplete="off"
-                                                   value="<?php echo isset($_COOKIE['pass'])?$_COOKIE['pass']:''; ?>"
+                                                   value="<?php echo htmlspecialchars($_COOKIE['pass'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                                             />
                                             <label class="form-label" for="formPassword">Password</label>
                                         </div>

@@ -3,6 +3,7 @@ global $db;
 session_start();
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
+include '../../../assets/security/Sanitizer.php';
 
 $iconSendMailDraft = '<i class="bi bi-envelope-slash action_icon text-muted" title="please edit designer"></i>';
 $iconSendMailReady = '<i class="bi bi-envelope-arrow-up-fill action_icon"></i>';
@@ -104,9 +105,9 @@ $param['ownerID'] = $_SESSION['id'];
         
         $data["data"][] = array(
             $i,
-            '<a href="'.$url.'" title="Project simple detail">'.$row["owner"].'</a>',
-            '<a href="'.$url.'" title="Project simple detail">'.minType($row["shopType"]) ." ". $row["selectedTemplate"].'</a>',
-            '<a href="'.$url.'" title="Project simple detail">'.$row["projectName"] . " (".$row["countryCode"].")".'</a>',
+            '<a href="'.esc($url).'" title="Project simple detail">'.esc($row["owner"]).'</a>',
+            '<a href="'.esc($url).'" title="Project simple detail">'.esc(minType($row["shopType"]) ." ". $row["selectedTemplate"]).'</a>',
+            '<a href="'.esc($url).'" title="Project simple detail">'.esc($row["projectName"] . " (".$row["countryCode"].")").'</a>',
             $iconPage,
             '<small>'.$statusText.'</small>',
             $sendingDiv . $actionDiv,
