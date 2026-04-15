@@ -42,6 +42,7 @@
     <div id="revLoading" class="text-center py-5">
         <div class="spinner-border" style="width:2.5rem;height:2.5rem;color:#635bff;" role="status"></div>
         <p class="mt-3 text-muted">Loading revenue data...</p>
+        <p class="mt-2 text-muted" style="font-size:13px;"><span id="loadTimer">0.0</span>s</p>
     </div>
 
     <!-- Error -->
@@ -153,6 +154,7 @@
                                                     <th class="text-right">Fee</th>
                                                     <th class="text-right">Revenue</th>
                                                     <th class="text-right">Charges</th>
+                                                    <th class="text-right">Refund</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="splitStripeMonthly"></tbody>
@@ -757,7 +759,7 @@
             <!-- Loading for Connect -->
             <div id="conLoading" class="text-center py-4" style="display:none;">
                 <div class="spinner-border spinner-border-sm" style="color:#635bff;" role="status"></div>
-                <span class="ml-2 text-muted">Loading Stripe Connect...</span>
+                <span class="ml-2 text-muted">Loading Stripe Connect... <span id="conTimer">0.0</span>s</span>
             </div>
 
             <div id="conContent" style="display:none;">
@@ -1046,15 +1048,31 @@ window.addEventListener('load', function(){
     }
 
     // ===== LOAD =====
+    var loadStartTime = 0;
+    var loadTimerInterval = null;
+
     function loadSummary(refresh) {
         document.getElementById('revDashboard').style.display = 'none';
         document.getElementById('revError').style.display = 'none';
         document.getElementById('revLoading').style.display = '';
+        
+        // Start timer
+        loadStartTime = Date.now();
+        document.getElementById('loadTimer').textContent = '0.0';
+        if (loadTimerInterval) clearInterval(loadTimerInterval);
+        loadTimerInterval = setInterval(function() {
+            var elapsed = ((Date.now() - loadStartTime) / 1000).toFixed(1);
+            document.getElementById('loadTimer').textContent = elapsed;
+        }, 100);
+        
         var params = {};
         if (refresh) params.refresh = '1';
 
         $.ajax({ url:'api/revenue/getSummary.php', data:params, dataType:'json', timeout:600000 })
         .done(function(d) {
+            if (loadTimerInterval) clearInterval(loadTimerInterval);
+            var finalTime = ((Date.now() - loadStartTime) / 1000).toFixed(1);
+            document.getElementById('loadTimer').textContent = finalTime;
             document.getElementById('revLoading').style.display = 'none';
             if (d.error) {
                 document.getElementById('revError').textContent = d.error;
@@ -1068,9 +1086,19 @@ window.addEventListener('load', function(){
             switchTab(activeTab);
         })
         .fail(function(xhr, st, err) {
+            if (loadTimerInterval) clearInterval(loadTimerInterval);
+            var finalTime = ((Date.now() - loadStartTime) / 1000).toFixed(1);
+            document.getElementById('loadTimer').textContent = finalTime;
             document.getElementById('revLoading').style.display = 'none';
-            document.getElementById('revError').textContent = 'Failed to load: ' + (err || st);
+            var errMsg = 'Failed: ' + (err || st);
+            if (xhr.responseText && xhr.responseText.substring(0, 5) === '<' + '?php') {
+                errMsg += ' (API returned PHP code - check syntax error)';
+            } else if (xhr.responseText && xhr.responseText.charAt(0) === '<') {
+                errMsg += ' (API returned HTML instead of JSON - check error_log)';
+            }
+            document.getElementById('revError').textContent = errMsg;
             document.getElementById('revError').style.display = '';
+            console.error('API Error:', xhr.responseText);
         });
     }
 
@@ -1364,10 +1392,17 @@ window.addEventListener('load', function(){
     }
 
     // ===== SPLIT VIEW: Load Stripe API data (uses getTransactions.php) =====
+    var spTimerInterval = null;
     function loadStripeApiData(acct, params, cs) {
-        document.getElementById('splitStripeLoading').innerHTML = '<div class="spinner-border spinner-border-sm" style="color:#635bff;" role="status"></div><span class="ml-2 text-muted" style="font-size:12px;">Loading Stripe data...</span>';
+        var spStart = Date.now();
+        document.getElementById('splitStripeLoading').innerHTML = '<div class="spinner-border spinner-border-sm" style="color:#635bff;" role="status"></div><span class="ml-2 text-muted" style="font-size:12px;">Loading Stripe data... <span id="spTimer">0.0</span>s</span>';
         document.getElementById('splitStripeLoading').style.display = '';
         document.getElementById('splitStripeContent').style.display = 'none';
+        if (spTimerInterval) clearInterval(spTimerInterval);
+        spTimerInterval = setInterval(function() {
+            var el = document.getElementById('spTimer');
+            if (el) el.textContent = ((Date.now() - spStart) / 1000).toFixed(1);
+        }, 100);
 
         var ajaxData = { account: params.account };
         if (params.start && params.end) {
@@ -1379,6 +1414,7 @@ window.addEventListener('load', function(){
 
         $.ajax({ url:'api/stripe/getTransactions.php', data: ajaxData, dataType:'json', timeout:180000 })
         .done(function(d) {
+            if (spTimerInterval) clearInterval(spTimerInterval);
             if (d.error) {
                 document.getElementById('splitStripeLoading').innerHTML = '<span class="text-danger" style="font-size:12px;">Error: ' + d.error + '</span>';
                 return;
@@ -1387,6 +1423,7 @@ window.addEventListener('load', function(){
             renderStripeApiPanel(d, cs);
         })
         .fail(function(xhr, st, err) {
+            if (spTimerInterval) clearInterval(spTimerInterval);
             document.getElementById('splitStripeLoading').innerHTML = '<span class="text-danger" style="font-size:12px;">Failed: ' + (err || st) + '</span>';
         });
     }
@@ -1406,7 +1443,9 @@ window.addEventListener('load', function(){
             {label:'Fee', val: sum.total_fee},
             {label:'Net', val: sum.total_net},
             {label:'Charges', val: sum.charge_count, isInt:true},
-            {label:'Items', val: d.total_count, isInt:true}
+            {label:'Items', val: d.total_count, isInt:true},
+            {label:'Refunds', val: sum.refund_count, isInt:true},
+            {label:'Refund Total', val: sum.refund_total}
         ];
         sDefs.forEach(function(dd) {
             metricsHtml += '<div class="col-4 split-mon-cell">'
@@ -1428,9 +1467,10 @@ window.addEventListener('load', function(){
                 + '<td class="text-right">' + fmt(m.fee, cs) + '</td>'
                 + '<td class="text-right">' + fmt(m.revenue, cs) + '</td>'
                 + '<td class="text-right">' + fmtInt(m.charge_count) + '</td>'
+                + '<td class="text-right text-danger">' + (m.refund ? fmt(m.refund, cs) : '-') + '</td>'
                 + '</tr>';
         });
-        if (!html) html = '<tr><td colspan="5" class="text-center text-muted">No data</td></tr>';
+        if (!html) html = '<tr><td colspan="6" class="text-center text-muted">No data</td></tr>';
         document.getElementById('splitStripeMonthly').innerHTML = html;
 
         // Period info
@@ -1995,9 +2035,18 @@ window.addEventListener('load', function(){
     }
 
     // ===== STRIPE CONNECT =====
+    var conTimerInterval = null;
     function loadConnect(forceRefresh) {
         document.getElementById('conLoading').style.display = '';
         document.getElementById('conContent').style.display = 'none';
+        var conStart = Date.now();
+        var conTimerEl = document.getElementById('conTimer');
+        if (conTimerEl) conTimerEl.textContent = '0.0';
+        if (conTimerInterval) clearInterval(conTimerInterval);
+        conTimerInterval = setInterval(function() {
+            var el = document.getElementById('conTimer');
+            if (el) el.textContent = ((Date.now() - conStart) / 1000).toFixed(1);
+        }, 100);
         var sel = document.getElementById('conPeriod').value;
         var params = { account: 'connect' };
         if (sel === 'custom') {
@@ -2019,7 +2068,7 @@ window.addEventListener('load', function(){
                 renderConnect();
             })
             .fail(function(xhr,st,err) { alert('Connect refresh failed: ' + (err||st)); })
-            .always(function() { document.getElementById('conLoading').style.display = 'none'; });
+            .always(function() { if (conTimerInterval) clearInterval(conTimerInterval); document.getElementById('conLoading').style.display = 'none'; });
         } else {
             $.ajax({ url:'api/stripe/getData.php', data: params, dataType:'json', timeout:120000 })
             .done(function(d) {
@@ -2028,7 +2077,7 @@ window.addEventListener('load', function(){
                 renderConnect();
             })
             .fail(function(xhr,st,err) { alert('Connect failed: ' + (err||st)); })
-            .always(function() { document.getElementById('conLoading').style.display = 'none'; });
+            .always(function() { if (conTimerInterval) clearInterval(conTimerInterval); document.getElementById('conLoading').style.display = 'none'; });
         }
     }
 

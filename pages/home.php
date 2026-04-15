@@ -22,62 +22,217 @@ $weekEnd   = (new DateTime())->modify('+' . (6 - $dow) . ' days')->format('Y-m-d
 $weekStartDisplay = (new DateTime($weekStart))->format('d M Y');
 $weekEndDisplay   = (new DateTime($weekEnd))->format('d M Y');
 
-// Signup
+// Previous week range
+$prevWeekStart = (new DateTime($weekStart))->modify('-7 days')->format('Y-m-d 00:00:00');
+$prevWeekEnd   = (new DateTime($weekEnd))->modify('-7 days')->format('Y-m-d 23:59:59');
+$prevWeekStartDisplay = (new DateTime($prevWeekStart))->format('d M Y');
+$prevWeekEndDisplay   = (new DateTime($prevWeekEnd))->format('d M Y');
+
+// Current month range
+$monthStart = (new DateTime())->modify('first day of this month')->format('Y-m-d 00:00:00');
+$monthEnd   = (new DateTime())->modify('last day of this month')->format('Y-m-d 23:59:59');
+
+// ── Helper: parse signup rows ──
+function parseSignupRows($rows) {
+    $data = ['total' => 0, 'byCountry' => [], 'byType' => [], 'byPackage' => [], 'byTeam' => ['CS' => 0, 'AM' => 0, 'All' => 0], 'packageByTeam' => [], 'shops' => []];
+    foreach ($rows as $row) {
+        $dl       = json_decode($row['dataLogs'], true);
+        $shopName = $dl['ShopName'] ?? '';
+        $country  = !empty($dl['Country']) ? $dl['Country'] : 'Unknown';
+        $custType = !empty($dl['CustomerType']) ? $dl['CustomerType'] : 'Unknown';
+        $product  = !empty($dl['MainProduct']) ? $dl['MainProduct'] : '';
+
+        if (in_array($shopName, $data['shops'])) continue;
+        $data['shops'][] = $shopName;
+
+        // Determine team based on product (same logic as ajaxFunction.js)
+        $toTeam = 'All';
+        if (empty($product)) {
+            $toTeam = 'All';
+        } elseif (stripos($product, 'Bundle') !== false) {
+            $toTeam = 'All';
+        } elseif (stripos($product, 'Solo') !== false || stripos($product, 'Yelp') !== false) {
+            $toTeam = 'AM';
+        } elseif (stripos($product, 'System') !== false) {
+            $toTeam = 'CS';
+        } else {
+            $toTeam = 'All';
+        }
+
+        $productDisplay = !empty($product) ? $product : 'Unknown';
+
+        $data['byCountry'][$country] = ($data['byCountry'][$country] ?? 0) + 1;
+        $data['byType'][$custType]   = ($data['byType'][$custType] ?? 0) + 1;
+        $data['byPackage'][$productDisplay] = ($data['byPackage'][$productDisplay] ?? 0) + 1;
+        $data['byTeam'][$toTeam]++;
+        
+        // Track package breakdown by team
+        if (!isset($data['packageByTeam'][$toTeam])) $data['packageByTeam'][$toTeam] = [];
+        $data['packageByTeam'][$toTeam][$productDisplay] = ($data['packageByTeam'][$toTeam][$productDisplay] ?? 0) + 1;
+        
+        $data['total']++;
+    }
+    arsort($data['byCountry']);
+    arsort($data['byType']);
+    arsort($data['byPackage']);
+    unset($data['shops']);
+    return $data;
+}
+
+// ── Helper: parse unsub rows ──
+function parseUnsubRows($rows) {
+    $data = ['total' => 0, 'byCountry' => [], 'byType' => []];
+    foreach ($rows as $row) {
+        $country = !empty($row['county']) ? $row['county'] : 'Unknown';
+        $indType = !empty($row['industrial']) ? $row['industrial'] : 'Unknown';
+
+        $data['byCountry'][$country] = ($data['byCountry'][$country] ?? 0) + 1;
+        $data['byType'][$indType]    = ($data['byType'][$indType] ?? 0) + 1;
+        $data['total']++;
+    }
+    arsort($data['byCountry']);
+    arsort($data['byType']);
+    return $data;
+}
+
+// ── Current week ──
 $signupRows = $db->query(
     'SELECT dataLogs FROM logssignup WHERE createAt BETWEEN ? AND ? AND test = 0',
     $weekStart, $weekEnd
 )->fetchAll();
+$ovSignup = parseSignupRows($signupRows);
 
-$ovSignupByCountry = [];
-$ovSignupByType    = [];
-$ovProcessedShops  = [];
-$ovTotalSignup     = 0;
-
-foreach ($signupRows as $row) {
-    $dl       = json_decode($row['dataLogs'], true);
-    $shopName = $dl['ShopName'] ?? '';
-    $country  = !empty($dl['Country']) ? $dl['Country'] : 'Unknown';
-    $custType = !empty($dl['CustomerType']) ? $dl['CustomerType'] : 'Unknown';
-
-    if (in_array($shopName, $ovProcessedShops)) continue;
-    $ovProcessedShops[] = $shopName;
-
-    $ovSignupByCountry[$country] = ($ovSignupByCountry[$country] ?? 0) + 1;
-    $ovSignupByType[$custType]   = ($ovSignupByType[$custType] ?? 0) + 1;
-    $ovTotalSignup++;
-}
-arsort($ovSignupByCountry);
-arsort($ovSignupByType);
-
-// Unsub
 $unsubRows = $db->query(
     'SELECT county, industrial FROM Cancellation WHERE timestamp BETWEEN ? AND ?',
     $weekStart, $weekEnd
 )->fetchAll();
+$ovUnsub = parseUnsubRows($unsubRows);
 
-$ovUnsubByCountry = [];
-$ovUnsubByType    = [];
-$ovTotalUnsub     = 0;
+$ovNet = $ovSignup['total'] - $ovUnsub['total'];
 
-foreach ($unsubRows as $row) {
-    $country = !empty($row['county']) ? $row['county'] : 'Unknown';
-    $indType = !empty($row['industrial']) ? $row['industrial'] : 'Unknown';
+// ── Previous week ──
+$prevSignupRows = $db->query(
+    'SELECT dataLogs FROM logssignup WHERE createAt BETWEEN ? AND ? AND test = 0',
+    $prevWeekStart, $prevWeekEnd
+)->fetchAll();
+$prevSignup = parseSignupRows($prevSignupRows);
 
-    $ovUnsubByCountry[$country] = ($ovUnsubByCountry[$country] ?? 0) + 1;
-    $ovUnsubByType[$indType]    = ($ovUnsubByType[$indType] ?? 0) + 1;
-    $ovTotalUnsub++;
+$prevUnsubRows = $db->query(
+    'SELECT county, industrial FROM Cancellation WHERE timestamp BETWEEN ? AND ?',
+    $prevWeekStart, $prevWeekEnd
+)->fetchAll();
+$prevUnsub = parseUnsubRows($prevUnsubRows);
+
+$prevNet = $prevSignup['total'] - $prevUnsub['total'];
+
+// ── Current month (for monthly Live stats) ──
+$monthSignupRows = $db->query(
+    'SELECT dataLogs FROM logssignup WHERE createAt BETWEEN ? AND ? AND test = 0',
+    $monthStart, $monthEnd
+)->fetchAll();
+$monthSignup = parseSignupRows($monthSignupRows);
+
+$monthUnsubRows = $db->query(
+    'SELECT county, industrial FROM Cancellation WHERE timestamp BETWEEN ? AND ?',
+    $monthStart, $monthEnd
+)->fetchAll();
+$monthUnsub = parseUnsubRows($monthUnsubRows);
+
+// ── Monday.com JSON data for Live / Cancelled Projects / CS-AC ──
+$mondayJsonDir = __DIR__ . '/../api/monday/selectWeek/file/ALL/';
+$mondayFiles = glob($mondayJsonDir . 'ALL_monday_data*.json');
+$mondayLiveByType = [];          // CS / AC live counts
+$mondayCancelledBeforeLive = 0;
+$mondayCancelledOther = 0;
+$mondayGroupCounts = [];         // group title => count
+
+if (!empty($mondayFiles)) {
+    rsort($mondayFiles);
+    $mondayJson = json_decode(file_get_contents($mondayFiles[0]), true);
+    $mondayProcessedAccounts = [];
+
+    if (isset($mondayJson['data']['items'])) {
+        foreach ($mondayJson['data']['items'] as $item) {
+            $activeStatus = '';
+            $projectStage = '';
+            $accountName  = '';
+            $customerType = '';
+            $groupTitle   = $item['group_title'] ?? ($item['group']['title'] ?? '');
+
+            foreach ($item['column_values'] as $col) {
+                if ($col['id'] === 'status')          $activeStatus = $col['text'];
+                if ($col['id'] === 'lookup_mkwh1gcr')  $projectStage = !empty($col['display_value']) ? $col['display_value'] : $col['text'];
+                if ($col['id'] === 'text9')             $accountName  = $col['text'] ?? '';
+                if ($col['id'] === 'mirror')            $customerType = !empty($col['display_value']) ? $col['display_value'] : ($col['text'] ?? '');
+            }
+
+            // Count by group title
+            if (!empty($groupTitle)) {
+                $mondayGroupCounts[$groupTitle] = ($mondayGroupCounts[$groupTitle] ?? 0) + 1;
+            }
+
+            // Active + Completed = "Live"
+            if (($activeStatus === 'Active Subscription' || $activeStatus === 'active' || $activeStatus === 'Request Cancellation') && $projectStage === 'Completed') {
+                if (!empty($accountName) && in_array($accountName, $mondayProcessedAccounts)) continue;
+                if (!empty($accountName)) $mondayProcessedAccounts[] = $accountName;
+
+                $ct = !empty($customerType) ? $customerType : 'Unknown';
+                $mondayLiveByType[$ct] = ($mondayLiveByType[$ct] ?? 0) + 1;
+            }
+
+            // Cancelled Projects
+            if ($groupTitle === 'Cancelled Projects') {
+                if ($projectStage !== 'Completed') {
+                    $mondayCancelledBeforeLive++;
+                } else {
+                    $mondayCancelledOther++;
+                }
+            }
+        }
+    }
 }
-arsort($ovUnsubByCountry);
-arsort($ovUnsubByType);
+arsort($mondayLiveByType);
+arsort($mondayGroupCounts);
 
-$ovNet = $ovTotalSignup - $ovTotalUnsub;
+$totalLive = array_sum($mondayLiveByType);
+
+// ── Unsub duration buckets (from Cancellation: estimate months from timestamp to lastdate) ──
+$unsubDurationRows = $db->query(
+    'SELECT timestamp, lastdate FROM Cancellation WHERE timestamp BETWEEN ? AND ? AND lastdate IS NOT NULL AND lastdate <> ""',
+    $weekStart, $weekEnd
+)->fetchAll();
+
+$unsubDuration = ['0-3m' => 0, '3-6m' => 0, '6-12m' => 0, '12m+' => 0];
+foreach ($unsubDurationRows as $row) {
+    $start = strtotime($row['lastdate']);
+    $end   = strtotime($row['timestamp']);
+    if ($start && $end && $end > $start) {
+        $months = ($end - $start) / (30 * 86400);
+        if ($months <= 3)       $unsubDuration['0-3m']++;
+        elseif ($months <= 6)   $unsubDuration['3-6m']++;
+        elseif ($months <= 12)  $unsubDuration['6-12m']++;
+        else                    $unsubDuration['12m+']++;
+    }
+}
 
 // Encode for JS
 $ovDataJson = json_encode([
-    'signup'  => ['total' => $ovTotalSignup,  'byCountry' => $ovSignupByCountry, 'byType' => $ovSignupByType],
-    'unsub'   => ['total' => $ovTotalUnsub,   'byCountry' => $ovUnsubByCountry,  'byType' => $ovUnsubByType],
-    'net'     => $ovNet,
-    'range'   => $weekStartDisplay . '  →  ' . $weekEndDisplay,
+    'signup'      => $ovSignup,
+    'unsub'       => $ovUnsub,
+    'net'         => $ovNet,
+    'range'       => $weekStartDisplay . '  →  ' . $weekEndDisplay,
+    'prevSignup'  => $prevSignup,
+    'prevUnsub'   => $prevUnsub,
+    'prevNet'     => $prevNet,
+    'prevRange'   => $prevWeekStartDisplay . '  →  ' . $prevWeekEndDisplay,
+    'monthSignup' => $monthSignup,
+    'monthUnsub'  => $monthUnsub,
+    'liveByType'  => $mondayLiveByType,
+    'totalLive'   => $totalLive,
+    'cancelBeforeLive' => $mondayCancelledBeforeLive,
+    'cancelOther'      => $mondayCancelledOther,
+    'groupCounts'      => $mondayGroupCounts,
+    'unsubDuration'    => $unsubDuration,
 ], JSON_UNESCAPED_UNICODE);
 ?>
 <!-- ChartJS -->
@@ -431,91 +586,106 @@ $ovDataJson = json_encode([
         <!-- ===== OVERVIEW SECTION ===== -->
         <div class="row mt-2">
 
-            <!-- Signup / Unsub -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ██  4. LIVE STATS  (by Customer Type / CS vs AC)     ██ -->
+            <!--  Week & Month breakdown                                ██ -->
+            <!-- ══════════════════════════════════════════════════════════ -->
             <div class="col-12 mb-3">
                 <div class="card ov-home-card">
                     <div class="card-header py-2">
-                        <div class="text-left">
-                            <h3 class="mb-1" style="font-size:14px;font-weight:600;">
-                                <i class="bi bi-person-plus-fill mr-1 text-success"></i> Signup &amp; Unsubscribe <small class="text-muted font-weight-normal">This Week</small>
-                            </h3>
-                            <div class="badge badge-light text-muted" style="font-size:11px;font-weight:400;">
-                                <?php echo $weekStartDisplay . '  -  ' . $weekEndDisplay; ?>
-                            </div>
-                        </div>
+                        <h3 class="mb-0" style="font-size:14px;font-weight:600;">
+                            <i class="bi bi-broadcast mr-1 text-info"></i> Live &amp; Active Customers
+                            <small class="text-muted font-weight-normal">(from Monday.com)</small>
+                        </h3>
                     </div>
                     <div class="card-body py-2">
-                        <!-- Summary numbers (centered) -->
-                        <div class="d-flex justify-content-center mb-4" style="gap:18px;">
-                            <div class="ov-home-num ov-home-num-lg ov-home-green">
-                                <span>+<?php echo $ovTotalSignup; ?></span>
-                                <small>Signup</small>
-                            </div>
-                            <div class="ov-home-num ov-home-num-lg ov-home-red">
-                                <span>-<?php echo $ovTotalUnsub; ?></span>
-                                <small>Unsub</small>
-                            </div>
-                            <div class="ov-home-num ov-home-num-lg <?php echo $ovNet >= 0 ? 'ov-home-warn' : 'ov-home-gray'; ?>">
-                                <span><?php echo ($ovNet >= 0 ? '+' : '') . $ovNet; ?></span>
-                                <small>Net</small>
+                        <!-- Total Live badge -->
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="ov-home-num ov-home-num-lg" style="background:#dbeafe;">
+                                <span style="color:#0361D1;"><?php echo number_format($totalLive); ?></span>
+                                <small>Total Live Customers</small>
                             </div>
                         </div>
 
-                        <!-- ── Signup Section (top) ── -->
-                        <h5 class="mb-3" style="font-size:14px;font-weight:700;color:#10b981;"><i class="bi bi-plus-circle"></i> Signup</h5>
-                        <div class="row mb-4">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Country</h6>
-                                <div style="height:220px;"><canvas id="chartSignupCountry"></canvas></div>
-                                <table class="table table-sm table-borderless mt-2 ov-num-table">
-                                    <tbody>
-                                    <?php foreach(array_slice($ovSignupByCountry, 0, 10, true) as $k => $v): ?>
-                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-success"><?php echo $v; ?></td></tr>
-                                    <?php endforeach; ?>
-                                    <?php if(empty($ovSignupByCountry)): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Type</h6>
-                                <div style="height:220px;"><canvas id="chartSignupType"></canvas></div>
-                                <table class="table table-sm table-borderless mt-2 ov-num-table">
-                                    <tbody>
-                                    <?php foreach(array_slice($ovSignupByType, 0, 10, true) as $k => $v): ?>
-                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-success"><?php echo $v; ?></td></tr>
-                                    <?php endforeach; ?>
-                                    <?php if(empty($ovSignupByType)): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <hr style="border-color:#e2e8f0;margin:0 0 16px 0;">
-
-                        <!-- ── Unsubscribe Section (bottom) ── -->
-                        <h5 class="mb-3" style="font-size:14px;font-weight:700;color:#ef4444;"><i class="bi bi-dash-circle"></i> Unsubscribe</h5>
                         <div class="row">
+                            <!-- Live by Customer Type (CS / AC / etc) -->
                             <div class="col-md-6 mb-3 mb-md-0">
-                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Country</h6>
-                                <div style="height:220px;"><canvas id="chartUnsubCountry"></canvas></div>
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">Live by Customer Type</h6>
+                                <div style="height:250px;"><canvas id="chartLiveByType"></canvas></div>
                                 <table class="table table-sm table-borderless mt-2 ov-num-table">
                                     <tbody>
-                                    <?php foreach(array_slice($ovUnsubByCountry, 0, 10, true) as $k => $v): ?>
-                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-danger"><?php echo $v; ?></td></tr>
+                                    <?php foreach(array_slice($mondayLiveByType, 0, 10, true) as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold" style="color:#0361D1;"><?php echo number_format($v); ?></td></tr>
                                     <?php endforeach; ?>
-                                    <?php if(empty($ovUnsubByCountry)): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    <?php if(empty($mondayLiveByType)): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- Weekly vs Monthly signup/unsub by type -->
                             <div class="col-md-6">
-                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Type</h6>
-                                <div style="height:220px;"><canvas id="chartUnsubType"></canvas></div>
-                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">This Week vs This Month</h6>
+                                <table class="table table-sm table-bordered mt-2" style="font-size:12px;">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Metric</th>
+                                            <th class="text-center">Week<br><small class="text-muted"><?php echo $weekStartDisplay . ' - ' . $weekEndDisplay; ?></small></th>
+                                            <th class="text-center">Month<br><small class="text-muted"><?php echo (new DateTime($monthStart))->format('M Y'); ?></small></th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
-                                    <?php foreach(array_slice($ovUnsubByType, 0, 10, true) as $k => $v): ?>
-                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-danger"><?php echo $v; ?></td></tr>
+                                        <tr>
+                                            <td><span class="text-success font-weight-bold">Signup</span></td>
+                                            <td class="text-center font-weight-bold text-success">+<?php echo $ovSignup['total']; ?></td>
+                                            <td class="text-center font-weight-bold text-success">+<?php echo $monthSignup['total']; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="text-danger font-weight-bold">Unsub</span></td>
+                                            <td class="text-center font-weight-bold text-danger">-<?php echo $ovUnsub['total']; ?></td>
+                                            <td class="text-center font-weight-bold text-danger">-<?php echo $monthUnsub['total']; ?></td>
+                                        </tr>
+                                        <tr style="background:#f8fafc;">
+                                            <td class="font-weight-bold">Net</td>
+                                            <?php $weekNet = $ovSignup['total'] - $ovUnsub['total']; $mNet = $monthSignup['total'] - $monthUnsub['total']; ?>
+                                            <td class="text-center font-weight-bold" style="color:<?php echo $weekNet >= 0 ? '#10b981' : '#ef4444'; ?>;"><?php echo ($weekNet >= 0 ? '+' : '') . $weekNet; ?></td>
+                                            <td class="text-center font-weight-bold" style="color:<?php echo $mNet >= 0 ? '#10b981' : '#ef4444'; ?>;"><?php echo ($mNet >= 0 ? '+' : '') . $mNet; ?></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <hr class="ov-section-divider">
+
+                                <!-- Signup by Type: Week vs Month -->
+                                <h6 class="text-center mb-2 mt-3" style="font-size:11px;font-weight:600;color:#475569;">Signup by Type (Week / Month)</h6>
+                                <table class="table table-sm table-bordered" style="font-size:11px;">
+                                    <thead class="thead-light"><tr><th>Type</th><th class="text-center">Week</th><th class="text-center">Month</th></tr></thead>
+                                    <tbody>
+                                    <?php
+                                    $allSignupTypes = array_unique(array_merge(array_keys($ovSignup['byType']), array_keys($monthSignup['byType'])));
+                                    sort($allSignupTypes);
+                                    foreach($allSignupTypes as $t):
+                                        $w = $ovSignup['byType'][$t] ?? 0;
+                                        $m = $monthSignup['byType'][$t] ?? 0;
+                                    ?>
+                                        <tr><td><?php echo htmlspecialchars($t); ?></td><td class="text-center"><?php echo $w; ?></td><td class="text-center"><?php echo $m; ?></td></tr>
                                     <?php endforeach; ?>
-                                    <?php if(empty($ovUnsubByType)): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    </tbody>
+                                </table>
+
+                                <!-- Unsub by Type: Week vs Month -->
+                                <h6 class="text-center mb-2 mt-3" style="font-size:11px;font-weight:600;color:#475569;">Unsub by Type (Week / Month)</h6>
+                                <table class="table table-sm table-bordered" style="font-size:11px;">
+                                    <thead class="thead-light"><tr><th>Type</th><th class="text-center">Week</th><th class="text-center">Month</th></tr></thead>
+                                    <tbody>
+                                    <?php
+                                    $allUnsubTypes = array_unique(array_merge(array_keys($ovUnsub['byType']), array_keys($monthUnsub['byType'])));
+                                    sort($allUnsubTypes);
+                                    foreach($allUnsubTypes as $t):
+                                        $w = $ovUnsub['byType'][$t] ?? 0;
+                                        $m = $monthUnsub['byType'][$t] ?? 0;
+                                    ?>
+                                        <tr><td><?php echo htmlspecialchars($t); ?></td><td class="text-center"><?php echo $w; ?></td><td class="text-center"><?php echo $m; ?></td></tr>
+                                    <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -523,6 +693,291 @@ $ovDataJson = json_encode([
                     </div>
                 </div>
             </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ██  2. SIGNUP DETAILS  (By Country, Type, Package)   ██ -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div class="col-12 mb-3">
+                <div class="card ov-home-card">
+                    <div class="card-header py-2">
+                        <h3 class="mb-0" style="font-size:14px;font-weight:600;">
+                            <i class="bi bi-person-plus-fill mr-1 text-success"></i> Signup Details
+                            <small class="text-muted font-weight-normal">This Week (<?php echo $weekStartDisplay . ' - ' . $weekEndDisplay; ?>)</small>
+                        </h3>
+                    </div>
+                    <div class="card-body py-2">
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Country</h6>
+                                <div style="height:220px;"><canvas id="chartSignupCountry"></canvas></div>
+                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                    <tbody>
+                                    <?php foreach(array_slice($ovSignup['byCountry'], 0, 10, true) as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-success"><?php echo $v; ?></td></tr>
+                                    <?php endforeach; ?>
+                                    <?php if(empty($ovSignup['byCountry'])): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Type</h6>
+                                <div style="height:220px;"><canvas id="chartSignupType"></canvas></div>
+                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                    <tbody>
+                                    <?php foreach(array_slice($ovSignup['byType'], 0, 10, true) as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-success"><?php echo $v; ?></td></tr>
+                                    <?php endforeach; ?>
+                                    <?php if(empty($ovSignup['byType'])): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;"><i class="bi bi-box-seam"></i> By Package</h6>
+                                <div style="height:220px;"><canvas id="chartSignupPackage"></canvas></div>
+                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                    <tbody>
+                                    <?php foreach(array_slice($ovSignup['byPackage'], 0, 10, true) as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-success"><?php echo $v; ?></td></tr>
+                                    <?php endforeach; ?>
+                                    <?php if(empty($ovSignup['byPackage'])): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr class="ov-section-divider">
+
+                        <!-- Signup by Team (CS/AM/All) -->
+                        <h6 class="mb-3" style="font-size:13px;font-weight:700;color:#8b5cf6;">
+                            <i class="bi bi-people-fill"></i> Signup by Team Assignment
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div style="height:200px;"><canvas id="chartSignupByTeam"></canvas></div>
+                                <table class="table table-sm table-bordered mt-2" style="font-size:12px;">
+                                    <thead class="thead-light">
+                                        <tr><th>Team</th><th class="text-center">Count</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge badge-primary">CS</span> (System packages)</td>
+                                            <td class="text-center font-weight-bold text-success"><?php echo $ovSignup['byTeam']['CS']; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-info">AM</span> (Solo/Yelp packages)</td>
+                                            <td class="text-center font-weight-bold text-success"><?php echo $ovSignup['byTeam']['AM']; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-secondary">All</span> (Bundle/Other packages)</td>
+                                            <td class="text-center font-weight-bold text-success"><?php echo $ovSignup['byTeam']['All']; ?></td>
+                                        </tr>
+                                        <tr class="font-weight-bold" style="background:#f8fafc;">
+                                            <td>Total</td>
+                                            <td class="text-center"><?php echo $ovSignup['total']; ?></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-8">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">Package Breakdown by Team</h6>
+                                <div class="row">
+                                    <?php foreach(['CS', 'AM', 'All'] as $team): ?>
+                                        <?php if (!empty($ovSignup['packageByTeam'][$team])): ?>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="card" style="border:1px solid #e2e8f0;">
+                                                <div class="card-header py-1 text-center" style="background:<?php echo $team === 'CS' ? '#dbeafe' : ($team === 'AM' ? '#e0f2fe' : '#f1f5f9'); ?>;font-size:11px;font-weight:700;">
+                                                    <?php echo $team; ?>
+                                                </div>
+                                                <div class="card-body p-2">
+                                                    <table class="table table-sm table-borderless mb-0" style="font-size:10px;">
+                                                        <tbody>
+                                                        <?php 
+                                                        arsort($ovSignup['packageByTeam'][$team]);
+                                                        foreach($ovSignup['packageByTeam'][$team] as $pkg => $cnt): 
+                                                        ?>
+                                                            <tr>
+                                                                <td style="padding:1px 4px;"><?php echo htmlspecialchars($pkg); ?></td>
+                                                                <td class="text-right font-weight-bold text-success" style="padding:1px 4px;"><?php echo $cnt; ?></td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!--  ██  3. UNSUBSCRIBE DETAILS                           ██ -->
+            <!--  By Type (industrial), Duration buckets, Cancel types  ██ -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div class="col-12 mb-3">
+                <div class="card ov-home-card">
+                    <div class="card-header py-2">
+                        <h3 class="mb-0" style="font-size:14px;font-weight:600;">
+                            <i class="bi bi-dash-circle mr-1 text-danger"></i> Unsubscribe Details
+                            <small class="text-muted font-weight-normal">This Week (<?php echo $weekStartDisplay . ' - ' . $weekEndDisplay; ?>)</small>
+                        </h3>
+                    </div>
+                    <div class="card-body py-2">
+                        <div class="row mb-4">
+                            <!-- Unsub by Country -->
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Country</h6>
+                                <div style="height:220px;"><canvas id="chartUnsubCountry"></canvas></div>
+                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                    <tbody>
+                                    <?php foreach(array_slice($ovUnsub['byCountry'], 0, 10, true) as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-danger"><?php echo $v; ?></td></tr>
+                                    <?php endforeach; ?>
+                                    <?php if(empty($ovUnsub['byCountry'])): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Unsub by Type (Industrial) -->
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">By Type (Industrial)</h6>
+                                <div style="height:220px;"><canvas id="chartUnsubType"></canvas></div>
+                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                    <tbody>
+                                    <?php foreach(array_slice($ovUnsub['byType'], 0, 10, true) as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-danger"><?php echo $v; ?></td></tr>
+                                    <?php endforeach; ?>
+                                    <?php if(empty($ovUnsub['byType'])): ?><tr><td class="text-muted text-center" colspan="2">No data</td></tr><?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Unsub Duration -->
+                            <div class="col-md-4">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;"><i class="bi bi-clock-history"></i> Subscription Duration Before Unsub</h6>
+                                <div style="height:220px;"><canvas id="chartUnsubDuration"></canvas></div>
+                                <table class="table table-sm table-borderless mt-2 ov-num-table">
+                                    <tbody>
+                                    <?php foreach($unsubDuration as $k => $v): ?>
+                                        <tr><td><?php echo htmlspecialchars($k); ?></td><td class="text-right font-weight-bold text-danger"><?php echo $v; ?></td></tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- <hr class="ov-section-divider"> -->
+
+                        <!-- Cancel Before Live vs Other Cancels -->
+                        <!-- <h6 class="mb-3" style="font-size:13px;font-weight:700;color:#8b5cf6;">
+                            <i class="bi bi-x-circle"></i> Cancellation Breakdown (from Monday.com)
+                        </h6> -->
+                        <!-- <div class="row">
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div style="height:200px;"><canvas id="chartCancelType"></canvas></div>
+                            </div>
+                            <div class="col-md-8">
+                                <table class="table table-sm table-bordered mt-2" style="font-size:12px;">
+                                    <thead class="thead-light">
+                                        <tr><th>Cancel Type</th><th class="text-center">Count</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge badge-warning">Cancel Before Live</span> (never reached "Completed" stage)</td>
+                                            <td class="text-center font-weight-bold"><?php echo $mondayCancelledBeforeLive; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-danger">Cancel After Live</span> (was "Completed" / went live)</td>
+                                            <td class="text-center font-weight-bold"><?php echo $mondayCancelledOther; ?></td>
+                                        </tr>
+                                        <tr class="font-weight-bold" style="background:#f8fafc;">
+                                            <td>Total Cancelled Projects</td>
+                                            <td class="text-center"><?php echo $mondayCancelledBeforeLive + $mondayCancelledOther; ?></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+
+                        <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- ██  1. COMPARE A vs B  (This Week vs Previous Week)  ██ -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div class="col-12 mb-3">
+                <div class="card ov-home-card">
+                    <div class="card-header py-2">
+                        <h3 class="mb-0" style="font-size:14px;font-weight:600;">
+                            <i class="bi bi-arrow-left-right mr-1 text-primary"></i> Week-over-Week Comparison
+                        </h3>
+                    </div>
+                    <div class="card-body py-3">
+                        <div class="row">
+                            <!-- ── A: Previous Week ── -->
+                            <div class="col-md-5">
+                                <div class="text-center mb-2">
+                                    <span class="badge badge-secondary" style="font-size:11px;">A — Previous Week</span>
+                                    <div class="text-muted" style="font-size:10px;"><?php echo $prevWeekStartDisplay . ' - ' . $prevWeekEndDisplay; ?></div>
+                                </div>
+                                <div class="d-flex justify-content-center mb-3" style="gap:12px;">
+                                    <div class="ov-home-num ov-home-green"><span>+<?php echo $prevSignup['total']; ?></span><small>Signup</small></div>
+                                    <div class="ov-home-num ov-home-red"><span>-<?php echo $prevUnsub['total']; ?></span><small>Unsub</small></div>
+                                    <div class="ov-home-num <?php echo $prevNet >= 0 ? 'ov-home-warn' : 'ov-home-gray'; ?>"><span><?php echo ($prevNet >= 0 ? '+' : '') . $prevNet; ?></span><small>Net</small></div>
+                                </div>
+                            </div>
+
+                            <!-- ── Divider ── -->
+                            <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                <div class="ov-compare-divider">
+                                    <div class="ov-compare-vs">VS</div>
+                                </div>
+                            </div>
+
+                            <!-- ── B: This Week ── -->
+                            <div class="col-md-5">
+                                <div class="text-center mb-2">
+                                    <span class="badge badge-primary" style="font-size:11px;">B — This Week</span>
+                                    <div class="text-muted" style="font-size:10px;"><?php echo $weekStartDisplay . ' - ' . $weekEndDisplay; ?></div>
+                                </div>
+                                <div class="d-flex justify-content-center mb-3" style="gap:12px;">
+                                    <div class="ov-home-num ov-home-green"><span>+<?php echo $ovSignup['total']; ?></span><small>Signup</small></div>
+                                    <div class="ov-home-num ov-home-red"><span>-<?php echo $ovUnsub['total']; ?></span><small>Unsub</small></div>
+                                    <div class="ov-home-num <?php echo $ovNet >= 0 ? 'ov-home-warn' : 'ov-home-gray'; ?>"><span><?php echo ($ovNet >= 0 ? '+' : '') . $ovNet; ?></span><small>Net</small></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Change summary -->
+                        <?php
+                        $signupDiff = $ovSignup['total'] - $prevSignup['total'];
+                        $unsubDiff  = $ovUnsub['total'] - $prevUnsub['total'];
+                        $netDiff    = $ovNet - $prevNet;
+                        ?>
+                        <div class="d-flex justify-content-center mt-2" style="gap:18px;">
+                            <div class="ov-home-num" style="background:#e0f2fe;"><span style="color:<?php echo $signupDiff >= 0 ? '#10b981' : '#ef4444'; ?>;font-size:1rem;"><?php echo ($signupDiff >= 0 ? '▲+' : '▼') . $signupDiff; ?></span><small>Signup Change</small></div>
+                            <div class="ov-home-num" style="background:#fef3c7;"><span style="color:<?php echo $unsubDiff <= 0 ? '#10b981' : '#ef4444'; ?>;font-size:1rem;"><?php echo ($unsubDiff >= 0 ? '▲+' : '▼') . $unsubDiff; ?></span><small>Unsub Change</small></div>
+                            <div class="ov-home-num" style="background:#f1f5f9;"><span style="color:<?php echo $netDiff >= 0 ? '#10b981' : '#ef4444'; ?>;font-size:1rem;"><?php echo ($netDiff >= 0 ? '▲+' : '▼') . $netDiff; ?></span><small>Net Change</small></div>
+                        </div>
+
+                        <!-- Side-by-side bar chart comparison -->
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">Signup by Country (A vs B)</h6>
+                                <div style="height:220px;"><canvas id="chartCompareSignupCountry"></canvas></div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-center mb-2" style="font-size:11px;font-weight:600;color:#475569;">Unsub by Country (A vs B)</h6>
+                                <div style="height:220px;"><canvas id="chartCompareUnsubCountry"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
 
         </div><!-- /.row overview -->
 
@@ -1330,7 +1785,17 @@ function nameOnly($fullName){
 .ov-num-table { font-size:11px; margin-bottom:0; }
 .ov-num-table td { padding:2px 6px; }
 .ov-num-table td:first-child { color:#475569; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-@media (max-width:767px) { .ov-chart-col { border-left:none!important; border-top:2px solid #e2e8f0; margin-top:10px; } }
+
+.ov-compare-divider { position:relative; display:flex; align-items:center; justify-content:center; height:100%; min-height:80px; }
+.ov-compare-divider::before { content:''; position:absolute; top:0; bottom:0; left:50%; width:3px; background:linear-gradient(180deg,#e2e8f0,#94a3b8,#e2e8f0); transform:translateX(-50%); border-radius:2px; }
+.ov-compare-vs { position:relative; z-index:1; background:#fff; border:2px solid #94a3b8; color:#475569; font-weight:800; font-size:13px; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+.ov-section-divider { border:none; border-top:2px solid #e2e8f0; margin:16px 0; }
+
+@media (max-width:767px) {
+    .ov-chart-col { border-left:none!important; border-top:2px solid #e2e8f0; margin-top:10px; }
+    .ov-compare-divider { min-height:40px; }
+    .ov-compare-divider::before { top:50%; bottom:auto; left:0; right:0; width:auto; height:3px; transform:translateY(-50%); background:linear-gradient(90deg,#e2e8f0,#94a3b8,#e2e8f0); }
+}
 </style>
 
 <!-- ===== Overview Section Scripts ===== -->
@@ -1377,15 +1842,94 @@ function nameOnly($fullName){
             });
         }
 
+        function makeGroupedBar(canvasId, dataA, dataB, labelA, labelB, colorA, colorB) {
+            var allKeys = {};
+            if (dataA) Object.keys(dataA).forEach(function(k){ allKeys[k] = true; });
+            if (dataB) Object.keys(dataB).forEach(function(k){ allKeys[k] = true; });
+            var labels = Object.keys(allKeys).sort();
+            if (labels.length === 0) return;
+            var valuesA = labels.map(function(k){ return (dataA && dataA[k]) || 0; });
+            var valuesB = labels.map(function(k){ return (dataB && dataB[k]) || 0; });
+            var canvas = document.querySelector(canvasId);
+            if (!canvas) return;
+            new Chart(canvas.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: labelA, data: valuesA, backgroundColor: colorA, borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.8 },
+                        { label: labelB, data: valuesB, backgroundColor: colorB, borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.8 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: { display: true, position: 'top', labels: { fontSize: 10, boxWidth: 12 } },
+                    scales: {
+                        yAxes: [{ ticks: { beginAtZero: true, stepSize: 1, fontSize: 10 }, gridLines: { color: '#f1f5f9' } }],
+                        xAxes: [{ ticks: { fontSize: 9, maxRotation: 45, minRotation: 0 }, gridLines: { display: false } }]
+                    }
+                }
+            });
+        }
+
+        function makeDoughnut(canvasId, dataObj, colors) {
+            if (!dataObj) return;
+            var labels = Object.keys(dataObj);
+            var values = labels.map(function(k){ return dataObj[k]; });
+            if (labels.length === 0) return;
+            var canvas = document.querySelector(canvasId);
+            if (!canvas) return;
+            new Chart(canvas.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{ data: values, backgroundColor: colors || COLORS.slice(0, labels.length), borderWidth: 1 }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: { display: true, position: 'bottom', labels: { fontSize: 10, boxWidth: 10 } }
+                }
+            });
+        }
+
+        // ── 1. Compare A vs B charts ──
+        var prevSC = ovData.prevSignup ? ovData.prevSignup.byCountry : {};
+        var currSC = ovData.signup ? ovData.signup.byCountry : {};
+        makeGroupedBar('#chartCompareSignupCountry', prevSC, currSC, 'Prev Week', 'This Week', '#86efac', '#10b981');
+
+        var prevUC = ovData.prevUnsub ? ovData.prevUnsub.byCountry : {};
+        var currUC = ovData.unsub ? ovData.unsub.byCountry : {};
+        makeGroupedBar('#chartCompareUnsubCountry', prevUC, currUC, 'Prev Week', 'This Week', '#fca5a5', '#ef4444');
+
+        // ── 2. Signup detail charts ──
         var greenBars = ovData.signup ? Object.keys(ovData.signup.byCountry||{}).map(function(){ return '#10b981'; }) : [];
         var greenBars2 = ovData.signup ? Object.keys(ovData.signup.byType||{}).map(function(){ return '#34d399'; }) : [];
-        var redBars = ovData.unsub ? Object.keys(ovData.unsub.byCountry||{}).map(function(){ return '#ef4444'; }) : [];
-        var redBars2 = ovData.unsub ? Object.keys(ovData.unsub.byType||{}).map(function(){ return '#f87171'; }) : [];
-
         makeBar('#chartSignupCountry', ovData.signup ? ovData.signup.byCountry : {}, greenBars);
         makeBar('#chartSignupType',    ovData.signup ? ovData.signup.byType : {},    greenBars2);
+        makeDoughnut('#chartSignupPackage', ovData.signup ? ovData.signup.byPackage : {}, ['#10b981','#34d399','#6ee7b7','#a7f3d0','#d1fae5','#059669','#047857']);
+        
+        // Signup by Team (CS/AM/All)
+        var teamData = ovData.signup && ovData.signup.byTeam ? ovData.signup.byTeam : {};
+        makeDoughnut('#chartSignupByTeam', teamData, ['#3b82f6','#06b6d4','#94a3b8']);
+
+        // ── 3. Unsub detail charts ──
+        var redBars = ovData.unsub ? Object.keys(ovData.unsub.byCountry||{}).map(function(){ return '#ef4444'; }) : [];
+        var redBars2 = ovData.unsub ? Object.keys(ovData.unsub.byType||{}).map(function(){ return '#f87171'; }) : [];
         makeBar('#chartUnsubCountry',  ovData.unsub  ? ovData.unsub.byCountry : {}, redBars);
         makeBar('#chartUnsubType',     ovData.unsub  ? ovData.unsub.byType : {},    redBars2);
+        makeBar('#chartUnsubDuration', ovData.unsubDuration || {}, ['#fbbf24','#f59e0b','#d97706','#b45309']);
+
+        // ── Cancel type doughnut ──
+        var cancelData = {};
+        if (ovData.cancelBeforeLive) cancelData['Before Live'] = ovData.cancelBeforeLive;
+        if (ovData.cancelOther) cancelData['After Live'] = ovData.cancelOther;
+        makeDoughnut('#chartCancelType', cancelData, ['#f59e0b','#ef4444']);
+
+        // ── 4. Live by Customer Type ──
+        makeDoughnut('#chartLiveByType', ovData.liveByType || {}, COLORS);
+
     } catch(e) {
         console.error('Overview chart error:', e);
     }

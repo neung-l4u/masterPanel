@@ -234,6 +234,7 @@ foreach ($accountKeys as $account) {
 
         $chargeList = $stripe->charges->all([
             'limit' => 100,
+            'expand' => ['data.customer'],
             'created' => ['gte' => $periodStart, 'lt' => $periodEnd + 86400]
         ]);
         foreach ($chargeList->autoPagingIterator() as $c) {
@@ -241,7 +242,9 @@ foreach ($accountKeys as $account) {
             if ($pcCount % 1000 === 0) echo "{$pcCount}... ";
             $amt = $c->amount / 100;
             $chargeCur = strtolower($c->currency);
-            $custEmail = $c->billing_details->email ?: ($c->receipt_email ?: '');
+            $custObj = $c->customer;
+            $custId = is_object($custObj) ? ($custObj->id ?? '') : ($custObj ?: '');
+            $custEmail = $c->billing_details->email ?: ($c->receipt_email ?: (is_object($custObj) ? ($custObj->email ?? '') : ''));
             $pi = $c->payment_intent ?: '';
 
             if ($c->status === 'succeeded') {
@@ -254,9 +257,8 @@ foreach ($accountKeys as $account) {
                     } else {
                         $uncapturedTotal += $amt;
                     }
-                    $custId = $c->customer ?: '';
                     if ($custId) {
-                        $custName = $c->billing_details->name ?: '';
+                        $custName = $c->billing_details->name ?: (is_object($custObj) ? ($custObj->name ?? '') : '');
                         if (!isset($customerSpend[$custId])) $customerSpend[$custId] = ['email' => $custEmail, 'name' => $custName, 'amount' => 0];
                         $customerSpend[$custId]['amount'] += $amt;
                         if (!$customerSpend[$custId]['name'] && $custName) $customerSpend[$custId]['name'] = $custName;

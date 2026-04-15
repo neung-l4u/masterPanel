@@ -237,13 +237,15 @@ $result['refundTotal'] = round($refundTotal, 2);
 $failedPayments = []; $succeededTotal = 0; $failedTotal = 0; $blockedTotal = 0;
 $uncapturedTotal = 0; $refundedTotal2 = 0; $succeededCount = 0; $failedCount = 0;
 $seenPISucc = []; $seenPIFail = []; $customerSpend = [];
-$periodCharges = $stripe->charges->all(['limit' => 100, 'created' => ['gte' => $periodStart, 'lt' => $periodEnd + 86400]]);
+$periodCharges = $stripe->charges->all(['limit' => 100, 'expand' => ['data.customer'], 'created' => ['gte' => $periodStart, 'lt' => $periodEnd + 86400]]);
 $pcCount = 0;
 foreach ($periodCharges->autoPagingIterator() as $c) {
     $pcCount++;
     $amt = $c->amount / 100;
     $chargeCur = strtolower($c->currency);
-    $custEmail = $c->billing_details->email ?: ($c->receipt_email ?: '');
+    $custObj = $c->customer;
+    $custId = is_object($custObj) ? ($custObj->id ?? '') : ($custObj ?: '');
+    $custEmail = $c->billing_details->email ?: ($c->receipt_email ?: (is_object($custObj) ? ($custObj->email ?? '') : ''));
     $pi = $c->payment_intent ?: '';
     if ($c->status === 'succeeded') {
         $isDupe = false;
@@ -251,9 +253,8 @@ foreach ($periodCharges->autoPagingIterator() as $c) {
         if (!$isDupe && ($isConnect || $chargeCur === $primaryCur)) {
             if ($c->captured) { $succeededTotal += $amt; $succeededCount++; if ($c->refunded) $refundedTotal2 += ($c->amount_refunded ?? 0) / 100; }
             else $uncapturedTotal += $amt;
-            $custId = $c->customer ?: '';
             if ($custId) {
-                $custName = $c->billing_details->name ?: '';
+                $custName = $c->billing_details->name ?: (is_object($custObj) ? ($custObj->name ?? '') : '');
                 if (!isset($customerSpend[$custId])) $customerSpend[$custId] = ['email' => $custEmail, 'name' => $custName, 'amount' => 0];
                 $customerSpend[$custId]['amount'] += $amt;
             }

@@ -31,6 +31,8 @@ function fetchAllProducts($base)
 }
 
 $base = 'https://' . ($_GET['domain'] ?? 'staging.core.wooshfood.com');
+$domainPrefix = explode('.', $_GET['domain'] ?? 'staging')[0];
+$shopUrl = 'https://' . $domainPrefix . '.website.localforyouorders.com/';
 
 $dataCompanyInfo       = fetchApi($base . '/api/get_company_info');
 $dataProductCategories = fetchApi($base . '/api/get_website_products_category');
@@ -109,7 +111,7 @@ $showcaseProducts = array_slice($productsWithImage, 0, min(6, count($productsWit
                 <?php if (!empty($companyInfo['phone_code'])): ?>+<?= htmlspecialchars($companyInfo['phone_code']) ?><?php endif; ?>
             </div>
             <?php endif; ?> -->
-            <a href="https://<?= htmlspecialchars($_GET['domain'] ?? 'staging.core.wooshfood.com') ?>/shop" class="hero-cta">Order Now</a>
+            <a href="<?= htmlspecialchars($shopUrl) ?>" class="hero-cta">Order Now</a>
         </div>
         <?php if (count($heroSlides) > 1): ?>
             <div class="hero-nav">
@@ -175,7 +177,7 @@ $showcaseProducts = array_slice($productsWithImage, 0, min(6, count($productsWit
                     Quality ingredients, authentic recipes, and a passion for great food — that's what we bring to every dish.
                 </p>
                 <p class="about-text"></p>
-                <a href="https://<?= htmlspecialchars($_GET['domain'] ?? 'staging.core.wooshfood.com') ?>/shop" class="about-btn">View Full Menu</a>
+                <a href="<?= htmlspecialchars($shopUrl) ?>" class="about-btn">View Full Menu</a>
             </div>
             <div class="about-img-side">
                 <?php if ($aboutBgImage): ?>
@@ -234,7 +236,7 @@ $showcaseProducts = array_slice($productsWithImage, 0, min(6, count($productsWit
                         <?php endif; ?>
                     </div>
                 </div>
-                <a href="https://<?= htmlspecialchars($_GET['domain'] ?? 'staging.core.wooshfood.com') ?>/shop" class="about-btn">Order Now</a>
+                <a href="<?= htmlspecialchars($shopUrl) ?>" class="about-btn">Order Now</a>
             </div>
         </div>
     </section>
@@ -284,7 +286,7 @@ $showcaseProducts = array_slice($productsWithImage, 0, min(6, count($productsWit
                             <div class="card-bottom">
                                 <div class="badge"><?= htmlspecialchars($categoryName) ?></div>
                                 <?php if (!$p['is_sold_out']): ?>
-                                    <a href="https://<?= htmlspecialchars($_GET['domain'] ?? 'staging.core.wooshfood.com') ?>/shop" class="add-btn">Add to Cart</a>
+                                    <a href="<?= htmlspecialchars($shopUrl) ?>" class="add-btn">Add to Cart</a>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -354,7 +356,7 @@ $showcaseProducts = array_slice($productsWithImage, 0, min(6, count($productsWit
                     
 
                     <div class="footer-btn">
-                        <a href="https://<?= htmlspecialchars($_GET['domain'] ?? 'staging.core.wooshfood.com') ?>/shop" class="footer-cta">Order Now</a>
+                        <a href="<?= htmlspecialchars($shopUrl) ?>" class="footer-cta">Order Now</a>
                     </div>
                 </div>
             </div>
