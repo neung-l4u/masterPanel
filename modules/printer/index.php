@@ -16,9 +16,9 @@
     <link rel="stylesheet" href="assets/css/formStyle.css">
     <title>Printer</title>
     <style>
-        .printer-card img { max-width: 120px; height: auto; }
+        .printer-card img { width: 120px; height: 120px; object-fit: contain; flex-shrink: 0; }
         @media (max-width: 575.98px) {
-            .printer-card img { max-width: 80px; }
+            .printer-card img { width: 80px; height: 80px; }
             .printer-card .card-body { padding: 1rem !important; }
             .display-6 { font-size: 1.75rem; }
         }
