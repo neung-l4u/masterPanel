@@ -112,6 +112,12 @@ global $db, $activeMenu;
                         </select>
                     </div>
                     <div class="col-auto">
+                        <label class="form-label mb-1 small fw-bold">Active Subscription</label>
+                        <select id="cfActiveSubs" class="form-control form-control-sm" style="max-width:180px;">
+                            <option value="ALL">All</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
                         <label class="form-label mb-1 small fw-bold">Marketing Phase</label>
                         <select id="cfPhase" class="form-control form-control-sm" style="min-width:140px;">
                             <option value="ALL">All</option>
@@ -151,11 +157,12 @@ global $db, $activeMenu;
                                 <th>Marketing Live Date</th>
                                 <th>Marketing Cancel Date</th>
                                 <th>Marketing Phase</th>
+                                <th>Active Subscriptions</th>
                                 <th>Life Span</th>
                             </tr>
                         </thead>
                         <tbody id="lifeSpanTbody">
-                            <tr><td colspan="11" class="text-center text-muted py-4">Click <strong>Load Data</strong> to fetch life span data.</td></tr>
+                            <tr><td colspan="12" class="text-center text-muted py-4">Click <strong>Load Data</strong> to fetch life span data.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -255,14 +262,108 @@ global $db, $activeMenu;
 <style>
 .spin { animation: spin 1s linear infinite; display: inline-block; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
+#lifeSpanTable {
+    font-size: 11px;
+    table-layout: fixed;
+    width: 100%;
+}
 #lifeSpanTable thead th {
     background: #f4f6f9 !important;
     position: sticky;
     top: 0;
     z-index: 2;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    font-size: 11px;
+    padding: 4px 6px;
+    text-align: center;
 }
-.lifespan-badge { font-size: 12px; white-space: nowrap; }
+#lifeSpanTable tbody td {
+    padding: 3px 6px;
+    vertical-align: middle;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+/* Fix column widths */
+/* # */
+#lifeSpanTable td:nth-child(1),
+#lifeSpanTable th:nth-child(1) {
+    width: 30px;
+    min-width: 30px;
+}
+
+/* Name */
+#lifeSpanTable td:nth-child(2),
+#lifeSpanTable th:nth-child(2) {
+    width: 140px;
+    min-width: 110px;
+    max-width: 220px;
+}
+
+/* Type Shop */
+#lifeSpanTable td:nth-child(3),
+#lifeSpanTable th:nth-child(3) {
+    width: 120px;
+    min-width: 120px;
+}
+
+/* Group */
+#lifeSpanTable td:nth-child(4),
+#lifeSpanTable th:nth-child(4) {
+    
+    width: 90px;
+    min-width: 130px;
+}
+
+/* Status */
+#lifeSpanTable td:nth-child(5),
+#lifeSpanTable th:nth-child(5) {
+    width: 50px;
+    min-width: 80px;
+}
+
+/* System Live Date */
+#lifeSpanTable td:nth-child(6),
+#lifeSpanTable th:nth-child(6) {
+    width: 70px;
+    min-width: 100px;
+}
+
+/* System Cancel Date */
+#lifeSpanTable td:nth-child(7),
+#lifeSpanTable th:nth-child(7) {
+    width: 70px;
+    min-width: 110px;
+}
+
+
+#lifeSpanTable td:nth-child(8),
+#lifeSpanTable th:nth-child(8) {
+    width: 70px;
+    min-width: 110px;
+}
+#lifeSpanTable td:nth-child(9),
+#lifeSpanTable th:nth-child(9) {
+    width: 70px;
+    min-width: 110px;
+}
+#lifeSpanTable td:nth-child(10),
+#lifeSpanTable th:nth-child(10) {
+    width: 110px;
+    min-width: 110px;
+}
+#lifeSpanTable td:nth-child(11),
+#lifeSpanTable th:nth-child(11) {
+    width: 180px;
+    min-width: 140px;
+    max-width: 180px;
+}
+#lifeSpanTable td:nth-child(12),
+#lifeSpanTable th:nth-child(12) {
+    width: 50px;
+    min-width: 90px;
+}
+.lifespan-badge { font-size: 11px; white-space: nowrap; }
 .lifespan-badge .ls-y { color: #dc3545; font-weight: 600; }
 .lifespan-badge .ls-m { color: #fd7e14; font-weight: 600; }
 .lifespan-badge .ls-d { color: #007bff; font-weight: 600; }
@@ -277,18 +378,47 @@ global $db, $activeMenu;
 .border-left-danger  { border-left: 4px solid #dc3545 !important; }
 .border-left-warning { border-left: 4px solid #ffc107 !important; }
 .text-xs { font-size: 0.7rem; }
+.active-subs-cell {
+    max-width: 180px;
+    min-width: 140px;
+    overflow-x: visible;
+    overflow-y: visible;
+    white-space: normal;
+}
+.active-subs-cell .subs-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+.active-subs-cell .subs-item {
+    display: inline-block;
+    font-size: 10px;
+    line-height: 1.2;
+    background: #eef3ff;
+    color: #2d4a7a;
+    border: 1px solid #c5d5f0;
+    border-radius: 3px;
+    padding: 1px 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.active-subs-cell .subs-item:nth-child(odd) {
+    background: #f0f7f0;
+    color: #2a6a3a;
+    border-color: #b8dcc5;
+}
 </style>
 
 <script>
 (function() {
     // Column ID mappings per country for life span dates
     var lifeSpanCols = {
-        AU: { sysLive: 'live_date', sysCancel: 'date_mm26gw5p', mktLive: 'date_mkzs3896', mktCancel: 'date_mm26kg00' },
-        TH: { sysLive: 'live_date', sysCancel: 'date_mm267zrn', mktLive: 'date_mkzsde4j', mktCancel: 'date_mm26989b' },
-        CA: { sysLive: 'live_date', sysCancel: 'date_mm26scn7', mktLive: 'date_mkzs7czr', mktCancel: 'date_mm26zjma' },
-        UK: { sysLive: 'live_date', sysCancel: 'date_mm26rep1', mktLive: 'date_mkzswq7q', mktCancel: 'date_mm26d16s' },
-        US: { sysLive: 'live_date', sysCancel: 'date_mm26ntpg', mktLive: 'date_mkzs790g', mktCancel: 'date_mm26jsve' },
-        NZ: { sysLive: 'live_date', sysCancel: 'date_mm26gdzw', mktLive: 'date_mkzs82rp', mktCancel: 'date_mm26tp5b' }
+        AU: { sysLive: 'live_date', sysCancel: 'date_mm26gw5p', mktLive: 'date_mkzs3896', mktCancel: 'date_mm26kg00', activeSubs: 'connect_boards06' },
+        TH: { sysLive: 'live_date', sysCancel: 'date_mm267zrn', mktLive: 'date_mkzsde4j', mktCancel: 'date_mm26989b', activeSubs: 'connect_boards06' },
+        CA: { sysLive: 'live_date', sysCancel: 'date_mm26scn7', mktLive: 'date_mkzs7czr', mktCancel: 'date_mm26zjma', activeSubs: 'connect_boards06' },
+        UK: { sysLive: 'live_date', sysCancel: 'date_mm26rep1', mktLive: 'date_mkzswq7q', mktCancel: 'date_mm26d16s', activeSubs: 'connect_boards06' },
+        US: { sysLive: 'live_date', sysCancel: 'date_mm26ntpg', mktLive: 'date_mkzs790g', mktCancel: 'date_mm26jsve', activeSubs: 'connect_boards06' },
+        NZ: { sysLive: 'live_date', sysCancel: 'date_mm26gdzw', mktLive: 'date_mkzs82rp', mktCancel: 'date_mm26tp5b', activeSubs: 'connect_boards06' }
     };
 
     var allRows = [];
@@ -366,6 +496,18 @@ global $db, $activeMenu;
         return '<span class="lifespan-badge"><span class="ls-d">' + totalDays.toLocaleString() + '</span> Day</span>';
     }
 
+    function formatActiveSubs(val) {
+        if (!val) return '<span class="text-muted">—</span>';
+        var parts = val.split(',');
+        var html = '';
+        for (var i = 0; i < parts.length; i++) {
+            var t = parts[i].trim();
+            if (t) html += '<span class="subs-item">' + escHtml(t) + '</span>';
+        }
+        if (!html) return '<span class="text-muted">—</span>';
+        return '<div class="subs-wrap">' + html + '</div>';
+    }
+
     function escHtml(str) {
         if (!str) return '';
         var div = document.createElement('div');
@@ -380,7 +522,7 @@ global $db, $activeMenu;
 
         document.getElementById('loadingWrap').style.display = '';
         document.getElementById('btnLoad').disabled = true;
-        document.getElementById('lifeSpanTbody').innerHTML = '<tr><td colspan="11" class="text-center py-4"><i class="bi bi-arrow-repeat spin mr-1"></i> Loading data from Monday.com...</td></tr>';
+        document.getElementById('lifeSpanTbody').innerHTML = '<tr><td colspan="12" class="text-center py-4"><i class="bi bi-arrow-repeat spin mr-1"></i> Loading data from Monday.com...</td></tr>';
         document.getElementById('btnExport').style.display = 'none';
         document.getElementById('conditionFilterCard').style.display = 'none';
         document.getElementById('summarySection').style.display = 'none';
@@ -389,7 +531,7 @@ global $db, $activeMenu;
             .then(function(r) { return r.json(); })
             .then(function(json) {
                 if (json.error) {
-                    document.getElementById('lifeSpanTbody').innerHTML = '<tr><td colspan="11" class="text-center text-danger py-4">Error: ' + json.error + '</td></tr>';
+                    document.getElementById('lifeSpanTbody').innerHTML = '<tr><td colspan="12" class="text-center text-danger py-4">Error: ' + json.error + '</td></tr>';
                     return;
                 }
                 allRows = [];
@@ -405,8 +547,9 @@ global $db, $activeMenu;
                         var sysCancel = getColVal(item, c.sysCancel);
                         var mktLive   = getColVal(item, c.mktLive);
                         var mktCancel = getColVal(item, c.mktCancel);
-                        var typeShop  = getColVal(item, 'color1');
-                        var group     = item.group_title || '';
+                        var typeShop    = getColVal(item, 'color1');
+                        var activeSubs  = getColVal(item, c.activeSubs);
+                        var group       = item.group_title || '';
                         allRows.push({
                             name: item.name,
                             country: detectedCC,
@@ -415,6 +558,7 @@ global $db, $activeMenu;
                             rowStatus: getStatus(group, sysLive, mktLive),
                             sysLive: sysLive, sysCancel: sysCancel,
                             mktLive: mktLive, mktCancel: mktCancel,
+                            activeSubs: activeSubs,
                             mktPhase: getMarketingPhase(group, sysLive, sysCancel, mktLive, mktCancel),
                             lifeSpan: calculateLifeSpan(group, sysLive, mktLive, sysCancel, mktCancel),
                             hasSysPair: !!(sysLive && sysCancel),
@@ -433,7 +577,7 @@ global $db, $activeMenu;
                 applyAllFilters();
             })
             .catch(function(err) {
-                document.getElementById('lifeSpanTbody').innerHTML = '<tr><td colspan="11" class="text-center text-danger py-4">Fetch error: ' + err + '</td></tr>';
+                document.getElementById('lifeSpanTbody').innerHTML = '<tr><td colspan="12" class="text-center text-danger py-4">Fetch error: ' + err + '</td></tr>';
             })
             .finally(function() {
                 document.getElementById('loadingWrap').style.display = 'none';
@@ -443,15 +587,22 @@ global $db, $activeMenu;
 
     // === Populate dynamic filter dropdowns ===
     function populateFilterDropdowns() {
-        var countries = {}, groups = {}, types = {};
+        var countries = {}, groups = {}, types = {}, subs = {};
         allRows.forEach(function(r) {
             if (r.country) countries[r.country] = true;
             if (r.group) groups[r.group] = true;
             if (r.typeShop) types[r.typeShop] = true;
+            if (r.activeSubs) {
+                r.activeSubs.split(',').forEach(function(s) {
+                    var t = s.trim();
+                    if (t) subs[t] = true;
+                });
+            }
         });
         fillSelect('cfCountry', countries);
         fillSelect('cfGroup', groups);
         fillSelect('cfTypeShop', types);
+        fillSelect('cfActiveSubs', subs);
     }
 
     function fillSelect(id, obj) {
@@ -490,12 +641,46 @@ global $db, $activeMenu;
             // Country
             if (cfCountry !== 'ALL' && r.country !== cfCountry) return false;
             // System / Marketing
-            if (cfSysMkt === 'system' && !r.hasSysPair) return false;
-            if (cfSysMkt === 'marketing' && !r.hasMktPair) return false;
+            if (cfSysMkt === 'system') {
+                var hasSystem = false;
+                if (!r.activeSubs || r.activeSubs.trim() === '') {
+                    if (r.hasSysPair) hasSystem = true;
+                } else {
+                    var sysKeywords = ['System', 'Bundle', 'Website', 'Hosting'];
+                    var sysLower = r.activeSubs.toLowerCase();
+                    for (var sk = 0; sk < sysKeywords.length; sk++) {
+                        if (sysLower.indexOf(sysKeywords[sk].toLowerCase()) !== -1) { hasSystem = true; break; }
+                    }
+                }
+                if (!hasSystem) return false;
+            }
+            if (cfSysMkt === 'marketing') {
+                var hasMarketing = false;
+                if (!r.activeSubs || r.activeSubs.trim() === '') {
+                    // ถ้า Active Subscription ว่าง ให้ดูจาก Marketing Live/Cancel Date
+                    if (r.hasMktPair) hasMarketing = true;
+                } else {
+                    // ถ้ามี Active Subscription ให้เช็คคำสำคัญ
+                    var keywords = ['Ad', 'Solo', 'Marketing', 'Social', 'Bundle'];
+                    var subs = r.activeSubs.toLowerCase();
+                    for (var k = 0; k < keywords.length; k++) {
+                        if (subs.indexOf(keywords[k].toLowerCase()) !== -1) {
+                            hasMarketing = true;
+                            break;
+                        }
+                    }
+                }
+                if (!hasMarketing) return false;
+            }
             // Group
             if (cfGroup !== 'ALL' && r.group !== cfGroup) return false;
             // Type Shop
             if (cfTypeShop !== 'ALL' && r.typeShop !== cfTypeShop) return false;
+            // Active Subscription
+            var cfActiveSubs = document.getElementById('cfActiveSubs').value;
+            if (cfActiveSubs !== 'ALL') {
+                if (!r.activeSubs || r.activeSubs.indexOf(cfActiveSubs) === -1) return false;
+            }
             // Status
             var cfStatus = document.getElementById('cfStatus').value;
             if (cfStatus !== 'ALL' && r.rowStatus !== cfStatus) return false;
@@ -526,7 +711,7 @@ global $db, $activeMenu;
     function renderTable(rows) {
         var tbody = document.getElementById('lifeSpanTbody');
         if (rows.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="11" class="text-center text-muted py-4">No data found.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="12" class="text-center text-muted py-4">No data found.</td></tr>';
             document.getElementById('btnExport').style.display = 'none';
             return;
         }
@@ -548,6 +733,7 @@ global $db, $activeMenu;
                 '<td>' + escHtml(r.mktLive) + '</td>' +
                 '<td>' + escHtml(r.mktCancel) + '</td>' +
                 '<td class="text-center">' + phaseHtml + '</td>' +
+                '<td class="active-subs-cell">' + formatActiveSubs(r.activeSubs) + '</td>' +
                 '<td class="text-center">' + formatLifeSpan(r.lifeSpan) + '</td>' +
                 '</tr>';
         });
@@ -579,14 +765,34 @@ global $db, $activeMenu;
             var cc = r.country || '(unknown)';
             byCountry[cc] = (byCountry[cc] || 0) + 1;
 
-            // System detail
-            if (r.sysLive || r.sysCancel) {
+            // System detail (same logic as filter)
+            var isSys = false;
+            if (!r.activeSubs || r.activeSubs.trim() === '') {
+                if (r.sysLive || r.sysCancel) isSys = true;
+            } else {
+                var sysKw = ['system', 'bundle', 'website', 'hosting'];
+                var sysLw = r.activeSubs.toLowerCase();
+                for (var sk2 = 0; sk2 < sysKw.length; sk2++) {
+                    if (sysLw.indexOf(sysKw[sk2]) !== -1) { isSys = true; break; }
+                }
+            }
+            if (isSys) {
                 sysTotal++;
                 if (r.rowStatus === 'Live') sysLive++;
                 if (r.rowStatus === 'Cancel') sysCancel++;
             }
-            // Marketing detail
-            if (r.mktLive || r.mktCancel) {
+            // Marketing detail (same logic as filter)
+            var isMkt = false;
+            if (!r.activeSubs || r.activeSubs.trim() === '') {
+                if (r.mktLive || r.mktCancel) isMkt = true;
+            } else {
+                var mktKeywords = ['ad', 'solo', 'marketing', 'social', 'bundle'];
+                var subsLower = r.activeSubs.toLowerCase();
+                for (var mk = 0; mk < mktKeywords.length; mk++) {
+                    if (subsLower.indexOf(mktKeywords[mk]) !== -1) { isMkt = true; break; }
+                }
+            }
+            if (isMkt) {
                 mktTotal++;
                 if (r.rowStatus === 'Live') mktLive++;
                 if (r.rowStatus === 'Cancel') mktCancel++;
@@ -627,7 +833,7 @@ global $db, $activeMenu;
     function exportCSV() {
         var rows = filteredRows.length > 0 ? filteredRows : allRows;
         if (rows.length === 0) return;
-        var headers = ['#','Name','Type Shop','Group','Status','System Live Date','System Cancel Date','Marketing Live Date','Marketing Cancel Date','Marketing Phase','Life Span (days)'];
+        var headers = ['#','Name','Type Shop','Group','Status','System Live Date','System Cancel Date','Marketing Live Date','Marketing Cancel Date','Marketing Phase','Active Subscriptions','Life Span (days)'];
         var csvRows = [headers.join(',')];
         rows.forEach(function(r, i) {
             csvRows.push([
@@ -638,6 +844,7 @@ global $db, $activeMenu;
                 r.rowStatus,
                 r.sysLive, r.sysCancel, r.mktLive, r.mktCancel,
                 r.mktPhase === 'active' ? 'Active' : r.mktPhase === 'completed' ? 'Completed' : '',
+                '"' + (r.activeSubs || '').replace(/"/g, '""') + '"',
                 r.lifeSpan !== null ? r.lifeSpan : ''
             ].join(','));
         });
@@ -657,6 +864,7 @@ global $db, $activeMenu;
         document.getElementById('cfTypeShop').value = 'ALL';
         document.getElementById('cfStatus').value = 'ALL';
         document.getElementById('cfPhase').value = 'ALL';
+        document.getElementById('cfActiveSubs').value = 'ALL';
         document.getElementById('searchInput').value = '';
         applyAllFilters();
     }
@@ -668,7 +876,7 @@ global $db, $activeMenu;
         searchTimer = setTimeout(applyAllFilters, 300);
     });
 
-    ['cfLifeSpan','cfCountry','cfSysMkt','cfGroup','cfTypeShop','cfStatus','cfPhase'].forEach(function(id) {
+    ['cfLifeSpan','cfCountry','cfSysMkt','cfGroup','cfTypeShop','cfStatus','cfPhase','cfActiveSubs'].forEach(function(id) {
         document.getElementById(id).addEventListener('change', applyAllFilters);
     });
 

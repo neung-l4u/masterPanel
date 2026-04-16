@@ -15,12 +15,12 @@ $countryBoards = [
 
 // Life Span extra column IDs per country
 $lifeSpanColumns = [
-    'AU' => ['live_date', 'date_mm26gw5p', 'date_mkzs3896', 'date_mm26kg00'],
-    'TH' => ['live_date', 'date_mm267zrn', 'date_mkzsde4j', 'date_mm26989b'],
-    'CA' => ['live_date', 'date_mm26scn7', 'date_mkzs7czr', 'date_mm26zjma'],
-    'UK' => ['live_date', 'date_mm26rep1', 'date_mkzswq7q', 'date_mm26d16s'],
-    'US' => ['live_date', 'date_mm26ntpg', 'date_mkzs790g', 'date_mm26jsve'],
-    'NZ' => ['live_date', 'date_mm26gdzw', 'date_mkzs82rp', 'date_mm26tp5b'],
+    'AU' => ['live_date', 'date_mm26gw5p', 'date_mkzs3896', 'date_mm26kg00', 'connect_boards06'],
+    'TH' => ['live_date', 'date_mm267zrn', 'date_mkzsde4j', 'date_mm26989b', 'connect_boards06'],
+    'CA' => ['live_date', 'date_mm26scn7', 'date_mkzs7czr', 'date_mm26zjma', 'connect_boards06'],
+    'UK' => ['live_date', 'date_mm26rep1', 'date_mkzswq7q', 'date_mm26d16s', 'connect_boards06'],
+    'US' => ['live_date', 'date_mm26ntpg', 'date_mkzs790g', 'date_mm26jsve', 'connect_boards06'],
+    'NZ' => ['live_date', 'date_mm26gdzw', 'date_mkzs82rp', 'date_mm26tp5b', 'connect_boards06'],
 ];
 
 // Main Board ID (all countries in one board)
@@ -102,6 +102,9 @@ function fetchSingleBoard($url, $headers, $boardId, $country, $lifeSpanColumns) 
           column_values (ids: [' . $columnIds . ']) {
             id
             text
+            ... on BoardRelationValue {
+              display_value
+            }
           }
         }
       }
@@ -123,10 +126,25 @@ function fetchSingleBoard($url, $headers, $boardId, $country, $lifeSpanColumns) 
     $boardName = $board['name'];
     $groupCursors = [];
     
+    // Normalize board relation columns: copy display_value into text when text is empty
+    $normalizeItems = function(&$items) {
+        foreach ($items as &$item) {
+            if (isset($item['column_values'])) {
+                foreach ($item['column_values'] as &$col) {
+                    if (empty($col['text']) && !empty($col['display_value'])) {
+                        $col['text'] = $col['display_value'];
+                    }
+                }
+            }
+        }
+    };
+    
     foreach ($board['groups'] as $group) {
         $groupTitle = $group['title'];
         
-        foreach ($group['items_page']['items'] as $item) {
+        $groupItems = $group['items_page']['items'];
+        $normalizeItems($groupItems);
+        foreach ($groupItems as $item) {
             $item['group_title'] = $groupTitle;
             $item['board_name'] = $boardName;
             $allItems[] = $item;
@@ -155,6 +173,9 @@ function fetchSingleBoard($url, $headers, $boardId, $country, $lifeSpanColumns) 
       column_values (ids: [' . $columnIds . ']) {
         id
         text
+        ... on BoardRelationValue {
+          display_value
+        }
       }
     }
   }
@@ -167,7 +188,9 @@ function fetchSingleBoard($url, $headers, $boardId, $country, $lifeSpanColumns) 
             }
             
             if (isset($nextResult['data']['next_items_page'])) {
-                foreach ($nextResult['data']['next_items_page']['items'] as $item) {
+                $nextItems = $nextResult['data']['next_items_page']['items'];
+                $normalizeItems($nextItems);
+                foreach ($nextItems as $item) {
                     $item['group_title'] = $groupTitle;
                     $item['board_name'] = $boardName;
                     $allItems[] = $item;
