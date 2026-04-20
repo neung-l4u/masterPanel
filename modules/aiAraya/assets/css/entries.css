@@ -1,0 +1,148 @@
+.form-title {
+    font-weight: 600;
+    color: #0d6efd;
+    text-align: center;
+}
+
+.viewDetail {
+    cursor: pointer;
+    color: #0d6efd;
+}
+
+table.dataTable {
+    font-size: 0.9em;
+}
+
+table.dataTable th, table.dataTable thead td {
+    border-right: 1px solid #5e6a75;
+}
+
+.dt-buttons button {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 4px !important;
+}
+
+td > abbr[title]{
+    font-size:1em;
+    line-height:1em;
+    width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: "...";
+}
+
+.col_id { width: 5%; text-align: center; }
+.col_business { width: 25%; }
+.col_email { width: 25%; }
+.col_phone { width: 20%; }
+.col_date { width: 15%; text-align: center; }
+.col_detail { width: 10%; text-align: center; }
+
+/* Detail Modal */
+.detail-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.detail-row {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    width: 200px;
+    flex-shrink: 0;
+    font-weight: 600;
+    color: #0d6efd;
+    font-size: 0.88rem;
+}
+
+.detail-label i {
+    margin-right: 6px;
+    font-size: 0.92rem;
+}
+
+.detail-value {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.6;
+    word-break: break-word;
+}
+
+/* Boolean badges */
+.badge-yes {
+    color: #198754;
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.badge-yes i {
+    margin-right: 4px;
+}
+
+.badge-no {
+    color: #dc3545;
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.badge-no i {
+    margin-right: 4px;
+}
+
+.badge-voice {
+    color: #6f42c1;
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.badge-voice i {
+    margin-right: 4px;
+}
+
+@media (max-width: 576px) {
+    .detail-row {
+        flex-direction: column;
+        gap: 2px;
+    }
+    .detail-label {
+        width: 100%;
+    }
+}
+
+.my-tooltip.tooltip {
+  max-width: 320px;
+  background-color: #ffffff !important;
+  backdrop-filter: blur(6px);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  opacity: 1;
+  padding: 0 !important;
+}
+
+.my-tooltip.tooltip .tooltip-inner {
+  display: block;
+  max-width: 100% !important;
+  width: 100% !important;
+  white-space: normal !important;
+  word-wrap: break-word;
+  word-break: break-word;
+  padding: 12px 16px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  color: #000;
+  background-color: #ffffff !important;
+  text-align: left;
+}
+
