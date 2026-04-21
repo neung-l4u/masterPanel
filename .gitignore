@@ -153,3 +153,4 @@ out
 /api/yelp/cache/
 /modules/printer/assets/php/config.php
 /vendor/
+/api/aiAraya/stripe_webhook.php
