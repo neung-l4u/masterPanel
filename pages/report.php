@@ -9,8 +9,10 @@ $periodLabels = [
     'reportWeekly'  => ['icon' => 'bi-calendar-week',  'title' => 'Weekly Report',  'label' => 'Weekly'],
     'reportMonthly' => ['icon' => 'bi-calendar-month', 'title' => 'Monthly Report', 'label' => 'Monthly'],
     'reportYearly'  => ['icon' => 'bi-calendar3',      'title' => 'Yearly Report',  'label' => 'Yearly'],
+    'reportDate'    => ['icon' => 'bi-calendar-date',  'title' => 'Date Range Report', 'label' => 'Date'],
 ];
 $cur = $periodLabels[$reportType];
+$isSingle = ($reportType === 'reportDate');
 ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 
@@ -68,6 +70,12 @@ $cur = $periodLabels[$reportType];
                             <span class="text-muted" style="font-size:13px;">vs</span>
                             <span class="badge badge-success px-2 py-1">B</span>
                             <input type="month" id="filterB" class="form-control form-control-sm" style="width:150px;" value="<?php echo date('Y-m'); ?>">
+                        <?php } elseif ($reportType == 'reportDate') { ?>
+                            <span class="badge badge-primary px-2 py-1">From</span>
+                            <input type="date" id="filterA" class="form-control form-control-sm" style="width:150px;" value="<?php echo date('Y-m-d', strtotime('-7 days')); ?>">
+                            <span class="text-muted" style="font-size:13px;">to</span>
+                            <span class="badge badge-success px-2 py-1">To</span>
+                            <input type="date" id="filterB" class="form-control form-control-sm" style="width:150px;" value="<?php echo date('Y-m-d'); ?>">
                         <?php } elseif ($reportType == 'reportYearly') { ?>
                             <span class="badge badge-primary px-2 py-1">A</span>
                             <select id="filterA" class="form-control form-control-sm" style="width:100px;">
@@ -110,8 +118,12 @@ $cur = $periodLabels[$reportType];
 
             <!-- Period Labels -->
             <div class="row mb-3">
-                <div class="col-6"><div class="rpt-period-label rpt-period-a"><i class="bi bi-calendar3 mr-1"></i> <span id="periodLabelA">Period A</span></div></div>
-                <div class="col-6"><div class="rpt-period-label rpt-period-b"><i class="bi bi-calendar3 mr-1"></i> <span id="periodLabelB">Period B</span></div></div>
+                <?php if ($isSingle) { ?>
+                    <div class="col-12"><div class="rpt-period-label rpt-period-a"><i class="bi bi-calendar3 mr-1"></i> <span id="periodLabelA">Period</span></div></div>
+                <?php } else { ?>
+                    <div class="col-6"><div class="rpt-period-label rpt-period-a"><i class="bi bi-calendar3 mr-1"></i> <span id="periodLabelA">Period A</span></div></div>
+                    <div class="col-6"><div class="rpt-period-label rpt-period-b"><i class="bi bi-calendar3 mr-1"></i> <span id="periodLabelB">Period B</span></div></div>
+                <?php } ?>
             </div>
 
             <!-- Comparison Summary Cards -->
@@ -183,6 +195,14 @@ $cur = $periodLabels[$reportType];
                 <div class="card-header"><h3 class="card-title"><i class="bi bi-table mr-1"></i> Country Comparison</h3></div>
                 <div class="card-body p-0" style="overflow-x:auto;">
                     <table class="table table-sm table-hover mb-0" id="tblCountry">
+                        <?php if ($isSingle) { ?>
+                        <thead class="thead-dark"><tr>
+                            <th>Country</th>
+                            <th class="text-center">Active</th>
+                            <th class="text-center">Signup</th>
+                            <th class="text-center">Unsub</th>
+                        </tr></thead>
+                        <?php } else { ?>
                         <thead class="thead-dark"><tr>
                             <th>Country</th>
                             <th class="text-center" colspan="3">Period A</th>
@@ -194,6 +214,7 @@ $cur = $periodLabels[$reportType];
                             <th class="text-center">Active</th><th class="text-center">Signup</th><th class="text-center">Unsub</th>
                             <th class="text-center">Signup</th><th class="text-center">Unsub</th>
                         </tr></thead>
+                        <?php } ?>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -203,6 +224,13 @@ $cur = $periodLabels[$reportType];
                 <div class="card-header"><h3 class="card-title"><i class="bi bi-table mr-1"></i> Customer Type Comparison</h3></div>
                 <div class="card-body p-0" style="overflow-x:auto;">
                     <table class="table table-sm table-hover mb-0" id="tblType">
+                        <?php if ($isSingle) { ?>
+                        <thead class="thead-dark"><tr>
+                            <th>Type</th>
+                            <th class="text-center">Signup</th>
+                            <th class="text-center">Unsub</th>
+                        </tr></thead>
+                        <?php } else { ?>
                         <thead class="thead-dark"><tr>
                             <th>Type</th>
                             <th class="text-center" colspan="2">Period A</th>
@@ -214,6 +242,7 @@ $cur = $periodLabels[$reportType];
                             <th class="text-center">Signup</th><th class="text-center">Unsub</th>
                             <th class="text-center">Signup</th><th class="text-center">Unsub</th>
                         </tr></thead>
+                        <?php } ?>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -251,10 +280,17 @@ $cur = $periodLabels[$reportType];
     .diff-up { color:#059669; font-weight:600; }
     .diff-down { color:#dc2626; font-weight:600; }
     .diff-zero { color:#94a3b8; }
+
+<?php if ($isSingle) { ?>
+    /* Date Range mode: show single period only, hide B column & diff */
+    #reportDashboard .rpt-cmp-card .d-flex > div:not(:first-child) { display:none !important; }
+    #reportDashboard .rpt-cmp-val small.badge { display:none; }
+<?php } ?>
 </style>
 
 <script>
     const reportType = '<?php echo $reportType; ?>';
+    const isSinglePeriod = <?php echo $isSingle ? 'true' : 'false'; ?>;
     const COLORS = ['#0361D1','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16','#f97316','#6366f1'];
     let chartCountry = null;
     let chartType = null;
@@ -271,6 +307,7 @@ $cur = $periodLabels[$reportType];
         if (reportType === 'reportWeekly') return 'api/monday/selectWeek/table/makeTableReport.php';
         if (reportType === 'reportMonthly') return 'api/monday/selectMonth/table/makeTableReportMonth.php';
         if (reportType === 'reportYearly') return 'api/monday/selectYear/table/makeTableReportYear.php';
+        if (reportType === 'reportDate') return 'api/monday/selectDate/table/makeTableReportDate.php';
         return '';
     }
 
@@ -296,6 +333,22 @@ $cur = $periodLabels[$reportType];
         document.getElementById('reportPlaceholder').style.display = 'none';
         document.getElementById('reportDashboard').style.display = 'none';
         document.getElementById('reportLoading').style.display = 'block';
+
+        if (isSinglePeriod) {
+            $.ajax({
+                url: base + '?start=' + params.a + '&end=' + params.b + '&format=json',
+                method: 'GET', dataType: 'json'
+            }).done(function(d) {
+                document.getElementById('reportLoading').style.display = 'none';
+                document.getElementById('reportDashboard').style.display = 'block';
+                renderSingleRange(d);
+            }).fail(function(xhr, status, error) {
+                document.getElementById('reportLoading').style.display = 'none';
+                document.getElementById('reportDashboard').style.display = 'block';
+                document.getElementById('tblCountry').querySelector('tbody').innerHTML = '<tr><td colspan="4" class="text-center text-danger py-3">Failed to load: ' + error + '</td></tr>';
+            });
+            return;
+        }
 
         var reqA = $.ajax({ url: base + '?day=' + params.a + '&format=json', method:'GET', dataType:'json' });
         var reqB = $.ajax({ url: base + '?day=' + params.b + '&format=json', method:'GET', dataType:'json' });
@@ -476,5 +529,97 @@ $cur = $periodLabels[$reportType];
             + '<td class="text-center">' + diffEl(totSB-totSA, false) + '</td><td class="text-center">' + diffEl(totUB-totUA, true) + '</td></tr>';
 
         document.getElementById('tblType').querySelector('tbody').innerHTML = html;
+    }
+
+    // ===== Single-range renderer (Date Range mode) =====
+    function renderSingleRange(d) {
+        // Period label
+        document.getElementById('periodLabelA').textContent =
+            d.period.start.substring(0,10) + ' → ' + d.period.end.substring(0,10);
+
+        // Summary cards (only A values shown; B + diff hidden by CSS)
+        var t = d.totals;
+        document.getElementById('cardActiveA').textContent = fmtN(t.active);
+        document.getElementById('cardSignupA').textContent = fmtN(t.signup);
+        document.getElementById('cardUnsubA').textContent  = fmtN(t.drop);
+        document.getElementById('cardNetA').textContent    = (t.percentChange >= 0 ? '+' : '') + t.percentChange + '%';
+
+        // Country chart: Signup + Unsub per country
+        var ctx = document.getElementById('chartCountry').getContext('2d');
+        if (chartCountry) chartCountry.destroy();
+        var rd = d.reportData || [];
+        var labels = rd.map(function(r){ return r.country; });
+        chartCountry = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label:'Signup', data: rd.map(function(r){ return r.signup; }), backgroundColor:'rgba(3,97,209,0.7)', borderRadius:4 },
+                    { label:'Unsub',  data: rd.map(function(r){ return r.drop; }),   backgroundColor:'rgba(239,68,68,0.7)', borderRadius:4 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position:'top', labels:{ usePointStyle:true, padding:12, font:{size:10} } } },
+                scales: { y: { beginAtZero:true, grid:{ color:'rgba(0,0,0,0.05)' } }, x: { grid:{ display:false } } }
+            }
+        });
+
+        // Customer Type chart: Active by type
+        var ctxT = document.getElementById('chartType').getContext('2d');
+        if (chartType) chartType.destroy();
+        var ct = d.customerType || {};
+        var tLabels = Object.keys(ct).filter(function(k){ return k !== 'Unknown'; }).sort();
+        if (tLabels.length === 0) {
+            ctxT.canvas.parentElement.innerHTML = '<div class="text-center text-muted py-5"><i class="bi bi-pie-chart" style="font-size:2rem;opacity:0.3;"></i><p class="mt-2">No data</p></div>';
+        } else {
+            chartType = new Chart(ctxT, {
+                type: 'bar',
+                data: {
+                    labels: tLabels,
+                    datasets: [{ label:'Active', data: tLabels.map(function(k){ return ct[k]||0; }), backgroundColor:'rgba(16,185,129,0.7)', borderRadius:4 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                    plugins: { legend: { position:'top', labels:{ usePointStyle:true, padding:12, font:{size:10} } } },
+                    scales: { x: { beginAtZero:true } }
+                }
+            });
+        }
+
+        // Country table: Country | Active | Signup | Unsub
+        var html = '';
+        var tot = { active:0, signup:0, drop:0 };
+        rd.forEach(function(r) {
+            tot.active += r.active; tot.signup += r.signup; tot.drop += r.drop;
+            html += '<tr><td><b>' + r.country + '</b></td>'
+                + '<td class="text-center">' + fmtN(r.active) + '</td>'
+                + '<td class="text-center">' + fmtN(r.signup) + '</td>'
+                + '<td class="text-center">' + fmtN(r.drop)   + '</td></tr>';
+        });
+        html += '<tr class="font-weight-bold" style="background:#f1f5f9;"><td>Total</td>'
+            + '<td class="text-center">' + fmtN(tot.active) + '</td>'
+            + '<td class="text-center">' + fmtN(tot.signup) + '</td>'
+            + '<td class="text-center">' + fmtN(tot.drop)   + '</td></tr>';
+        document.getElementById('tblCountry').querySelector('tbody').innerHTML = html;
+
+        // Customer Type table: Type | Signup | Unsub
+        var s = d.signupByType || {}, u = d.unsubByType || {};
+        var typeMap = {};
+        Object.keys(s).forEach(function(k){ if(k!=='Unknown') typeMap[k] = true; });
+        Object.keys(u).forEach(function(k){ if(k!=='Unknown') typeMap[k] = true; });
+        var types = Object.keys(typeMap).sort();
+        var html2 = '', ts = 0, tu = 0;
+        types.forEach(function(tn) {
+            var sv = s[tn]||0, uv = u[tn]||0;
+            ts += sv; tu += uv;
+            html2 += '<tr><td><b>' + tn + '</b></td>'
+                + '<td class="text-center">' + sv + '</td>'
+                + '<td class="text-center">' + uv + '</td></tr>';
+        });
+        html2 += '<tr class="font-weight-bold" style="background:#f1f5f9;"><td>Total</td>'
+            + '<td class="text-center">' + ts + '</td>'
+            + '<td class="text-center">' + tu + '</td></tr>';
+        document.getElementById('tblType').querySelector('tbody').innerHTML = html2;
     }
 </script>

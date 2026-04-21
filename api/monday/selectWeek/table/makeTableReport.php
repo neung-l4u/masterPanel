@@ -5,6 +5,7 @@ ini_set('display_errors', 0);
 
 require_once '../../../../assets/db/db.php';
 require_once '../../../../assets/db/initDB.php';
+require_once __DIR__ . '/../../pickSnapshot.php';
 
 $day = !empty($_GET['day']) ? $_GET['day'] : date('Y-m-d');
 
@@ -37,19 +38,15 @@ if (empty($files)) {
     die("JSON file not found");
 }
 
-// Sort by filename descending (filename contains timestamp)
-rsort($files);
-
-if (!empty($files2)) {
-    rsort($files2);
-}
-
-$latestFile = $files[0];
+// Pick snapshots whose timestamp is closest to (but not after) the period's endDate
+// so historical weeks show the Active state that was current at the time the
+// Weekly Summary email was sent, rather than always the most recent snapshot.
+$latestFile = pickSnapshotForPeriod($files, $endDate);
 $jsonData = json_decode(file_get_contents($latestFile), true);
 
 $jsonData2 = null;
 if (!empty($files2)) {
-    $latestFile2 = $files2[0];
+    $latestFile2 = pickSnapshotForPeriod($files2, $endDate);
     $jsonData2 = json_decode(file_get_contents($latestFile2), true);
 }
 

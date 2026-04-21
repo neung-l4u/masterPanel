@@ -17,6 +17,7 @@ try {
     exit;
 }
 
+$shopName = !empty($_REQUEST['shopName']) ? $_REQUEST['shopName'] : (!empty($_POST['shopName']) ? $_POST['shopName'] : null);
 $stripeID = !empty($_REQUEST['stripeID']) ? $_REQUEST['stripeID'] : (!empty($_POST['stripeID']) ? $_POST['stripeID'] : null);
 $customerEmail = !empty($_REQUEST['customerEmail']) ? $_REQUEST['customerEmail'] : (!empty($_POST['customerEmail']) ? $_POST['customerEmail'] : null);
 
@@ -32,7 +33,7 @@ if (!$stripeID || !$customerEmail) {
 }
 
 try {
-    $db->query('INSERT IGNORE INTO order_tracking (stripeID, customerEmail, statusUser, reminderStep) VALUES (?, ?, ?, ?)', $stripeID, $customerEmail, 'pending', 0);
+    $db->query('INSERT IGNORE INTO order_tracking (shopName, stripeID, customerEmail, statusUser, reminderStep) VALUES (?, ?, ?, ?, ?)', $shopName, $stripeID, $customerEmail, 'pending', 0);
 
     if ($db->affectedRows() > 0) {
         echo json_encode([

@@ -1,0 +1,574 @@
+[16-Apr-2026 02:10:40 UTC] PHP Warning:  require_once(../../assets/db/initDB_server.php): Failed to open stream: No such file or directory in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:10:40 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../assets/db/initDB_server.php' (include_path='.:/opt/alt/php85/usr/share/pear:/opt/alt/php85/usr/share/php:/usr/share/pear:/usr/share/php') in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:10:46 UTC] PHP Warning:  require_once(../../assets/db/initDB_server.php): Failed to open stream: No such file or directory in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:10:46 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../assets/db/initDB_server.php' (include_path='.:/opt/alt/php85/usr/share/pear:/opt/alt/php85/usr/share/php:/usr/share/pear:/usr/share/php') in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:10:52 UTC] PHP Warning:  require_once(../../assets/db/initDB_server.php): Failed to open stream: No such file or directory in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:10:52 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../assets/db/initDB_server.php' (include_path='.:/opt/alt/php85/usr/share/pear:/opt/alt/php85/usr/share/php:/usr/share/pear:/usr/share/php') in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:14:07 UTC] PHP Warning:  require_once(../../assets/db/initDB_server.php): Failed to open stream: No such file or directory in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:14:07 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../assets/db/initDB_server.php' (include_path='.:/opt/alt/php85/usr/share/pear:/opt/alt/php85/usr/share/php:/usr/share/pear:/usr/share/php') in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:14:13 UTC] PHP Warning:  require_once(../../assets/db/initDB_server.php): Failed to open stream: No such file or directory in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:14:13 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../assets/db/initDB_server.php' (include_path='.:/opt/alt/php85/usr/share/pear:/opt/alt/php85/usr/share/php:/usr/share/pear:/usr/share/php') in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:14:19 UTC] PHP Warning:  require_once(../../assets/db/initDB_server.php): Failed to open stream: No such file or directory in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:14:19 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../assets/db/initDB_server.php' (include_path='.:/opt/alt/php85/usr/share/pear:/opt/alt/php85/usr/share/php:/usr/share/pear:/usr/share/php') in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:25:56 UTC] PHP Warning:  require_once(../../assets/db/initDB_server.php): Failed to open stream: No such file or directory in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:25:56 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../assets/db/initDB_server.php' (include_path='.:/opt/alt/php85/usr/share/pear:/opt/alt/php85/usr/share/php:/usr/share/pear:/usr/share/php') in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:26:01 UTC] PHP Warning:  require_once(../../assets/db/initDB_server.php): Failed to open stream: No such file or directory in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:26:01 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../assets/db/initDB_server.php' (include_path='.:/opt/alt/php85/usr/share/pear:/opt/alt/php85/usr/share/php:/usr/share/pear:/usr/share/php') in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:26:07 UTC] PHP Warning:  require_once(../../assets/db/initDB_server.php): Failed to open stream: No such file or directory in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 02:26:07 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../assets/db/initDB_server.php' (include_path='.:/opt/alt/php85/usr/share/pear:/opt/alt/php85/usr/share/php:/usr/share/pear:/usr/share/php') in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php on line 3
+[16-Apr-2026 10:09:57 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:10:03 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:10:08 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:19:57 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:20:03 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:20:08 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:25:13 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:25:19 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:25:24 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:27:30 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:27:36 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:27:42 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:29:59 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:30:05 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:30:11 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:33:25 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:33:31 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:33:37 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:35:31 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:35:37 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:35:42 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:45:15 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:45:21 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:45:27 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:46:03 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:46:09 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:46:14 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:46:32 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:46:38 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:46:44 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:49:46 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:49:52 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:49:57 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:50:41 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'stripeID' cannot be null in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:55:53 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:55:59 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 10:56:05 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bbaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:44:59 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '-' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:45:05 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '-' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:45:10 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '-' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:51:44 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '-' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:51:53 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '-' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:52:02 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '-' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:52:27 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '-' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:52:37 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '-' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(21): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:59:02 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bvvaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:59:07 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bvvaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 11:59:13 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'bvvaasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:00:26 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'aasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:00:31 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'aasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:00:37 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'aasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:04:50 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'aasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:04:56 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'aasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:05:02 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'aasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:05:46 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'aasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:05:52 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'aasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:05:57 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'aasssTest123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:07:57 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:08:03 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:08:09 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:08:50 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:08:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:09:01 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:11:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:12:01 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:12:07 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:14:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:15:01 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:15:07 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:18:37 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:18:42 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:18:48 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:19:50 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:19:56 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:20:02 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'abc007' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:25:20 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:25:26 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 12:25:31 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 13:48:25 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 13:48:31 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 13:48:36 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 13:50:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 13:51:01 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[16-Apr-2026 13:51:06 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'test123' for key 'PRIMARY' in /home/localfor/report.localforyou.com/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/api/aiAraya/aiFirstStep.php(34): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/assets/db/db.php on line 42
+[17-Apr-2026 02:57:46 UTC] [stripe_webhook] Unknown account: 
+[17-Apr-2026 02:59:51 UTC] [stripe_webhook] Unknown account: 
+[17-Apr-2026 05:10:43 UTC] [stripe_webhook] Signature mismatch
+[17-Apr-2026 05:31:35 UTC] [stripe_webhook][au] Received event: invoice.paid
+[17-Apr-2026 05:31:35 UTC] [stripe_webhook][au] Product matched: prod_ULi7yyxbKIHXeJ (currency: aud)
+[17-Apr-2026 05:31:35 UTC] [stripe_webhook][au] Passed filters — event: invoice.paid | stripeID: in_1TN4wcAVc0AdHeDfhcpZRmmy | email: bas@localforyou.com
+[17-Apr-2026 05:31:35 UTC] PHP Deprecated:  Function curl_close() is deprecated since 8.5, as it has no effect since PHP 8.0 in /home/localfor/report.localforyou.com/api/aiAraya/stripe_webhook.php on line 306
+[17-Apr-2026 05:31:35 UTC] [stripe_webhook][au] Forwarded to Make.com OK — event: invoice.paid | stripeID: in_1TN4wcAVc0AdHeDfhcpZRmmy
+[17-Apr-2026 05:42:51 UTC] [stripe_webhook][au] Received event: invoice.paid
+[17-Apr-2026 05:42:51 UTC] [stripe_webhook][au] Product matched: prod_ULi7yyxbKIHXeJ (currency: aud)
+[17-Apr-2026 05:42:51 UTC] [stripe_webhook][au] Passed filters — event: invoice.paid | stripeID: in_1TN58vAVc0AdHeDfHQfjYyvV | email: bas@localforyou.com
+[17-Apr-2026 05:42:54 UTC] PHP Deprecated:  Function curl_close() is deprecated since 8.5, as it has no effect since PHP 8.0 in /home/localfor/report.localforyou.com/api/aiAraya/stripe_webhook.php on line 306
+[17-Apr-2026 05:42:54 UTC] [stripe_webhook][au] Forwarded to Make.com OK — event: invoice.paid | stripeID: in_1TN58vAVc0AdHeDfHQfjYyvV
+[17-Apr-2026 06:16:41 UTC] [stripe_webhook] Missing Stripe-Signature header
+[17-Apr-2026 06:18:35 UTC] [stripe_webhook][au] Received event: invoice.paid
+[17-Apr-2026 06:18:35 UTC] [stripe_webhook][au] Product matched: prod_ULi7yyxbKIHXeJ (currency: aud)
+[17-Apr-2026 06:18:35 UTC] [stripe_webhook][au] Passed filters — event: invoice.paid | stripeID: cus_ULjvFkSsFcRv25 | email: bas@localforyou.com
+[17-Apr-2026 06:18:38 UTC] PHP Deprecated:  Function curl_close() is deprecated since 8.5, as it has no effect since PHP 8.0 in /home/localfor/report.localforyou.com/api/aiAraya/stripe_webhook.php on line 306
+[17-Apr-2026 06:18:38 UTC] [stripe_webhook][au] Forwarded to Make.com OK — event: invoice.paid | stripeID: cus_ULjvFkSsFcRv25
+[17-Apr-2026 09:00:24 UTC] [stripe_webhook][au] Received event: invoice.paid
+[17-Apr-2026 09:00:24 UTC] [stripe_webhook][au] product_id not in allowed list (event: invoice.paid, stripeID: cus_ULpPN8YTkZySK4)
+[17-Apr-2026 12:22:21 UTC] [stripe_webhook] Signature mismatch (manual)
+[17-Apr-2026 14:16:24 UTC] [stripe_webhook][au] Received event: invoice.paid
+[17-Apr-2026 14:16:24 UTC] [stripe_webhook][au] product_id not in allowed list (event: invoice.paid, stripeID: cus_ULv1vdLc1vCmNl)
+[17-Apr-2026 20:43:31 UTC] [stripe_webhook] Signature mismatch (manual)

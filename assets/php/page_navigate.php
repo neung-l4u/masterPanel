@@ -269,6 +269,14 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Report Yearly";
         break;
+    case "reportDate":
+        $showPage = "report.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportDate";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Report Date Comparison";
+        break;
     case "reportOverview":
         $showPage = "reportOverview.php";
         $activeMenu["lv1"] = "report";

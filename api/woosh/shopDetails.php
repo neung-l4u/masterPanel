@@ -36,9 +36,49 @@ $shopUrl = 'https://' . $domainPrefix . '.website.localforyouorders.com/';
 
 $dataCompanyInfo       = fetchApi($base . '/api/get_company_info');
 $dataProductCategories = fetchApi($base . '/api/get_website_products_category');
+$dataWebsiteSettings   = fetchApi($base . '/api/website_settings');
 
 $companyInfo       = $dataCompanyInfo['result'][0] ?? [];
 $productCategories = $dataProductCategories['result']['categories'] ?? [];
+$websiteSettings   = $dataWebsiteSettings['result'] ?? [];
+$firstOpening      = $websiteSettings['first_opening'] ?? [];
+$secondOpening     = $websiteSettings['second_opening'] ?? [];
+$isSecondOpening   = !empty($websiteSettings['is_second_opening']);
+
+// index opening by day name
+$firstOpeningByDay  = [];
+foreach ($firstOpening as $o) {
+    if (!empty($o['day'])) $firstOpeningByDay[strtolower($o['day'])] = $o;
+}
+$secondOpeningByDay = [];
+foreach ($secondOpening as $o) {
+    if (!empty($o['day'])) $secondOpeningByDay[strtolower($o['day'])] = $o;
+}
+
+function formatOpeningHours($day, $firstOpeningByDay, $secondOpeningByDay, $isSecondOpening)
+{
+    $day = strtolower($day);
+    $first = $firstOpeningByDay[$day] ?? null;
+    $second = $secondOpeningByDay[$day] ?? null;
+
+    if (!$first) return 'Closed';
+    if (!empty($first['closed'])) return 'Closed';
+
+    $from = $first['from'] ?? '';
+    $to   = $first['to'] ?? '';
+    if ($from === '' || $to === '' || ($from === '00:00' && $to === '00:00')) return 'Closed';
+
+    $text = $from . ' - ' . $to;
+    if ($isSecondOpening && $second && empty($second['closed'])) {
+        $sf = $second['from'] ?? '';
+        $st = $second['to'] ?? '';
+        if ($sf !== '' && $st !== '' && !($sf === '00:00' && $st === '00:00')) {
+            $text .= ', ' . $sf . ' - ' . $st;
+        }
+    }
+    return $text;
+}
+
 $products          = fetchAllProducts($base);
 
 // กรอง products ที่มี category เท่านั้น
@@ -205,13 +245,16 @@ $showcaseProducts = array_slice($productsWithImage, 0, min(6, count($productsWit
                 <h2 class="opening-title">Opening Hours</h2>
                 <p class="opening-subtext">Visit us during our operating hours. We look forward to serving you.</p>
                 <div class="opening-schedule">
-                    <div class="schedule-row"><span class="schedule-day">Monday: -</span><span class="schedule-time"></span></div>
-                    <div class="schedule-row"><span class="schedule-day">Tuesday: -</span><span class="schedule-time"></span></div>
-                    <div class="schedule-row"><span class="schedule-day">Wednesday: -</span><span class="schedule-time"></span></div>
-                    <div class="schedule-row"><span class="schedule-day">Thursday: -</span><span class="schedule-time"></span></div>
-                    <div class="schedule-row"><span class="schedule-day">Friday: -</span><span class="schedule-time"></span></div>
-                    <div class="schedule-row"><span class="schedule-day">Saturday: -</span><span class="schedule-time"></span></div>
-                    <div class="schedule-row"><span class="schedule-day">Sunday: -</span><span class="schedule-time"></span></div>
+                    <?php
+                    $daysOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                    foreach ($daysOrder as $d):
+                        $hours = formatOpeningHours($d, $firstOpeningByDay, $secondOpeningByDay, $isSecondOpening);
+                    ?>
+                        <div class="schedule-row">
+                            <span class="schedule-day"><?= ucfirst($d) ?></span>
+                            <span class="schedule-time"><?= htmlspecialchars($hours) ?></span>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
                 <div class="opening-contact">
                     <div class="opening-contact-item">

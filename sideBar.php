@@ -7,6 +7,13 @@ $teamID = $_SESSION['teamID'];
 $staffType = $_SESSION['staffType'] ?? 'fullTime';
 include ('assets/api/checkSession.php');
 ?>
+<style>
+    /* จัดลูกศรเมนูย่อยให้อยู่กึ่งกลางแนวตั้งกับข้อความ (เพราะ sidebar ใช้ .text-xs) */
+    .main-sidebar .nav-sidebar .nav-link > p > .right {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+</style>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="main.php" class="brand-link">
         <img src="assets/img/logo-login2.png" alt="L4U Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
@@ -156,7 +163,7 @@ include ('assets/api/checkSession.php');
                     <ul class="nav nav-treeview">
                         <?php if($userLevel<=3){ ?>
                         <li class="nav-item pl-2">
-                            <a href="main.php?p=reportWeekly" class="nav-link <?php echo in_array($activeMenu["lv2"], ['reportWeekly','reportMonthly','reportYearly']) ? "active":""; ?>">
+                            <a href="main.php?p=reportWeekly" class="nav-link <?php echo in_array($activeMenu["lv2"], ['reportWeekly','reportMonthly','reportYearly','reportDate']) ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-clipboard-data"></i>
                                 <p>Subscription Report</p>
                             </a>
