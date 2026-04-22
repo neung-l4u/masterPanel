@@ -930,7 +930,9 @@ function requestToPay() {
                 let fail = `<span class="badge bg-danger">Payment Fail!!</span>`;
                 $(fail).appendTo(".paymentResult");
                 res.message = "Payment step is fail"
-                alert("Payment step is fail");
+                // ดึงเหตุผลจริงจาก response แล้วแสดงใน fail modal (ไม่ใช้ alert แล้ว)
+                let failReason = extractPaymentError(res) || "Payment step is fail";
+                modalRespondAction('open', 'fail', failReason);
                 stripeRes = "Ajax Fail : " + stripeRes;
                 stripeResToDB(stripeRes);
                 if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
@@ -944,7 +946,9 @@ function requestToPay() {
             //console.log(xhr.responseText);
             console.log("ajax request Payment fail!!");
             console.log(status + ': ' + error);
-            modalRespondAction('open', 'fail');
+            // ดึงเหตุผลจริงจาก xhr แล้วแสดงใน fail modal
+            let failReason = extractPaymentError(xhr) || (status + ': ' + error);
+            modalRespondAction('open', 'fail', failReason);
             result.html("");
             $("#cmdSubmit").removeClass("btn-outline-info").addClass("btn-outline-success").prop("disabled", false);
             $("#paymentSubmit").prop('disabled', false);
@@ -1058,6 +1062,14 @@ const sendMailToL4UTeam = () => {
 
     ///////////////////////////////
 
+    // รวบรวมชื่อ Addons ทั้งหมดที่ถูกติ๊ก (ครอบคลุมทั้ง name="addon*" และ name="addWebsite*")
+    let mainAddonsList = [];
+    $("input:checkbox[name^='addon']:checked, input:checkbox[name^='addWebsite']:checked").each(function () {
+        let v = $(this).val();
+        if (v) mainAddonsList.push(v);
+    });
+    let MainAddons = mainAddonsList.join(", ");
+
     //formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
     let payload = {
         mode : "alert",
@@ -1067,6 +1079,7 @@ const sendMailToL4UTeam = () => {
         formMessage: 'Hi, Team <br>There are new sign-up customers coming in now. Below are brief details. You can check full information on CRM.',
         formProduct: $("#currentlyPackage option:selected").text(),
         MainProduct: $("input[name='product']:checked").val(),
+        MainAddons: MainAddons,
         formInitialProductOffering: $("#initialProductOffering").val(),
         formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
@@ -1963,6 +1976,14 @@ const saveToDB = (stripePayload, stripeRes) => {
 
     let CheckedBoxTestmailValue = $("#CheckedBoxTestmail").is(':checked') ? $("#CheckedBoxTestmail").val() : 0;
 
+    // รวบรวมชื่อ Addons ทั้งหมดที่ถูกติ๊ก (ถ้าไม่มี จะได้ "")
+    let mainAddonsList = [];
+    $("input:checkbox[name^='addon']:checked, input:checkbox[name^='addWebsite']:checked").each(function () {
+        let v = $(this).val();
+        if (v) mainAddonsList.push(v);
+    });
+    let MainAddons = mainAddonsList.join(", ");
+
     let payload = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
@@ -1989,6 +2010,7 @@ const saveToDB = (stripePayload, stripeRes) => {
         Cuisine: txtCuisine,
         OtherCuisine: $("#cuisineOther").val(),
         MainProduct: $("input[name='product']:checked").val(),
+        MainAddons: MainAddons,
         LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
         Service: txtServices,
         Delivery: $("input[name='serviceCheck']:checked").val(),
@@ -2151,6 +2173,14 @@ const createLogs = (stripePayload) => {
         shopAgent = $("#otherAgent").val();
     }
 
+    // รวบรวมชื่อ Addons ทั้งหมดที่ถูกติ๊ก (ถ้าไม่มี จะได้ "")
+    let mainAddonsList = [];
+    $("input:checkbox[name^='addon']:checked, input:checkbox[name^='addWebsite']:checked").each(function () {
+        let v = $(this).val();
+        if (v) mainAddonsList.push(v);
+    });
+    let MainAddons = mainAddonsList.join(", ");
+
     let tempData = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
@@ -2177,6 +2207,7 @@ const createLogs = (stripePayload) => {
         Cuisine: txtCuisine,
         OtherCuisine: $("#cuisineOther").val(),
         MainProduct: $("input[name='product']:checked").val(),
+        MainAddons: MainAddons,
         LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
         Service: txtServices,
         Delivery: $("input[name='serviceCheck']:checked").val(),
@@ -2222,9 +2253,9 @@ const createLogs = (stripePayload) => {
         // CardNumber: $("#creditCardNumber").val(),
         // ExpDate: $("#creditExpireDate").val(),
         // CVV: $("#creditCCV").val(),
-        CardName: $("#creditFullName").val(),
-        EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
-        BSB: $("#bsbDirectDebit").val(),
+        // CardName: $("#creditFullName").val(),
+        // EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
+        // BSB: $("#bsbDirectDebit").val(),
         EmailInvoice: $("#emailInvoiceOther").val().trim().toLowerCase(),
         Routing_number: $("#routingDirectDebit").val(),
         AccountNumber: $("#acnDirectDebit").val(),

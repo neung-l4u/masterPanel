@@ -110,11 +110,11 @@ $Step04_SocialNetworkscouponCode2 = $_POST['couponCode2'] ?? ''; //Coupun code 2
 
 $Step04_SocialNetworks00N2v00000IyVq7 = $_POST['paymentMethod'] ?? ''; // payment method
 
-$Step04_SocialNetworkscreditCardNumber = $_POST['creditCardNumber'] ?? ''; //  Card number
+// $Step04_SocialNetworkscreditCardNumber = $_POST['creditCardNumber'] ?? ''; //  Card number
 
-$Step04_SocialNetworkscreditExpireDate = $_POST['creditExpireDate'] ?? ''; //  creditExpireDate
+// $Step04_SocialNetworkscreditExpireDate = $_POST['creditExpireDate'] ?? ''; //  creditExpireDate
 
-$Step04_SocialNetworkscreditCCV = $_POST['creditCCV'] ?? ''; //  creditExpireDate
+// $Step04_SocialNetworkscreditCCV = $_POST['creditCCV'] ?? ''; //  creditExpireDate
 
 $Step04_SocialNetworkscreditFullName = $_POST['creditFullName'] ?? ''; //  creditFullName
 
@@ -213,6 +213,53 @@ curl_close($curl);
 // Extract form data
 
   $formData = $_POST;
+
+  // รวบรวม addon ทุกตัวให้เป็น field เดียว "addons" (คั่นด้วย , )
+  // ครอบคลุม 2 รูปแบบ:
+  //   1) key ที่ขึ้นต้นด้วย "addon" (addonPOS, addonPricingDesign ฯลฯ)
+  //      หรือ "addWebsite" (addWebsiteMakeoverTemplate, addWebsiteMakeoverFully ฯลฯ)
+  //   2) key พิเศษที่ไม่ได้ขึ้นต้นด้วย addon แต่เป็น addon จริง
+  //      (มาจาก form_name ใน assets/API/B-Price-*.json)
+  //      *หมายเหตุ: "email" ถูกตัดออก เพราะชื่อชนกับ owner email
+  $extraAddonKeys = ['promotions', 'webEmail', 'mob'];
+
+  $isAddonKey = function ($key) use ($extraAddonKeys) {
+      // กัน key รวม 'addons' (พหูพจน์) ไม่ให้ถูกลบ เพราะก็ขึ้นต้นด้วย 'addon'
+      if ($key === 'addons') return false;
+      return strpos($key, 'addon') === 0
+          || strpos($key, 'addWebsite') === 0
+          || in_array($key, $extraAddonKeys, true);
+  };
+
+  // ลบ field addon รายตัวออกก่อน แล้วค่อย set 'addons' ทีหลัง
+  // เพื่อป้องกันความผิดพลาดแบบ prefix-match อีก
+  $addonsList = [];
+  $addonKeysFound = [];
+  foreach ($formData as $key => $value) {
+      if ($isAddonKey($key) && is_string($value) && trim($value) !== '') {
+          $addonsList[] = trim($value);
+          $addonKeysFound[] = $key;
+      }
+  }
+
+  foreach (array_keys($formData) as $key) {
+      if ($isAddonKey($key)) {
+          unset($formData[$key]);
+      }
+  }
+
+  // Set 'addons' หลังจาก unset เสร็จแล้ว → ไม่ถูกลบซ้ำ
+  $formData['addons'] = implode(', ', $addonsList);
+
+  // Debug markers — ใช้ยืนยันว่า production รัน monday_data.php เวอร์ชันใหม่จริง
+  // และช่วยให้เห็นว่า $_POST มี addon key ตัวไหนมาบ้าง
+  $formData['_serverCodeVersion'] = 'addons-v3-' . date('Ymd-His', filemtime(__FILE__));
+  $formData['_addonKeysFound'] = implode('|', $addonKeysFound);
+  $formData['_postKeysCount'] = (string) count($_POST);
+
+  // Log ดิบๆ ลง error log (ดูได้ผ่าน tail -f /var/log/php/*.log)
+  error_log('monday_data.php $_POST keys: ' . implode(',', array_keys($_POST)));
+  error_log('monday_data.php addons computed: ' . $formData['addons']);
 
 
 
