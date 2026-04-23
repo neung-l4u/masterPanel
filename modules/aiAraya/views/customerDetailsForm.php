@@ -340,15 +340,6 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
                             </div>
                         </div>
 
-                        <!-- ========== SECTION 7: Additional ========== -->
-                        <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-chat-dots"></i> Additional Comments</h5>
-
-                            <div class="mb-3">
-                                <textarea class="form-control" id="additionalComments" name="additionalComments" rows="4" placeholder="Any additional information you'd like us to know..."></textarea>
-                            </div>
-                        </div>
-
                         <!-- ========== SECTION 8: Booking Policy ========== -->
                         <div class="form-section">
                             <h5 class="section-title"><i class="bi bi-stars"></i> Booking Policy</h5>
@@ -430,13 +421,23 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
                                         </div>
                                     </div>
                                 </div>
+                                
 
                                 <div class="mb-3" id="termAndConditionsLink">
-                                <label for="termAndConditionsLink" class="form-label">Term and Conditions Link (if you have one) <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="termAndConditionsLink" name="termAndConditionsLink" placeholder="e.g. https://yourbusiness.com/terms">
+                                    <label for="termAndConditionsLink" class="form-label">Term and Conditions Link (if you have one) <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="termAndConditionsLink" name="termAndConditionsLink" placeholder="e.g. https://yourbusiness.com/terms">
+                                </div>
                             </div>
+                        </div>
 
+                        <!-- ========== SECTION 7: Additional ========== -->
+                        <div class="form-section">
+                            <h5 class="section-title"><i class="bi bi-chat-dots"></i> Additional Comments</h5>
+
+                            <div class="mb-3">
+                                <textarea class="form-control" id="additionalComments" name="additionalComments" rows="4" placeholder="Any additional information you'd like us to know..."></textarea>
                             </div>
+                        </div>
 
                         <!-- ===== Submit ===== -->
                         <div class="submit-area">
