@@ -55,14 +55,6 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
                 <div class="form-body">
                     <form id="customerDetailsForm" name="customerDetailsForm" method="post" enctype="multipart/form-data">
 
-                        <!-- Stripe ID -->
-                        <div class="mb-3" style="background-color:#ffdddd;">
-                            <small class="text-muted">This row for Debugging will be removed in production</small>
-                            <b><i><small class="text-muted" id="stripeID">StripeID: 
-                                <?php echo $stripeID; ?>
-                            </small></i><b>
-                        </div>
-
                         <!-- ========== SECTION 1: Business Information ========== -->
                         <div class="form-section">
                             <h5 class="section-title"><i class="bi bi-building"></i> Business Information</h5>
