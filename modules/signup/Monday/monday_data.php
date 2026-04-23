@@ -1,5 +1,25 @@
 <?php
 
+// ======================================================================
+// 🍯 HONEYPOT CHECK — ต้องอยู่บนสุดก่อนโค้ดอื่นใดๆ
+// ถ้า field 'website_url_confirm' มีค่า = บอท → reject ทันที
+// มนุษย์กรอกไม่ได้เพราะ field ซ่อนด้วย CSS + tabindex=-1 + aria-hidden
+// ======================================================================
+if (!empty($_POST['website_url_confirm'])) {
+    $honeypotVal = substr((string) $_POST['website_url_confirm'], 0, 200);
+    $ip         = $_SERVER['REMOTE_ADDR']    ?? 'unknown';
+    $ua         = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+    $referer    = $_SERVER['HTTP_REFERER']    ?? 'unknown';
+    error_log(sprintf(
+        '[HONEYPOT] signup form spam blocked | ip=%s | ua=%s | referer=%s | value=%s',
+        $ip, $ua, $referer, $honeypotVal
+    ));
+    // ตอบแบบปกติหลอกบอท ไม่บอกว่า block (ไม่ให้เรียนรู้)
+    http_response_code(200);
+    echo 'OK';
+    exit;
+}
+
 //echo "<pre>";print_R($_POST);die;
 
 // ********** Getting All Data ***********
@@ -250,6 +270,24 @@ curl_close($curl);
 
   // Set 'addons' หลังจาก unset เสร็จแล้ว → ไม่ถูกลบซ้ำ
   $formData['addons'] = implode(', ', $addonsList);
+
+  // --- Security: ลบข้อมูลบัตรเครดิต/credentials ที่ sensitive ออกก่อนส่ง Make.com ---
+  // PCI DSS: ห้ามส่ง/เก็บ PAN (card number) เต็ม และ "ห้ามเก็บ CVV/CVC" เด็ดขาด
+  $sensitiveKeys = [
+      'creditCardNumber',
+      'creditExpireDate',
+      'creditCCV',
+      'stripePassword',
+      'ref_Domain_P',   // domain password
+      'ref_IHD_Password',
+      'passwordBooking',
+      'bsbDirectDebit',
+      'acnDirectDebit',
+      'routingDirectDebit',
+  ];
+  foreach ($sensitiveKeys as $sk) {
+      unset($formData[$sk]);
+  }
 
   // Debug markers — ใช้ยืนยันว่า production รัน monday_data.php เวอร์ชันใหม่จริง
   // และช่วยให้เห็นว่า $_POST มี addon key ตัวไหนมาบ้าง

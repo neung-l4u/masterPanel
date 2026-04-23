@@ -436,7 +436,7 @@ function getProductList(country) {
                         type="checkbox" 
                         name="${item.form_name}"
                         id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}$ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}$${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
@@ -451,7 +451,7 @@ function getProductList(country) {
                         type="checkbox" 
                         name="${item.form_name}"
                         id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}£ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}£${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
@@ -466,7 +466,7 @@ function getProductList(country) {
                         type="checkbox" 
                         name="${item.form_name}"
                         id="addon-${product_id}"
-                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}฿${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
@@ -481,7 +481,7 @@ function getProductList(country) {
                         type="checkbox" 
                         name="${item.form_name}"
                         id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}$${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
@@ -496,7 +496,7 @@ function getProductList(country) {
                         type="checkbox" 
                         name="${item.form_name}"
                         id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}$${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
