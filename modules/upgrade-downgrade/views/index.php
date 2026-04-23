@@ -19,7 +19,7 @@ global $db;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/customerDetailsForm.css?v=1.0.0" rel="stylesheet">
+    <link href="../assets/css/upgradeForm.css?v=1.0.0" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,7 +41,10 @@ global $db;
                     <a class="nav-link active" aria-current="page" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../views/customerDetailsForm.php">Form</a>
+                    <a class="nav-link" href="../views/upgradeForm.php">Upgrade Form</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../views/downgradeForm.php">Downgrade Form</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../views/entries.php">Entries</a>
@@ -57,12 +60,15 @@ global $db;
             <div class="row align-items-center" style="height: 85vh;">
                 <!-- Left Content -->
                 <div class="col-md-6 text-center text-md-start mb-4 mb-md-0">
-                    <h1 class="display-4 fw-bold">Local For You<br>AI Araya</h1>
+                    <h1 class="display-5 fw-bold">Local For You<br>
+                    <span class="text-primary">Upgrade<i class="bi bi-arrow-up-right-square ms-2" style="font-size: 40px;"></i></span><br>
+                    <span class="text-danger">Downgrade<i class="bi bi-arrow-down-right-square ms-2" style="font-size: 40px;"></i></span></h1>
                     <p class="text-muted mt-3">
                     Our AI Araya system allows you to easily share your thoughts, suggestions, or issues. Every entry helps us improve our service and better meet your needs.
                     </p>
                     <div class="mt-4">
-                    <a href="customerDetailsForm.php" class="btn btn-primary me-2">Customer Details Form</a>
+                    <a href="upgradeForm.php" class="btn btn-primary">Upgrade Form</a>
+                    <a href="downgradeForm.php" class="btn btn-danger me-2">Downgrade Form</a>
                     <a href="entries.php" class="btn btn-outline-dark">View Entries</a>
                     </div>
                 </div>

@@ -21,13 +21,13 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/customerDetailsForm.css?v=2.0.0" rel="stylesheet">
+    <link href="../assets/css/upgradeForm.css?v=1.0.0" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     
-    <title>Customer Details - Form</title>
+    <title>Upgrade - Form</title>
 </head>
 <body>
 
@@ -39,29 +39,15 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
                 <!-- ===== Header ===== -->
                 <div class="form-header">
                     <img src="../assets/img/L4U-Site-Icon.png" alt="Logo Image" class="logo-img">
-                    <h3 class="form-title text-uppercase">AI Araya – Customer Details Form</h3>
+                    <h3 class="form-title text-uppercase">Upgrade Form</h3>
                     <p class="form-subtitle">
                         Please complete this form so we can configure your AI receptionist correctly. You may skip any fields you prefer to handle during the onboarding call.
                     </p>
-                    <div class="howto-links">
-                        <a href="howToGetCalendarId.php" target="_blank">
-                            <i class="bi bi-calendar3"></i> Setting up Google Calendar
-                        </a>
-                    </div>
                 </div>
                 
-
                 <!-- ===== Form Body ===== -->
                 <div class="form-body">
-                    <form id="customerDetailsForm" name="customerDetailsForm" method="post" enctype="multipart/form-data">
-
-                        <!-- Stripe ID -->
-                        <div class="mb-3" style="background-color:#ffdddd;">
-                            <small class="text-muted">This row for Debugging will be removed in production</small>
-                            <b><i><small class="text-muted" id="stripeID">StripeID: 
-                                <?php echo $stripeID; ?>
-                            </small></i><b>
-                        </div>
+                    <form id="upgradeForm" name="upgradeForm" method="post" enctype="multipart/form-data">
 
                         <!-- ========== SECTION 1: Business Information ========== -->
                         <div class="form-section">
@@ -500,7 +486,7 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
-<script src="../controllers/customerDetailsForm.js?v=1.0.0"></script>
+<script src="../controllers/upgradeForm.js?v=1.0.0"></script>
 <script>
 $(function() {
     // Toggle booking credentials when currentBookingSystem has value

@@ -1,4 +1,4 @@
-$('#customerDetailsForm').on('submit', function (e) {
+$('#upgradeForm').on('submit', function (e) {
     e.preventDefault();
     const result = $('#result');
     const cmdSubmit = $('#cmdSubmit');
@@ -18,8 +18,8 @@ function sendData(formData) {
     const now = new Date();
     const formattedDate = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-    //const modulePath = "http://localhost/masterPanel/modules/aiAraya"; // Local path
-    const modulePath = "https://report.localforyou.com/modules/aiAraya"; // Server path
+    const modulePath = "http://localhost/masterPanel/modules/upgrade-downgrade"; // Local path
+    //const modulePath = "https://report.localforyou.com/modules/upgrade-downgrade"; // Server path
 
     const jsonData = {
         businessName: formData.businessName || "",
@@ -72,7 +72,7 @@ function sendData(formData) {
 
 function saveToDB(payload, result, cmdSubmit, stripeID) {
     $.ajax({
-        url: "../models/customerDetailsForm.php",
+        url: "../models/upgradeForm.php",
         type: "POST",
         data: {payload, stripeID: stripeID},
         success: () => {
@@ -94,7 +94,7 @@ function saveToDB(payload, result, cmdSubmit, stripeID) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('customerDetailsForm');
+    const form = document.getElementById('upgradeForm');
 
     form.addEventListener('submit', function (e) {
         let isValid = true;
