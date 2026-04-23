@@ -47,9 +47,17 @@ function sendData(formData) {
         restroom: formData.restroom || "",
         promotions: formData.promotions || "",
         voiceType: formData.voiceType || "",
-        googleCalendar: formData.googleCalendar || "",
         googleCalendarId: formData.googleCalendarId || "",
         additionalComments: formData.additionalComments || "",
+        setPolicies: formData.setPolicies || "",
+        lateArrivalFee: formData.lateArrivalFee || "",
+        noshowFee: formData.noshowFee || "",
+        freeCancellationWindow: formData.freeCancellationWindow || "",
+        lateCancellationFee: formData.lateCancellationFee || "",
+        setDeposit: formData.setDeposit || "",
+        depositAmount: formData.depositAmount || "",
+        depositPaymentLink: formData.depositPaymentLink || "",
+        termAndConditionsLink: formData.termAndConditionsLink || "",
         stripeID: formData.stripeID || "",
         formVersion: formData.formVersion || "NULL",
         date: formattedDate,
@@ -131,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const requiredRadios = [
             'phoneNumberDecision', 'coupleMassage', 'happyMassage',
             'maleTherapists', 'femaleTherapists', 'wheelchair',
-            'parking', 'restroom', 'voiceType', 'googleCalendar'
+            'parking', 'restroom', 'voiceType', 'setPolicies', 'setDeposit'
         ];
         requiredRadios.forEach(name => {
             const radios = document.querySelectorAll(`input[name="${name}"]`);
