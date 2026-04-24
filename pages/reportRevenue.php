@@ -71,64 +71,26 @@
             <!-- ===== MODE: Split View (Stripe tabs only) ===== -->
             <div id="stripeSplitView" style="display:none;">
                 <div class="row" style="position:relative;">
-                    <!-- Sync chain icon -->
-                    <div id="syncChainWrap">
-                        <button id="btnSyncChain" class="sync-chain-btn" title="Sync datepickers between Monday &amp; Stripe">
-                            <i class="bi bi-link-45deg"></i>
-                        </button>
-                    </div>
-                    <!-- LEFT: Monday.com -->
-                    <div class="col-lg-6">
+                    <!-- Stripe API (full width) -->
+                    <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <span class="source-badge source-monday"><i class="bi bi-table"></i> Monday.com</span>
-                                    <div class="d-flex align-items-center" style="gap:6px;">
-                                        <label class="rc-label mb-0" style="font-size:11px;">Mode:</label>
-                                        <select id="tabMode" class="form-control form-control-sm" style="width:auto;font-size:11px;">
-                                            <option value="alltime">All Time</option>
-                                            <option value="compare">Compare</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center mb-3" style="gap:6px;">
-                                    <input type="month" id="monDateStart" class="form-control form-control-sm" style="font-size:11px;width:auto;">
-                                    <span style="font-size:11px;color:#697386;">to</span>
-                                    <input type="month" id="monDateEnd" class="form-control form-control-sm" style="font-size:11px;width:auto;">
-                                    <button class="btn btn-sm btn-outline-primary" id="monDateGo" style="font-size:11px;padding:2px 10px;">Filter</button>
-                                    <button class="btn btn-sm btn-outline-secondary" id="monDateReset" style="font-size:11px;padding:2px 8px;">All</button>
-                                </div>
-                                <div class="row" id="splitMondayMetrics"></div>
-                                <hr class="my-2">
-                                <h6 class="mb-2" style="font-size:12px;color:#697386;font-weight:600;">Monthly Breakdown</h6>
-                                <div style="max-height:420px;overflow-y:auto;">
-                                    <table class="table table-sm table-striped mb-0" style="font-size:11px;">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th>Period</th>
-                                                <th class="text-right">Amount</th>
-                                                <th class="text-right">Fee</th>
-                                                <th class="text-right">Revenue</th>
-                                                <th class="text-right">Charges</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="splitMondayMonthly"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- RIGHT: Stripe API (same format as Monday) -->
-                    <div class="col-lg-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap" style="gap:8px;">
                                     <span class="source-badge source-stripe"><i class="bi bi-credit-card"></i> Stripe API</span>
-                                    <div class="d-flex align-items-center" style="gap:4px;">
-                                        <button class="btn btn-outline-secondary btn-xs sp-preset active" data-days="28">28d</button>
-                                        <button class="btn btn-outline-secondary btn-xs sp-preset" data-days="90">90d</button>
-                                        <button class="btn btn-outline-secondary btn-xs sp-preset" data-days="365">1Y</button>
-                                        <button class="btn btn-outline-secondary btn-xs sp-preset" data-days="9999">All</button>
+                                    <div class="d-flex align-items-center flex-wrap" style="gap:10px;">
+                                        <div class="d-flex align-items-center" style="gap:6px;">
+                                            <label class="rc-label mb-0" style="font-size:11px;">Mode:</label>
+                                            <select id="tabMode" class="form-control form-control-sm" style="width:auto;font-size:11px;">
+                                                <option value="alltime">All Time</option>
+                                                <option value="compare">Compare</option>
+                                            </select>
+                                        </div>
+                                        <div class="d-flex align-items-center" style="gap:4px;">
+                                            <button class="btn btn-outline-secondary btn-xs sp-preset active" data-days="28">28d</button>
+                                            <button class="btn btn-outline-secondary btn-xs sp-preset" data-days="90">90d</button>
+                                            <button class="btn btn-outline-secondary btn-xs sp-preset" data-days="365">1Y</button>
+                                            <button class="btn btn-outline-secondary btn-xs sp-preset" data-days="9999">All</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center mb-3" style="gap:6px;">
@@ -1174,8 +1136,6 @@ window.addEventListener('load', function(){
             document.getElementById('modeAllTime').style.display = 'none';
             document.getElementById('stripeSplitView').style.display = '';
             document.getElementById('yelpSplitView').style.display = 'none';
-            initMondayDatepicker(key, r);
-            renderSplitMonday(key, r, cs);
             var acct = stripeAcctMap[key];
             if (acct) {
                 initSplitStripeDates();
@@ -1612,15 +1572,26 @@ window.addEventListener('load', function(){
         var totalAud = 0;
         var totalRevAud = 0;
 
+        // Stripe AU/US/TH — use Stripe API summary if loaded, fallback to Monday
+        function stripeAmt(acct) {
+            var sd = (STRIPE_SUM_DATA[acct]||{}).summary;
+            if (sd) return sd.total_amount || 0;
+            return (rev['stripe_' + acct]||{}).amount || 0;
+        }
+        function stripeRev(acct) {
+            var sd = (STRIPE_SUM_DATA[acct]||{}).summary;
+            if (sd) return sd.total_revenue || 0;
+            return (rev['stripe_' + acct]||{}).revenue || 0;
+        }
         // Stripe AU (AUD)
-        totalAud    += ((rev.stripe_au||{}).amount||0) * 1;
-        totalRevAud += ((rev.stripe_au||{}).revenue||0) * 1;
+        totalAud    += stripeAmt('au') * 1;
+        totalRevAud += stripeRev('au') * 1;
         // Stripe US (USD)
-        totalAud    += ((rev.stripe_us||{}).amount||0) * rUSD;
-        totalRevAud += ((rev.stripe_us||{}).revenue||0) * rUSD;
+        totalAud    += stripeAmt('us') * rUSD;
+        totalRevAud += stripeRev('us') * rUSD;
         // Stripe TH (THB)
-        totalAud    += ((rev.stripe_th||{}).amount||0) * rTHB;
-        totalRevAud += ((rev.stripe_th||{}).revenue||0) * rTHB;
+        totalAud    += stripeAmt('th') * rTHB;
+        totalRevAud += stripeRev('th') * rTHB;
 
         // Stripe Connect — from Stripe API (currency from API response)
         if (CON_DATA) {
@@ -1689,6 +1660,10 @@ window.addEventListener('load', function(){
         return { from: months[0], to: months[months.length - 1] };
     }
 
+    // Summary-scoped Stripe API cache (all-time per account)
+    var STRIPE_SUM_DATA = {}; // { au:{}, us:{}, th:{} }
+    var STRIPE_SUM_LOADED = {};
+
     function renderSummaryTab() {
         var rev = DATA.revenue || {};
         var gt = DATA.grand_total || {};
@@ -1696,20 +1671,32 @@ window.addEventListener('load', function(){
         var yoy = DATA.yoy || {};
 
         // --- Stripe metadata ---
-        var stripeMetaText = 'Source: Monday.com';
-        if (DATA.cache_age !== undefined) {
-            stripeMetaText += ' | Cache: ' + Math.round(DATA.cache_age / 60) + ' min ago';
-        }
-        if (DATA.fetched_at) stripeMetaText += ' | Fetched: ' + DATA.fetched_at;
-        document.getElementById('sumMetaStripe').textContent = stripeMetaText;
+        document.getElementById('sumMetaStripe').textContent = 'Loading from Stripe API...';
 
-        // Stripe cards
-        document.getElementById('sum_stripe_au').textContent = fmt((rev.stripe_au||{}).amount, 'A$');
-        document.getElementById('sum_stripe_au_rev').textContent = fmt((rev.stripe_au||{}).revenue, 'A$');
-        document.getElementById('sum_stripe_us').textContent = fmt((rev.stripe_us||{}).amount, '$');
-        document.getElementById('sum_stripe_us_rev').textContent = fmt((rev.stripe_us||{}).revenue, '$');
-        document.getElementById('sum_stripe_th').textContent = fmt((rev.stripe_th||{}).amount, '฿');
-        document.getElementById('sum_stripe_th_rev').textContent = fmt((rev.stripe_th||{}).revenue, '฿');
+        // Stripe cards: load from Stripe API (all time) per account
+        var stripeAccts = ['au','us','th'];
+        var stripeSymMap = { au:'A$', us:'$', th:'฿' };
+        stripeAccts.forEach(function(a) {
+            var el = document.getElementById('sum_stripe_' + a);
+            var elRev = document.getElementById('sum_stripe_' + a + '_rev');
+            if (STRIPE_SUM_DATA[a]) {
+                renderStripeSumCard(a);
+                STRIPE_SUM_LOADED[a] = true;
+                checkAllStripeSumLoaded();
+            } else {
+                el.textContent = '...';
+                elRev.textContent = '...';
+                $.ajax({ url:'api/stripe/getTransactions.php', data:{ account:a, days:9999 }, dataType:'json', timeout:300000 })
+                .done(function(d) {
+                    if (d.error) { el.textContent = 'Err'; STRIPE_SUM_LOADED[a] = true; checkAllStripeSumLoaded(); return; }
+                    STRIPE_SUM_DATA[a] = d;
+                    renderStripeSumCard(a);
+                    STRIPE_SUM_LOADED[a] = true;
+                    checkAllStripeSumLoaded();
+                })
+                .fail(function() { el.textContent = '—'; STRIPE_SUM_LOADED[a] = true; checkAllStripeSumLoaded(); });
+            }
+        });
 
         // Connect card
         if (CON_DATA) {
@@ -1738,15 +1725,12 @@ window.addEventListener('load', function(){
         // Grand Total — computed client-side after all sources loaded
         updateGrandTotal();
 
-        // Active users
-        var auC = (rev.stripe_au||{}).charge_count||0;
-        var usC = (rev.stripe_us||{}).charge_count||0;
-        var thC = (rev.stripe_th||{}).charge_count||0;
-        document.getElementById('users_stripe_us').textContent = fmtInt(usC);
-        document.getElementById('users_stripe_au').textContent = fmtInt(auC);
-        document.getElementById('users_stripe_th').textContent = fmtInt(thC);
-        document.getElementById('users_total').textContent = fmtInt(auC + usC + thC);
-        document.getElementById('sumMetaUsers').textContent = 'Source: Monday.com (Stripe boards)';
+        // Active users — populated from Stripe API via checkAllStripeSumLoaded
+        document.getElementById('users_stripe_us').textContent = '...';
+        document.getElementById('users_stripe_au').textContent = '...';
+        document.getElementById('users_stripe_th').textContent = '...';
+        document.getElementById('users_total').textContent = '...';
+        document.getElementById('sumMetaUsers').textContent = 'Loading from Stripe API...';
 
         // Top charges
         var topHtml = '';
@@ -1826,6 +1810,62 @@ window.addEventListener('load', function(){
         document.getElementById('sum_connect_period').textContent = periodText;
     }
 
+    // ===== Stripe Summary helpers (data from Stripe API) =====
+    function renderStripeSumCard(acct) {
+        var d = STRIPE_SUM_DATA[acct];
+        if (!d) return;
+        var sym = { au:'A$', us:'$', th:'฿' }[acct] || '$';
+        var sum = d.summary || {};
+        document.getElementById('sum_stripe_' + acct).textContent = fmt(sum.total_amount, sym);
+        document.getElementById('sum_stripe_' + acct + '_rev').textContent = fmt(sum.total_revenue, sym);
+    }
+
+    function stripeSumMonthRevenue(acct, monthKey) {
+        var d = STRIPE_SUM_DATA[acct];
+        if (!d || !d.by_month || !d.by_month[monthKey]) return { amount:0, fee:0, net:0, revenue:0, charge_count:0 };
+        return d.by_month[monthKey];
+    }
+
+    function stripeSumYearAggr(acct, year) {
+        var d = STRIPE_SUM_DATA[acct];
+        var out = { amount:0, fee:0, net:0, revenue:0, charge_count:0 };
+        if (!d || !d.by_month) return out;
+        Object.keys(d.by_month).forEach(function(mk) {
+            if (mk.indexOf(year) !== 0) return;
+            var m = d.by_month[mk];
+            out.amount += m.amount || 0;
+            out.fee += m.fee || 0;
+            out.net += m.net || 0;
+            out.revenue += m.revenue || 0;
+            out.charge_count += m.charge_count || 0;
+        });
+        return out;
+    }
+
+    function checkAllStripeSumLoaded() {
+        if (!STRIPE_SUM_LOADED.au || !STRIPE_SUM_LOADED.us || !STRIPE_SUM_LOADED.th) return;
+        // Update metadata
+        var fetched = [];
+        ['au','us','th'].forEach(function(a) {
+            if (STRIPE_SUM_DATA[a] && STRIPE_SUM_DATA[a].fetched_at) fetched.push(a.toUpperCase() + ':' + STRIPE_SUM_DATA[a].fetched_at);
+        });
+        document.getElementById('sumMetaStripe').textContent = 'Source: Stripe API' + (fetched.length ? ' | ' + fetched.join(' | ') : '');
+
+        // Active users = Stripe charge_count
+        var auC = ((STRIPE_SUM_DATA.au||{}).summary||{}).charge_count || 0;
+        var usC = ((STRIPE_SUM_DATA.us||{}).summary||{}).charge_count || 0;
+        var thC = ((STRIPE_SUM_DATA.th||{}).summary||{}).charge_count || 0;
+        document.getElementById('users_stripe_us').textContent = fmtInt(usC);
+        document.getElementById('users_stripe_au').textContent = fmtInt(auC);
+        document.getElementById('users_stripe_th').textContent = fmtInt(thC);
+        document.getElementById('users_total').textContent = fmtInt(auC + usC + thC);
+        document.getElementById('sumMetaUsers').textContent = 'Source: Stripe API';
+
+        // Rebuild MoM/YoY with Stripe API data
+        renderMomYoy();
+        updateGrandTotal();
+    }
+
     function checkAllSmsLoaded() {
         if (!SMS_SUM_LOADED.au || !SMS_SUM_LOADED.us || !SMS_SUM_LOADED.uk) return;
         // Update SMS metadata
@@ -1856,14 +1896,56 @@ window.addEventListener('load', function(){
         var mom = DATA.mom || {};
         var yoy = DATA.yoy || {};
 
-        // Filter out Monday.com sms keys from by_type (we use TransmitSMS instead)
+        // Filter out Monday.com sms & stripe keys from by_type (we use APIs instead)
         function filterByType(bt) {
             var out = {};
             for (var k in bt) {
                 if (k.indexOf('sms') === 0) continue; // skip Monday.com sms_*
+                if (k.indexOf('stripe') === 0) continue; // skip Monday.com stripe_* (use Stripe API)
                 out[k] = bt[k];
             }
             return out;
+        }
+
+        // Build Stripe MoM rows from Stripe API monthly data
+        function buildStripeMomRows() {
+            var curMonth = mom.current_month || '';
+            var prevMonth = mom.previous_month || '';
+            var html = '';
+            var symMap = { au:'A$', us:'$', th:'฿' };
+            ['au','us','th'].forEach(function(a) {
+                if (!STRIPE_SUM_DATA[a]) return;
+                var cur = stripeSumMonthRevenue(a, curMonth);
+                var prev = stripeSumMonthRevenue(a, prevMonth);
+                var curA = cur.amount || 0, prevA = prev.amount || 0;
+                var pct = prevA > 0 ? Math.round((curA - prevA) / prevA * 1000) / 10 : null;
+                var key = 'stripe_' + a;
+                html += '<tr><td>' + typeLabel(key) + '</td>'
+                    + '<td class="text-right">' + fmt(prevA, symMap[a]) + '</td>'
+                    + '<td class="text-right">' + fmt(curA, symMap[a]) + '</td>'
+                    + '<td class="text-center">' + changeBadge(pct) + '</td></tr>';
+            });
+            return html;
+        }
+
+        // Build Stripe YoY rows from Stripe API monthly data
+        function buildStripeYoyRows() {
+            var curYear = yoy.current_year || '';
+            var prevYear = yoy.previous_year || '';
+            var html = '';
+            var symMap = { au:'A$', us:'$', th:'฿' };
+            ['au','us','th'].forEach(function(a) {
+                if (!STRIPE_SUM_DATA[a]) return;
+                var cur = stripeSumYearAggr(a, curYear);
+                var prev = stripeSumYearAggr(a, prevYear);
+                var pct = prev.amount > 0 ? Math.round((cur.amount - prev.amount) / prev.amount * 1000) / 10 : null;
+                var key = 'stripe_' + a;
+                html += '<tr><td>' + typeLabel(key) + '</td>'
+                    + '<td class="text-right">' + fmt(prev.amount, symMap[a]) + '</td>'
+                    + '<td class="text-right">' + fmt(cur.amount, symMap[a]) + '</td>'
+                    + '<td class="text-center">' + changeBadge(pct) + '</td></tr>';
+            });
+            return html;
         }
 
         // Build SMS MoM/YoY from TransmitSMS data
@@ -1936,30 +2018,30 @@ window.addEventListener('load', function(){
             return html;
         }
 
+        var hasStripe = STRIPE_SUM_LOADED.au || STRIPE_SUM_LOADED.us || STRIPE_SUM_LOADED.th;
+        var hasSms = SMS_SUM_LOADED.au || SMS_SUM_LOADED.us || SMS_SUM_LOADED.uk;
+
         // MoM
         document.getElementById('sumMomPrev').textContent = mom.previous_month || 'Prev';
         document.getElementById('sumMomCur').textContent = mom.current_month || 'Current';
-        var momHtml = buildMondayRows(mom.by_type || {});
+        var momHtml = buildStripeMomRows();
+        momHtml += buildMondayRows(mom.by_type || {}); // now only yelp + others
         momHtml += buildSmsMomRows();
-        momHtml += '<tr class="font-weight-bold" style="background:#f0edff;"><td>Total</td>'
-            + '<td class="text-right">' + fmt(mom.previous ? mom.previous.amount : 0, '$') + '</td>'
-            + '<td class="text-right">' + fmt(mom.current ? mom.current.amount : 0, '$') + '</td>'
-            + '<td class="text-center">' + changeBadge(mom.change_pct) + '</td></tr>';
         document.getElementById('sumMomBody').innerHTML = momHtml;
-        var hasSms = SMS_SUM_LOADED.au || SMS_SUM_LOADED.us || SMS_SUM_LOADED.uk;
-        document.getElementById('sumMetaMom').textContent = 'Stripe/Yelp: Monday.com' + (hasSms ? ' | SMS: TransmitSMS API' : '');
+        var momMeta = [];
+        if (hasStripe) momMeta.push('Stripe: Stripe API');
+        momMeta.push('Yelp: Monday.com');
+        if (hasSms) momMeta.push('SMS: TransmitSMS API');
+        document.getElementById('sumMetaMom').textContent = momMeta.join(' | ');
 
         // YoY
         document.getElementById('sumYoyPrev').textContent = yoy.previous_year || 'Prev';
         document.getElementById('sumYoyCur').textContent = yoy.current_year || 'Current';
-        var yoyHtml = buildMondayRows(yoy.by_type || {});
+        var yoyHtml = buildStripeYoyRows();
+        yoyHtml += buildMondayRows(yoy.by_type || {});
         yoyHtml += buildSmsYoyRows();
-        yoyHtml += '<tr class="font-weight-bold" style="background:#f0edff;"><td>Total</td>'
-            + '<td class="text-right">' + fmt(yoy.previous ? yoy.previous.amount : 0, '$') + '</td>'
-            + '<td class="text-right">' + fmt(yoy.current ? yoy.current.amount : 0, '$') + '</td>'
-            + '<td class="text-center">' + changeBadge(yoy.change_pct) + '</td></tr>';
         document.getElementById('sumYoyBody').innerHTML = yoyHtml;
-        document.getElementById('sumMetaYoy').textContent = 'Stripe/Yelp: Monday.com' + (hasSms ? ' | SMS: TransmitSMS API' : '');
+        document.getElementById('sumMetaYoy').textContent = momMeta.join(' | ');
     }
 
     // ===== SMS (TransmitSMS) =====
@@ -2302,7 +2384,6 @@ window.addEventListener('load', function(){
             var cs = getCur(activeTab);
             var params = getSplitStripeParams(acct);
             loadStripeApiData(acct, params, cs);
-            if (dateSynced) syncStripeToMon();
         });
     });
 
@@ -2315,7 +2396,6 @@ window.addEventListener('load', function(){
         var cs = getCur(activeTab);
         var params = getSplitStripeParams(acct);
         loadStripeApiData(acct, params, cs);
-        if (dateSynced) syncStripeToMon();
     });
 
     // Connect period change — show/hide datepicker
@@ -2374,14 +2454,8 @@ window.addEventListener('load', function(){
         });
     });
 
-    // ===== SYNC CHAIN =====
+    // ===== SYNC CHAIN (removed with Monday panel) =====
     var dateSynced = false;
-
-    document.getElementById('btnSyncChain').addEventListener('click', function() {
-        dateSynced = !dateSynced;
-        this.classList.toggle('active', dateSynced);
-        if (dateSynced) syncMonToStripe(); // immediately sync Monday → Stripe
-    });
 
     // Helper: month "2025-03" → first day "2025-03-01"
     function monthToDateStart(m) { return m ? m + '-01' : ''; }
@@ -2426,28 +2500,7 @@ window.addEventListener('load', function(){
         renderSplitMonday(activeTab, r, cs);
     }
 
-    // ===== MONDAY DATEPICKER EVENTS =====
-    document.getElementById('monDateGo').addEventListener('click', function() {
-        monFilterStart = document.getElementById('monDateStart').value;
-        monFilterEnd = document.getElementById('monDateEnd').value;
-        if (!DATA || !activeTab) return;
-        var rev = DATA.revenue || {};
-        var r = rev[activeTab] || {};
-        var cs = getCur(activeTab);
-        renderSplitMonday(activeTab, r, cs);
-        if (dateSynced) syncMonToStripe();
-    });
-    document.getElementById('monDateReset').addEventListener('click', function() {
-        monFilterStart = null;
-        monFilterEnd = null;
-        if (!DATA || !activeTab) return;
-        var rev = DATA.revenue || {};
-        var r = rev[activeTab] || {};
-        var cs = getCur(activeTab);
-        initMondayDatepicker(activeTab, r);
-        renderSplitMonday(activeTab, r, cs);
-        if (dateSynced) syncMonToStripe();
-    });
+    // ===== MONDAY DATEPICKER EVENTS (removed with Monday panel) =====
 
     // ===== YELP SPLIT VIEW =====
     var YELP_BILLING = null;

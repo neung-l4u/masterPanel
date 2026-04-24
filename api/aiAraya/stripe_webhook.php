@@ -168,19 +168,21 @@ try {
     // ── 2. Branch by event type (ignore everything else) ────────────────────
     $stripeID       = '';
     $customerEmail  = '';
+    $shopName       = '';
     $productMatch   = false;
     $matchedId      = '';
     $matchedCurrency = '';
 
     /**
-     * Helper: does this ID match our product or any of our prices?
-     * Returns the currency when a price_id matches, empty string for product_id,
-     * or null if no match.
+     * Helper: does this ID match one of our configured price_ids?
+     * Returns the currency when a price_id matches, or null if no match.
+     * NOTE: product_id alone is NOT a valid match — only explicitly listed
+     * price_ids are accepted, otherwise any new/legacy price under the same
+     * Stripe Product would leak through to Make.com.
      */
-    $matchAgainstConfig = function (string $id) use ($productId, $priceIdToCurrency) {
+    $matchAgainstConfig = function (string $id) use ($priceIdToCurrency) {
         if ($id === '') return null;
-        if ($productId !== '' && $id === $productId) return ''; // product match (currency unknown)
-        if (isset($priceIdToCurrency[$id]))          return $priceIdToCurrency[$id]; // price match
+        if (isset($priceIdToCurrency[$id])) return $priceIdToCurrency[$id]; // price match
         return null;
     };
 
@@ -196,7 +198,7 @@ try {
         // Rely on metadata set by your app when creating the Session, plus
         // the `currency` on the Session itself as a fallback signal.
         $metadata = $dataObj['metadata'] ?? [];
-        foreach (['price_id', 'product_id'] as $k) {
+        foreach (['price_id'] as $k) {
             $id = trim($metadata[$k] ?? '');
             $hit = $matchAgainstConfig($id);
             if ($hit !== null) {
@@ -214,6 +216,7 @@ try {
 
         $stripeID      = $dataObj['customer'] ?? '';
         $customerEmail = $dataObj['customer_details']['email'] ?? $dataObj['customer_email'] ?? '';
+        $shopName      = trim((string)($dataObj['customer_details']['name'] ?? $dataObj['customer_name'] ?? ''));
 
     } elseif ($eventType === 'invoice.paid') {
         // ── Flow B: subscription / invoice ──────────────────────────────────
@@ -230,12 +233,11 @@ try {
             $price  = $li['price'] ?? [];
             $liMeta = $li['metadata'] ?? [];
 
-            // Ordered candidates — price_id first so we can capture currency
+            // Only consider price_id candidates — product_id alone must
+            // never pass the filter (see $matchAgainstConfig).
             $candidates = array_filter([
                 $price['id']            ?? null,
                 $liMeta['price_id']     ?? null,
-                $price['product']       ?? null,
-                $liMeta['product_id']   ?? null,
             ]);
 
             foreach ($candidates as $cid) {
@@ -256,6 +258,7 @@ try {
 
         $stripeID      = $dataObj['customer'] ?? '';
         $customerEmail = $dataObj['customer_email'] ?? $dataObj['customer_details']['email'] ?? '';
+        $shopName      = trim((string)($dataObj['customer_name'] ?? $dataObj['customer_details']['name'] ?? ''));
 
     } else {
         // Not an event we care about — ack and exit
@@ -282,6 +285,7 @@ try {
     $makePayload = json_encode([
         'stripeID'      => $stripeID,
         'customerEmail' => $customerEmail,
+        'shopName'      => $shopName,         // Stripe customer_name (e.g. "Sawad home spa")
         'account'       => $account,          // Stripe account: au | us | th
         'country'       => $country,          // country from URL: au|nz|uk|us|ca|th
         'currency'      => $matchedCurrency,  // currency of the matched price: aud|nzd|gbp|usd|cad|thb
