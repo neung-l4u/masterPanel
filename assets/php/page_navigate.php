@@ -189,6 +189,14 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataSignupLogs.php";
         $title = "Master panel : SignUp Logs (Staff)";
         break;
+    case "formASAPLogs":
+        $showPage = "formASAPLogs.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "formASAPLogs";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataFormASAPLogs.php";
+        $title = "Master panel : Upgrade to the new system logs";
+        break;
     case "unsub":
         $showPage = "unSubmitted.php";
         $activeMenu["lv1"] = "";
