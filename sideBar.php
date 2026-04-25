@@ -246,6 +246,12 @@ include ('assets/api/checkSession.php');
                             </a>
                         </li>
                         <li class="nav-item pl-2">
+                            <a href="https://report.localforyou.com/modules/aiAraya/views/entries.php" target="_blank" class="nav-link">
+                                <span class="nav-icon mr-3 d-inline-block text-center" style="font-weight: bold; font-size: 0.85rem; width: 1rem;">AI</span>
+                                <p>AI Araya Logs &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
                             <a href="modules/changeLog/changelog.php" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-clock-history"></i>
                                 <p>Change Logs &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
