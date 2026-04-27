@@ -14,7 +14,7 @@
 }
 
 .submit-header {background: linear-gradient(135deg, #0d6efd 0%, #4f8cfd 50%, #80b1ff 100%);}
-.unsubmit-header {background: linear-gradient(135deg, #fd0d0d 0%, #fd4f4f 50%, #ff8080 100%);}
+.unsubmit-header {background: linear-gradient(135deg, #  0%, #fd4f4f 50%, #ff8080 100%);}
 
 .form-header::before {
     content: '';
