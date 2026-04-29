@@ -5,31 +5,29 @@ require_once '../assets/db/initDB.php';
 global $db;
 
 $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
+$mode = $_GET['mode'] ?? 'customer';
 ?>
 <!doctype html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-LGKDYHL23T');
     </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/upgradeForm.css?v=1.0.0" rel="stylesheet">
+    <link href="../assets/css/upgradeForm.css?v=2.0.0" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    
-    <title>Upgrade - Form</title>
+    <title>Upgrade Form - Local For You</title>
 </head>
-<body>
+<body data-mode="<?php echo htmlspecialchars($mode); ?>">
 
 <div class="container">
     <main>
@@ -39,320 +37,520 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
                 <!-- ===== Header ===== -->
                 <div class="form-header">
                     <img src="../assets/img/L4U-Site-Icon.png" alt="Logo Image" class="logo-img">
-                    <h3 class="form-title text-uppercase">Upgrade Form</h3>
+                    <h3 class="form-title text-uppercase">Upgrade / Add-on Form</h3>
                     <p class="form-subtitle">
-                        Please complete this form so we can configure your AI receptionist correctly. You may skip any fields you prefer to handle during the onboarding call.
+                        <?php if ($mode === 'customer'): ?>
+                            Please review the upgrade details below and complete this form to proceed with your package upgrade or add-on purchase.
+                        <?php else: ?>
+                            Internal upgrade &amp; add-on management form. Fill in all relevant details for the customer's upgrade.
+                        <?php endif; ?>
                     </p>
+                    <div class="mode-toggle mt-3">
+                        <a href="?mode=customer&stripeID=<?php echo urlencode($stripeID); ?>" class="mode-btn <?php echo $mode === 'customer' ? 'active' : ''; ?>"><i class="bi bi-person"></i> Customer</a>
+                        <a href="?mode=staff&stripeID=<?php echo urlencode($stripeID); ?>" class="mode-btn <?php echo $mode === 'staff' ? 'active' : ''; ?>"><i class="bi bi-headset"></i> Staff</a>
+                    </div>
                 </div>
-                
+
                 <!-- ===== Form Body ===== -->
                 <div class="form-body">
+
+                    <!-- ============================================================ -->
+                    <!-- Package Details (visible to both Staff & Customer)            -->
+                    <!-- ============================================================ -->
+                    <div class="form-section">
+                        <h5 class="section-title"><i class="bi bi-box-seam"></i> Package Details</h5>
+
+                        <div class="pkg-compare-grid">
+                            <!-- Local Starter -->
+                            <div class="pkg-column">
+                                <div class="pkg-column-header pkg-starter">
+                                    <i class="bi bi-rocket-takeoff"></i>
+                                    <h6>Local Starter</h6>
+                                </div>
+                                <ul class="pkg-feature-list">
+                                    <li><i class="bi bi-check2"></i> 1 Ad Channel (Google or FB/IG)</li>
+                                    <li><i class="bi bi-check2"></i> Yelp Ads Management</li>
+                                    <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
+                                    <li><i class="bi bi-check2"></i> 2 GMB Posts/Month</li>
+                                    <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Social Media Posts</li>
+                                    <li><i class="bi bi-check2"></i> 1 Email Campaign/Month</li>
+                                    <li><i class="bi bi-check2"></i> 2 SMS Campaigns/Month</li>
+                                    <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Advanced SEO</li>
+                                    <li><i class="bi bi-check2"></i> Strategy Call</li>
+                                    <li><i class="bi bi-check2"></i> Monthly Report</li>
+                                </ul>
+                            </div>
+
+                            <!-- Local Growth -->
+                            <div class="pkg-column pkg-column-highlight">
+                                <div class="pkg-column-header pkg-growth">
+                                    <span class="pkg-popular-badge">Popular</span>
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                    <h6>Local Growth</h6>
+                                </div>
+                                <ul class="pkg-feature-list">
+                                    <li><i class="bi bi-check2"></i> Google + FB/IG Ads</li>
+                                    <li><i class="bi bi-check2"></i> Yelp Ads Management</li>
+                                    <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
+                                    <li><i class="bi bi-check2"></i> 4 GMB Posts/Month</li>
+                                    <li><i class="bi bi-check2"></i> 4 Social Media Posts/Month</li>
+                                    <li><i class="bi bi-check2"></i> 2 Email Campaigns/Month</li>
+                                    <li><i class="bi bi-check2"></i> 2 SMS Campaigns/Month</li>
+                                    <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Advanced SEO</li>
+                                    <li><i class="bi bi-check2"></i> Monthly Strategy Call</li>
+                                    <li><i class="bi bi-check2"></i> Monthly Report</li>
+                                </ul>
+                            </div>
+
+                            <!-- Local Ultimate -->
+                            <div class="pkg-column">
+                                <div class="pkg-column-header pkg-ultimate">
+                                    <i class="bi bi-trophy"></i>
+                                    <h6>Local Ultimate</h6>
+                                </div>
+                                <ul class="pkg-feature-list">
+                                    <li><i class="bi bi-check2"></i> Google + FB/IG + Advanced Ads</li>
+                                    <li><i class="bi bi-check2"></i> Yelp Ads</li>
+                                    <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
+                                    <li><i class="bi bi-check2"></i> 8 GMB Posts/Month</li>
+                                    <li><i class="bi bi-check2"></i> 8 Social Media Posts/Month</li>
+                                    <li><i class="bi bi-check2"></i> 4 Email Campaigns/Month</li>
+                                    <li><i class="bi bi-check2"></i> 4 SMS Campaigns/Month</li>
+                                    <li><i class="bi bi-check2"></i> Advanced SEO Components</li>
+                                    <li><i class="bi bi-check2"></i> Monthly Strategy Call</li>
+                                    <li><i class="bi bi-check2"></i> Monthly Report</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================ -->
+                    <!-- STAFF-ONLY: Internal Knowledge Base                           -->
+                    <!-- ============================================================ -->
+                    <?php if ($mode === 'staff'): ?>
+                    <div class="form-section staff-only-section">
+                        <h5 class="section-title"><i class="bi bi-book"></i> Staff Knowledge Base <span class="badge bg-warning text-dark ms-2" style="font-size:.65rem;">Staff Only</span></h5>
+
+                        <div class="mb-3">
+                            <label class="form-label">Package Reference Materials <small class="text-muted">(file, link, image)</small></label>
+                            <input type="text" class="form-control" name="staffPackageRef" placeholder="e.g. Google Drive link, file path, or image URL">
+                        </div>
+
+                        <div class="info-card info-stripe mb-3">
+                            <h6><i class="bi bi-credit-card-2-front"></i> Stripe Information</h6>
+                            <ul class="mb-0">
+                                <li>Stripe is our payment processing partner.</li>
+                                <li>Local For You does <strong>not</strong> hold customer revenue at any point.</li>
+                                <li>Stripe fee: <strong>2.9% + 30&cent;</strong> per transaction (standard US rate).</li>
+                                <li>Customers connect their own Stripe account for online payments.</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-card info-delivery mb-3">
+                            <h6><i class="bi bi-truck"></i> In-House Delivery &amp; AI Marketing</h6>
+                            <ul class="mb-0">
+                                <li><strong>In-House Delivery:</strong> Available for Bundle restaurant customers. Delivery fee is customizable per area/zone.</li>
+                                <li><strong>AI Marketing:</strong> Available for restaurant packages. Activation should be done by the customer themselves.</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-card info-amelia mb-3">
+                            <h6><i class="bi bi-calendar-check"></i> Amelia Booking System</h6>
+                            <p class="mb-0">For Amelia booking system, the customer <strong>must use WordPress</strong>. If they want to keep their own website, make sure it is WordPress-based.</p>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- ============================================================ -->
+                    <!-- CUSTOMER-ONLY: Important Notices                              -->
+                    <!-- ============================================================ -->
+                    <?php if ($mode === 'customer'): ?>
+                    <div class="form-section customer-notice-section">
+                        <h5 class="section-title"><i class="bi bi-info-circle"></i> Important Information</h5>
+                        <div class="notice-card notice-cancel">
+                            <div class="notice-icon"><i class="bi bi-calendar-x"></i></div>
+                            <div>
+                                <strong>30-Day Cancellation Notice</strong>
+                                <p class="mb-0">All cancellations require a <strong>30-day advance notice</strong>. Please notify us at least 30 days before your next billing date if you wish to cancel your service.</p>
+                            </div>
+                        </div>
+                        <div class="notice-card notice-contract">
+                            <div class="notice-icon"><i class="bi bi-file-earmark-lock"></i></div>
+                            <div>
+                                <strong>Contract &amp; Service Fee</strong>
+                                <p class="mb-0">If the contract has expired, the service fee will remain as per the contract selected until canceled or changed to another contract.</p>
+                            </div>
+                        </div>
+                        <div class="notice-card notice-stripe">
+                            <div class="notice-icon"><i class="bi bi-shield-check"></i></div>
+                            <div>
+                                <strong>Payment Processing (Stripe)</strong>
+                                <p class="mb-0">Stripe is our trusted payment partner. <strong>Local For You does not hold your revenue at any point.</strong> All payments go directly through Stripe to your connected account.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- ============================================================ -->
+                    <!-- MAIN FORM                                                    -->
+                    <!-- ============================================================ -->
                     <form id="upgradeForm" name="upgradeForm" method="post" enctype="multipart/form-data">
 
-                        <!-- ========== SECTION 1: Business Information ========== -->
+                        <!-- ========== SECTION: Shop Details ========== -->
                         <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-building"></i> Business Information</h5>
+                            <h5 class="section-title"><i class="bi bi-shop-window"></i> Shop Details</h5>
 
                             <div class="mb-3">
-                                <label for="businessName" class="form-label">Business Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="businessName" name="businessName" placeholder="e.g. Serenity Spa & Wellness" required>
-                                <div class="invalid-feedback">Please enter your business name.</div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="businessHours" class="form-label">Business Hours <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="businessHours" name="businessHours" rows="3" placeholder="e.g. Mon-Fri 9:00 AM - 7:00 PM, Sat 10:00 AM - 5:00 PM, Sun Closed" required></textarea>
-                                <div class="invalid-feedback">Please enter your business hours.</div>
+                                <label for="mondayProjectId" class="form-label">Monday Project / Shop ID <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="e.g. 12345678" required>
+                                <div class="form-text">Enter the Monday.com project or Shop ID. Other fields will auto-fill.</div>
+                                <div class="invalid-feedback">Please enter the Monday Project / Shop ID.</div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="shopAddress" class="form-label">Shop Address</label>
-                                    <textarea class="form-control" id="shopAddress" name="shopAddress" rows="2" placeholder="e.g. 123 Main Street, Suite 4, Los Angeles, CA 90001"></textarea>
+                                    <label for="shopName" class="form-label">Shop Name</label>
+                                    <input type="text" class="form-control" id="shopName" name="shopName" placeholder="Auto-filled from ID">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="timezoneId" class="form-label">Timezone ID <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="timezoneId" name="timezoneId" placeholder="e.g. America/New_York" required>
-                                    <div class="invalid-feedback">Please enter your timezone ID.</div>
+                                    <label for="shopType" class="form-label">Shop Type</label>
+                                    <input type="text" class="form-control" id="shopType" name="shopType" placeholder="Auto-filled from ID">
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="currentBookingSystem" class="form-label">Current Booking System <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="currentBookingSystem" name="currentBookingSystem" placeholder="e.g. Google Calendar, Fresha" required>
-                                <div class="invalid-feedback">Please enter your current booking system.</div>
-                            </div>
-
-                            <div class="row" id="bookingCredentials" style="display: none;">
-                                <div class="col-12 mb-2">
-                                    <small class="text-muted"><i class="bi bi-lock"></i> Booking system login credentials</small>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="ownerName" class="form-label">Owner's Name</label>
+                                    <input type="text" class="form-control" id="ownerName" name="ownerName" placeholder="Auto-filled from ID">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="bookingUser" class="form-label">Username / Email</label>
-                                    <input type="text" class="form-control" id="bookingUser" name="bookingUser" placeholder="e.g. admin@yourbusiness.com">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="bookingPassword" class="form-label">Password</label>
-                                    <input type="text" class="form-control" id="bookingPassword" name="bookingPassword" placeholder="e.g. ••••••••">
+                                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Auto-filled from ID">
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="businessWebsite" class="form-label">Business Website</label>
-                                <input type="url" class="form-control" id="businessWebsite" name="businessWebsite" placeholder="e.g. https://www.yourbusiness.com">
+                            <div class="row">
+                                <div class="col-md mb-3">
+                                    <label for="bestTimeContact" class="form-label">Best Time to Contact <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="bestTimeContact" name="bestTimeContact" placeholder="e.g. Weekdays 10am-2pm PST" required>
+                                    <div class="invalid-feedback">Please enter the best time to contact.</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- ========== SECTION 2: Phone & Contact ========== -->
+                        <!-- ========== SECTION: Upgrade Type ========== -->
                         <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-telephone"></i> Phone & Contact</h5>
-
+                            <h5 class="section-title"><i class="bi bi-arrow-up-circle"></i> What would you like to do?</h5>
                             <div class="mb-3">
-                                <label class="form-label">Phone Number Decision <span class="text-danger">*</span></label>
                                 <div class="radio-card-group">
                                     <div class="radio-card">
-                                        <input type="radio" name="phoneNumberDecision" id="phoneDecisionPromote" value="Promote AI Phone Number" required>
-                                        <label for="phoneDecisionPromote"><i class="bi bi-megaphone"></i> Promote AI Phone Number</label>
+                                        <input type="radio" name="upgradeType" id="typeUpgradePackage" value="upgrade_package" required>
+                                        <label for="typeUpgradePackage"><i class="bi bi-box-arrow-up"></i> Upgrade Package</label>
                                     </div>
                                     <div class="radio-card">
-                                        <input type="radio" name="phoneNumberDecision" id="phoneDecisionTransfer" value="Transfer call to Shop's number">
-                                        <label for="phoneDecisionTransfer"><i class="bi bi-telephone-forward"></i> Transfer to Shop's Number</label>
+                                        <input type="radio" name="upgradeType" id="typeAddonOnly" value="addon_only">
+                                        <label for="typeAddonOnly"><i class="bi bi-plus-circle"></i> Add-on Only</label>
                                     </div>
                                 </div>
-                                <div class="invalid-feedback">Please select a phone number decision.</div>
+                                <div class="invalid-feedback">Please select an upgrade type.</div>
+                            </div>
+                        </div>
+
+                        <!-- ========== SECTION: Upgrade Information (Package Upgrade) ========== -->
+                        <div class="form-section" id="upgradeInfoSection" style="display:none;">
+                            <h5 class="section-title"><i class="bi bi-arrow-repeat"></i> Upgrade Information</h5>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="originalProduct" class="form-label">Original Product <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="originalProduct" name="originalProduct">
+                                        <option value="">-- Select Original Product --</option>
+                                        <optgroup label="Pro Plans">
+                                            <option value="pro_starter">Pro - Local Starter</option>
+                                            <option value="pro_growth">Pro - Local Growth</option>
+                                            <option value="pro_ultimate">Pro - Local Ultimate</option>
+                                        </optgroup>
+                                        <optgroup label="Solo Plans">
+                                            <option value="solo_starter">Solo - Local Starter</option>
+                                            <option value="solo_growth">Solo - Local Growth</option>
+                                            <option value="solo_ultimate">Solo - Local Ultimate</option>
+                                        </optgroup>
+                                        <optgroup label="Bundle Plans">
+                                            <option value="bundle_starter">Bundle - Local Starter</option>
+                                            <option value="bundle_growth">Bundle - Local Growth</option>
+                                            <option value="bundle_ultimate">Bundle - Local Ultimate</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="newProduct" class="form-label">New Product <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="newProduct" name="newProduct">
+                                        <option value="">-- Select New Product --</option>
+                                        <optgroup label="Pro Plans">
+                                            <option value="pro_starter">Pro - Local Starter</option>
+                                            <option value="pro_growth">Pro - Local Growth</option>
+                                            <option value="pro_ultimate">Pro - Local Ultimate</option>
+                                        </optgroup>
+                                        <optgroup label="Bundle Plans">
+                                            <option value="bundle_starter">Bundle - Local Starter</option>
+                                            <option value="bundle_growth">Bundle - Local Growth</option>
+                                            <option value="bundle_ultimate">Bundle - Local Ultimate</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Package Comparison -->
+                            <div id="packageComparisonCard" class="mb-3" style="display:none;"></div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="promotion" class="form-label">Promotion</label>
+                                    <input type="text" class="form-control" id="promotion" name="promotion" placeholder="e.g. 20% off first 3 months">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="contractPeriod" class="form-label">Contract Period <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="contractPeriod" name="contractPeriod" placeholder="e.g. 12 months">
+                                    <div class="invalid-feedback">Please enter the contract period.</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="upgradeReason" class="form-label">Reason of Upgrade / Upgrade Purpose <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="upgradeReason" name="upgradeReason" rows="2" placeholder="e.g. Want more repeat customers / Want to advertise for walk-in customers"></textarea>
+                                <div class="invalid-feedback">Please enter the reason for upgrade.</div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="backupPhoneNumber" class="form-label">Backup Phone Number <span class="text-danger">*</span></label>
-                                    <input type="tel" class="form-control" id="backupPhoneNumber" name="backupPhoneNumber" placeholder="e.g. +1 (555) 123-4567" required>
-                                    <div class="invalid-feedback">Please enter a backup phone number.</div>
-                                    <div class="form-text">AI transfers to human at this number</div>
+                                    <label for="salesAgent" class="form-label">Sales Agent / Upgrade Person <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="salesAgent" name="salesAgent" placeholder="e.g. John D.">
+                                    <div class="invalid-feedback">Please enter the sales agent name.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="phoneCarrier" class="form-label">Phone Carrier <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="phoneCarrier" name="phoneCarrier" placeholder="e.g. AT&T, Verizon, T-Mobile" required>
-                                    <div class="invalid-feedback">Please enter your phone carrier.</div>
+                                    <label for="billingDate" class="form-label">Billing Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="billingDate" name="billingDate">
+                                    <div class="invalid-feedback">Please enter the billing date.</div>
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="shopEmail" class="form-label">Shop Email Address <small class="text-muted">(for booking confirmations)</small></label>
-                                <input type="email" class="form-control" id="shopEmail" name="shopEmail" placeholder="e.g. bookings@yourbusiness.com">
-                                <div class="invalid-feedback">Please enter a valid email address.</div>
+                                <label for="upgradeNote" class="form-label">Note</label>
+                                <textarea class="form-control" id="upgradeNote" name="upgradeNote" rows="2" placeholder="Any additional notes about this upgrade..."></textarea>
                             </div>
                         </div>
 
-                        <!-- ========== SECTION 3: Services ========== -->
-                        <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-list-check"></i> Services</h5>
-
-                            <div class="mb-3">
-                                <label for="servicesOffered" class="form-label">Services Offered <small class="text-muted">(Include name, duration, and price)</small> <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="servicesOffered" name="servicesOffered" rows="5" placeholder="e.g.&#10;Swedish Massage - 60 min - $80&#10;Deep Tissue Massage - 90 min - $120&#10;Hot Stone Therapy - 60 min - $100&#10;Aromatherapy Massage - 60 min - $90" required></textarea>
-                                <div class="invalid-feedback">Please list your services offered.</div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="bufferMinutes" class="form-label">Buffer Minutes <small class="text-muted">(Optional)</small></label>
-                                <input type="number" class="form-control" id="bufferMinutes" name="bufferMinutes" min="0" placeholder="e.g. 15" style="max-width: 200px;">
-                                <div class="form-text">Minutes between appointments for preparation.</div>
-                            </div>
-
-                            <div class="radio-grid">
-                                <div class="radio-field">
-                                    <label class="form-label">Couple Massage <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="coupleMassage" id="coupleMassageYes" value="Couple Massage Available" required>
-                                            <label for="coupleMassageYes"><i class="bi bi-check-lg"></i> Available</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="coupleMassage" id="coupleMassageNo" value="Couple Massage Not Available">
-                                            <label for="coupleMassageNo"><i class="bi bi-x-lg"></i> Not Available</label>
-                                        </div>
-                                    </div>
-                                    <div class="invalid-feedback">Please select an option.</div>
-                                </div>
-
-                                <div class="radio-field">
-                                    <label class="form-label">Happy Massage <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="happyMassage" id="happyMassageYes" value="Happy Massage Available" required>
-                                            <label for="happyMassageYes"><i class="bi bi-check-lg"></i> Available</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="happyMassage" id="happyMassageNo" value="Happy Massage Not Available">
-                                            <label for="happyMassageNo"><i class="bi bi-x-lg"></i> Not Available</label>
-                                        </div>
-                                    </div>
-                                    <div class="invalid-feedback">Please select an option.</div>
-                                </div>
+                        <!-- ========== SECTION: Add-on Products ========== -->
+                        <div class="form-section" id="addonSection" style="display:none;">
+                            <h5 class="section-title"><i class="bi bi-bag-plus"></i> Add-on Products <small class="text-muted">(Purchase / Not free offer)</small></h5>
+                            <div class="checkbox-grid">
+                                <div class="check-card"><input type="checkbox" id="addonWebTemplate" name="addons[]" value="Website Template"><label for="addonWebTemplate"><i class="bi bi-layout-text-window-reverse"></i> Website Template</label></div>
+                                <div class="check-card"><input type="checkbox" id="addonWebMakeover" name="addons[]" value="Website Makeover"><label for="addonWebMakeover"><i class="bi bi-brush"></i> Website Makeover</label></div>
+                                <div class="check-card"><input type="checkbox" id="addonAraya" name="addons[]" value="ARAYA (Massage)"><label for="addonAraya"><i class="bi bi-robot"></i> ARAYA (Massage)</label></div>
+                                <div class="check-card"><input type="checkbox" id="addonAiMarketing" name="addons[]" value="AI Marketing (Restaurant)"><label for="addonAiMarketing"><i class="bi bi-stars"></i> AI Marketing (Restaurant)</label></div>
+                                <div class="check-card"><input type="checkbox" id="addonUnlimitedPromo" name="addons[]" value="Unlimited Promotion (Restaurant)"><label for="addonUnlimitedPromo"><i class="bi bi-megaphone"></i> Unlimited Promo (Restaurant)</label></div>
+                                <div class="check-card"><input type="checkbox" id="addonSocialMedia" name="addons[]" value="Social Media Post"><label for="addonSocialMedia"><i class="bi bi-share"></i> Social Media Post</label></div>
+                                <div class="check-card"><input type="checkbox" id="addonSMS" name="addons[]" value="SMS Marketing"><label for="addonSMS"><i class="bi bi-chat-left-text"></i> SMS Marketing</label></div>
+                                <div class="check-card"><input type="checkbox" id="addonDineIn" name="addons[]" value="Dine-in Dual"><label for="addonDineIn"><i class="bi bi-cup-straw"></i> Dine-in Dual</label></div>
+                                <div class="check-card"><input type="checkbox" id="addonDelivery" name="addons[]" value="Inhouse Delivery"><label for="addonDelivery"><i class="bi bi-truck"></i> Inhouse Delivery</label></div>
                             </div>
                         </div>
 
-                        <!-- ========== SECTION 4: Therapists ========== -->
-                        <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-people"></i> Therapists</h5>
-
-                            <div class="radio-grid mb-3">
-                                <div class="radio-field">
-                                    <label class="form-label">Male Therapists <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="maleTherapists" id="maleTherapistYes" value="Male Therapist Available" required>
-                                            <label for="maleTherapistYes"><i class="bi bi-check-lg"></i> Available</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="maleTherapists" id="maleTherapistNo" value="Male Therapist Not Available">
-                                            <label for="maleTherapistNo"><i class="bi bi-x-lg"></i> Not Available</label>
-                                        </div>
-                                    </div>
-                                    <div class="invalid-feedback">Please select an option.</div>
-                                </div>
-
-                                <div class="radio-field">
-                                    <label class="form-label">Female Therapists <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="femaleTherapists" id="femaleTherapistYes" value="Female Therapists Available" required>
-                                            <label for="femaleTherapistYes"><i class="bi bi-check-lg"></i> Available</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="femaleTherapists" id="femaleTherapistNo" value="Female Therapists Not Available">
-                                            <label for="femaleTherapistNo"><i class="bi bi-x-lg"></i> Not Available</label>
-                                        </div>
-                                    </div>
-                                    <div class="invalid-feedback">Please select an option.</div>
-                                </div>
-                            </div>
-
+                        <!-- ========== SECTION: Social Media Access ========== -->
+                        <div class="form-section" id="socialMediaSection" style="display:none;">
+                            <h5 class="section-title"><i class="bi bi-globe2"></i> Social Media Access</h5>
                             <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label for="numberOfTherapists" class="form-label">Number of Therapists <span class="text-danger">*</span></label>
-                                    <input type="number" class="form-control" id="numberOfTherapists" name="numberOfTherapists" min="1" placeholder="e.g. 5" required>
-                                    <div class="invalid-feedback">Please enter the number of therapists.</div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="facebookPage" class="form-label">Facebook Page</label>
+                                    <input type="url" class="form-control" id="facebookPage" name="facebookPage" placeholder="https://facebook.com/yourpage">
                                 </div>
-                                <div class="col-md-8 mb-3">
-                                    <label for="therapistNames" class="form-label">Therapist Names <span class="text-danger">*</span></label>
-                                    <textarea class="form-control" id="therapistNames" name="therapistNames" rows="2" placeholder="e.g. Anna, Brian, Clara, David" required></textarea>
-                                    <div class="invalid-feedback">Please enter therapist names.</div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="googleBP" class="form-label">Google Business Profile</label>
+                                    <input type="url" class="form-control" id="googleBP" name="googleBP" placeholder="https://business.google.com/...">
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="yelpPage" class="form-label">Yelp</label>
+                                    <input type="url" class="form-control" id="yelpPage" name="yelpPage" placeholder="https://yelp.com/biz/...">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lineOA" class="form-label">Line Official Account</label>
+                                    <input type="text" class="form-control" id="lineOA" name="lineOA" placeholder="e.g. @yourshop">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tiktokPage" class="form-label">TikTok</label>
+                                <input type="url" class="form-control" id="tiktokPage" name="tiktokPage" placeholder="https://tiktok.com/@yourshop">
                             </div>
                         </div>
 
-                        <!-- ========== SECTION 5: Facilities ========== -->
-                        <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-shop"></i> Facilities</h5>
-
-                            <div class="radio-grid">
-                                <div class="radio-field">
-                                    <label class="form-label">Wheelchair <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="wheelchair" id="wheelchairYes" value="Wheelchair Accessible" required>
-                                            <label for="wheelchairYes"><i class="bi bi-check-lg"></i> Accessible</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="wheelchair" id="wheelchairNo" value="Wheelchair Not Accessible">
-                                            <label for="wheelchairNo"><i class="bi bi-x-lg"></i> Not Accessible</label>
-                                        </div>
-                                    </div>
-                                    <div class="invalid-feedback">Please select an option.</div>
-                                </div>
-
-                                <div class="radio-field">
-                                    <label class="form-label">Parking <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="parking" id="parkingYes" value="Parking Available" required>
-                                            <label for="parkingYes"><i class="bi bi-check-lg"></i> Available</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="parking" id="parkingNo" value="Parking Not Available">
-                                            <label for="parkingNo"><i class="bi bi-x-lg"></i> Not Available</label>
-                                        </div>
-                                    </div>
-                                    <div class="invalid-feedback">Please select an option.</div>
-                                </div>
-
-                                <div class="radio-field">
-                                    <label class="form-label">Restroom <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="restroom" id="restroomYes" value="Restroom Available" required>
-                                            <label for="restroomYes"><i class="bi bi-check-lg"></i> Available</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="restroom" id="restroomNo" value="Restroom Not Available">
-                                            <label for="restroomNo"><i class="bi bi-x-lg"></i> Not Available</label>
-                                        </div>
-                                    </div>
-                                    <div class="invalid-feedback">Please select an option.</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ========== SECTION 6: Promotions & AI Preferences ========== -->
-                        <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-stars"></i> Promotions & AI Preferences</h5>
+                        <!-- ========== SECTION: Solo->Bundle System Build ========== -->
+                        <div class="form-section" id="soloBundleSection" style="display:none;">
+                            <h5 class="section-title"><i class="bi bi-gear-wide-connected"></i> System Build Details <span class="badge bg-info text-dark ms-2" style="font-size:.65rem;">Solo &rarr; Bundle</span></h5>
 
                             <div class="mb-3">
-                                <label for="promotions" class="form-label">Ongoing Promotions & Gift Vouchers <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="promotions" name="promotions" rows="3" placeholder="e.g. 20% off first visit, Gift cards available from $50, Buy 5 sessions get 1 free" required></textarea>
-                                <div class="invalid-feedback">Please enter promotions or type "None".</div>
-                                <div class="form-text">AI will mention these before call end & in confirmation email sent to customers.</div>
+                                <label for="systemEmail" class="form-label">Email for System Login <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="systemEmail" name="systemEmail" placeholder="e.g. owner@restaurant.com">
+                                <div class="invalid-feedback">Please enter an email for system login.</div>
                             </div>
 
-                            <div class="radio-grid mb-3">
-                                <div class="radio-field">
-                                    <label class="form-label">Voice Type <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="voiceType" id="voiceFemale" value="Female" required>
-                                            <label for="voiceFemale"><i class="bi bi-gender-female"></i> Female</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="voiceType" id="voiceMale" value="Male">
-                                            <label for="voiceMale"><i class="bi bi-gender-male"></i> Male</label>
-                                        </div>
-                                    </div>
-                                    <div class="invalid-feedback">Please select a voice type.</div>
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label">Menu / Logo / Picture</label>
+                                <select class="form-select" id="menuLogoStatus" name="menuLogoStatus">
+                                    <option value="">-- Select Status --</option>
+                                    <option value="google_drive">Google Drive Link</option>
+                                    <option value="received">Received</option>
+                                    <option value="requested">Requested</option>
+                                </select>
+                                <input type="url" class="form-control mt-2" id="menuLogoLink" name="menuLogoLink" placeholder="Google Drive link" style="display:none;">
+                            </div>
 
-                                <div class="radio-field">
-                                    <label class="form-label">Existing Google Calendar? <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="googleCalendar" id="googleCalendarYes" value="Yes" required>
-                                            <label for="googleCalendarYes"><i class="bi bi-check-circle"></i> Yes</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="googleCalendar" id="googleCalendarNo" value="No">
-                                            <label for="googleCalendarNo"><i class="bi bi-x-circle"></i> No</label>
-                                        </div>
+                            <div class="restaurant-fields">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="ownDeliveryArea" class="form-label">(Restaurant) Own Delivery Area &amp; Fee</label>
+                                        <textarea class="form-control" id="ownDeliveryArea" name="ownDeliveryArea" rows="2" placeholder="e.g. 5 mile radius - $3.99"></textarea>
                                     </div>
-                                    <div class="invalid-feedback">Please select an option.</div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="inhouseDeliveryArea" class="form-label">(Restaurant) In-House Delivery Area &amp; Fee</label>
+                                        <textarea class="form-control" id="inhouseDeliveryArea" name="inhouseDeliveryArea" rows="2" placeholder="e.g. Zone A: $2.99, Zone B: $4.99"></textarea>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="mb-3" id="googleCalendarIdGroup" style="display: none;">
-                                <label for="googleCalendarId" class="form-label">Google Calendar ID</label>
-                                <input type="text" class="form-control" id="googleCalendarId" name="googleCalendarId" placeholder="e.g. abc123@group.calendar.google.com">
-                                <div class="form-text d-flex gap-3">
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#calendarHowToModal"><i class="bi bi-play-circle"></i> Quick Guide</a>
-                                    <a href="howToGetCalendarId.php" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Full Guide</a>
+                            <div class="mb-3">
+                                <label class="form-label">Online Payment (Stripe Account) <span class="text-danger">*</span></label>
+                                <div class="radio-card-group radio-card-group-3">
+                                    <div class="radio-card"><input type="radio" name="stripeStatus" id="stripeNoWant" value="Don't Want Online Payment"><label for="stripeNoWant"><i class="bi bi-x-circle"></i> Don't Want</label></div>
+                                    <div class="radio-card"><input type="radio" name="stripeStatus" id="stripeWaiting" value="Waiting"><label for="stripeWaiting"><i class="bi bi-hourglass-split"></i> Waiting</label></div>
+                                    <div class="radio-card"><input type="radio" name="stripeStatus" id="stripeConnected" value="Connected"><label for="stripeConnected"><i class="bi bi-check-circle"></i> Connected</label></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="openingDayTime" class="form-label">Opening Day / Time <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="openingDayTime" name="openingDayTime" rows="2" placeholder="e.g. Mon-Sat 11am-9pm, Sun 12pm-8pm"></textarea>
+                                <div class="invalid-feedback">Please enter opening day/time.</div>
+                            </div>
+
+                            <div class="restaurant-fields">
+                                <div class="mb-3">
+                                    <label class="form-label">(Restaurant) Services Provided</label>
+                                    <div class="checkbox-grid checkbox-grid-sm">
+                                        <div class="check-card"><input type="checkbox" id="svcPickUp" name="restaurantServices[]" value="Pick Up"><label for="svcPickUp"><i class="bi bi-bag"></i> Pick Up</label></div>
+                                        <div class="check-card"><input type="checkbox" id="svcHomeDelivery" name="restaurantServices[]" value="Home Delivery"><label for="svcHomeDelivery"><i class="bi bi-house-door"></i> Home Delivery</label></div>
+                                        <div class="check-card"><input type="checkbox" id="svcInhouseDelivery" name="restaurantServices[]" value="Inhouse Delivery"><label for="svcInhouseDelivery"><i class="bi bi-truck"></i> Inhouse Delivery</label></div>
+                                        <div class="check-card"><input type="checkbox" id="svcTableReserve" name="restaurantServices[]" value="Table Reservation"><label for="svcTableReserve"><i class="bi bi-calendar-check"></i> Table Reservation</label></div>
+                                        <div class="check-card"><input type="checkbox" id="svcDineIn" name="restaurantServices[]" value="On Premise (Dine-in)"><label for="svcDineIn"><i class="bi bi-cup-straw"></i> On Premise (Dine-in)</label></div>
+                                        <div class="check-card"><input type="checkbox" id="svcScheduled" name="restaurantServices[]" value="Scheduled Orders"><label for="svcScheduled"><i class="bi bi-clock-history"></i> Scheduled Orders</label></div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">(Restaurant) AI Marketing Activation</label>
+                                    <div class="radio-card-group">
+                                        <div class="radio-card"><input type="radio" name="aiMarketingActivation" id="aiMarketingYes" value="Yes"><label for="aiMarketingYes"><i class="bi bi-check-lg"></i> Yes</label></div>
+                                        <div class="radio-card"><input type="radio" name="aiMarketingActivation" id="aiMarketingNo" value="No"><label for="aiMarketingNo"><i class="bi bi-x-lg"></i> No</label></div>
+                                    </div>
+                                    <div class="form-text">Note: AI Marketing activation should be done by the customer themselves.</div>
+                                </div>
+                            </div>
+
+                            <!-- Website -->
+                            <div class="sub-section">
+                                <h6 class="sub-section-title"><i class="bi bi-globe"></i> Website</h6>
+                                <div class="mb-3">
+                                    <div class="radio-card-group">
+                                        <div class="radio-card"><input type="radio" name="websiteOption" id="webOptAddButton" value="Add button/amelia to their own website"><label for="webOptAddButton"><i class="bi bi-plus-square"></i> Add to own site</label></div>
+                                        <div class="radio-card"><input type="radio" name="websiteOption" id="webOptGF" value="Need GF website"><label for="webOptGF"><i class="bi bi-layout-text-window"></i> Need GF Website</label></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3" id="websiteTemplateGroup" style="display:none;">
+                                    <label for="websiteTemplate" class="form-label">Website Template</label>
+                                    <select class="form-select" id="websiteTemplate" name="websiteTemplate">
+                                        <option value="">-- Select Template --</option>
+                                        <option value="restaurant_1">Restaurant Template 1</option>
+                                        <option value="restaurant_2">Restaurant Template 2</option>
+                                        <option value="restaurant_3">Restaurant Template 3</option>
+                                        <option value="massage_1">Massage Template 1</option>
+                                    </select>
+                                    <div class="form-text">Colors &amp; Tone: Will follow template colour preview</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="websiteOther" class="form-label">Other Website Notes</label>
+                                    <input type="text" class="form-control" id="websiteOther" name="websiteOther" placeholder="Any other website requirements...">
+                                </div>
+                            </div>
+
+                            <!-- Domain Hosting -->
+                            <div class="sub-section">
+                                <h6 class="sub-section-title"><i class="bi bi-hdd-network"></i> Domain Hosting</h6>
+                                <div class="mb-3">
+                                    <div class="radio-card-group-vertical">
+                                        <div class="radio-card-v"><input type="radio" name="domainOption" id="domainBuyNew" value="Buy New with Localforyou Domain"><label for="domainBuyNew">Buy New with Localforyou Domain</label></div>
+                                        <div class="radio-card-v"><input type="radio" name="domainOption" id="domainTransfer" value="Transfer In to L4U Domain"><label for="domainTransfer">Transfer In to L4U Domain</label></div>
+                                        <div class="radio-card-v"><input type="radio" name="domainOption" id="domainDNS" value="Add DNS (to Another Domain Hosting)"><label for="domainDNS">Add DNS (to Another Domain Hosting)</label></div>
+                                        <div class="radio-card-v"><input type="radio" name="domainOption" id="domainOtherRadio" value="Other"><label for="domainOtherRadio">Other</label></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3" id="domainOtherGroup" style="display:none;">
+                                    <input type="text" class="form-control" id="domainOtherText" name="domainOtherText" placeholder="Please specify domain hosting details...">
+                                </div>
+                            </div>
+
+                            <!-- Payment Method -->
+                            <div class="sub-section">
+                                <h6 class="sub-section-title"><i class="bi bi-credit-card"></i> Payment Method</h6>
+                                <div class="checkbox-grid checkbox-grid-sm">
+                                    <div class="check-card"><input type="checkbox" id="payCash" name="paymentMethods[]" value="Cash"><label for="payCash"><i class="bi bi-cash"></i> Cash</label></div>
+                                    <div class="check-card"><input type="checkbox" id="payCard" name="paymentMethods[]" value="Card at Counter"><label for="payCard"><i class="bi bi-credit-card-2-front"></i> Card at Counter</label></div>
+                                    <div class="check-card"><input type="checkbox" id="payOnline" name="paymentMethods[]" value="Online Payment"><label for="payOnline"><i class="bi bi-phone"></i> Online Payment</label></div>
+                                </div>
+                            </div>
+
+                            <!-- Restaurant QR Code -->
+                            <div class="sub-section restaurant-fields">
+                                <h6 class="sub-section-title"><i class="bi bi-qr-code"></i> (Restaurant) Dine-in QR Code</h6>
+                                <div class="radio-card-group">
+                                    <div class="radio-card"><input type="radio" name="qrCodeOption" id="qrDefault" value="Default (A6 with 20 copies)"><label for="qrDefault">Default (A6 x20)</label></div>
+                                    <div class="radio-card"><input type="radio" name="qrCodeOption" id="qrOther" value="Other"><label for="qrOther">Other</label></div>
+                                </div>
+                                <div class="mb-3 mt-2" id="qrOtherGroup" style="display:none;">
+                                    <input type="text" class="form-control" id="qrOtherText" name="qrOtherText" placeholder="Specify QR code requirements...">
+                                </div>
+                            </div>
+
+                            <!-- Restaurant Printer -->
+                            <div class="sub-section restaurant-fields">
+                                <h6 class="sub-section-title"><i class="bi bi-printer"></i> (Restaurant) Supported Printer</h6>
+                                <div class="form-text mb-2">Attach image of printer model that our system supports.</div>
+                                <input type="text" class="form-control" id="printerModel" name="printerModel" placeholder="e.g. Epson TM-T82III or image link">
+                            </div>
+
+                            <!-- Massage Gift Voucher -->
+                            <div class="sub-section massage-fields">
+                                <h6 class="sub-section-title"><i class="bi bi-gift"></i> (Massage) Gift Voucher</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="radio-card-group">
+                                            <div class="radio-card"><input type="radio" name="giftVoucher" id="giftVoucherYes" value="Yes"><label for="giftVoucherYes"><i class="bi bi-check-lg"></i> Yes</label></div>
+                                            <div class="radio-card"><input type="radio" name="giftVoucher" id="giftVoucherNo" value="No"><label for="giftVoucherNo"><i class="bi bi-x-lg"></i> No</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3" id="voucherValueGroup" style="display:none;">
+                                        <label for="voucherValue" class="form-label">Voucher Value</label>
+                                        <input type="text" class="form-control" id="voucherValue" name="voucherValue" placeholder="e.g. $50, $100, $150">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- ========== SECTION 7: Additional ========== -->
+                        <!-- ========== SECTION: Additional Comments ========== -->
                         <div class="form-section">
                             <h5 class="section-title"><i class="bi bi-chat-dots"></i> Additional Comments</h5>
-
                             <div class="mb-3">
-                                <textarea class="form-control" id="additionalComments" name="additionalComments" rows="4" placeholder="Any additional information you'd like us to know..."></textarea>
+                                <textarea class="form-control" id="additionalComments" name="additionalComments" rows="3" placeholder="Any additional information..."></textarea>
                             </div>
                         </div>
 
@@ -361,8 +559,9 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
                             <button type="submit" id="cmdSubmit" class="btn btn-submit"><i class="bi bi-send"></i> Submit Form</button>
                             <div id="result" class="mt-3"></div>
                         </div>
-                        
-                        <input type="hidden" name="formVersion" value="1.0.0">
+
+                        <input type="hidden" name="formVersion" value="2.0.0">
+                        <input type="hidden" name="formMode" value="<?php echo htmlspecialchars($mode); ?>">
                         <input type="hidden" name="stripeID" id="stripeID" value="<?php echo htmlspecialchars($stripeID ?? ''); ?>">
                         <input type="hidden" id="statusUser" name="statusUser" value="completed">
                     </form>
@@ -370,184 +569,12 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
             </div>
         </section>
     </main>
-</div><!-- container-->
+</div>
 
 <?php include '../layout/footer.php'; ?>
 
-<style>
-    #calendarHowToModal .modal-body { font-family: 'Montserrat', sans-serif; font-weight: 400; font-size: 0.85rem; color: #444; line-height: 1.75; }
-    #calendarHowToModal .step-card { background: #f8f9fb; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
-    #calendarHowToModal .step-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #0d6efd; color: #fff; border-radius: 50%; font-weight: 700; font-size: 0.75rem; flex-shrink: 0; }
-    #calendarHowToModal .step-label { font-weight: 600; font-size: 0.88rem; color: #1a1a2e; }
-    #calendarHowToModal .step-desc { margin-top: 8px; padding-left: 38px; }
-    #calendarHowToModal .email-list { background: #fff; border: 1px solid #e0e3e8; border-radius: 8px; padding: 10px 14px; font-family: monospace; font-size: 0.72rem; color: #0d6efd; line-height: 2; word-break: break-all; margin-top: 8px; }
-    #calendarHowToModal .tip { background: #fff8e6; border-radius: 8px; padding: 10px 14px; font-size: 0.8rem; color: #665500; margin-top: 10px; }
-    #calendarHowToModal .done-box { background: #eafaf1; border-radius: 8px; padding: 10px 14px; font-size: 0.8rem; color: #1a5c2e; margin-top: 10px; }
-    #calendarHowToModal .badge-perm { background: #eef3ff; color: #0d6efd; font-size: 0.74rem; font-weight: 600; padding: 3px 10px; border-radius: 50px; white-space: nowrap; }
-    #calendarHowToModal ul { padding-left: 18px; margin: 6px 0 0; }
-    #calendarHowToModal ul li { margin-bottom: 4px; }
-    #calendarHowToModal .step-video h6 { font-weight: 700; color: #0d6efd; }
-</style>
-<div class="modal fade" id="calendarHowToModal" tabindex="-1" aria-labelledby="calendarHowToModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden;">
-            <div class="modal-header" style="background: #0d6efd; border: none; padding: 20px 24px;">
-                <h6 class="modal-title text-white" id="calendarHowToModalLabel" style="font-weight: 700; font-size: 0.95rem;"><i class="bi bi-calendar3"></i> Google Calendar Setup</h6>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="padding: 24px;">
-
-                <!-- Video -->
-                 <div class="step-card step-video">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="step-num"><i class="bi bi-play-circle"></i></span>
-                        <span class="step-label text-bold"> Video Guide</span>
-                    </div>
-                    <div class="step-desc">
-                        <video controls style="width: 100%; max-width: 640px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.10);">
-                            <source src="../assets/img/google-calendar-step/set-up-Google-Calendar-guide.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                </div>
-
-                <!-- Step 1 -->
-                <div class="step-card">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="step-num">1</span>
-                        <span class="step-label">Open Calendar Settings</span>
-                    </div>
-                    <div class="step-desc">
-                        ไปที่ <a href="https://calendar.google.com" target="_blank">calendar.google.com</a> → คลิกที่ไอคอนเฟือง ⚙️ → <b>Settings</b>
-                        <div style="margin-top: 10px;"><img src="../assets/img/google-calendar-step/step1.png" alt="Step 1" style="width: 100%; border-radius: 8px; border: 1px solid #e0e3e8;"></div>
-                    </div>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="step-card">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="step-num">2</span>
-                        <span class="step-label">Check Time Zone</span>
-                    </div>
-                    <div class="step-desc">
-                        ตรวจสอบให้แน่ใจว่า Time zone ตรงกับโลเคชันร้านของคุณ
-                        <div style="margin-top: 10px;"><img src="../assets/img/google-calendar-step/step2.png" alt="Step 2" style="width: 100%; border-radius: 8px; border: 1px solid #e0e3e8;"></div>
-                    </div>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="step-card">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="step-num">3</span>
-                        <span class="step-label">Share Calendar</span>
-                    </div>
-                    <div class="step-desc">
-                        แถบด้านข้างซ้าย เลื่อนมาดูตรง Settings for my calendars → ชื่อปฏิทินของคุณ → <b>Share with</b><br>
-                        กด <b>+ Add people and groups</b><br>
-                        เพิ่มที่อยู่อีเมลต่อไปนี้ โดยให้สิทธิ์ <b>Make changes to events</b> สำหรับแต่ละรายการ:
-                        <div class="email-list">
-                            calendar-api@lfy-ai-gcal-463906-b1.iam.gserviceaccount.com<br>
-                            calendar-bot@gcalbookingapi.iam.gserviceaccount.com<br>
-                            ailogins@localforyou.com
-                        </div>
-                        <div style="margin-top: 10px;"><img src="../assets/img/google-calendar-step/step3-1.png" alt="Step 3-1" style="width: 100%; border-radius: 8px; border: 1px solid #e0e3e8;"></div>
-                        <div style="margin-top: 8px;"><img src="../assets/img/google-calendar-step/step3-2.png" alt="Step 3-2" style="width: 100%; border-radius: 8px; border: 1px solid #e0e3e8;"></div>
-                    </div>
-                </div>
-
-                <!-- Step 4 -->
-                <div class="step-card">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="step-num">4</span>
-                        <span class="step-label">Copy Calendar ID</span>
-                    </div>
-                    <div class="step-desc">
-                        ให้เลื่อนลงไปที่ Integrate calendar จะเจอ <b>Calendar ID</b><br>
-                        คัดลอก Calendar ID ที่แสดง<br>
-                        <span style="color: #888; font-size: 0.78rem;">Example: abc123xyz@group.calendar.google.com</span>
-                        <div style="margin-top: 10px;"><img src="../assets/img/google-calendar-step/step4-1.png" alt="Step 4-1" style="width: 100%; border-radius: 8px; border: 1px solid #e0e3e8;"></div>
-                        กลับไปที่ฟอร์ม AI Araya วาง Calendar ID ที่คัดลอกลงในช่อง <b>Google Calendar ID</b>
-                        <div style="margin-top: 8px;"><img src="../assets/img/google-calendar-step/step4-2.png" alt="Step 4-2" style="width: 100%; border-radius: 8px; border: 1px solid #e0e3e8;"></div>
-                    </div>
-                </div>
-
-                <div class="done-box" style="margin-top: 18px;">
-                    <i class="bi bi-check-circle-fill" style="color: #28a745;"></i> That's it! Your calendar is ready for AI Araya.
-                </div>
-
-            </div>
-            <div class="modal-footer" style="border-top: 1px solid #eef0f4; padding: 12px 24px;">
-                <a href="howToGetCalendarId.php" target="_blank" class="btn btn-outline-primary btn-sm" style="border-radius: 50px; font-size: 0.8rem;"><i class="bi bi-box-arrow-up-right"></i> Full Guide</a>
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal" style="border-radius: 50px; font-size: 0.8rem;">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
-<script src="../controllers/upgradeForm.js?v=1.0.0"></script>
-<script>
-$(function() {
-    // Toggle booking credentials when currentBookingSystem has value
-    const $bookingInput = $('#currentBookingSystem');
-    const $credentials = $('#bookingCredentials');
-    $bookingInput.on('input', function() {
-        if ($(this).val().trim()) {
-            $credentials.slideDown(200);
-        } else {
-            $credentials.slideUp(200);
-            $('#bookingUser, #bookingPassword').val('');
-        }
-    });
-    // Check on page load (e.g. browser autofill)
-    if ($bookingInput.val().trim()) $credentials.show();
-
-    // Toggle Google Calendar ID when "Yes" is selected
-    $('input[name="googleCalendar"]').on('change', function() {
-        if ($('#googleCalendarYes').is(':checked')) {
-            $('#googleCalendarIdGroup').slideDown(200);
-        } else {
-            $('#googleCalendarIdGroup').slideUp(200);
-            $('#googleCalendarId').val('');
-        }
-    });
-
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('test') === 'true') {
-        // Text / Textarea / Number fields
-        $('#businessName').val('Serenity Spa & Wellness');
-        $('#businessHours').val('Mon-Fri 9:00 AM - 7:00 PM\nSat 10:00 AM - 5:00 PM\nSun Closed');
-        $('#currentBookingSystem').val('Google Calendar');
-        $('#timezoneId').val('America/New_York');
-        $('#shopAddress').val('123 Main Street, Suite 4, Los Angeles, CA 90001');
-        $('#businessWebsite').val('https://www.serenityspa.com');
-        $('#backupPhoneNumber').val('+1 (555) 123-4567');
-        $('#phoneCarrier').val('AT&T');
-        $('#shopEmail').val('bookings@serenityspa.com');
-        $('#servicesOffered').val('Swedish Massage - 60 min - $80\nDeep Tissue Massage - 90 min - $120\nHot Stone Therapy - 60 min - $100\nAromatherapy Massage - 60 min - $90');
-        $('#bufferMinutes').val('15');
-        $('#numberOfTherapists').val('5');
-        $('#therapistNames').val('Anna, Brian, Clara, David, Emily');
-        $('#promotions').val('20% off first visit, Gift cards available from $50, Buy 5 sessions get 1 free');
-        $('#additionalComments').val('Test submission - please ignore.');
-
-        // Radio buttons
-        $('#phoneDecisionPromote').prop('checked', true);
-        $('#coupleMassageYes').prop('checked', true);
-        $('#happyMassageNo').prop('checked', true);
-        $('#maleTherapistYes').prop('checked', true);
-        $('#femaleTherapistYes').prop('checked', true);
-        $('#wheelchairYes').prop('checked', true);
-        $('#parkingYes').prop('checked', true);
-        $('#restroomYes').prop('checked', true);
-        $('#voiceFemale').prop('checked', true);
-        $('#googleCalendarYes').prop('checked', true);
-        $('#stripeID').val(stripeID);
-
-        console.log('🧪 Test mode: form auto-filled with sample data.');
-    }
-});
-</script>
+<script src="../controllers/upgradeForm.js?v=2.0.0"></script>
 </body>
 </html>
