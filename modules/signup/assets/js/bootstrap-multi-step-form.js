@@ -194,6 +194,36 @@ $(".next").on("click", function () {
     }
   }
 
+  // Validate document upload section when visible
+  if ($("#docUploadSection").is(":visible")) {
+    $(".doc-upload-error").remove();
+    let docError = false;
+
+    // Check 3 file inputs
+    const fileInputs = ["file_bizReg", "file_bank", "file_dirId"];
+    const fileLabels = ["Business Registration Document", "Bank Statement", "Director's ID"];
+    for (let i = 0; i < fileInputs.length; i++) {
+      const input = $("#" + fileInputs[i]);
+      if (!input[0].files || input[0].files.length === 0) {
+        input.closest(".file-card").after('<div class="doc-upload-error text-danger mt-1" style="font-size:12px;">Please upload ' + fileLabels[i] + '</div>');
+        if (!docError) { input.closest(".file-card").addClass("border-danger"); }
+        docError = true;
+      } else {
+        input.closest(".file-card").removeClass("border-danger");
+      }
+    }
+
+    // Check Adyen agreement
+    if (!$("#adyenAgreement").is(":checked")) {
+      $("#adyenAgreement").closest(".d-flex").after('<div class="doc-upload-error text-danger mt-1" style="font-size:12px;">Please agree to the Adyen Terms & Conditions</div>');
+      docError = true;
+    }
+
+    if (docError) {
+      nextstep = false;
+    }
+  }
+
   if (nextstep === true) {
     if (step < classStep.length) {
       classStep.show();
@@ -978,6 +1008,7 @@ function addMainCart(name, price, amount, special, product_id){
 
   //calPrice("add", amount);
   listProductItems();
+  if (typeof toggleDocUploadSection === 'function') toggleDocUploadSection();
 }
 
 //function for search text in array and return first match array index
@@ -1042,6 +1073,7 @@ function deleteAddOn(id) {
     findAmount = getAmountFromAddonList(id,readAddonProduct);
     calShowPrice();
     listProductItems();
+    if (typeof toggleDocUploadSection === 'function') toggleDocUploadSection();
   }else {
     console.log("Not found item in array, nothing to delete!!");
   }
@@ -1168,6 +1200,7 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
   }//else
   setShowPrice();
   listProductItems();
+  if (typeof toggleDocUploadSection === 'function') toggleDocUploadSection();
 }
 
 //set hidden select delevery value

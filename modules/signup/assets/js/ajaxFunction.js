@@ -912,18 +912,20 @@ function requestToPay() {
 
 
                 setTimeout(function () {
-                    try {
-                        genLinkPDF();
-                    } catch (e) { console.error('genLinkPDF error:', e); }
-                    try {
-                        modalRespondAction('open', 'success');
-                    } catch (e) { console.error('modalRespondAction error:', e); }
-                    try {
-                        sendMailToL4UTeam();
-                    } catch (e) { console.error('sendMailToL4UTeam error:', e); }
-                    try {
-                        signupToCustomerProjectID();
-                    } catch (e) { console.error('signupToCustomerProjectID error:', e); }
+                    uploadDocuments().finally(function () {
+                        try {
+                            genLinkPDF();
+                        } catch (e) { console.error('genLinkPDF error:', e); }
+                        try {
+                            modalRespondAction('open', 'success');
+                        } catch (e) { console.error('modalRespondAction error:', e); }
+                        try {
+                            sendMailToL4UTeam();
+                        } catch (e) { console.error('sendMailToL4UTeam error:', e); }
+                        try {
+                            signupToCustomerProjectID();
+                        } catch (e) { console.error('signupToCustomerProjectID error:', e); }
+                    });
                 }, 1000);
             } else {
                 result.empty();
@@ -968,10 +970,12 @@ function requestToPay() {
         let cusID = `<span class="badge bg-info">No Stripe Connect</span>`;
         $(done).appendTo(".paymentResult");
         $(cusID).appendTo(".paymentResult");
-        try { genLinkPDF(); } catch (e) { console.error('genLinkPDF error:', e); }
-        try { sendMailToL4UTeam(); } catch (e) { console.error('sendMailToL4UTeam error:', e); }
-        try { signupToCustomerProjectID(); } catch (e) { console.error('signupToCustomerProjectID error:', e); }
-        try { modalRespondAction('open', 'success'); } catch (e) { console.error('modalRespondAction error:', e); }
+        uploadDocuments().finally(function () {
+            try { genLinkPDF(); } catch (e) { console.error('genLinkPDF error:', e); }
+            try { sendMailToL4UTeam(); } catch (e) { console.error('sendMailToL4UTeam error:', e); }
+            try { signupToCustomerProjectID(); } catch (e) { console.error('signupToCustomerProjectID error:', e); }
+            try { modalRespondAction('open', 'success'); } catch (e) { console.error('modalRespondAction error:', e); }
+        });
         $("#cmdSubmit").removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
 
@@ -2350,7 +2354,7 @@ const setPeriodSelectBox = (month) => {
     sendMail();
 }*/
 
-const submitToCRM = () => {
+const submitToCRM = async () => {
     const first_name = $("#first_name");
     const last_name = $("#last_name");
     let cap_first_name = capitalize(first_name.val());
@@ -2363,6 +2367,15 @@ const submitToCRM = () => {
         $("#firstTimePayment").val("GBP 1.00");
     }*/
 
+    try {
+        console.log('submitToCRM: starting uploadDocuments...');
+        const uploadResult = await uploadDocuments();
+        console.log('submitToCRM: uploadDocuments done', uploadResult);
+    } catch (e) {
+        console.error('Document upload error:', e);
+    }
+
+    console.log('submitToCRM: submitting form...');
     applicationForm.submit();
 }
 
@@ -2386,6 +2399,219 @@ $('#formCountry').on('change', function () {
     }else{
         $('#policyNoThai').show();
     }
+    toggleDocUploadSection();
 })
 
+// ============ Document Upload Section ============
+
+// Toggle visibility: show only when country=AU AND (product or addon contains "POS")
+function toggleDocUploadSection() {
+    const country = formData.formCountry || $('#formCountry').val();
+    const docSection = $('#docUploadSection');
+    const fileInputs = docSection.find('input[type="file"]');
+    const adyenAgree = $('#adyenAgreement');
+
+    if (country !== 'AU') {
+        docSection.hide();
+        fileInputs.prop('required', false);
+        adyenAgree.prop('required', false);
+        return;
+    }
+
+    // Check main product for "POS" (check value + label text)
+    const productInput = $("input[name='product']:checked");
+    const selectedProduct = (productInput.val() || '') + ' ' +
+        $("label[for='" + productInput.attr('id') + "']").text();
+    let hasPOS = selectedProduct.toUpperCase().includes('POS');
+
+    // Check ALL checked addon checkboxes inside the products/addon container
+    if (!hasPOS) {
+        $("#products2 input[type='checkbox']:checked, #addon2 input[type='checkbox']:checked").each(function () {
+            const val = ($(this).val() || '');
+            const lbl = $("label[for='" + $(this).attr('id') + "']").text();
+            if ((val + ' ' + lbl).toUpperCase().includes('POS')) {
+                hasPOS = true;
+                return false; // break
+            }
+        });
+    }
+
+    if (hasPOS) {
+        docSection.show();
+        fileInputs.prop('required', true);
+        adyenAgree.prop('required', true);
+    } else {
+        docSection.hide();
+        fileInputs.prop('required', false);
+        adyenAgree.prop('required', false);
+    }
+}
+
+// Sync Adyen agreement checkbox: only from modal to main (after scrolling to bottom)
+$(document).on('change', '#adyenAgreementModal', function () {
+    const mainCheckbox = $('#adyenAgreement');
+    if (this.checked) {
+        mainCheckbox.prop('disabled', false).prop('checked', true);
+    } else {
+        // Only disable and uncheck main if user explicitly unchecks (not on modal reset)
+        // The modal reset happens without triggering change event
+        mainCheckbox.prop('disabled', true).prop('checked', false);
+    }
+});
+
+// Prevent direct clicking on main checkbox - show error message
+$(document).on('click', '#adyenAgreement', function (e) {
+    if ($(this).prop('disabled')) {
+        e.preventDefault();
+        // Show error message below the checkbox
+        $('.adyen-direct-click-error').remove();
+        $(this).closest('.d-flex').after('<div class="adyen-direct-click-error text-danger mt-1" style="font-size:12px;">Please click the eye icon to read the full terms before agreeing.</div>');
+        return false;
+    }
+});
+
+// Reveal agreement section only after scrolling to bottom of Adyen pages
+$('#adyenTermsModal').on('shown.bs.modal', function () {
+    const container = $('.adyen-pages-container');
+    const agreementSection = $('#adyenAgreementSection');
+
+    // Reset to hidden state when modal opens (use attr to avoid triggering change event)
+    agreementSection.hide().css('opacity', '0');
+    $('#adyenAgreementModal').attr('checked', false).prop('checked', false);
+
+    container.off('scroll').on('scroll', function () {
+        if (this.scrollTop + this.clientHeight >= this.scrollHeight - 10) {
+            agreementSection.show();
+            setTimeout(() => agreementSection.css('opacity', '1'), 10);
+        }
+    });
+});
+
+// Show selected file name & toggle card style
+$('.file-card input[type="file"]').on('change', function () {
+    const card = $(this).closest('.file-card');
+    const nameSpan = card.find('.file-name');
+    if (this.files && this.files.length > 0) {
+        const file = this.files[0];
+        const extension = file.name.split('.').pop() || 'file';
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        nameSpan.find('.file-icon').text(extension);
+        nameSpan.find('.file-selected-title').text(file.name);
+        nameSpan.find('.file-selected-meta').text('.' + extension + ' | ' + sizeMB + 'MB');
+        card.addClass('has-file');
+    } else {
+        nameSpan.find('.file-icon').text('FILE');
+        nameSpan.find('.file-selected-title').text('No file selected');
+        nameSpan.find('.file-selected-meta').text('');
+        card.removeClass('has-file');
+    }
+});
+
+$(document).on('click', '.file-remove-btn', function () {
+    const card = $(this).closest('.file-card');
+    const input = card.find('input[type="file"]');
+    const nameSpan = card.find('.file-name');
+
+    input.val('');
+    nameSpan.find('.file-icon').text('FILE');
+    nameSpan.find('.file-selected-title').text('No file selected');
+    nameSpan.find('.file-selected-meta').text('');
+    card.removeClass('has-file border-danger');
+    card.next('.doc-upload-error').remove();
+});
+
+let adyenDocumentsUploadDone = false;
+
+// Upload documents via AJAX — call after successful submit/payment
+function uploadDocuments() {
+    return new Promise(function (resolve, reject) {
+        if (adyenDocumentsUploadDone) {
+            console.log('uploadDocuments already done — skipping duplicate upload');
+            resolve({ success: true, message: 'Documents already uploaded' });
+            return;
+        }
+
+        const bizReg = $('#file_bizReg')[0];
+        const bank   = $('#file_bank')[0];
+        const dirId  = $('#file_dirId')[0];
+
+        console.log('uploadDocuments called');
+        // Check own display style (not :visible) because parent step div is hidden at submit time
+        const sectionDisplay = $('#docUploadSection').css('display');
+        console.log('docUploadSection display:', sectionDisplay);
+        console.log('bizReg files:', bizReg ? bizReg.files.length : 'element not found');
+        console.log('bank files:', bank ? bank.files.length : 'element not found');
+        console.log('dirId files:', dirId ? dirId.files.length : 'element not found');
+
+        // Skip if section was not activated (display:none means AU+POS was not selected)
+        if (sectionDisplay === 'none') {
+            console.log('docUploadSection display:none — skipping upload');
+            resolve({ success: true, message: 'Section not active, no upload needed' });
+            return;
+        }
+
+        // Check if at least files exist
+        if ((!bizReg.files || !bizReg.files.length) &&
+            (!bank.files || !bank.files.length) &&
+            (!dirId.files || !dirId.files.length)) {
+            // No files selected at all — resolve silently
+            console.log('No files selected — skipping upload');
+            resolve({ success: true, message: 'No files to upload' });
+            return;
+        }
+
+        const fd = new FormData();
+        fd.append('country', formData.formCountry || $('#formCountry').val());
+        fd.append('shopName', $('#shopName').val());
+
+        if (bizReg.files.length) fd.append('businessRegistrationDoc', bizReg.files[0]);
+        if (bank.files.length)   fd.append('bankStatementDoc', bank.files[0]);
+        if (dirId.files.length)  fd.append('directorIdDoc', dirId.files[0]);
+
+        $.ajax({
+            url: settings.url_uploadDocuments,
+            method: 'POST',
+            data: fd,
+            processData: false,
+            contentType: false,
+            dataType: 'json'
+        }).done(function (res) {
+            console.log('Upload documents response:', res);
+
+            // Save to database after upload (even if some files had errors)
+            if (res.folder && res.uploaded) {
+                const dbPayload = {
+                    country: formData.formCountry || $('#formCountry').val(),
+                    shopName: $('#shopName').val(),
+                    email: $('#email').val(),
+                    adyenAgreement: $('#adyenAgreement').is(':checked') ? 'agreed' : '',
+                    businessRegistrationDoc: res.uploaded.businessRegistrationDoc || null,
+                    bankStatementDoc: res.uploaded.bankStatementDoc || null,
+                    directorIdDoc: res.uploaded.directorIdDoc || null,
+                    uploadFolder: res.folder
+                };
+
+                $.ajax({
+                    url: settings.url_saveAdyenDocuments,
+                    method: 'POST',
+                    data: dbPayload,
+                    dataType: 'json'
+                }).done(function (dbRes) {
+                    console.log('Database save response:', dbRes);
+                    adyenDocumentsUploadDone = true;
+                    resolve(res);
+                }).fail(function (xhr, status, error) {
+                    console.error('Database save failed:', status, error);
+                    resolve(res); // still resolve so form can submit
+                });
+            } else {
+                adyenDocumentsUploadDone = true;
+                resolve(res);
+            }
+        }).fail(function (xhr, status, error) {
+            console.error('Upload documents failed:', status, error);
+            reject(error);
+        });
+    });
+}
 

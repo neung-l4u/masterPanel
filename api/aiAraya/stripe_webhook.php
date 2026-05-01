@@ -49,7 +49,7 @@ $STRIPE_ACCOUNTS = [
         'make_url'       => 'https://hook.us1.make.com/6vloshre04tb1xtkjhgawblx2jk7a2ji',
         'product_id'     => 'prod_TcJeLZeufWMSIw',
         'price_ids'      => [
-            'usd' => 'price_1Sf516I6vmxJT6OmVI1bPAxe',   // US
+            'usd' => 'price_1Sf516I6vmxJT6OmVI1bPAxe',   // US 
             'cad' => 'price_1Sf516I6vmxJT6Omxjnt0nVP',   // CA
         ],
     ],
