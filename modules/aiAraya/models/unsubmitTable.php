@@ -11,6 +11,7 @@ $data = array("data"=> array());
 $i = 1;
 
 foreach ($result as $row) {
+    $stripeID = htmlspecialchars($row["stripeID"] ?? "");
     $date = date("d-m-y H:i", strtotime($row["startedAt"]));
     $shopName = htmlspecialchars($row["shopName"] ?? "");
     $customerEmail = htmlspecialchars($row["customerEmail"] ?? "");
@@ -22,6 +23,7 @@ foreach ($result as $row) {
         $customerEmail,
         $statusUser,
         $date,
+        $stripeID
     );
 
     $i++;
