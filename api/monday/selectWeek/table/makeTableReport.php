@@ -349,9 +349,7 @@ if ($totalPercentChange >= 5) {
 }
 
 // JSON mode: return data for charts
-$isJson = (isset($_GET['format']) && $_GET['format'] === 'json')
-    || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)
-    || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest');
+$isJson = isset($_GET['format']) && $_GET['format'] === 'json';
 if ($isJson) {
     ob_end_clean();
     header('Content-Type: application/json');
