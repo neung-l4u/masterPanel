@@ -678,6 +678,24 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         <div id="products2" class="text-start">
                                                             product 2 will show here
                                                         </div>
+                                                        <div class="form-group row pt-2 adsBudget d-none">
+                                                            <label for="adsBudget" class="col-2 control-label col-form-label">
+                                                                Ads Budget <b class="red">*</b></label>
+                                                            <div class="col-8">
+                                                                <input
+                                                                    type="number"
+                                                                    id="adsBudget"
+                                                                    class="form-control"
+                                                                    name="adsBudget"
+                                                                    maxlength="80"
+                                                                    autocomplete="off"
+                                                                    placeholder="$1000"
+                                                                />
+                                                                <small id="adsBudgetHelp" class="form-text text-muted">
+                                                                    e.g. this is a one time budget not.
+                                                                </small>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

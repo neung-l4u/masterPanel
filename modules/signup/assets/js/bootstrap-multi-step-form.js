@@ -897,6 +897,25 @@ function addMainCart(name, price, amount, special, product_id){
   //setSetupFee(setup_fee);
   ///////////////
 
+  // Show adsBudget only for Local bundle/solo products
+  const localAdsBudgetProducts = [
+    "Local Starter Bundle",
+    "Local Growth Bundle",
+    "Local Ultimate Bundle",
+    "Local Starter Solo",
+    "Local Growth Solo",
+    "Local Ultimate Solo"
+  ];
+  const adsBudgetDiv = $(".adsBudget");
+  const adsBudgetInput = $("#adsBudget");
+  if (localAdsBudgetProducts.includes(currentProduct)) {
+    adsBudgetDiv.removeClass("d-none");
+    adsBudgetInput.prop("required", true);
+  } else {
+    adsBudgetDiv.addClass("d-none");
+    adsBudgetInput.prop("required", false).val("");
+  }
+
 
 
 
