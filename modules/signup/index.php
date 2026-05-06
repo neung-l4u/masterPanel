@@ -692,7 +692,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                     placeholder="$1000"
                                                                 />
                                                                 <small id="adsBudgetHelp" class="form-text text-muted">
-                                                                    e.g. this is a one time budget not.
+                                                                    Budget for ads only. It will be gradually spent as your ads run until fully used.
                                                                 </small>
                                                             </div>
                                                         </div>
