@@ -2,6 +2,9 @@
 date_default_timezone_set('Asia/Bangkok');
 $id          = !empty($_GET['id']) ? strtolower(trim($_GET['id'])) : '';
 $testMode    = ($id == "test") ? 1 : 0;
+$isValidCustomerMode = in_array($id, ['oldcustomer', 'newcustomer'], true);
+$customerMode = $isValidCustomerMode ? $id : '';
+$isOldCustomer = ($customerMode === 'oldcustomer');
 $leadSource  = "POS & Online Order Onboarding";
 $formVersion = "1.0.0";
 $emailVersion= "1.0";
@@ -28,12 +31,12 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
         }
         .check-card label:hover, .radio-card label:hover { border-color: #0d6efd; color: #0d6efd; background: rgba(13,110,253,0.04); }
         .check-card input:checked + label, .radio-card input:checked + label { border-color: #0d6efd; color: #0d6efd; font-weight: 600; background: rgba(13,110,253,0.06); }
-        .radio-card-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .radio-card-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .day-row { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: center; margin-bottom: 8px; }
         .day-row .day-label { font-weight: 600; color: #444; }
-        .day-row .radio-card-group { grid-template-columns: repeat(3, 1fr); }
-        .day-row input.other-time { display: none; max-width: 200px; }
-        .day-row.show-other input.other-time { display: inline-block; }
+        .day-row .radio-card-group { grid-template-columns: repeat(2, 1fr); }
+        .opening-time-range { display: none; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; margin-top: 8px; max-width: 420px; }
+        .day-row.show-open .opening-time-range { display: grid; }
         .form-section { padding: 20px 0; border-bottom: 1px solid #eef0f3; }
         .form-section:last-child { border-bottom: 0; }
         .section-title { color: #0d6efd; margin-bottom: 16px; }
@@ -47,26 +50,145 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
         .file-card .file-name { margin-left: 10px; font-size: 0.82rem; color: #6c757d; word-break: break-all; }
         .file-card.has-file { border-color: #0d6efd; background: rgba(13,110,253,0.03); }
         .file-card.has-file .file-name { color: #0d6efd; font-weight: 500; }
-        /* QR promo card */
-        .qr-card {
-            display: flex; align-items: center; gap: 18px;
-            border: 1.5px solid #e2e5eb; border-radius: 12px;
-            padding: 18px 20px; background: linear-gradient(135deg, #fff 0%, #f4f8ff 100%);
+        .adyen-terms-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            background: transparent;
+            color: #8a8f98;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
         }
-        .qr-card .qr-img-link { flex-shrink: 0; display: block; line-height: 0; }
-        .qr-card img { width: 140px; height: 140px; object-fit: contain; border: 1px solid #e2e5eb; border-radius: 8px; background: #fff; padding: 6px; transition: transform .2s ease; }
-        .qr-card .qr-img-link:hover img { transform: scale(1.03); border-color: #0d6efd; }
-        .qr-card .qr-text { flex: 1; }
-        .qr-card .qr-text h6 { font-weight: 600; color: #2c3e50; }
-        .qr-card .check-card { margin-top: 4px; }
+        .adyen-terms-row .form-check-input {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #dee2e6;
+            border-radius: 7px;
+            margin: 0;
+            cursor: pointer;
+        }
+        .adyen-terms-divider { color: #8a8f98; }
+        .adyen-terms-label { margin: 0; font-weight: 400; }
+        .adyen-unlock-hint { color: #6c757d; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
+        .adyen-terms-link {
+            color: #2b78a0;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            cursor: pointer;
+        }
+        .adyen-terms-eye {
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: #0d6efd;
+            font-size: 1.7rem;
+            line-height: 1;
+        }
+        .adyen-accept-warning { color: #dc3545; font-weight: 700; margin-right: auto; }
+        .adyen-accept-btn { display: none; margin-right: auto; }
+        .contact-admin-message {
+            max-width: 620px;
+            margin: 32px auto;
+            padding: 28px;
+            border: 1px solid #f1c2c7;
+            border-radius: 12px;
+            background: #fff5f5;
+            color: #842029;
+            text-align: center;
+        }
+        .contact-admin-message a {
+            color: #0d6efd;
+            font-weight: 600;
+        }
+        .eftpos-option-label {
+            display: flex;
+            flex-direction: column;
+            min-height: 76px;
+        }
+        .eftpos-option-label img {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .eftpos-option-label span {
+            display: block;
+        }
+        .eftpos-online-option {
+            min-height: 56px;
+            flex-direction: row;
+        }
+        .pos-setup-grid {
+            row-gap: 20px;
+        }
+        .pos-setup-panel {
+            height: 100%;
+            padding: 18px;
+            border: 1px solid #eef0f3;
+            border-radius: 16px;
+            background: #fff;
+        }
+        .pos-setup-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .pos-setup-options .check-card label {
+            min-height: 52px;
+        }
+        .pos-right-group {
+            margin-bottom: 22px;
+        }
+        .website-options {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            width: 100%;
+        }
         @media (max-width: 576px) {
-            .qr-card { flex-direction: column; text-align: center; gap: 12px; }
-            .qr-card .qr-text { width: 100%; }
+            .website-options { grid-template-columns: 1fr; }
         }
         @media (max-width: 576px) { .check-card-group, .radio-card-group { grid-template-columns: 1fr; } .day-row { grid-template-columns: 1fr; } }
+        body.oldcustomer .newcustomer-only { display: none !important; }
+        .ajax-loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(3px);
+        }
+        .ajax-loading-card {
+            min-width: 260px;
+            padding: 28px 32px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 16px 45px rgba(15, 23, 42, 0.16);
+            text-align: center;
+            color: #1f2937;
+        }
+        .ajax-loading-card .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        .ajax-loading-title {
+            margin-top: 16px;
+            margin-bottom: 6px;
+            font-weight: 700;
+            color: #0d6efd;
+        }
+        .ajax-loading-text {
+            margin: 0;
+            font-size: 0.92rem;
+            color: #6c757d;
+        }
     </style>
 </head>
-<body>
+<body class="<?php echo $customerMode; ?>">
 <div class="container">
     <main>
         <section style="min-height: 60vh;">
@@ -74,9 +196,15 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                 <div class="form-header">
                     <img src="../assets/img/newL4U-logo-100x100.png" alt="L4U Logo" class="logo-img" onerror="this.style.display='none'">
                     <h3 class="form-title text-uppercase">POS &amp; New Online Order Onboarding</h3>
-                    <p class="form-subtitle">Please complete all sections so our team can get your shop set up.</p>
+                    <p class="form-subtitle"><?php echo !$isValidCustomerMode ? 'This form requires a valid access link.' : ($isOldCustomer ? 'Please complete shop information and upload the required documents below.' : 'Please complete all sections so our team can get your shop set up.'); ?></p>
                 </div>
 
+                <?php if (!$isValidCustomerMode): ?>
+                    <div class="contact-admin-message">
+                        <h5 class="mb-2"><i class="bi bi-exclamation-circle-fill"></i> Please contact admin</h5>
+                        <p class="mb-0">Please contact <a href="mailto:admin@localforyou.com">admin@localforyou.com</a> to access this form.</p>
+                    </div>
+                <?php else: ?>
                 <div class="form-body">
                     <form id="myForm" action="#" method="POST" enctype="multipart/form-data" autocomplete="off">
 
@@ -88,19 +216,23 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                                     <label class="form-label">Country <span class="text-danger">*</span></label>
                                     <select class="form-select" id="country" name="country" required>
                                         <option value="" disabled selected>Please select country</option>
-                                        <option value="Australia">Australia</option>
+                                        <option value="AU">Australia</option>
                                         <option value="USA">United States</option>
                                         <option value="UK">United Kingdom</option>
-                                        <option value="New Zealand">New Zealand</option>
+                                        <option value="NZ">New Zealand</option>
                                     </select>
                                     <small class="form-text text-muted">Currency &amp; phone code are auto-filled from country.</small>
                                 </div>
                                 <input type="hidden" id="currency" name="currency" value="">
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Shop Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="shop_name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Shop's Phone Number <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="phonePrefix">+--</span>
-                                        <input type="tel" class="form-control" id="shopPhone" name="shopPhone" placeholder="Select country first" required>
+                                        <input type="tel" class="form-control" id="shopPhone" name="shopPhone" placeholder="Select country first" inputmode="numeric" pattern="[0-9]+" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -111,11 +243,11 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                                     <label class="form-label">Manager's Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="managerName" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3 newcustomer-only">
                                     <label class="form-label">Trading Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="tradingName" required>
                                 </div>
-                                <div class="col-12 mb-3">
+                                <div class="col-12 mb-3 newcustomer-only">
                                     <label class="form-label">Trading Address <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="tradingAddress" required>
                                 </div>
@@ -164,12 +296,79 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                                     </div>
                                 </div>
 
+                                <!-- Adyen Terms & Conditions Agreement -->
                                 <div class="col-12 mb-3">
+                                    <div class="adyen-terms-row">
+                                        <input class="form-check-input" type="checkbox" id="adyenAgreement" name="adyenAgreement" value="agreed" disabled>
+                                        <span class="adyen-terms-divider">|</span>
+                                        <label class="adyen-terms-label" for="adyenAgreement">
+                                            I agree to <span class="adyen-terms-link" data-bs-toggle="modal" data-bs-target="#adyenTermsModal">terms &amp; conditions.</span>
+                                        </label>
+                                        <span class="adyen-unlock-hint" data-bs-toggle="modal" data-bs-target="#adyenTermsModal">Click to read &amp; unlock</span>
+                                        <button type="button" class="adyen-terms-eye" data-bs-toggle="modal" data-bs-target="#adyenTermsModal" title="View Adyen Terms & Conditions">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Adyen Terms Modal -->
+                                <div class="modal fade" id="adyenTermsModal" tabindex="-1" aria-labelledby="adyenTermsModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="adyenTermsModalLabel">View Adyen Terms &amp; Conditions</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="adyen-pages-container" style="max-height:60vh; overflow-y:auto; border:1px solid #dee2e6; border-radius:6px; padding:10px; background:#f8f9fa;">
+                                                    <div class="text-center mb-3">
+                                                        <span class="badge bg-secondary">21 Pages</span>
+                                                    </div>
+                                                    <div class="adyen-pages">
+                                                        <img src="../assets/img/adyen/adyen_page-0001.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 1">
+                                                        <img src="../assets/img/adyen/adyen_page-0002.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 2">
+                                                        <img src="../assets/img/adyen/adyen_page-0003.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 3">
+                                                        <img src="../assets/img/adyen/adyen_page-0004.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 4">
+                                                        <img src="../assets/img/adyen/adyen_page-0005.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 5">
+                                                        <img src="../assets/img/adyen/adyen_page-0006.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 6">
+                                                        <img src="../assets/img/adyen/adyen_page-0007.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 7">
+                                                        <img src="../assets/img/adyen/adyen_page-0008.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 8">
+                                                        <img src="../assets/img/adyen/adyen_page-0009.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 9">
+                                                        <img src="../assets/img/adyen/adyen_page-0010.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 10">
+                                                        <img src="../assets/img/adyen/adyen_page-0011.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 11">
+                                                        <img src="../assets/img/adyen/adyen_page-0012.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 12">
+                                                        <img src="../assets/img/adyen/adyen_page-0013.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 13">
+                                                        <img src="../assets/img/adyen/adyen_page-0014.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 14">
+                                                        <img src="../assets/img/adyen/adyen_page-0015.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 15">
+                                                        <img src="../assets/img/adyen/adyen_page-0016.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 16">
+                                                        <img src="../assets/img/adyen/adyen_page-0017.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 17">
+                                                        <img src="../assets/img/adyen/adyen_page-0018.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 18">
+                                                        <img src="../assets/img/adyen/adyen_page-0019.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 19">
+                                                        <img src="../assets/img/adyen/adyen_page-0020.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 20">
+                                                        <img src="../assets/img/adyen/adyen_page-0021.jpg" class="img-fluid mb-0" alt="Adyen Terms Page 21">
+                                                    </div>
+                                                </div>
+                                                <div id="adyenAgreementSection" style="display:none; opacity:0; transition:opacity 0.3s ease-in;">
+                                                    <p class="mt-3 mb-2">
+                                                        By clicking "I Accept the Terms", you confirm that you have read, understood, and agree to the Adyen Terms and Conditions. You further authorise Local For You to establish and manage your Adyen merchant account on your behalf.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <span id="adyenAcceptWarning" class="adyen-accept-warning">! scroll to the end unlock acceptance</span>
+                                                <button type="button" id="adyenAcceptBtn" class="btn btn-primary adyen-accept-btn">I Accept the Terms</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-3 newcustomer-only">
                                     <label class="form-label">Preferred Address for Terminal Delivery</label>
                                     <div class="form-text mb-1">Portable Eftpos $225+GST (No receipt) &middot; Standard Eftpos $525+GST (receipt)</div>
                                     <input type="text" class="form-control" name="terminalDeliveryAddress">
                                 </div>
-                                <div class="col-12 mb-3">
+                                <div class="col-12 mb-3 newcustomer-only">
                                     <label class="form-label d-block">Service Provided <span class="text-danger">*</span></label>
                                     <div class="check-card-group">
                                         <?php foreach (["Pickup","Delivery","Table Reservation","Dine-in"] as $i=>$opt): $sid="svc_$i"; ?>
@@ -184,9 +383,9 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                         </div>
 
                         <!-- ========== Page 2 : Opening Hours ========== -->
-                        <div class="form-section">
+                        <div class="form-section newcustomer-only">
                             <h5 class="section-title"><i class="bi bi-clock"></i> Opening Hours</h5>
-                            <div class="form-text mb-3">Select <em>Other</em> to specify custom hours (e.g. 09:00-21:00).</div>
+                            <!-- <div class="form-text mb-3">Select <em>Other</em> to specify custom hours (e.g. 09:00-21:00).</div> -->
                             <?php
                             $days = ['Mon'=>'Monday','Tue'=>'Tuesday','Wed'=>'Wednesday','Thu'=>'Thursday','Fri'=>'Friday','Sat'=>'Saturday','Sun'=>'Sunday'];
                             foreach ($days as $k=>$label):
@@ -196,72 +395,95 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                                 <div class="day-label"><?php echo $label; ?></div>
                                 <div>
                                     <div class="radio-card-group">
-                                        <?php foreach (["Open","Closed","Other"] as $i=>$o): $rid="{$base}_$i"; ?>
+                                        <?php foreach (["Open","Closed"] as $i=>$o): $rid="{$base}_$i"; ?>
                                             <div class="radio-card">
                                                 <input type="radio" id="<?php echo $rid; ?>" name="<?php echo $base; ?>" value="<?php echo $o; ?>" class="dayRadio">
                                                 <label for="<?php echo $rid; ?>"><?php echo $o; ?></label>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
-                                    <input type="text" class="form-control mt-2 other-time" name="<?php echo $base; ?>OtherText" placeholder="e.g. 09:00-21:00">
+                                    <div class="opening-time-range">
+                                        <input type="time" class="form-control open-time-input" name="<?php echo $base; ?>OpenTime" aria-label="<?php echo $label; ?> time open">
+                                        <span>-</span>
+                                        <input type="time" class="form-control open-time-input" name="<?php echo $base; ?>CloseTime" aria-label="<?php echo $label; ?> time close">
+                                    </div>
                                 </div>
                             </div>
                             <?php endforeach; ?>
                         </div>
 
                         <!-- ========== Page 3 : POS set up ========== -->
-                        <div class="form-section">
+                        <div class="form-section newcustomer-only">
                             <h5 class="section-title"><i class="bi bi-calculator"></i> POS Setup</h5>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Eftpos Model <span class="text-danger">*</span></label>
-                                    <div class="form-text mb-2">$225+GST (No receipt) &middot; $525+GST (receipt)</div>
-                                    <div class="radio-card-group" style="grid-template-columns: 1fr;">
-                                        <?php foreach ([
-                                            "Portable ($225+GST)"          => "Portable ($225+GST)",
-                                            "Standard ($525+GST)"          => "Standard ($525+GST)",
-                                            "Only online payment (No eftpos)" => "Only online payment (No eftpos)"
-                                        ] as $val => $lbl): $rid = "eftpos_" . md5($val); ?>
+                            <div class="row pos-setup-grid">
+                                <div class="col-lg-6">
+                                    <div class="pos-setup-panel">
+                                        <label class="form-label">Eftpos Model <span class="text-danger">*</span></label>
+                                        <div class="form-text mb-2">$225+GST (No receipt) &middot; $525+GST (receipt)</div>
+                                        <div class="pos-setup-options">
                                             <div class="check-card">
-                                                <input type="radio" id="<?php echo $rid; ?>" name="eftposModel" value="<?php echo $val; ?>" required>
-                                                <label for="<?php echo $rid; ?>"><?php echo $lbl; ?></label>
+                                                <input type="radio" id="eftpos_portable" name="eftposModel" value="Portable Eftpos $225+GST (No receipt)" required>
+                                                <label for="eftpos_portable" class="eftpos-option-label">
+                                                    <img src="../assets/img/pos/AMS1-Portable ($225+GST).webp" alt="Portable Eftpos $225+GST">
+                                                    <span>Portable ($225+GST)</span>
+                                                </label>
                                             </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">How Many Eftpos terminal need <span class="text-danger">*</span></label>
-                                    <select class="form-select mb-3" name="eftposQty" required>
-                                        <option value="" disabled selected>Select</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="None">None</option>
-                                    </select>
-
-                                    <label class="form-label d-block mt-2">Use third-party platforms <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group" style="grid-template-columns: 1fr;">
-                                        <?php foreach (["Ubereats","Doordash","Other"] as $i=>$opt): $tid="tp_$i"; ?>
                                             <div class="check-card">
-                                                <input type="radio" id="<?php echo $tid; ?>" class="thirdPartyRadio" name="thirdPartyPlatforms" value="<?php echo $opt; ?>" required>
-                                                <label for="<?php echo $tid; ?>"><?php echo $opt; ?></label>
+                                                <input type="radio" id="eftpos_standard" name="eftposModel" value="Standard Eftpos $525+ GST (receipt)" required>
+                                                <label for="eftpos_standard" class="eftpos-option-label">
+                                                    <img src="../assets/img/pos/S1F2-Standard ($525+GST).webp" alt="Standard Eftpos $525+GST">
+                                                    <span>Standard ($525+GST)</span>
+                                                </label>
                                             </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                    <input type="text" class="form-control mt-2" id="thirdPartyOther" name="thirdPartyOther" placeholder="Specify other platform..." style="display:none;">
-                                </div>
-                                <div class="col-12 mb-3">
-                                    <label class="form-label">Do they have their own Website <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group" style="grid-template-columns: repeat(2, 1fr); max-width: 400px;">
-                                        <div class="check-card">
-                                            <input type="radio" id="web_yes" name="hasOwnWebsite" value="YES" required>
-                                            <label for="web_yes">YES</label>
+                                            <div class="check-card">
+                                                <input type="radio" id="eftpos_online" name="eftposModel" value="Only online payment (No eftpos)" required>
+                                                <label for="eftpos_online" class="eftpos-option-label eftpos-online-option">
+                                                    <span>Only online payment (No eftpos)</span>
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div class="check-card">
-                                            <input type="radio" id="web_no" name="hasOwnWebsite" value="No" required>
-                                            <label for="web_no">No</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="pos-setup-panel">
+                                        <div class="pos-right-group">
+                                            <label class="form-label">How Many Eftpos terminal need <span class="text-danger">*</span></label>
+                                            <select class="form-select mb-3" name="eftposQty" required>
+                                                <option value="" disabled selected>Select</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="None">None</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="pos-right-group">
+                                            <label class="form-label d-block mt-2">Use third-party platforms <span class="text-danger">*</span></label>
+                                            <div class="pos-setup-options">
+                                                <?php foreach (["Ubereats","Doordash","Other"] as $i=>$opt): $tid="tp_$i"; ?>
+                                                    <div class="check-card">
+                                                        <input type="radio" id="<?php echo $tid; ?>" class="thirdPartyRadio" name="thirdPartyPlatforms" value="<?php echo $opt; ?>" required>
+                                                        <label for="<?php echo $tid; ?>"><?php echo $opt; ?></label>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                            <input type="text" class="form-control mt-2" id="thirdPartyOther" name="thirdPartyOther" placeholder="Specify other platform..." style="display:none;">
+                                        </div>
+
+                                        <div class="pos-right-group">
+                                            <label class="form-label">Do they have their own Website <span class="text-danger">*</span></label>
+                                            <div class="website-options">
+                                                <div class="check-card">
+                                                    <input type="radio" id="web_yes" name="hasOwnWebsite" value="YES" required>
+                                                    <label for="web_yes">YES</label>
+                                                </div>
+                                                <div class="check-card">
+                                                    <input type="radio" id="web_no" name="hasOwnWebsite" value="No" required>
+                                                    <label for="web_no">No</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -269,7 +491,7 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                         </div>
 
                         <!-- ========== Page 4 : Restaurant Address / Cuisine ========== -->
-                        <div class="form-section">
+                        <div class="form-section newcustomer-only">
                             <h5 class="section-title"><i class="bi bi-geo-alt"></i> Restaurant Address &amp; Cuisine</h5>
                             <div class="row">
                                 <input type="hidden" id="countryCode" name="countryCode">
@@ -301,7 +523,7 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                         </div>
 
                         <!-- ========== Page 5 : Delivery Service Need ========== -->
-                        <div class="form-section">
+                        <div class="form-section newcustomer-only">
                             <h5 class="section-title"><i class="bi bi-truck"></i> Delivery Service</h5>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -371,7 +593,7 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                         </div>
 
                         <!-- ========== Page 7 : Local for you team ========== -->
-                        <div class="form-section">
+                        <div class="form-section newcustomer-only">
                             <h5 class="section-title"><i class="bi bi-people"></i> For Local for You Team</h5>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -413,24 +635,6 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                                         <option value="Add DNS (to Another Domain Hosting)">Add DNS (to Another Domain Hosting)</option>
                                     </select>
                                 </div>
-                                <div class="col-12 mb-3">
-                                    <div class="qr-card">
-                                        <a href="https://www.facebook.com/groups/localforyou/" target="_blank" rel="noopener" class="qr-img-link">
-                                            <img src="../assets/img/qr_form.png" alt="Scan QR to join Local For You group">
-                                        </a>
-                                        <div class="qr-text">
-                                            <h6 class="mb-1"><i class="bi bi-megaphone-fill text-primary"></i> SCAN HERE — Get FREE Marketing Tricks 🎉</h6>
-                                            <p class="mb-2 text-muted small">Scan the QR code or
-                                                <a href="https://www.facebook.com/groups/localforyou/" target="_blank" rel="noopener">click here</a>
-                                                to join our Facebook group and receive free marketing tips for your shop.
-                                            </p>
-                                            <div class="check-card">
-                                                <input type="checkbox" id="optIn" name="marketingTricksOptIn" value="YES">
-                                                <label for="optIn"><i class="bi bi-check2-circle"></i> Yes, I'm interested!</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -448,6 +652,7 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                             <small class="text-danger d-block mt-2" id="errMsg" style="display:none;"></small>
                         </div>
 
+                        <input type="hidden" name="customerMode" value="<?php echo $customerMode; ?>">
                         <input type="hidden" name="testMode"     value="<?php echo $testMode; ?>">
                         <input type="hidden" name="leadSource"   value="<?php echo $leadSource; ?>">
                         <input type="hidden" name="formVersion"  value="<?php echo $formVersion; ?>">
@@ -455,6 +660,7 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                         <input type="hidden" name="timeStamps"   value="<?php echo $timestamps; ?>">
                     </form>
                 </div>
+                <?php endif; ?>
             </div>
         </section>
     </main>
@@ -467,16 +673,29 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
     </div>
 </footer>
 
+<div id="ajaxLoadingOverlay" class="ajax-loading-overlay" aria-hidden="true">
+    <div class="ajax-loading-card">
+        <div class="spinner-border text-primary" role="status" aria-label="Loading"></div>
+        <h5 class="ajax-loading-title">Submitting your form...</h5>
+        <p class="ajax-loading-text">Please wait while we save your information.</p>
+    </div>
+</div>
+
 <script src="../assets/js/jquery.3.6.0.min.js"></script>
 <script src="../assets/js/bootstrap5.0.2.bundle.min.js"></script>
 <script>
 $(function () {
+    const CUSTOMER_MODE = <?php echo json_encode($customerMode); ?>;
+    if (CUSTOMER_MODE === "oldcustomer") {
+        $(".newcustomer-only").find("input, select, textarea").prop("required", false).prop("disabled", true);
+    }
+
     // ===== Country -> Currency / Phone prefix / Country Code auto-fill =====
     const COUNTRY_MAP = {
-        "Australia":   { currency: "AUD", code: "+61" },
-        "USA":         { currency: "USD", code: "+1"  },
-        "UK":          { currency: "GBP", code: "+44" },
-        "New Zealand": { currency: "NZD", code: "+64" }
+        "AU":  { currency: "AUD", code: "+61" },
+        "USA": { currency: "USD", code: "+1"  },
+        "UK":  { currency: "GBP", code: "+44" },
+        "NZ":  { currency: "NZD", code: "+64" }
     };
     $("#country").on("change", function () {
         const m = COUNTRY_MAP[$(this).val()];
@@ -485,6 +704,10 @@ $(function () {
         $("#countryCode").val(m.code);
         $("#phonePrefix").text(m.code);
         $("#shopPhone").attr("placeholder", "e.g. " + m.code.replace("+", "") + " 412 345 678").focus();
+    });
+
+    $("#shopPhone").on("input paste", function () {
+        this.value = this.value.replace(/\D/g, "");
     });
 
     // ===== Show "Other" text input for GMB / Facebook =====
@@ -509,14 +732,16 @@ $(function () {
         $card.addClass("has-file").find(".file-name").text(names);
     });
 
-    // Toggle "Other" time input on opening hours
+    // Toggle opening time inputs
     $(".dayRadio").on("change", function () {
         const $row = $(this).closest(".day-row");
-        if ($(this).val() === "Other") {
-            $row.addClass("show-other");
+        const $timeInputs = $row.find(".open-time-input");
+        if ($(this).val() === "Open") {
+            $row.addClass("show-open");
+            $timeInputs.prop("required", true);
         } else {
-            $row.removeClass("show-other");
-            $row.find("input.other-time").val("");
+            $row.removeClass("show-open");
+            $timeInputs.prop("required", false).val("");
         }
     });
 
@@ -543,6 +768,37 @@ $(function () {
         $("#cuisineOther").toggle(checkedOther);
         if (!checkedOther) $("#cuisineOther").val("");
     });
+
+    $("#adyenTermsModal").on("shown.bs.modal", function () {
+        const container = $(".adyen-pages-container");
+        const agreementSection = $("#adyenAgreementSection");
+        const acceptWarning = $("#adyenAcceptWarning");
+        const acceptBtn = $("#adyenAcceptBtn");
+
+        agreementSection.hide().css("opacity", "0");
+        acceptWarning.show();
+        acceptBtn.hide();
+
+        function revealAgreementIfBottom() {
+            if (this.scrollTop + this.clientHeight >= this.scrollHeight - 10) {
+                agreementSection.show();
+                acceptWarning.hide();
+                acceptBtn.show();
+                setTimeout(() => agreementSection.css("opacity", "1"), 10);
+            }
+        }
+
+        container.off("scroll").on("scroll", revealAgreementIfBottom);
+        container.find("img").off("load").on("load", function () {
+            container.trigger("scroll");
+        });
+        container.trigger("scroll");
+    });
+
+    $(document).on("click", "#adyenAcceptBtn", function () {
+        $("#adyenAgreement").prop("disabled", false).prop("checked", true);
+        $("#adyenTermsModal").modal("hide");
+    });
 });
 
 function validateAndSubmit() {
@@ -557,13 +813,27 @@ function validateAndSubmit() {
             $(this).removeClass("is-invalid");
         }
     });
-    if ($(".svcChk:checked").length < 1) {
+    if ($('input[name="customerMode"]').val() !== "oldcustomer" && $(".svcChk:checked").length < 1) {
         $err.text("Please select at least one Service Provided.").show();
         return;
     }
     if (firstInvalid) {
         firstInvalid.focus();
         $err.text("Please complete the required fields.").show();
+        return;
+    }
+
+    const phoneVal = ($("#shopPhone").val() || "").trim();
+    if (!/^[0-9]+$/.test(phoneVal)) {
+        $("#shopPhone").addClass("is-invalid").focus();
+        $err.text("Shop phone number must contain numbers only.").show();
+        return;
+    }
+
+    const emailEl = document.querySelector('input[name="shopEmail"]');
+    if (emailEl && !emailEl.checkValidity()) {
+        $(emailEl).addClass("is-invalid").focus();
+        $err.text("Please enter a valid shop email address.").show();
         return;
     }
 
@@ -585,6 +855,7 @@ function validateAndSubmit() {
 
     $("#submitBtn").hide();
     $("#loadingAjax").show();
+    $("#ajaxLoadingOverlay").css("display", "flex").attr("aria-hidden", "false");
 
     $.ajax({
         url: "activeajax.php",
@@ -598,14 +869,15 @@ function validateAndSubmit() {
         if (res && res.success) {
             $("#doneForm").show();
             console.log("Saved:", res);
-            // Optionally redirect:
-            // location.replace("https://localforyou.com/thank-you/");
+            location.replace("thank-you.php");
         } else {
+            $("#ajaxLoadingOverlay").hide().attr("aria-hidden", "true");
             $("#submitBtn").show();
             $err.text(res && res.result ? res.result : "Submit failed.").show();
         }
     }).fail(function (xhr) {
         $("#loadingAjax").hide();
+        $("#ajaxLoadingOverlay").hide().attr("aria-hidden", "true");
         $("#submitBtn").show();
         $err.text("Server error: " + xhr.status + " — " + (xhr.responseText || "").slice(0, 200)).show();
     });

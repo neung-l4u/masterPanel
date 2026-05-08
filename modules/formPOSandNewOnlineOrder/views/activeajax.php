@@ -19,18 +19,29 @@ function vList($k) {
     return trim($_POST[$k]);
 }
 
-// Compose opening-hour value: if "Other" selected, use the typed text; else "Open"/"Closed"/null
+function csvFromAssoc($row) {
+    $fp = fopen('php://temp', 'r+');
+    fputcsv($fp, array_keys($row));
+    fputcsv($fp, array_values($row));
+    rewind($fp);
+    $csv = stream_get_contents($fp);
+    fclose($fp);
+    return $csv;
+}
+
 function dayValue($dayKey) {
     $sel = v($dayKey);
-    if ($sel === 'Other') {
-        $txt = v($dayKey . 'OtherText');
-        return $txt ?: 'Other';
+    if ($sel === 'Open') {
+        $open = v($dayKey . 'OpenTime');
+        $close = v($dayKey . 'CloseTime');
+        return ($open && $close) ? ($open . '-' . $close) : 'Open';
     }
     return $sel;
 }
 
 $submissionId = bin2hex(random_bytes(16));
 $dateThai     = date("d/m/") . (intval(date("Y")) + 543) . date(" H:i:s");
+$customerMode = v('customerMode') === 'oldcustomer' ? 'oldcustomer' : 'newcustomer';
 
 // ===== File upload handling =====
 // Folder name pattern: <id>_<shopEmail>_<tradingName>  (sanitized)
@@ -39,13 +50,18 @@ function slugify($s) {
     $s = trim($s, '-');
     return $s !== '' ? substr($s, 0, 60) : 'na';
 }
+
+function csvFileSlug($s) {
+    $s = preg_replace('/[^A-Za-z0-9]+/', '', (string)$s);
+    return $s !== '' ? strtolower(substr($s, 0, 80)) : 'shop';
+}
 $idShort   = substr($submissionId, 0, 8);
 $emailSlug = slugify($_POST['shopEmail']   ?? '');
-$nameSlug  = slugify($_POST['tradingName'] ?? '');
+$nameSlug  = slugify($_POST['shop_name'] ?? ($_POST['tradingName'] ?? ''));
 $folder    = $idShort . '_' . $emailSlug . '_' . $nameSlug;
 
 $uploadDir = __DIR__ . '/../assets/uploads/' . $folder . '/';
-$uploadUrl = '../assets/uploads/' . $folder . '/';
+$uploadUrl = 'https://report.localforyou.com/modules/formPOSandNewOnlineOrder/assets/uploads/' . $folder . '/';
 if (!is_dir($uploadDir)) { @mkdir($uploadDir, 0775, true); }
 
 $ALLOWED_EXT = ['jpg','jpeg','png','gif','webp','pdf'];
@@ -92,10 +108,49 @@ function moveOne($origName, $tmp, $size, $uploadDir, $uploadUrl, $allowed, $maxS
     return $uploadUrl . $name;
 }
 
+function normalizeUploadUrl($url) {
+    if ($url === null || $url === '') return $url;
+    return str_replace(
+        'https://report.localforyou.com/modules/formPOSandNewOnlineOrder/uploads/',
+        'https://report.localforyou.com/modules/formPOSandNewOnlineOrder/assets/uploads/',
+        $url
+    );
+}
+
+function countryMeta($country) {
+    $map = [
+        'AU' => ['countryCode' => 'AU', 'telCode' => '61'],
+        'Australia' => ['countryCode' => 'AU', 'telCode' => '61'],
+        'USA' => ['countryCode' => 'USA', 'telCode' => '1'],
+        'United States' => ['countryCode' => 'USA', 'telCode' => '1'],
+        'UK' => ['countryCode' => 'UK', 'telCode' => '44'],
+        'United Kingdom' => ['countryCode' => 'UK', 'telCode' => '44'],
+        'NZ' => ['countryCode' => 'NZ', 'telCode' => '64'],
+        'New Zealand' => ['countryCode' => 'NZ', 'telCode' => '64'],
+    ];
+    return $map[$country] ?? ['countryCode' => $country, 'telCode' => ''];
+}
+
+function makeEftposModel($eftposModel) {
+    $map = [
+        'Portable ($225+GST)' => 'Portable Eftpos $225+GST (No receipt)',
+        'Portable Eftpos $225+GST (No receipt)' => 'Portable Eftpos $225+GST (No receipt)',
+        'Standard ($525+GST)' => 'Standard Eftpos $525+ GST (receipt)',
+        'Standard Eftpos $525+ GST (receipt)' => 'Standard Eftpos $525+ GST (receipt)',
+        'Only online payment (No eftpos)' => 'Only online payment (No eftpos)',
+    ];
+    return $map[$eftposModel] ?? $eftposModel;
+}
+
 $logoUrl    = saveUpload('logoMenuPictures',        $uploadDir, $uploadUrl, $ALLOWED_EXT, $MAX_SIZE);
 $bizRegUrl  = saveUpload('businessRegistrationDoc', $uploadDir, $uploadUrl, $ALLOWED_EXT, $MAX_SIZE, 'BRD_');
 $bankUrl    = saveUpload('bankStatementDoc',        $uploadDir, $uploadUrl, $ALLOWED_EXT, $MAX_SIZE, 'BS_');
 $dirIdUrl   = saveUpload('directorIdDoc',           $uploadDir, $uploadUrl, $ALLOWED_EXT, $MAX_SIZE, 'DirectorID_');
+
+$logoUrl   = normalizeUploadUrl($logoUrl);
+$bizRegUrl = normalizeUploadUrl($bizRegUrl);
+$bankUrl   = normalizeUploadUrl($bankUrl);
+$dirIdUrl  = normalizeUploadUrl($dirIdUrl);
 
 // Required document checks
 foreach ([
@@ -112,14 +167,26 @@ foreach ([
 
 $row = [
     'submissionId'            => $submissionId,
+    'shop_name'               => v('shop_name'),
     'shopEmail'               => v('shopEmail'),
     'shopPhone'               => (function () {
         $phone = trim((string) v('shopPhone'));
         $cc    = trim((string) v('countryCode'));
+        if ($cc === '') {
+            $countryCodes = [
+                'AU' => '+61',
+                'Australia' => '+61',
+                'USA' => '+1',
+                'UK' => '+44',
+                'NZ' => '+64',
+                'New Zealand' => '+64',
+            ];
+            $cc = $countryCodes[v('country')] ?? '';
+        }
         if ($phone === '') return null;
         if ($phone[0] === '+') return $phone;                    // already has prefix
         $local = ltrim($phone, '0');                              // drop leading 0 (e.g. 0959... -> 959...)
-        return $cc ? ($cc . ' ' . $local) : $phone;
+        return $cc ? ($cc . $local) : $phone;
     })(),
     'managerName'             => v('managerName'),
     'country'                 => v('country'),
@@ -192,20 +259,49 @@ $row = [
         'businessRegistration' => $bizRegUrl,
         'bankStatement'        => $bankUrl,
         'directorId'           => $dirIdUrl,
-    ], JSON_UNESCAPED_UNICODE),
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
 
-    'status'   => 'New Client',
+    'BRD'        => $bizRegUrl ? basename($bizRegUrl) : null,
+    'BS'         => $bankUrl ? basename($bankUrl) : null,
+    'DirectorID' => $dirIdUrl ? basename($dirIdUrl) : null,
+    'adyenAgree' => v('adyenAgree') === 'agreed' ? 'agreed' : '',
+    'status'   => ($customerMode === 'oldcustomer') ? 'Old Client' : 'New Client',
     'dateThai' => $dateThai,
 ];
 
 // Minimum required fields
-$required = ['shopEmail','shopPhone','managerName','country','currency','tradingName','tradingAddress','eftposModel','hasOwnWebsite'];
+$required = ($customerMode === 'oldcustomer')
+    ? ['shop_name','shopEmail','shopPhone','managerName','country','currency']
+    : ['shop_name','shopEmail','shopPhone','managerName','country','currency','tradingName','tradingAddress','eftposModel','hasOwnWebsite'];
 foreach ($required as $r) {
     if ($row[$r] === null || $row[$r] === '') {
         http_response_code(400);
         echo json_encode(['success' => false, 'result' => "Missing required field: $r"]);
         exit;
     }
+}
+
+if ($customerMode !== 'oldcustomer') {
+    foreach (['openMon','openTue','openWed','openThu','openFri','openSat','openSun'] as $dayKey) {
+        if (v($dayKey) === 'Open' && (!v($dayKey . 'OpenTime') || !v($dayKey . 'CloseTime'))) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'result' => "Missing opening time for: $dayKey"]);
+            exit;
+        }
+    }
+}
+
+if ($row['shopEmail'] !== null && !filter_var($row['shopEmail'], FILTER_VALIDATE_EMAIL)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'result' => 'Invalid shop email address']);
+    exit;
+}
+
+$rawPhone = trim((string) v('shopPhone'));
+if ($rawPhone !== '' && !preg_match('/^[0-9]+$/', $rawPhone)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'result' => 'Shop phone number must contain numbers only']);
+    exit;
 }
 
 $cols   = array_keys($row);
@@ -215,6 +311,12 @@ $sql    = "INSERT INTO `POSandNewOnlineOrder` ($colSql) VALUES ($place)";
 
 try {
     $db->query($sql, ...array_values($row));
+
+    $csvContent = csvFromAssoc($row);
+    $csvFileName = date('ymd') . '-' . csvFileSlug($row['shop_name']) . '.csv';
+    $csvFilePath = $uploadDir . $csvFileName;
+    $csvFileUrl = $uploadUrl . $csvFileName;
+    file_put_contents($csvFilePath, $csvContent);
 
     // ===== Forward to Make.com webhook (non-blocking on failure) =====
     $webhookUrl = 'https://hook.us1.make.com/pbgdj10u6ewd5s3h4gkxbf43tp8iyfl7';
@@ -233,13 +335,27 @@ try {
     // Identifiers / file folder
     $payload['submissionId'] = $submissionId;
     $payload['uploadFolder'] = $folder;
+    $payload['eftposModel'] = makeEftposModel($row['eftposModel']);
 
     // Extra meta fields posted by the form (not stored in DB)
+    $payload['customerMode'] = $customerMode;
+    $payload['customerType'] = $customerMode;
     $payload['testMode']     = v('testMode');
     $payload['leadSource']   = v('leadSource');
     $payload['formVersion']  = v('formVersion');
     $payload['emailVersion'] = v('emailVersion');
     $payload['timeStamps']   = v('timeStamps');
+    $countryMeta = countryMeta(v('country'));
+    $payload['countryCode']  = $countryMeta['countryCode'];
+    $payload['telCode']      = $countryMeta['telCode'];
+    $payload['dateforMonday'] = date('dmy');
+    $payload['csvfileTomake'] = $csvFileUrl;
+
+    if ($customerMode === 'newcustomer') {
+        $payload['csvFileName'] = $csvFileName;
+        $payload['csvContent'] = $csvContent;
+        $payload['csvContentBase64'] = base64_encode($payload['csvContent']);
+    }
 
     // Raw "Other" text inputs (in case Make wants the unmerged value)
     $payload['rawOther'] = [
