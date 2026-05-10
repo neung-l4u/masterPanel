@@ -1,12 +1,34 @@
 <?php
 global $testMode;
-if ($testMode){
+if ($testMode == "true"){
     $randomNumber = sprintf("%03d", mt_rand(1, 999));
     $test["firstname"] = "Neung L4U";
     $test["lastname"] = "Test - ".$randomNumber;
     $test["mobile"] = rand(1000000000,9999999999);
     $test["email"] = "neung@gmail.com";
     $test["time"] = "11:12";
+    $test["shop"] = "Test Shop".$randomNumber;
+    $test["abn"] = sprintf("%06d", mt_rand(1, 999999));
+    $test["trading"] = "L4U Test";
+    $test["shopnumber"] = rand(1000000000,9999999999);
+    $test["website"] = "www.localforyou.com";
+    $test["address"] = "11/22 abc street";
+    $test["city"] = "ABC Village";
+    $test["zip"] = "10110";
+    //$test["card"] = "4242424242424242";
+    $test["card"] = "";
+    //$test["cvv"] = "123";
+    $test["cvv"] = "";
+    $test["note"] = "test mode";
+    $test["person"] = randomName();
+    $test["refShop"] = randomShop();
+}elseif ($testMode == "mark"){
+    $randomNumber = sprintf("%03d", mt_rand(1, 999));
+    $test["firstname"] = "Mark L4U";
+    $test["lastname"] = "Test - ".$randomNumber;
+    $test["mobile"] = rand(1000000000,9999999999);
+    $test["email"] = "mark@localforyou.com";
+    $test["time"] = "12:12";
     $test["shop"] = "Test Shop".$randomNumber;
     $test["abn"] = sprintf("%06d", mt_rand(1, 999999));
     $test["trading"] = "L4U Test";
