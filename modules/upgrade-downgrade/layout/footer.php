@@ -14,5 +14,5 @@
     }
 </style>
 <footer>
-    Copyright © 2025 by localforyou.com
+    Copyright © 2026 by localforyou.com
 </footer>

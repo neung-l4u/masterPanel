@@ -16,18 +16,17 @@ global $db;
 
         gtag('config', 'G-LGKDYHL23T');
     </script>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/entries.css?v=1.0.0" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/css/entries.css?v=2.0.0" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/libs/DataTables/datatables-bs5.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     
-    <title>Upgrade/Downgrade - Entries</title>
+    <title>Customer Details - Entries</title>
 </head>
 <body>
 
@@ -43,10 +42,7 @@ global $db;
                     <a class="nav-link" aria-current="page" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../views/upgradeForm.php">Upgrade Form</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../views/downgradeForm.php">Downgrade Form</a>
+                    <a class="nav-link" href="../views/customerDetailsForm.php">Form</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="../views/entries.php">Entries</a>
@@ -70,8 +66,8 @@ global $db;
                         </ol>
                     </nav>
                 </header> -->
-                <h3 class="mb-4 text-center text-uppercase form-title">Feedback Entries</h3>
-                <p class="text-center">Here you can view all feedback entries submitted through the form.</p>
+                <h3 class="mb-4 text-center text-uppercase form-title">Customer Details Entries</h3>
+                <p class="text-center">Here you can view all customer details entries submitted through the form.</p>
             </div>
 
             <div class="row pt-3">
@@ -79,21 +75,34 @@ global $db;
                     <table id="entriesTable" class="table table-striped table-hover">
                         <thead class="table-dark thead-dark">
                             <tr>
-                                <th class="col_id"><i class="bi bi-record2" title="ID"></i></th>
-                                <th class="col_owner"><i class="bi bi-person-circle" title="Owner"></i></th>
-                                <th class="col_shopName">Shop Name</th>
+                                <th class="col_id">#</th>
+                                <th class="col_business">Business</th>
                                 <th class="col_email">Email</th>
-                                <th class="col_shopType">Shop Type</th>
-                                <th class="col_package">Package</th>
-                                <th class="col_shortDesc">description</th>
-                                <th class="col_fullDesc"></th>
-                                <th class="col_attachFile">Image</th>
+                                <th class="col_phone">Phone</th>
                                 <th class="col_date">Date</th>
+                                <th class="col_detail"></th>
                             </tr>
                         </thead>
                         <tbody>
                         </tbody>
                     </table>
+
+                    <!-- Detail Modal -->
+                    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="detailModalLabel"><i class="bi bi-file-earmark-text"></i> Customer Details</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" id="detailModalBody">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -102,7 +111,7 @@ global $db;
 
 <?php include '../layout/footer.php'; ?>
 
-<script src="../assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
 <script src="../assets/libs/DataTables/datatables.min.js"></script>
 <script src="../controllers/entries.js?v=1.0.0"></script>
@@ -114,44 +123,116 @@ $(function() {
             url: '../models/entriesTable.php',
             dataSrc: 'data'
         },
-        "pageLength": 10,
+        pageLength: 10,
         lengthMenu: [
             [10, 25, 50, -1],
             ['Fit', 25, 50, 'All']
-        ],columnDefs: [
-            { targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "orderable": "false"},
-            { targets: [0, 8], className: 'dt-center'},
-            { targets: [7], className: 'd-none' }
+        ],
+        columnDefs: [
+            { targets: '_all', orderable: false },
+            { targets: [0, 4], className: 'dt-center' },
+            { targets: [5], render: function(data) {
+                return `<button class="btn btn-sm btn-outline-primary btn-view-detail" title="View Details"><i class="bi bi-eye"></i></button>`;
+            }, className: 'dt-center'},
         ],
         layout: {
             topStart: {
                 buttons: [
                 {
-                    text: 'Excel',
+                    text: '<i class="bi bi-file-earmark-spreadsheet"></i> Excel',
                     extend: 'excelHtml5',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 7, 8, 9]
+                        columns: [0, 1, 2, 3, 4]
                     },
-                },
-                // {
-                //     text: 'PDF',
-                //     extend: 'pdfHtml5',
-                //     orientation: 'landscape',
-                //     pageSize: 'A4',
-                //     exportOptions: {
-                //         columns: [0, 1, 2, 3, 4, 5, 6, 8]
-                //     },
-                // }
-                ]
+                }]
             }
         },
         drawCallback: function () {
             initTooltips();
         }
-    } );
+    });
 
-initTooltips();
+    // Detail modal handler
+    $('#entriesTable').on('click', '.btn-view-detail', function () {
+        const table = $('#entriesTable').DataTable();
+        const row = table.row($(this).closest('tr'));
+        const rawJson = row.data()[5]; // column 5 = raw JSON (rendered as button)
 
+        try {
+            const decoded = $('<textarea/>').html(rawJson).text();
+            const json = JSON.parse(decoded);
+            const fields = [
+                { key: 'stripeID',             label: 'Stripe ID',           icon: 'bi-credit-card' },
+                { key: 'businessName',         label: 'Business Name',       icon: 'bi-building' },
+                { key: 'businessHours',        label: 'Business Hours',      icon: 'bi-clock' },
+                { key: 'currentBookingSystem', label: 'Booking System',      icon: 'bi-calendar-check' },
+                { key: 'bookingUser',          label: 'Booking User',        icon: 'bi-person-badge' },
+                { key: 'bookingPassword',      label: 'Booking Password',    icon: 'bi-key' },
+                { key: 'timezoneId',           label: 'Timezone',            icon: 'bi-globe' },
+                { key: 'shopAddress',          label: 'Shop Address',        icon: 'bi-geo-alt' },
+                { key: 'businessWebsite',      label: 'Website',             icon: 'bi-link-45deg' },
+                { key: 'phoneNumberDecision',  label: 'Phone Decision',      icon: 'bi-telephone' },
+                { key: 'backupPhoneNumber',    label: 'Backup Phone',        icon: 'bi-phone' },
+                { key: 'phoneCarrier',         label: 'Phone Carrier',       icon: 'bi-sim' },
+                { key: 'shopEmail',            label: 'Email',               icon: 'bi-envelope' },
+                { key: 'servicesOffered',      label: 'Services Offered',    icon: 'bi-list-check' },
+                { key: 'bufferMinutes',        label: 'Buffer Minutes',      icon: 'bi-hourglass-split' },
+                { key: 'coupleMassage',        label: 'Couple Massage',      icon: 'bi-people' },
+                { key: 'happyMassage',         label: 'Happy Massage',       icon: 'bi-emoji-smile' },
+                { key: 'maleTherapists',       label: 'Male Therapists',     icon: 'bi-person' },
+                { key: 'femaleTherapists',     label: 'Female Therapists',   icon: 'bi-person' },
+                { key: 'numberOfTherapists',   label: 'Number of Therapists',icon: 'bi-people-fill' },
+                { key: 'therapistNames',       label: 'Therapist Names',     icon: 'bi-person-lines-fill' },
+                { key: 'wheelchair',           label: 'Wheelchair',          icon: 'bi-wheelchair' },
+                { key: 'parking',              label: 'Parking',             icon: 'bi-p-circle' },
+                { key: 'restroom',             label: 'Restroom',            icon: 'bi-door-open' },
+                { key: 'promotions',           label: 'Promotions',          icon: 'bi-tag' },
+                { key: 'voiceType',            label: 'Voice Type',          icon: 'bi-mic' },
+                { key: 'googleCalendar',       label: 'Google Calendar',     icon: 'bi-calendar3' },
+                { key: 'googleCalendarId',     label: 'Calendar ID',         icon: 'bi-calendar3-event' },
+                { key: 'additionalComments',   label: 'Additional Comments', icon: 'bi-chat-dots' },
+                { key: 'formVersion',          label: 'Form Version',        icon: 'bi-file-code' },
+                { key: 'emailVersion',         label: 'Email Version',       icon: 'bi-file-code' },
+                { key: 'date',                 label: 'Submitted',           icon: 'bi-calendar-event' },
+            ];
+
+            const booleanFields = ['coupleMassage','happyMassage','maleTherapists','femaleTherapists','wheelchair','parking','restroom','googleCalendar'];
+
+            let html = '<div class="detail-grid">';
+            for (const f of fields) {
+                const val = json[f.key];
+                if (val !== undefined && val !== '') {
+                    let display;
+                    if (f.key === 'voiceType') {
+                        const gIcon = String(val).toLowerCase() === 'male'
+                            ? '<i class="bi bi-gender-male"></i>'
+                            : '<i class="bi bi-gender-female"></i>';
+                        display = `<span class="badge-voice">${gIcon} ${val}</span>`;
+                    } else if (booleanFields.includes(f.key)) {
+                        const v = String(val).toLowerCase();
+                        const isPositive = !v.includes('not') && (v.includes('available') || v.includes('accessible') || v === 'yes');
+                        display = isPositive
+                            ? `<span class="badge-yes"><i class="bi bi-check-circle-fill"></i> ${val}</span>`
+                            : `<span class="badge-no"><i class="bi bi-x-circle-fill"></i> ${val}</span>`;
+                    } else {
+                        display = String(val).replace(/\n/g, '<br>').replace(/\r/g, '');
+                    }
+                    html += `<div class="detail-row">
+                        <div class="detail-label"><i class="bi ${f.icon}"></i> ${f.label}</div>
+                        <div class="detail-value">${display}</div>
+                    </div>`;
+                }
+            }
+            html += '</div>';
+            $('#detailModalBody').html(html);
+        } catch (e) {
+            $('#detailModalBody').html('<div class="alert alert-danger">Unable to parse detail data.</div>');
+        }
+
+        new bootstrap.Modal('#detailModal').show();
+    });
+
+    initTooltips();
 });//ready
 </script>
 </body>

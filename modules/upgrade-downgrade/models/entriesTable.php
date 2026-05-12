@@ -4,7 +4,7 @@ session_start();
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 
-$result = $db->query('SELECT * FROM feedback')->fetchAll();
+$result = $db->query('SELECT * FROM ai_araya ORDER BY id DESC')->fetchAll();
 
 $data = array("data"=> array());
 
@@ -12,61 +12,51 @@ $i = 1;
 
 foreach ($result as $row) {
     $date = date("d-m-y H:i", strtotime($row["createAt"]));
-    $dateOnly = explode(' ', $date)[0];
-    $timeOnly = explode(' ', $date)[1];
+    $stripeID = htmlspecialchars($row["stripeID"] ?? "");
 
-    $json = json_decode($row["dataLogs"], true);
-    $cusName = $json["name"];
-    $shopName = $json["shopName"];
-    $email = $json["email"];
-    $shopType = $json["shopType"];
+    // Try new customerDetailsLogs column first, fallback to old dataLogs
+    $rawJson = !empty($row["customerDetailsLogs"]) ? $row["customerDetailsLogs"] : ($row["dataLogs"] ?? "");
+    $json = json_decode($rawJson, true);
 
-    $fullDesc = $json["description"];
-    $shortDesc = shortDesc($fullDesc);
-
-    $fileName = $json["fileName"];
-    //$modulePath = "../"; // Local path
-    $modulePath = "https://report.localforyou.com/modules/feedback"; // Server path
-    $filePath = $modulePath . $json["filePath"];
-
-    if (empty($fileName)) {
-        $attachFile = "-";
-    } else {
-        $attachFile = "<a href='$filePath' target='_blank'><i class='bi bi-image'></i></a><p class='d-none'>$filePath</p>";
+    if (!$json) {
+        $i++;
+        continue;
     }
 
-    if ($json["shopType"] == "Other") {
-        $shopType = "Other: ".$json["shopTypeOtherInput"];
-    } else {
-        $shopType = $json["shopType"];
-    }
+    // New payload fields
+    $businessName   = htmlspecialchars($json["businessName"] ?? "-");
+    $shopEmail      = htmlspecialchars($json["shopEmail"] ?? "-");
+    $phone          = htmlspecialchars($json["backupPhoneNumber"] ?? "-");
+    $bookingSystem  = htmlspecialchars($json["currentBookingSystem"] ?? "-");
+    $voiceType      = htmlspecialchars($json["voiceType"] ?? "-");
+    $googleCal      = htmlspecialchars($json["googleCalendar"] ?? "-");
+    $therapists     = htmlspecialchars($json["numberOfTherapists"] ?? "-");
+    $formVersion    = htmlspecialchars($json["formVersion"] ?? "-");
 
-    if ($json["package"] == "Other") {
-        $package = "Other: ".$json["packageOtherInput"];
-    } else {
-        $package = $json["package"];
-    }
+    // Services summary (truncated)
+    $servicesFull = htmlspecialchars($json["servicesOffered"] ?? "-");
+    $servicesShort = shortText($servicesFull, 30);
+
+    // Build detail JSON for modal
+    $detailJson = htmlspecialchars($rawJson, ENT_QUOTES, 'UTF-8');
 
     $data["data"][] = array(
         $i,
-        $cusName,
-        $shopName,
-        $email,
-        $shopType,
-        $package,
-        $shortDesc,
-        $fullDesc,
-        $attachFile,
-        $dateOnly,
-    );//array
+        $businessName,
+        $shopEmail,
+        $phone,
+        $date,
+        $detailJson,
+    );
 
     $i++;
-}//foreach
+}
 
 echo json_encode($data);
 
-function shortDesc($param): string
+function shortText($param, $len = 30): string
 {
-    $desc = mb_substr($param, 0, 20).'...';
-    return "<p class='description' data-bs-toggle='tooltip' title='$param'>$desc</p>";
+    if (mb_strlen($param) <= $len) return $param;
+    $desc = mb_substr($param, 0, $len).'...';
+    return "<span data-bs-toggle='tooltip' title='" . str_replace("'", "&#39;", $param) . "'>$desc</span>";
 }
