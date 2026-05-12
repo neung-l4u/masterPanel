@@ -1,0 +1,70 @@
+[15-Apr-2026 13:07:56 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php:13
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php(13): mysqli->__construct()
+#1 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/initDB.php(10): db->__construct()
+#2 /home/localfor/report.localforyou.com/modules/aiAraya/views/index.php(4): require_once('/home/localfor/...')
+#3 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php on line 13
+[15-Apr-2026 13:08:20 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php:13
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php(13): mysqli->__construct()
+#1 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/initDB.php(10): db->__construct()
+#2 /home/localfor/report.localforyou.com/modules/aiAraya/views/index.php(4): require_once('/home/localfor/...')
+#3 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php on line 13
+[15-Apr-2026 13:08:30 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php:13
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php(13): mysqli->__construct()
+#1 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/initDB.php(10): db->__construct()
+#2 /home/localfor/report.localforyou.com/modules/aiAraya/views/index.php(4): require_once('/home/localfor/...')
+#3 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php on line 13
+[15-Apr-2026 13:12:25 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php:13
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php(13): mysqli->__construct()
+#1 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/initDB.php(10): db->__construct()
+#2 /home/localfor/report.localforyou.com/modules/aiAraya/views/index.php(4): require_once('/home/localfor/...')
+#3 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php on line 13
+[15-Apr-2026 13:13:49 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php:13
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php(13): mysqli->__construct()
+#1 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/initDB.php(10): db->__construct()
+#2 /home/localfor/report.localforyou.com/modules/aiAraya/views/index.php(4): require_once('/home/localfor/...')
+#3 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php on line 13
+[15-Apr-2026 13:14:47 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php:13
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php(13): mysqli->__construct()
+#1 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/initDB.php(10): db->__construct()
+#2 /home/localfor/report.localforyou.com/modules/aiAraya/views/index.php(4): require_once('/home/localfor/...')
+#3 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php on line 13
+[15-Apr-2026 13:19:31 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php:13
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php(13): mysqli->__construct()
+#1 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/initDB.php(10): db->__construct()
+#2 /home/localfor/report.localforyou.com/modules/aiAraya/views/index.php(4): require_once('/home/localfor/...')
+#3 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php on line 13
+[20-Apr-2026 09:09:18 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php:13
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php(13): mysqli->__construct()
+#1 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/initDB.php(10): db->__construct()
+#2 /home/localfor/report.localforyou.com/modules/aiAraya/views/customerDetailsForm.php(4): require_once('/home/localfor/...')
+#3 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php on line 13
+[20-Apr-2026 09:09:22 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php:13
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php(13): mysqli->__construct()
+#1 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/initDB.php(10): db->__construct()
+#2 /home/localfor/report.localforyou.com/modules/aiAraya/views/customerDetailsForm.php(4): require_once('/home/localfor/...')
+#3 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php on line 13
+[20-Apr-2026 09:09:27 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php:13
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php(13): mysqli->__construct()
+#1 /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/initDB.php(10): db->__construct()
+#2 /home/localfor/report.localforyou.com/modules/aiAraya/views/index.php(4): require_once('/home/localfor/...')
+#3 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/aiAraya/assets/db/db.php on line 13

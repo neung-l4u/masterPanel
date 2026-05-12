@@ -103,7 +103,7 @@ try {
 echo "<hr><h2>Test Form Data Processing</h2>";
 if ($_POST) {
     echo "<h3>Received POST data:</h3>";
-    echo "<pre>" . print_r($_POST, true) . "</pre>";
+    echo "<pre>" . htmlspecialchars(print_r($_POST, true), ENT_QUOTES, 'UTF-8') . "</pre>";
     
     // Test the saveOrderDB.php processing
     echo "<h3>Processing with saveOrderDB.php logic:</h3>";

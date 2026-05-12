@@ -436,7 +436,7 @@ function getProductList(country) {
                         type="checkbox" 
                         name="${item.form_name}"
                         id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}$ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}$${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
@@ -451,7 +451,7 @@ function getProductList(country) {
                         type="checkbox" 
                         name="${item.form_name}"
                         id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}£ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}£${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
@@ -466,7 +466,7 @@ function getProductList(country) {
                         type="checkbox" 
                         name="${item.form_name}"
                         id="addon-${product_id}"
-                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}฿${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
@@ -481,7 +481,7 @@ function getProductList(country) {
                         type="checkbox" 
                         name="${item.form_name}"
                         id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}$${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
@@ -496,7 +496,7 @@ function getProductList(country) {
                         type="checkbox" 
                         name="${item.form_name}"
                         id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}$${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
@@ -912,25 +912,29 @@ function requestToPay() {
 
 
                 setTimeout(function () {
-                    try {
-                        genLinkPDF();
-                    } catch (e) { console.error('genLinkPDF error:', e); }
-                    try {
-                        modalRespondAction('open', 'success');
-                    } catch (e) { console.error('modalRespondAction error:', e); }
-                    try {
-                        sendMailToL4UTeam();
-                    } catch (e) { console.error('sendMailToL4UTeam error:', e); }
-                    try {
-                        signupToCustomerProjectID();
-                    } catch (e) { console.error('signupToCustomerProjectID error:', e); }
+                    uploadDocuments().finally(function () {
+                        try {
+                            genLinkPDF();
+                        } catch (e) { console.error('genLinkPDF error:', e); }
+                        try {
+                            modalRespondAction('open', 'success');
+                        } catch (e) { console.error('modalRespondAction error:', e); }
+                        try {
+                            sendMailToL4UTeam();
+                        } catch (e) { console.error('sendMailToL4UTeam error:', e); }
+                        try {
+                            signupToCustomerProjectID();
+                        } catch (e) { console.error('signupToCustomerProjectID error:', e); }
+                    });
                 }, 1000);
             } else {
                 result.empty();
                 let fail = `<span class="badge bg-danger">Payment Fail!!</span>`;
                 $(fail).appendTo(".paymentResult");
                 res.message = "Payment step is fail"
-                alert("Payment step is fail");
+                // ดึงเหตุผลจริงจาก response แล้วแสดงใน fail modal (ไม่ใช้ alert แล้ว)
+                let failReason = extractPaymentError(res) || "Payment step is fail";
+                modalRespondAction('open', 'fail', failReason);
                 stripeRes = "Ajax Fail : " + stripeRes;
                 stripeResToDB(stripeRes);
                 if(formCountry === "TH"){invoiceIDToDB(stripeRes)}
@@ -944,7 +948,9 @@ function requestToPay() {
             //console.log(xhr.responseText);
             console.log("ajax request Payment fail!!");
             console.log(status + ': ' + error);
-            modalRespondAction('open', 'fail');
+            // ดึงเหตุผลจริงจาก xhr แล้วแสดงใน fail modal
+            let failReason = extractPaymentError(xhr) || (status + ': ' + error);
+            modalRespondAction('open', 'fail', failReason);
             result.html("");
             $("#cmdSubmit").removeClass("btn-outline-info").addClass("btn-outline-success").prop("disabled", false);
             $("#paymentSubmit").prop('disabled', false);
@@ -964,10 +970,12 @@ function requestToPay() {
         let cusID = `<span class="badge bg-info">No Stripe Connect</span>`;
         $(done).appendTo(".paymentResult");
         $(cusID).appendTo(".paymentResult");
-        try { genLinkPDF(); } catch (e) { console.error('genLinkPDF error:', e); }
-        try { sendMailToL4UTeam(); } catch (e) { console.error('sendMailToL4UTeam error:', e); }
-        try { signupToCustomerProjectID(); } catch (e) { console.error('signupToCustomerProjectID error:', e); }
-        try { modalRespondAction('open', 'success'); } catch (e) { console.error('modalRespondAction error:', e); }
+        uploadDocuments().finally(function () {
+            try { genLinkPDF(); } catch (e) { console.error('genLinkPDF error:', e); }
+            try { sendMailToL4UTeam(); } catch (e) { console.error('sendMailToL4UTeam error:', e); }
+            try { signupToCustomerProjectID(); } catch (e) { console.error('signupToCustomerProjectID error:', e); }
+            try { modalRespondAction('open', 'success'); } catch (e) { console.error('modalRespondAction error:', e); }
+        });
         $("#cmdSubmit").removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false); //enable submit button
     }
 
@@ -1058,6 +1066,14 @@ const sendMailToL4UTeam = () => {
 
     ///////////////////////////////
 
+    // รวบรวมชื่อ Addons ทั้งหมดที่ถูกติ๊ก (ครอบคลุมทั้ง name="addon*" และ name="addWebsite*")
+    let mainAddonsList = [];
+    $("input:checkbox[name^='addon']:checked, input:checkbox[name^='addWebsite']:checked").each(function () {
+        let v = $(this).val();
+        if (v) mainAddonsList.push(v);
+    });
+    let MainAddons = mainAddonsList.join(", ");
+
     //formProduct: $("#currentlyPackage option:selected").text(), อันนี้เลิกใช้ ใช้ MainProduct แทน
     let payload = {
         mode : "alert",
@@ -1067,6 +1083,7 @@ const sendMailToL4UTeam = () => {
         formMessage: 'Hi, Team <br>There are new sign-up customers coming in now. Below are brief details. You can check full information on CRM.',
         formProduct: $("#currentlyPackage option:selected").text(),
         MainProduct: $("input[name='product']:checked").val(),
+        MainAddons: MainAddons,
         formInitialProductOffering: $("#initialProductOffering").val(),
         formSalesAgent: shopAgent,
         formContractPeriod: $("#ContractPeriod").val(),
@@ -1963,6 +1980,14 @@ const saveToDB = (stripePayload, stripeRes) => {
 
     let CheckedBoxTestmailValue = $("#CheckedBoxTestmail").is(':checked') ? $("#CheckedBoxTestmail").val() : 0;
 
+    // รวบรวมชื่อ Addons ทั้งหมดที่ถูกติ๊ก (ถ้าไม่มี จะได้ "")
+    let mainAddonsList = [];
+    $("input:checkbox[name^='addon']:checked, input:checkbox[name^='addWebsite']:checked").each(function () {
+        let v = $(this).val();
+        if (v) mainAddonsList.push(v);
+    });
+    let MainAddons = mainAddonsList.join(", ");
+
     let payload = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
@@ -1989,6 +2014,7 @@ const saveToDB = (stripePayload, stripeRes) => {
         Cuisine: txtCuisine,
         OtherCuisine: $("#cuisineOther").val(),
         MainProduct: $("input[name='product']:checked").val(),
+        MainAddons: MainAddons,
         LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
         Service: txtServices,
         Delivery: $("input[name='serviceCheck']:checked").val(),
@@ -2151,6 +2177,14 @@ const createLogs = (stripePayload) => {
         shopAgent = $("#otherAgent").val();
     }
 
+    // รวบรวมชื่อ Addons ทั้งหมดที่ถูกติ๊ก (ถ้าไม่มี จะได้ "")
+    let mainAddonsList = [];
+    $("input:checkbox[name^='addon']:checked, input:checkbox[name^='addWebsite']:checked").each(function () {
+        let v = $(this).val();
+        if (v) mainAddonsList.push(v);
+    });
+    let MainAddons = mainAddonsList.join(", ");
+
     let tempData = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
@@ -2177,6 +2211,7 @@ const createLogs = (stripePayload) => {
         Cuisine: txtCuisine,
         OtherCuisine: $("#cuisineOther").val(),
         MainProduct: $("input[name='product']:checked").val(),
+        MainAddons: MainAddons,
         LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
         Service: txtServices,
         Delivery: $("input[name='serviceCheck']:checked").val(),
@@ -2222,9 +2257,9 @@ const createLogs = (stripePayload) => {
         // CardNumber: $("#creditCardNumber").val(),
         // ExpDate: $("#creditExpireDate").val(),
         // CVV: $("#creditCCV").val(),
-        CardName: $("#creditFullName").val(),
-        EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
-        BSB: $("#bsbDirectDebit").val(),
+        // CardName: $("#creditFullName").val(),
+        // EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
+        // BSB: $("#bsbDirectDebit").val(),
         EmailInvoice: $("#emailInvoiceOther").val().trim().toLowerCase(),
         Routing_number: $("#routingDirectDebit").val(),
         AccountNumber: $("#acnDirectDebit").val(),
@@ -2319,7 +2354,7 @@ const setPeriodSelectBox = (month) => {
     sendMail();
 }*/
 
-const submitToCRM = () => {
+const submitToCRM = async () => {
     const first_name = $("#first_name");
     const last_name = $("#last_name");
     let cap_first_name = capitalize(first_name.val());
@@ -2332,6 +2367,15 @@ const submitToCRM = () => {
         $("#firstTimePayment").val("GBP 1.00");
     }*/
 
+    try {
+        console.log('submitToCRM: starting uploadDocuments...');
+        const uploadResult = await uploadDocuments();
+        console.log('submitToCRM: uploadDocuments done', uploadResult);
+    } catch (e) {
+        console.error('Document upload error:', e);
+    }
+
+    console.log('submitToCRM: submitting form...');
     applicationForm.submit();
 }
 
@@ -2355,6 +2399,219 @@ $('#formCountry').on('change', function () {
     }else{
         $('#policyNoThai').show();
     }
+    toggleDocUploadSection();
 })
 
+// ============ Document Upload Section ============
+
+// Toggle visibility: show only when country=AU AND (product or addon contains "POS")
+function toggleDocUploadSection() {
+    const country = formData.formCountry || $('#formCountry').val();
+    const docSection = $('#docUploadSection');
+    const fileInputs = docSection.find('input[type="file"]');
+    const adyenAgree = $('#adyenAgreement');
+
+    if (country !== 'AU') {
+        docSection.hide();
+        fileInputs.prop('required', false);
+        adyenAgree.prop('required', false);
+        return;
+    }
+
+    // Check main product for "POS" (check value + label text)
+    const productInput = $("input[name='product']:checked");
+    const selectedProduct = (productInput.val() || '') + ' ' +
+        $("label[for='" + productInput.attr('id') + "']").text();
+    let hasPOS = selectedProduct.toUpperCase().includes('POS');
+
+    // Check ALL checked addon checkboxes inside the products/addon container
+    if (!hasPOS) {
+        $("#products2 input[type='checkbox']:checked, #addon2 input[type='checkbox']:checked").each(function () {
+            const val = ($(this).val() || '');
+            const lbl = $("label[for='" + $(this).attr('id') + "']").text();
+            if ((val + ' ' + lbl).toUpperCase().includes('POS')) {
+                hasPOS = true;
+                return false; // break
+            }
+        });
+    }
+
+    if (hasPOS) {
+        docSection.show();
+        fileInputs.prop('required', true);
+        adyenAgree.prop('required', true);
+    } else {
+        docSection.hide();
+        fileInputs.prop('required', false);
+        adyenAgree.prop('required', false);
+    }
+}
+
+// Sync Adyen agreement checkbox: only from modal to main (after scrolling to bottom)
+$(document).on('change', '#adyenAgreementModal', function () {
+    const mainCheckbox = $('#adyenAgreement');
+    if (this.checked) {
+        mainCheckbox.prop('disabled', false).prop('checked', true);
+    } else {
+        // Only disable and uncheck main if user explicitly unchecks (not on modal reset)
+        // The modal reset happens without triggering change event
+        mainCheckbox.prop('disabled', true).prop('checked', false);
+    }
+});
+
+// Prevent direct clicking on main checkbox - show error message
+$(document).on('click', '#adyenAgreement', function (e) {
+    if ($(this).prop('disabled')) {
+        e.preventDefault();
+        // Show error message below the checkbox
+        $('.adyen-direct-click-error').remove();
+        $(this).closest('.d-flex').after('<div class="adyen-direct-click-error text-danger mt-1" style="font-size:12px;">Please click the eye icon to read the full terms before agreeing.</div>');
+        return false;
+    }
+});
+
+// Reveal agreement section only after scrolling to bottom of Adyen pages
+$('#adyenTermsModal').on('shown.bs.modal', function () {
+    const container = $('.adyen-pages-container');
+    const agreementSection = $('#adyenAgreementSection');
+
+    // Reset to hidden state when modal opens (use attr to avoid triggering change event)
+    agreementSection.hide().css('opacity', '0');
+    $('#adyenAgreementModal').attr('checked', false).prop('checked', false);
+
+    container.off('scroll').on('scroll', function () {
+        if (this.scrollTop + this.clientHeight >= this.scrollHeight - 10) {
+            agreementSection.show();
+            setTimeout(() => agreementSection.css('opacity', '1'), 10);
+        }
+    });
+});
+
+// Show selected file name & toggle card style
+$('.file-card input[type="file"]').on('change', function () {
+    const card = $(this).closest('.file-card');
+    const nameSpan = card.find('.file-name');
+    if (this.files && this.files.length > 0) {
+        const file = this.files[0];
+        const extension = file.name.split('.').pop() || 'file';
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        nameSpan.find('.file-icon').text(extension);
+        nameSpan.find('.file-selected-title').text(file.name);
+        nameSpan.find('.file-selected-meta').text('.' + extension + ' | ' + sizeMB + 'MB');
+        card.addClass('has-file');
+    } else {
+        nameSpan.find('.file-icon').text('FILE');
+        nameSpan.find('.file-selected-title').text('No file selected');
+        nameSpan.find('.file-selected-meta').text('');
+        card.removeClass('has-file');
+    }
+});
+
+$(document).on('click', '.file-remove-btn', function () {
+    const card = $(this).closest('.file-card');
+    const input = card.find('input[type="file"]');
+    const nameSpan = card.find('.file-name');
+
+    input.val('');
+    nameSpan.find('.file-icon').text('FILE');
+    nameSpan.find('.file-selected-title').text('No file selected');
+    nameSpan.find('.file-selected-meta').text('');
+    card.removeClass('has-file border-danger');
+    card.next('.doc-upload-error').remove();
+});
+
+let adyenDocumentsUploadDone = false;
+
+// Upload documents via AJAX — call after successful submit/payment
+function uploadDocuments() {
+    return new Promise(function (resolve, reject) {
+        if (adyenDocumentsUploadDone) {
+            console.log('uploadDocuments already done — skipping duplicate upload');
+            resolve({ success: true, message: 'Documents already uploaded' });
+            return;
+        }
+
+        const bizReg = $('#file_bizReg')[0];
+        const bank   = $('#file_bank')[0];
+        const dirId  = $('#file_dirId')[0];
+
+        console.log('uploadDocuments called');
+        // Check own display style (not :visible) because parent step div is hidden at submit time
+        const sectionDisplay = $('#docUploadSection').css('display');
+        console.log('docUploadSection display:', sectionDisplay);
+        console.log('bizReg files:', bizReg ? bizReg.files.length : 'element not found');
+        console.log('bank files:', bank ? bank.files.length : 'element not found');
+        console.log('dirId files:', dirId ? dirId.files.length : 'element not found');
+
+        // Skip if section was not activated (display:none means AU+POS was not selected)
+        if (sectionDisplay === 'none') {
+            console.log('docUploadSection display:none — skipping upload');
+            resolve({ success: true, message: 'Section not active, no upload needed' });
+            return;
+        }
+
+        // Check if at least files exist
+        if ((!bizReg.files || !bizReg.files.length) &&
+            (!bank.files || !bank.files.length) &&
+            (!dirId.files || !dirId.files.length)) {
+            // No files selected at all — resolve silently
+            console.log('No files selected — skipping upload');
+            resolve({ success: true, message: 'No files to upload' });
+            return;
+        }
+
+        const fd = new FormData();
+        fd.append('country', formData.formCountry || $('#formCountry').val());
+        fd.append('shopName', $('#shopName').val());
+
+        if (bizReg.files.length) fd.append('businessRegistrationDoc', bizReg.files[0]);
+        if (bank.files.length)   fd.append('bankStatementDoc', bank.files[0]);
+        if (dirId.files.length)  fd.append('directorIdDoc', dirId.files[0]);
+
+        $.ajax({
+            url: settings.url_uploadDocuments,
+            method: 'POST',
+            data: fd,
+            processData: false,
+            contentType: false,
+            dataType: 'json'
+        }).done(function (res) {
+            console.log('Upload documents response:', res);
+
+            // Save to database after upload (even if some files had errors)
+            if (res.folder && res.uploaded) {
+                const dbPayload = {
+                    country: formData.formCountry || $('#formCountry').val(),
+                    shopName: $('#shopName').val(),
+                    email: $('#email').val(),
+                    adyenAgreement: $('#adyenAgreement').is(':checked') ? 'agreed' : '',
+                    businessRegistrationDoc: res.uploaded.businessRegistrationDoc || null,
+                    bankStatementDoc: res.uploaded.bankStatementDoc || null,
+                    directorIdDoc: res.uploaded.directorIdDoc || null,
+                    uploadFolder: res.folder
+                };
+
+                $.ajax({
+                    url: settings.url_saveAdyenDocuments,
+                    method: 'POST',
+                    data: dbPayload,
+                    dataType: 'json'
+                }).done(function (dbRes) {
+                    console.log('Database save response:', dbRes);
+                    adyenDocumentsUploadDone = true;
+                    resolve(res);
+                }).fail(function (xhr, status, error) {
+                    console.error('Database save failed:', status, error);
+                    resolve(res); // still resolve so form can submit
+                });
+            } else {
+                adyenDocumentsUploadDone = true;
+                resolve(res);
+            }
+        }).fail(function (xhr, status, error) {
+            console.error('Upload documents failed:', status, error);
+            reject(error);
+        });
+    });
+}
 

@@ -55,14 +55,6 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
                 <div class="form-body">
                     <form id="customerDetailsForm" name="customerDetailsForm" method="post" enctype="multipart/form-data">
 
-                        <!-- Stripe ID -->
-                        <div class="mb-3" style="background-color:#ffdddd;">
-                            <small class="text-muted">This row for Debugging will be removed in production</small>
-                            <b><i><small class="text-muted" id="stripeID">StripeID: 
-                                <?php echo $stripeID; ?>
-                            </small></i><b>
-                        </div>
-
                         <!-- ========== SECTION 1: Business Information ========== -->
                         <div class="form-section">
                             <h5 class="section-title"><i class="bi bi-building"></i> Business Information</h5>
@@ -138,10 +130,11 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="backupPhoneNumber" class="form-label">Backup Phone Number <span class="text-danger">*</span></label>
+                                    <label for="backupPhoneNumber" class="form-label">Backup Phone Number <span class="text-danger">*</span><br>
+                                        <div class="form-text text-muted">AI transfers to human at this number</div>
+                                    </label>
                                     <input type="tel" class="form-control" id="backupPhoneNumber" name="backupPhoneNumber" placeholder="e.g. +1 (555) 123-4567" required>
                                     <div class="invalid-feedback">Please enter a backup phone number.</div>
-                                    <div class="form-text">AI transfers to human at this number</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="phoneCarrier" class="form-label">Phone Carrier <span class="text-danger">*</span></label>
@@ -334,29 +327,105 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
                                     </div>
                                     <div class="invalid-feedback">Please select a voice type.</div>
                                 </div>
-
-                                <div class="radio-field">
-                                    <label class="form-label">Existing Google Calendar? <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="googleCalendar" id="googleCalendarYes" value="Yes" required>
-                                            <label for="googleCalendarYes"><i class="bi bi-check-circle"></i> Yes</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="googleCalendar" id="googleCalendarNo" value="No">
-                                            <label for="googleCalendarNo"><i class="bi bi-x-circle"></i> No</label>
-                                        </div>
-                                    </div>
-                                    <div class="invalid-feedback">Please select an option.</div>
-                                </div>
                             </div>
 
-                            <div class="mb-3" id="googleCalendarIdGroup" style="display: none;">
-                                <label for="googleCalendarId" class="form-label">Google Calendar ID</label>
-                                <input type="text" class="form-control" id="googleCalendarId" name="googleCalendarId" placeholder="e.g. abc123@group.calendar.google.com">
+                            <div class="mb-3" id="googleCalendarIdGroup">
+                                <label for="googleCalendarId" class="form-label">Google Calendar ID <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="googleCalendarId" name="googleCalendarId" placeholder="e.g. abc123@group.calendar.google.com" required>
+                                <div class="invalid-feedback">Please enter your Google Calendar ID.</div>
                                 <div class="form-text d-flex gap-3">
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#calendarHowToModal"><i class="bi bi-play-circle"></i> Quick Guide</a>
                                     <a href="howToGetCalendarId.php" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Full Guide</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ========== SECTION 8: Booking Policy ========== -->
+                        <div class="form-section">
+                            <h5 class="section-title"><i class="bi bi-stars"></i> Booking Policy</h5>
+
+                            <div class="radio-grid mb-3">
+                                <div class="radio-field">
+                                    <label class="form-label">Set Booking Policies? <span class="text-danger">*</span></label>
+                                    <div class="radio-card-group">
+                                        <div class="radio-card">
+                                            <input type="radio" name="setPolicies" id="yesPolicy" value="yesPolicy" required>
+                                            <label for="yesPolicy"><i class="bi bi-check-lg"></i> Yes</label>
+                                        </div>
+                                        <div class="radio-card">
+                                            <input type="radio" name="setPolicies" id="noPolicy" value="noPolicy">
+                                            <label for="noPolicy"><i class="bi bi-x-lg"></i> No, skip</label>
+                                        </div>
+                                    </div>
+                                    <div class="invalid-feedback">Please select a policy.</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 radio-field" style="display: none; background: #f8f9fb61; border: 1.5px solid #eef0f4; border-radius: 12px; padding: 16px 18px;" id="bookingPolicies">
+                                <div class="row" id="lateAndNo-show">
+                                    <h6 class="fw-bold">Late & No-Show</h6>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lateArrivalFee" class="form-label">Late Arrival Fee <span class="text-danger">*</span><br></label>
+                                        <input type="text" class="form-control" id="lateArrivalFee" name="lateArrivalFee" placeholder="e.g. $20 after 15 min late" required>
+                                        <div class="invalid-feedback">Please enter late arrival fee.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="noshowFee" class="form-label">No-Show Fee <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="noshowFee" name="noshowFee" placeholder="e.g. 100% of service" required>
+                                        <div class="invalid-feedback">Please enter no-show fee.</div>
+                                    </div>
+                                </div>
+
+                                <div class="row" id="cancellation">
+                                    <h6 class="fw-bold">Cancellation</h6>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="freeCancellationWindow" class="form-label">Free Cancellation Window <span class="text-danger">*</span><br></label>
+                                        <input type="text" class="form-control" id="freeCancellationWindow" name="freeCancellationWindow" placeholder="e.g. 24 Hours before" required>
+                                        <div class="invalid-feedback">Please enter free cancellation window.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lateCancellationFee" class="form-label">Late Cancellation Fee <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="lateCancellationFee" name="lateCancellationFee" placeholder="e.g. 50% of service" required>
+                                        <div class="invalid-feedback">Please enter late cancellation fee.</div>
+                                    </div>
+                                </div>
+
+                                <div class="row" id="requireDeposit">
+                                    <div class="radio-grid mb-3">
+                                        <div class="radio-field">
+                                            <label class="form-label">Require Deposit? <span class="text-danger">*</span></label>
+                                            <div class="radio-card-group">
+                                                <div class="radio-card">
+                                                    <input type="radio" name="setDeposit" id="yesDeposit" value="yesDeposit" required>
+                                                    <label for="yesDeposit"><i class="bi bi-check-lg"></i> Yes</label>
+                                                </div>
+                                                <div class="radio-card">
+                                                    <input type="radio" name="setDeposit" id="noDeposit" value="noDeposit">
+                                                    <label for="noDeposit"><i class="bi bi-x-lg"></i> No</label>
+                                                </div>
+                                            </div>
+                                            <div class="invalid-feedback">Please select a require doposit.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" id="deposit" style="display: none;">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="depositeAmount" class="form-label">Deposit Amount <span class="text-danger">*</span><br></label>
+                                            <input type="text" class="form-control" id="depositeAmount" name="depositeAmount" placeholder="e.g. $30 or 30%" required>
+                                            <div class="invalid-feedback">Please enter deposit amount.</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="depositPaymentLink" class="form-label">Deposit Payment Link <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="depositPaymentLink" name="depositPaymentLink" placeholder="e.g. https://buy.stripe.com/..." required>
+                                            <div class="invalid-feedback">Please enter deposit payment link.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+                                <div class="mb-3" id="termAndConditionsLink">
+                                    <label for="termAndConditionsLink" class="form-label">Term and Conditions Link (if you have one) <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="termAndConditionsLink" name="termAndConditionsLink" placeholder="e.g. https://yourbusiness.com/terms">
                                 </div>
                             </div>
                         </div>
@@ -517,28 +586,44 @@ $(function() {
     // Check on page load (e.g. browser autofill)
     if ($bookingInput.val().trim()) $credentials.show();
 
-    // Toggle Google Calendar ID when "Yes" is selected
-    $('input[name="googleCalendar"]').on('change', function() {
-        if ($('#googleCalendarYes').is(':checked')) {
-            $('#googleCalendarIdGroup').slideDown(200);
+    // Toggle Booking Policies when "Yes" is selected
+    $('input[name="setPolicies"]').on('change', function() {
+        if ($('#yesPolicy').is(':checked')) {
+            $('#bookingPolicies').slideDown(200);
+            $('#bookingPolicies').find('input[type="text"], input[type="radio"]').each(function() {
+                if ($(this).closest('#deposit').length === 0 || $('#yesDeposit').is(':checked')) {
+                    $(this).prop('required', true);
+                }
+            });
         } else {
-            $('#googleCalendarIdGroup').slideUp(200);
-            $('#googleCalendarId').val('');
+            $('#bookingPolicies').slideUp(200);
+            $('#bookingPolicies').find('input').prop('required', false);
+        }
+    });
+
+    // Toggle Deposit fields when "Yes" is selected
+    $('input[name="setDeposit"]').on('change', function() {
+        if ($('#yesDeposit').is(':checked')) {
+            $('#deposit').slideDown(200);
+            $('#deposit').find('input').prop('required', true);
+        } else {
+            $('#deposit').slideUp(200);
+            $('#deposit').find('input').val('').prop('required', false);
         }
     });
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('test') === 'true') {
         // Text / Textarea / Number fields
-        $('#businessName').val('Serenity Spa & Wellness');
+        $('#businessName').val('Mark Test & Spa');
         $('#businessHours').val('Mon-Fri 9:00 AM - 7:00 PM\nSat 10:00 AM - 5:00 PM\nSun Closed');
         $('#currentBookingSystem').val('Google Calendar');
         $('#timezoneId').val('America/New_York');
         $('#shopAddress').val('123 Main Street, Suite 4, Los Angeles, CA 90001');
-        $('#businessWebsite').val('https://www.serenityspa.com');
+        $('#businessWebsite').val('https://www.marktesttest.com');
         $('#backupPhoneNumber').val('+1 (555) 123-4567');
         $('#phoneCarrier').val('AT&T');
-        $('#shopEmail').val('bookings@serenityspa.com');
+        $('#shopEmail').val('bookings@marktesttest.com');
         $('#servicesOffered').val('Swedish Massage - 60 min - $80\nDeep Tissue Massage - 90 min - $120\nHot Stone Therapy - 60 min - $100\nAromatherapy Massage - 60 min - $90');
         $('#bufferMinutes').val('15');
         $('#numberOfTherapists').val('5');
@@ -556,7 +641,6 @@ $(function() {
         $('#parkingYes').prop('checked', true);
         $('#restroomYes').prop('checked', true);
         $('#voiceFemale').prop('checked', true);
-        $('#googleCalendarYes').prop('checked', true);
         $('#stripeID').val(stripeID);
 
         console.log('🧪 Test mode: form auto-filled with sample data.');

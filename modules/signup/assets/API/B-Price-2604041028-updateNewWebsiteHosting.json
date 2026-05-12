@@ -1094,7 +1094,7 @@
                   "name": "Email Marketing",
                   "product_id": "prod_TcUzkrp8103N5h",
                   "price_id": "AUEMM03M00O-20",
-                  "form_name": "email",
+                  "form_name": "addonEmailMarketing",
                   "currency": "aud",
                   "amount": 9900,
                   "type": "mail",

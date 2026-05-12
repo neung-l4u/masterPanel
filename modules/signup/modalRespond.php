@@ -133,6 +133,13 @@
                 <div class="modal-body text-center">
                     <h4>Oops!</h4>
                     <p class="text-danger fw-bold">The billing process was unsuccessful.</p>
+
+                    <!-- กล่องแสดงเหตุผลจริงจาก Stripe / Server (ถูกเติมผ่าน JS: modalRespondAction) -->
+                    <div id="failReasonBox"
+                         class="alert alert-warning text-start small mx-auto"
+                         style="display:none; max-height:180px; overflow:auto; white-space:pre-wrap; word-break:break-word; max-width:90%;">
+                    </div>
+
                     <p>Please check your payment information <br> and wait 5 seconds and try submit again. <br><br>
                         If it still can't be done please contact <a href="mailto:admin@localforyou.com">admin@localforyou.com</a> </p>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -6,6 +6,8 @@ header('Content-Type: application/json');
 
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
+include '../../assets/security/Sanitizer.php';
+include '../../assets/security/QueryBuilder.php';
 
 $data = array("data" => array());
 
@@ -15,25 +17,15 @@ $params["team"] = !empty($_POST['team']) ? $_POST['team'] : '';
 $params["dateFrom"] = !empty($_POST['dateFrom']) ? $_POST['dateFrom'] : '';
 $params["dateTo"] = !empty($_POST['dateTo']) ? $_POST['dateTo'] : '';
 
-$where = "";
-if (!empty($params["coinType"])) {
-    $where .= " AND CL.`coinType` = '" . $params["coinType"] . "'";
-}
-if (!empty($params["activity"])) {
-    $where .= " AND CL.`activityID` = '" . $params["activity"] . "'";
-}
-if (!empty($params["team"])) {
-    $where .= " AND S.`teamID` = '" . $params["team"] . "'";
-}
-if (!empty($params["dateFrom"])) {
-    $where .= " AND DATE(CL.`giveOn`) >= '" . $params["dateFrom"] . "'";
-}
-if (!empty($params["dateTo"])) {
-    $where .= " AND DATE(CL.`giveOn`) <= '" . $params["dateTo"] . "'";
-}
+$qb = new QueryBuilder();
+$qb->eq('CL.`coinType`', $params["coinType"])
+   ->eq('CL.`activityID`', $params["activity"])
+   ->eq('S.`teamID`', $params["team"])
+   ->gte('DATE(CL.`giveOn`)', $params["dateFrom"])
+   ->lte('DATE(CL.`giveOn`)', $params["dateTo"]);
 
 try {
-    $sql = "SELECT CL.`id`, CT.`name` AS 'coin', CL.`coinType`, CL.`ownerID`, CL.`amount`, 
+    $baseSql = "SELECT CL.`id`, CT.`name` AS 'coin', CL.`coinType`, CL.`ownerID`, CL.`amount`, 
                    S.`sNickName` AS 'ownerNick', S.`sName` AS 'ownerName', S.`sPic` AS 'ownerPic',
                    S.`teamID`, T.`name` AS 'teamName',
                    G.`sNickName` AS 'giverNick', G.`sName` AS 'giverName',
@@ -45,9 +37,9 @@ try {
             AND CL.`coinType` = CT.`id`
             AND CL.`activityID` = CA.`aID`
             AND S.`teamID` = T.`id`
-            AND S.`sStatus` = 1" . $where . " ORDER BY CL.`giveOn` DESC";
+            AND S.`sStatus` = 1";
     
-    $result = $db->query($sql)->fetchAll();
+    $result = $qb->execute($db, $baseSql, 'ORDER BY CL.`giveOn` DESC')->fetchAll();
 
     if ($result) {
         $i = 1;
@@ -67,9 +59,9 @@ try {
             
             $reward = !empty($row["activity"]) ? $row["activity"] : '-';
             $reason = !empty($row["reason"]) ? $row["reason"] : '-';
-            $rewardDisplay = '<strong>' . $reward . '</strong>';
+            $rewardDisplay = '<strong>' . esc($reward) . '</strong>';
             if ($reason != '-' && $reason != $reward) {
-                $rewardDisplay .= '<br><small class="text-muted">' . $reason . '</small>';
+                $rewardDisplay .= '<br><small class="text-muted">' . esc($reason) . '</small>';
             }
             
             // ถ้าเป็น Redeem for gift (activityID = 12) แสดง THB ตาม CoinType

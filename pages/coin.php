@@ -9,6 +9,7 @@
 </script>
 <?php
 global $db, $date;
+require_once 'assets/security/Sanitizer.php';
 $teamID = $_SESSION['teamID'];
 if (($teamID == 2) or ($teamID == 8) or ($teamID == 210) or ($teamID == 11)) {
     $teamLogged = 2;

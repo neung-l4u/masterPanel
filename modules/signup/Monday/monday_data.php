@@ -1,5 +1,25 @@
 <?php
 
+// ======================================================================
+// 🍯 HONEYPOT CHECK — ต้องอยู่บนสุดก่อนโค้ดอื่นใดๆ
+// ถ้า field 'website_url_confirm' มีค่า = บอท → reject ทันที
+// มนุษย์กรอกไม่ได้เพราะ field ซ่อนด้วย CSS + tabindex=-1 + aria-hidden
+// ======================================================================
+if (!empty($_POST['website_url_confirm'])) {
+    $honeypotVal = substr((string) $_POST['website_url_confirm'], 0, 200);
+    $ip         = $_SERVER['REMOTE_ADDR']    ?? 'unknown';
+    $ua         = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+    $referer    = $_SERVER['HTTP_REFERER']    ?? 'unknown';
+    error_log(sprintf(
+        '[HONEYPOT] signup form spam blocked | ip=%s | ua=%s | referer=%s | value=%s',
+        $ip, $ua, $referer, $honeypotVal
+    ));
+    // ตอบแบบปกติหลอกบอท ไม่บอกว่า block (ไม่ให้เรียนรู้)
+    http_response_code(200);
+    echo 'OK';
+    exit;
+}
+
 //echo "<pre>";print_R($_POST);die;
 
 // ********** Getting All Data ***********
@@ -110,11 +130,11 @@ $Step04_SocialNetworkscouponCode2 = $_POST['couponCode2'] ?? ''; //Coupun code 2
 
 $Step04_SocialNetworks00N2v00000IyVq7 = $_POST['paymentMethod'] ?? ''; // payment method
 
-$Step04_SocialNetworkscreditCardNumber = $_POST['creditCardNumber'] ?? ''; //  Card number
+// $Step04_SocialNetworkscreditCardNumber = $_POST['creditCardNumber'] ?? ''; //  Card number
 
-$Step04_SocialNetworkscreditExpireDate = $_POST['creditExpireDate'] ?? ''; //  creditExpireDate
+// $Step04_SocialNetworkscreditExpireDate = $_POST['creditExpireDate'] ?? ''; //  creditExpireDate
 
-$Step04_SocialNetworkscreditCCV = $_POST['creditCCV'] ?? ''; //  creditExpireDate
+// $Step04_SocialNetworkscreditCCV = $_POST['creditCCV'] ?? ''; //  creditExpireDate
 
 $Step04_SocialNetworkscreditFullName = $_POST['creditFullName'] ?? ''; //  creditFullName
 
@@ -213,6 +233,71 @@ curl_close($curl);
 // Extract form data
 
   $formData = $_POST;
+
+  // รวบรวม addon ทุกตัวให้เป็น field เดียว "addons" (คั่นด้วย , )
+  // ครอบคลุม 2 รูปแบบ:
+  //   1) key ที่ขึ้นต้นด้วย "addon" (addonPOS, addonPricingDesign ฯลฯ)
+  //      หรือ "addWebsite" (addWebsiteMakeoverTemplate, addWebsiteMakeoverFully ฯลฯ)
+  //   2) key พิเศษที่ไม่ได้ขึ้นต้นด้วย addon แต่เป็น addon จริง
+  //      (มาจาก form_name ใน assets/API/B-Price-*.json)
+  //      *หมายเหตุ: "email" ถูกตัดออก เพราะชื่อชนกับ owner email
+  $extraAddonKeys = ['promotions', 'webEmail', 'mob'];
+
+  $isAddonKey = function ($key) use ($extraAddonKeys) {
+      // กัน key รวม 'addons' (พหูพจน์) ไม่ให้ถูกลบ เพราะก็ขึ้นต้นด้วย 'addon'
+      if ($key === 'addons') return false;
+      return strpos($key, 'addon') === 0
+          || strpos($key, 'addWebsite') === 0
+          || in_array($key, $extraAddonKeys, true);
+  };
+
+  // ลบ field addon รายตัวออกก่อน แล้วค่อย set 'addons' ทีหลัง
+  // เพื่อป้องกันความผิดพลาดแบบ prefix-match อีก
+  $addonsList = [];
+  $addonKeysFound = [];
+  foreach ($formData as $key => $value) {
+      if ($isAddonKey($key) && is_string($value) && trim($value) !== '') {
+          $addonsList[] = trim($value);
+          $addonKeysFound[] = $key;
+      }
+  }
+
+  foreach (array_keys($formData) as $key) {
+      if ($isAddonKey($key)) {
+          unset($formData[$key]);
+      }
+  }
+
+  // Set 'addons' หลังจาก unset เสร็จแล้ว → ไม่ถูกลบซ้ำ
+  $formData['addons'] = implode(', ', $addonsList);
+
+  // --- Security: ลบข้อมูลบัตรเครดิต/credentials ที่ sensitive ออกก่อนส่ง Make.com ---
+  // PCI DSS: ห้ามส่ง/เก็บ PAN (card number) เต็ม และ "ห้ามเก็บ CVV/CVC" เด็ดขาด
+  $sensitiveKeys = [
+      'creditCardNumber',
+      'creditExpireDate',
+      'creditCCV',
+      'stripePassword',
+      'ref_Domain_P',   // domain password
+      'ref_IHD_Password',
+      'passwordBooking',
+      'bsbDirectDebit',
+      'acnDirectDebit',
+      'routingDirectDebit',
+  ];
+  foreach ($sensitiveKeys as $sk) {
+      unset($formData[$sk]);
+  }
+
+  // Debug markers — ใช้ยืนยันว่า production รัน monday_data.php เวอร์ชันใหม่จริง
+  // และช่วยให้เห็นว่า $_POST มี addon key ตัวไหนมาบ้าง
+  $formData['_serverCodeVersion'] = 'addons-v3-' . date('Ymd-His', filemtime(__FILE__));
+  $formData['_addonKeysFound'] = implode('|', $addonKeysFound);
+  $formData['_postKeysCount'] = (string) count($_POST);
+
+  // Log ดิบๆ ลง error log (ดูได้ผ่าน tail -f /var/log/php/*.log)
+  error_log('monday_data.php $_POST keys: ' . implode(',', array_keys($_POST)));
+  error_log('monday_data.php addons computed: ' . $formData['addons']);
 
 
 

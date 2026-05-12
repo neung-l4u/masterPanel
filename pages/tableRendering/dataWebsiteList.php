@@ -3,6 +3,8 @@ global $db;
 session_start();
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
+include '../../assets/security/Sanitizer.php';
+include '../../assets/security/QueryBuilder.php';
 
 $params = [
     "shopType" => !empty($_POST['shopType']) ? $_POST['shopType'] : '',
@@ -13,42 +15,20 @@ $params = [
     "server"   => !empty($_POST['server'])   ? $_POST['server']   : '',
 ];
 
-$sql   = "SELECT *";
-$from = " FROM websiteList w LEFT JOIN L4UServers sv ON w.svID = sv.svID";
-$where = " WHERE delete_at IS NULL";
-$order = " ORDER BY w.wID DESC";
+$qb = new QueryBuilder();
+$qb->eq('w.wIndustry', $params["shopType"]);
 
-if ($params["shopType"] !== '') {
-    $where .= " AND w.wIndustry = '".$params["shopType"]."'";
-}
+if ($params["system"] === "AM")      $qb->raw("AND w.wSystemAmelia = 1");
+elseif ($params["system"] === "GF")  $qb->raw("AND w.wSystemGloriaFood = 1");
+elseif ($params["system"] === "VC")  $qb->raw("AND w.wSystemVoucher = 1");
 
-if ($params["system"] !== '') {
-    if ($params["system"] === "AM") {
-        $where .= " AND w.wSystemAmelia = 1";
-    } elseif ($params["system"] === "GF") {
-        $where .= " AND w.wSystemGloriaFood = 1";
-    } elseif ($params["system"] === "VC") {
-        $where .= " AND w.wSystemVoucher = 1";
-    }
-}
-if ($params["liveStatus"] !== '') {
-    $where .= " AND w.wLiveStatus = '".$params["liveStatus"]."'";
-}
+$qb->eq('w.wLiveStatus', $params["liveStatus"])
+   ->eq('w.wTemplateUsed', $params["template"])
+   ->eq('w.countryID', $params["country"])
+   ->eq('sv.svID', $params["server"]);
 
-if ($params["template"] !== '') {
-    $where .= " AND w.wTemplateUsed = '".$params["template"]."'";
-}
-
-if ($params["country"] !== '') {
-    $where .= " AND w.countryID = '".$params["country"]."'";
-}
-
-if ($params["server"] !== '') {
-    $where .= " AND sv.svID = '".$params["server"]."'";
-}
-
-$sql = $sql . $from . $where . $order;
-$result = $db->query($sql)->fetchAll();
+$baseSql = "SELECT * FROM websiteList w LEFT JOIN L4UServers sv ON w.svID = sv.svID WHERE delete_at IS NULL";
+$result = $qb->execute($db, $baseSql, 'ORDER BY w.wID DESC')->fetchAll();
 
 $data = array("data"=> array());
 
@@ -56,17 +36,17 @@ $i=1;
 foreach ($result as $row) {
     $No = $row["wID"];
     $statusWebsite = !empty($row["wLiveStatus"]) ? $row["wLiveStatus"] : '-';
-    $url = '<a href="'.$row["wDomain"].'" target="_blank" title="WP-Link">'.$row["wDomain"].'</a>';
+    $url = '<a href="'.escUrl($row["wDomain"]).'" target="_blank" title="WP-Link">'.esc($row["wDomain"]).'</a>';
     $link = !empty($row["wDomain"]) ? $url : '-';
     $server = $row['svName'] ?? '-';
-    $btn["URL"] = '<a href="'.$row["wWordpressURL"].'" target="_blank" title="WP-Admin"><i class="bi bi-box-arrow-up-right"></i></a>';
+    $btn["URL"] = '<a href="'.escUrl($row["wWordpressURL"]).'" target="_blank" title="WP-Admin"><i class="bi bi-box-arrow-up-right"></i></a>';
     $btn["detail"] = '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail"><i class="bi bi-file-earmark-text"></i></a>';
     $btn["edit"] = '<a href="#" onclick="setEdit('.$row["wID"].')" title="Edit"><i class="bi bi-pencil-square text-dark"></i></a>';
     $btn["delete"] = '<a href="#" onclick="setDel('.$row["wID"].')" title="Delete"><i class="bi bi-x-square text-danger"></i></a>';
     
     $data["data"][] = array(
         $i,
-        '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail" class="linkDetail">'.dash($row["wProject"]).'</a>',
+        '<a href="#" onclick="viewDetail('.intval($row["wID"]).')" title="Detail" class="linkDetail">'.esc(dash($row["wProject"])).'</a>',
         $link,
         $server,
         $statusWebsite,
@@ -95,6 +75,6 @@ function dashAndShort($param): string
     if (empty($param)) { return "-"; }
     else {
         $location = mb_substr($param, 0, 15).'...';
-        return '<abbr title="'.$param.'">'.$location.'</abbr>';
+        return '<abbr title="'.esc($param).'">'.esc($location).'</abbr>';
     }
 }

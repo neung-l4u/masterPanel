@@ -81,6 +81,8 @@ class DreamscapeAPI {
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT => 30,
         ]);
         
         if ($method !== 'GET') {
@@ -114,43 +116,253 @@ class DreamscapeAPI {
     }
     
     /**
+     * Prepare a cURL handle for use with curl_multi
+     * @param string $endpoint API endpoint
+     * @param string $method HTTP method
+     * @param array $data Request data
+     * @return resource cURL handle
+     */
+    private function prepareCurlHandle($endpoint, $method = 'GET', $data = []) {
+        $requestId = $this->generateRequestId();
+        $signature = $this->generateSignature($requestId);
+        
+        $url = $this->getBaseUrl() . $endpoint;
+        
+        if ($method === 'GET' && !empty($data)) {
+            $url .= '?' . http_build_query($data);
+        }
+        
+        $ch = curl_init();
+        
+        $headers = [
+            'Api-Request-Id: ' . $requestId,
+            'Api-Signature: ' . $signature,
+        ];
+        
+        if ($method !== 'GET') {
+            $headers[] = 'Content-Type: application/json';
+        }
+        
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT => 30,
+        ]);
+        
+        if ($method !== 'GET') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+            if (!empty($data)) {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            }
+        }
+        
+        return $ch;
+    }
+    
+    /**
+     * Execute multiple cURL requests in parallel using curl_multi
+     * @param array $handles Array of ['key' => curl_handle]
+     * @return array Array of ['key' => response_array]
+     */
+    private function executeMulti($handles) {
+        $mh = curl_multi_init();
+        
+        foreach ($handles as $key => $ch) {
+            curl_multi_add_handle($mh, $ch);
+        }
+        
+        // Execute all requests simultaneously
+        $running = null;
+        do {
+            $status = curl_multi_exec($mh, $running);
+            if ($running) {
+                curl_multi_select($mh);
+            }
+        } while ($running > 0 && $status === CURLM_OK);
+        
+        // Collect results
+        $results = [];
+        foreach ($handles as $key => $ch) {
+            $response = curl_multi_getcontent($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = curl_error($ch);
+            
+            curl_multi_remove_handle($mh, $ch);
+            curl_close($ch);
+            
+            if ($error) {
+                $results[$key] = [
+                    'success' => false,
+                    'error' => $error,
+                    'http_code' => $httpCode
+                ];
+            } else {
+                $result = json_decode($response, true);
+                $results[$key] = [
+                    'success' => $httpCode >= 200 && $httpCode < 300,
+                    'http_code' => $httpCode,
+                    'data' => $result
+                ];
+            }
+        }
+        
+        curl_multi_close($mh);
+        return $results;
+    }
+    
+    /**
+     * Fetch all pages of a paginated endpoint in parallel
+     * @param string $endpoint API endpoint
+     * @param int $limit Items per page
+     * @param int $maxPages Maximum pages to fetch (0 = unlimited)
+     * @return array All items combined from all pages
+     */
+    private function fetchAllPages($endpoint, $limit = 100, $maxPages = 0) {
+        // First request to get total pages
+        $result = $this->makeRequest($endpoint, 'GET', ['limit' => $limit, 'page' => 1]);
+        
+        if (!$result['success'] || !isset($result['data']['data'])) {
+            return ['items' => [], 'pagination' => []];
+        }
+        
+        $apiResponse = $result['data'];
+        $allItems = $apiResponse['data'];
+        $pagination = isset($apiResponse['pagination']) ? $apiResponse['pagination'] : [];
+        $totalPages = isset($pagination['total_pages']) ? $pagination['total_pages'] : 1;
+        
+        if ($maxPages > 0) {
+            $totalPages = min($totalPages, $maxPages);
+        }
+        
+        // Fetch remaining pages in parallel batches
+        if ($totalPages > 1) {
+            $batchSize = 10; // 10 concurrent requests at a time
+            for ($batchStart = 2; $batchStart <= $totalPages; $batchStart += $batchSize) {
+                $handles = [];
+                $batchEnd = min($batchStart + $batchSize - 1, $totalPages);
+                
+                for ($page = $batchStart; $page <= $batchEnd; $page++) {
+                    $handles['page_' . $page] = $this->prepareCurlHandle(
+                        $endpoint, 'GET', ['limit' => $limit, 'page' => $page]
+                    );
+                }
+                
+                $batchResults = $this->executeMulti($handles);
+                
+                foreach ($batchResults as $key => $res) {
+                    if ($res['success'] && isset($res['data']['data'])) {
+                        $allItems = array_merge($allItems, $res['data']['data']);
+                    }
+                }
+            }
+        }
+        
+        return ['items' => $allItems, 'pagination' => $pagination];
+    }
+    
+    /**
      * Get dashboard summary
      * @param string $startDate Start date for period calculation (Y-m-d format)
      * @param string $endDate End date for period calculation (Y-m-d format)
      * @return array
      */
     public function getDashboardSummary($startDate = null, $endDate = null) {
-        $domains = $this->getDomainsSummary();
-        $hosting = $this->getHostingSummary();
-        $products = $this->getProductsSummary();
-        $packages = $this->getPackagesSummary();
-        $sales = $this->getSalesSummary($startDate, $endDate);
+        // Step 1: Fire first pages of domains, invoices, and balance in parallel
+        $initialHandles = [
+            'domains_p1' => $this->prepareCurlHandle('/domains', 'GET', ['limit' => 100, 'page' => 1]),
+            'invoices_p1' => $this->prepareCurlHandle('/finances/invoices', 'GET', ['limit' => 100, 'page' => 1]),
+            'balance' => $this->prepareCurlHandle('/finances/balance', 'GET'),
+        ];
+        $initialResults = $this->executeMulti($initialHandles);
         
-        // Get recent orders from invoices
-        $orders = [];
-        $invoicesResult = $this->getInvoices(['limit' => 20]);
+        // Step 2: Determine total pages for domains & invoices, then fetch remaining pages in parallel
+        $allDomains = [];
+        $domainsTotalPages = 1;
+        $domainsTotalItems = 0;
+        if ($initialResults['domains_p1']['success'] && isset($initialResults['domains_p1']['data']['data'])) {
+            $allDomains = $initialResults['domains_p1']['data']['data'];
+            $domainsTotalItems = isset($initialResults['domains_p1']['data']['pagination']['total_items']) ? $initialResults['domains_p1']['data']['pagination']['total_items'] : 0;
+            $domainsTotalPages = isset($initialResults['domains_p1']['data']['pagination']['total_pages']) ? $initialResults['domains_p1']['data']['pagination']['total_pages'] : 1;
+        }
         
-        if ($invoicesResult['success'] && isset($invoicesResult['data']['data'])) {
-            $invoices = $invoicesResult['data']['data'];
+        $allInvoices = [];
+        $invoicesTotalPages = 1;
+        if ($initialResults['invoices_p1']['success'] && isset($initialResults['invoices_p1']['data']['data'])) {
+            $allInvoices = $initialResults['invoices_p1']['data']['data'];
+            $invoicesTotalPages = isset($initialResults['invoices_p1']['data']['pagination']['total_pages']) ? $initialResults['invoices_p1']['data']['pagination']['total_pages'] : 1;
+            $invoicesTotalPages = min($invoicesTotalPages, 50); // cap to avoid timeout
+        }
+        
+        $balance = 0.00;
+        if ($initialResults['balance']['success'] && isset($initialResults['balance']['data']['data']['balance'])) {
+            $balance = floatval($initialResults['balance']['data']['data']['balance']);
+        }
+        
+        // Step 3: Fetch all remaining pages (domains + invoices) in parallel batches
+        $batchSize = 10;
+        $domainPage = 2;
+        $invoicePage = 2;
+        
+        while ($domainPage <= $domainsTotalPages || $invoicePage <= $invoicesTotalPages) {
+            $handles = [];
             
-            foreach ($invoices as $invoice) {
-                if (!isset($invoice['orders']) || !is_array($invoice['orders'])) {
-                    continue;
-                }
-                
-                foreach ($invoice['orders'] as $order) {
-                    $orders[] = [
-                        'date' => isset($invoice['order_date']) ? substr($invoice['order_date'], 0, 10) : '',
-                        'order_id' => isset($invoice['id']) ? $invoice['id'] : '',
-                        'customer_id' => isset($invoice['customer_id']) ? $invoice['customer_id'] : '',
-                        'customer_name' => isset($order['product_name']) ? $order['product_name'] : 'N/A',
-                        'amount' => isset($invoice['total_amount']) ? $invoice['total_amount'] : 0,
-                        'type' => isset($order['type']) ? $order['type'] : 'unknown',
-                        'product_name' => isset($order['product_name']) ? $order['product_name'] : 'N/A'
-                    ];
+            $domainBatchEnd = min($domainPage + $batchSize - 1, $domainsTotalPages);
+            for ($p = $domainPage; $p <= $domainBatchEnd; $p++) {
+                $handles['dom_' . $p] = $this->prepareCurlHandle('/domains', 'GET', ['limit' => 100, 'page' => $p]);
+            }
+            $domainPage = $domainBatchEnd + 1;
+            
+            $invoiceBatchEnd = min($invoicePage + $batchSize - 1, $invoicesTotalPages);
+            for ($p = $invoicePage; $p <= $invoiceBatchEnd; $p++) {
+                $handles['inv_' . $p] = $this->prepareCurlHandle('/finances/invoices', 'GET', ['limit' => 100, 'page' => $p]);
+            }
+            $invoicePage = $invoiceBatchEnd + 1;
+            
+            if (empty($handles)) break;
+            
+            $batchResults = $this->executeMulti($handles);
+            
+            foreach ($batchResults as $key => $res) {
+                if (!$res['success'] || !isset($res['data']['data'])) continue;
+                if (strpos($key, 'dom_') === 0) {
+                    $allDomains = array_merge($allDomains, $res['data']['data']);
+                } elseif (strpos($key, 'inv_') === 0) {
+                    $allInvoices = array_merge($allInvoices, $res['data']['data']);
                 }
             }
         }
+        
+        // Step 4: Process domains summary
+        $domains = $this->processDomainsSummary($allDomains, $domainsTotalPages, $domainsTotalItems);
+        
+        // Step 5: Process sales summary from invoices (reuse data, no extra API calls)
+        $sales = $this->processSalesSummary($allInvoices, $balance, $startDate, $endDate);
+        
+        // Step 6: Extract recent orders from first 20 invoices (already fetched)
+        $orders = [];
+        $recentInvoices = array_slice($allInvoices, 0, 20);
+        foreach ($recentInvoices as $invoice) {
+            if (!isset($invoice['orders']) || !is_array($invoice['orders'])) {
+                continue;
+            }
+            foreach ($invoice['orders'] as $order) {
+                $orders[] = [
+                    'date' => isset($invoice['order_date']) ? substr($invoice['order_date'], 0, 10) : '',
+                    'order_id' => isset($invoice['id']) ? $invoice['id'] : '',
+                    'customer_id' => isset($invoice['customer_id']) ? $invoice['customer_id'] : '',
+                    'customer_name' => isset($order['product_name']) ? $order['product_name'] : 'N/A',
+                    'amount' => isset($invoice['total_amount']) ? $invoice['total_amount'] : 0,
+                    'type' => isset($order['type']) ? $order['type'] : 'unknown',
+                    'product_name' => isset($order['product_name']) ? $order['product_name'] : 'N/A'
+                ];
+            }
+        }
+        
+        $hosting = $this->getHostingSummary();
+        $products = $this->getProductsSummary();
+        $packages = $this->getPackagesSummary();
         
         return [
             'success' => true,
@@ -170,40 +382,19 @@ class DreamscapeAPI {
      * @return array
      */
     public function getDomainsSummary() {
-        // Get all domains by fetching multiple pages
-        $allDomains = [];
-        $page = 1;
-        $limit = 100;
-        $totalPages = 1;
-        
-        // Fetch first page to get total pages
-        $result = $this->makeRequest('/domains', 'GET', ['limit' => $limit, 'page' => $page]);
-        
-        if (!$result['success'] || !isset($result['data']['data'])) {
-            return [
-                'total' => 0,
-                'pending_approval' => 0,
-                'transfers' => 0,
-                'renewal_due' => 0
-            ];
-        }
-        
-        $apiResponse = $result['data'];
-        $allDomains = array_merge($allDomains, $apiResponse['data']);
-        
-        $totalItems = isset($apiResponse['pagination']['total_items']) ? $apiResponse['pagination']['total_items'] : 0;
-        if (isset($apiResponse['pagination']['total_pages'])) {
-            $totalPages = $apiResponse['pagination']['total_pages'];
-        }
-        
-        // Fetch all remaining pages to get accurate count
-        for ($page = 2; $page <= $totalPages; $page++) {
-            $result = $this->makeRequest('/domains', 'GET', ['limit' => $limit, 'page' => $page]);
-            if ($result['success'] && isset($result['data']['data'])) {
-                $allDomains = array_merge($allDomains, $result['data']['data']);
-            }
-        }
-        
+        // Use parallel page fetching
+        $result = $this->fetchAllPages('/domains', 100);
+        return $this->processDomainsSummary($result['items'], 0, 0);
+    }
+    
+    /**
+     * Process domains data into summary (used by both getDomainsSummary and getDashboardSummary)
+     * @param array $allDomains All domain records
+     * @param int $totalPages Total pages fetched (for logging)
+     * @param int $totalItems Total items reported by API (for logging)
+     * @return array
+     */
+    private function processDomainsSummary($allDomains, $totalPages = 0, $totalItems = 0) {
         // Count statuses from all fetched domains
         $active_count = 0;
         $pending_approval = 0;
@@ -315,38 +506,54 @@ class DreamscapeAPI {
      * @return array
      */
     public function getSalesSummary($startDate = null, $endDate = null) {
-        // Get account balance
-        $balanceResult = $this->makeRequest('/finances/balance', 'GET');
+        // Fetch balance and invoices first page in parallel
+        $initialHandles = [
+            'balance' => $this->prepareCurlHandle('/finances/balance', 'GET'),
+            'invoices_p1' => $this->prepareCurlHandle('/finances/invoices', 'GET', ['limit' => 100, 'page' => 1]),
+        ];
+        $initialResults = $this->executeMulti($initialHandles);
         
         $balance = 0.00;
-        if ($balanceResult['success'] && isset($balanceResult['data']['data']['balance'])) {
-            $balance = floatval($balanceResult['data']['data']['balance']);
+        if ($initialResults['balance']['success'] && isset($initialResults['balance']['data']['data']['balance'])) {
+            $balance = floatval($initialResults['balance']['data']['data']['balance']);
         }
         
-        // Get all invoices by fetching multiple pages
         $allInvoices = [];
-        $page = 1;
-        $limit = 100;
+        $invoicesTotalPages = 1;
+        if ($initialResults['invoices_p1']['success'] && isset($initialResults['invoices_p1']['data']['data'])) {
+            $allInvoices = $initialResults['invoices_p1']['data']['data'];
+            $invoicesTotalPages = isset($initialResults['invoices_p1']['data']['pagination']['total_pages']) ? $initialResults['invoices_p1']['data']['pagination']['total_pages'] : 1;
+            $invoicesTotalPages = min($invoicesTotalPages, 50);
+        }
         
-        // Fetch first page
-        $result = $this->makeRequest('/finances/invoices', 'GET', ['limit' => $limit, 'page' => $page]);
-        
-        if ($result['success'] && isset($result['data']['data'])) {
-            $apiResponse = $result['data'];
-            $allInvoices = array_merge($allInvoices, $apiResponse['data']);
-            
-            $totalPages = isset($apiResponse['pagination']['total_pages']) ? $apiResponse['pagination']['total_pages'] : 1;
-            
-            // Fetch remaining pages (limit to 50 pages = 5000 invoices to avoid timeout)
-            $maxPages = min($totalPages, 50);
-            for ($page = 2; $page <= $maxPages; $page++) {
-                $result = $this->makeRequest('/finances/invoices', 'GET', ['limit' => $limit, 'page' => $page]);
-                if ($result['success'] && isset($result['data']['data'])) {
-                    $allInvoices = array_merge($allInvoices, $result['data']['data']);
+        // Fetch remaining invoice pages in parallel batches
+        $batchSize = 10;
+        for ($batchStart = 2; $batchStart <= $invoicesTotalPages; $batchStart += $batchSize) {
+            $handles = [];
+            $batchEnd = min($batchStart + $batchSize - 1, $invoicesTotalPages);
+            for ($p = $batchStart; $p <= $batchEnd; $p++) {
+                $handles['inv_' . $p] = $this->prepareCurlHandle('/finances/invoices', 'GET', ['limit' => 100, 'page' => $p]);
+            }
+            $batchResults = $this->executeMulti($handles);
+            foreach ($batchResults as $res) {
+                if ($res['success'] && isset($res['data']['data'])) {
+                    $allInvoices = array_merge($allInvoices, $res['data']['data']);
                 }
             }
         }
         
+        return $this->processSalesSummary($allInvoices, $balance, $startDate, $endDate);
+    }
+    
+    /**
+     * Process invoices data into sales summary (used by both getSalesSummary and getDashboardSummary)
+     * @param array $allInvoices All invoice records
+     * @param float $balance Account balance
+     * @param string|null $startDate
+     * @param string|null $endDate
+     * @return array
+     */
+    private function processSalesSummary($allInvoices, $balance, $startDate = null, $endDate = null) {
         $today = 0.00;
         $thisWeek = 0.00;
         $thisMonth = 0.00;

@@ -83,8 +83,19 @@
 
         
     </style>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5P9NGXT2');</script>
+    <!-- End Google Tag Manager -->
 </head>
 <body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0619B6] via-[#0361D1] to-[#00BCF4] p-4">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5P9NGXT2"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <!-- Animated Vector Background -->
 
@@ -133,7 +144,7 @@
                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#00BCF4] focus:border-transparent transition"
                                    placeholder="mail@localforyou.com | 0891234567"
                                    autocomplete="off"
-                                   value="<?php echo $_COOKIE['user'] ?? ''; ?>"
+                                   value="<?php echo htmlspecialchars($_COOKIE['user'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                             />
                             <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                                 <i class="fa-solid fa-envelope text-sm"></i>
@@ -149,7 +160,7 @@
                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#00BCF4] focus:border-transparent transition"
                                    placeholder="your password here"
                                    autocomplete="off"
-                                   value="<?php echo $_COOKIE['pass'] ?? ''; ?>"
+                                   value="<?php echo htmlspecialchars($_COOKIE['pass'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                             />
                             <a href="#" id="linkViewPassword" onclick="showPass(); return false;"
                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition no-underline">

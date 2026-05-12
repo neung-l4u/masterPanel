@@ -137,6 +137,30 @@ $(document).ready(function () {
   $("#nameQuotation").hide();
   $("#forThaiBank").hide();
 
+  // Auto-clean ช่องอีเมลทุกช่องเมื่อ user ออกจาก input
+  // ลบ space ทั้งหมด (รวมถึง space กลางอีเมล เช่น "areeyahemsanit @gmail.com")
+  // + lowercase ทั้งหมด
+  $(document).on("blur",
+    "input[type='email'], #email, #emailShoppingCart, #emailInvoiceOther, #emailDirectDebit, #emailBooking, #customerStripeEmail, #quotationEmail, .mainEmail",
+    function () {
+      const cleaned = ($(this).val() || "").replace(/\s+/g, "").toLowerCase();
+      if ($(this).val() !== cleaned) {
+        $(this).val(cleaned).trigger("change");
+      }
+    }
+  );
+
+  // ลบ space ทั้งหมดในช่องเบอร์โทร/เลขธนาคาร เมื่อ user ออกจาก input
+  // เช่น "+61 425 957 778" -> "+61425957778"
+  $(document).on("blur",
+    "input[type='tel'], #mobile, #ownerMobile, #shopNumber, #shopPhoneFormatted, #physicalShopNumber, #shipNumber, #quotationPhone, #bsbDirectDebit, #acnDirectDebit, #routingDirectDebit",
+    function () {
+      const cleaned = ($(this).val() || "").replace(/\s+/g, "");
+      if ($(this).val() !== cleaned) {
+        $(this).val(cleaned).trigger("change");
+      }
+    }
+  );
 
 });//ready
 
@@ -166,6 +190,36 @@ $(".next").on("click", function () {
     }
 
     if (hasError) {
+      nextstep = false;
+    }
+  }
+
+  // Validate document upload section when visible
+  if ($("#docUploadSection").is(":visible")) {
+    $(".doc-upload-error").remove();
+    let docError = false;
+
+    // Check 3 file inputs
+    const fileInputs = ["file_bizReg", "file_bank", "file_dirId"];
+    const fileLabels = ["Business Registration Document", "Bank Statement", "Director's ID"];
+    for (let i = 0; i < fileInputs.length; i++) {
+      const input = $("#" + fileInputs[i]);
+      if (!input[0].files || input[0].files.length === 0) {
+        input.closest(".file-card").after('<div class="doc-upload-error text-danger mt-1" style="font-size:12px;">Please upload ' + fileLabels[i] + '</div>');
+        if (!docError) { input.closest(".file-card").addClass("border-danger"); }
+        docError = true;
+      } else {
+        input.closest(".file-card").removeClass("border-danger");
+      }
+    }
+
+    // Check Adyen agreement
+    if (!$("#adyenAgreement").is(":checked")) {
+      $("#adyenAgreement").closest(".d-flex").after('<div class="doc-upload-error text-danger mt-1" style="font-size:12px;">Please agree to the Adyen Terms & Conditions</div>');
+      docError = true;
+    }
+
+    if (docError) {
       nextstep = false;
     }
   }
@@ -954,6 +1008,7 @@ function addMainCart(name, price, amount, special, product_id){
 
   //calPrice("add", amount);
   listProductItems();
+  if (typeof toggleDocUploadSection === 'function') toggleDocUploadSection();
 }
 
 //function for search text in array and return first match array index
@@ -1018,6 +1073,7 @@ function deleteAddOn(id) {
     findAmount = getAmountFromAddonList(id,readAddonProduct);
     calShowPrice();
     listProductItems();
+    if (typeof toggleDocUploadSection === 'function') toggleDocUploadSection();
   }else {
     console.log("Not found item in array, nothing to delete!!");
   }
@@ -1144,6 +1200,7 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
   }//else
   setShowPrice();
   listProductItems();
+  if (typeof toggleDocUploadSection === 'function') toggleDocUploadSection();
 }
 
 //set hidden select delevery value
@@ -1652,17 +1709,62 @@ const modalTermsAction = (action) => {
   if (action==="open"){ modalTerms.show();}
 }
 
-const modalRespondAction = (action,status) => {
+const modalRespondAction = (action, status, reason) => {
   const respondSuccess = $(".respondSuccess");
   const respondFail = $(".respondFail");
   respondSuccess.hide();
   respondFail.hide();
-  if (status==="success"){
+  if (status === "success"){
     respondSuccess.show();
-  }else if (status==="fail"){
+  } else if (status === "fail"){
     respondFail.show();
+    // เติม reason ลงในกล่อง #failReasonBox ถ้ามี
+    const $reasonBox = $("#failReasonBox");
+    if ($reasonBox.length) {
+      const text = (reason == null ? "" : String(reason)).trim();
+      if (text !== "") {
+        $reasonBox.text(text).show();
+      } else {
+        $reasonBox.text("").hide();
+      }
+    }
   }
-  if (action==="open"){ modalResponse.show();}
+  if (action === "open"){ modalResponse.show(); }
+}
+
+// Helper: ดึงข้อความ error ที่มีความหมายจาก response (xhr / obj / string)
+// รองรับหลายรูปแบบ เช่น
+//   { "error": "Invalid email: bas@loca..." }
+//   { "error": { "message": "Your card does not support..." } }
+//   { "message": "Payment Fail", "error": "..." }
+//   "Raw text error"
+const extractPaymentError = (input) => {
+  if (!input) return "";
+  try {
+    let obj = input;
+    // jQuery xhr
+    if (input && typeof input === "object" && "responseText" in input) {
+      const raw = input.responseText || "";
+      try { obj = JSON.parse(raw); }
+      catch (e) { return raw ? String(raw).slice(0, 500) : (input.statusText || ""); }
+    } else if (typeof input === "string") {
+      try { obj = JSON.parse(input); }
+      catch (e) { return input.slice(0, 500); }
+    }
+    if (!obj) return "";
+    if (typeof obj === "string") return obj;
+
+    // รูปแบบที่พบในระบบ
+    if (obj.error) {
+      if (typeof obj.error === "string") return obj.error;
+      if (obj.error.message) return obj.error.message;
+      try { return JSON.stringify(obj.error); } catch (e) { return String(obj.error); }
+    }
+    if (obj.message && obj.message !== "Success") return obj.message;
+    try { return JSON.stringify(obj); } catch (e) { return ""; }
+  } catch (e) {
+    return "";
+  }
 }
 
 const modalSecretSetupAction = (action) => {

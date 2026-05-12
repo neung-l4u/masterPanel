@@ -9,7 +9,7 @@
 </script>
 <?php
 global $db, $date;
-
+require_once 'assets/security/Sanitizer.php';
 ?>
 
 <!-- Content Header (Page header) -->
@@ -70,8 +70,8 @@ global $db, $date;
                                             ?>
                                             <tr>
                                                 <td><?php echo $num++; ?></td>
-                                                <td><a href="<?php echo $row["link"];?>"><?php echo $row["name"];?></a></td>
-                                                <td><?php echo $row["detail"];?> </td>
+                                                <td><a href="<?php echo escUrl($row["link"]);?>"><?php echo esc($row["name"]);?></a></td>
+                                                <td><?php echo esc($row["detail"]);?> </td>
                                             </tr>
                                         <?php  }//end foreach
                                     }else{ ?>
@@ -88,7 +88,7 @@ global $db, $date;
                         <div class="col">
                             <div class="card-body">
                                 <h4 class="card-header">Action</h4>
-                                <table id="datatable" class="table table-bordered table-striped table-hover " style="width:100%">
+                                <table id="datatableAction" class="table table-bordered table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
                                         <th scope="col" style="width: 5%;">#</th>
@@ -108,8 +108,8 @@ global $db, $date;
                                             ?>
                                             <tr>
                                                 <td><?php echo $numb++;?></td>
-                                                <td><a href="<?php echo $row["link"];?>"><?php echo $row["name"];?></a></td>
-                                                <td><?php echo $row["detail"];?> </td>
+                                                <td><a href="<?php echo escUrl($row["link"]);?>"><?php echo esc($row["name"]);?></a></td>
+                                                <td><?php echo esc($row["detail"]);?> </td>
                                             </tr>
                                         <?php  }//end foreach
                                     }else{ ?>
@@ -219,6 +219,15 @@ global $db, $date;
 </div> <!-- /.contact-->
 <script src="plugins/jquery/jquery.min.js"></script>
 <script>
+    $(function(){
+        if(!$.fn.DataTable.isDataTable('#datatableAction')){
+            $('#datatableAction').DataTable({
+                pagingType: 'full_numbers',
+                pageLength: 8,
+                lengthMenu: [[8, 25, 50, -1], ['Fit', 25, 50, 'All']]
+            });
+        }
+    });
 
     const setStatus = (id, status) => {
         const flagStatus = !status ? 1 : 0;
@@ -236,7 +245,7 @@ global $db, $date;
         });
 
         reqAjax.done(function (res) {
-            reloadTable();
+            reloadToolsTable();
         });
 
         reqAjax.fail(function (xhr, status, error) {
@@ -325,7 +334,7 @@ global $db, $date;
 
         reqAjax.done(function (res) {
             console.log(res);
-            reloadTable();
+            reloadToolsTable();
             resetForm();
             $("#formServicesModal").modal('hide');
         });
@@ -337,7 +346,7 @@ global $db, $date;
 
     }// const
 
-    function reloadTable() {
+    function reloadToolsTable() {
         location.reload();
     }
 
@@ -388,7 +397,7 @@ global $db, $date;
             reqAjax.done(function (res) {
 
                 console.log(res);
-                reloadTable();
+                reloadToolsTable();
                 resetForm();
                 $("#formServicesModal").modal('hide');
             });

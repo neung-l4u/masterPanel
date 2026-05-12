@@ -189,6 +189,14 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataSignupLogs.php";
         $title = "Master panel : SignUp Logs (Staff)";
         break;
+    case "formASAPLogs":
+        $showPage = "formASAPLogs.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "formASAPLogs";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataFormASAPLogs.php";
+        $title = "Master panel : Upgrade to the new system logs";
+        break;
     case "unsub":
         $showPage = "unSubmitted.php";
         $activeMenu["lv1"] = "";
@@ -269,6 +277,14 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Report Yearly";
         break;
+    case "reportDate":
+        $showPage = "report.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportDate";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Report Date Comparison";
+        break;
     case "reportOverview":
         $showPage = "reportOverview.php";
         $activeMenu["lv1"] = "report";
@@ -308,6 +324,14 @@ switch ($menuPage){
         $datatable["show"] = "false";
         $datatable["src"] = "";
         $title = "Master panel : Dreamscape Report";
+        break;
+    case "reportLifeSpan":
+        $showPage = "reportLifeSpan.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "reportLifeSpan";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Life Span Report";
         break;
     case "l4utaskBoards":
         $showPage = "l4utaskBoards.php";

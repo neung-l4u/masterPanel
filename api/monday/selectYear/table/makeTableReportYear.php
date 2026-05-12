@@ -5,6 +5,7 @@ ini_set('display_errors', 0);
 
 require_once '../../../../assets/db/db.php';
 require_once '../../../../assets/db/initDB.php';
+require_once __DIR__ . '/../../pickSnapshot.php';
 
 $day = !empty($_GET['day']) ? $_GET['day'] : date('Y-m-d');
 
@@ -32,18 +33,17 @@ if (empty($files)) {
     die("JSON file not found");
 }
 
-// Sort by filename descending (filename contains timestamp)
-rsort($files);
-
-$latestFile = $files[0];
+// Pick snapshot whose timestamp is closest to (but not after) the year's endDate
+// to reproduce the Active state that was current at end-of-year.
+$latestFile = pickSnapshotForPeriod($files, $endDate);
 $jsonData = json_decode(file_get_contents($latestFile), true);
 
 $jsonDir2 = __DIR__ . '/../../selectWeek/file/ALL_COUNTRY/';
 $files2 = glob($jsonDir2 . 'ALL_monday_data_ALL_COUNTRY*.json');
 $jsonData2 = null;
 if (!empty($files2)) {
-    rsort($files2);
-    $jsonData2 = json_decode(file_get_contents($files2[0]), true);
+    $latestFile2 = pickSnapshotForPeriod($files2, $endDate);
+    $jsonData2 = json_decode(file_get_contents($latestFile2), true);
 }
 
 // ========== 2. Parse Monday data by country ==========
@@ -63,7 +63,8 @@ $processedAccounts = []; // Track counted Account Names (by country)
 $cancelledLastYearAccounts = []; // Track unique cancelled accounts (by country)
 $activeByType = []; // Customer Type from mirror column
 $activeByTypeAccounts = []; // Track unique accounts per type
-$firstDayOfCurrentYear = date('Y-01-01'); // For Cancellation Date check
+// Derive from the selected $day, not today, so historical years are evaluated correctly.
+$firstDayOfCurrentYear = $obj_day->format('Y-01-01');
 $firstDayOfPrevYear = (new DateTime($firstDayOfCurrentYear))->modify('-1 year')->format('Y-01-01');
 
 // Check JSON structure (supports both old and new format)

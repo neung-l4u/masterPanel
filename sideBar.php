@@ -7,6 +7,13 @@ $teamID = $_SESSION['teamID'];
 $staffType = $_SESSION['staffType'] ?? 'fullTime';
 include ('assets/api/checkSession.php');
 ?>
+<style>
+    /* จัดลูกศรเมนูย่อยให้อยู่กึ่งกลางแนวตั้งกับข้อความ (เพราะ sidebar ใช้ .text-xs) */
+    .main-sidebar .nav-sidebar .nav-link > p > .right {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+</style>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="main.php" class="brand-link">
         <img src="assets/img/logo-login2.png" alt="L4U Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
@@ -156,7 +163,7 @@ include ('assets/api/checkSession.php');
                     <ul class="nav nav-treeview">
                         <?php if($userLevel<=3){ ?>
                         <li class="nav-item pl-2">
-                            <a href="main.php?p=reportWeekly" class="nav-link <?php echo in_array($activeMenu["lv2"], ['reportWeekly','reportMonthly','reportYearly']) ? "active":""; ?>">
+                            <a href="main.php?p=reportWeekly" class="nav-link <?php echo in_array($activeMenu["lv2"], ['reportWeekly','reportMonthly','reportYearly','reportDate']) ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-clipboard-data"></i>
                                 <p>Subscription Report</p>
                             </a>
@@ -185,6 +192,12 @@ include ('assets/api/checkSession.php');
                             <a href="main.php?p=reportDreamscape" class="nav-link <?php echo $activeMenu["lv2"] == "reportDreamscape" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-cloud"></i>
                                 <p>Dreamscape Report</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=reportLifeSpan" class="nav-link <?php echo $activeMenu["lv2"] == "reportLifeSpan" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-hourglass-split"></i>
+                                <p>Life Span Report</p>
                             </a>
                         </li>
                         <?php } ?>
@@ -224,6 +237,18 @@ include ('assets/api/checkSession.php');
                             <a href="main.php?p=signupLogs" class="nav-link <?php echo $activeMenu["lv2"] == "signupLogs" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-person-plus"></i>
                                 <p>SignUp Logs (Staff)</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=formASAPLogs" class="nav-link <?php echo $activeMenu["lv2"] == "formASAPLogs" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-calendar-check"></i>
+                                <p>Upgrade to New System</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
+                            <a href="https://report.localforyou.com/modules/aiAraya/views/entries.php" target="_blank" class="nav-link">
+                                <span class="nav-icon mr-3 d-inline-block text-center" style="font-weight: bold; font-size: 0.85rem; width: 1rem;">AI</span>
+                                <p>AI Araya Logs &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
                             </a>
                         </li>
                         <li class="nav-item pl-2">

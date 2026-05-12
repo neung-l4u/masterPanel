@@ -12,6 +12,8 @@ const settings = {
   url_generateID: "assets/function/generateID.php",
   url_saveToDB: "assets/function/saveToDB.php",
   url_saveQuestionToDB: "assets/function/saveQuotationToDB.php",
+  url_uploadDocuments: "assets/API/upload_documents.php",
+  url_saveAdyenDocuments: "assets/function/saveAdyenDocuments.php",
   Payment_Module: {
     CreditCard: true,
     DirectDebit: true,

@@ -53,9 +53,9 @@ global $db;
 </nav>
 <body>
 
-<div class="container mt-5">
+<div class="container mt-5 p-5" style="min-height: 500px;">
     <main>
-        <section style="min-height: 50vh;">
+        <section>
             <div class="form-div">
                 <!-- <header>
                     <nav class="text-center mb-4" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
@@ -66,39 +66,78 @@ global $db;
                         </ol>
                     </nav>
                 </header> -->
-                <h3 class="mb-4 text-center text-uppercase form-title">Customer Details Entries</h3>
+                <h3 class="mb-4 text-center text-uppercase page-title">Customer Details Entries</h3>
                 <p class="text-center">Here you can view all customer details entries submitted through the form.</p>
             </div>
+            <div >
+                <!-- <div class="col-5 pt-3">
 
-            <div class="row pt-3">
-                <div class="col border rounded py-3">
-                    <table id="entriesTable" class="table table-striped table-hover">
-                        <thead class="table-dark thead-dark">
-                            <tr>
-                                <th class="col_id">#</th>
-                                <th class="col_business">Business</th>
-                                <th class="col_email">Email</th>
-                                <th class="col_phone">Phone</th>
-                                <th class="col_date">Date</th>
-                                <th class="col_detail"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                    <div class="form-header unsubmit-header">
+                        <h3 class="form-title text-uppercase">Unsubmitted Entries</h3>
+                        <div class="submit-links">
+                            <a href="customerDetailsForm.php" target="_blank">
+                                <i class="bi bi-calendar3"></i> Go to Customer Details Form
+                            </a>
+                        </div>
+                    </div>
 
-                    <!-- Detail Modal -->
-                    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title" id="detailModalLabel"><i class="bi bi-file-earmark-text"></i> Customer Details</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body" id="detailModalBody">
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <div class="border rounded py-2 px-3">
+                        <table id="unsubmitTable" class="table table-striped table-hover">
+                            <thead class="table-dark thead-dark">
+                                <tr>
+                                    <th class="col_id">#</th>
+                                    <th class="col_business">Business</th>
+                                    <th class="col_email">Email</th>
+                                    <th class="col_status">Status</th>
+                                    <th class="col_date">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> -->
+
+                <div class="pt-3">
+
+                    <div class="form-header submit-header">
+                        <h3 class="form-title text-uppercase">Submitted Entries</h3>
+                        <div class="submit-links">
+                            <a href="https://local-for-you.monday.com/boards/2032016220" target="_blank">
+                                <i class="bi bi-calendar3"></i> Monday - AI Receptionist
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="border rounded py-2 px-3">
+                        <table id="entriesTable" class="table table-striped table-hover">
+                            <thead class="table-dark thead-dark">
+                                <tr>
+                                    <th class="col_id">#</th>
+                                    <th class="col_business">Business</th>
+                                    <th class="col_email">Email</th>
+                                    <th class="col_phone">Phone</th>
+                                    <th class="col_date">Date</th>
+                                    <th class="col_detail"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+
+                        <!-- Detail Modal -->
+                        <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title" id="detailModalLabel"><i class="bi bi-file-earmark-text"></i> Customer Details</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body" id="detailModalBody">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -135,18 +174,6 @@ $(function() {
                 return `<button class="btn btn-sm btn-outline-primary btn-view-detail" title="View Details"><i class="bi bi-eye"></i></button>`;
             }, className: 'dt-center'},
         ],
-        layout: {
-            topStart: {
-                buttons: [
-                {
-                    text: '<i class="bi bi-file-earmark-spreadsheet"></i> Excel',
-                    extend: 'excelHtml5',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4]
-                    },
-                }]
-            }
-        },
         drawCallback: function () {
             initTooltips();
         }
@@ -232,7 +259,22 @@ $(function() {
         new bootstrap.Modal('#detailModal').show();
     });
 
-    initTooltips();
+    $('#unsubmitTable').DataTable( {
+        pagingType: 'full_numbers',
+        ajax: {
+            url: '../models/unsubmitTable.php',
+            dataSrc: 'data'
+        },
+        pageLength: 10,
+        lengthMenu: [
+            [10, 25, 50, -1],
+            ['Fit', 25, 50, 'All']
+        ],
+        columnDefs: [
+            { targets: '_all', orderable: false },
+            { targets: [0, 4], className: 'dt-center' },
+        ]
+    });
 });//ready
 </script>
 </body>

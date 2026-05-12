@@ -12,7 +12,7 @@ global $db, $date;
 
 $password = "Localeats#".date("Y");
 ?>
-<link rel="stylesheet" href="plugins/datatables-bs5/css/datatables-bs4.min.css">
+<link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 
 <style>
     .clickable {
@@ -167,7 +167,7 @@ $password = "Localeats#".date("Y");
 
 <script src="plugins/jquery/jquery.min.js"></script>
 <script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
-<script src="plugins/datatables-bs4/js/dataTables."></script>
+<script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
     let shopName = $(".shopName");
     let logType = $(".logType");

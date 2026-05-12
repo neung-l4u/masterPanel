@@ -52,8 +52,8 @@ global $db;
                     </div>
                     <div class="card-body">
                         <div class="filter-row">
-                            <div class="row">
-                                <div class="col-6 col-md-2 mb-2 mb-md-0">
+                            <div class="row mb-2">
+                                <div class="col-6 col-md-3 mb-2 mb-md-0">
                                     <label for="filterDepartment" class="form-label small">Department</label>
                                     <select id="filterDepartment" class="form-control form-control-sm">
                                         <option value="">All</option>
@@ -65,7 +65,19 @@ global $db;
                                         ?>
                                     </select>
                                 </div>
-                                <div class="col-6 col-md-2 mb-2 mb-md-0">
+                                <div class="col-6 col-md-3 mb-2 mb-md-0">
+                                    <label for="filterEmployee" class="form-label small">Employee</label>
+                                    <select id="filterEmployee" class="form-control form-control-sm">
+                                        <option value="">All</option>
+                                        <?php
+                                        $employees = $db->query('SELECT DISTINCT `employee` FROM `checkin` WHERE `employee` IS NOT NULL AND `employee` != "" ORDER BY `employee`;')->fetchAll();
+                                        foreach ($employees as $emp) {
+                                            echo '<option value="' . $emp['employee'] . '">' . $emp['employee'] . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-3 mb-2 mb-md-0">
                                     <label for="filterStatus" class="form-label small">Status</label>
                                     <select id="filterStatus" class="form-control form-control-sm">
                                         <option value="">All</option>
@@ -73,23 +85,41 @@ global $db;
                                         <option value="Clock Out">Clock Out</option>
                                     </select>
                                 </div>
-                                <div class="col-6 col-md-2 mb-2 mb-md-0">
+                                <div class="col-6 col-md-3 mb-2 mb-md-0">
                                     <label for="filterDateFrom" class="form-label small">From Date</label>
                                     <input type="date" id="filterDateFrom" class="form-control form-control-sm">
                                 </div>
-                                <div class="col-6 col-md-2 mb-2 mb-md-0">
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-3 mb-2 mb-md-0">
                                     <label for="filterDateTo" class="form-label small">To Date</label>
                                     <input type="date" id="filterDateTo" class="form-control form-control-sm">
                                 </div>
-                                <div class="col-12 col-md-2 d-flex align-items-end">
+                                <div class="col-6 col-md-3 mb-2 mb-md-0 d-flex align-items-end">
                                     <button id="btnFilter" class="btn btn-primary btn-sm w-100" data-ga="click_filter_checkin" data-ga-label="Filter Check-in">
                                         <i class="bi bi-search"></i> Filter
                                     </button>
                                 </div>
-                                <div class="col-12 col-md-2 d-flex align-items-end mt-2 mt-md-0">
+                                <div class="col-6 col-md-3 mb-2 mb-md-0 d-flex align-items-end">
                                     <button id="btnReset" class="btn btn-secondary btn-sm w-100" data-ga="click_reset_checkin_filter" data-ga-label="Reset Filter">
                                         <i class="bi bi-arrow-counterclockwise"></i> Reset
                                     </button>
+                                </div>
+                                <div class="col-6 col-md-3 mb-2 mb-md-0 d-flex align-items-end">
+                                    <div class="btn-group w-100" role="group">
+                                        <button id="btnExportCSV" class="btn btn-success btn-sm" data-ga="click_export_csv_checkin" data-ga-label="Export CSV">
+                                            <i class="bi bi-filetype-csv"></i> CSV
+                                        </button>
+                                        <button id="btnExportXLSX" class="btn btn-info btn-sm text-white" data-ga="click_export_xlsx_checkin" data-ga-label="Export XLSX">
+                                            <i class="bi bi-filetype-xlsx"></i> XLSX
+                                        </button>
+                                        <button id="btnPrint" class="btn btn-dark btn-sm" data-ga="click_print_checkin" data-ga-label="Print Check-in">
+                                            <i class="bi bi-printer"></i> <i class="bi bi-filetype-csv"></i>
+                                        </button>
+                                        <button id="btnPrintXLSX" class="btn btn-warning btn-sm" data-ga="click_print_xlsx_checkin" data-ga-label="Print XLSX">
+                                            <i class="bi bi-printer"></i> <i class="bi bi-filetype-xlsx"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -136,6 +166,7 @@ global $db;
 
 <div id="formModal"></div>
 
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Wait for jQuery to be available
@@ -161,6 +192,7 @@ function initDataTable() {
             "dataSrc": "data",
             "data": function(d) {
                 d.department = $('#filterDepartment').val();
+                d.employee = $('#filterEmployee').val();
                 d.status = $('#filterStatus').val();
                 d.dateFrom = $('#filterDateFrom').val();
                 d.dateTo = $('#filterDateTo').val();
@@ -197,10 +229,57 @@ function initDataTable() {
     // Reset button click
     $('#btnReset').on('click', function() {
         $('#filterDepartment').val('');
+        $('#filterEmployee').val('');
         $('#filterStatus').val('');
         $('#filterDateFrom').val('');
         $('#filterDateTo').val('');
         table.ajax.reload();
+    });
+
+    // Export function
+    function exportData(format) {
+        var params = new URLSearchParams({
+            format: format,
+            department: $('#filterDepartment').val() || '',
+            employee: $('#filterEmployee').val() || '',
+            status: $('#filterStatus').val() || '',
+            dateFrom: $('#filterDateFrom').val() || '',
+            dateTo: $('#filterDateTo').val() || ''
+        });
+        window.location.href = 'pages/tableRendering/exportCheckinLogs.php?' + params.toString();
+    }
+
+    // Export CSV
+    $('#btnExportCSV').on('click', function() {
+        exportData('csv');
+    });
+
+    // Export XLSX
+    $('#btnExportXLSX').on('click', function() {
+        exportData('xlsx');
+    });
+
+    // Print function
+    function printData(format) {
+        var params = new URLSearchParams({
+            format: format,
+            department: $('#filterDepartment').val() || '',
+            employee: $('#filterEmployee').val() || '',
+            status: $('#filterStatus').val() || '',
+            dateFrom: $('#filterDateFrom').val() || '',
+            dateTo: $('#filterDateTo').val() || ''
+        });
+        window.open('pages/tableRendering/printCheckinLogs.php?' + params.toString(), '_blank');
+    }
+
+    // Print CSV
+    $('#btnPrint').on('click', function() {
+        printData('csv');
+    });
+
+    // Print XLSX
+    $('#btnPrintXLSX').on('click', function() {
+        printData('xlsx');
     });
 }
 </script>
