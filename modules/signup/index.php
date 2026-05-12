@@ -39,6 +39,126 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
             margin: 4px 2px;
             cursor: pointer;
         }
+        .file-card {
+            border: 1px solid #e9eef5;
+            border-radius: 18px;
+            padding: 18px;
+            background: #fff;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        }
+        .file-card.has-file { background: #fbfdff; }
+        .file-label { font-weight: 700; color: #172033; margin-bottom: 10px; display: block; }
+        .file-help { font-size: .8rem; color: #6c757d; margin-top: -4px; margin-bottom: 12px; }
+        .file-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            border: 2px dashed #2d6f94;
+            border-radius: 18px;
+            cursor: pointer;
+            background: #fff;
+            color: #6c757d;
+            transition: border-color .2s, background .2s;
+        }
+        .file-btn:hover { border-color: #0d6efd; background: #f8fbff; color: #6c757d; }
+        .file-plus-icon {
+            width: 44px;
+            height: 44px;
+            border: 2px solid #0d6efd;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #0d6efd;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+        .file-browse-text { font-size: 1rem; }
+        .file-browse-text strong { color: #0d5d85; }
+        .file-limit { color: #b42335; font-weight: 700; margin-top: 12px; }
+        .file-name {
+            display: none;
+            align-items: center;
+            gap: 14px;
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: #eef6ff;
+            color: #172033;
+        }
+        .file-card.has-file .file-name { display: flex; }
+        .file-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #d9ecff;
+            color: #0d5d85;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: .75rem;
+            flex: 0 0 auto;
+            text-transform: uppercase;
+        }
+        .file-info { min-width: 0; flex: 1; }
+        .file-selected-title { font-weight: 700; color: #172033; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-selected-meta { color: #7a8594; font-size: .85rem; }
+        .file-remove-btn {
+            width: 44px;
+            height: 44px;
+            border: 2px solid #dc3545;
+            border-radius: 10px;
+            background: #fff;
+            color: #dc3545;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex: 0 0 auto;
+            transition: background .2s, color .2s;
+        }
+        .file-remove-btn:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+        .adyen-terms-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            background: transparent;
+            color: #8a8f98;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+        }
+        .adyen-terms-row .form-check-input {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #dee2e6;
+            border-radius: 7px;
+            margin: 0;
+            cursor: pointer;
+        }
+        .adyen-terms-divider { color: #8a8f98; }
+        .adyen-terms-label { margin: 0; font-weight: 400; }
+        .adyen-terms-link {
+            color: #2b78a0;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            cursor: pointer;
+        }
+        .adyen-terms-eye {
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: #0d6efd;
+            font-size: 1.7rem;
+            line-height: 1;
+        }
+        .file-card input[type="file"] { display: none; }
     </style>
 </head>
 <body class="pt-3" id="topForm">
@@ -90,6 +210,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                         <input type=hidden name="lead_source" value="New Signup">
                         <input type="hidden" id="leadStage" name="leadStage" value="New">
                         <input type=hidden name="currency" value="AUD">
+
+                        <!-- 🍯 Honeypot: ห้ามลบ / ห้ามแก้ name / ห้ามเอาออกจากฟอร์ม -->
+                        <!-- มนุษย์จะไม่เห็น (hidden ด้วย CSS + tabindex=-1) แต่บอทส่วนใหญ่จะกรอก -->
+                        <!-- ถ้ามีค่า → monday_data.php จะ reject ทันที -->
+                        <div aria-hidden="true" style="position:absolute !important; left:-9999px !important; top:-9999px !important; width:1px !important; height:1px !important; opacity:0 !important; pointer-events:none !important; overflow:hidden !important;">
+                            <label for="website_url_confirm">Leave this field empty</label>
+                            <input type="text" id="website_url_confirm" name="website_url_confirm" value="" tabindex="-1" autocomplete="off">
+                        </div>
 
                         <!-- All Form -->
                         <div class="card mt-3">
@@ -1408,6 +1536,146 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Document Upload Section -->
+                                    <div id="docUploadSection" class="row p-4" style="display:none;">
+                                        <h5 class="fw-semibold mb-3">Upload Files</h5>
+                                        <div class="col-12 mb-3">
+                                            <div class="file-card" data-file="businessRegistrationDoc">
+                                                <span class="file-label">Copy of Business Registration Document <span class="text-danger">*</span></span>
+                                                <label class="file-btn" for="file_bizReg">
+                                                    <span class="file-plus-icon"><i class="bi bi-plus-lg"></i></span>
+                                                    <span class="file-browse-text">Drag &amp; drop or <strong>browse file</strong></span>
+                                                    <span class="file-limit"><i class="bi bi-exclamation-triangle"></i> Max file size : 10MB</span>
+                                                </label>
+                                                <div class="file-name">
+                                                    <span class="file-icon">FILE</span>
+                                                    <span class="file-info">
+                                                        <span class="file-selected-title">No file selected</span>
+                                                        <span class="file-selected-meta"></span>
+                                                    </span>
+                                                    <button type="button" class="file-remove-btn" title="Remove file">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="file" id="file_bizReg" name="businessRegistrationDoc" accept="image/*,application/pdf">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <div class="file-card" data-file="bankStatementDoc">
+                                                <span class="file-label">Copy of Bank Statement <span class="text-danger">*</span></span>
+                                                <small class="file-help">Only the first page is required. Please ensure the company name, BSB, and account number are visible. All other details can be blacked out.</small>
+                                                <label class="file-btn" for="file_bank">
+                                                    <span class="file-plus-icon"><i class="bi bi-plus-lg"></i></span>
+                                                    <span class="file-browse-text">Drag &amp; drop or <strong>browse file</strong></span>
+                                                    <span class="file-limit"><i class="bi bi-exclamation-triangle"></i> Max file size : 10MB</span>
+                                                </label>
+                                                <div class="file-name">
+                                                    <span class="file-icon">FILE</span>
+                                                    <span class="file-info">
+                                                        <span class="file-selected-title">No file selected</span>
+                                                        <span class="file-selected-meta"></span>
+                                                    </span>
+                                                    <button type="button" class="file-remove-btn" title="Remove file">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="file" id="file_bank" name="bankStatementDoc" accept="image/*,application/pdf">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <div class="file-card" data-file="directorIdDoc">
+                                                <span class="file-label">Director's ID <span class="text-danger">*</span></span>
+                                                <small class="file-help">1 form required — either a driver's licence or passport. Please attach a clear copy.</small>
+                                                <label class="file-btn" for="file_dirId">
+                                                    <span class="file-plus-icon"><i class="bi bi-plus-lg"></i></span>
+                                                    <span class="file-browse-text">Drag &amp; drop or <strong>browse file</strong></span>
+                                                    <span class="file-limit"><i class="bi bi-exclamation-triangle"></i> Max file size : 10MB</span>
+                                                </label>
+                                                <div class="file-name">
+                                                    <span class="file-icon">FILE</span>
+                                                    <span class="file-info">
+                                                        <span class="file-selected-title">No file selected</span>
+                                                        <span class="file-selected-meta"></span>
+                                                    </span>
+                                                    <button type="button" class="file-remove-btn" title="Remove file">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="file" id="file_dirId" name="directorIdDoc" accept="image/*,application/pdf">
+                                            </div>
+                                        </div>
+
+                                        <!-- Adyen Terms & Conditions Agreement -->
+                                        <div class="col-12 mb-3">
+                                            <div class="adyen-terms-row">
+                                                <input class="form-check-input" type="checkbox" id="adyenAgreement" name="adyenAgreement" value="agreed" disabled>
+                                                <span class="adyen-terms-divider">|</span>
+                                                <label class="adyen-terms-label" for="adyenAgreement">
+                                                    I agree to <span class="adyen-terms-link" data-bs-toggle="modal" data-bs-target="#adyenTermsModal">terms &amp; conditions.</span>
+                                                </label>
+                                                <button type="button" class="adyen-terms-eye" data-bs-toggle="modal" data-bs-target="#adyenTermsModal" title="View Adyen Terms & Conditions">
+                                                    <i class="bi bi-eye-fill"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Adyen Terms Modal -->
+                                    <div class="modal fade" id="adyenTermsModal" tabindex="-1" aria-labelledby="adyenTermsModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="adyenTermsModalLabel">View Adyen Terms &amp; Conditions</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="adyen-pages-container" style="max-height:60vh; overflow-y:auto; border:1px solid #dee2e6; border-radius:6px; padding:10px; background:#f8f9fa;">
+                                                        <div class="text-center mb-3">
+                                                            <span class="badge bg-secondary">21 Pages</span>
+                                                        </div>
+                                                        <div class="adyen-pages">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0001.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 1">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0002.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 2">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0003.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 3">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0004.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 4">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0005.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 5">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0006.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 6">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0007.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 7">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0008.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 8">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0009.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 9">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0010.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 10">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0011.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 11">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0012.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 12">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0013.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 13">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0014.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 14">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0015.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 15">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0016.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 16">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0017.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 17">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0018.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 18">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0019.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 19">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0020.jpg" class="img-fluid mb-3" alt="Adyen Terms Page 20">
+                                                            <img src="assets/img/pdf/adyen/adyen_page-0021.jpg" class="img-fluid mb-0" alt="Adyen Terms Page 21">
+                                                        </div>
+                                                    </div>
+                                                    <div id="adyenAgreementSection" style="display:none; opacity:0; transition:opacity 0.3s ease-in;">
+                                                        <p class="mt-3 mb-2">
+                                                            By selecting the checkbox below, you confirm that you have read, understood, and agree to the Adyen Terms and Conditions. You further authorise Local For You to establish and manage your Adyen merchant account on your behalf.
+                                                        </p>
+                                                        <div class="form-check mt-3">
+                                                            <input class="form-check-input" type="checkbox" id="adyenAgreementModal">
+                                                            <label class="form-check-label" for="adyenAgreementModal">
+                                                                I have read and agree to the Adyen Terms and Conditions, and I authorise Local For You to proceed with account setup on my behalf.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <hr class="row mt-4">
                                     <div class="row p-4">
                                         <div class="card col">
