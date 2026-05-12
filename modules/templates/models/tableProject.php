@@ -18,8 +18,8 @@ $iconTemplateGray = '<i class="bi bi-file-earmark-richtext action_icon text-mute
 
 $param['ownerID'] = $_SESSION['id'];
 
-    $ownerID = $param['ownerID'];
-    $showAll = in_array($ownerID, [1, 14, 60, 100, 27, 48]);
+    // $ownerID = $param['ownerID'];
+    // $showAll = in_array($ownerID, [1, 14, 60, 100, 27, 48]);
     $where = '';
 
     $sql = 'SELECT pj.saveFlag, pj.projectID AS id, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, 
@@ -35,12 +35,12 @@ $param['ownerID'] = $_SESSION['id'];
     $where = 'WHERE pj.deleteAt IS NULL';
     $order = 'ORDER BY pj.projectID DESC';
 
-    if (!$showAll) {
-        $sql = $sql . ' ' . $where . ' AND pj.projectOwner = ? '.$order;
-        $projects = $db->query($sql, $ownerID)->fetchAll();
-    } else {
+    // if (!$showAll) {
+    //     $sql = $sql . ' ' . $where . ' AND pj.projectOwner = ? '.$order;
+    //     $projects = $db->query($sql, $ownerID)->fetchAll();
+    // } else {
         $projects = $db->query($sql . ' ' . $where.' '.$order)->fetchAll();
-    }
+    // }
     
     $row = array();
     $i = 1;

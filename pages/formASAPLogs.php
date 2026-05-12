@@ -13,6 +13,8 @@
     .clickable { cursor: pointer; }
     .thead-dark { background-color: #212529; }
     .note-cell { max-width: 240px; white-space: normal; word-break: break-word; }
+    #posNewCustomerTable td { vertical-align: top; }
+    #posNewCustomerTable td div { white-space: nowrap; margin-bottom: 2px; }
     .status-badge {
         display: inline-block; padding: 2px 8px; font-size: 11px;
         border-radius: 10px; font-weight: 600;
@@ -93,8 +95,21 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="card">
-                            <div class="card-body table-responsive p-4" style="min-height: 630px;">
+                        <ul class="nav nav-tabs mb-3" id="logTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="booking-tab" data-toggle="tab" href="#bookingTabPane" role="tab" aria-controls="bookingTabPane" aria-selected="true">Booking Changes System</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="pos-new-tab" data-toggle="tab" href="#posNewTabPane" role="tab" aria-controls="posNewTabPane" aria-selected="false">Logs POS and New Online Order ( New Customer )</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="pos-old-tab" data-toggle="tab" href="#posOldTabPane" role="tab" aria-controls="posOldTabPane" aria-selected="false">Logs POS and New Online Order (Old Customer)</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="logTabsContent">
+                            <div class="tab-pane fade show active" id="bookingTabPane" role="tabpanel" aria-labelledby="booking-tab">
+                                <div class="table-responsive p-4" style="min-height: 630px;">
+                                <h5 class="mb-3">Booking Changes System</h5>
                                 <table id="formASAPTable" class="table table-borderless table-striped table-hover" style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
@@ -110,6 +125,74 @@
                                     </tr>
                                     </thead>
                                 </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="posNewTabPane" role="tabpanel" aria-labelledby="pos-new-tab">
+                                <div class="table-responsive p-4">
+                                <h5 class="mb-3">Logs POS and New Online Order ( New Customer )</h5>
+                                <table id="posNewCustomerTable" class="table table-borderless table-striped table-hover" style="width:100%">
+                                    <thead class="thead-dark">
+                                    <tr>
+                                        <th>Date</th>
+                                        <!-- <th>Submission ID</th> -->
+                                        <th>Shop Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Manager Name</th>
+                                        <th>Country</th>
+                                        <th>Currency</th>
+                                        <th>Trading Name</th>
+                                        <th>Trading Address</th>
+                                        <th>Terminal Delivery Address</th>
+                                        <th>Service</th>
+                                        <th>Opening Hours</th>
+                                        <th>EftPOS Model</th>
+                                        <th>Qty</th>
+                                        <th>Website</th>
+                                        <th>Third Party Platforms</th>
+                                        <th>Restaurant Address</th>
+                                        <th>Delivery Service Need</th>
+                                        <th>Deliver By</th>
+                                        <th>Serviced Area</th>
+                                        <th>Minimum Order</th>
+                                        <th>Delivery Fee</th>
+                                        <th>Inhouse Delivery</th>
+                                        <th>Logo Status</th>
+                                        <th>GMB Access</th>
+                                        <th>Facebook Page Access</th>
+                                        <th>Domain Hosting</th>
+                                        <!-- <th>Marketing Tricks Opt In</th> -->
+                                        <th>Logo/Menu</th>
+                                        <th>BRD</th>
+                                        <th>BS</th>
+                                        <th>DirectorID</th>
+                                        <th>adyenAgree</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="posOldTabPane" role="tabpanel" aria-labelledby="pos-old-tab">
+                                <div class="table-responsive p-4">
+                                <h5 class="mb-3">Logs POS and New Online Order (Old Customer)</h5>
+                                <table id="posOldCustomerTable" class="table table-borderless table-striped table-hover" style="width:100%">
+                                    <thead class="thead-dark">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Shop Name</th>
+                                        <th>Country</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Manager Name</th>
+                                        <th>BRD</th>
+                                        <th>BS</th>
+                                        <th>DirectorID</th>
+                                        <th>adyenAgree</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -179,8 +262,48 @@
         ]
     });
 
+    let posNewCustomerTable = $('#posNewCustomerTable').DataTable({
+        pagingType: 'full_numbers',
+        ajax: {
+            url: 'pages/tableRendering/dataPOSNewCustomerLogs.php',
+            type: 'POST',
+            dataSrc: 'data'
+        },
+        pageLength: 10,
+        order: [[0, 'desc']],
+        lengthMenu: [
+            [10, 25, 50, -1],
+            [10, 25, 50, 'All']
+        ],
+        columnDefs: [
+            { targets: '_all', className: 'dt-left' }
+        ]
+    });
+
+    let posOldCustomerTable = $('#posOldCustomerTable').DataTable({
+        pagingType: 'full_numbers',
+        ajax: {
+            url: 'pages/tableRendering/dataPOSOldCustomerLogs.php',
+            type: 'POST',
+            dataSrc: 'data'
+        },
+        pageLength: 10,
+        order: [[0, 'desc']],
+        lengthMenu: [
+            [10, 25, 50, -1],
+            [10, 25, 50, 'All']
+        ],
+        columnDefs: [
+            { targets: '_all', className: 'dt-left' }
+        ]
+    });
+
     $('#btnApplyFilter').on('click', function() { formASAPTable.ajax.reload(); });
     $('#filterSearch').on('keypress', function(e) { if(e.which === 13) formASAPTable.ajax.reload(); });
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function () {
+        $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+    });
 
     $('#btnResetFilter').on('click', function() {
         $('#filterDateStart,#filterDateEnd,#filterCountry,#filterStatus,#filterSearch').val('');

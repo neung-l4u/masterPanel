@@ -271,8 +271,8 @@ $row = [
 
 // Minimum required fields
 $required = ($customerMode === 'oldcustomer')
-    ? ['shop_name','shopEmail','shopPhone','managerName','country','currency']
-    : ['shop_name','shopEmail','shopPhone','managerName','country','currency','tradingName','tradingAddress','eftposModel','hasOwnWebsite'];
+    ? ['shop_name','shopEmail','shopPhone','managerName','country','currency','adyenAgree']
+    : ['shop_name','shopEmail','shopPhone','managerName','country','currency','tradingName','tradingAddress','terminalDeliveryAddress','serviceProvided','eftposModel','eftposQty','hasOwnWebsite','thirdPartyPlatforms','streetAddress','city','stateRegion','deliveryServiceNeed','deliverBy','servicedArea','minimumOrder','deliveryFee','logoStatus','gmbAccess','facebookPageAccess','domainHosting','adyenAgree'];
 foreach ($required as $r) {
     if ($row[$r] === null || $row[$r] === '') {
         http_response_code(400);
@@ -282,7 +282,17 @@ foreach ($required as $r) {
 }
 
 if ($customerMode !== 'oldcustomer') {
+    if (v('cuisineSelector') === null || vList('cuisineSelector') === '') {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'result' => 'Missing required field: cuisineSelector']);
+        exit;
+    }
     foreach (['openMon','openTue','openWed','openThu','openFri','openSat','openSun'] as $dayKey) {
+        if (v($dayKey) === null || v($dayKey) === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'result' => "Missing opening status for: $dayKey"]);
+            exit;
+        }
         if (v($dayKey) === 'Open' && (!v($dayKey . 'OpenTime') || !v($dayKey . 'CloseTime'))) {
             http_response_code(400);
             echo json_encode(['success' => false, 'result' => "Missing opening time for: $dayKey"]);
@@ -353,8 +363,6 @@ try {
 
     if ($customerMode === 'newcustomer') {
         $payload['csvFileName'] = $csvFileName;
-        $payload['csvContent'] = $csvContent;
-        $payload['csvContentBase64'] = base64_encode($payload['csvContent']);
     }
 
     // Raw "Other" text inputs (in case Make wants the unmerged value)
@@ -374,8 +382,8 @@ try {
         CURLOPT_POSTFIELDS     => json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
         CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT        => 30,
-        CURLOPT_CONNECTTIMEOUT => 20,
+        CURLOPT_TIMEOUT        => 5,
+        CURLOPT_CONNECTTIMEOUT => 3,
         CURLOPT_IPRESOLVE      => CURL_IPRESOLVE_V4,
         CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_SSL_VERIFYHOST => 0,

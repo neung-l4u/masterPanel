@@ -299,7 +299,7 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                                 <!-- Adyen Terms & Conditions Agreement -->
                                 <div class="col-12 mb-3">
                                     <div class="adyen-terms-row">
-                                        <input class="form-check-input" type="checkbox" id="adyenAgreement" name="adyenAgreement" value="agreed" disabled>
+                                        <input class="form-check-input" type="checkbox" id="adyenAgreement" name="adyenAgree" value="agreed" required disabled>
                                         <span class="adyen-terms-divider">|</span>
                                         <label class="adyen-terms-label" for="adyenAgreement">
                                             I agree to <span class="adyen-terms-link" data-bs-toggle="modal" data-bs-target="#adyenTermsModal">terms &amp; conditions.</span>
@@ -366,7 +366,7 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                                 <div class="col-12 mb-3 newcustomer-only">
                                     <label class="form-label">Preferred Address for Terminal Delivery</label>
                                     <div class="form-text mb-1">Portable Eftpos $225+GST (No receipt) &middot; Standard Eftpos $525+GST (receipt)</div>
-                                    <input type="text" class="form-control" name="terminalDeliveryAddress">
+                                    <input type="text" class="form-control" name="terminalDeliveryAddress" required>
                                 </div>
                                 <div class="col-12 mb-3 newcustomer-only">
                                     <label class="form-label d-block">Service Provided <span class="text-danger">*</span></label>
@@ -497,7 +497,7 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                                 <input type="hidden" id="countryCode" name="countryCode">
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label">Street Address</label>
-                                    <input type="text" class="form-control" name="streetAddress">
+                                    <input type="text" class="form-control" name="streetAddress" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">City <span class="text-danger">*</span></label>
@@ -552,15 +552,15 @@ $timestamps  = date("H:i D ,d M Y") . " (BKK)";
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">Serviced Area</label>
-                                    <input type="text" class="form-control" name="servicedArea">
+                                    <input type="text" class="form-control" name="servicedArea" required>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">Minimum Order</label>
-                                    <input type="number" min="0" step="0.01" class="form-control" name="minimumOrder">
+                                    <input type="number" min="0" step="0.01" class="form-control" name="minimumOrder" required>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">Delivery Fee</label>
-                                    <input type="number" min="0" step="0.01" class="form-control" name="deliveryFee">
+                                    <input type="number" min="0" step="0.01" class="form-control" name="deliveryFee" required>
                                 </div>
                             </div>
 
@@ -714,9 +714,9 @@ $(function () {
     $(".gmbFbSelect").on("change", function () {
         const $other = $("#" + $(this).data("other"));
         if ($(this).val() === "Other") {
-            $other.show();
+            $other.show().prop("required", true);
         } else {
-            $other.hide().val("");
+            $other.hide().prop("required", false).val("");
         }
     });
 
@@ -758,14 +758,14 @@ $(function () {
     // Third-party platform "Other" toggle
     $(".thirdPartyRadio").on("change", function () {
         const isOther = $(this).val() === "Other";
-        $("#thirdPartyOther").toggle(isOther);
+        $("#thirdPartyOther").toggle(isOther).prop("required", isOther);
         if (!isOther) $("#thirdPartyOther").val("");
     });
 
     // Cuisine "Other" toggle
     $(".cuisineChk").on("change", function () {
         const checkedOther = $('.cuisineChk[value="Other"]').is(":checked");
-        $("#cuisineOther").toggle(checkedOther);
+        $("#cuisineOther").toggle(checkedOther).prop("required", checkedOther);
         if (!checkedOther) $("#cuisineOther").val("");
     });
 
@@ -804,18 +804,42 @@ $(function () {
 function validateAndSubmit() {
     const $err = $("#errMsg").hide().text("");
     const required = $("#myForm [required]");
+    const isOldCustomer = $('input[name="customerMode"]').val() === "oldcustomer";
     let firstInvalid = null;
     required.each(function () {
-        if (!$(this).val() || $(this).val() === "") {
+        if (this.disabled) return;
+        if ((this.type === "checkbox" || this.type === "radio") && !this.checked) {
+            if (!firstInvalid) firstInvalid = this;
+            $(this).addClass("is-invalid");
+        } else if (!$(this).val() || $(this).val() === "") {
             if (!firstInvalid) firstInvalid = this;
             $(this).addClass("is-invalid");
         } else {
             $(this).removeClass("is-invalid");
         }
     });
-    if ($('input[name="customerMode"]').val() !== "oldcustomer" && $(".svcChk:checked").length < 1) {
+    if (!$("#adyenAgreement").is(":checked")) {
+        $("#adyenAgreement").addClass("is-invalid");
+        $err.text("Please read and accept the Adyen Terms and Conditions.").show();
+        return;
+    }
+    if (!isOldCustomer && $(".svcChk:checked").length < 1) {
         $err.text("Please select at least one Service Provided.").show();
         return;
+    }
+    if (!isOldCustomer && $(".cuisineChk:checked").length < 1) {
+        $err.text("Please select at least one Cuisine.").show();
+        return;
+    }
+    if (!isOldCustomer) {
+        const missingOpeningDay = $(".day-row").filter(function () {
+            return $(this).find(".dayRadio:checked").length < 1;
+        }).first();
+        if (missingOpeningDay.length) {
+            $err.text("Please select Open or Closed for every opening day.").show();
+            missingOpeningDay[0].scrollIntoView({ behavior: "smooth", block: "center" });
+            return;
+        }
     }
     if (firstInvalid) {
         firstInvalid.focus();
