@@ -641,7 +641,7 @@ $(function() {
         $('#parkingYes').prop('checked', true);
         $('#restroomYes').prop('checked', true);
         $('#voiceFemale').prop('checked', true);
-        $('#stripeID').val(stripeID);
+        $('#stripeID').val(params.get('stripeID') || '');
 
         console.log('🧪 Test mode: form auto-filled with sample data.');
     }

@@ -53,7 +53,7 @@ global $db;
 </nav>
 <body>
 
-<div class="container mt-5 p-5" style="min-height: 500px;">
+<div class="container-fluid mt-5 p-5" style="min-height: 500px;">
     <main>
         <section>
             <div class="form-div">
@@ -69,15 +69,15 @@ global $db;
                 <h3 class="mb-4 text-center text-uppercase page-title">Customer Details Entries</h3>
                 <p class="text-center">Here you can view all customer details entries submitted through the form.</p>
             </div>
-            <div >
-                <!-- <div class="col-5 pt-3">
+            <div class="row">
+                <div class="col-5 pt-3">
 
                     <div class="form-header unsubmit-header">
                         <h3 class="form-title text-uppercase">Unsubmitted Entries</h3>
                         <div class="submit-links">
-                            <a href="customerDetailsForm.php" target="_blank">
+                            <!-- <a href="customerDetailsForm.php" target="_blank">
                                 <i class="bi bi-calendar3"></i> Go to Customer Details Form
-                            </a>
+                            </a> -->
                         </div>
                     </div>
 
@@ -90,15 +90,16 @@ global $db;
                                     <th class="col_email">Email</th>
                                     <th class="col_status">Status</th>
                                     <th class="col_date">Date</th>
+                                    <th class="col_toform"></th>
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
                     </div>
-                </div> -->
+                </div>
 
-                <div class="pt-3">
+                <div class="col-7 pt-3">
 
                     <div class="form-header submit-header">
                         <h3 class="form-title text-uppercase">Submitted Entries</h3>
@@ -273,6 +274,9 @@ $(function() {
         columnDefs: [
             { targets: '_all', orderable: false },
             { targets: [0, 4], className: 'dt-center' },
+            { targets: [5], render: function(data) {
+                return `<a href="../views/customerDetailsForm.php?stripeID=${encodeURIComponent(data)}" class="btn btn-sm btn-outline-primary" title="Fill in the Information"><i class="bi bi-box-arrow-up-right"></i></a>`;
+            }, className: 'dt-center'},
         ]
     });
 });//ready
