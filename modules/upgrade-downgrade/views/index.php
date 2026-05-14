@@ -18,16 +18,16 @@ global $db;
     </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/feedbackForm.css?v=1.0.0" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/css/upgradeForm.css?v=1.0.0" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
-    <title>Upgrade/Downgrade</title>
+    <title>AI Araya Form</title>
 </head>
-<body style="min-height: 100vh;">
+<body style="min-height: 100vh; background-color: #ffffff;">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
@@ -38,7 +38,7 @@ global $db;
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="index.php">Home</a>
+                    <a class="nav-link active" aria-current="page" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../views/upgradeForm.php">Upgrade Form</a>
@@ -47,7 +47,7 @@ global $db;
                     <a class="nav-link" href="../views/downgradeForm.php">Downgrade Form</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="../views/entries.php">Entries</a>
+                    <a class="nav-link" href="../views/entries.php">Entries</a>
                 </li>
             </ul>
         </div>
@@ -60,13 +60,16 @@ global $db;
             <div class="row align-items-center" style="height: 85vh;">
                 <!-- Left Content -->
                 <div class="col-md-6 text-center text-md-start mb-4 mb-md-0">
-                    <h1 class="display-4 fw-bold">Local For You<br><i><span style="color: #007bff;">Upgrade</span>/<span style="color: #ff0000;">Downgrade</span></i></h1>
+                    <h1 class="display-5 fw-bold">Local For You<br>
+                    <span class="text-primary">Upgrade<i class="bi bi-arrow-up-right-square ms-2" style="font-size: 40px;"></i></span><br>
+                    <span class="text-danger">Downgrade<i class="bi bi-arrow-down-right-square ms-2" style="font-size: 40px;"></i></span></h1>
                     <p class="text-muted mt-3">
-                    Our feedback system allows you to easily share your thoughts, suggestions, or issues. Every entry helps us improve our service and better meet your needs.
+                    Our AI Araya system allows you to easily share your thoughts, suggestions, or issues. Every entry helps us improve our service and better meet your needs.
                     </p>
                     <div class="mt-4">
-                    <a href="upgradeForm.php" class="btn btn-primary me-2">Upgrade Form</a>
+                    <a href="upgradeForm.php" class="btn btn-primary">Upgrade Form</a>
                     <a href="downgradeForm.php" class="btn btn-danger me-2">Downgrade Form</a>
+                    <a href="entries.php" class="btn btn-outline-dark">View Entries</a>
                     </div>
                 </div>
 
@@ -81,7 +84,7 @@ global $db;
 
 <?php include '../layout/footer.php'; ?>
 
-<script src="../assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
 <!-- <script src="../controllers/index.js?v=1.0.0"></script> -->
 </body>

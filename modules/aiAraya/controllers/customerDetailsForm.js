@@ -10,11 +10,10 @@ $('#customerDetailsForm').on('submit', function (e) {
         return obj;
     }, {});
     const payload = JSON.stringify(formData);
-    sendData(formData);
-    saveToDB(payload, result, cmdSubmit, formData.stripeID);
+    saveToDB(payload, result, cmdSubmit, formData.stripeID, formData);
 });
 
-function sendData(formData) {
+function sendData(formData, qualify) {
     const now = new Date();
     const formattedDate = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
@@ -61,6 +60,7 @@ function sendData(formData) {
         stripeID: formData.stripeID || "",
         formVersion: formData.formVersion || "NULL",
         date: formattedDate,
+        qualify: qualify || "",
     };
 
     $.ajax({
@@ -70,7 +70,7 @@ function sendData(formData) {
         data: JSON.stringify(jsonData),
         success: () => {
             console.log("✅ Webhook sent successfully.");
-            window.location.replace("thankyou.php");
+            //window.location.replace("thankyou.php");
         },
         error: () => {
             console.error("❌ Webhook sending failed.");
@@ -78,12 +78,14 @@ function sendData(formData) {
     });
 }
 
-function saveToDB(payload, result, cmdSubmit, stripeID) {
+function saveToDB(payload, result, cmdSubmit, stripeID, formData) {
     $.ajax({
         url: "../models/customerDetailsForm.php",
         type: "POST",
         data: {payload, stripeID: stripeID},
-        success: () => {
+        success: (response) => {
+            const qualify = response?.qualify ?? "no";
+            sendData(formData, qualify);
             result.html(`<div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
             let countdown = 3;
             const countdownInterval = setInterval(() => {

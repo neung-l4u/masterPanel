@@ -270,7 +270,11 @@ if (isset($result['error'])) {
         ];
         
         file_put_contents($filePath, json_encode($output, JSON_UNESCAPED_UNICODE));
-        echo "Saved " . count($result['items']) . " items for ALL countries to $filePath\n";
+        echo json_encode([
+            "status" => "success",
+            "saved" => count($result['items']),
+            "file" => $filePath
+        ]);
     }
 }
 ?>
