@@ -227,14 +227,28 @@ $netPayable  = number_format($netPayableRaw, 2);
         }
 
         .footer {
-            margin-top: 100px;
+            margin-top: 40px;
             text-align: left;
             font-size: 10px;
             color: #999999;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         .footer, figure{
             margin-left: 0px;
+        }
+
+        .footer figure {
+            page-break-inside: avoid;
+            break-inside: avoid;
+            margin: 0;
+        }
+
+        .footer ul.dash,
+        .footer ul.dash > li {
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         ul.dash {
