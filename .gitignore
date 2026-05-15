@@ -134,6 +134,7 @@ out
 
 # Project specific ignores
 **/initDB.php
+**/initDB_stripe.php
 **/.DS_Store
 /pages/examples
 /modules/mini/logs

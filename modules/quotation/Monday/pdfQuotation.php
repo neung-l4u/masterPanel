@@ -1,7 +1,7 @@
 <?php
 global $db;
 include '../assets/db/db.php';
-include "../assets/db/initDB.php";
+include "../assets/db/initDB_stripe.php";
 
 date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
@@ -30,17 +30,26 @@ $address     = $customer['address'];
 $tax_id      = $customer['tax_id'];
 $email       = $customer['email'];
 $phone       = $customer['phone'];
+$taxType     = $customer['taxType'] ?? '';
+$isCorporate = ($taxType === 'นิติบุคคล');
 
 // --- ดึงข้อมูลใบเสนอราคา ---
 $date = $invoiceData['date'];
 
 // --- ดึงยอดรวม ---
-$subtotal   = $summaryData['subtotal'];
-$subtotal = number_format($subtotal, 2);
-$tax        = $summaryData['tax'];
-$tax = number_format($tax, 2);
-$grandtotal = $summaryData['grandtotal'];
-$grandtotal = number_format($grandtotal, 2);
+$subtotalRaw   = (float)$summaryData['subtotal'];
+$taxRaw        = (float)$summaryData['tax'];
+$grandtotalRaw = (float)$summaryData['grandtotal'];
+
+// หัก ณ ที่จ่าย 3% คิดจากราคาก่อน VAT (เฉพาะนิติบุคคล)
+$withholdingRaw = $isCorporate ? round($subtotalRaw * 0.03, 2) : 0;
+$netPayableRaw  = $grandtotalRaw - $withholdingRaw;
+
+$subtotal    = number_format($subtotalRaw, 2);
+$tax         = number_format($taxRaw, 2);
+$grandtotal  = number_format($grandtotalRaw, 2);
+$withholding = number_format($withholdingRaw, 2);
+$netPayable  = number_format($netPayableRaw, 2);
 
 
 ?>
@@ -218,7 +227,7 @@ $grandtotal = number_format($grandtotal, 2);
         }
 
         .footer {
-            margin-top: 150px;
+            margin-top: 100px;
             text-align: left;
             font-size: 10px;
             color: #999999;
@@ -358,15 +367,25 @@ $grandtotal = number_format($grandtotal, 2);
         <tbody>
         <tr>
             <td class="text-right"><strong>รวมเป็นเงิน</strong></td>
+            <td class="text-right"><?php echo $grandtotal;?> บาท</td>
+        </tr>
+        <tr>
+            <td class="text-right"><strong>ราคาก่อนภาษีมูลค่าเพิ่ม</strong></td>
             <td class="text-right"><?php echo $subtotal;?> บาท</td>
         </tr>
         <tr>
             <td class="text-right"><strong>ภาษีมูลค่าเพิ่ม 7%</strong></td>
             <td class="text-right"><?php echo $tax;?> บาท</td>
         </tr>
+        <?php if ($isCorporate): ?>
         <tr>
-            <td class="text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
-            <td class="text-right"><?php echo $grandtotal;?> บาท</td>
+            <td class="text-right"><strong>ภาษีเงินได้หัก ณ ที่จ่าย 3%</strong></td>
+            <td class="text-right"><?php echo $withholding;?> บาท</td>
+        </tr>
+        <?php endif; ?>
+        <tr>
+            <td class="text-right"><strong>จำนวนเงินสุทธิที่ต้องชำระ</strong></td>
+            <td class="text-right"><?php echo $netPayable;?> บาท</td>
         </tr>
         <tr>
             <td colspan="2">

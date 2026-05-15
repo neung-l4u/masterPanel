@@ -1052,7 +1052,8 @@ $("#cmdSubmit").click(function(e){
                         "address": addressQuotation,
                         "tax_id": taxNumberQuotation,
                         "email": emailQuotation,
-                        "phone": phoneQuotation
+                        "phone": phoneQuotation,
+                        "taxType": taxType
                     }
                 ]
             }
