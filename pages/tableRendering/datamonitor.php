@@ -71,7 +71,7 @@ foreach ($result as $row) {
         esc($row['name']),
         $urlDisplay,
         $catDisplay,
-        $row['check_interval'] . ' min',
+        (int)$row['check_interval'] . ' min',
         $statusBadge,
         $sslDisplay,
         esc($lastCheck),
