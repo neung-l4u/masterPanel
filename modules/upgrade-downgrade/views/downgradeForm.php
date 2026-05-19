@@ -6,6 +6,7 @@ global $db;
 
 $stripeID = $_GET['stripeID'] ?? '';
 $mode = $_GET['mode'] ?? 'customer';
+$testMode = $_GET['testMode'] ?? 'false';
 ?>
 <!doctype html>
 <html lang="en">
@@ -32,6 +33,48 @@ $mode = $_GET['mode'] ?? 'customer';
 <div class="container">
     <main>
         <section style="min-height: 50vh;">
+            <div class="form-layout">
+                <nav class="info-sidebar">
+                    <div class="sidebar-section">
+                        <h6 class="sidebar-title">Form Type</h6>
+                        <a href="upgradeForm.php?mode=<?php echo htmlspecialchars($mode); ?>&stripeID=<?php echo urlencode($stripeID); ?>" class="sidebar-item sidebar-form sidebar-form-upgrade">
+                            <i class="bi bi-arrow-up-circle"></i>
+                            <span>Upgrade</span>
+                        </a>
+                        <a href="downgradeForm.php?mode=<?php echo htmlspecialchars($mode); ?>&stripeID=<?php echo urlencode($stripeID); ?>" class="sidebar-item sidebar-form sidebar-form-downgrade sidebar-mode-active">
+                            <i class="bi bi-arrow-down-circle"></i>
+                            <span>Downgrade</span>
+                        </a>
+                    </div>
+                    <div class="sidebar-divider"></div>
+                    <div class="sidebar-section">
+                        <h6 class="sidebar-title">Submitted By</h6>
+                        <a href="?mode=customer&stripeID=<?php echo urlencode($stripeID); ?>" class="sidebar-item sidebar-mode <?php echo $mode === 'customer' ? 'sidebar-mode-active' : ''; ?>">
+                            <i class="bi bi-person"></i>
+                            <span>Customer</span>
+                        </a>
+                        <a href="?mode=staff&stripeID=<?php echo urlencode($stripeID); ?>" class="sidebar-item sidebar-mode <?php echo $mode === 'staff' ? 'sidebar-mode-active' : ''; ?>">
+                            <i class="bi bi-headset"></i>
+                            <span>Staff</span>
+                        </a>
+                    </div>
+                    <div class="sidebar-divider"></div>
+                    <div class="sidebar-section">
+                        <h6 class="sidebar-title">Information</h6>
+                        <button class="sidebar-item sidebar-action" data-bs-toggle="modal" data-bs-target="#modalPackageRef">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Products</span>
+                        </button>
+                        <button class="sidebar-item sidebar-action" data-bs-toggle="modal" data-bs-target="#modalImportantInfo">
+                            <i class="bi bi-info-circle"></i>
+                            <span>Important Info</span>
+                        </button>
+                        <button class="sidebar-item sidebar-action" data-bs-toggle="modal" data-bs-target="#modalStaffKB">
+                            <i class="bi bi-book"></i>
+                            <span>Knowledge Base</span>
+                        </button>
+                    </div>
+                </nav>
             <div class="form-div">
 
                 <!-- ===== Header ===== -->
@@ -45,148 +88,11 @@ $mode = $_GET['mode'] ?? 'customer';
                             Internal downgrade &amp; unsubscription management form. Fill in all relevant details for the customer's request.
                         <?php endif; ?>
                     </p>
-                    <div class="mode-toggle mt-3">
-                        <a href="?mode=customer&stripeID=<?php echo urlencode($stripeID); ?>" class="mode-btn <?php echo $mode === 'customer' ? 'active' : ''; ?>"><i class="bi bi-person"></i> Customer</a>
-                        <a href="?mode=staff&stripeID=<?php echo urlencode($stripeID); ?>" class="mode-btn <?php echo $mode === 'staff' ? 'active' : ''; ?>"><i class="bi bi-headset"></i> Staff</a>
-                    </div>
                 </div>
 
                 <!-- ===== Form Body ===== -->
                 <div class="form-body">
 
-                    <!-- ============================================================ -->
-                    <!-- Package Reference (visible to both Staff & Customer)          -->
-                    <!-- ============================================================ -->
-                    <div class="form-section">
-                        <h5 class="section-title"><i class="bi bi-box-seam"></i> Current Package Reference</h5>
-
-                        <div class="pkg-compare-grid">
-                            <!-- Local Starter -->
-                            <div class="pkg-column">
-                                <div class="pkg-column-header pkg-starter">
-                                    <i class="bi bi-rocket-takeoff"></i>
-                                    <h6>Local Starter</h6>
-                                </div>
-                                <ul class="pkg-feature-list">
-                                    <li><i class="bi bi-check2"></i> 1 Ad Channel (Google or FB/IG)</li>
-                                    <li><i class="bi bi-check2"></i> Yelp Ads Management</li>
-                                    <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
-                                    <li><i class="bi bi-check2"></i> 2 GMB Posts/Month</li>
-                                    <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Social Media Posts</li>
-                                    <li><i class="bi bi-check2"></i> 1 Email Campaign/Month</li>
-                                    <li><i class="bi bi-check2"></i> 2 SMS Campaigns/Month</li>
-                                    <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Advanced SEO</li>
-                                    <li><i class="bi bi-check2"></i> Strategy Call</li>
-                                    <li><i class="bi bi-check2"></i> Monthly Report</li>
-                                </ul>
-                            </div>
-
-                            <!-- Local Growth -->
-                            <div class="pkg-column pkg-column-highlight">
-                                <div class="pkg-column-header pkg-growth">
-                                    <span class="pkg-popular-badge">Popular</span>
-                                    <i class="bi bi-graph-up-arrow"></i>
-                                    <h6>Local Growth</h6>
-                                </div>
-                                <ul class="pkg-feature-list">
-                                    <li><i class="bi bi-check2"></i> Google + FB/IG Ads</li>
-                                    <li><i class="bi bi-check2"></i> Yelp Ads Management</li>
-                                    <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
-                                    <li><i class="bi bi-check2"></i> 4 GMB Posts/Month</li>
-                                    <li><i class="bi bi-check2"></i> 4 Social Media Posts/Month</li>
-                                    <li><i class="bi bi-check2"></i> 2 Email Campaigns/Month</li>
-                                    <li><i class="bi bi-check2"></i> 2 SMS Campaigns/Month</li>
-                                    <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Advanced SEO</li>
-                                    <li><i class="bi bi-check2"></i> Monthly Strategy Call</li>
-                                    <li><i class="bi bi-check2"></i> Monthly Report</li>
-                                </ul>
-                            </div>
-
-                            <!-- Local Ultimate -->
-                            <div class="pkg-column">
-                                <div class="pkg-column-header pkg-ultimate">
-                                    <i class="bi bi-trophy"></i>
-                                    <h6>Local Ultimate</h6>
-                                </div>
-                                <ul class="pkg-feature-list">
-                                    <li><i class="bi bi-check2"></i> Google + FB/IG + Advanced Ads</li>
-                                    <li><i class="bi bi-check2"></i> Yelp Ads</li>
-                                    <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
-                                    <li><i class="bi bi-check2"></i> 8 GMB Posts/Month</li>
-                                    <li><i class="bi bi-check2"></i> 8 Social Media Posts/Month</li>
-                                    <li><i class="bi bi-check2"></i> 4 Email Campaigns/Month</li>
-                                    <li><i class="bi bi-check2"></i> 4 SMS Campaigns/Month</li>
-                                    <li><i class="bi bi-check2"></i> Advanced SEO Components</li>
-                                    <li><i class="bi bi-check2"></i> Monthly Strategy Call</li>
-                                    <li><i class="bi bi-check2"></i> Monthly Report</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ============================================================ -->
-                    <!-- STAFF-ONLY: Internal Knowledge Base                           -->
-                    <!-- ============================================================ -->
-                    <?php if ($mode === 'staff'): ?>
-                    <div class="form-section staff-only-section">
-                        <h5 class="section-title"><i class="bi bi-book"></i> Staff Knowledge Base <span class="badge bg-warning text-dark ms-2" style="font-size:.65rem;">Staff Only</span></h5>
-
-                        <div class="mb-3">
-                            <label class="form-label">Package Reference Materials <small class="text-muted">(file, link, image)</small></label>
-                            <input type="text" class="form-control" name="staffPackageRef" placeholder="e.g. Google Drive link, file path, or image URL">
-                        </div>
-
-                        <div class="info-card info-cancel mb-3">
-                            <h6><i class="bi bi-calendar-x"></i> Cancellation &amp; Downgrade Policy</h6>
-                            <ul class="mb-0">
-                                <li>All cancellations require a <strong>30-day advance notice</strong>.</li>
-                                <li>If the contract has not expired, check with management before processing.</li>
-                                <li>Billing continues until the 30-day notice period has passed.</li>
-                                <li>"End of billing cycle" option = cancel after 30 days.</li>
-                            </ul>
-                        </div>
-
-                        <div class="info-card info-downgrade mb-3">
-                            <h6><i class="bi bi-arrow-down-circle"></i> Downgrade Feature Changes</h6>
-                            <ul class="mb-0">
-                                <li><strong>Ultimate &rarr; Growth:</strong> GMB 8&rarr;4, Social 8&rarr;4, Email 4&rarr;2, SMS 4&rarr;2, Remove Advanced SEO.</li>
-                                <li><strong>Ultimate &rarr; Starter:</strong> GMB 8&rarr;2, Social 8&rarr;0, Email 4&rarr;1, SMS 4&rarr;1, Remove SEO, Ads all&rarr;1 channel, Remove Strategy Call.</li>
-                                <li><strong>Growth &rarr; Starter:</strong> GMB 4&rarr;2, Social 4&rarr;0, Email 2&rarr;1, SMS 2&rarr;1, Ads all&rarr;1 channel, Remove Strategy Call.</li>
-                                <li><strong>Any &rarr; Pro Plan:</strong> Remove <em>all</em> marketing-related features.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
-                    <!-- ============================================================ -->
-                    <!-- CUSTOMER-ONLY: Important Notices                              -->
-                    <!-- ============================================================ -->
-                    <?php if ($mode === 'customer'): ?>
-                    <div class="form-section customer-notice-section">
-                        <h5 class="section-title"><i class="bi bi-info-circle"></i> Important Information</h5>
-                        <div class="notice-card notice-cancel">
-                            <div class="notice-icon"><i class="bi bi-calendar-x"></i></div>
-                            <div>
-                                <strong>30-Day Cancellation Notice</strong>
-                                <p class="mb-0">All cancellations require a <strong>30-day advance notice</strong>. Please notify us at least 30 days before your next billing date if you wish to cancel or downgrade your service.</p>
-                            </div>
-                        </div>
-                        <div class="notice-card notice-contract">
-                            <div class="notice-icon"><i class="bi bi-file-earmark-lock"></i></div>
-                            <div>
-                                <strong>Contract &amp; Service Fee</strong>
-                                <p class="mb-0">If the contract has expired, the service fee will remain as per the contract selected until cancelled or changed to another contract.</p>
-                            </div>
-                        </div>
-                        <div class="notice-card notice-stripe">
-                            <div class="notice-icon"><i class="bi bi-shield-check"></i></div>
-                            <div>
-                                <strong>Service Changes</strong>
-                                <p class="mb-0">Upon downgrade or unsubscription, certain features will be deactivated based on your new plan. Please review your selection carefully before submitting.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
 
                     <!-- ============================================================ -->
                     <!-- MAIN FORM                                                    -->
@@ -217,8 +123,21 @@ $mode = $_GET['mode'] ?? 'customer';
 
                             <?php if ($mode === 'staff'): ?>
                             <div class="mb-3">
+                                <label for="country" class="form-label">Country</label>
+                                <select class="form-select" id="country" name="country">
+                                    <option value="">-- Select Country --</option>
+                                    <option value="US">United States</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="NZ">New Zealand</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="TH">Thailand</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 position-relative">
                                 <label for="mondayProjectId" class="form-label">Monday Project / Shop ID <small class="text-muted">(Staff Reference)</small></label>
-                                <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="e.g. 12345678">
+                                <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="Type shop name or ID to search..." autocomplete="off">
+                                <div id="projectSearchDropdown" class="project-search-dropdown"></div>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -283,7 +202,13 @@ $mode = $_GET['mode'] ?? 'customer';
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="originalProduct" class="form-label">Current Product <span class="text-danger">*</span></label>
+                                    <label class="form-label">Current Product (Active Subscriptions) <span class="text-danger">*</span></label>
+                                    <?php if ($mode === 'staff'): ?>
+                                    <div id="originalProductList" class="subscription-list">
+                                        <span class="subscription-placeholder">Select a project first</span>
+                                    </div>
+                                    <input type="hidden" id="originalProduct" name="originalProduct">
+                                    <?php else: ?>
                                     <select class="form-select" id="originalProduct" name="originalProduct">
                                         <option value="">-- Select Current Product --</option>
                                         <optgroup label="Pro Plans">
@@ -302,6 +227,7 @@ $mode = $_GET['mode'] ?? 'customer';
                                             <option value="bundle_ultimate">Bundle - Local Ultimate</option>
                                         </optgroup>
                                     </select>
+                                    <?php endif; ?>
                                     <div class="invalid-feedback">Please select the current product.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -397,28 +323,40 @@ $mode = $_GET['mode'] ?? 'customer';
                             <p class="text-muted mb-3" style="font-size:.84rem;">Select all that apply.</p>
                             <div class="checkbox-grid mb-3">
                                 <div class="check-card">
-                                    <input type="checkbox" id="reasonCost" name="reasons[]" value="Save cost / Budget concerns">
-                                    <label for="reasonCost"><i class="bi bi-piggy-bank"></i> Save cost / Budget concerns</label>
+                                    <input type="checkbox" id="reasonSelling" name="reasons[]" value="Selling or transferring my business">
+                                    <label for="reasonSelling"><i class="bi bi-building-check"></i> Selling or transferring my business</label>
                                 </div>
                                 <div class="check-card">
-                                    <input type="checkbox" id="reasonOrders" name="reasons[]" value="Low number of orders/bookings">
-                                    <label for="reasonOrders"><i class="bi bi-graph-down"></i> Low orders / bookings</label>
+                                    <input type="checkbox" id="reasonClosing" name="reasons[]" value="Closing down my business">
+                                    <label for="reasonClosing"><i class="bi bi-shop"></i> Closing down my business</label>
                                 </div>
                                 <div class="check-card">
-                                    <input type="checkbox" id="reasonPlatform" name="reasons[]" value="Moving to another platform/service">
-                                    <label for="reasonPlatform"><i class="bi bi-box-arrow-right"></i> Moving to another platform</label>
+                                    <input type="checkbox" id="reasonBudget" name="reasons[]" value="Budget constraints">
+                                    <label for="reasonBudget"><i class="bi bi-piggy-bank"></i> Budget constraints</label>
                                 </div>
                                 <div class="check-card">
-                                    <input type="checkbox" id="reasonProduct" name="reasons[]" value="Unhappy with product">
-                                    <label for="reasonProduct"><i class="bi bi-emoji-frown"></i> Unhappy with product</label>
+                                    <input type="checkbox" id="reasonResults" name="reasons[]" value="Results did not meet my expectations">
+                                    <label for="reasonResults"><i class="bi bi-graph-down"></i> Results did not meet my expectations</label>
                                 </div>
                                 <div class="check-card">
-                                    <input type="checkbox" id="reasonSupport" name="reasons[]" value="Unhappy with customer support/account manager">
-                                    <label for="reasonSupport"><i class="bi bi-headset"></i> Unhappy with support</label>
+                                    <input type="checkbox" id="reasonPlatform" name="reasons[]" value="Switching to another platform or agency">
+                                    <label for="reasonPlatform"><i class="bi bi-box-arrow-right"></i> Switching to another platform or agency</label>
                                 </div>
                                 <div class="check-card">
-                                    <input type="checkbox" id="reasonOwner" name="reasons[]" value="Owner/management change">
-                                    <label for="reasonOwner"><i class="bi bi-people"></i> Owner / management change</label>
+                                    <input type="checkbox" id="reasonComplexity" name="reasons[]" value="Platform or Product Complexity">
+                                    <label for="reasonComplexity"><i class="bi bi-emoji-frown"></i> Platform or Product Complexity</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonSupport" name="reasons[]" value="Dissatisfied with the service or support team">
+                                    <label for="reasonSupport"><i class="bi bi-headset"></i> Dissatisfied with the service or support team</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonOwnership" name="reasons[]" value="Change in ownership or management direction">
+                                    <label for="reasonOwnership"><i class="bi bi-people"></i> Change in ownership or management direction</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonObjectives" name="reasons[]" value="Achieved Objectives">
+                                    <label for="reasonObjectives"><i class="bi bi-trophy"></i> Achieved Objectives</label>
                                 </div>
                                 <div class="check-card">
                                     <input type="checkbox" id="reasonOther" name="reasons[]" value="Other">
@@ -530,14 +468,162 @@ $mode = $_GET['mode'] ?? 'customer';
                         <input type="hidden" name="formMode" value="<?php echo htmlspecialchars($mode); ?>">
                         <input type="hidden" name="stripeID" id="stripeID" value="<?php echo htmlspecialchars($stripeID ?? ''); ?>">
                         <input type="hidden" id="statusUser" name="statusUser" value="completed">
+                        <input type="hidden" name="testMode" id="testMode" value="<?php echo htmlspecialchars($testMode); ?>">
                     </form>
                 </div>
             </div>
+            </div><!-- /form-layout -->
         </section>
     </main>
 </div>
 
 <?php include '../layout/footer.php'; ?>
+
+
+<!-- ===== Modal: Package Reference ===== -->
+<div class="modal fade" id="modalPackageRef" tabindex="-1" aria-labelledby="modalPackageRefLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPackageRefLabel"><i class="bi bi-box-seam me-2 text-danger"></i>Current Package Reference</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="pkg-compare-grid">
+                    <div class="pkg-column">
+                        <div class="pkg-column-header pkg-starter">
+                            <i class="bi bi-rocket-takeoff"></i>
+                            <h6>Local Starter</h6>
+                        </div>
+                        <ul class="pkg-feature-list">
+                            <li><i class="bi bi-check2"></i> 1 Ad Channel (Google or FB/IG)</li>
+                            <li><i class="bi bi-check2"></i> Yelp Ads Management</li>
+                            <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
+                            <li><i class="bi bi-check2"></i> 2 GMB Posts/Month</li>
+                            <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Social Media Posts</li>
+                            <li><i class="bi bi-check2"></i> 1 Email Campaign/Month</li>
+                            <li><i class="bi bi-check2"></i> 2 SMS Campaigns/Month</li>
+                            <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Advanced SEO</li>
+                            <li><i class="bi bi-check2"></i> Strategy Call</li>
+                            <li><i class="bi bi-check2"></i> Monthly Report</li>
+                        </ul>
+                    </div>
+                    <div class="pkg-column pkg-column-highlight">
+                        <div class="pkg-column-header pkg-growth">
+                            <span class="pkg-popular-badge">Popular</span>
+                            <i class="bi bi-graph-up-arrow"></i>
+                            <h6>Local Growth</h6>
+                        </div>
+                        <ul class="pkg-feature-list">
+                            <li><i class="bi bi-check2"></i> Google + FB/IG Ads</li>
+                            <li><i class="bi bi-check2"></i> Yelp Ads Management</li>
+                            <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
+                            <li><i class="bi bi-check2"></i> 4 GMB Posts/Month</li>
+                            <li><i class="bi bi-check2"></i> 4 Social Media Posts/Month</li>
+                            <li><i class="bi bi-check2"></i> 2 Email Campaigns/Month</li>
+                            <li><i class="bi bi-check2"></i> 2 SMS Campaigns/Month</li>
+                            <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Advanced SEO</li>
+                            <li><i class="bi bi-check2"></i> Monthly Strategy Call</li>
+                            <li><i class="bi bi-check2"></i> Monthly Report</li>
+                        </ul>
+                    </div>
+                    <div class="pkg-column">
+                        <div class="pkg-column-header pkg-ultimate">
+                            <i class="bi bi-trophy"></i>
+                            <h6>Local Ultimate</h6>
+                        </div>
+                        <ul class="pkg-feature-list">
+                            <li><i class="bi bi-check2"></i> Google + FB/IG + Advanced Ads</li>
+                            <li><i class="bi bi-check2"></i> Yelp Ads</li>
+                            <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
+                            <li><i class="bi bi-check2"></i> 8 GMB Posts/Month</li>
+                            <li><i class="bi bi-check2"></i> 8 Social Media Posts/Month</li>
+                            <li><i class="bi bi-check2"></i> 4 Email Campaigns/Month</li>
+                            <li><i class="bi bi-check2"></i> 4 SMS Campaigns/Month</li>
+                            <li><i class="bi bi-check2"></i> Advanced SEO Components</li>
+                            <li><i class="bi bi-check2"></i> Monthly Strategy Call</li>
+                            <li><i class="bi bi-check2"></i> Monthly Report</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Modal: Important Information ===== -->
+<div class="modal fade" id="modalImportantInfo" tabindex="-1" aria-labelledby="modalImportantInfoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImportantInfoLabel"><i class="bi bi-info-circle me-2 text-danger"></i>Important Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="notice-card notice-cancel">
+                    <div class="notice-icon"><i class="bi bi-calendar-x"></i></div>
+                    <div>
+                        <strong>30-Day Cancellation Notice</strong>
+                        <p class="mb-0">All cancellations require a <strong>30-day advance notice</strong>. Please notify us at least 30 days before your next billing date if you wish to cancel or downgrade your service.</p>
+                    </div>
+                </div>
+                <div class="notice-card notice-contract">
+                    <div class="notice-icon"><i class="bi bi-file-earmark-lock"></i></div>
+                    <div>
+                        <strong>Contract &amp; Service Fee</strong>
+                        <p class="mb-0">If the contract has expired, the service fee will remain as per the contract selected until cancelled or changed to another contract.</p>
+                    </div>
+                </div>
+                <div class="notice-card notice-stripe">
+                    <div class="notice-icon"><i class="bi bi-shield-check"></i></div>
+                    <div>
+                        <strong>Service Changes</strong>
+                        <p class="mb-0">Upon downgrade or unsubscription, certain features will be deactivated based on your new plan. Please review your selection carefully before submitting.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Modal: Staff Knowledge Base ===== -->
+<div class="modal fade" id="modalStaffKB" tabindex="-1" aria-labelledby="modalStaffKBLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#fffdf5; border-bottom:2px dashed #ffc107;">
+                <h5 class="modal-title" id="modalStaffKBLabel">
+                    <i class="bi bi-book me-2" style="color:#d48f00;"></i>Staff Knowledge Base
+                    <span class="badge bg-warning text-dark ms-2" style="font-size:.65rem;">Staff Only</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="background:#fffdf5;">
+                <div class="mb-3">
+                    <label class="form-label">Package Reference Materials <small class="text-muted">(file, link, image)</small></label>
+                    <input type="text" class="form-control" name="staffPackageRef" placeholder="e.g. Google Drive link, file path, or image URL">
+                </div>
+                <div class="info-card info-cancel mb-3">
+                    <h6><i class="bi bi-calendar-x"></i> Cancellation &amp; Downgrade Policy</h6>
+                    <ul class="mb-0">
+                        <li>All cancellations require a <strong>30-day advance notice</strong>.</li>
+                        <li>If the contract has not expired, check with management before processing.</li>
+                        <li>Billing continues until the 30-day notice period has passed.</li>
+                        <li>"End of billing cycle" option = cancel after 30 days.</li>
+                    </ul>
+                </div>
+                <div class="info-card info-downgrade mb-3">
+                    <h6><i class="bi bi-arrow-down-circle"></i> Downgrade Feature Changes</h6>
+                    <ul class="mb-0">
+                        <li><strong>Ultimate &rarr; Growth:</strong> GMB 8&rarr;4, Social 8&rarr;4, Email 4&rarr;2, SMS 4&rarr;2, Remove Advanced SEO.</li>
+                        <li><strong>Ultimate &rarr; Starter:</strong> GMB 8&rarr;2, Social 8&rarr;0, Email 4&rarr;1, SMS 4&rarr;1, Remove SEO, Ads all&rarr;1 channel, Remove Strategy Call.</li>
+                        <li><strong>Growth &rarr; Starter:</strong> GMB 4&rarr;2, Social 4&rarr;0, Email 2&rarr;1, SMS 2&rarr;1, Ads all&rarr;1 channel, Remove Strategy Call.</li>
+                        <li><strong>Any &rarr; Pro Plan:</strong> Remove <em>all</em> marketing-related features.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>

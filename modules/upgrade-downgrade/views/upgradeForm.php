@@ -6,6 +6,7 @@ global $db;
 
 $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
 $mode = $_GET['mode'] ?? 'customer';
+$testMode = $_GET['testMode'] ?? 'false';
 ?>
 <!doctype html>
 <html lang="en">
@@ -32,6 +33,48 @@ $mode = $_GET['mode'] ?? 'customer';
 <div class="container">
     <main>
         <section style="min-height: 50vh;">
+            <div class="form-layout">
+                <nav class="info-sidebar">
+                    <div class="sidebar-section">
+                        <h6 class="sidebar-title">Form Type</h6>
+                        <a href="upgradeForm.php?mode=<?php echo htmlspecialchars($mode); ?>&stripeID=<?php echo urlencode($stripeID); ?>" class="sidebar-item sidebar-form sidebar-form-upgrade sidebar-mode-active">
+                            <i class="bi bi-arrow-up-circle"></i>
+                            <span>Upgrade</span>
+                        </a>
+                        <a href="downgradeForm.php?mode=<?php echo htmlspecialchars($mode); ?>&stripeID=<?php echo urlencode($stripeID); ?>" class="sidebar-item sidebar-form sidebar-form-downgrade">
+                            <i class="bi bi-arrow-down-circle"></i>
+                            <span>Downgrade</span>
+                        </a>
+                    </div>
+                    <div class="sidebar-divider"></div>
+                    <div class="sidebar-section">
+                        <h6 class="sidebar-title">Submitted By</h6>
+                        <a href="?mode=customer&stripeID=<?php echo urlencode($stripeID); ?>" class="sidebar-item sidebar-mode <?php echo $mode === 'customer' ? 'sidebar-mode-active' : ''; ?>">
+                            <i class="bi bi-person"></i>
+                            <span>Customer</span>
+                        </a>
+                        <a href="?mode=staff&stripeID=<?php echo urlencode($stripeID); ?>" class="sidebar-item sidebar-mode <?php echo $mode === 'staff' ? 'sidebar-mode-active' : ''; ?>">
+                            <i class="bi bi-headset"></i>
+                            <span>Staff</span>
+                        </a>
+                    </div>
+                    <div class="sidebar-divider"></div>
+                    <div class="sidebar-section">
+                        <h6 class="sidebar-title">Information</h6>
+                        <button class="sidebar-item sidebar-action" data-bs-toggle="modal" data-bs-target="#modalPackageDetails">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Products</span>
+                        </button>
+                        <button class="sidebar-item sidebar-action" data-bs-toggle="modal" data-bs-target="#modalImportantInfo">
+                            <i class="bi bi-info-circle"></i>
+                            <span>Important Info</span>
+                        </button>
+                        <button class="sidebar-item sidebar-action" data-bs-toggle="modal" data-bs-target="#modalStaffKB">
+                            <i class="bi bi-book"></i>
+                            <span>Knowledge Base</span>
+                        </button>
+                    </div>
+                </nav>
             <div class="form-div">
 
                 <!-- ===== Header ===== -->
@@ -45,151 +88,11 @@ $mode = $_GET['mode'] ?? 'customer';
                             Internal upgrade &amp; add-on management form. Fill in all relevant details for the customer's upgrade.
                         <?php endif; ?>
                     </p>
-                    <div class="mode-toggle mt-3">
-                        <a href="?mode=customer&stripeID=<?php echo urlencode($stripeID); ?>" class="mode-btn <?php echo $mode === 'customer' ? 'active' : ''; ?>"><i class="bi bi-person"></i> Customer</a>
-                        <a href="?mode=staff&stripeID=<?php echo urlencode($stripeID); ?>" class="mode-btn <?php echo $mode === 'staff' ? 'active' : ''; ?>"><i class="bi bi-headset"></i> Staff</a>
-                    </div>
                 </div>
 
                 <!-- ===== Form Body ===== -->
                 <div class="form-body">
 
-                    <!-- ============================================================ -->
-                    <!-- Package Details (visible to both Staff & Customer)            -->
-                    <!-- ============================================================ -->
-                    <div class="form-section">
-                        <h5 class="section-title"><i class="bi bi-box-seam"></i> Package Details</h5>
-
-                        <div class="pkg-compare-grid">
-                            <!-- Local Starter -->
-                            <div class="pkg-column">
-                                <div class="pkg-column-header pkg-starter">
-                                    <i class="bi bi-rocket-takeoff"></i>
-                                    <h6>Local Starter</h6>
-                                </div>
-                                <ul class="pkg-feature-list">
-                                    <li><i class="bi bi-check2"></i> 1 Ad Channel (Google or FB/IG)</li>
-                                    <li><i class="bi bi-check2"></i> Yelp Ads Management</li>
-                                    <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
-                                    <li><i class="bi bi-check2"></i> 2 GMB Posts/Month</li>
-                                    <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Social Media Posts</li>
-                                    <li><i class="bi bi-check2"></i> 1 Email Campaign/Month</li>
-                                    <li><i class="bi bi-check2"></i> 2 SMS Campaigns/Month</li>
-                                    <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Advanced SEO</li>
-                                    <li><i class="bi bi-check2"></i> Strategy Call</li>
-                                    <li><i class="bi bi-check2"></i> Monthly Report</li>
-                                </ul>
-                            </div>
-
-                            <!-- Local Growth -->
-                            <div class="pkg-column pkg-column-highlight">
-                                <div class="pkg-column-header pkg-growth">
-                                    <span class="pkg-popular-badge">Popular</span>
-                                    <i class="bi bi-graph-up-arrow"></i>
-                                    <h6>Local Growth</h6>
-                                </div>
-                                <ul class="pkg-feature-list">
-                                    <li><i class="bi bi-check2"></i> Google + FB/IG Ads</li>
-                                    <li><i class="bi bi-check2"></i> Yelp Ads Management</li>
-                                    <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
-                                    <li><i class="bi bi-check2"></i> 4 GMB Posts/Month</li>
-                                    <li><i class="bi bi-check2"></i> 4 Social Media Posts/Month</li>
-                                    <li><i class="bi bi-check2"></i> 2 Email Campaigns/Month</li>
-                                    <li><i class="bi bi-check2"></i> 2 SMS Campaigns/Month</li>
-                                    <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Advanced SEO</li>
-                                    <li><i class="bi bi-check2"></i> Monthly Strategy Call</li>
-                                    <li><i class="bi bi-check2"></i> Monthly Report</li>
-                                </ul>
-                            </div>
-
-                            <!-- Local Ultimate -->
-                            <div class="pkg-column">
-                                <div class="pkg-column-header pkg-ultimate">
-                                    <i class="bi bi-trophy"></i>
-                                    <h6>Local Ultimate</h6>
-                                </div>
-                                <ul class="pkg-feature-list">
-                                    <li><i class="bi bi-check2"></i> Google + FB/IG + Advanced Ads</li>
-                                    <li><i class="bi bi-check2"></i> Yelp Ads</li>
-                                    <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
-                                    <li><i class="bi bi-check2"></i> 8 GMB Posts/Month</li>
-                                    <li><i class="bi bi-check2"></i> 8 Social Media Posts/Month</li>
-                                    <li><i class="bi bi-check2"></i> 4 Email Campaigns/Month</li>
-                                    <li><i class="bi bi-check2"></i> 4 SMS Campaigns/Month</li>
-                                    <li><i class="bi bi-check2"></i> Advanced SEO Components</li>
-                                    <li><i class="bi bi-check2"></i> Monthly Strategy Call</li>
-                                    <li><i class="bi bi-check2"></i> Monthly Report</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ============================================================ -->
-                    <!-- STAFF-ONLY: Internal Knowledge Base                           -->
-                    <!-- ============================================================ -->
-                    <?php if ($mode === 'staff'): ?>
-                    <div class="form-section staff-only-section">
-                        <h5 class="section-title"><i class="bi bi-book"></i> Staff Knowledge Base <span class="badge bg-warning text-dark ms-2" style="font-size:.65rem;">Staff Only</span></h5>
-
-                        <div class="mb-3">
-                            <label class="form-label">Package Reference Materials <small class="text-muted">(file, link, image)</small></label>
-                            <input type="text" class="form-control" name="staffPackageRef" placeholder="e.g. Google Drive link, file path, or image URL">
-                        </div>
-
-                        <div class="info-card info-stripe mb-3">
-                            <h6><i class="bi bi-credit-card-2-front"></i> Stripe Information</h6>
-                            <ul class="mb-0">
-                                <li>Stripe is our payment processing partner.</li>
-                                <li>Local For You does <strong>not</strong> hold customer revenue at any point.</li>
-                                <li>Stripe fee: <strong>2.9% + 30&cent;</strong> per transaction (standard US rate).</li>
-                                <li>Customers connect their own Stripe account for online payments.</li>
-                            </ul>
-                        </div>
-
-                        <div class="info-card info-delivery mb-3">
-                            <h6><i class="bi bi-truck"></i> In-House Delivery &amp; AI Marketing</h6>
-                            <ul class="mb-0">
-                                <li><strong>In-House Delivery:</strong> Available for Bundle restaurant customers. Delivery fee is customizable per area/zone.</li>
-                                <li><strong>AI Marketing:</strong> Available for restaurant packages. Activation should be done by the customer themselves.</li>
-                            </ul>
-                        </div>
-
-                        <div class="info-card info-amelia mb-3">
-                            <h6><i class="bi bi-calendar-check"></i> Amelia Booking System</h6>
-                            <p class="mb-0">For Amelia booking system, the customer <strong>must use WordPress</strong>. If they want to keep their own website, make sure it is WordPress-based.</p>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
-                    <!-- ============================================================ -->
-                    <!-- CUSTOMER-ONLY: Important Notices                              -->
-                    <!-- ============================================================ -->
-                    <?php if ($mode === 'customer'): ?>
-                    <div class="form-section customer-notice-section">
-                        <h5 class="section-title"><i class="bi bi-info-circle"></i> Important Information</h5>
-                        <div class="notice-card notice-cancel">
-                            <div class="notice-icon"><i class="bi bi-calendar-x"></i></div>
-                            <div>
-                                <strong>30-Day Cancellation Notice</strong>
-                                <p class="mb-0">All cancellations require a <strong>30-day advance notice</strong>. Please notify us at least 30 days before your next billing date if you wish to cancel your service.</p>
-                            </div>
-                        </div>
-                        <div class="notice-card notice-contract">
-                            <div class="notice-icon"><i class="bi bi-file-earmark-lock"></i></div>
-                            <div>
-                                <strong>Contract &amp; Service Fee</strong>
-                                <p class="mb-0">If the contract has expired, the service fee will remain as per the contract selected until canceled or changed to another contract.</p>
-                            </div>
-                        </div>
-                        <div class="notice-card notice-stripe">
-                            <div class="notice-icon"><i class="bi bi-shield-check"></i></div>
-                            <div>
-                                <strong>Payment Processing (Stripe)</strong>
-                                <p class="mb-0">Stripe is our trusted payment partner. <strong>Local For You does not hold your revenue at any point.</strong> All payments go directly through Stripe to your connected account.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
 
                     <!-- ============================================================ -->
                     <!-- MAIN FORM                                                    -->
@@ -201,9 +104,24 @@ $mode = $_GET['mode'] ?? 'customer';
                             <h5 class="section-title"><i class="bi bi-shop-window"></i> Shop Details</h5>
 
                             <div class="mb-3">
+                                <label for="country" class="form-label">Country <span class="text-danger">*</span></label>
+                                <select class="form-select" id="country" name="country" required>
+                                    <option value="">-- Select Country --</option>
+                                    <option value="US">United States</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="NZ">New Zealand</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="TH">Thailand</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a country.</div>
+                            </div>
+
+                            <div class="mb-3 position-relative">
                                 <label for="mondayProjectId" class="form-label">Monday Project / Shop ID <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="e.g. 12345678" required>
-                                <div class="form-text">Enter the Monday.com project or Shop ID. Other fields will auto-fill.</div>
+                                <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="Type shop name or ID to search..." autocomplete="off" required>
+                                <div id="projectSearchDropdown" class="project-search-dropdown"></div>
+                                <div class="form-text">Search by shop name or ID. Other fields will auto-fill.</div>
                                 <div class="invalid-feedback">Please enter the Monday Project / Shop ID.</div>
                             </div>
 
@@ -227,6 +145,12 @@ $mode = $_GET['mode'] ?? 'customer';
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
                                     <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Auto-filled from ID">
                                 </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="emailAddress" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="emailAddress" name="emailAddress" placeholder="e.g. owner@restaurant.com" required>
+                                <div class="invalid-feedback">Please enter an email address.</div>
                             </div>
 
                             <div class="row">
@@ -262,25 +186,11 @@ $mode = $_GET['mode'] ?? 'customer';
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="originalProduct" class="form-label">Original Product <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="originalProduct" name="originalProduct">
-                                        <option value="">-- Select Original Product --</option>
-                                        <optgroup label="Pro Plans">
-                                            <option value="pro_starter">Pro - Local Starter</option>
-                                            <option value="pro_growth">Pro - Local Growth</option>
-                                            <option value="pro_ultimate">Pro - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Solo Plans">
-                                            <option value="solo_starter">Solo - Local Starter</option>
-                                            <option value="solo_growth">Solo - Local Growth</option>
-                                            <option value="solo_ultimate">Solo - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Bundle Plans">
-                                            <option value="bundle_starter">Bundle - Local Starter</option>
-                                            <option value="bundle_growth">Bundle - Local Growth</option>
-                                            <option value="bundle_ultimate">Bundle - Local Ultimate</option>
-                                        </optgroup>
-                                    </select>
+                                    <label class="form-label">Original Product (Active Subscriptions)</label>
+                                    <div id="originalProductList" class="subscription-list">
+                                        <span class="subscription-placeholder">Select a project first</span>
+                                    </div>
+                                    <input type="hidden" id="originalProduct" name="originalProduct">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="newProduct" class="form-label">New Product <span class="text-danger">*</span></label>
@@ -564,14 +474,164 @@ $mode = $_GET['mode'] ?? 'customer';
                         <input type="hidden" name="formMode" value="<?php echo htmlspecialchars($mode); ?>">
                         <input type="hidden" name="stripeID" id="stripeID" value="<?php echo htmlspecialchars($stripeID ?? ''); ?>">
                         <input type="hidden" id="statusUser" name="statusUser" value="completed">
+                        <input type="hidden" name="testMode" id="testMode" value="<?php echo htmlspecialchars($testMode); ?>">
                     </form>
                 </div>
             </div>
+            </div><!-- /form-layout -->
         </section>
     </main>
 </div>
 
 <?php include '../layout/footer.php'; ?>
+
+
+<!-- ===== Modal: Package Details ===== -->
+<div class="modal fade" id="modalPackageDetails" tabindex="-1" aria-labelledby="modalPackageDetailsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPackageDetailsLabel"><i class="bi bi-box-seam me-2 text-primary"></i>Package Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="pkg-compare-grid">
+                    <div class="pkg-column">
+                        <div class="pkg-column-header pkg-starter">
+                            <i class="bi bi-rocket-takeoff"></i>
+                            <h6>Local Starter</h6>
+                        </div>
+                        <ul class="pkg-feature-list">
+                            <li><i class="bi bi-check2"></i> 1 Ad Channel (Google or FB/IG)</li>
+                            <li><i class="bi bi-check2"></i> Yelp Ads Management</li>
+                            <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
+                            <li><i class="bi bi-check2"></i> 2 GMB Posts/Month</li>
+                            <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Social Media Posts</li>
+                            <li><i class="bi bi-check2"></i> 1 Email Campaign/Month</li>
+                            <li><i class="bi bi-check2"></i> 2 SMS Campaigns/Month</li>
+                            <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Advanced SEO</li>
+                            <li><i class="bi bi-check2"></i> Strategy Call</li>
+                            <li><i class="bi bi-check2"></i> Monthly Report</li>
+                        </ul>
+                    </div>
+                    <div class="pkg-column pkg-column-highlight">
+                        <div class="pkg-column-header pkg-growth">
+                            <span class="pkg-popular-badge">Popular</span>
+                            <i class="bi bi-graph-up-arrow"></i>
+                            <h6>Local Growth</h6>
+                        </div>
+                        <ul class="pkg-feature-list">
+                            <li><i class="bi bi-check2"></i> Google + FB/IG Ads</li>
+                            <li><i class="bi bi-check2"></i> Yelp Ads Management</li>
+                            <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
+                            <li><i class="bi bi-check2"></i> 4 GMB Posts/Month</li>
+                            <li><i class="bi bi-check2"></i> 4 Social Media Posts/Month</li>
+                            <li><i class="bi bi-check2"></i> 2 Email Campaigns/Month</li>
+                            <li><i class="bi bi-check2"></i> 2 SMS Campaigns/Month</li>
+                            <li class="pkg-feature-disabled"><i class="bi bi-x"></i> Advanced SEO</li>
+                            <li><i class="bi bi-check2"></i> Monthly Strategy Call</li>
+                            <li><i class="bi bi-check2"></i> Monthly Report</li>
+                        </ul>
+                    </div>
+                    <div class="pkg-column">
+                        <div class="pkg-column-header pkg-ultimate">
+                            <i class="bi bi-trophy"></i>
+                            <h6>Local Ultimate</h6>
+                        </div>
+                        <ul class="pkg-feature-list">
+                            <li><i class="bi bi-check2"></i> Google + FB/IG + Advanced Ads</li>
+                            <li><i class="bi bi-check2"></i> Yelp Ads</li>
+                            <li><i class="bi bi-check2"></i> Proactive Review Replies</li>
+                            <li><i class="bi bi-check2"></i> 8 GMB Posts/Month</li>
+                            <li><i class="bi bi-check2"></i> 8 Social Media Posts/Month</li>
+                            <li><i class="bi bi-check2"></i> 4 Email Campaigns/Month</li>
+                            <li><i class="bi bi-check2"></i> 4 SMS Campaigns/Month</li>
+                            <li><i class="bi bi-check2"></i> Advanced SEO Components</li>
+                            <li><i class="bi bi-check2"></i> Monthly Strategy Call</li>
+                            <li><i class="bi bi-check2"></i> Monthly Report</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Modal: Important Information ===== -->
+<div class="modal fade" id="modalImportantInfo" tabindex="-1" aria-labelledby="modalImportantInfoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImportantInfoLabel"><i class="bi bi-info-circle me-2 text-success"></i>Important Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="notice-card notice-cancel">
+                    <div class="notice-icon"><i class="bi bi-calendar-x"></i></div>
+                    <div>
+                        <strong>30-Day Cancellation Notice</strong>
+                        <p class="mb-0">All cancellations require a <strong>30-day advance notice</strong>. Please notify us at least 30 days before your next billing date if you wish to cancel your service.</p>
+                    </div>
+                </div>
+                <div class="notice-card notice-contract">
+                    <div class="notice-icon"><i class="bi bi-file-earmark-lock"></i></div>
+                    <div>
+                        <strong>Contract &amp; Service Fee</strong>
+                        <p class="mb-0">If the contract has expired, the service fee will remain as per the contract selected until canceled or changed to another contract.</p>
+                    </div>
+                </div>
+                <div class="notice-card notice-stripe">
+                    <div class="notice-icon"><i class="bi bi-shield-check"></i></div>
+                    <div>
+                        <strong>Payment Processing (Stripe)</strong>
+                        <p class="mb-0">Stripe is our trusted payment partner. <strong>Local For You does not hold your revenue at any point.</strong> All payments go directly through Stripe to your connected account.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Modal: Staff Knowledge Base ===== -->
+<div class="modal fade" id="modalStaffKB" tabindex="-1" aria-labelledby="modalStaffKBLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#fffdf5; border-bottom:2px dashed #ffc107;">
+                <h5 class="modal-title" id="modalStaffKBLabel">
+                    <i class="bi bi-book me-2" style="color:#d48f00;"></i>Staff Knowledge Base
+                    <span class="badge bg-warning text-dark ms-2" style="font-size:.65rem;">Staff Only</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="background:#fffdf5;">
+                <div class="mb-3">
+                    <label class="form-label">Package Reference Materials <small class="text-muted">(file, link, image)</small></label>
+                    <input type="text" class="form-control" name="staffPackageRef" placeholder="e.g. Google Drive link, file path, or image URL">
+                </div>
+                <div class="info-card info-stripe mb-3">
+                    <h6><i class="bi bi-credit-card-2-front"></i> Stripe Information</h6>
+                    <ul class="mb-0">
+                        <li>Stripe is our payment processing partner.</li>
+                        <li>Local For You does <strong>not</strong> hold customer revenue at any point.</li>
+                        <li>Stripe fee: <strong>2.9% + 30&cent;</strong> per transaction (standard US rate).</li>
+                        <li>Customers connect their own Stripe account for online payments.</li>
+                    </ul>
+                </div>
+                <div class="info-card info-delivery mb-3">
+                    <h6><i class="bi bi-truck"></i> In-House Delivery &amp; AI Marketing</h6>
+                    <ul class="mb-0">
+                        <li><strong>In-House Delivery:</strong> Available for Bundle restaurant customers. Delivery fee is customizable per area/zone.</li>
+                        <li><strong>AI Marketing:</strong> Available for restaurant packages. Activation should be done by the customer themselves.</li>
+                    </ul>
+                </div>
+                <div class="info-card info-amelia mb-3">
+                    <h6><i class="bi bi-calendar-check"></i> Amelia Booking System</h6>
+                    <p class="mb-0">For Amelia booking system, the customer <strong>must use WordPress</strong>. If they want to keep their own website, make sure it is WordPress-based.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>

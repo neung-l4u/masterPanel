@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <title>Thank you - Araya AI</title>
+    <title>Form Submitted - Local For You</title>
     <style>
         body {
             background: #f0f2f5;
@@ -197,19 +197,19 @@
             <div class="thankyou-icon">
                 <i class="bi bi-check-lg"></i>
             </div>
-            <h1>Thank You!</h1>
+            <h1>Form Submitted!</h1>
         </div>
         <div class="thankyou-body">
-            <p>Your information has been successfully received! Our team is now beginning the setup of your <strong>Araya AI Receptionist</strong> right away.</p>
+            <p>Your request has been successfully submitted. Our team will review the details and reach out to you within <strong>1–2 business days</strong> to confirm the next steps.</p>
 
             <div class="highlight-box">
-                <i class="bi bi-clock-history"></i>
-                <span>The system will be ready within <strong>48 hours</strong>. We will contact you to confirm once the system is fully online and operational.</span>
+                <i class="bi bi-envelope-check"></i>
+                <span>Please check your <strong>email or phone</strong> for follow-up from our team. If you have any questions, feel free to contact your account manager directly.</span>
             </div>
 
-            <p>Thank you for trusting and choosing <strong>Araya AI</strong> services.</p>
+            <p>Thank you for being a valued customer of <strong>Local For You</strong>.</p>
 
-            <a href="customerDetailsForm.php" class="btn-back"><i class="bi bi-arrow-left"></i> Back to Form</a>
+            <a href="javascript:window.close()" class="btn-back"><i class="bi bi-x-lg"></i> Close Tab</a>
         </div>
     </div>
 </div>

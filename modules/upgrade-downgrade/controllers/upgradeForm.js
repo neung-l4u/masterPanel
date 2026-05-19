@@ -147,6 +147,130 @@ function updateSectionVisibility() {
     }
 }
 
+// ===== Project Search Autocomplete =====
+(function () {
+    let searchTimer = null;
+    let allProjects = [];
+    const $input = $('#mondayProjectId');
+    const $dropdown = $('#projectSearchDropdown');
+
+    function setLoading(on) {
+        if (on) {
+            $input.prop('disabled', true);
+            $input.closest('.position-relative').find('.ps-spinner').remove();
+            $input.after('<div class="ps-spinner"><span class="spinner-border spinner-border-sm"></span> Fetching projects...</div>');
+        } else {
+            $input.prop('disabled', false);
+            $input.closest('.position-relative').find('.ps-spinner').remove();
+        }
+    }
+
+    function fetchProjects(country) {
+        if (!country) { allProjects = []; return; }
+        setLoading(true);
+        $dropdown.removeClass('show').empty();
+        $.getJSON('../assets/API/selectProjectCountry/live.php', { country }, function (data) {
+            allProjects = Array.isArray(data) ? data : [];
+        }).fail(function () {
+            allProjects = [];
+        }).always(function () {
+            setLoading(false);
+            renderDropdown($input.val().trim());
+        });
+    }
+
+    function renderDropdown(query) {
+        if (!query) { $dropdown.removeClass('show').empty(); return; }
+
+        const q = query.toLowerCase();
+        const matches = allProjects.filter(p =>
+            p.shopName.toLowerCase().includes(q) ||
+            p.shopId.includes(q)
+        ).slice(0, 30);
+
+        if (!matches.length) {
+            $dropdown.html('<div class="project-search-empty">No results found</div>').addClass('show');
+            return;
+        }
+
+        const items = matches.map(p => {
+            const meta = [p.shopType, p.ownerName, p.phone].filter(Boolean).join(' · ');
+            return `<div class="project-search-item" data-id="${p.shopId}" data-name="${p.shopName}" data-type="${p.shopType}" data-owner="${p.ownerName}" data-phone="${p.phone}">
+                <div class="ps-name">${p.shopName} <small class="text-muted">#${p.shopId}</small></div>
+                ${meta ? `<div class="ps-meta">${meta}</div>` : ''}
+            </div>`;
+        }).join('');
+        $dropdown.html(items).addClass('show');
+    }
+
+    function loadSubscriptions(shopName) {
+        const $list = $('#originalProductList');
+        $list.html('<span class="subscription-loading"><span class="spinner-border spinner-border-sm"></span> Loading...</span>');
+        $('#originalProduct').val('');
+
+        $.getJSON('../assets/API/getSubscriptions.php', { shopName: shopName }, function (data) {
+            if (!data.length) {
+                $list.html('<span class="subscription-placeholder">No active subscriptions found</span>');
+                return;
+            }
+            const names = data.map(p => p.name);
+            $('#originalProduct').val(names.join(', '));
+            const html = data.map(p => `
+                <div class="subscription-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>
+                        <div class="sub-name">${p.name}</div>
+                        ${p.price ? `<div class="sub-price">${p.currency} ${p.price}/mo</div>` : ''}
+                    </div>
+                </div>`).join('');
+            $list.html(html);
+        }).fail(function () {
+            $list.html('<span class="subscription-placeholder">Failed to load subscriptions</span>');
+        });
+    }
+
+    function selectProject(item) {
+        const $item = $(item);
+        $input.val($item.data('id'));
+        $('#shopName').val($item.data('name'));
+        $('#shopType').val($item.data('type'));
+        $('#ownerName').val($item.data('owner'));
+        $('#phoneNumber').val($item.data('phone'));
+        $input.removeClass('is-invalid');
+        $dropdown.removeClass('show').empty();
+        loadSubscriptions($item.data('name'));
+    }
+
+    $('#country').on('change', function () {
+        const country = $(this).val();
+        $input.val('').prop('disabled', !country);
+        $('#shopName, #shopType, #ownerName, #phoneNumber').val('');
+        $dropdown.removeClass('show').empty();
+        allProjects = [];
+        if (country) fetchProjects(country);
+    });
+
+    $input.on('input', function () {
+        clearTimeout(searchTimer);
+        const q = $(this).val().trim();
+        if (!q) { $dropdown.removeClass('show').empty(); return; }
+        searchTimer = setTimeout(() => renderDropdown(q), 200);
+    });
+
+    $dropdown.on('click', '.project-search-item', function () {
+        selectProject(this);
+    });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('#mondayProjectId, #projectSearchDropdown').length) {
+            $dropdown.removeClass('show').empty();
+        }
+    });
+
+    // disable input until country selected
+    if (!$('#country').val()) $input.prop('disabled', true);
+})();
+
 // ===== DOM Ready =====
 $(function () {
 
@@ -248,7 +372,7 @@ function sendData(formData) {
     const jsonData = Object.assign({}, formData, { date: formattedDate });
 
     $.ajax({
-        url: "https://hook.us1.make.com/3y48icq17day9xjnn4wjd3cuan9yutcw",
+        url: "https://hook.us1.make.com/15w2pggndrpv3ggsm7hfqqh1vsy83s92",
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(jsonData),
@@ -290,8 +414,11 @@ function validateForm() {
     const upgradeType = $('input[name="upgradeType"]:checked').val();
     const isUpgradePackage = (upgradeType === 'upgrade_package');
 
+    // Re-enable mondayProjectId before serializing (it may be disabled when country not selected)
+    $('#mondayProjectId').prop('disabled', false);
+
     // Always required fields
-    const alwaysRequired = ['mondayProjectId', 'bestTimeContact'];
+    const alwaysRequired = ['mondayProjectId', 'bestTimeContact', 'emailAddress'];
     alwaysRequired.forEach(id => {
         const el = document.getElementById(id);
         if (el && !el.value.trim()) {
@@ -301,6 +428,15 @@ function validateForm() {
             el.classList.remove('is-invalid');
         }
     });
+
+    // Country select
+    const countryEl = document.getElementById('country');
+    if (countryEl && !countryEl.value) {
+        countryEl.classList.add('is-invalid');
+        isValid = false;
+    } else if (countryEl) {
+        countryEl.classList.remove('is-invalid');
+    }
 
     // Upgrade type radio must be selected
     if (!upgradeType) {
@@ -378,4 +514,57 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('input[name="' + this.name + '"]').forEach(r => r.classList.remove('is-invalid'));
         });
     });
+
+    if ($('#testMode').val() === 'true') {
+        applyTestAutofill();
+    }
 });
+
+// ===== Test Mode Autofill =====
+function applyTestAutofill() {
+    $('#country').val('TH').trigger('change');
+
+    setTimeout(function () {
+        $('#mondayProjectId').prop('disabled', false).val('99999');
+        $('#shopName').val('Test Shop');
+        $('#shopType').val('Restaurant');
+        $('#ownerName').val('Test Owner');
+        $('#phoneNumber').val('555-010-0000');
+        $('#bestTimeContact').val('Weekdays 9am-5pm PST');
+        $('#emailAddress').val('test@example.com');
+
+        $('#typeUpgradePackage').prop('checked', true).trigger('change');
+
+        // Set originalProduct hidden input + show placeholder in list
+        $('#originalProduct').val('pro_starter');
+        $('#originalProductList').html(`
+            <div class="subscription-item">
+                <i class="bi bi-check-circle-fill"></i>
+                <div><div class="sub-name">Pro - Local Starter (Test)</div></div>
+            </div>`);
+
+        $('#newProduct').val('pro_growth').trigger('change');
+        $('#promotion').val('1trial');
+        $('#contractPeriod').val('12 months');
+        $('#upgradeReason').val('Test mode - automated autofill');
+        $('#salesAgent').val('Test Agent');
+
+        const today = new Date().toISOString().split('T')[0];
+        $('#billingDate').val(today);
+        $('#upgradeNote').val('Please upgrade ASAP.');
+
+        // Add-on products
+        $('#addonSocialMedia').prop('checked', true);
+        $('#addonSMS').prop('checked', true);
+        $('#addonAraya').prop('checked', true);
+
+        // Social media
+        $('#facebookPage').val('https://facebook.com/testshop');
+        $('#googleBP').val('https://business.google.com/testshop');
+        $('#yelpPage').val('https://yelp.com/biz/testshop');
+        $('#lineOA').val('@testshop');
+        $('#tiktokPage').val('https://tiktok.com/@testshop');
+
+        $('#additionalComments').val('Automated test submission for upgrade form. Please ignore.');
+    }, 300);
+}

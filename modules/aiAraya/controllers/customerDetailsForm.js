@@ -30,6 +30,7 @@ function sendData(formData, qualify) {
         shopAddress: formData.shopAddress || "",
         businessWebsite: formData.businessWebsite || "",
         phoneNumberDecision: formData.phoneNumberDecision || "",
+        mainPhoneNumber: formData.mainPhoneNumber || "",
         backupPhoneNumber: formData.backupPhoneNumber || "",
         phoneCarrier: formData.phoneCarrier || "",
         shopEmail: formData.shopEmail || "",
@@ -70,7 +71,7 @@ function sendData(formData, qualify) {
         data: JSON.stringify(jsonData),
         success: () => {
             console.log("✅ Webhook sent successfully.");
-            //window.location.replace("thankyou.php");
+            window.location.replace("thankyou.php");
         },
         error: () => {
             console.error("❌ Webhook sending failed.");
@@ -112,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Validate required text/textarea/number fields
         const requiredFields = [
             'businessName', 'businessHours', 'currentBookingSystem', 'timezoneId',
-            'backupPhoneNumber', 'phoneCarrier', 'servicesOffered',
+            'mainPhoneNumber', 'backupPhoneNumber', 'phoneCarrier', 'servicesOffered',
             'numberOfTherapists', 'therapistNames', 'promotions'
         ];
         requiredFields.forEach(id => {

@@ -119,6 +119,34 @@ function buildDowngradeComparisonHTML(origVal, newVal) {
     return html;
 }
 
+// ===== Load Active Subscriptions (staff mode) =====
+function loadSubscriptions(shopName) {
+    const $list = $('#originalProductList');
+    if (!$list.length) return;
+    $list.html('<span class="subscription-loading"><span class="spinner-border spinner-border-sm"></span> Loading...</span>');
+    $('#originalProduct').val('');
+
+    $.getJSON('../assets/API/getSubscriptions.php', { shopName: shopName }, function (data) {
+        if (!data.length) {
+            $list.html('<span class="subscription-placeholder">No active subscriptions found</span>');
+            return;
+        }
+        const names = data.map(p => p.name);
+        $('#originalProduct').val(names.join(', '));
+        const html = data.map(p => `
+            <div class="subscription-item">
+                <i class="bi bi-check-circle-fill"></i>
+                <div>
+                    <div class="sub-name">${p.name}</div>
+                    ${p.price ? `<div class="sub-price">${p.currency} ${p.price}/mo</div>` : ''}
+                </div>
+            </div>`).join('');
+        $list.html(html);
+    }).fail(function () {
+        $list.html('<span class="subscription-placeholder">Failed to load subscriptions</span>');
+    });
+}
+
 // ===== Section Visibility =====
 function updateSectionVisibility() {
     const requestType      = $('input[name="requestType"]:checked').val();
@@ -187,6 +215,90 @@ function initStarRating(widgetId, inputId, labelId) {
 }
 
 // ===== DOM Ready =====
+// ===== Project Search Autocomplete (staff mode) =====
+(function () {
+    const $input = $('#mondayProjectId');
+    const $dropdown = $('#projectSearchDropdown');
+    if (!$input.length) return;
+
+    let searchTimer = null;
+    let allProjects = [];
+
+    function setLoading(on) {
+        if (on) {
+            $input.prop('disabled', true);
+            $input.closest('.position-relative').find('.ps-spinner').remove();
+            $input.after('<div class="ps-spinner"><span class="spinner-border spinner-border-sm"></span> Fetching projects...</div>');
+        } else {
+            $input.prop('disabled', false);
+            $input.closest('.position-relative').find('.ps-spinner').remove();
+        }
+    }
+
+    function fetchProjects(country) {
+        if (!country) { allProjects = []; return; }
+        setLoading(true);
+        $dropdown.removeClass('show').empty();
+        $.getJSON('../assets/API/selectProjectCountry/live.php', { country }, function (data) {
+            allProjects = Array.isArray(data) ? data : [];
+        }).fail(function () {
+            allProjects = [];
+        }).always(function () {
+            setLoading(false);
+            renderDropdown($input.val().trim());
+        });
+    }
+
+    function renderDropdown(query) {
+        if (!query) { $dropdown.removeClass('show').empty(); return; }
+        const q = query.toLowerCase();
+        const matches = allProjects.filter(p =>
+            p.shopName.toLowerCase().includes(q) ||
+            p.shopId.includes(q)
+        ).slice(0, 30);
+
+        if (!matches.length) {
+            $dropdown.html('<div class="project-search-empty">No results found</div>').addClass('show');
+            return;
+        }
+        const items = matches.map(p => {
+            const meta = [p.shopType, p.ownerName, p.phone].filter(Boolean).join(' · ');
+            return `<div class="project-search-item" data-id="${p.shopId}" data-name="${p.shopName}">
+                <div class="ps-name">${p.shopName} <small class="text-muted">#${p.shopId}</small></div>
+                ${meta ? `<div class="ps-meta">${meta}</div>` : ''}
+            </div>`;
+        }).join('');
+        $dropdown.html(items).addClass('show');
+    }
+
+    $('#country').on('change', function () {
+        const country = $(this).val();
+        $input.val('');
+        $dropdown.removeClass('show').empty();
+        allProjects = [];
+        if (country) fetchProjects(country);
+    });
+
+    $input.on('input', function () {
+        clearTimeout(searchTimer);
+        const q = $(this).val().trim();
+        if (!q) { $dropdown.removeClass('show').empty(); return; }
+        searchTimer = setTimeout(() => renderDropdown(q), 200);
+    });
+
+    $dropdown.on('click', '.project-search-item', function () {
+        $input.val($(this).data('id'));
+        $dropdown.removeClass('show').empty();
+        loadSubscriptions($(this).data('name'));
+    });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('#mondayProjectId, #projectSearchDropdown').length) {
+            $dropdown.removeClass('show').empty();
+        }
+    });
+})();
+
 $(function () {
 
     // --- Request type toggle ---
@@ -260,7 +372,7 @@ function sendData(formData) {
     const jsonData = Object.assign({}, formData, { date: formattedDate });
 
     $.ajax({
-        url: "https://hook.us1.make.com/REPLACE_WITH_DOWNGRADE_WEBHOOK",
+        url: "https://hook.us1.make.com/bx39ojs8u6q8xgq9b2e2an8f14r4rxwe",
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(jsonData),
@@ -351,15 +463,25 @@ function validateForm() {
 
     // Downgrade package — product selects
     if (isDowngradePkg) {
-        ['originalProduct', 'newProduct'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el && !el.value) {
-                el.classList.add('is-invalid');
-                isValid = false;
-            } else if (el) {
-                el.classList.remove('is-invalid');
-            }
-        });
+        // originalProduct: hidden input (staff) or select (customer)
+        const origEl = document.getElementById('originalProduct');
+        const origList = document.getElementById('originalProductList');
+        if (origEl && !origEl.value) {
+            if (origList) origList.classList.add('is-invalid');
+            else origEl.classList.add('is-invalid');
+            isValid = false;
+        } else if (origEl) {
+            if (origList) origList.classList.remove('is-invalid');
+            else origEl.classList.remove('is-invalid');
+        }
+
+        const newEl = document.getElementById('newProduct');
+        if (newEl && !newEl.value) {
+            newEl.classList.add('is-invalid');
+            isValid = false;
+        } else if (newEl) {
+            newEl.classList.remove('is-invalid');
+        }
     }
 
     if (!isValid) {
@@ -387,4 +509,83 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('input[name="' + this.name + '"]').forEach(r => r.classList.remove('is-invalid'));
         });
     });
+
+    if ($('#testMode').val() === 'true') {
+        applyTestAutofill();
+    }
 });
+
+// ===== Test Mode Autofill =====
+function applyTestAutofill() {
+    // Business Info
+    $('#shopName').val('Test Shop');
+    $('#tradingName').val('Test Shop LLC');
+    $('#address').val('123 Test St, Los Angeles, CA 90001');
+    $('#contactPerson').val('Test Person');
+    $('#emailAddress').val('test@example.com');
+    $('#mobileNumber').val('+1 (555) 010-0000');
+
+    // Staff fields
+    $('#country').val('US');
+    $('#mondayProjectId').val('99999');
+
+    // Request Type
+    $('#reqOtherPackage').prop('checked', true).trigger('change');
+
+    // Current Product: staff mode = hidden input + list; customer mode = select
+    if ($('#originalProductList').length) {
+        $('#originalProduct').val('Pro - Local Growth');
+        $('#originalProductList').html(`
+            <div class="subscription-item">
+                <i class="bi bi-check-circle-fill"></i>
+                <div><div class="sub-name">Pro - Local Growth (Test)</div></div>
+            </div>`);
+    } else {
+        $('#originalProduct').val('pro_growth').trigger('change');
+    }
+
+    // New Product
+    $('#newProduct').val('pro_starter').trigger('change');
+
+    // Staff downgrade fields
+    $('#contractPeriod').val('12 months');
+    $('#accountManager').val('Test Manager');
+    $('#billingDate').val(new Date().toISOString().split('T')[0]);
+    $('#staffDowngradeNote').val('Test mode - automated autofill');
+
+    // Effective Date
+    $('#effEndBilling').prop('checked', true).trigger('change');
+
+    // Reasons
+    $('#reasonBudget').prop('checked', true);
+    $('#reasonResults').prop('checked', true);
+
+    // Features to Keep
+    $('#keepNone').prop('checked', true);
+
+    // Additional Details
+    $('#improvementSuggestion').val('Test mode - improvement suggestion');
+    $('#contactNo').prop('checked', true).trigger('change');
+    $('#feedbackComments').val('Test mode - feedback');
+
+    // Star Ratings
+    $('#experienceRating').val('4');
+    setStarUI('experienceRatingWidget', 4, 'expRatingLabel');
+    $('#overallRating').val('5');
+    setStarUI('overallRatingWidget', 5, 'overallRatingLabel');
+
+    // Additional Comments
+    $('#additionalComments').val('Test mode - automated autofill');
+}
+
+function setStarUI(widgetId, val, labelId) {
+    const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+    const widget = document.getElementById(widgetId);
+    if (!widget) return;
+    widget.querySelectorAll('.star').forEach((s, i) => {
+        s.classList.remove('active');
+        s.classList.toggle('selected', i < val);
+    });
+    const labelEl = labelId ? document.getElementById(labelId) : null;
+    if (labelEl) labelEl.textContent = labels[val] || '';
+}

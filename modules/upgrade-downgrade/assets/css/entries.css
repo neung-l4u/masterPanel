@@ -1,7 +1,107 @@
-.form-title {
+.page-title {
     font-weight: 600;
     color: #0d6efd;
     text-align: center;
+}
+
+/* ===== Header Section ===== */
+.form-header {
+    padding: 48px 40px 36px;
+    border-radius: 20px 20px 0 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-header {background: linear-gradient(135deg, #0d6efd 0%, #4f8cfd 50%, #80b1ff 100%);}
+.unsubmit-header {background: linear-gradient(135deg, #ff0000  0%, #fd4f4f 50%, #ff8080 100%);}
+
+.form-header::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+}
+
+.form-header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+}
+
+.logo-img {
+    width: 80px;
+    height: 80px;
+    display: block;
+    margin: 0 auto 16px;
+    border-radius: 16px;
+    background: #fff;
+    padding: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    position: relative;
+    z-index: 1;
+}
+
+.form-title {
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 0;
+}
+
+.form-header .form-subtitle {
+    color: rgba(255,255,255,0.85);
+    font-size: 0.88rem;
+    max-width: 500px;
+    margin: 12px auto 0;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== How-To Links ===== */
+.submit-links {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.submit-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.submit-links a:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-1px);
 }
 
 .viewDetail {
@@ -41,6 +141,8 @@ td > abbr[title]{
 .col_phone { width: 20%; }
 .col_date { width: 15%; text-align: center; }
 .col_detail { width: 10%; text-align: center; }
+.col_status { width: 10%; text-align: center; }
+.col_toform { width: 7%; text-align: center; }
 
 /* Detail Modal */
 .detail-grid {

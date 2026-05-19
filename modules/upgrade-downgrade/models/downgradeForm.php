@@ -5,15 +5,38 @@ header('Content-Type: application/json');
 include '../assets/db/db.php';
 include '../assets/db/initDB.php';
 
-$result["result"] = "";
-$result["msg"]    = "";
+$result = ['result' => '', 'msg' => ''];
 
-$dataLogs = !empty($_POST["payload"]) ? $_POST["payload"] : "no data";
+$payload = !empty($_POST['payload']) ? $_POST['payload'] : 'no data';
 
-$db->query('INSERT INTO `feedback`(`dataLogs`) VALUES (?)', [$dataLogs]);
+// Parse payload to extract key fields for indexed columns
+$data = json_decode($payload, true) ?: [];
 
-$result["result"] = "success";
-$result["msg"]    = "Save to DB successfully!";
+$formType       = 'downgrade';
+$formVersion    = $data['formVersion']      ?? null;
+$formMode       = $data['formMode']         ?? 'customer';
+$testMode       = ($data['testMode'] ?? 'false') === 'true' ? 1 : 0;
+$stripeID       = $data['stripeID']         ?? '';
+$mondayId       = $data['mondayProjectId']  ?? null;
+$shopName       = $data['shopName']         ?? null;
+$emailAddress   = $data['emailAddress']     ?? null;
+$country        = $data['country']          ?? null;
+$requestType    = $data['requestType']      ?? null;
+$submittedAt    = $data['date']             ?? null;
+
+$db->query(
+    'INSERT INTO `upgrade_downgrade_logs`
+        (`formType`, `formVersion`, `formMode`, `testMode`,
+         `stripeId`, `mondayProjectId`, `shopName`, `emailAddress`,
+         `country`, `requestType`, `payload`, `submittedAt`)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    $formType, $formVersion, $formMode, $testMode,
+    $stripeID, $mondayId, $shopName, $emailAddress,
+    $country, $requestType, $payload, $submittedAt
+);
+
+$result['result'] = 'success';
+$result['msg']    = 'Saved to DB successfully.';
 
 echo json_encode($result);
 ?>

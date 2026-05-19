@@ -130,17 +130,25 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
+                                    <label for="mainPhoneNumber" class="form-label">Main Phone Number <span class="text-danger">*</span>
+                                        <div class="form-text text-muted">Shop's primary phone number</div>
+                                    </label>
+                                    <input type="tel" class="form-control" id="mainPhoneNumber" name="mainPhoneNumber" placeholder="e.g. +1 (555) 000-1111" required>
+                                    <div class="invalid-feedback">Please enter your main phone number.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
                                     <label for="backupPhoneNumber" class="form-label">Backup Phone Number <span class="text-danger">*</span><br>
                                         <div class="form-text text-muted">AI transfers to human at this number</div>
                                     </label>
                                     <input type="tel" class="form-control" id="backupPhoneNumber" name="backupPhoneNumber" placeholder="e.g. +1 (555) 123-4567" required>
                                     <div class="invalid-feedback">Please enter a backup phone number.</div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="phoneCarrier" class="form-label">Phone Carrier <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="phoneCarrier" name="phoneCarrier" placeholder="e.g. AT&T, Verizon, T-Mobile" required>
-                                    <div class="invalid-feedback">Please enter your phone carrier.</div>
-                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phoneCarrier" class="form-label">Phone Carrier <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="phoneCarrier" name="phoneCarrier" placeholder="e.g. AT&T, Verizon, T-Mobile" required>
+                                <div class="invalid-feedback">Please enter your phone carrier.</div>
                             </div>
 
                             <div class="mb-3">
@@ -410,8 +418,8 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
 
                                     <div class="row" id="deposit" style="display: none;">
                                         <div class="col-md-6 mb-3">
-                                            <label for="depositeAmount" class="form-label">Deposit Amount <span class="text-danger">*</span><br></label>
-                                            <input type="text" class="form-control" id="depositeAmount" name="depositeAmount" placeholder="e.g. $30 or 30%" required>
+                                            <label for="depositAmount" class="form-label">Deposit Amount <span class="text-danger">*</span><br></label>
+                                            <input type="text" class="form-control" id="depositAmount" name="depositAmount" placeholder="e.g. $30 or 30%" required>
                                             <div class="invalid-feedback">Please enter deposit amount.</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
@@ -621,6 +629,7 @@ $(function() {
         $('#timezoneId').val('America/New_York');
         $('#shopAddress').val('123 Main Street, Suite 4, Los Angeles, CA 90001');
         $('#businessWebsite').val('https://www.marktesttest.com');
+        $('#mainPhoneNumber').val('+1 (555) 000-1111');
         $('#backupPhoneNumber').val('+1 (555) 123-4567');
         $('#phoneCarrier').val('AT&T');
         $('#shopEmail').val('bookings@marktesttest.com');

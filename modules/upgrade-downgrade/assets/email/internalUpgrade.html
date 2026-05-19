@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal – Upgrade / Add-on Submission</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background-color:#f0f2f5;font-family:'Inter',sans-serif;color:#1a1a2e;">
+<div style="padding:40px 20px;background-color:#f0f2f5;">
+<table cellspacing="0" cellpadding="0" border="0" role="presentation" width="620" align="center" style="width:620px;table-layout:fixed;">
+<tr><td>
+
+    <!-- ===== CARD ===== -->
+    <div style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.07);">
+
+        <!-- HEADER -->
+        <div style="background:linear-gradient(135deg,#0d6efd 0%,#4f8cfd 50%,#80b1ff 100%);padding:48px 40px 36px;text-align:center;position:relative;overflow:hidden;">
+            <!-- logo -->
+            <div style="position:relative;z-index:1;">
+                <img src="https://report.localforyou.com/modules/signup/assets/img/Logo-Local-For-You.png" alt="Local For You" width="80" height="80" style="display:block;margin:0 auto 16px;background:#ffffff;border-radius:16px;padding:8px;box-shadow:0 4px 20px rgba(0,0,0,0.15);box-sizing:border-box;">
+                <!-- INTERNAL badge -->
+                <div style="margin-bottom:12px;">
+                    <span style="display:inline-block;background:rgba(255,255,255,0.2);color:#fff;font-family:'Manrope',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.8px;padding:4px 14px;border-radius:50px;border:1px solid rgba(255,255,255,0.35);">INTERNAL</span>
+                </div>
+                <!-- title -->
+                <p style="margin:0 0 8px 0;font-family:'Manrope',sans-serif;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:0.5px;text-transform:uppercase;">Upgrade / Add-on Submission</p>
+                <!-- meta -->
+                <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.8);line-height:1.8;">
+                    {{1.date}} &nbsp;·&nbsp; Mode: <strong style="color:#fff;">{{1.formMode}}</strong><br>
+                    Stripe ID: <strong style="color:#fff;">{{1.stripeID}}</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- BODY -->
+        <div style="padding:32px 32px 40px 32px;">
+
+            <!-- ── SECTION: Shop Details ── -->
+            <p style="margin:0 0 12px 0;font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#3949ab;text-transform:uppercase;">Shop Details</p>
+            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border:1px solid #e8eaf6;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+                <tr style="background:#f5f6ff;">
+                    <td width="38%" style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Country</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.country}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Monday Project ID</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;"><strong>{{1.mondayProjectId}}</strong></td>
+                </tr>
+                <tr style="background:#f5f6ff;">
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Shop Name</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.shopName}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Shop Type</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.shopType}}</td>
+                </tr>
+                <tr style="background:#f5f6ff;">
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Owner Name</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.ownerName}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Phone</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.phoneNumber}}</td>
+                </tr>
+                <tr style="background:#f5f6ff;">
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;">Best Time to Contact</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;">{{1.bestTimeContact}}</td>
+                </tr>
+            </table>
+
+            <!-- ── SECTION: Request Type ── -->
+            <p style="margin:0 0 12px 0;font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#3949ab;text-transform:uppercase;">Request Type</p>
+            <div style="background:#e8eaf6;border-radius:10px;padding:14px 18px;margin-bottom:24px;">
+                <p style="margin:0;font-size:14px;font-weight:700;color:#1a237e;">{{1.upgradeType}}</p>
+            </div>
+
+            <!-- ── SECTION: Upgrade Information ── -->
+            <p style="margin:0 0 12px 0;font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#3949ab;text-transform:uppercase;">Upgrade Information</p>
+            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border:1px solid #e8eaf6;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+                <tr style="background:#f5f6ff;">
+                    <td width="38%" style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Original Product</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.originalProduct}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">New Product</td>
+                    <td style="padding:11px 16px;font-size:13px;font-weight:700;color:#1a237e;border-bottom:1px solid #e8eaf6;">{{1.newProduct}}</td>
+                </tr>
+                <tr style="background:#f5f6ff;">
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Promotion</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.promotion}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Contract Period</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.contractPeriod}}</td>
+                </tr>
+                <tr style="background:#f5f6ff;">
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Sales Agent</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.salesAgent}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Billing Date</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.billingDate}}</td>
+                </tr>
+                <tr style="background:#f5f6ff;">
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Reason</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.upgradeReason}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;">Note</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;">{{1.upgradeNote}}</td>
+                </tr>
+            </table>
+
+            <!-- ── SECTION: Add-on Products ── -->
+            <p style="margin:0 0 12px 0;font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#3949ab;text-transform:uppercase;">Add-on Products</p>
+            <div style="background:#f5f6ff;border:1px solid #e8eaf6;border-radius:10px;padding:14px 18px;margin-bottom:24px;">
+                <p style="margin:0;font-size:13px;color:#1a1a2e;line-height:1.8;">{{1.addons}}</p>
+            </div>
+
+            <!-- ── SECTION: Social Media ── -->
+            <p style="margin:0 0 12px 0;font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#3949ab;text-transform:uppercase;">Social Media Access</p>
+            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border:1px solid #e8eaf6;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+                <tr style="background:#f5f6ff;">
+                    <td width="38%" style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Facebook Page</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.facebookPage}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Google Business Profile</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.googleBP}}</td>
+                </tr>
+                <tr style="background:#f5f6ff;">
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Yelp</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.yelpPage}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #e8eaf6;">Line OA</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #e8eaf6;">{{1.lineOA}}</td>
+                </tr>
+                <tr style="background:#f5f6ff;">
+                    <td style="padding:11px 16px;font-size:12px;font-weight:600;color:#555;">TikTok</td>
+                    <td style="padding:11px 16px;font-size:13px;color:#1a1a2e;">{{1.tiktokPage}}</td>
+                </tr>
+            </table>
+
+            <!-- ── SECTION: Additional Comments ── -->
+            <p style="margin:0 0 12px 0;font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#3949ab;text-transform:uppercase;">Additional Comments</p>
+            <div style="background:#f5f6ff;border:1px solid #e8eaf6;border-radius:10px;padding:14px 18px;margin-bottom:0;">
+                <p style="margin:0;font-size:13px;color:#1a1a2e;line-height:1.8;">{{1.additionalComments}}</p>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="background:#1a237e;padding:20px 32px;text-align:center;">
+            <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.55);">Internal use only &nbsp;·&nbsp; Local For You Operations &nbsp;·&nbsp; &copy; 2026</p>
+        </div>
+
+    </div>
+    <!-- ===== END CARD ===== -->
+
+</td></tr>
+</table>
+</div>
+</body>
+</html>

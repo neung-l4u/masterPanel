@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Received – Local For You</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background-color:#f0f2f5;font-family:'Inter',sans-serif;color:#1a1a2e;">
+<div style="padding:40px 20px;background-color:#f0f2f5;">
+<table cellspacing="0" cellpadding="0" border="0" role="presentation" width="620" align="center" style="width:620px;table-layout:fixed;">
+<tr><td>
+
+    <!-- ===== CARD ===== -->
+    <div style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.07);">
+
+        <!-- HEADER -->
+        <div style="background:linear-gradient(135deg,#0d6efd 0%,#4f8cfd 50%,#80b1ff 100%);padding:48px 40px 36px;text-align:center;position:relative;overflow:hidden;">
+            <div style="position:relative;z-index:1;">
+                <img src="https://report.localforyou.com/modules/signup/assets/img/Logo-Local-For-You.png" alt="Local For You" width="80" height="80" style="display:block;margin:0 auto 16px;background:#ffffff;border-radius:16px;padding:8px;box-shadow:0 4px 20px rgba(0,0,0,0.15);box-sizing:border-box;">
+                <p style="margin:0 0 8px 0;font-family:'Manrope',sans-serif;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:0.5px;text-transform:uppercase;">Request Received</p>
+                <p style="margin:0;font-size:14px;color:rgba(255,255,255,0.85);line-height:1.7;">
+                    Thank you, <strong style="color:#fff;">{{1.shopName}}</strong>.<br>
+                    We have received your downgrade / unsubscription request.
+                </p>
+            </div>
+        </div>
+
+        <!-- BODY -->
+        <div style="padding:36px 32px 44px 32px;">
+
+            <!-- Intro -->
+            <p style="margin:0 0 28px 0;font-size:14px;color:#555;line-height:1.75;text-align:center;">
+                Our team will review your request and follow up within <strong style="color:#0d6efd;">1–2 business days</strong>. Please see your submission summary below.
+            </p>
+
+            <!-- ── Request Summary ── -->
+            <p style="margin:0 0 12px 0;font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#0d6efd;text-transform:uppercase;">Request Summary</p>
+            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border:1px solid #dde4ff;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+                <tr style="background:#f0f4ff;">
+                    <td width="40%" style="padding:12px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #dde4ff;">Type of Request</td>
+                    <td style="padding:12px 16px;font-size:13px;font-weight:700;color:#0d6efd;border-bottom:1px solid #dde4ff;">{{1.requestType}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:12px 16px;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid #dde4ff;">Current Plan</td>
+                    <td style="padding:12px 16px;font-size:13px;color:#1a1a2e;border-bottom:1px solid #dde4ff;">{{1.originalProduct}}</td>
+                </tr>
+                <tr style="background:#f0f4ff;">
+                    <td style="padding:12px 16px;font-size:12px;font-weight:600;color:#555;">New Plan</td>
+                    <td style="padding:12px 16px;font-size:13px;color:#1a1a2e;">{{1.newProduct}}</td>
+                </tr>
+            </table>
+
+            <!-- ── Effective Date ── -->
+            <p style="margin:0 0 12px 0;font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#0d6efd;text-transform:uppercase;">Effective Date</p>
+            <div style="background:#f0f4ff;border:1px solid #dde4ff;border-radius:10px;padding:14px 18px;margin-bottom:24px;">
+                <p style="margin:0;font-size:13px;font-weight:700;color:#1a1a2e;">{{1.effectiveDate}}</p>
+            </div>
+
+            <!-- ── Features to Keep ── -->
+            <p style="margin:0 0 12px 0;font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#0d6efd;text-transform:uppercase;">Features to Keep Active</p>
+            <div style="background:#f0f4ff;border:1px solid #dde4ff;border-radius:10px;padding:14px 18px;margin-bottom:32px;">
+                <p style="margin:0;font-size:13px;color:#1a1a2e;line-height:1.9;">{{1.featuresKeep}}</p>
+            </div>
+
+            <!-- What's Next -->
+            <div style="background:#eef3ff;border:1.5px solid #c7d6fd;border-radius:12px;padding:20px 22px;margin-bottom:32px;">
+                <p style="margin:0 0 8px 0;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;color:#0d6efd;">What happens next?</p>
+                <p style="margin:0;font-size:13px;color:#444;line-height:1.75;">
+                    Our team will contact you to confirm the details and guide you through the next steps. Please note that all changes require a <strong>30-day advance notice</strong> before taking effect.
+                </p>
+            </div>
+
+            <!-- Important Notice -->
+            <div style="background:#fff8e1;border:1.5px solid #ffe082;border-radius:12px;padding:20px 22px;margin-bottom:32px;">
+                <p style="margin:0 0 8px 0;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;color:#f57f17;">30-Day Cancellation Notice</p>
+                <p style="margin:0;font-size:13px;color:#444;line-height:1.75;">
+                    All cancellations and downgrades require a <strong>30-day advance notice</strong>. Billing continues until the notice period has passed. If you have any questions, please contact your account manager.
+                </p>
+            </div>
+
+            <!-- CTA -->
+            <div style="text-align:center;">
+                <a href="https://m.me/508274126220447"
+                   style="display:inline-block;background:linear-gradient(135deg,#0d6efd,#4f8cfd);color:#ffffff;font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;padding:14px 40px;border-radius:12px;text-decoration:none;box-shadow:0 4px 16px rgba(13,110,253,0.3);">
+                    Contact Support
+                </a>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="background:#eff4ff;border-radius:0 0 16px 16px;padding:32px;text-align:center;">
+            <p style="margin:0 0 16px 0;font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;color:#0d1c2f;">Local For You</p>
+            <p style="margin:0 0 16px 0;font-size:12px;color:#666;">
+                <a style="color:#666;text-decoration:none;margin:0 8px;" href="https://localforyou.com/en/privacy-policy-en/">Privacy Policy</a>
+                <a style="color:#666;text-decoration:none;margin:0 8px;" href="https://localforyou.com/en/terms-and-conditions-en/">Terms of Service</a>
+            </p>
+            <div style="margin-bottom:16px;">
+                <a style="margin:0 5px;" href="https://facebook.com/localforyou/"><img src="https://cdn-icons-png.flaticon.com/512/733/733604.png" width="18" style="vertical-align:middle;"></a>
+                <a style="margin:0 5px;" href="https://line.me/R/ti/p/%40238pwmel"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111527.png" width="18" style="vertical-align:middle;"></a>
+                <a style="margin:0 5px;" href="https://wa.me/447418313742"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384023.png" width="18" style="vertical-align:middle;"></a>
+                <a style="margin:0 5px;" href="https://www.instagram.com/local_for_you_/"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384031.png" width="18" style="vertical-align:middle;"></a>
+            </div>
+            <p style="margin:0;font-size:12px;color:#888;">&copy; 2026 Local For You. All rights reserved.</p>
+        </div>
+
+    </div>
+
+</td></tr>
+</table>
+</div>
+</body>
+</html>
