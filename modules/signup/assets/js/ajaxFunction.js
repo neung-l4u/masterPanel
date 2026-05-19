@@ -1145,6 +1145,7 @@ const sendMailToL4UTeam = () => {
         cuisinesOther: txtCuisine,
         formCuisineOther: $("#cuisinesOther").val(),
         formSetupFee: $("input[name='setup']:checked").val(),
+        adsBudget: $("#adsBudget").val(),
 
 
         //Booking System//
@@ -2085,6 +2086,7 @@ const saveToDB = (stripePayload, stripeRes) => {
         formPOSUsingOther: $("#posOtherDate").val(),
         formNoPOSProvider: $("input[id='noPOSProvider']:checked").val(),
         formYesPOSProvider: $("#endDatePOS").val(),
+        adsBudget: $("#adsBudget").val(),
         // Attach Customer ID & Store ID to payload for database storage **Comebank Change**
         // customerID: generatedCustomerID,
         // storeID: generatedStoreID,
@@ -2281,6 +2283,7 @@ const createLogs = (stripePayload) => {
         formPOSUsing: $("#posSystem").val(),
         formPOSUsingOther: $("#posOtherDate").val(),
         formYesPOSProvider: $("#endDatePOS").val(),
+        adsBudget: $("#adsBudget").val(),
         // Attach Customer ID & Store ID to logs **Comebank Change**
         // StoreID: generatedStoreID,
         // CustomerID: generatedCustomerID

@@ -43,25 +43,60 @@ $currencyMapping = [
 ini_set('memory_limit', '512M');
 set_time_limit(300);
 
-// Helper function to make API call
+// Helper function to make API call (single)
 function callMondayAPI($url, $headers, $query) {
-    $data = json_encode(['query' => $query]);
-    
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    
-    $response = curl_exec($ch);
-    $error = curl_error($ch);
-    curl_close($ch);
-    
-    if ($error) {
-        return ['error' => $error];
+    $batched = callMondayAPIBatch($url, $headers, ['_' => $query]);
+    return $batched['_'];
+}
+
+// Helper to fire multiple GraphQL queries in parallel via curl_multi.
+// $queries is an associative array: key => queryString.
+// Returns an associative array: key => decoded response (or ['error' => msg]).
+// Concurrency is capped to avoid Monday API rate / complexity limits.
+function callMondayAPIBatch($url, $headers, $queries, $maxConcurrent = 10) {
+    if (empty($queries)) return [];
+
+    $results = [];
+    $chunks = array_chunk($queries, $maxConcurrent, true);
+
+    foreach ($chunks as $chunk) {
+        $mh = curl_multi_init();
+        $handles = [];
+
+        foreach ($chunk as $key => $query) {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['query' => $query]));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+            curl_multi_add_handle($mh, $ch);
+            $handles[$key] = $ch;
+        }
+
+        $running = null;
+        do {
+            $status = curl_multi_exec($mh, $running);
+            if ($running > 0) {
+                curl_multi_select($mh, 1.0);
+            }
+        } while ($running > 0 && $status === CURLM_OK);
+
+        foreach ($handles as $key => $ch) {
+            $err = curl_error($ch);
+            if ($err) {
+                $results[$key] = ['error' => $err];
+            } else {
+                $body = curl_multi_getcontent($ch);
+                $results[$key] = json_decode($body, true);
+            }
+            curl_multi_remove_handle($mh, $ch);
+            curl_close($ch);
+        }
+        curl_multi_close($mh);
     }
-    
-    return json_decode($response, true);
+
+    return $results;
 }
 
 // Resolve country code from board ID
@@ -82,51 +117,16 @@ function buildColumnIds($country, $lifeSpanColumns) {
     return '"' . implode('", "', $baseColumns) . '"';
 }
 
-// Fetch all items from a SINGLE board with pagination
+// Fetch all items from a SINGLE board.
+// Strategy: split work into per-group queries and run them in parallel via curl_multi.
+//   1) Lightweight metadata query (board name + group list) -- 1 request
+//   2) First page of every group -- N requests in parallel (chunked)
+//   3) Round-by-round parallel pagination until all cursors are exhausted
 function fetchSingleBoard($url, $headers, $boardId, $country, $lifeSpanColumns) {
     $allItems = [];
     $columnIds = buildColumnIds($country, $lifeSpanColumns);
-    
-    $query = 'query {
-  boards (ids: [' . $boardId . ']) {
-    name
-    id
-    groups {
-      id
-      title
-      items_page (limit: 500) {
-        cursor
-        items {
-          id
-          name
-          column_values (ids: [' . $columnIds . ']) {
-            id
-            text
-            ... on BoardRelationValue {
-              display_value
-            }
-          }
-        }
-      }
-    }
-  }
-}';
-    
-    $result = callMondayAPI($url, $headers, $query);
-    
-    if (isset($result['error'])) {
-        return $result;
-    }
-    
-    if (!isset($result['data']['boards'][0])) {
-        return ['items' => [], 'board' => null];
-    }
-    
-    $board = $result['data']['boards'][0];
-    $boardName = $board['name'];
-    $groupCursors = [];
-    
-    // Normalize board relation columns: copy display_value into text when text is empty
+
+    // Helper: normalize BoardRelation text from display_value when text is empty
     $normalizeItems = function(&$items) {
         foreach ($items as &$item) {
             if (isset($item['column_values'])) {
@@ -138,36 +138,9 @@ function fetchSingleBoard($url, $headers, $boardId, $country, $lifeSpanColumns) 
             }
         }
     };
-    
-    foreach ($board['groups'] as $group) {
-        $groupTitle = $group['title'];
-        
-        $groupItems = $group['items_page']['items'];
-        $normalizeItems($groupItems);
-        foreach ($groupItems as $item) {
-            $item['group_title'] = $groupTitle;
-            $item['board_name'] = $boardName;
-            $allItems[] = $item;
-        }
-        
-        if (!empty($group['items_page']['cursor'])) {
-            $groupCursors[] = [
-                'title' => $groupTitle,
-                'cursor' => $group['items_page']['cursor']
-            ];
-        }
-    }
-    
-    // Paginate remaining items
-    foreach ($groupCursors as $groupInfo) {
-        $cursor = $groupInfo['cursor'];
-        $groupTitle = $groupInfo['title'];
-        
-        while ($cursor) {
-            $nextQuery = 'query {
-  next_items_page (limit: 500, cursor: "' . $cursor . '") {
-    cursor
-    items {
+
+    // Helper: build the items_page selection set (shared by first-page and next-page queries)
+    $itemsSelection = 'items {
       id
       name
       column_values (ids: [' . $columnIds . ']) {
@@ -177,31 +150,109 @@ function fetchSingleBoard($url, $headers, $boardId, $country, $lifeSpanColumns) 
           display_value
         }
       }
+    }';
+
+    // ---- Step 1: lightweight metadata query (board name + group ids/titles only) ----
+    $metaQuery = 'query { boards(ids: [' . $boardId . ']) { id name groups { id title } } }';
+    $meta = callMondayAPI($url, $headers, $metaQuery);
+
+    if (isset($meta['error']))  return $meta;
+    if (isset($meta['errors'])) return ['error' => 'Monday GraphQL: ' . json_encode($meta['errors'])];
+    if (!isset($meta['data']['boards'][0])) {
+        return ['items' => [], 'board' => null];
+    }
+
+    $board = $meta['data']['boards'][0];
+    $boardName = $board['name'];
+    $groups = $board['groups'];
+
+    // ---- Step 2: first page of every group, in parallel ----
+    $firstPageQueries = [];
+    $groupTitleByKey = [];
+    foreach ($groups as $g) {
+        $key = 'g_' . $g['id'];
+        $groupTitleByKey[$key] = $g['title'];
+        $firstPageQueries[$key] = 'query {
+  boards (ids: [' . $boardId . ']) {
+    groups (ids: ["' . $g['id'] . '"]) {
+      items_page (limit: 100) {
+        cursor
+        ' . $itemsSelection . '
+      }
     }
   }
 }';
-            
-            $nextResult = callMondayAPI($url, $headers, $nextQuery);
-            
-            if (isset($nextResult['error'])) {
-                return $nextResult;
-            }
-            
-            if (isset($nextResult['data']['next_items_page'])) {
-                $nextItems = $nextResult['data']['next_items_page']['items'];
-                $normalizeItems($nextItems);
-                foreach ($nextItems as $item) {
-                    $item['group_title'] = $groupTitle;
-                    $item['board_name'] = $boardName;
-                    $allItems[] = $item;
-                }
-                $cursor = $nextResult['data']['next_items_page']['cursor'];
-            } else {
-                $cursor = null;
-            }
+    }
+
+    $t0 = microtime(true);
+    $firstResults = callMondayAPIBatch($url, $headers, $firstPageQueries);
+    error_log("[lifespan] step2 first-page-of-each-group (" . count($firstPageQueries) . " queries) took=" . round(microtime(true)-$t0,2) . "s");
+
+    // Cursor queue for next round of pagination
+    $cursors = []; // each entry: ['title' => ..., 'cursor' => ...]
+
+    foreach ($firstResults as $key => $r) {
+        if (isset($r['error']))  return $r;
+        if (isset($r['errors'])) return ['error' => 'Monday GraphQL: ' . json_encode($r['errors'])];
+
+        $groupNode = $r['data']['boards'][0]['groups'][0] ?? null;
+        if (!$groupNode || !isset($groupNode['items_page'])) continue;
+
+        $page  = $groupNode['items_page'];
+        $items = $page['items'];
+        $normalizeItems($items);
+        foreach ($items as $item) {
+            $item['group_title']  = $groupTitleByKey[$key];
+            $item['board_name']   = $boardName;
+            $item['country_code'] = $country;
+            $allItems[] = $item;
+        }
+        if (!empty($page['cursor'])) {
+            $cursors[] = ['title' => $groupTitleByKey[$key], 'cursor' => $page['cursor']];
         }
     }
-    
+
+    // ---- Step 3: round-by-round parallel pagination ----
+    $round = 0;
+    while (!empty($cursors)) {
+        $round++;
+        $batchQueries = [];
+        foreach ($cursors as $i => $c) {
+            $batchQueries[$i] = 'query {
+  next_items_page (limit: 100, cursor: "' . $c['cursor'] . '") {
+    cursor
+    ' . $itemsSelection . '
+  }
+}';
+        }
+
+        $tr = microtime(true);
+        $batchResults = callMondayAPIBatch($url, $headers, $batchQueries);
+        error_log("[lifespan] step3 round=$round (" . count($batchQueries) . " queries) took=" . round(microtime(true)-$tr,2) . "s");
+
+        $newCursors = [];
+        foreach ($batchResults as $i => $r) {
+            $title = $cursors[$i]['title'];
+            if (isset($r['error']))  return $r;
+            if (isset($r['errors'])) return ['error' => 'Monday GraphQL: ' . json_encode($r['errors'])];
+            if (!isset($r['data']['next_items_page'])) continue;
+
+            $page  = $r['data']['next_items_page'];
+            $items = $page['items'];
+            $normalizeItems($items);
+            foreach ($items as $item) {
+                $item['group_title']  = $title;
+                $item['board_name']   = $boardName;
+                $item['country_code'] = $country;
+                $allItems[] = $item;
+            }
+            if (!empty($page['cursor'])) {
+                $newCursors[] = ['title' => $title, 'cursor' => $page['cursor']];
+            }
+        }
+        $cursors = $newCursors;
+    }
+
     return ['items' => $allItems, 'board' => $board];
 }
 
@@ -278,19 +329,8 @@ if (isset($result['error'])) {
             
             $filteredItems = [];
             foreach ($result['items'] as $item) {
-                if (isset($item['board_name'])) {
-                    $bn = $item['board_name'];
-                    $matchCountry = null;
-                    if (strpos($bn, '| TH') !== false) $matchCountry = 'TH';
-                    elseif (strpos($bn, '| CA') !== false) $matchCountry = 'CA';
-                    elseif (strpos($bn, '| UK') !== false) $matchCountry = 'UK';
-                    elseif (strpos($bn, '| USA') !== false || strpos($bn, '| US') !== false) $matchCountry = 'US';
-                    elseif (strpos($bn, '| NZ') !== false) $matchCountry = 'NZ';
-                    elseif (strpos($bn, '| AU') !== false) $matchCountry = 'AU';
-                    
-                    if ($matchCountry === $filterCountry) {
-                        $filteredItems[] = $item;
-                    }
+                if (isset($item['country_code']) && $item['country_code'] === $filterCountry) {
+                    $filteredItems[] = $item;
                 }
             }
             

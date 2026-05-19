@@ -1,7 +1,7 @@
 <?php
 global $db;
 include '../db/db.php';
-include "../db/initDB.php";
+include "../db/initDB_stripe.php";
 
 date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
