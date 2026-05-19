@@ -241,7 +241,7 @@ foreach ($toImport as $w) {
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title"><i class="bi bi-journal-text"></i> Check Logs</h5>
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                        <button type="button" class="close" data-bs-dismiss="modal"><span>&times;</span></button>
                     </div>
                     <div class="modal-body">
                         <table class="table table-sm table-striped" id="logTable">
@@ -264,7 +264,7 @@ foreach ($toImport as $w) {
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title"><i class="bi bi-graph-down"></i> Downtime Summary (Last 30 Days)</h5>
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                        <button type="button" class="close" data-bs-dismiss="modal"><span>&times;</span></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
@@ -292,6 +292,8 @@ foreach ($toImport as $w) {
 const formModal     = new bootstrap.Modal(document.getElementById('formModal'), {});
 const logModal      = new bootstrap.Modal(document.getElementById('logModal'), {});
 const downtimeModal = new bootstrap.Modal(document.getElementById('downtimeModal'), {});
+
+const h = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
 // ── Stats ──────────────────────────────────────────────
 function loadStats() {
@@ -396,13 +398,13 @@ function viewLogs(id) {
     $.post('assets/php/actionMonitor.php', { act: 'getLogs', id: id }, function(res) {
         const rows = res.data.map(r => `
             <tr>
-                <td>${r.checked_at}</td>
-                <td><span class="badge bg-${r.status === 'up' ? 'success' : 'danger'}">${r.status}</span></td>
-                <td>${r.http_code ?? '-'}</td>
-                <td>${r.response_ms != null ? r.response_ms + 'ms' : '-'}</td>
-                <td>${r.ssl_days_left ?? '-'}</td>
-                <td>${r.check_type}</td>
-                <td><small>${r.error_msg ?? ''}</small></td>
+                <td>${h(r.checked_at)}</td>
+                <td><span class="badge bg-${r.status === 'up' ? 'success' : 'danger'}">${h(r.status)}</span></td>
+                <td>${h(r.http_code ?? '-')}</td>
+                <td>${r.response_ms != null ? h(r.response_ms) + 'ms' : '-'}</td>
+                <td>${h(r.ssl_days_left ?? '-')}</td>
+                <td>${h(r.check_type)}</td>
+                <td><small>${h(r.error_msg)}</small></td>
             </tr>`).join('');
         $('#logTableBody').html(rows || '<tr><td colspan="7" class="text-center">No logs</td></tr>');
         logModal.show();
@@ -415,9 +417,9 @@ function viewDowntime(id) {
         $('#uptimePct').text(res.uptime_pct !== null ? res.uptime_pct + '%' : 'No data');
         const rows = (res.incidents || []).map(inc => `
             <tr>
-                <td>${inc.start}</td>
-                <td>${inc.end ?? '<span class="text-danger">Still down</span>'}</td>
-                <td>${inc.duration_min}</td>
+                <td>${h(inc.start)}</td>
+                <td>${inc.end ? h(inc.end) : '<span class="text-danger">Still down</span>'}</td>
+                <td>${h(inc.duration_min)}</td>
             </tr>`).join('');
         $('#downtimeTableBody').html(rows || '<tr><td colspan="3" class="text-center">No downtime incidents</td></tr>');
         downtimeModal.show();
