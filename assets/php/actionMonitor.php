@@ -5,6 +5,11 @@ include '../../assets/db/db.php';
 include '../../assets/db/initDB.php';
 include '../../assets/security/Sanitizer.php';
 
+if (empty($_SESSION['id'])) {
+    echo json_encode(['status' => 'unauthorized']);
+    exit;
+}
+
 $act    = !empty($_POST['act']) ? $_POST['act'] : '';
 $id     = !empty($_POST['id'])  ? (int)$_POST['id'] : 0;
 $params = [];
@@ -50,7 +55,7 @@ if ($act === 'save') {
 
 // ── DELETE ─────────────────────────────────────────────────────────────────
 } elseif ($act === 'setDelete') {
-    $db->query("UPDATE monitors SET delete_at=NOW() WHERE id=?", $id);
+    $db->query("UPDATE monitors SET delete_at=NOW() WHERE id=? AND delete_at IS NULL", $id);
     $params['status'] = 'ok';
 
 // ── MANUAL CHECK ───────────────────────────────────────────────────────────
@@ -165,6 +170,7 @@ if ($act === 'save') {
         $url = trim($w['wDomain']);
         if (empty($url)) continue;
         if (!preg_match('#^https?://#i', $url)) $url = 'https://' . $url;
+        if (!filter_var($url, FILTER_VALIDATE_URL)) continue;
         $db->query(
             "INSERT INTO monitors (name, url, category, source_wID, check_interval) VALUES (?, ?, 'client', ?, 5)",
             $w['wProject'], $url, $w['wID']
