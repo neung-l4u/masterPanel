@@ -124,17 +124,16 @@ function handleNotifications(object $db, array $monitor, array $result): void {
         sendNotifications($monitor, $subject, $body);
     }
 
-    // SSL expiring ≤ 30 days — send once per day
+    // SSL expiring ≤ 30 days — send once per day (cnt==1 means only the row just saved exists today)
     if ($result['sslDaysLeft'] !== null && $result['sslDaysLeft'] <= 30) {
-        $lastLog = $db->query(
-            "SELECT checked_at FROM monitor_logs
+        $countRow = $db->query(
+            "SELECT COUNT(*) AS cnt FROM monitor_logs
              WHERE monitor_id = ? AND ssl_days_left <= 30
                AND DATE(checked_at) = CURDATE()
-               AND check_type = 'auto'
-             ORDER BY id DESC LIMIT 1 OFFSET 1"
+               AND check_type = 'auto'"
         , $monitor['id'])->fetchArray();
 
-        if (empty($lastLog)) {
+        if (($countRow['cnt'] ?? 0) == 1) {
             $subject = "[SSL WARNING] {$monitor['name']} — {$result['sslDaysLeft']} days left";
             $body    = "Monitor: {$monitor['name']}\nURL: {$monitor['url']}\nSSL Expiry: {$result['sslExpiry']}\nDays Left: {$result['sslDaysLeft']}";
             sendNotifications($monitor, $subject, $body);
