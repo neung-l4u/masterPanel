@@ -2,16 +2,10 @@
 date_default_timezone_set("Asia/Bangkok");
 error_reporting(E_ERROR | E_PARSE);
 
-require_once __DIR__ . '/../db/db.php';
-
-$dbHost = 'localhost';
-$dbUser = 'root';
-$dbPass = '';
-$dbName = 'db_localforyou';
-$db = new db($dbHost, $dbUser, $dbPass, $dbName);
-
 // Only run the main loop when executed directly as cron (not included by actionMonitor.php)
 if (!defined('MONITOR_FUNCTIONS_ONLY')) {
+    require_once __DIR__ . '/../../assets/db/db.php';
+    require_once __DIR__ . '/../../assets/db/initDB.php';
     $monitors = $db->query(
         "SELECT * FROM monitors
          WHERE is_active = 1

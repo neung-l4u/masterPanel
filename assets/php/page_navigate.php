@@ -349,4 +349,12 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : L4U Task Board";
         break;
+    case "monitor":
+        $showPage = "monitor.php";
+        $activeMenu["lv1"] = "monitor";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Monitor";
+        break;
 }

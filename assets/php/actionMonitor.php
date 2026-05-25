@@ -84,6 +84,19 @@ if ($act === 'save') {
         $params['status'] = 'ok';
     }
 
+// ── GET LIST (split-panel UI) ──────────────────────────────────────────────
+} elseif ($act === 'getList') {
+    $category = !empty($_POST['category']) ? $_POST['category'] : '';
+    $status   = !empty($_POST['status'])   ? $_POST['status']   : '';
+
+    include_once __DIR__ . '/../security/QueryBuilder.php';
+    $qb = new QueryBuilder();
+    $qb->eq('category', $category)->eq('last_status', $status);
+    $baseSql = "SELECT id, name, url, category, check_interval, last_status, last_checked_at, last_response_ms, ssl_days_left FROM monitors WHERE delete_at IS NULL AND is_active = 1";
+    $rows = $qb->execute($db, $baseSql, 'ORDER BY id DESC')->fetchAll();
+    $params['data']   = $rows;
+    $params['status'] = 'ok';
+
 // ── STATS CARDS ────────────────────────────────────────────────────────────
 } elseif ($act === 'getStats') {
     $rows = $db->query(
