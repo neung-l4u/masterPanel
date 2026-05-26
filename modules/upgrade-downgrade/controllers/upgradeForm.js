@@ -371,19 +371,39 @@ function sendData(formData) {
 
     const jsonData = Object.assign({}, formData, { date: formattedDate });
 
-    $.ajax({
+    const addons = formData.addons || [];
+    const hasAraya = Array.isArray(addons)
+        ? addons.some(v => v === 'ARAYA (Massage)')
+        : addons === 'ARAYA (Massage)';
+
+    const mainWebhook = $.ajax({
         url: "https://hook.us1.make.com/15w2pggndrpv3ggsm7hfqqh1vsy83s92",
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(jsonData),
-        success: () => {
-            console.log("Webhook sent successfully.");
-            window.location.replace("thankyou.php");
-        },
-        error: () => {
-            console.error("Webhook sending failed.");
-        }
     });
+
+    const requests = [mainWebhook];
+
+    if (hasAraya) {
+        const arayaPayload = {
+            stripeID: formData.stripeID || '',
+            customerEmail: formData.emailAddress || '',
+            shopName: formData.shopName || '',
+        };
+        requests.push($.ajax({
+            url: "https://hook.us1.make.com/6vloshre04tb1xtkjhgawblx2jk7a2ji",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(arayaPayload),
+        }));
+    }
+
+    $.when(...requests)
+        .always(() => {
+            console.log("Webhook(s) sent.");
+            window.location.replace("thankyou.php");
+        });
 }
 
 // ===== Save to database =====
