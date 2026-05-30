@@ -214,10 +214,10 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                         <!-- 🍯 Honeypot: ห้ามลบ / ห้ามแก้ name / ห้ามเอาออกจากฟอร์ม -->
                         <!-- มนุษย์จะไม่เห็น (hidden ด้วย CSS + tabindex=-1) แต่บอทส่วนใหญ่จะกรอก -->
                         <!-- ถ้ามีค่า → monday_data.php จะ reject ทันที -->
-                        <div aria-hidden="true" style="position:absolute !important; left:-9999px !important; top:-9999px !important; width:1px !important; height:1px !important; opacity:0 !important; pointer-events:none !important; overflow:hidden !important;">
+                        <!-- <div aria-hidden="true" style="position:absolute !important; left:-9999px !important; top:-9999px !important; width:1px !important; height:1px !important; opacity:0 !important; pointer-events:none !important; overflow:hidden !important;">
                             <label for="website_url_confirm">Leave this field empty</label>
-                            <input type="text" id="website_url_confirm" name="website_url_confirm" value="" tabindex="-1" autocomplete="off">
-                        </div>
+                            <input type="text" id="website_url_confirm" name="website_url_confirm" value="" tabindex="-1" autocomplete="nope" readonly onfocus="this.removeAttribute('readonly')">
+                        </div> -->
 
                         <!-- All Form -->
                         <div class="card mt-3">
