@@ -4,20 +4,7 @@
       "Bash(php -r ' *)",
       "Bash(curl -s --max-time 300 \"http://localhost/masterPanel/modules/upgrade-downgrade/assets/API/selectProjectCountry/live.php?country=US&bust=1\")",
       "Bash(php -r '$d=json_decode\\(file_get_contents\\('\\\\''php://stdin'\\\\''\\),true\\); foreach\\(array_slice\\($d,0,5\\) as $r\\) echo $r['\\\\''shopName'\\\\''].'\\\\'' | owner='\\\\''.$r['\\\\''ownerName'\\\\''].'\\\\'' | phone='\\\\''.$r['\\\\''phone'\\\\''].PHP_EOL;')",
-      "Bash(curl -s --max-time 300 \"http://localhost/masterPanel/modules/upgrade-downgrade/assets/API/selectProjectCountry/live.php?country=UK&bust=1\")",
-      "Read(//c/d/Projects/3.Sizecor/**)",
-      "Bash(gh auth *)",
-      "PowerShell($g = \\(Get-Command gh -ErrorAction SilentlyContinue\\); if \\($g\\) { \"gh: $\\($g.Source\\)\"; gh auth status } else { \"gh NOT found\" })",
-      "PowerShell(\"--- git user ---\"; git config --global user.name; git config --global user.email; \"--- repo neonetipong/sizecor ? ---\"; try { \\(Invoke-WebRequest -Uri \"https://api.github.com/repos/neonetipong/sizecor-web-v1\" -UseBasicParsing -ErrorAction Stop\\).StatusCode } catch { $_.Exception.Response.StatusCode.value__ })",
-      "PowerShell(winget install --id GitHub.cli --silent --accept-source-agreements --accept-package-agreements 2>&1)",
-      "PowerShell($gh = \"$env:ProgramFiles\\\\GitHub CLI\\\\gh.exe\"; if \\(Test-Path $gh\\) { & $gh --version } else { \"not at default path\"; Get-ChildItem \"$env:LOCALAPPDATA\\\\Microsoft\\\\WinGet\\\\Links\\\\gh.exe\" -ErrorAction SilentlyContinue })",
-      "PowerShell(& \"$env:ProgramFiles\\\\GitHub CLI\\\\gh.exe\" auth status 2>&1)",
-      "Bash(curl -sI \"https://cdn.respond.io/webchat/widget/widget.js?cId=e5bf38fb0ca8689dcb1e5e5714c8544b103bef1db400b27747a0b8bf0d96a830\")",
-      "PowerShell(Set-Location \"d:\\\\Projects\\\\3.Sizecor\\\\sizecor-web-v1\"; git init; git config user.name \"neonetipong\"; git config user.email \"neonetipong@gmail.com\"; \"--- verify ---\"; \"name: $\\(git config user.name\\)\"; \"email: $\\(git config user.email\\)\")",
-      "PowerShell(Set-Location \"d:\\\\Projects\\\\3.Sizecor\\\\sizecor-web-v1\"; git add -A; \"--- staged count ---\"; \\(git diff --cached --name-only | Measure-Object -Line\\).Lines; \"--- check sensitive ---\"; git diff --cached --name-only | Select-String -Pattern \"\\\\.env|\\\\.agents|backup/|graphify-out|node_modules|\\\\.next/\"; \"--- top-level staged ---\"; git diff --cached --name-only | ForEach-Object { \\($_ -split '/'\\)[0] } | Sort-Object -Unique)",
-      "PowerShell(Set-Location \"d:\\\\Projects\\\\3.Sizecor\\\\sizecor-web-v1\"; git rm -r --cached test-results tsconfig.tsbuildinfo --quiet; git add -A 2>$null; \"--- final check ---\"; \"count: $\\(\\(git diff --cached --name-only | Measure-Object -Line\\).Lines\\)\"; \"leftover test-results/tsbuildinfo:\"; git diff --cached --name-only | Select-String -Pattern \"test-results|tsbuildinfo|\\\\.env\")",
-      "PowerShell(Set-Location \"d:\\\\Projects\\\\3.Sizecor\\\\sizecor-web-v1\"; $env:PATH = \"$env:ProgramFiles\\\\GitHub CLI;$env:PATH\"; gh repo create neonetipong/sizecor-web-v1 --private --source=. --remote=origin --push 2>&1)",
-      "Bash(python -c ' *)"
+      "Bash(curl -s --max-time 300 \"http://localhost/masterPanel/modules/upgrade-downgrade/assets/API/selectProjectCountry/live.php?country=UK&bust=1\")"
     ]
   }
 }
