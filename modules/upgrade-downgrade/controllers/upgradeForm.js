@@ -555,13 +555,15 @@ function applyTestAutofill() {
 
         $('#typeUpgradePackage').prop('checked', true).trigger('change');
 
-        // Set originalProduct hidden input + show placeholder in list
-        $('#originalProduct').val('pro_starter');
-        $('#originalProductList').html(`
-            <div class="subscription-item">
-                <i class="bi bi-check-circle-fill"></i>
-                <div><div class="sub-name">Pro - Local Starter (Test)</div></div>
-            </div>`);
+        // Set originalProduct after fetch completes (fetch may take >300ms)
+        setTimeout(function () {
+            $('#originalProduct').val('pro_starter');
+            $('#originalProductList').html(`
+                <div class="subscription-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div><div class="sub-name">Pro - Local Starter (Test)</div></div>
+                </div>`);
+        }, 1500);
 
         $('#newProduct').val('pro_growth').trigger('change');
         $('#promotion').val('1trial');
