@@ -24,13 +24,13 @@ $CUSTOMER_IDS = [
 
 // Map country code → Monday board_id(s) — fill in your actual board IDs
 $PROJECT_IDS = [
-    'CA' => [5026295488],   // e.g. [1234567890]
-    'AU' => [5026295450],
-    'NZ' => [5026295509],
-    'UK' => [5026295557],
-    'US' => [5026295593],
-    'TH' => [5026295538],
-    'ALL' => [],  // leave empty to query all per-country boards above
+    'TH' => [1943203205],
+    'CA' => [1943203287],
+    'UK' => [1943203305],
+    'NZ' => [1943203264],
+    'AU' => [1943203246],
+    'US' => [1940392927],
+    'ALL' => [],
 ];
 
 $COUNTRY_NAMES = [
@@ -139,7 +139,7 @@ function queryMonday(string $token, string $boardIdList, int $limit, ?string $cu
             'Authorization: ' . $token,
             'API-Version: 2024-01',
         ],
-        CURLOPT_TIMEOUT        => 15,
+        CURLOPT_TIMEOUT        => 60,
     ]);
     $raw = curl_exec($ch);
     $err = curl_error($ch);
@@ -207,10 +207,12 @@ if ($debug) {
     exit;
 }
 
+set_time_limit(300);
+
 $result   = [];
 $cursor   = null;
-$limit    = $debug2 ? 1 : 200;
-$maxPages = $debug2 ? 1 : 10;
+$limit    = $debug2 ? 1 : 50;
+$maxPages = $debug2 ? 1 : 40;
 
 for ($page = 0; $page < $maxPages; $page++) {
     $resp = queryMonday($MONDAY_TOKEN, $boardIdList, $limit, $cursor);
@@ -238,6 +240,12 @@ for ($page = 0; $page < $maxPages; $page++) {
             // Auto-detect country column: color_ whose text = country code
             $detectedCountry = $country;
             $shopType        = '';
+
+            // Priority: color1 column (Customer Type/Industrial Type)
+            if (!empty($cols['color1']['text'])) {
+                $shopType = $cols['color1']['text'];
+            }
+
             foreach ($cols as $id => $cv) {
                 if (strpos($id, 'color_') === 0 && $cv['text'] === $country) {
                     $detectedCountry = $cv['text'];
@@ -269,24 +277,35 @@ for ($page = 0; $page < $maxPages; $page++) {
                 exit;
             }
 
-            // Extract linked customer from inline fragment result
-            $ownerName = '';
-            $phone     = '';
-            foreach ($item['column_values'] as $col) {
-                if (strpos($col['id'], 'board_relation_') !== 0) continue;
-                foreach ($col['linked_items'] ?? [] as $cust) {
-                    $ownerName = $cust['name'] ?? '';
-                    foreach ($cust['column_values'] ?? [] as $cc) {
-                        if (empty($phone) && strpos($cc['id'], 'phone_') === 0) {
-                            $phone = $cc['text'] ?: (json_decode($cc['value'] ?? '', true)['phone'] ?? '');
+            // Extract owner name and phone — prefer direct columns, fallback to linked_items
+            $ownerName = $cols['primary_contact']['text'] ?? '';
+            $phone     = $cols['contact_mobile']['text'] ?? ($cols['shop_number']['text'] ?? '');
+
+            if (empty($ownerName) || empty($phone)) {
+                foreach ($item['column_values'] as $col) {
+                    if (strpos($col['id'], 'board_relation_') !== 0) continue;
+                    foreach ($col['linked_items'] ?? [] as $cust) {
+                        if (empty($ownerName)) $ownerName = $cust['name'] ?? '';
+                        foreach ($cust['column_values'] ?? [] as $cc) {
+                            if (empty($phone) && strpos($cc['id'], 'phone_') === 0) {
+                                $phone = $cc['text'] ?: (json_decode($cc['value'] ?? '', true)['phone'] ?? '');
+                            }
                         }
-                        if (empty($phone) && strpos($cc['id'], 'email_') === 0 && !empty($cc['text'])) {
-                            $phone = $cc['text'];
-                        }
+                        break;
                     }
-                    break;
+                    if ($ownerName && $phone) break;
                 }
-                if ($ownerName) break;
+            }
+
+            // Fallback: detect shop type from shop name if color columns gave nothing
+            if (empty($shopType)) {
+                $nameLower = strtolower($item['name'] ?? '');
+                foreach ($SHOP_TYPE_KEYWORDS as $kw) {
+                    if (strpos($nameLower, $kw) !== false) {
+                        $shopType = ucfirst($kw);
+                        break;
+                    }
+                }
             }
 
             $result[] = [

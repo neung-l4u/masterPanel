@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -r ' *)",
+      "Bash(curl -s --max-time 300 \"http://localhost/masterPanel/modules/upgrade-downgrade/assets/API/selectProjectCountry/live.php?country=US&bust=1\")",
+      "Bash(php -r '$d=json_decode\\(file_get_contents\\('\\\\''php://stdin'\\\\''\\),true\\); foreach\\(array_slice\\($d,0,5\\) as $r\\) echo $r['\\\\''shopName'\\\\''].'\\\\'' | owner='\\\\''.$r['\\\\''ownerName'\\\\''].'\\\\'' | phone='\\\\''.$r['\\\\''phone'\\\\''].PHP_EOL;')",
+      "Bash(curl -s --max-time 300 \"http://localhost/masterPanel/modules/upgrade-downgrade/assets/API/selectProjectCountry/live.php?country=UK&bust=1\")"
+    ]
+  }
+}
