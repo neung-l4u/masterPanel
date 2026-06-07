@@ -10,8 +10,8 @@ date_default_timezone_set('Asia/Bangkok');
 
 // ========== CONFIG ==========
 $MAX_SLOTS  = 2;                      // จำนวนสล็อตสูงสุดต่อวัน (ตัวแปรปรับได้)
-$ALLOW_MIN  = '2026-06-01';           // จองได้เฉพาะเดือน June 2026
-$ALLOW_MAX  = '2026-06-30';
+$ALLOW_MIN  = '2026-07-13';           // จองได้เฉพาะเดือน July 2026
+$ALLOW_MAX  = '2026-07-31';
 $HOUR_MIN   = 6;                      // 06:00 BKK
 $HOUR_MAX   = 18;                     // 18:00 BKK
 // calendar ต้องเปิด public share (Settings > Access permissions > Make available to public)

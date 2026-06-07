@@ -5,9 +5,9 @@ global $db;
 
 header('Content-Type: application/json');
 
-// ดึงเฉพาะพนักงาน teamID = 3 และยังไม่ถูกลบ
+// ดึงเฉพาะพนักงาน teamID = 3 และยังไม่ถูกลบ พร้อมรูปโปรไฟล์
 $sql = "
-    SELECT sID, sNickName, sName
+    SELECT sID, sNickName, sName, sPic
     FROM staffs
     WHERE teamID = 3 AND staffs.sStatus = 1
     ORDER BY sNickName ASC
@@ -19,7 +19,8 @@ $data = [];
 foreach ($rows as $row) {
     $data[] = [
         'id' => $row['sID'],
-        'text' => $row['sNickName'] . ' - ' . $row['sName']
+        'text' => $row['sNickName'] . ' - ' . $row['sName'],
+        'pic' => $row['sPic'] ?? null
     ];
 }
 
