@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 /**
  * Booking Step View (Clean Version)
  * Separated JavaScript to controllers/bookingController.js
