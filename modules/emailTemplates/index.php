@@ -15,5 +15,9 @@
     <button onclick="location.href='views/unsubscribe.php'">Unsubscribe</button>
     <button onclick="location.href='views/oldConfirmSignup.php'">Old Confirm Signup</button>
     <button onclick="location.href='views/upgradeForm.php'">Upgrade Form</button>
+    <button onclick="location.href='views/newPrice1June.php'">New Price 1 June</button>
+    <hr>
+    <h2>HTML for Mass Email</h2>
+    <button><a href="https://docs.google.com/document/d/1DvfmyB1GygOTqKO5FXty14lYrUT2SljuRqXVn-I4sM4/edit?tab=t.0#heading=h.60itvsq8wcmb" target="_blank">View New Price 1 June Template</a></button>
 </body>
 </html>
