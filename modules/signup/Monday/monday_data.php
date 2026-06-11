@@ -5,20 +5,21 @@
 // ถ้า field 'website_url_confirm' มีค่า = บอท → reject ทันที
 // มนุษย์กรอกไม่ได้เพราะ field ซ่อนด้วย CSS + tabindex=-1 + aria-hidden
 // ======================================================================
-if (!empty($_POST['website_url_confirm'])) {
-    $honeypotVal = substr((string) $_POST['website_url_confirm'], 0, 200);
-    $ip         = $_SERVER['REMOTE_ADDR']    ?? 'unknown';
-    $ua         = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
-    $referer    = $_SERVER['HTTP_REFERER']    ?? 'unknown';
-    error_log(sprintf(
-        '[HONEYPOT] signup form spam blocked | ip=%s | ua=%s | referer=%s | value=%s',
-        $ip, $ua, $referer, $honeypotVal
-    ));
-    // ตอบแบบปกติหลอกบอท ไม่บอกว่า block (ไม่ให้เรียนรู้)
-    http_response_code(200);
-    echo 'OK';
-    exit;
-}
+// error_log('[monday_data] website_url_confirm value: ' . ($_POST['website_url_confirm'] ?? '(empty)'));
+// TODO: Re-enable honeypot after fixing Chrome autofill issue
+// if (!empty($_POST['website_url_confirm'])) {
+//     $honeypotVal = substr((string) $_POST['website_url_confirm'], 0, 200);
+//     $ip         = $_SERVER['REMOTE_ADDR']    ?? 'unknown';
+//     $ua         = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+//     $referer    = $_SERVER['HTTP_REFERER']    ?? 'unknown';
+//     error_log(sprintf(
+//         '[HONEYPOT] signup form spam blocked | ip=%s | ua=%s | referer=%s | value=%s',
+//         $ip, $ua, $referer, $honeypotVal
+//     ));
+//     http_response_code(200);
+//     echo 'OK';
+//     exit;
+// }
 
 //echo "<pre>";print_R($_POST);die;
 
@@ -298,6 +299,31 @@ curl_close($curl);
   // Log ดิบๆ ลง error log (ดูได้ผ่าน tail -f /var/log/php/*.log)
   error_log('monday_data.php $_POST keys: ' . implode(',', array_keys($_POST)));
   error_log('monday_data.php addons computed: ' . $formData['addons']);
+
+  // Extract productName from $_POST['product'] (format: "Name - Price")
+  $productValue = $_POST['product'] ?? '';
+  $productName = '';
+  if (!empty($productValue)) {
+      $parts = explode(' - ', $productValue);
+      $productName = $parts[0] ?? '';
+  }
+  $formData['productName'] = $productName;
+
+  // Extract addonsName from $formData['addons'] (format: "Name - Price, Name - Price")
+  // For Monday.com - send as comma-separated string
+  $addonsValue = $formData['addons'] ?? '';
+  $addonsNames = [];
+  if (!empty($addonsValue)) {
+      $addonList = explode(', ', $addonsValue);
+      foreach ($addonList as $addon) {
+          $parts = explode(' - ', $addon);
+          if (!empty($parts[0])) {
+              $addonsNames[] = $parts[0];
+          }
+      }
+  }
+  // Send as comma-separated string
+  $formData['addonsName'] = implode(', ', $addonsNames);
 
 
 

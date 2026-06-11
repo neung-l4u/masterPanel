@@ -15,7 +15,6 @@ $tomorrow = date("Y-m-d", strtotime("+1 day"));
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/libs/select2/css/select2.min.css" rel="stylesheet"/>
     <link href="../assets/libs/select2/css/select2-bootstrap-5-theme.min.css" rel="stylesheet"/>
-    <link href="../assets/libs/flatpickr/flatpickr.min.css" rel="stylesheet"/>
     <style>
         .step-section {
             display: none;

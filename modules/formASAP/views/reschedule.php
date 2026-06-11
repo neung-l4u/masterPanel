@@ -10,8 +10,8 @@ include '../assets/db/initDB2.php';
 
 // ===== Booking slot config (ต้องตรงกับ index.php + checkAvailability.php) =====
 $maxSlots       = 2;
-$bookingMin     = "2026-06-01";
-$bookingMax     = "2026-06-30";
+$bookingMin     = "2026-07-13";
+$bookingMax     = "2026-07-31";
 $bookingHourMin = "06:00";
 $bookingHourMax = "18:00";
 

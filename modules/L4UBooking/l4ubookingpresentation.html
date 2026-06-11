@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>L4U Booking — Architecture & Features</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --danger: #f87171;
+      --success: #34d399;
+      --warning: #fbbf24;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+    }
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(15,23,42,0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #334155;
+      padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+    }
+    header h1 { margin: 0; font-size: 1.2rem; color: var(--accent); }
+    header nav { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .nav-btn {
+      background: #334155; color: var(--text); border: none;
+      padding: 0.45rem 0.9rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.85rem;
+    }
+    .nav-btn:hover, .nav-btn.active { background: var(--accent); color: #0f172a; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .hero { text-align: center; padding: 3rem 1rem 2rem; }
+    .hero h2 { font-size: 2rem; margin: 0 0 0.5rem; }
+    .hero p { color: var(--muted); max-width: 700px; margin: 0 auto 1.5rem; }
+    .tag {
+      display: inline-block; background: #334155; color: var(--accent);
+      padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.75rem; margin: 0.15rem;
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .card {
+      background: var(--card); border: 1px solid #334155; border-radius: 0.75rem; padding: 1.25rem;
+    }
+    .card h3 { margin: 0 0 0.5rem; font-size: 1.05rem; color: var(--accent); }
+    .card p, .card ul { margin: 0; color: var(--muted); font-size: 0.92rem; }
+    .card ul { padding-left: 1.1rem; }
+    .card li { margin: 0.25rem 0; }
+    .diagram {
+      background: #0b1221; border: 1px dashed #334155; border-radius: 0.75rem;
+      padding: 1.25rem; margin-top: 1rem; overflow-x: auto;
+    }
+    .diagram pre { margin: 0; font-size: 0.85rem; line-height: 1.6; color: #cbe2ff; }
+    .arrow { color: var(--accent); font-weight: bold; }
+    .highlight { color: var(--warning); }
+    .danger  { color: var(--danger); }
+    .success { color: var(--success); }
+    .collapsible { margin-top: 1rem; }
+    .collapsible .toggle {
+      width: 100%; text-align: left; background: #334155; color: var(--text);
+      border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; cursor: pointer;
+      font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between;
+    }
+    .collapsible .toggle:hover { background: #475569; }
+    .collapsible .body {
+      display: none; padding: 1rem; background: #0b1221;
+      border: 1px solid #334155; border-top: none; border-radius: 0 0 0.5rem 0.5rem;
+    }
+    .collapsible.open .body { display: block; }
+    .collapsible.open .toggle { border-radius: 0.5rem 0.5rem 0 0; }
+    .er-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 0.5rem; }
+    .er-table th, .er-table td { border: 1px solid #334155; padding: 0.45rem 0.6rem; text-align: left; }
+    .er-table th { background: #1e293b; color: var(--accent); }
+    .er-table td { color: #cbd5e1; }
+    .rel { color: var(--accent2); font-size: 0.8rem; }
+    .small { font-size: 0.8rem; color: var(--muted); }
+    footer {
+      text-align: center; padding: 2rem; color: var(--muted);
+      font-size: 0.85rem; border-top: 1px solid #334155; margin-top: 2rem;
+    }
+    code {
+      background: #334155; padding: 0.15rem 0.35rem;
+      border-radius: 0.25rem; font-size: 0.85rem;
+    }
+    .step-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--accent); color: #0f172a; font-weight: bold;
+      width: 1.6rem; height: 1.6rem; border-radius: 999px; font-size: 0.8rem; flex-shrink: 0;
+    }
+    .step-row { display: flex; align-items: flex-start; gap: 0.75rem; margin: 0.5rem 0; }
+    .step-row-body { color: var(--muted); font-size: 0.9rem; }
+    .step-row-body strong { color: var(--text); }
+    .version-badge {
+      display: inline-block; background: #1e293b; border: 1px solid #475569;
+      color: var(--warning); padding: 0.2rem 0.6rem; border-radius: 0.4rem;
+      font-size: 0.78rem; margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>L4U Booking System</h1>
+  <nav>
+    <button class="nav-btn active" data-target="overview">Overview</button>
+    <button class="nav-btn" data-target="stack">Stack</button>
+    <button class="nav-btn" data-target="structure">Structure</button>
+    <button class="nav-btn" data-target="data">Data Model</button>
+    <button class="nav-btn" data-target="flows">Flows</button>
+    <button class="nav-btn" data-target="integrations">Integrations</button>
+    <button class="nav-btn" data-target="validation">Validation</button>
+  </nav>
+</header>
+
+<div class="container">
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="section active">
+    <div class="hero">
+      <h2>Architecture & Feature Map</h2>
+      <p>An internal appointment booking system for the Local For You Sales team — staff log in to schedule meetings with overseas shop clients, save records to the database, send email notifications, and automatically create Calendar Events via Make.com Webhooks.</p>
+      <div>
+        <span class="tag">PHP</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">jQuery</span>
+        <span class="tag">Tailwind CSS</span>
+        <span class="tag">Select2</span>
+        <span class="tag">Vanilla Calendar Pro</span>
+        <span class="tag">Luxon</span>
+        <span class="tag">Make.com Webhook</span>
+        <span class="tag">Google Analytics</span>
+      </div>
+      <div style="margin-top:1rem">
+        <span class="version-badge">Version 1.2.0</span>
+      </div>
+    </div>
+
+    <div class="diagram">
+<pre>
+[L4U Staff]  <span class="arrow">--opens browser--></span>  [views/index.php]
+                                     <span class="arrow">|</span>
+                                     <span class="arrow">v</span>  clicks "Book now"
+                              [views/bookingStep.php]
+                                        <span class="arrow">|</span>
+                     +------------------+------------------+
+                     <span class="arrow">|</span>                                   <span class="arrow">|</span>
+          [models/save_appointment.php]       [Make.com Webhook x2]
+                     <span class="arrow">|</span>                           <span class="arrow">|</span>              <span class="arrow">|</span>
+              [MySQL Database]          [Send Email]   [Book Calendar]
+                                        <span class="arrow">|</span>
+                              [views/booking_success.php]
+</pre>
+    </div>
+
+    <div class="grid" style="margin-top:1.5rem">
+      <div class="card">
+        <h3>Booking Steps</h3>
+        <ul>
+          <li>Step 1 — Business Info: Shop type, Country, State, Timezone, City</li>
+          <li>Step 3 — Schedule: Salesperson, Booked By, Presentation Language, Date (Vanilla Calendar), Time</li>
+          <li>Step 8 — Customer Info: Shop Name, Customer Name, Email, Phone, Mobile, Line ID, WhatsApp, Address, Comment</li>
+          <li>Step 9 — Review &amp; Confirm</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Models (PHP API)</h3>
+        <ul>
+          <li><code>load_all_sales.php</code> — Load all Sales staff (teamID=3) with profile pics</li>
+          <li><code>load_sales_by_country.php</code> — Load Sales by Country</li>
+          <li><code>load_available_times.php</code> — Check available time slots for a Sales person</li>
+          <li><code>save_appointment.php</code> — Save booking record to DB</li>
+          <li><code>ShopTypeModel.php</code> — Shop type model class (getActiveShopTypes, getById, getOptionsHtml)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Post-Booking Actions</h3>
+        <ul>
+          <li><code>sendEmail()</code> — POST to Make.com Webhook to send email to Sales &amp; customer</li>
+          <li><code>bookCalendar()</code> — POST to Make.com Webhook to create a Calendar Event</li>
+          <li>Redirect to <code>booking_success.php</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Version 1.2 Features</h3>
+        <ul>
+          <li>Save booking data to Database</li>
+          <li>Send Confirmation Email to customer and Sales</li>
+          <li>Send Calendar Link via Email</li>
+          <li>3x Reminders</li>
+          <li>Manual Timezone selection (per State)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- STACK -->
+  <section id="stack" class="section">
+    <h2>Technology Stack</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Backend (PHP)</h3>
+        <ul>
+          <li>PHP + Session-based auth (<code>session_start()</code>)</li>
+          <li>Custom <code>db</code> class — MySQLi wrapper (Prepared Statements)</li>
+          <li>JSON API responses (<code>header('Content-Type: application/json')</code>)</li>
+          <li>Model files accept input via <code>$_POST</code> / <code>$_GET</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Frontend</h3>
+        <ul>
+          <li>Tailwind CSS — Modern utility-first UI framework</li>
+          <li>Bootstrap Icons 1.11.3 — Icon library</li>
+          <li>jQuery 3.7.1 — AJAX + DOM</li>
+          <li>Select2 — Dropdown searchable (Sales, Time, BookBy)</li>
+          <li>Vanilla Calendar Pro — Modern date picker (replaces Flatpickr)</li>
+          <li>Luxon 3 — Timezone conversion (Customer TZ → BKK)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>External Services</h3>
+        <ul>
+          <li>Make.com Webhook — send Email notifications</li>
+          <li>Make.com Webhook — create Calendar Events (iCal format)</li>
+          <li>Google Analytics (G-LGKDYHL23T) — Tracking clicks</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Database</h3>
+        <ul>
+          <li>MySQL + MySQLi (custom <code>db</code> class)</li>
+          <li>Connection config in <code>assets/db/initDB.php</code></li>
+          <li><code>assets/php/share_function.php</code> — Shared utility functions</li>
+          <li>Table <code>sale_appointment</code> — stores bookings</li>
+          <li>Table <code>staffs</code> — staff information</li>
+          <li>Table <code>sale_staff_availability</code> — Sales work schedule</li>
+          <li>Table <code>sale_staff_country</code> — which countries each Sales person covers</li>
+          <li>Table <code>tb_shopType</code> — shop type categories</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRUCTURE -->
+  <section id="structure" class="section">
+    <h2>File Structure</h2>
+    <p class="small">Folder structure of the L4UBooking module</p>
+    <div class="diagram">
+<pre>
+modules/L4UBooking/
+├── index.php                          <span class="success"># Redirect → views/index.php</span>
+├── l4ubookingpresentation.html        <span class="success"># This presentation file</span>
+│
+├── views/
+│   ├── index.php                      <span class="success"># Home page (Version changelog)</span>
+│   ├── bookingStep.php                <span class="success"># Booking page (Multi-step form)</span>
+│   ├── booking_success.php            <span class="success"># Booking success page</span>
+│   ├── navbar.php                     <span class="success"># Navigation bar (included)</span>
+│   └── bookingStepBak.php             <span class="highlight"># Backup version</span>
+│
+├── models/
+│   ├── index.php                      <span class="muted"># (empty)</span>
+│   ├── load_all_sales.php             <span class="success"># GET: fetch all Sales staff (teamID=3) with sPic</span>
+│   ├── load_sales_by_country.php      <span class="success"># GET: fetch Sales by country_code</span>
+│   ├── load_available_times.php       <span class="success"># GET: available time slots for a Sales on a date</span>
+│   ├── save_appointment.php           <span class="success"># POST: save booking to DB</span>
+│   └── ShopTypeModel.php              <span class="success"># Model class for shop type operations</span>
+│
+├── controllers/
+│   ├── index.js                       <span class="success"># Login handler (jQuery AJAX)</span>
+│   └── bookingController.js         <span class="success"># Main booking form controller</span>
+│
+└── assets/
+    ├── css/index.css
+    ├── js/index.js
+    ├── db/
+    │   ├── db.php                     <span class="success"># MySQLi Wrapper Class</span>
+    │   ├── initDB.php                 <span class="success"># DB Connection config (actual)</span>
+    │   ├── initDB_example.php         <span class="highlight"># Example config</span>
+    │   └── initDB_server.php          <span class="highlight"># Server config</span>
+    ├── php/
+    └── libs/
+        ├── bootstrap-5.3.3-dist/
+        ├── jQuery-v3.7.1/
+        ├── select2/
+        └── flatpickr/
+</pre>
+    </div>
+  </section>
+
+  <!-- DATA MODEL -->
+  <section id="data" class="section">
+    <h2>Data Model</h2>
+    <p class="small">MySQL tables used by this system</p>
+
+    <div class="collapsible open">
+      <button class="toggle">sale_appointment — Booking Records Table <span>▼</span></button>
+      <div class="body">
+        <table class="er-table">
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>staff_id</td><td>INT</td><td>FK → staffs.sID (Sales person assigned)</td></tr>
+          <tr><td>created_by_staff_id</td><td>INT</td><td>Staff who made the booking (from session)</td></tr>
+          <tr><td>customer_name</td><td>VARCHAR</td><td>Customer's name</td></tr>
+          <tr><td>shop_name</td><td>VARCHAR</td><td>Customer's shop name</td></tr>
+          <tr><td>contact_email</td><td>VARCHAR</td><td>Contact email</td></tr>
+          <tr><td>contact_phone</td><td>VARCHAR</td><td>Phone number (min 10 digits)</td></tr>
+          <tr><td>line_id</td><td>VARCHAR</td><td>Line ID (optional)</td></tr>
+          <tr><td>whatsapp</td><td>VARCHAR</td><td>WhatsApp (optional)</td></tr>
+          <tr><td>shop_type_id</td><td>INT</td><td>FK → tb_shopType.id</td></tr>
+          <tr><td>country_code</td><td>VARCHAR(2)</td><td>AU / NZ / US / UK / CA / TH</td></tr>
+          <tr><td>city</td><td>VARCHAR</td><td>City (optional)</td></tr>
+          <tr><td>timezone</td><td>VARCHAR</td><td>e.g. Australia/Sydney (currently null)</td></tr>
+          <tr><td>meeting_date</td><td>DATE</td><td>Appointment date</td></tr>
+          <tr><td>meeting_time</td><td>TIME</td><td>Start time (HH:mm:ss)</td></tr>
+          <tr><td>meeting_end_time</td><td>TIME</td><td>End time (+15 minutes)</td></tr>
+          <tr><td>status</td><td>ENUM</td><td>'pending' (default)</td></tr>
+          <tr><td>created_at</td><td>DATETIME</td><td>NOW()</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="collapsible">
+      <button class="toggle">staffs — Staff Table <span>▼</span></button>
+      <div class="body">
+        <table class="er-table">
+          <tr><th>Column</th><th>Notes</th></tr>
+          <tr><td>sID</td><td>Primary Key</td></tr>
+          <tr><td>sNickName</td><td>Nickname (shown in dropdown)</td></tr>
+          <tr><td>sName</td><td>Full name</td></tr>
+          <tr><td>sPic</td><td>Profile picture filename</td></tr>
+          <tr><td>teamID</td><td>= 3 for Sales team</td></tr>
+          <tr><td>sStatus</td><td>= 1 for active</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="collapsible">
+      <button class="toggle">sale_staff_availability — Sales Work Schedule Table <span>▼</span></button>
+      <div class="body">
+        <table class="er-table">
+          <tr><th>Column</th><th>Notes</th></tr>
+          <tr><td>staff_id</td><td>FK → staffs.sID</td></tr>
+          <tr><td>day_of_week</td><td>Monday / Tuesday / ... / Sunday</td></tr>
+          <tr><td>start_time</td><td>Work start time</td></tr>
+          <tr><td>end_time</td><td>Work end time</td></tr>
+        </table>
+        <p style="color:var(--muted);font-size:0.85rem;margin-top:0.5rem">The system generates 15-minute slots then filters out already-booked ones.</p>
+      </div>
+    </div>
+
+    <div class="collapsible">
+      <button class="toggle">sale_staff_country &amp; tb_shopType <span>▼</span></button>
+      <div class="body">
+        <table class="er-table">
+          <tr><th>Table</th><th>Columns</th><th>Notes</th></tr>
+          <tr><td>sale_staff_country</td><td>staff_id, country_code, active</td><td>Which countries a Sales person covers</td></tr>
+          <tr><td>tb_shopType</td><td>id, name, status</td><td>Shop type categories (status=1 = active)</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOWS -->
+  <section id="flows" class="section">
+    <h2>Request Flows</h2>
+
+    <div class="collapsible open">
+      <button class="toggle">Booking Step Flow (Multi-Step Form) <span>▼</span></button>
+      <div class="body">
+        <div class="step-row">
+          <span class="step-badge">1</span>
+          <div class="step-row-body">
+            <strong>Step 1 — Location</strong><br>
+            Select Shop Type → Country → State (auto-loads timezone) → Timezone → City
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">3</span>
+          <div class="step-row-body">
+            <strong>Step 3 — Sales &amp; Schedule</strong><br>
+            Select Salesperson (AJAX: <code>load_all_sales.php</code>) → Booked By → Presentation Language →
+            Date (Vanilla Calendar Pro: today~+7d) → Time (displays customer time + BKK preview via Luxon)
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">8</span>
+          <div class="step-row-body">
+            <strong>Step 8 — Customer Info</strong><br>
+            Shop Name, Customer Name, Email, Phone, Mobile, Line ID, WhatsApp, Address, Comment
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">9</span>
+          <div class="step-row-body">
+            <strong>Step 9 — Review</strong><br>
+            Displays a summary of all fields in a Card Grid — click "Confirm &amp; Book" to proceed
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-badge">✓</span>
+          <div class="step-row-body">
+            <strong>Submit</strong><br>
+            POST → <code>save_appointment.php</code> → DB<br>
+            Calls <code>sendEmail()</code> + <code>bookCalendar()</code> simultaneously<br>
+            Redirect → <code>booking_success.php</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="collapsible">
+      <button class="toggle">Load Available Times Flow <span>▼</span></button>
+      <div class="body">
+        <div class="diagram">
+<pre>
+JS <span class="arrow">GET /models/load_available_times.php?staff_id=X&date=Y</span>
+  <span class="arrow">|</span>
+  <span class="arrow">v</span>  resolve day of week from date (Monday / Tuesday / ...)
+  <span class="arrow">v</span>  query sale_staff_availability WHERE staff_id = X AND day_of_week = ?
+  <span class="arrow">v</span>  query sale_appointment WHERE staff_id = X AND meeting_date = Y (already-booked slots)
+  <span class="arrow">v</span>  generate 15-minute slots between start_time → end_time
+  <span class="arrow">v</span>  filter out slots that exist in used_times
+  <span class="arrow">v</span>  return [{id: "HH:mm:ss", text: "HH:mm"}, ...]
+</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="collapsible">
+      <button class="toggle">Save Appointment Flow <span>▼</span></button>
+      <div class="body">
+        <div class="diagram">
+<pre>
+JS <span class="arrow">POST /models/save_appointment.php</span>
+  <span class="arrow">|</span>
+  <span class="arrow">v</span>  validate Request Method = POST
+  <span class="arrow">v</span>  receive: sales, shop_type, country, city, date, time, customer_name,
+            shop_name, contact_email, contact_phone, line_id, whatsapp
+  <span class="arrow">v</span>  calculate end_time = time + 15 minutes
+  <span class="arrow">v</span>  map staff_id → staff_email (hardcoded map)
+  <span class="arrow">v</span>  INSERT INTO sale_appointment (...) VALUES (...)
+  <span class="arrow">v</span>  return {status: "ok"} or {status: "error"}
+</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="collapsible">
+      <button class="toggle">Email &amp; Calendar Webhook Flow <span>▼</span></button>
+      <div class="body">
+        <div class="diagram">
+<pre>
+<span class="highlight">sendEmail()</span>  <span class="arrow">POST https://hook.us1.make.com/yk8yef5sm9m5y4gr8qfj71ynmsorhz7d</span>
+  Payload:
+    staff_id, staff_email, book_by (email), staff_name, staff_nickname
+    book_by_name, shop_type, country, timezone, city, state
+    daythaionly (BKK date), timethaionly (BKK time), end_timethaionly
+    date, time, customer_name, shop_name, contact_email, contact_phone
+    contact_mobile, presentation, line_id, whatsapp, address, comment
+    timetodaynow, formVersion: "1.2.0"
+
+<span class="highlight">bookCalendar()</span>  <span class="arrow">POST https://hook.us1.make.com/hg8rqnmfuxry86lq4ylr967j9uifhlt1</span>
+  Payload (includes iCal fields):
+    dtStamp, dtStart (TZID:DATETIME), dtEnd (TZID:DATETIME)
+    startDate, startTime, endDate, endTime
+    + all fields from sendEmail payload
+</pre>
+        </div>
+        <p style="color:var(--muted);font-size:0.85rem;margin-top:0.75rem">
+          Both webhooks are called simultaneously after <code>save_appointment.php</code> returns <code>status: ok</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTEGRATIONS -->
+  <section id="integrations" class="section">
+    <h2>Integrations</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Make.com — Email Webhook</h3>
+        <p>URL: <code>hook.us1.make.com/yk8yef5...</code><br>
+        Sends a POST payload with full booking data. Make.com processes it and sends emails to Sales and the customer, including a Calendar link.</p>
+      </div>
+      <div class="card">
+        <h3>Make.com — Calendar Webhook</h3>
+        <p>URL: <code>hook.us1.make.com/hg8rqn...</code><br>
+        Sends a POST with iCal datetime format (<code>TZID:YYYYMMDDTHHmmss</code>). Make.com creates a Google Calendar Event for the assigned Sales person.</p>
+      </div>
+      <div class="card">
+        <h3>Luxon — Timezone Conversion</h3>
+        <p>Converts the customer's local time (manually selected Timezone per State) to Thai time (Asia/Bangkok) and shows a real-time preview, e.g. <code>⏰ BKK: 14:30 (Mon 02 Jun)</code></p>
+      </div>
+      <div class="card">
+        <h3>Google Analytics</h3>
+        <p>Tracking ID: <code>G-LGKDYHL23T</code><br>
+        Automatically tracks click events via a Global Event Listener on elements with the <code>data-ga</code> attribute.</p>
+      </div>
+      <div class="card">
+        <h3>Staff Email Map</h3>
+        <p>Hardcoded map in <code>save_appointment.php</code> and <code>controllers/bookingController.js</code> to resolve <code>staff_id → email</code>. Staff: boom, dear, honey, pluem, pruek, toffee, ball, lani, naya, gun, aon</p>
+      </div>
+      <div class="card">
+        <h3>Timezone per State</h3>
+        <p>Supports 6 countries: AU, US, CA, UK, NZ, TH<br>
+        Each country has States/Provinces with individual timezones, e.g. AU/QLD → <code>Australia/Brisbane</code> vs AU/NSW → <code>Australia/Sydney</code></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALIDATION -->
+  <section id="validation" class="section">
+    <h2>Validation & Business Rules</h2>
+
+    <div class="collapsible open">
+      <button class="toggle">Frontend Validation (showReview()) <span>▼</span></button>
+      <div class="body">
+        <table class="er-table">
+          <tr><th>Field</th><th>Rule</th><th>Alert ID</th></tr>
+          <tr><td>Shop Type</td><td>Required</td><td><code>#alertShopType</code></td></tr>
+          <tr><td>Country</td><td>Required</td><td><code>#alertCountry</code></td></tr>
+          <tr><td>State</td><td>Required</td><td><code>#alertState</code></td></tr>
+          <tr><td>Salesperson</td><td>Required</td><td><code>#alertSale</code></td></tr>
+          <tr><td>Booked By</td><td>Required</td><td><code>#alertBooking</code></td></tr>
+          <tr><td>Presentation</td><td>Required</td><td><code>#alertLanguage</code></td></tr>
+          <tr><td>Shop Name</td><td>Required</td><td><code>#alertShopName</code></td></tr>
+          <tr><td>Customer Name</td><td>Required</td><td><code>#alertCustomerName</code></td></tr>
+          <tr><td>Contact Email</td><td>Required + valid format (Regex)</td><td><code>#alertCustomerEmail</code> / <code>#alertCustomerEmailValid</code></td></tr>
+          <tr><td>Contact Phone</td><td>Required + minimum 10 digits</td><td><code>#alertCustomerPhone</code> / <code>#alertCustomerPhoneComplete</code></td></tr>
+        </table>
+        <p style="color:var(--muted);font-size:0.85rem;margin-top:0.5rem">Validation runs sequentially — on failure, <code>nextStep()</code> navigates to the step containing that field.</p>
+      </div>
+    </div>
+
+    <div class="collapsible">
+      <button class="toggle">Backend Validation (save_appointment.php) <span>▼</span></button>
+      <div class="body">
+        <table class="er-table">
+          <tr><th>Check</th><th>Result</th></tr>
+          <tr><td>Request Method ≠ POST</td><td>return error</td></tr>
+          <tr><td>staff_id, date, time, customer_name, shop_name are empty</td><td>return error "Missing required fields"</td></tr>
+          <tr><td>DB insert succeeds</td><td>return <code>{status: "ok"}</code></td></tr>
+          <tr><td>DB insert fails</td><td>return <code>{status: "error", message: "Save failed"}</code></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="collapsible">
+      <button class="toggle">Business Rules <span>▼</span></button>
+      <div class="body">
+        <table class="er-table">
+          <tr><th>Rule</th><th>Detail</th></tr>
+          <tr><td>Date range</td><td>Bookable only from today to +7 days (Vanilla Calendar Pro min/max)</td></tr>
+          <tr><td>Time slot</td><td>Every 15 minutes based on <code>sale_staff_availability</code></td></tr>
+          <tr><td>Meeting duration</td><td>15 minutes (end_time = time + 900 seconds)</td></tr>
+          <tr><td>Sales filter</td><td>teamID = 3 AND sStatus = 1 only</td></tr>
+          <tr><td>Sales by country</td><td>Uses <code>sale_staff_country</code> table with active = 1</td></tr>
+          <tr><td>Timezone display</td><td>Converts customer time to BKK time via Luxon in real-time</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  L4U Booking System — Architecture Presentation<br>
+  Local For You Internal Dev Documentation · Version 1.2.0
+</footer>
+
+<script>
+  const navButtons = document.querySelectorAll('.nav-btn');
+  const sections = document.querySelectorAll('.section');
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sections.forEach(s => s.classList.remove('active'));
+      document.getElementById(target).classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.collapsible .toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      toggle.closest('.collapsible').classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>
