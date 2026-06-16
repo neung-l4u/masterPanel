@@ -1,6 +1,10 @@
 <?php
 global $showPage, $datatable, $datatable2, $db, $loadTotal, $title;
 session_start();
+if (!isset($_SESSION['id']) && !isset($_COOKIE['id'])) {
+    header("Location: index.php");
+    exit();
+}
 include 'assets/db/db.php';
 include "assets/db/initDB.php";
 

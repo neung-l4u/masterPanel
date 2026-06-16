@@ -1,7 +1,7 @@
 <?php
 /**
  * Stripe Webhook — aiAraya
- * -----------------------------------
+ * ---------------------------------------------------------------------------
  * Pure filter + forward. No DB writes.
  * Multi-account: supports AU, US, TH Stripe accounts.
  * Route each Stripe webhook to:  stripe_webhook.php?account=au|us|th
@@ -12,86 +12,54 @@
  *
  * Event is forwarded to Make.com only if BOTH:
  *   1. Payment is actually paid (payment_status/status === 'paid')
- *   2. Price ID matches the account's allowed list
+ *   2. Product ID matches the account's allowed list (Stripe Product/Price ID)
  *
  * ALWAYS replies HTTP 200 to Stripe so it does not retry the webhook.
- * -----------------------------------
+ * ---------------------------------------------------------------------------
  */
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-// ─── CONFIG ──────────────────────────────────────────────────────────
+// ─── CONFIG ────────────────────────────────────────────────────────────────
 // Three Stripe accounts, each serving multiple countries:
 //   - 'au' account  → AU, NZ, UK
-//   - 'us' account  → US, CA  
+//   - 'us' account  → US, CA
 //   - 'th' account  → TH
 //
-// Each account has MULTIPLE allowed Price IDs for AI products.
-// A webhook event matches if the Price ID on the line item is in the allowed list.
-
+// Each account has ONE product (product_id) with MULTIPLE prices — one
+// Price ID per currency. A webhook event matches if the Stripe Product ID
+// on the line equals `product_id`, OR the Price ID is listed in `price_ids`.
+// Fill in US/TH placeholders before going live.
 $STRIPE_ACCOUNTS = [
     'au' => [
         'countries'      => ['au', 'nz', 'uk'],
         'webhook_secret' => 'whsec_q5muKPjQWrEECZ1N2yZdMElckPPlrEka',
         'make_url'       => 'https://hook.us1.make.com/6vloshre04tb1xtkjhgawblx2jk7a2ji',
+        'product_id'     => 'prod_TcJ65297HW99bE',
         'price_ids'      => [
-            // AU - AI Receptionist & Bundles
-            'AUAI02M00O-20', 'AUAI02P12O-20',
-            'AUAIBO04M00O-20', 'AUAIBO04P12O-20',
-            'AUAILS04M00O-20', 'AUAILS04M06O-20', 'AUAILS04M12O-20', 'AUAILSB04P12O-20',
-            'AUAILG04M00O-20', 'AUAILG04M06O-20', 'AUAILG04M12O-20', 'AUAILGB04P12O-20',
-            'AUAILU04M00O-20', 'AUAILU04M06O-20', 'AUAILU04M12O-20', 'AUAILUB04P12O-20',
-            // NZ - AI Receptionist & Bundles
-            'NZAI02P12O-20',
-            'NZAIBO04M00O-20', 'NZAIBO04P12O-20',
-            'NZAILS04M00O-20', 'NZAILS04M06O-20', 'NZAILS04M12O-20', 'NZAILSB04P12O-20',
-            'NZAILG04M00O-20', 'NZAILG04M06O-20', 'NZAILG04M12O-20', 'NZAILGB04P12O-20',
-            'NZAILU04M00O-20', 'NZAILU04M06O-20', 'NZAILU04M12O-20', 'NZAILUB04P12O-20',
-            // UK - AI Receptionist & Bundles
-            'UKAI02M00O-20', 'UKAI02P12O-20',
-            'UKAIBO04M00O-20', 'UKAIBO04P12O-20',
-            'UKAILS04M00O-20', 'UKAILS04M06O-20', 'UKAILS04M12O-20', 'UKAILSB04P12O-20',
-            'UKAILG04M00O-20', 'UKAILG04M06O-20', 'UKAILG04M12O-20', 'UKAILGB04P12O-20',
-            'UKAILU04M00O-20', 'UKAILU04M06O-20', 'UKAILU04M12O-20', 'UKAILUB04P12O-20',
+            'aud' => 'AUAI02M00O-20',       // AU
+            'nzd' => 'NZAI02M00O-20',   // NZ
+            'gbp' => 'UKAI02M00O-20',   // UK
         ],
     ],
     'us' => [
         'countries'      => ['us', 'ca'],
         'webhook_secret' => 'whsec_IrotZUi7sJuxgWitKQjYMDP23bW7OyNj',
         'make_url'       => 'https://hook.us1.make.com/6vloshre04tb1xtkjhgawblx2jk7a2ji',
+        'product_id'     => 'prod_TcJeLZeufWMSIw',
         'price_ids'      => [
-            // US - AI Receptionist & Bundles
-            'price_1Sf516I6vmxJT6OmVI1bPAxe', 'price_1Sf7OxI6vmxJT6OmvZ7KXFA1',
-            'price_1Sf7iNI6vmxJT6OmyAgdFODx', 'price_1Sf7tmI6vmxJT6Omu1JNwVKu',
-            'price_1Sf846I6vmxJT6OmoWHEt4PN', 'price_1SfAImI6vmxJT6OmqROYbkAF',
-            'price_1SfApXI6vmxJT6Omui46Ap7v', 'price_1SfBFWI6vmxJT6OmvMfbRBGN',
-            'price_1SfgI3I6vmxJT6OmlE0l0rQh', 'price_1SfgMeI6vmxJT6Omv5AfA2Zs',
-            'price_1SfgQ5I6vmxJT6OmPR3aMzi0', 'price_1SukhSI6vmxJT6OmvoKn0yTV',
-            'price_1SulfGI6vmxJT6Omr5YjGhd0', 'price_1SuljII6vmxJT6OmQhe5Qugi',
-            'price_1SulnCI6vmxJT6OmYD5fVNLl', 'price_1Sulr2I6vmxJT6OmVDHcMZ0R',
-            // CA - AI Receptionist & Bundles
-            'price_1Sf516I6vmxJT6Omxjnt0nVP', 'price_1Sf7OxI6vmxJT6Om8xJRAHoX',
-            'price_1Sf7iNI6vmxJT6OmrOkvuCtI', 'price_1Sf7tmI6vmxJT6OmJPLQIvpD',
-            'price_1Sf846I6vmxJT6Om4e9e7g1D', 'price_1SfAImI6vmxJT6OmfpH5zSo0',
-            'price_1SfApXI6vmxJT6Om1lYxyNvR', 'price_1SfBFWI6vmxJT6OmR65VYxVW',
-            'price_1SfgI3I6vmxJT6OmeqbYEeX2', 'price_1SfgMeI6vmxJT6OmDTOtBTam',
-            'price_1SfgQ5I6vmxJT6OmC8TCjmZf', 'price_1SukhSI6vmxJT6Om50qlwwip',
-            'price_1SulfGI6vmxJT6OmBlgYF5c5', 'price_1SuljII6vmxJT6Om4uRCVHKE',
-            'price_1SulnCI6vmxJT6OmRoxl5Mdh', 'price_1Sulr2I6vmxJT6OmAoALWtno',
+            'usd' => 'price_1Sf516I6vmxJT6OmVI1bPAxe',   // US 
+            'cad' => 'price_1Sf516I6vmxJT6Omxjnt0nVP',   // CA
         ],
     ],
     'th' => [
         'countries'      => ['th'],
         'webhook_secret' => 'whsec_9BFZpnul9OIK73w9llqNI7SmgP22utpS',
         'make_url'       => 'https://hook.us1.make.com/6vloshre04tb1xtkjhgawblx2jk7a2ji',
+        'product_id'     => 'prod_TcJuebWo6cwN5q',
         'price_ids'      => [
-            // TH - AI Receptionist & Bundles
-            'THAI02M00O-11', 'THAI02M00O-20', 'THAI02P12O-20',
-            'THAIBO04M00O-20', 'THAIBO04M06O-20', 'THAIBO04M12O-20', 'THAIBO04P12O-20',
-            'THAILS04M00O-20', 'THAILS04M06O-20', 'THAILS04M12O-20', 'THAILSB04P12O-20',
-            'THAILG04M00O-20', 'THAILG04M06O-20', 'THAILG04M12O-20', 'THAILGB04P12O-20',
-            'THAILU04M00O-20', 'THAILU04M06O-20', 'THAILU04M12O-20', 'THAILUB04P12O-20',
+            'thb' => 'THAI02M00O-11',   // TH
         ],
     ],
 ];
@@ -99,11 +67,6 @@ $STRIPE_ACCOUNTS = [
 // Build a country → account lookup table from the config above.
 // e.g. 'nz' → 'au',  'ca' → 'us',  'th' → 'th'
 $COUNTRY_TO_ACCOUNT = [];
-foreach ($STRIPE_ACCOUNTS as $acctKey => $acctCfg) {
-    foreach (($acctCfg['countries'] ?? []) as $cc) {
-        $COUNTRY_TO_ACCOUNT[strtolower($cc)] = $acctKey;
-    }
-}
 foreach ($STRIPE_ACCOUNTS as $acctKey => $acctCfg) {
     foreach (($acctCfg['countries'] ?? []) as $cc) {
         $COUNTRY_TO_ACCOUNT[strtolower($cc)] = $acctKey;
@@ -191,7 +154,7 @@ try {
     $priceIds      = $accountCfg['price_ids'] ?? []; // currency => price_id
 
     // Reverse map: price_id => currency (used to derive country from the matched line)
-    $allowedPriceIds = $priceIds; // Flat array of allowed price IDs
+    $priceIdToCurrency = array_flip($priceIds);
 
     // ── 1. Read raw payload + verify Stripe signature ───────────────────────
     $payload   = file_get_contents('php://input');
@@ -217,9 +180,9 @@ try {
      * price_ids are accepted, otherwise any new/legacy price under the same
      * Stripe Product would leak through to Make.com.
      */
-    $matchAgainstConfig = function (string $id) use ($allowedPriceIds) {
+    $matchAgainstConfig = function (string $id) use ($priceIdToCurrency) {
         if ($id === '') return null;
-        if (in_array($id, $allowedPriceIds, true)) return $id; // price match - return the matched price ID
+        if (isset($priceIdToCurrency[$id])) return $priceIdToCurrency[$id]; // price match
         return null;
     };
 

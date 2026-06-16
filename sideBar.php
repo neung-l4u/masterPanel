@@ -121,6 +121,12 @@ include ('assets/api/checkSession.php');
                                 <p>Template Submissions &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
                             </a>
                         </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=aiManagement" class="nav-link <?php echo $activeMenu["lv2"] == "aiManagement" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-robot"></i>
+                                <p>AI Management</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

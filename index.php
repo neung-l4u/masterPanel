@@ -1,3 +1,24 @@
+<?php
+session_start();
+$redirectToMain = false;
+
+if (isset($_SESSION['id']) && !empty($_SESSION['id'])) {
+    $redirectToMain = true;
+} else if (isset($_COOKIE['id']) && !empty($_COOKIE['id'])) {
+    include 'assets/db/db.php';
+    include 'assets/db/initDB.php';
+    $check = $db->query('SELECT sID FROM `staffs` WHERE sID = ? AND sStatus = 1 AND sDeleteAt IS NULL', $_COOKIE['id'])->fetchArray();
+    if (!empty($check['sID'])) {
+        $_SESSION['id'] = $check['sID'];
+        $redirectToMain = true;
+    }
+}
+
+if ($redirectToMain) {
+    header("Location: main.php");
+    exit();
+}
+?>
 <!doctype html>
 <html lang="en">
 <head>

@@ -229,6 +229,14 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataZoomExt.php";
         $title = "Master panel : Zoom Extension";
         break;
+    case "aiManagement":
+        $showPage = "aiManagement.php";
+        $activeMenu["lv1"] = "formMgmt";
+        $activeMenu["lv2"] = "aiManagement";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataAiLogs.php";
+        $title = "Master panel : AI Management";
+        break;
     case "rewardCoin":
         $showPage = "rewardCoin.php";
         $activeMenu["lv1"] = "rewardsCoin";

@@ -11,6 +11,7 @@ if($act=="login"){
     die();
 }else if($act=="logout"){
     session_destroy();
+    setcookie("id", "", time() - 3600, '/');
     setcookie("user", "", time() - 3600, '/');
     setcookie("pass", "", time() - 3600, '/');
     setcookie("remember", "", time() - 3600, '/');
