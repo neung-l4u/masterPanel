@@ -140,6 +140,7 @@ $(function() {
         pagingType: 'full_numbers',
         pageLength: 25,
         lengthMenu: [[25,50,100,-1],[25,50,100,'All']],
+        dom: 'lrtip', // Remove default search box (no 'f')
         ajax: {
             url: 'pages/tableRendering/dataAiLogs.php',
             type: 'POST',
