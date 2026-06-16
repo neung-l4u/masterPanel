@@ -193,10 +193,22 @@ try {
     // Reverse map: price_id => currency (used to derive country from the matched line)
     $allowedPriceIds = $priceIds; // Flat array of allowed price IDs
 
+
     // ── 1. Read raw payload + verify Stripe signature ───────────────────────
+    // TEST MODE: skip signature verification when ?test=1 is passed
+    $isTestMode = isset($_GET['test']) && $_GET['test'] === '1';
+    
     $payload   = file_get_contents('php://input');
     $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
-    $event     = verifyAndParseEvent($payload, $sigHeader, $webhookSecret);
+    
+    if ($isTestMode) {
+        // Test mode: parse payload directly without signature verification
+        $event = json_decode($payload, true) ?: [];
+        error_log('[stripe_webhook][' . $account . '] TEST MODE: Signature verification skipped');
+    } else {
+        // Production: verify Stripe signature
+        $event = verifyAndParseEvent($payload, $sigHeader, $webhookSecret);
+    }
 
     $eventType = $event['type'] ?? '';
     $dataObj   = $event['data']['object'] ?? [];
