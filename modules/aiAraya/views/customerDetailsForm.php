@@ -189,21 +189,6 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
                                     </div>
                                     <div class="invalid-feedback">Please select an option.</div>
                                 </div>
-
-                                <div class="radio-field">
-                                    <label class="form-label">Happy Massage <span class="text-danger">*</span></label>
-                                    <div class="radio-card-group">
-                                        <div class="radio-card">
-                                            <input type="radio" name="happyMassage" id="happyMassageYes" value="Happy Massage Available" required>
-                                            <label for="happyMassageYes"><i class="bi bi-check-lg"></i> Available</label>
-                                        </div>
-                                        <div class="radio-card">
-                                            <input type="radio" name="happyMassage" id="happyMassageNo" value="Happy Massage Not Available">
-                                            <label for="happyMassageNo"><i class="bi bi-x-lg"></i> Not Available</label>
-                                        </div>
-                                    </div>
-                                    <div class="invalid-feedback">Please select an option.</div>
-                                </div>
                             </div>
                         </div>
 
