@@ -361,6 +361,23 @@ function collectFormData() {
         return obj;
     }, {});
 
+    // Monday "Country" status column mapping (board column: numbers_mkn4adf8)
+    // index values come from the Monday status column definition; sending the
+    // index avoids "missingLabel" errors when the label text doesn't match.
+    const COUNTRY_STATUS = {
+        NZ:  { index: 0,  label: 'NZ' },
+        AU:  { index: 1,  label: 'AU' },
+        US:  { index: 2,  label: 'US' },
+        CA:  { index: 3,  label: 'CA' },
+        UK:  { index: 4,  label: 'UK' },
+        TH:  { index: 6,  label: 'TH' },
+    };
+    const cc = (raw.country || '').toUpperCase();
+    if (COUNTRY_STATUS[cc]) {
+        raw.countryStatusIndex = COUNTRY_STATUS[cc].index;
+        raw.countryLabel = COUNTRY_STATUS[cc].label;
+    }
+
     return raw;
 }
 
