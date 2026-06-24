@@ -12,6 +12,17 @@ $raw = file_get_contents("php://input");
 //         }';
 $data = json_decode($raw, true);
 
+// Optional shared-secret gate. Backward compatible: requests that send NO
+// "secret" field behave exactly as before (existing callers keep working).
+// When a "secret" IS present it must match the configured value.
+$expectedSecret = getenv('SSO_SHARED_SECRET') ?: '';
+if (isset($data['secret']) && $data['secret'] !== '') {
+    if ($expectedSecret === '' || !hash_equals($expectedSecret, (string)$data['secret'])) {
+        echo json_encode(["status" => false, "msg" => "Unauthorized"]);
+        exit;
+    }
+}
+
 $user     = base64_decode($data['user']);
 $pass     = base64_decode($data['pass']);
 $system   = base64_decode($data['system']);
