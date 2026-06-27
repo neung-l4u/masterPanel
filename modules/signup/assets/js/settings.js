@@ -13,6 +13,7 @@ const settings = {
   url_saveToDB: "assets/function/saveToDB.php",
   url_saveQuestionToDB: "assets/function/saveQuotationToDB.php",
   url_uploadDocuments: "assets/API/upload_documents.php",
+  url_uploadSlip: "assets/API/upload_slip.php",
   url_saveAdyenDocuments: "assets/function/saveAdyenDocuments.php",
   Payment_Module: {
     CreditCard: true,

@@ -865,6 +865,10 @@ function requestToPay() {
             $("#cmdSubmit").removeClass("btn-outline-info").addClass("btn-outline-success").prop("disabled", false);
             $("#paymentSubmit").prop('disabled', false);
             result.html('<span class="badge bg-warning">กรุณากรอกข้อมูลใบเสนอราคาให้ครบ</span>');
+            const $firstError = $(".tax-validate-error").first();
+            if ($firstError.length) {
+                $firstError[0].scrollIntoView({ behavior: "smooth", block: "center" });
+            }
             return;
         }
     }
@@ -1241,6 +1245,9 @@ const sendMailToL4UTeam = () => {
 } //sendMail
 
 //*Comeback Change*
+const signupToCustomerProjectID = () => {
+    console.log('signupToCustomerProjectID: skipped (commented out)');
+};
 // const signupToCustomerProjectID = () => {
 //     let formCountryText = $("#formCountry option:selected").text();
 //     let formTypeText = formData.formType;
@@ -1708,7 +1715,7 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
         let amountProductExVAT = getPriceBeforeVAT(priceInc);
 
         if (amountProductExVAT > 0) {
-            tableData.push({ "product": nameProduct, "qyt": 1, "amount": amountProductExVAT });
+            tableData.push({ "product": nameProduct, "qyt": 1, "amount": amountProductExVAT, "fullamount": priceInc.toFixed(2) });
         }
     }
 
@@ -1722,7 +1729,7 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
         let amountSetupExVAT = getPriceBeforeVAT(priceInc);
 
         if (amountSetupExVAT > 0) {
-            tableData.push({ "setupfee": nameSetup, "qyt": 1, "amount": amountSetupExVAT });
+            tableData.push({ "setupfee": nameSetup, "qyt": 1, "amount": amountSetupExVAT, "fullamount": priceInc.toFixed(2) });
         }
     }
 
@@ -1739,7 +1746,7 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
             let amountAddonExVAT = getPriceBeforeVAT(priceInc);
 
             if (amountAddonExVAT > 0) {
-                tableData.push({ "addon": nameAddon, "qyt": 1, "amount": amountAddonExVAT });
+                tableData.push({ "addon": nameAddon, "qyt": 1, "amount": amountAddonExVAT, "fullamount": priceInc.toFixed(2) });
             }
         }
     });

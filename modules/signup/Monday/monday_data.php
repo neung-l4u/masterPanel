@@ -131,11 +131,11 @@ $Step04_SocialNetworkscouponCode2 = $_POST['couponCode2'] ?? ''; //Coupun code 2
 
 $Step04_SocialNetworks00N2v00000IyVq7 = $_POST['paymentMethod'] ?? ''; // payment method
 
-// $Step04_SocialNetworkscreditCardNumber = $_POST['creditCardNumber'] ?? ''; //  Card number
+$Step04_SocialNetworkscreditCardNumber = $_POST['creditCardNumber'] ?? ''; //  Card number
 
-// $Step04_SocialNetworkscreditExpireDate = $_POST['creditExpireDate'] ?? ''; //  creditExpireDate
+$Step04_SocialNetworkscreditExpireDate = $_POST['creditExpireDate'] ?? ''; //  creditExpireDate
 
-// $Step04_SocialNetworkscreditCCV = $_POST['creditCCV'] ?? ''; //  creditExpireDate
+$Step04_SocialNetworkscreditCCV = $_POST['creditCCV'] ?? ''; //  creditExpireDate
 
 $Step04_SocialNetworkscreditFullName = $_POST['creditFullName'] ?? ''; //  creditFullName
 
@@ -359,14 +359,103 @@ curl_close($curl);
 
       // Handle error
 
-      echo "Failed to send data to webhook.";
+      // Failed to send data to webhook
 
   } else {
 
       // Webhook request successful
 
-      echo "Data sent to webhook successfully.";
+      // Data sent to webhook successfully
 
+  }
+
+  // Send to TH invoice webhook if country is Thailand
+  if (($formData['country_code'] ?? '') === 'TH') {
+    try {
+      // Load DB and build invoice payload
+      if (!class_exists('db')) {
+          include_once __DIR__ . '/../assets/db/db.php';
+      }
+      include_once __DIR__ . '/../assets/db/initDB.php';
+      global $db;
+      $convertBahtPath = __DIR__ . '/../../../../api/invoice/convertToBahtText.php';
+      if (file_exists($convertBahtPath)) {
+          require_once $convertBahtPath;
+      }
+
+      $email = $formData['email'] ?? $formData['quotationEmail'] ?? $formData['emailShoppingCart'] ?? '';
+
+      // Find latest invoice for this email
+      $invRows = $db->query(
+          'SELECT i.*, c.`name`, c.`address`, c.`taxNumber`, c.`email` AS customerEmail,
+                  c.`phone` AS customerPhone, c.`type`, c.`sale`,
+                  c.`bankName`, c.`bankNumber` AS bankThaiNumber, c.`bankAccName` AS bankThaiName
+           FROM `thInvoice` i
+           JOIN `thCustomer` c ON c.`id` = i.`customer_id`
+           WHERE c.`email` = ?
+           ORDER BY i.`id` DESC LIMIT 1',
+          $email
+      )->fetchAll();
+
+      if (!empty($invRows[0])) {
+          $row        = $invRows[0];
+          $productArr = json_decode($row['product'] ?? '', true) ?? [];
+          $summary    = $productArr['summary']   ?? [];
+          $rawItems   = $productArr['table']     ?? [];
+          $quotation  = $productArr['quotation'] ?? [];
+
+          $receiptRow = $db->query(
+              'SELECT * FROM `thReceipt` WHERE `invoice_id` = ? ORDER BY `id` DESC LIMIT 1',
+              $row['id']
+          )->fetchAll();
+          $receipt      = $receiptRow[0] ?? [];
+          $receiptID    = $receipt['receiptID']  ?? $row['invoiceID'];
+          $thBathRe     = $receipt['thBathRe']   ?? '';
+          $thBathIn     = $row['thBathIn']        ?? convertToBahtText((float)($summary['net_payment'] ?? 0));
+          $slipPath     = $receipt['slip']        ?? '';
+          $slipUrl      = $slipPath ? 'https://report.localforyou.com/modules/signup2/assets/uploads/' . $slipPath : '';
+
+          $thPayload = [
+              'invoice_id'    => (int)$row['id'],
+              'invoiceID'     => $row['invoiceID'],
+              'name'          => $row['name'],
+              'address'       => $row['address'],
+              'taxNumber'     => $row['taxNumber'],
+              'type'          => $row['type'],
+              'sale'          => $row['sale'],
+              'customerEmail' => $row['customerEmail'],
+              'customerPhone' => $row['customerPhone'],
+              'bankName'      => $row['bankName'],
+              'bankThaiNumber'=> $row['bankThaiNumber'],
+              'bankThaiName'  => $row['bankThaiName'],
+              'createdAt'     => $row['createdAt'],
+              'subtotal'      => $summary['subtotal']            ?? '',
+              'vat'           => $summary['vat']                 ?? '',
+              'grandtotal'    => $summary['grandtotal_inc_vat']  ?? '',
+              'withholdingTax'=> $summary['withholdingTax']      ?? '',
+              'net_payment'   => $summary['net_payment']         ?? '',
+              'items'         => $rawItems,
+              'quotation'     => $quotation,
+              'receiptID'     => $receiptID,
+              'receipt_url'   => 'https://report.localforyou.com/pages/receiptTH.php?invoice_id=' . $row['id'],
+              'slip_url'      => $slipUrl,
+              'base_url'      => 'https://report.localforyou.com/',
+              'thBathIn'      => $thBathIn,
+              'thBathRe'      => $thBathRe,
+          ];
+
+          $thWebhookUrl = 'https://hook.us1.make.com/gnxfafua86k6mutxg8tr65cuxmrk3v2k';
+          $thCh = curl_init($thWebhookUrl);
+          curl_setopt($thCh, CURLOPT_POST, 1);
+          curl_setopt($thCh, CURLOPT_POSTFIELDS, json_encode($thPayload));
+          curl_setopt($thCh, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+          curl_setopt($thCh, CURLOPT_RETURNTRANSFER, true);
+          curl_exec($thCh);
+          curl_close($thCh);
+      }
+    } catch (\Throwable $e) {
+        error_log('[TH webhook] ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+    }
   }
 
 // Redirect to the specified link

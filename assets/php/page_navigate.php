@@ -357,4 +357,28 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Monitor";
         break;
+    case "invoiceThailand":
+        $showPage = "invoiceThailand.php";
+        $activeMenu["lv1"] = "formMgmt";
+        $activeMenu["lv2"] = "invoiceThailand";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Invoice Thailand";
+        break;
+    case "slipSubmission":
+        $showPage = "slipSubmission.php";
+        $activeMenu["lv1"] = "formMgmt";
+        $activeMenu["lv2"] = "slipSubmission";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : ส่งหลักฐานการชำระเงิน";
+        break;
+    case "billingTH":
+        $showPage = "billingTH.php";
+        $activeMenu["lv1"] = "formMgmt";
+        $activeMenu["lv2"] = "billingTH";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Billing TH";
+        break;
 }

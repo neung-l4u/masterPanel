@@ -572,6 +572,9 @@ $('#formCountry').change(function() {
       fakeNumber.html("0895117447");
       countryTextOnly.val("Thailand");
 
+      // ไม่สร้าง Stripe customer สำหรับ TH
+      $("#CheckedBoxMakeCharge").prop('checked', false);
+
       // 1. ซ่อนฟอร์มและแท็บการชำระเงินอื่นๆ ทั้งหมด
       formCreditCard.hide();
       formDebit.hide();
@@ -1735,6 +1738,12 @@ const modalRespondAction = (action, status, reason) => {
   respondFail.hide();
   if (status === "success"){
     respondSuccess.show();
+    const isTH = $("#formCountry").val() === "TH";
+    $("#thPaymentSection").toggle(isTH);
+    if (isTH) {
+      const total = parseFloat($("#grandTotal").val().replace(/,/g, '')) || 0;
+      $("#thTotalAmount").text(total.toLocaleString('th-TH', {minimumFractionDigits: 2}) + ' บาท');
+    }
   } else if (status === "fail"){
     respondFail.show();
     // เติม reason ลงในกล่อง #failReasonBox ถ้ามี
