@@ -31,7 +31,7 @@ $requestAt = $data['requestAt'];
 $passwordAddSalt = $salt . $pass;
 $passwordHash = md5($passwordAddSalt);
 
-$account = $db->query('SELECT s.sID, s.sEmail, s.sMobile, s.sName, s.sLevel, l.lName, s.teamID ,s.sPic, s.sL4U, s.sCEO
+$account = $db->query('SELECT s.sID, s.sEmail, s.sMobile, s.sName, s.sNickName, s.sLevel, l.lName, s.teamID ,s.sPic, s.sL4U, s.sCEO
                                      FROM `staffs` s , `userLevel` l
                                      WHERE s.sDeleteAt IS NULL 
                                      AND s.sStatus = ? 
@@ -45,6 +45,7 @@ count($account);
 if (count($account) !== 0) {
     $staffID = $account['sID'];
     $staffName = $account['sName'];
+    $staffNickName = $account['sNickName'];
 
     $sql = "SELECT `$system` FROM isAdmin WHERE staffID = ?";
     $getRole = $db->query($sql, $staffID)->fetchArray();
@@ -57,9 +58,11 @@ if (count($account) !== 0) {
 
     echo json_encode([
         "status" => true,
-        "userID" => $staffID,
-        "name"   => $staffName,
-        "role"   => $role,
+        "userID"   => $staffID,
+        "name"     => $staffName,
+        "nickName" => $staffNickName,
+        "role"     => $role,
+        "teamID"   => $account['teamID'],
         "system" => $system,
         "iss"    => $iss,
         "iat"    => $currentTimestamp,
