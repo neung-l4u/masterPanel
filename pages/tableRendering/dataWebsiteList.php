@@ -36,10 +36,12 @@ $i=1;
 foreach ($result as $row) {
     $No = $row["wID"];
     $statusWebsite = !empty($row["wLiveStatus"]) ? $row["wLiveStatus"] : '-';
-    $url = '<a href="'.escUrl($row["wDomain"]).'" target="_blank" title="WP-Link">'.esc($row["wDomain"]).'</a>';
-    $link = !empty($row["wDomain"]) ? $url : '-';
+    $siteUrl = ensureAbsoluteUrl(stripWpAdmin($row["wWordpressURL"]));
+    $url = '<a href="'.escUrl($siteUrl).'" target="_blank" title="WP-Link">'.esc($siteUrl).'</a>';
+    $link = !empty($siteUrl) ? $url : '-';
     $server = $row['svName'] ?? '-';
-    $btn["URL"] = '<a href="'.escUrl($row["wWordpressURL"]).'" target="_blank" title="WP-Admin"><i class="bi bi-box-arrow-up-right"></i></a>';
+    $wpAdminUrl = ensureAbsoluteUrl($row["wWordpressURL"]);
+    $btn["URL"] = '<a href="'.escUrl($wpAdminUrl).'" target="_blank" title="WP-Admin"><i class="bi bi-box-arrow-up-right"></i></a>';
     $btn["detail"] = '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail"><i class="bi bi-file-earmark-text"></i></a>';
     $btn["edit"] = '<a href="#" onclick="setEdit('.$row["wID"].')" title="Edit"><i class="bi bi-pencil-square text-dark"></i></a>';
     $btn["delete"] = '<a href="#" onclick="setDel('.$row["wID"].')" title="Delete"><i class="bi bi-x-square text-danger"></i></a>';
@@ -77,4 +79,19 @@ function dashAndShort($param): string
         $location = mb_substr($param, 0, 15).'...';
         return '<abbr title="'.esc($param).'">'.esc($location).'</abbr>';
     }
+}
+
+function stripWpAdmin($url): string
+{
+    $url = trim($url ?? '');
+    if (empty($url)) return $url;
+    return preg_replace('~/wp-admin/?$~i', '', $url);
+}
+
+function ensureAbsoluteUrl($url): string
+{
+    $url = trim($url ?? '');
+    if (empty($url)) return $url;
+    if (preg_match('~^(https?://|mailto:|tel:|//)~i', $url)) return $url;
+    return 'https://' . $url;
 }

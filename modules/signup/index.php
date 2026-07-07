@@ -202,7 +202,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                 <div class="col-11 col-offset-2">
                     <?php include "progress_bar.php"; ?>
                     <form id="myForm" action="<?php echo $settings["formAction"]; ?>"
-                          method="POST">
+                          method="POST" onsubmit="return false;">
                         <input type=hidden name="oid" value="00D2v0000012UyV">
                         <input type=hidden id="redirectURL" name="retURL"
                                value="<?php echo $settings["formRedirect"]; ?>">

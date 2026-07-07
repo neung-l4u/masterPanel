@@ -52,12 +52,12 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $billingDate)) {
 // --- หา customer จาก customer_id หรือ shop_name ---
 if ($customerId > 0) {
     $custRows = $db->query(
-        'SELECT `id`, `customerCode`, `name`, `email`, `clientType` FROM `thCustomer` WHERE `id` = ? LIMIT 1',
+        'SELECT `id`, `customerCode`, `name`, `address`, `taxNumber`, `email`, `phone`, `type`, `clientType` FROM `thCustomer` WHERE `id` = ? LIMIT 1',
         $customerId
     )->fetchAll();
 } elseif ($shopName !== '') {
     $custRows = $db->query(
-        'SELECT `id`, `customerCode`, `name`, `email`, `clientType` FROM `thCustomer` WHERE `name` LIKE ? LIMIT 1',
+        'SELECT `id`, `customerCode`, `name`, `address`, `taxNumber`, `email`, `phone`, `type`, `clientType` FROM `thCustomer` WHERE `name` LIKE ? LIMIT 1',
         $shopName . '%'
     )->fetchAll();
 } else {
@@ -94,28 +94,59 @@ if (!empty($dupCheck[0])) {
     exit;
 }
 
-// --- Build product JSON ---
-$thBathIn = convertToBahtText($amount);
+// --- Build product JSON: amount จาก Make.com คือราคารวม VAT (gross) ---
+$gross = (float)$amount;
+$net   = round($gross / 1.07, 2);
+$vat   = round($gross - $net, 2);
+$withhold = round($net * 0.03, 2);
+$netPay   = round($gross - $withhold, 2);
+
+$thBathIn = convertToBahtText($netPay);
+
+$taxType = match ($cust['type'] ?? '') {
+    'นิติบุคคล' => 'นิติบุคคล',
+    'บุคคลธรรมดา' => 'บุคคลธรรมดา',
+    default => 'นิติบุคคล',
+};
+
+$billingDateThai = date('d/m/Y', strtotime($billingDate));
+
+$productItems = [];
+foreach ($items as $it) {
+    $productItems[] = [
+        'product' => $it['product'] ?? '',
+        'qyt'     => (string)($it['qyt'] ?? 1),
+        'amount'  => number_format((float)($it['amount'] ?? 0), 2, '.', ''),
+    ];
+}
+
 $productJson = json_encode([
-    'summary' => [
-        'subtotal'           => $amount,
-        'vat'                => 0,
-        'grandtotal_inc_vat' => $amount,
-        'withholdingTax'     => 0,
-        'net_payment'        => $amount,
-    ],
-    'table'     => $items,
     'quotation' => [[
-        'date'   => $billingDate,
-        'detail' => [['shopName' => $cust['name']]],
+        'date'   => $billingDateThai,
+        'detail' => [[
+            'company'  => $cust['name'],
+            'address'  => $cust['address'],
+            'tax_id'   => $cust['taxNumber'],
+            'email'    => $cust['email'],
+            'phone'    => $cust['phone'],
+            'tax_type' => $taxType,
+        ]],
     ]],
-]);
+    'table' => $productItems,
+    'summary' => [
+        'subtotal'           => number_format($net, 2, '.', ''),
+        'vat'                => number_format($vat, 2, '.', ''),
+        'grandtotal_inc_vat' => number_format($gross, 2, '.', ''),
+        'withholdingTax'     => number_format($withhold, 2, '.', ''),
+        'net_payment'        => number_format($netPay, 2, '.', ''),
+    ],
+], JSON_UNESCAPED_UNICODE);
 
 // --- INSERT thInvoice ---
 $db->query(
-    'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `product`, `amount`, `thBathIn`, `status`, `billingSeq`, `billingDate`, `createdAt`)
-     VALUES (?,?,?,?,?,?,?,?,NOW())',
-    $customerId, $invoiceID, $productJson, $amount, $thBathIn, 'pending', $nextSeq, $billingDate
+    'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `type`, `product`, `amount`, `thBathIn`, `status`, `source`, `billingSeq`, `billingDate`, `createdAt`)
+     VALUES (?,?,?,?,?,?,?,?,?,?,NOW())',
+    $customerId, $invoiceID, 'subscription', $productJson, $netPay, $thBathIn, 'pending', 'monday', $nextSeq, $billingDate
 );
 $newInvoiceId = $db->lastInsertId();
 
@@ -130,14 +161,14 @@ if ($clientType === 'first_time' && $lastSeq >= 1) {
 // --- ส่ง email invoice ผ่าน Make.com webhook ---
 $protocol   = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $baseUrl    = $protocol . '://' . ($_SERVER['HTTP_HOST'] ?? 'report.localforyou.com');
-$slipFormUrl = $baseUrl . '/main.php?p=slipSubmission';
+$slipFormUrl = $baseUrl . '/modules/customeruploadslip/?invoiceID=' . urlencode($invoiceID);
 
 $payload = [
     'invoice_id'    => (int)$newInvoiceId,
     'invoiceID'     => $invoiceID,
     'shopName'      => $cust['name'],
     'customerEmail' => $cust['email'],
-    'amount'        => $amount,
+    'amount'        => $netPay,
     'thBathIn'      => $thBathIn,
     'billingDate'   => $billingDate,
     'billingSeq'    => $nextSeq,

@@ -130,7 +130,7 @@ foreach ($mondayItems as $item) {
 
     // ค้นหา thCustomer ตามชื่อร้าน
     $custRows = $db->query(
-        'SELECT `id`, `customerCode` FROM `thCustomer` WHERE `name` LIKE ? LIMIT 1',
+        'SELECT `id`, `customerCode`, `name`, `address`, `taxNumber`, `email`, `phone`, `type` FROM `thCustomer` WHERE `name` LIKE ? LIMIT 1',
         '%' . $shopName . '%'
     )->fetchAll();
 
@@ -164,38 +164,66 @@ foreach ($mondayItems as $item) {
         continue;
     }
 
-    // สร้าง product JSON เบื้องต้น (Make.com จะ fill items จริงๆ ภายหลัง)
-    $thBathIn = convertToBahtText($amount);
-    $productJson = json_encode([
-        'summary' => [
-            'subtotal'          => $amount,
-            'vat'               => 0,
-            'grandtotal_inc_vat'=> $amount,
-            'withholdingTax'    => 0,
-            'net_payment'       => $amount,
-        ],
-        'table'     => [],
-        'quotation' => [[
-            'date'   => $billingDate,
-            'detail' => [['shopName' => $shopName]],
-        ]],
-    ]);
+    // สร้าง product JSON: amount จาก monday.com คือราคารวม VAT (gross)
+    $gross = (float)$amount;
+    $net   = round($gross / 1.07, 2);
+    $vat   = round($gross - $net, 2);
+    $withhold = round($net * 0.03, 2);
+    $netPay   = round($gross - $withhold, 2);
 
-    // INSERT thInvoice
+    $thBathIn = convertToBahtText($netPay);
+
+    $taxType = match ($cust['type'] ?? '') {
+        'นิติบุคคล' => 'นิติบุคคล',
+        'บุคคลธรรมดา' => 'บุคคลธรรมดา',
+        default => 'นิติบุคคล',
+    };
+
+    $billingDateThai = date('d/m/Y', strtotime($billingDate));
+
+    $productJson = json_encode([
+        'quotation' => [[
+            'date'   => $billingDateThai,
+            'detail' => [[
+                'company'  => $cust['name'],
+                'address'  => $cust['address'],
+                'tax_id'   => $cust['taxNumber'],
+                'email'    => $cust['email'],
+                'phone'    => $cust['phone'],
+                'tax_type' => $taxType,
+            ]],
+        ]],
+        'table' => [],
+        'summary' => [
+            'subtotal'           => number_format($net, 2, '.', ''),
+            'vat'                => number_format($vat, 2, '.', ''),
+            'grandtotal_inc_vat' => number_format($gross, 2, '.', ''),
+            'withholdingTax'     => number_format($withhold, 2, '.', ''),
+            'net_payment'        => number_format($netPay, 2, '.', ''),
+        ],
+    ], JSON_UNESCAPED_UNICODE);
+
+    // INSERT thInvoice (status pending, เก็บ net_payment)
     $db->query(
-        'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `product`, `amount`, `thBathIn`, `status`, `billingSeq`, `billingDate`, `createdAt`)
-         VALUES (?,?,?,?,?,?,?,?,NOW())',
-        $customerId, $invoiceID, $productJson, $amount, $thBathIn, 'pending', $nextSeq, $billingDate
+        'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `type`, `product`, `amount`, `thBathIn`, `status`, `source`, `billingSeq`, `billingDate`, `createdAt`)
+         VALUES (?,?,?,?,?,?,?,?,?,?,NOW())',
+        $customerId, $invoiceID, 'subscription', $productJson, $netPay, $thBathIn, 'pending', 'monday', $nextSeq, $billingDate
     );
 
     $newInvoiceId = $db->lastInsertId();
+
+    // INSERT thReceipt รอไว้
+    $db->query(
+        'INSERT INTO `thReceipt`(`invoice_id`, `receiptID`, `amount_paid`, `thBathRe`, `status`) VALUES (?,?,?,?,?)',
+        $newInvoiceId, $invoiceID, $netPay, $thBathIn, 'pending'
+    );
 
     $processed++;
     $resultItems[] = [
         'invoice_id'    => (int)$newInvoiceId,
         'invoiceID'     => $invoiceID,
         'shopName'      => $shopName,
-        'amount'        => $amount,
+        'amount'        => $netPay,
         'billingSeq'    => $nextSeq,
         'billingDate'   => $billingDate,
         'monday_item_id'=> $mondayItemId,

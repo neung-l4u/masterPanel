@@ -121,12 +121,6 @@ include ('assets/api/checkSession.php');
                                 <p>Template Submissions &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
                             </a>
                         </li>
-                        <li class="nav-item pl-2">
-                            <a href="main.php?p=aiManagement" class="nav-link <?php echo $activeMenu["lv2"] == "aiManagement" ? "active":""; ?>">
-                                <i class="nav-icon mr-3 bi bi-robot"></i>
-                                <p>AI Management</p>
-                            </a>
-                        </li>
                         <?php if($_SESSION['level'] == 1 || $_SESSION['id'] == 83){ ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=invoiceThailand" class="nav-link <?php echo $activeMenu["lv2"] == "invoiceThailand" ? "active":""; ?>">
@@ -355,22 +349,6 @@ include ('assets/api/checkSession.php');
                             <a href="main.php?p=l4uPassword" class="nav-link <?php echo $activeMenu["lv2"] == "l4uPassword" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-key"></i>
                                 <p>Password</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- User Tools -->
-                <li class="nav-item <?php echo $activeMenu["lv1"] == "userTools" ? "menu-is-opening menu-open":""; ?>">
-                    <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "userTools" ? "active":""; ?>">
-                        <i class="nav-icon mr-2 bi bi-tools"></i>
-                        <p>Tools <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item pl-2">
-                            <a href="main.php?p=userTools" class="nav-link <?php echo $activeMenu["lv2"] == "userToolsHome" ? "active":""; ?>">
-                                <i class="nav-icon mr-3 bi bi-grid-3x3-gap"></i>
-                                <p>All Tools</p>
                             </a>
                         </li>
                     </ul>

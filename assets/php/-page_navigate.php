@@ -114,22 +114,6 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Tools Management & Logs";
         break;
-    case "userTools":
-        $showPage = "toolsUser.php";
-        $activeMenu["lv1"] = "userTools";
-        $activeMenu["lv2"] = "userToolsHome";
-        $datatable["show"] = "false";
-        $datatable["src"] = "";
-        $title = "Master panel : User Tools";
-        break;
-    case "qrGenerator":
-        $showPage = "qrGenerator.php";
-        $activeMenu["lv1"] = "userTools";
-        $activeMenu["lv2"] = "qrGenerator";
-        $datatable["show"] = "false";
-        $datatable["src"] = "";
-        $title = "Master panel : QR Generator";
-        break;
     case "coin":
         $showPage = "coin.php";
         $activeMenu["lv1"] = "rewardsCoin";
@@ -244,14 +228,6 @@ switch ($menuPage){
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataZoomExt.php";
         $title = "Master panel : Zoom Extension";
-        break;
-    case "aiManagement":
-        $showPage = "aiManagement.php";
-        $activeMenu["lv1"] = "formMgmt";
-        $activeMenu["lv2"] = "aiManagement";
-        $datatable["show"] = "true";
-        $datatable["src"] = "pages/tableRendering/dataAiLogs.php";
-        $title = "Master panel : AI Management";
         break;
     case "rewardCoin":
         $showPage = "rewardCoin.php";

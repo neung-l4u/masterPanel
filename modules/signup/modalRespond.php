@@ -117,7 +117,7 @@
                                 <!-- Left: bank details -->
                                 <div style="flex:1; padding:16px; border-right:1px solid #e0e0e0;">
                                     <div class="d-flex align-items-center gap-2 mb-3">
-                                        <img src="assets/img/k-bank.png" alt="K PLUS" height="36" style="border-radius:8px;">
+                                        <!-- <img src="assets/img/k-bank.png" alt="K PLUS" height="36" style="border-radius:8px;"> -->
                                         <span style="font-size:18px; font-weight:700;">K PLUS</span>
                                     </div>
                                     
@@ -200,7 +200,7 @@
                         </div>
                         <img src="assets/img/ballLoading.gif" alt="loading" id="ballLoading" width="30" height="30" style="display:none;">
                         <span id="countdownText" class="text-muted fw-bold" style="display:none; margin-left: 10px;"></span>
-                        <button type="button" id="CRMButton" disabled class="btn btn-primary" style="display:none;" onclick="submitToCRM();" data-bs-dismiss="modal">Save</button>
+                        <button type="button" id="CRMButton" disabled class="btn btn-primary" style="display:none;" onclick="submitToCRM();">Save</button>
                     </div>
                 </div>
             </div>

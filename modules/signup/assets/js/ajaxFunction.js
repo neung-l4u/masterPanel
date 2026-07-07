@@ -309,6 +309,8 @@ function getProductList(country) {
                     classType = "isWebsiteMakeOver";
                 }else if (name.search("Web Hosting")>-1){
                     classType = "isWebHosting";
+                }else if (name.search("POS Devices")>-1){
+                    classType = "isPOSDevices";
                 }else { classType = ""; }
 
                 if((position>-1) && (!didItFlyer)){
@@ -429,6 +431,28 @@ function getProductList(country) {
                 /////////
 
 
+                let posDevicesSubHTML = "";
+                if (name === "POS Devices") {
+                    posDevicesSubHTML = `<div class="pos-devices-sub ms-4 mt-1" id="posDevicesSub-${product_id}" style="display:none;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="addonPOSDeviceDuelScreen" id="posDeviceDuelScreen-${product_id}" value="Duel Screen">
+                            <label class="form-check-label" for="posDeviceDuelScreen-${product_id}">Duel Screen</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="addonPOSDevicePrinter" id="posDevicePrinter-${product_id}" value="Printer">
+                            <label class="form-check-label" for="posDevicePrinter-${product_id}">Printer</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="addonPOSDeviceCashDrawer" id="posDeviceCashDrawer-${product_id}" value="Cash Drawer">
+                            <label class="form-check-label" for="posDeviceCashDrawer-${product_id}">Cash Drawer</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="addonPOSDeviceWifi" id="posDeviceWifi-${product_id}" value="Wifi Extension">
+                            <label class="form-check-label" for="posDeviceWifi-${product_id}">Wifi Extension</label>
+                        </div>
+                    </div>`;
+                }
+
                 if(formCountry==="US" || formCountry==="CA"){
                 return `${addText}<div class="form-check">
                     <input 
@@ -437,13 +461,13 @@ function getProductList(country) {
                         name="${item.form_name}"
                         id="addon-${product_id}" 
                         value="${name} - ${formData.formCurrency.charAt(0)}$${price} ${special}"
-                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}'); togglePOSDevicesSub('addon-${product_id}', 'posDevicesSub-${product_id}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
                         ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
                         ${discountText}
                     </label>
-                </div>`;
+                </div>${posDevicesSubHTML}`;
                 }else if(formCountry==="UK"){
                     return `${addText}<div class="form-check">
                     <input 
@@ -452,13 +476,13 @@ function getProductList(country) {
                         name="${item.form_name}"
                         id="addon-${product_id}" 
                         value="${name} - ${formData.formCurrency.charAt(0)}£${price} ${special}"
-                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}'); togglePOSDevicesSub('addon-${product_id}', 'posDevicesSub-${product_id}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
                         ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
                         ${discountText}
                     </label>
-                </div>`;
+                </div>${posDevicesSubHTML}`;
                 }else if(formCountry==="TH"){
                     return `${addText}<div class="form-check">
                     <input 
@@ -467,13 +491,13 @@ function getProductList(country) {
                         name="${item.form_name}"
                         id="addon-${product_id}"
                         value="${name} - ${formData.formCurrency.charAt(0)}฿${price} ${special}"
-                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}'); togglePOSDevicesSub('addon-${product_id}', 'posDevicesSub-${product_id}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
                         ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
                         ${discountText}
                     </label>
-                </div>`;
+                </div>${posDevicesSubHTML}`;
                 }else if(formCountry==="AU"){
                     return `${addText}<div class="form-check">
                     <input 
@@ -482,13 +506,13 @@ function getProductList(country) {
                         name="${item.form_name}"
                         id="addon-${product_id}" 
                         value="${name} - ${formData.formCurrency.charAt(0)}$${price} ${special}"
-                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}'); togglePOSDevicesSub('addon-${product_id}', 'posDevicesSub-${product_id}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
                         ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
                         ${discountText}
                     </label>
-                </div>`;
+                </div>${posDevicesSubHTML}`;
                 }else if(formCountry==="NZ"){
                     return `${addText}<div class="form-check">
                     <input 
@@ -497,13 +521,13 @@ function getProductList(country) {
                         name="${item.form_name}"
                         id="addon-${product_id}" 
                         value="${name} - ${formData.formCurrency.charAt(0)}$${price} ${special}"
-                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
+                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}'); togglePOSDevicesSub('addon-${product_id}', 'posDevicesSub-${product_id}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
                         ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
                         ${discountText}
                     </label>
-                </div>`;
+                </div>${posDevicesSubHTML}`;
                 }
 
             });
@@ -880,8 +904,6 @@ function requestToPay() {
 
     console.log("stripePayload = ",stripePayload);
 
-    modalRespondAction('open','success');
-
     if(CheckedBoxMakeChargeValue) { //ถ้าเลือกโหมดจ่ายเงิน ให้คิดเงินผ่าน Stripe
         // TODO :  ชาร์จเงินผ่าน stripe
         const reqPay = $.ajax({
@@ -1116,6 +1138,8 @@ const sendMailToL4UTeam = () => {
         addonYelpAdSpend: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
         addonSocialMediaSetup: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
 
+        
+
 
 
         formCustomerType: $("#formType option:selected").text(),
@@ -1211,6 +1235,12 @@ const sendMailToL4UTeam = () => {
         posCheck: $("#posCheck").val(),
         renovationTakePOS: $("#renovationTakePOS").val(),
         necessaryPermitsPOS: $("#necessaryPermitsPOS").val(),
+
+        //POS Devices//
+        addonPOSDeviceDuelScreen: $("input:checkbox[name='addonPOSDeviceDuelScreen']:checked").val(),
+        addonPOSDevicePrinter: $("input:checkbox[name='addonPOSDevicePrinter']:checked").val(),
+        addonPOSDeviceCashDrawer: $("input:checkbox[name='addonPOSDeviceCashDrawer']:checked").val(),
+        addonPOSDeviceWifi: $("input:checkbox[name='addonPOSDeviceWifi']:checked").val(),
 
         ///AI ///
         addonARAYA: $("input:checkbox[name='addonAI']:checked").val(),
@@ -2055,6 +2085,10 @@ const saveToDB = (stripePayload, stripeRes) => {
         AddOn10: $("input:checkbox[name='addonPOS']:checked").val(),
         AddOn11: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
         AddOn12: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
+        POSDeviceDuelScreen: $("input:checkbox[name='addonPOSDeviceDuelScreen']:checked").val(),
+        POSDevicePrinter: $("input:checkbox[name='addonPOSDevicePrinter']:checked").val(),
+        POSDeviceCashDrawer: $("input:checkbox[name='addonPOSDeviceCashDrawer']:checked").val(),
+        POSDeviceWifi: $("input:checkbox[name='addonPOSDeviceWifi']:checked").val(),
         OrderDiscount: $("input[name='discount']:checked").val(),
         OtherDiscount: $("#discountOther").val(),
         mainDiscountCode: $("#couponCode").val(),
@@ -2253,6 +2287,10 @@ const createLogs = (stripePayload) => {
         AddOn10: $("input:checkbox[name='addonPOS']:checked").val(),
         AddOn11: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
         AddOn12: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
+        POSDeviceDuelScreen: $("input:checkbox[name='addonPOSDeviceDuelScreen']:checked").val(),
+        POSDevicePrinter: $("input:checkbox[name='addonPOSDevicePrinter']:checked").val(),
+        POSDeviceCashDrawer: $("input:checkbox[name='addonPOSDeviceCashDrawer']:checked").val(),
+        POSDeviceWifi: $("input:checkbox[name='addonPOSDeviceWifi']:checked").val(),
         OrderDiscount: $("input[name='discount']:checked").val(),
         OtherDiscount: $("#discountOther").val(),
         mainDiscountCode: $("#couponCode").val(),
@@ -2386,7 +2424,9 @@ const submitToCRM = async () => {
     }
 
     console.log('submitToCRM: submitting form...');
-    applicationForm.submit();
+    if (typeof modalResponse !== 'undefined') { try { modalResponse.hide(); } catch(e){} }
+    window._crmSubmitAuthorized = true;
+    applicationForm[0].submit(); // use native DOM submit() to bypass onsubmit="return false"
 }
 
 const openConfirm = () => {
@@ -2416,45 +2456,12 @@ $('#formCountry').on('change', function () {
 
 // Toggle visibility: show only when country=AU AND (product or addon contains "POS")
 function toggleDocUploadSection() {
-    const country = formData.formCountry || $('#formCountry').val();
     const docSection = $('#docUploadSection');
     const fileInputs = docSection.find('input[type="file"]');
     const adyenAgree = $('#adyenAgreement');
-
-    if (country !== 'AU') {
-        docSection.hide();
-        fileInputs.prop('required', false);
-        adyenAgree.prop('required', false);
-        return;
-    }
-
-    // Check main product for "POS" (check value + label text)
-    const productInput = $("input[name='product']:checked");
-    const selectedProduct = (productInput.val() || '') + ' ' +
-        $("label[for='" + productInput.attr('id') + "']").text();
-    let hasPOS = selectedProduct.toUpperCase().includes('POS');
-
-    // Check ALL checked addon checkboxes inside the products/addon container
-    if (!hasPOS) {
-        $("#products2 input[type='checkbox']:checked, #addon2 input[type='checkbox']:checked").each(function () {
-            const val = ($(this).val() || '');
-            const lbl = $("label[for='" + $(this).attr('id') + "']").text();
-            if ((val + ' ' + lbl).toUpperCase().includes('POS')) {
-                hasPOS = true;
-                return false; // break
-            }
-        });
-    }
-
-    if (hasPOS) {
-        docSection.show();
-        fileInputs.prop('required', true);
-        adyenAgree.prop('required', true);
-    } else {
-        docSection.hide();
-        fileInputs.prop('required', false);
-        adyenAgree.prop('required', false);
-    }
+    docSection.hide();
+    fileInputs.prop('required', false);
+    adyenAgree.prop('required', false);
 }
 
 // Sync Adyen agreement checkbox: only from modal to main (after scrolling to bottom)
@@ -2623,5 +2630,19 @@ function uploadDocuments() {
             reject(error);
         });
     });
+}
+
+function togglePOSDevicesSub(checkboxId, subDivId) {
+    let chk = document.getElementById(checkboxId);
+    let sub = document.getElementById(subDivId);
+    if (!chk || !sub) return;
+    if (chk.checked) {
+        sub.style.display = "block";
+    } else {
+        sub.style.display = "none";
+        sub.querySelectorAll("input[type='checkbox']").forEach(function(el) {
+            el.checked = false;
+        });
+    }
 }
 
