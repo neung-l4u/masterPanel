@@ -28,6 +28,8 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
 <html lang="en">
 <head>
     <?php require_once "assets/api/googleAnalytics.php";?>
+  <link rel="shortcut icon" href="assets/img/logo-login2.png?v=2">
+  <link rel="icon" type="image/png" href="assets/img/logo-login2.png?v=2">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?php echo $title;?></title>

@@ -429,6 +429,20 @@ $password = "Localeats#".date("Y");
                                         <input class="form-check-input" type="checkbox" id="inputVoucher">
                                         <label class="form-check-label" for="inputVoucher">Voucher</label>
                                     </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="inputCloudwaitress">
+                                        <label class="form-check-label" for="inputCloudwaitress">Cloudwaitress</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="inputOtherCheck" onchange="toggleOtherInput()">
+                                        <label class="form-check-label" for="inputOtherCheck">Other</label>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="otherInputGroup" style="display:none;">
+                                    <label for="inputOther">Other (details)</label>
+                                    <span id="inputOtherDisplay" class="form-control" style="display:none; cursor:pointer; min-height:38px;" ondblclick="editOtherInput()"></span>
+                                    <textarea class="form-control" id="inputOther" rows="2" maxlength="300" placeholder="e.g. OpenTable, Resy ..."></textarea>
+                                    <small class="text-muted"><span id="inputOtherCount">0</span>/300</small>
                                 </div>
 
                                 <input type="hidden" name="editID" id="editID" value="">
@@ -682,8 +696,34 @@ $password = "Localeats#".date("Y");
     const inputGloriaFood = $("#inputGloriaFood");
     const inputAmelia = $("#inputAmelia");
     const inputVoucher = $("#inputVoucher");
+    const inputCloudwaitress = $("#inputCloudwaitress");
+    const inputOtherCheck = $("#inputOtherCheck");
+    const inputOther = $("#inputOther");
     const editID = $("#editID");
     const formAction = $("#formAction");
+
+    function toggleOtherInput() {
+        const checked = inputOtherCheck.prop("checked");
+        $("#otherInputGroup").toggle(checked);
+        if (!checked) {
+            inputOther.val('');
+            $("#inputOtherDisplay").hide().text('');
+            inputOther.show();
+            $("#inputOtherCount").text('0');
+        }
+    }
+
+    function editOtherInput() {
+        const currentText = $("#inputOtherDisplay").text();
+        $("#inputOtherDisplay").hide();
+        inputOther.val(currentText).show().focus();
+        $("#inputOtherCount").text(currentText.length);
+    }
+
+    inputOther.on('input', function() {
+        const len = $(this).val().length;
+        $("#inputOtherCount").text(len);
+    });
 
     // Modal Form Detail
     const ProjectName = $("#wProject");
@@ -755,15 +795,13 @@ $password = "Localeats#".date("Y");
                 Industry.text(res.wIndustry);
                 TemplateUsed.text(res.wTemplateUsed);
 
-                if (res.wSystemGloriaFood === 1) {
-                    System.text("Gloria Food");
-                } else if (res.wSystemAmelia === 1 && res.wSystemVoucher === 1) {
-                    System.text("Amelia, Voucher");
-                } else if (res.wSystemAmelia === 1) {
-                    System.text("Amelia");
-                } else if (res.wSystemVoucher === 1) {
-                    System.text("Voucher");
-                }
+                let systems = [];
+                if (res.wSystemGloriaFood == 1) systems.push("Gloria Food");
+                if (res.wSystemAmelia == 1) systems.push("Amelia");
+                if (res.wSystemVoucher == 1) systems.push("Voucher");
+                if (res.wSystemCloudwaitress == 1) systems.push("Cloudwaitress");
+                if (res.wSystemOther) systems.push(res.wSystemOther);
+                System.text(systems.length > 0 ? systems.join(", ") : "-");
 
                 DomainName.text(res.wDomain);
                 DomainProvidersID.text(res.domainProvidersName);
@@ -839,9 +877,23 @@ $password = "Localeats#".date("Y");
             inputContactEmailUser.val(res.wContactEmailUser);
             inputContactEmailPass.val(res.wContactEmailPass);
             inputContactEmailRemark.val(res.wContactEmailRemark);
-            inputGloriaFood.prop("checked", res.wSystemGloriaFood === 1 ? 1 : 0);
-            inputAmelia.prop("checked", res.wSystemAmelia === 1 ? 1 : 0);
-            inputVoucher.prop("checked", res.wSystemVoucher === 1 ? 1 : 0);
+            inputGloriaFood.prop("checked", res.wSystemGloriaFood == 1);
+            inputAmelia.prop("checked", res.wSystemAmelia == 1);
+            inputVoucher.prop("checked", res.wSystemVoucher == 1);
+            inputCloudwaitress.prop("checked", res.wSystemCloudwaitress == 1);
+            const hasOther = res.wSystemOther && res.wSystemOther.trim() !== '';
+            inputOtherCheck.prop("checked", hasOther);
+            if (hasOther) {
+                $("#otherInputGroup").show();
+                inputOther.hide();
+                $("#inputOtherDisplay").show().text(res.wSystemOther);
+                $("#inputOtherCount").text(res.wSystemOther.length);
+            } else {
+                $("#otherInputGroup").hide();
+                inputOther.val('').show();
+                $("#inputOtherDisplay").hide().text('');
+                $("#inputOtherCount").text('0');
+            }
             editID.val(res.id);
             formAction.val("edit");
             newModalFormAction("open");
@@ -882,6 +934,8 @@ $password = "Localeats#".date("Y");
                 inputGloriaFood: inputGloriaFood.prop("checked") ? 1 : 0,
                 inputAmelia: inputAmelia.prop("checked") ? 1 : 0,
                 inputVoucher: inputVoucher.prop("checked") ? 1 : 0,
+                inputCloudwaitress: inputCloudwaitress.prop("checked") ? 1 : 0,
+                inputOther: inputOtherCheck.prop("checked") ? ($("#inputOtherDisplay").is(":visible") ? $("#inputOtherDisplay").text() : inputOther.val().substring(0, 300)) : '',
                 editID: editID.val(),
                 formAction: formAction.val(),
             };
@@ -937,6 +991,12 @@ $password = "Localeats#".date("Y");
         inputGloriaFood.prop("checked", false);
         inputAmelia.prop("checked", false);
         inputVoucher.prop("checked", false);
+        inputCloudwaitress.prop("checked", false);
+        inputOtherCheck.prop("checked", false);
+        $("#otherInputGroup").hide();
+        inputOther.val('').show();
+        $("#inputOtherDisplay").hide().text('');
+        $("#inputOtherCount").text('0');
         editID.val('');
         formAction.val('add');
         reloadTable_bs5();
