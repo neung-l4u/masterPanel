@@ -31,9 +31,9 @@
 <script src="assets/js/date_format.js"></script>
 <script src="assets/js/getUserAgent.js"></script>
 <script src="assets/js/util.js?v=2.0.18"></script>
-<script src="assets/js/ajaxFunction.js?v=2.0.52"></script>
+<script src="assets/js/ajaxFunction.js?v=2.0.53"></script>
 <script src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
 <script src="assets/js/popper.2.11.5.min.js"></script>
-<script src="assets/js/bootstrap-multi-step-form.js?v=2.0.42"></script>
+<script src="assets/js/bootstrap-multi-step-form.js?v=2.0.44"></script>
 
 <input type="hidden" id="signupFormVersion" name="signupFormVersion" value="2.10.53" />

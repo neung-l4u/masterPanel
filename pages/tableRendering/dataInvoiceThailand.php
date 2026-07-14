@@ -12,35 +12,33 @@ $dateEnd    = $_POST['dateEnd']    ?? '';
 $searchVal  = $_POST['search_val'] ?? '';
 
 $params = [];
-$query = "SELECT i.`id`, i.`invoiceID`, i.`product`, i.`amount`, i.`status`, i.`createdAt`,
+$query = "SELECT r.`id` AS receiptId, r.`invoice_id` AS id, r.`receiptID`, r.`amount_paid`, r.`status` AS receiptStatus, r.`slip`, r.`createdAt`, r.`sentAt`,
+                 i.`invoiceID`, i.`product`, i.`amount` AS invoiceAmount, i.`status` AS invoiceStatus,
                  c.`name`, c.`email` AS customerEmail, c.`phone` AS customerPhone,
-                 c.`type`, c.`clientType`, c.`bankName`, c.`bankNumber` AS bankThaiNumber,
-                 r.`slip`, r.`receiptID`, r.`status` AS receiptStatus
-          FROM `thInvoice` i
+                 c.`type`, c.`clientType`, c.`bankName`, c.`bankNumber` AS bankThaiNumber
+          FROM `thReceipt` r
+          JOIN `thInvoice` i ON i.`id` = r.`invoice_id`
           JOIN `thCustomer` c ON c.`id` = i.`customer_id`
-          LEFT JOIN `thReceipt` r ON r.`id` = (
-              SELECT MAX(`id`) FROM `thReceipt` WHERE `invoice_id` = i.`id`
-          )
           WHERE 1=1";
 
 if (!empty($dateStart) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateStart)) {
-    $query .= ' AND DATE(i.createdAt) >= ?';
+    $query .= ' AND DATE(r.createdAt) >= ?';
     $params[] = $dateStart;
 }
 if (!empty($dateEnd) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateEnd)) {
-    $query .= ' AND DATE(i.createdAt) <= ?';
+    $query .= ' AND DATE(r.createdAt) <= ?';
     $params[] = $dateEnd;
 }
 if (!empty($searchVal)) {
     $s = '%' . strip_tags(trim($searchVal)) . '%';
-    $query .= ' AND (c.`name` LIKE ? OR c.`email` LIKE ? OR i.`invoiceID` LIKE ?)';
+    $query .= ' AND (c.`name` LIKE ? OR c.`email` LIKE ? OR i.`invoiceID` LIKE ? OR r.`receiptID` LIKE ?)';
+    $params[] = $s;
     $params[] = $s;
     $params[] = $s;
     $params[] = $s;
 }
 
-$query .= ' AND (r.`receiptID` IS NOT NULL OR i.`invoiceID` IS NOT NULL)';
-$query .= ' ORDER BY i.id DESC';
+$query .= ' ORDER BY r.id DESC';
 
 $rows = empty($params) ? $db->query($query)->fetchAll() : $db->query($query, ...$params)->fetchAll();
 $data  = ['data' => []];
@@ -51,7 +49,7 @@ foreach ($rows as $row) {
     $name     = htmlspecialchars($row['name'] ?? '-');
     $email    = htmlspecialchars($row['customerEmail'] ?? '-');
     $phone    = htmlspecialchars($row['customerPhone'] ?? '-');
-    $amount = number_format((float)($row['amount'] ?? 0), 2) . ' ฿';
+    $amount = number_format((float)($row['amount_paid'] ?? 0), 2) . ' ฿';
     $date   = $row['createdAt'];
 
     // Type badge
@@ -77,8 +75,8 @@ foreach ($rows as $row) {
     if (!empty($slipPath)) {
         $slipHtml = '<span class="badge badge-success"><i class="bi bi-check-circle"></i> มีสลิป</span>';
     } else {
-        $statusVal = $row['status'] ?? 'pending';
-        if ($statusVal === 'sent') {
+        $invoiceStatus = $row['invoiceStatus'] ?? 'pending';
+        if ($invoiceStatus === 'sent') {
             $slipHtml = '<span class="badge badge-success"><i class="bi bi-check-circle"></i> ส่งแล้ว</span>';
         } else {
             $slipHtml = '<span class="badge badge-warning"><i class="bi bi-clock"></i> รอหลักฐาน</span>';
@@ -86,7 +84,7 @@ foreach ($rows as $row) {
     }
 
     // Status badge (clickable)
-    $receiptStatus = $row['receiptStatus'] ?? ($row['status'] ?? 'pending');
+    $receiptStatus = $row['receiptStatus'] ?? 'pending';
     $safeInvID = htmlspecialchars($row['invoiceID'] ?? '-', ENT_QUOTES);
     $onclick = 'openEditStatus(' . $id . ', \'' . $safeInvID . '\', \'' . $receiptStatus . '\')';
     if ($receiptStatus === 'confirmed') {

@@ -148,6 +148,17 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Payment expiry countdown -->
+                        <div id="thCountdownBox" class="mb-3" style="display:none; border:1px solid #bee5eb; background:#e8f4f8; border-radius:8px; padding:10px 14px;">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span style="font-size:13px; color:#0c5460;">
+                                    <i class="bi bi-clock-history mr-1"></i>
+                                    รายการชำระเงินจะหมดอายุในอีก
+                                </span>
+                                <span id="thCountdownTimer" style="font-family:'Courier New',monospace; font-size:16px; font-weight:700; color:#0c5460;">10:00</span>
+                            </div>
+                        </div>
+
                         <!-- Total amount -->
                         <div class="d-flex justify-content-between align-items-center mb-3" style="padding:0 4px;">
                             <span style="font-size:15px;">จำนวนที่ต้องชำระ</span>
@@ -237,7 +248,7 @@
 <script>
 function sendThTransferProof() {
     const slipInput = document.getElementById('thSlipUpload');
-    const quotationID = $("#quotationID").val();
+    let quotationID = $("#quotationID").val();
     const shopName = $("#shopName").val();
     const country = $("#formCountry").val();
     const sendBtn = $("button[onclick='sendThTransferProof()']");
@@ -246,6 +257,18 @@ function sendThTransferProof() {
         alert('กรุณาเลือกไฟล์สลิปโอนเงินก่อน');
         return;
     }
+
+    // Fallback: ถ้า quotationID ว่าง ให้ลองดึงจาก dataInvoice
+    if (!quotationID) {
+        try {
+            const dataInvoice = JSON.parse($("#dataInvoice").val() || '[]');
+            if (Array.isArray(dataInvoice) && dataInvoice.length > 0 && dataInvoice[0].id) {
+                quotationID = dataInvoice[0].id;
+                $("#quotationID").val(quotationID);
+            }
+        } catch (e) { console.warn('sendThTransferProof dataInvoice parse error:', e); }
+    }
+
     if (!quotationID) {
         alert('ไม่พบ Quotation ID กรุณาลองใหม่อีกครั้ง');
         return;

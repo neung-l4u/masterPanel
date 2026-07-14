@@ -123,12 +123,20 @@ switch ($menuPage){
         $title = "Master panel : User Tools";
         break;
     case "qrGenerator":
-        $showPage = "qrGenerator.php";
+        $showPage = "toolsUser/qrGenerator.php";
         $activeMenu["lv1"] = "userTools";
         $activeMenu["lv2"] = "qrGenerator";
         $datatable["show"] = "false";
         $datatable["src"] = "";
         $title = "Master panel : QR Generator";
+        break;
+    case "imageResizer":
+        $showPage = "toolsUser/imageResizer.php";
+        $activeMenu["lv1"] = "userTools";
+        $activeMenu["lv2"] = "imageResizer";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Image Resizer";
         break;
     case "coin":
         $showPage = "coin.php";
@@ -387,7 +395,7 @@ switch ($menuPage){
         $activeMenu["lv2"] = "invoiceThailand";
         $datatable["show"] = "false";
         $datatable["src"] = "";
-        $title = "Master panel : Invoice Thailand";
+        $title = "Master panel : Customer Thailand";
         break;
     case "slipSubmission":
         $showPage = "slipSubmission.php";
@@ -395,7 +403,7 @@ switch ($menuPage){
         $activeMenu["lv2"] = "slipSubmission";
         $datatable["show"] = "false";
         $datatable["src"] = "";
-        $title = "Master panel : ส่งหลักฐานการชำระเงิน";
+        $title = "Master panel : ส่งหลักฐานชำระเงิน";
         break;
     case "billingTH":
         $showPage = "billingTH.php";
@@ -403,6 +411,6 @@ switch ($menuPage){
         $activeMenu["lv2"] = "billingTH";
         $datatable["show"] = "false";
         $datatable["src"] = "";
-        $title = "Master panel : Billing TH";
+        $title = "Master panel : Billing TH — ตรวจสลิป";
         break;
 }

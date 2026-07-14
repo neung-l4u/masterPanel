@@ -6,21 +6,33 @@ include '../../assets/db/db.php';
 include '../../assets/db/initDB.php';
 ob_clean();
 
-$invoice_id = isset($_GET['invoice_id']) ? (int)$_GET['invoice_id'] : 0;
+$receipt_id = isset($_GET['invoice_id']) ? (int)$_GET['invoice_id'] : 0;
 
-if (!$invoice_id) {
+if (!$receipt_id) {
     http_response_code(400);
-    echo '<h2>Invalid request: missing invoice_id</h2>';
+    echo '<h2>Invalid request: missing receipt_id</h2>';
     exit;
 }
+
+// Lookup invoice_id from thReceipt
+$receiptLookup = $db->query(
+    'SELECT `invoice_id` FROM `thReceipt` WHERE `id` = ? LIMIT 1',
+    $receipt_id
+)->fetchAll();
+if (empty($receiptLookup[0])) {
+    http_response_code(404);
+    echo '<h2>ไม่พบข้อมูล Receipt</h2>';
+    exit;
+}
+$invoice_id = (int)$receiptLookup[0]['invoice_id'];
 
 // Handle POST submit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $comment = trim($_POST['needfix'] ?? '');
     if ($comment !== '') {
         $db->query(
-            'UPDATE `thReceipt` SET `needfix` = ?, `status` = ? WHERE `invoice_id` = ?',
-            $comment, 'rejected', $invoice_id
+            'UPDATE `thReceipt` SET `needfix` = ?, `status` = ? WHERE `id` = ?',
+            $comment, 'rejected', $receipt_id
         );
         $db->query(
             'UPDATE `thInvoice` SET `status` = ? WHERE `id` = ?',
@@ -37,11 +49,9 @@ $rows = $db->query(
             r.`receiptID`, r.`needfix`, r.`status` AS receiptStatus
      FROM `thInvoice` i
      JOIN `thCustomer` c ON c.`id` = i.`customer_id`
-     LEFT JOIN `thReceipt` r ON r.`id` = (
-         SELECT MAX(`id`) FROM `thReceipt` WHERE `invoice_id` = i.`id`
-     )
+     LEFT JOIN `thReceipt` r ON r.`id` = ?
      WHERE i.`id` = ? LIMIT 1',
-    $invoice_id
+    $receipt_id, $invoice_id
 )->fetchAll();
 
 if (empty($rows)) {

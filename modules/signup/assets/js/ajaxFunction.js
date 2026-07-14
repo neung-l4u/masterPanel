@@ -1908,6 +1908,10 @@ const callDatabaseInvoice = (idInvoice) => {
             console.log("📦 Data from DB:", res);
             // แปลง JSON เป็น string แล้วใส่ลง input
             $("#dataInvoice").val(JSON.stringify(res.dataInvoice, null, 2));
+            // Fallback: เติม quotationID ถ้ายังว่าง
+            if (idInvoice && !$("#quotationID").val()) {
+                $("#quotationID").val(idInvoice);
+            }
             // callWebhookInvoice(idInvoice, res.dataInvoice); กลับมาเปิดคอมเม้นด้วย
         },
         error: function(xhr, status, error) {

@@ -76,6 +76,17 @@ $submittedBy = $_SESSION['name'] ?? $_SESSION['nickName'] ?? 'Unknown';
                                 <div id="labelInvoiceID" class="font-weight-bold text-primary" style="font-size:15px;"></div>
                             </div>
                         </div>
+                        <!-- Countdown timer -->
+                        <div id="countdownBox" class="alert alert-info mb-3" style="display:none; padding:10px 14px; border-radius:8px;">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span style="font-size:13px;">
+                                    <i class="bi bi-clock-history mr-1"></i>
+                                    รายการชำระเงินจะหมดอายุในอีก
+                                </span>
+                                <span id="countdownTimer" style="font-family:'Courier New',monospace; font-size:16px; font-weight:700;">10:00</span>
+                            </div>
+                        </div>
+
                         <div class="row mb-4">
                             <div class="col-6">
                                 <label class="text-muted" style="font-size:11px;">ยอดที่ต้องชำระ</label>
@@ -155,6 +166,37 @@ $submittedBy = $_SESSION['name'] ?? $_SESSION['nickName'] ?? 'Unknown';
 window.addEventListener('load', function() {
     const submittedBy = <?php echo json_encode($submittedBy); ?>;
     let currentInvoiceID = '';
+    let countdownInterval = null;
+
+    // --- Countdown timer helpers ---
+    function pad(n) { return n < 10 ? '0' + n : n; }
+    function stopCountdown() {
+        if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+    }
+    function startCountdown(expireAt) {
+        stopCountdown();
+        const $box = $('#countdownBox');
+        const $timer = $('#countdownTimer');
+        $box.show().removeClass('alert-danger').addClass('alert-info');
+
+        function tick() {
+            const now = Date.now();
+            const diff = expireAt - now;
+            if (diff <= 0) {
+                $timer.text('00:00');
+                $box.removeClass('alert-info').addClass('alert-danger');
+                $box.find('span:first').html('<i class="bi bi-exclamation-circle-fill mr-1"></i> รายการชำระเงินหมดอายุแล้ว');
+                $('#btnSubmitSlip').prop('disabled', true);
+                stopCountdown();
+                return;
+            }
+            const m = Math.floor(diff / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            $timer.text(pad(m) + ':' + pad(s));
+        }
+        tick();
+        countdownInterval = setInterval(tick, 1000);
+    }
 
     // --- Autocomplete suggest ---
     let suggestTimeout = null;
@@ -240,6 +282,10 @@ window.addEventListener('load', function() {
                     $('#labelDate').text(d);
                     $('#cardSearch').hide();
                     $('#cardInvoice').show();
+
+                    // Start 10-minute expiry countdown from invoice createdAt
+                    const createdAt = r.createdAt ? new Date(r.createdAt).getTime() : Date.now();
+                    startCountdown(createdAt + 10 * 60 * 1000);
                 } else {
                     $('#searchError').text(res.message || 'ไม่พบข้อมูลร้าน กรุณาตรวจสอบชื่อร้าน').show();
                 }
@@ -260,11 +306,14 @@ window.addEventListener('load', function() {
 
     // Reset to search
     $('#btnResetSearch').on('click', function() {
+        stopCountdown();
+        $('#countdownBox').hide();
         $('#cardInvoice').hide();
         $('#cardSearch').show();
         $('#slipForm')[0].reset();
         $('#slipPreviewWrap').hide();
         $('#slipFile').next('.custom-file-label').text('เลือกไฟล์ (JPG, PNG, PDF, max 10MB)');
+        $('#btnSubmitSlip').prop('disabled', false);
     });
 
     // Submit slip form
@@ -289,6 +338,7 @@ window.addEventListener('load', function() {
             dataType: 'json',
             success: function(res) {
                 if (res.success) {
+                    stopCountdown();
                     $('#successInvoiceID').text(currentInvoiceID);
                     $('#cardInvoice').hide();
                     $('#cardSuccess').show();
@@ -306,6 +356,8 @@ window.addEventListener('load', function() {
 
     // Submit another
     $('#btnSubmitAnother').on('click', function() {
+        stopCountdown();
+        $('#countdownBox').hide();
         $('#cardSuccess').hide();
         $('#cardSearch').show();
         $('#shopSearchInput').val('').trigger('focus');

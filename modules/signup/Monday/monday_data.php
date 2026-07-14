@@ -213,7 +213,7 @@ curl_setopt_array($curl, array(
 
     'Content-Type: application/json',
 
-    'Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjM0MjgwMDgyMSwiYWFpIjoxMSwidWlkIjo1NzY0ODkyNCwiaWFkIjoiMjAyNC0wNC0wNVQwNzo0NzowMC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjIxMTY5MjAsInJnbiI6ImFwc2UyIn0.u7Gp_ftfX4t7sEdfKLM3l59bgBVT3I1jSh5lWZ-XREA',
+    'Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYxNzI4MTY4NiwiYWFpIjoxMSwidWlkIjo1NzY1NDA2MSwiaWFkIjoiMjAyNi0wMi0wNVQwMjowNDo0NC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjIxMTY5MjAsInJnbiI6ImFwc2UyIn0.RIk109S-veeBTyvud8wxzCc656ytoFfVMgA5zyfo3sM',
 
     'Cookie: __cf_bm=Q5yOzWX_3IlEaSZ3h5.3wcf4A72v6l7CDWGbDYU2crk-1712839991-1.0.1.1-UiurDJnpRJ82m.cxTPqDxuhUe.ReOFtwABGOsRvXnM2gXbRrecRvVLLupORaYJNXYmvhIQhYC.qyD4m4ykNeJWzYCMqfP.I0fuyvdrn9SUc'
 
@@ -230,6 +230,15 @@ $response = curl_exec($curl);
 curl_close($curl);
 
 //echo $response;
+
+// Extract item_id จากการสร้าง lead บน Monday เพื่อใช้ create_update ต่อ
+$mondayItemId = null;
+if ($response) {
+    $mondayResponse = json_decode($response, true);
+    if (isset($mondayResponse['data']['create_item']['id'])) {
+        $mondayItemId = $mondayResponse['data']['create_item']['id'];
+    }
+}
 
 // Extract form data
 
@@ -452,6 +461,63 @@ curl_close($curl);
           curl_setopt($thCh, CURLOPT_RETURNTRANSFER, true);
           curl_exec($thCh);
           curl_close($thCh);
+
+          // --- Create Item + Update บน Monday board "Past billing (Receipt TH)" (ID: 1784022923) ---
+          try {
+              $receiptBoardId  = 5029904278;
+              $receiptItemName = $row['name'] ?? ($first_name . ' ' . $last_name);
+              $receiptStatus   = !empty($receipt['status']) ? ucfirst($receipt['status']) : 'Wait for Approve';
+              $amountText      = !empty($summary['net_payment']) ? number_format((float)$summary['net_payment'], 2) . ' ฿' : '-';
+              $slipStatus      = !empty($slipPath) ? 'มีสลิปแล้ว' : 'รอสลิป';
+              $linkUrl         = $thPayload['receipt_url'] ?? '';
+              $today           = date('Y-m-d');
+
+              // column_values: text, link, date columns
+              $columnValues = json_encode([
+                  'text_mm58ns1b' => $row['customerEmail'] ?? '',
+                  'text_mm58qhx9' => $productName ?? '',
+                  'text_mm58ay9j' => $receiptID ?? '',
+                  'text_mm58g75z' => $amountText,
+                  'link_mm5867rj' => ['url' => $linkUrl, 'text' => 'Receipt Link'],
+                  'date4'         => ['date' => $today],
+              ]);
+
+              $createItemQuery = 'mutation ($board: ID!, $group: String!, $itemName: String!, $colVals: JSON!) { create_item (board_id: $board, group_id: $group, item_name: $itemName, column_values: $colVals) { id } }';
+              $createItemVars  = [
+                  'board'    => (int)$receiptBoardId,
+                  'group'    => 'topics',
+                  'itemName' => $receiptItemName,
+                  'colVals'  => $columnValues,
+              ];
+
+              $itemCurl = curl_init('https://api.monday.com/v2');
+              curl_setopt_array($itemCurl, [
+                  CURLOPT_RETURNTRANSFER => true,
+                  CURLOPT_POST           => true,
+                  CURLOPT_POSTFIELDS     => json_encode(['query' => $createItemQuery, 'variables' => $createItemVars]),
+                  CURLOPT_HTTPHEADER     => [
+                      'Content-Type: application/json',
+                      'Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYxNzI4MTY4NiwiYWFpIjoxMSwidWlkIjo1NzY1NDA2MSwiaWFkIjoiMjAyNi0wMi0wNVQwMjowNDo0NC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjIxMTY5MjAsInJnbiI6ImFwc2UyIn0.RIk109S-veeBTyvud8wxzCc656ytoFfVMgA5zyfo3sM',
+                      'API-Version: 2024-01',
+                  ],
+                  CURLOPT_TIMEOUT        => 15,
+              ]);
+              $itemResponse = curl_exec($itemCurl);
+              curl_close($itemCurl);
+
+              $receiptItemId = null;
+              if ($itemResponse) {
+                  $itemData = json_decode($itemResponse, true);
+                  $receiptItemId = $itemData['data']['create_item']['id'] ?? null;
+                  if (!$receiptItemId) {
+                      error_log('[Monday create_item Receipt TH] no item_id. response=' . $itemResponse);
+                  } else {
+                      error_log('[Monday create_item Receipt TH] created item_id=' . $receiptItemId);
+                  }
+              }
+          } catch (\Throwable $e) {
+              error_log('[Monday Receipt TH] ' . $e->getMessage());
+          }
       }
     } catch (\Throwable $e) {
         error_log('[TH webhook] ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
@@ -464,6 +530,6 @@ curl_close($curl);
 
 header("Location: https://localforyou.com/thank-you/");
 
-exit; // Make sure to exit after the redirect to prevent further execution of the script
+// exit; // Make sure to exit after the redirect to prevent further execution of the script
 
 ?>

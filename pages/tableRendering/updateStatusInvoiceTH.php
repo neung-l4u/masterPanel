@@ -10,11 +10,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 $isGet      = $_SERVER['REQUEST_METHOD'] === 'GET';
-$invoice_id = $isGet ? (int)($_GET['invoice_id'] ?? 0) : (int)($_POST['invoice_id'] ?? 0);
+$receipt_id = $isGet ? (int)($_GET['invoice_id'] ?? 0) : (int)($_POST['invoice_id'] ?? 0);
 $status     = $isGet ? 'confirmed' : ($_POST['status'] ?? '');
 $allowed    = ['pending', 'confirmed', 'rejected'];
 
-if (!$invoice_id || !in_array($status, $allowed)) {
+if (!$receipt_id || !in_array($status, $allowed)) {
     if ($isGet) {
         http_response_code(400);
         echo '<p style="font-family:sans-serif;text-align:center;margin-top:60px;color:red;">ลิงก์ไม่ถูกต้อง กรุณาติดต่อทีมงาน</p>';
@@ -24,6 +24,22 @@ if (!$invoice_id || !in_array($status, $allowed)) {
     exit;
 }
 
+// Lookup invoice_id from thReceipt
+$receiptLookup = $db->query(
+    'SELECT `invoice_id` FROM `thReceipt` WHERE `id` = ? LIMIT 1',
+    $receipt_id
+)->fetchAll();
+if (empty($receiptLookup[0])) {
+    if ($isGet) {
+        http_response_code(404);
+        echo '<p style="font-family:sans-serif;text-align:center;margin-top:60px;color:red;">ไม่พบข้อมูล Receipt</p>';
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Receipt not found']);
+    }
+    exit;
+}
+$invoice_id = (int)$receiptLookup[0]['invoice_id'];
+
 // Get previous status before update
 $prevRows = $db->query(
     'SELECT `status` FROM `thReceipt` WHERE `invoice_id` = ? ORDER BY `id` DESC LIMIT 1',
@@ -32,8 +48,8 @@ $prevRows = $db->query(
 $prevStatus = $prevRows[0]['status'] ?? '';
 
 $db->query(
-    'UPDATE `thReceipt` SET `status` = ? WHERE `invoice_id` = ?',
-    $status, $invoice_id
+    'UPDATE `thReceipt` SET `status` = ? WHERE `id` = ?',
+    $status, $receipt_id
 );
 
 $invoiceStatus = $status === 'confirmed' ? 'sent' : 'pending';
@@ -112,6 +128,70 @@ if ($status === 'pending' && $prevStatus === 'rejected') {
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_exec($ch);
         curl_close($ch);
+    }
+}
+
+// --- Sync status to Monday board "Past billing (Receipt TH)" ---
+$statusMap = [
+    'pending'   => 'Wait for Approve',
+    'confirmed' => 'Approve',
+    'rejected'  => 'Fix',
+];
+$mondayLabel = $statusMap[$status] ?? null;
+
+if ($mondayLabel) {
+    try {
+        $receiptRow = $db->query(
+            'SELECT `receiptID` FROM `thReceipt` WHERE `invoice_id` = ? ORDER BY `id` DESC LIMIT 1',
+            $invoice_id
+        )->fetchAll();
+        $receiptCode = $receiptRow[0]['receiptID'] ?? null;
+
+        if ($receiptCode) {
+            $mondayToken   = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYxNzI4MTY4NiwiYWFpIjoxMSwidWlkIjo1NzY1NDA2MSwiaWFkIjoiMjAyNi0wMi0wNVQwMjowNDo0NC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjIxMTY5MjAsInJnbiI6ImFwc2UyIn0.RIk109S-veeBTyvud8wxzCc656ytoFfVMgA5zyfo3sM';
+            $mondayBoardId = 5029904278;
+
+            // Search item by receiptID in column text_mm58ay9j
+            $searchQuery = 'query ($board: ID!, $colId: String!, $val: String!) { items_page_by_column_values (limit: 1, board_id: $board, columns: [{column_id: $colId, column_values: [$val]}]) { items { id } } }';
+            $searchVars  = ['board' => (int)$mondayBoardId, 'colId' => 'text_mm58ay9j', 'val' => $receiptCode];
+
+            $sCurl = curl_init('https://api.monday.com/v2');
+            curl_setopt_array($sCurl, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => json_encode(['query' => $searchQuery, 'variables' => $searchVars]),
+                CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
+                CURLOPT_TIMEOUT        => 10,
+            ]);
+            $sResponse = curl_exec($sCurl);
+            curl_close($sCurl);
+
+            $sData     = json_decode($sResponse, true);
+            $mondayItemId = $sData['data']['items_page_by_column_values']['items'][0]['id'] ?? null;
+
+            if ($mondayItemId) {
+                // Update status column (id: "status") on Monday item
+                $colVals       = json_encode(['status' => ['label' => $mondayLabel]]);
+                $mutationQuery = 'mutation ($board: ID!, $item: ID!, $colVals: JSON!) { change_multiple_column_values (board_id: $board, item_id: $item, column_values: $colVals, create_labels_if_missing: true) { id } }';
+                $mutationVars  = ['board' => (int)$mondayBoardId, 'item' => (int)$mondayItemId, 'colVals' => $colVals];
+
+                $mCurl = curl_init('https://api.monday.com/v2');
+                curl_setopt_array($mCurl, [
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_POST           => true,
+                    CURLOPT_POSTFIELDS     => json_encode(['query' => $mutationQuery, 'variables' => $mutationVars]),
+                    CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
+                    CURLOPT_TIMEOUT        => 10,
+                ]);
+                $mResponse = curl_exec($mCurl);
+                curl_close($mCurl);
+                error_log('[Monday updateStatus Receipt TH] item_id=' . $mondayItemId . ' status=' . $mondayLabel . ' response=' . $mResponse);
+            } else {
+                error_log('[Monday updateStatus Receipt TH] item not found for receiptCode=' . $receiptCode . ' searchResponse=' . $sResponse);
+            }
+        }
+    } catch (\Throwable $e) {
+        error_log('[Monday updateStatus Receipt TH] ' . $e->getMessage());
     }
 }
 
