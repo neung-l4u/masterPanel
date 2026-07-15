@@ -1,4 +1,5 @@
 <?php
+set_time_limit(300); // large boards (AU ~1300) need many slow paginated requests
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -12,24 +13,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 $MONDAY_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYxNzI4MTY4NiwiYWFpIjoxMSwidWlkIjo1NzY1NDA2MSwiaWFkIjoiMjAyNi0wMi0wNVQwMjowNDo0NC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjIxMTY5MjAsInJnbiI6ImFwc2UyIn0.RIk109S-veeBTyvud8wxzCc656ytoFfVMgA5zyfo3sM";
 
-$CUSTOMER_IDS = [
-    'CA' => [5026278085],   // e.g. [1234567890]
-    'AU' => [5026277183],
-    'NZ' => [5026295114],
-    'UK' => [5026295223],
-    'US' => [5026295245],
-    'TH' => [5026295175],
-    'ALL' => [],  // leave empty to query all per-country boards above
-];
+// $CUSTOMER_IDS = [
+//     'CA' => [5026278085],   // e.g. [1234567890]
+//     'AU' => [5026277183],
+//     'NZ' => [5026295114],
+//     'UK' => [5026295223],
+//     'US' => [5026295245],
+//     'TH' => [5026295175],
+//     'ALL' => [],  // leave empty to query all per-country boards above
+// ];
 
-// Map country code → Monday board_id(s) — fill in your actual board IDs
+// // Map country code → Monday board_id(s) — fill in your actual board IDs
+// $PROJECT_IDS = [
+//     'CA' => [5026295488],   // e.g. [1234567890]
+//     'AU' => [5026295450],
+//     'NZ' => [5026295509],
+//     'UK' => [5026295557],
+//     'US' => [5026295593],
+//     'TH' => [5026295538],
+//     'ALL' => [],  // leave empty to query all per-country boards above
+// ];
+
 $PROJECT_IDS = [
-    'CA' => [5026295488],   // e.g. [1234567890]
-    'AU' => [5026295450],
-    'NZ' => [5026295509],
-    'UK' => [5026295557],
-    'US' => [5026295593],
-    'TH' => [5026295538],
+    'CA' => [1943203287],   // e.g. [1234567890]
+    'AU' => [1943203246],
+    'NZ' => [1943203264],
+    'UK' => [1943203305],
+    'US' => [1940392927],
+    'TH' => [1943203205],
     'ALL' => [],  // leave empty to query all per-country boards above
 ];
 
@@ -112,15 +123,7 @@ function queryMonday(string $token, string $boardIdList, int $limit, ?string $cu
               text
               value
               ... on BoardRelationValue {
-                linked_items {
-                  id
-                  name
-                  column_values {
-                    id
-                    text
-                    value
-                  }
-                }
+                linked_item_ids
               }
             }
           }
@@ -129,6 +132,45 @@ function queryMonday(string $token, string $boardIdList, int $limit, ?string $cu
     }
     GQL;
 
+    return mondayRequest($token, $gql);
+}
+
+// Batch-fetch customer (Contacts & Accounts) records by id — much faster than
+// resolving linked_items inline per project item.
+function queryCustomers(string $token, array $ids): array
+{
+    if (empty($ids)) return [];
+    $idList = implode(',', array_map('intval', $ids));
+    $count  = count($ids);
+    $gql = <<<GQL
+    {
+      items(ids: [$idList], limit: $count) {
+        id
+        name
+        column_values(ids: ["text0", "text7", "contact_phone", "dup__of_mobile", "contact_email"]) {
+          id
+          text
+        }
+      }
+    }
+    GQL;
+
+    $out = [];
+    for ($attempt = 0; $attempt < 3; $attempt++) {
+        $resp = mondayRequest($token, $gql);
+        if (isset($resp['data']['items'])) {
+            foreach ($resp['data']['items'] as $cust) {
+                $out[(string) $cust['id']] = $cust;
+            }
+            return $out;
+        }
+        usleep(500000);
+    }
+    return $out;
+}
+
+function mondayRequest(string $token, string $gql): array
+{
     $ch = curl_init('https://api.monday.com/v2');
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
@@ -139,7 +181,7 @@ function queryMonday(string $token, string $boardIdList, int $limit, ?string $cu
             'Authorization: ' . $token,
             'API-Version: 2024-01',
         ],
-        CURLOPT_TIMEOUT        => 15,
+        CURLOPT_TIMEOUT        => 90,
     ]);
     $raw = curl_exec($ch);
     $err = curl_error($ch);
@@ -209,14 +251,29 @@ if ($debug) {
 
 $result   = [];
 $cursor   = null;
-$limit    = $debug2 ? 1 : 200;
-$maxPages = $debug2 ? 1 : 10;
+$limit    = $debug2 ? 1 : 100;  // filtered nested cols keep 100 under the subgraph complexity limit
+$maxPages = $debug2 ? 1 : 20;   // 100 * 20 = 2000, covers largest board (AU ~1300)
+
+$apiError = null;
 
 for ($page = 0; $page < $maxPages; $page++) {
-    $resp = queryMonday($MONDAY_TOKEN, $boardIdList, $limit, $cursor);
+    // Retry transient Monday errors (subgraph fetch/timeout) so a single bad
+    // page doesn't silently truncate a large board mid-pagination.
+    $resp = null;
+    for ($attempt = 0; $attempt < 3; $attempt++) {
+        $resp = queryMonday($MONDAY_TOKEN, $boardIdList, $limit, $cursor);
+        if (!isset($resp['error']) && !isset($resp['errors']) && isset($resp['data']['boards'])) {
+            $apiError = null;
+            break;
+        }
+        $apiError = $resp['error'] ?? ($resp['errors'][0]['message'] ?? 'Unknown Monday API error');
+        usleep(500000); // 0.5s backoff before retry
+    }
 
-    if (isset($resp['error'])) break;
-    if (!isset($resp['data']['boards'])) break;
+    // Monday returns { errors: [...], data: null } on subgraph/complexity failures
+    if ($apiError !== null) {
+        break;
+    }
 
     $nextCursor = null;
 
@@ -269,33 +326,25 @@ for ($page = 0; $page < $maxPages; $page++) {
                 exit;
             }
 
-            // Extract linked customer from inline fragment result
-            $ownerName = '';
-            $phone     = '';
+            // Capture the linked customer id from the Contacts & Accounts relation.
+            // The item has many board_relation_/connect_boards columns; only
+            // "connect_boards0" links to the Contacts board (id 1862866069).
+            // Customer details are resolved in a fast batch pass below.
+            $custId = '';
             foreach ($item['column_values'] as $col) {
-                if (strpos($col['id'], 'board_relation_') !== 0) continue;
-                foreach ($col['linked_items'] ?? [] as $cust) {
-                    $ownerName = $cust['name'] ?? '';
-                    foreach ($cust['column_values'] ?? [] as $cc) {
-                        if (empty($phone) && strpos($cc['id'], 'phone_') === 0) {
-                            $phone = $cc['text'] ?: (json_decode($cc['value'] ?? '', true)['phone'] ?? '');
-                        }
-                        if (empty($phone) && strpos($cc['id'], 'email_') === 0 && !empty($cc['text'])) {
-                            $phone = $cc['text'];
-                        }
-                    }
-                    break;
-                }
-                if ($ownerName) break;
+                if ($col['id'] !== 'connect_boards0') continue;
+                $custId = (string) ($col['linked_item_ids'][0] ?? '');
+                break;
             }
 
             $result[] = [
                 'shopId'    => (string) $item['id'],
                 'shopName'  => $item['name'] ?? '',
                 'shopType'  => $shopType,
-                'ownerName' => $ownerName,
-                'phone'     => $phone,
+                'ownerName' => '',
+                'phone'     => '',
                 'country'   => $detectedCountry,
+                '_custId'   => $custId,
             ];
         }
     }
@@ -303,6 +352,50 @@ for ($page = 0; $page < $maxPages; $page++) {
     if (!$nextCursor) break;
     $cursor = $nextCursor;
 }
+
+// Don't cache/return an empty result caused by an API error — keeps stale-but-valid
+// cache alive and surfaces the failure instead of poisoning the cache with []
+if ($apiError && empty($result)) {
+    http_response_code(502);
+    echo json_encode(['error' => $apiError]);
+    exit;
+}
+
+// ── Phase 2: batch-resolve customer (owner/phone) records ─────────────────────
+// Collect unique customer ids, fetch them in chunks, then fill owner + phone.
+// This avoids inline linked_items resolution, which is ~2x slower per page.
+$custIds = array_values(array_unique(array_filter(array_map(
+    static fn($r) => $r['_custId'],
+    $result
+))));
+
+$customers = [];
+foreach (array_chunk($custIds, 100) as $chunk) {
+    $customers += queryCustomers($MONDAY_TOKEN, $chunk);
+}
+
+foreach ($result as &$row) {
+    $cust = $customers[$row['_custId']] ?? null;
+    unset($row['_custId']);
+    if (!$cust) continue;
+
+    $first = $last = $mobile = $altPhone = $email = '';
+    foreach ($cust['column_values'] ?? [] as $cc) {
+        switch ($cc['id']) {
+            case 'text0':          $first    = $cc['text'] ?? ''; break;
+            case 'text7':          $last     = $cc['text'] ?? ''; break;
+            case 'contact_phone':  $mobile   = $cc['text'] ?? ''; break;
+            case 'dup__of_mobile': $altPhone = $cc['text'] ?? ''; break;
+            case 'contact_email':  $email    = $cc['text'] ?? ''; break;
+        }
+    }
+    $owner = trim($first . ' ' . $last);
+    if ($owner === '') $owner = $cust['name'] ?? '';
+    $row['ownerName'] = $owner;
+    $row['phone']     = $mobile ?: $altPhone ?: $email; // email fallback when no phone
+}
+unset($row);
+// ──────────────────────────────────────────────────────────────────────────────
 
 $output = json_encode($result, JSON_UNESCAPED_UNICODE);
 

@@ -8,6 +8,7 @@
 </script>
 <?php global $db; ?>
 <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 
 <style>
     .clickable { cursor: pointer; }
@@ -221,11 +222,39 @@
 <script src="plugins/jquery/jquery.min.js"></script>
 <script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="plugins/jszip/jszip.min.js"></script>
+<script src="plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script>
     let shopName = $(".shopName");
 
+    const exportStrip = {
+        format: {
+            body: function(data) {
+                if (data === null || data === undefined) return '';
+                let s = String(data);
+                s = s.replace(/<br\s*\/?>(?=)/gi, ' ');
+                s = s.replace(/<[^>]+>/g, '');
+                s = s.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+                return s.trim();
+            }
+        }
+    };
+
+    const buildExportButtons = function(filename) {
+        return [
+            { extend: 'excelHtml5', text: '<i class="bi bi-file-earmark-excel"></i> Excel', className: 'btn btn-sm btn-success', title: filename, exportOptions: exportStrip },
+            // { extend: 'csvHtml5',   text: '<i class="bi bi-filetype-csv"></i> CSV',       className: 'btn btn-sm btn-secondary', title: filename, exportOptions: exportStrip },
+            // { extend: 'print',      text: '<i class="bi bi-printer"></i> Print',          className: 'btn btn-sm btn-info', title: filename, exportOptions: exportStrip }
+        ];
+    };
+
     let formASAPTable = $('#formASAPTable').DataTable({
         pagingType: 'full_numbers',
+        dom: "<'row'<'col-sm-6'B><'col-sm-6'f>>rt<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        buttons: buildExportButtons('BookingChangesSystem'),
         ajax: {
             url: 'pages/tableRendering/dataFormASAPLogs.php',
             type: 'POST',
@@ -264,6 +293,8 @@
 
     let posNewCustomerTable = $('#posNewCustomerTable').DataTable({
         pagingType: 'full_numbers',
+        dom: "<'row'<'col-sm-6'B><'col-sm-6'f>>rt<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        buttons: buildExportButtons('POS_NewCustomerLogs'),
         ajax: {
             url: 'pages/tableRendering/dataPOSNewCustomerLogs.php',
             type: 'POST',
@@ -282,6 +313,8 @@
 
     let posOldCustomerTable = $('#posOldCustomerTable').DataTable({
         pagingType: 'full_numbers',
+        dom: "<'row'<'col-sm-6'B><'col-sm-6'f>>rt<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        buttons: buildExportButtons('POS_OldCustomerLogs'),
         ajax: {
             url: 'pages/tableRendering/dataPOSOldCustomerLogs.php',
             type: 'POST',

@@ -364,12 +364,42 @@ function collectFormData() {
     return raw;
 }
 
+// Map country code → Monday project board id (keep in sync with
+// assets/API/selectProjectCountry/live.php $PROJECT_IDS)
+const COUNTRY_BOARD_IDS = {
+    CA: '1943203287',
+    AU: '1943203246',
+    NZ: '1943203264',
+    UK: '1943203305',
+    US: '1940392927',
+    TH: '1943203205',
+};
+
 // ===== Send to webhook =====
 function sendData(formData) {
     const now = new Date();
     const formattedDate = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-    const jsonData = Object.assign({}, formData, { date: formattedDate });
+    const country = (formData.country || '').toUpperCase();
+
+    const jsonData = Object.assign({}, formData, {
+        date: formattedDate,
+        // ---- Normalized fields (shared upgrade/downgrade webhook schema) ----
+        formType: 'upgrade',
+        changeType: formData.upgradeType || '',
+        email: formData.emailAddress || '',
+        shopName: formData.shopName || '',
+        mondayProjectId: formData.mondayProjectId || '',
+        country: formData.country || '',
+        countryBoardId: COUNTRY_BOARD_IDS[country] || '',
+        originalProduct: formData.originalProduct || '',
+        newProduct: formData.newProduct || '',
+        contractPeriod: formData.contractPeriod || '',
+        billingDate: formData.billingDate || '',
+        staffName: formData.salesAgent || '',
+        reason: formData.upgradeReason || '',
+        note: formData.upgradeNote || '',
+    });
 
     const addons = formData.addons || [];
     const hasAraya = Array.isArray(addons)
@@ -508,7 +538,10 @@ function validateForm() {
     }
 
     if (!isValid) {
-        $('#result').html('<div class="alert alert-danger">Please fill in all required fields correctly.</div>');
+        const invalidIds = Array.from(document.querySelectorAll('.is-invalid'))
+            .map(el => el.id || el.name || el.tagName).join(', ');
+        console.warn('[validateForm] invalid fields:', invalidIds);
+        $('#result').html('<div class="alert alert-danger">Please fill in all required fields correctly.<br><small>Invalid: ' + invalidIds + '</small></div>');
         const firstInvalid = document.querySelector('.is-invalid');
         if (firstInvalid) {
             firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -586,5 +619,8 @@ function applyTestAutofill() {
         $('#tiktokPage').val('https://tiktok.com/@testshop');
 
         $('#additionalComments').val('Automated test submission for upgrade form. Please ignore.');
+
+        console.log('[autofill] done. originalProduct=', $('#originalProduct').val(),
+            'newProduct=', $('#newProduct').val(), 'mondayProjectId=', $('#mondayProjectId').val());
     }, 300);
 }

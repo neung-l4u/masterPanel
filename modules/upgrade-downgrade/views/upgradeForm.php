@@ -33,7 +33,7 @@ $testMode = $_GET['testMode'] ?? 'false';
 <div class="container">
     <main>
         <section style="min-height: 50vh;">
-            <div class="form-layout">
+            <div class="form-layout"> ิ
                 <nav class="info-sidebar">
                     <div class="sidebar-section">
                         <h6 class="sidebar-title">Form Type</h6>

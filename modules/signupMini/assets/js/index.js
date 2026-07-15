@@ -39,14 +39,15 @@ function shortCountry() {
 }
 
 function shopTypeForLeadManagement() {
+    // The dropdown is now populated with the exact Monday "Shop Type" labels,
+    // so the selected value is already a valid label and can pass through as-is.
+    // The map only covers legacy values that no longer appear in the dropdown.
     let shopType = $("#shopType").val();
-    if (shopType === "Thai Restaurants &amp; Takeaways"){
-        return "Thai Restaurant";
-    }else if (shopType === "Thai Massage"){
-        return "Thai Massage";
-    }else if (shopType === "Restaurants &amp; Takeaways"){
-        return "Restaurant";
-    }
+    const legacyMap = {
+        "Thai Restaurants & Takeaways": "Thai Restaurant",
+        "Restaurants & Takeaways": "Restaurant"
+    };
+    return legacyMap[shopType] || shopType;
 }
 
 function getPayload(form) {

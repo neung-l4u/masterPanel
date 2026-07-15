@@ -15,7 +15,9 @@ $data = json_decode($raw, true);
 // Optional shared-secret gate. Backward compatible: requests that send NO
 // "secret" field behave exactly as before (existing callers keep working).
 // When a "secret" IS present it must match the configured value.
-$expectedSecret = getenv('SSO_SHARED_SECRET') ?: '';
+// Shared secret: env first, then a hardcoded fallback (no env loader under plain
+// Apache). Must match L4U-Docs auth-config $AUTH_SECRET fallback.
+$expectedSecret = getenv('SSO_SHARED_SECRET') ?: 'd55ed0906f301cfd13f91dd3fda7786dc568322ec75c0019';
 if (isset($data['secret']) && $data['secret'] !== '') {
     if ($expectedSecret === '' || !hash_equals($expectedSecret, (string)$data['secret'])) {
         echo json_encode(["status" => false, "msg" => "Unauthorized"]);
