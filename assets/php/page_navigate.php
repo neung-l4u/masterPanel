@@ -405,12 +405,13 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : ส่งหลักฐานชำระเงิน";
         break;
-    case "billingTH":
-        $showPage = "billingTH.php";
-        $activeMenu["lv1"] = "formMgmt";
-        $activeMenu["lv2"] = "billingTH";
-        $datatable["show"] = "false";
-        $datatable["src"] = "";
-        $title = "Master panel : Billing TH — ตรวจสลิป";
-        break;
+    // [HIDDEN] billingTH — ซ่อนไว้ก่อน เนื่องจาก invoiceThailand ครอบคลุม feature เดียวกัน
+    // case "billingTH":
+    //     $showPage = "billingTH.php";
+    //     $activeMenu["lv1"] = "formMgmt";
+    //     $activeMenu["lv2"] = "billingTH";
+    //     $datatable["show"] = "false";
+    //     $datatable["src"] = "";
+    //     $title = "Master panel : Billing TH — ตรวจสลิป";
+    //     break;
 }

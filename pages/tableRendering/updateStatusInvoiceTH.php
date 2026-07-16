@@ -24,10 +24,13 @@ if (!$receipt_id || !in_array($status, $allowed)) {
     exit;
 }
 
-// Lookup invoice_id from thReceipt
+// invoice_id ที่รับมาคือ thInvoice.id โดยตรง
+$invoice_id = $receipt_id;
+
+// ตรวจว่ามี thReceipt สำหรับ invoice นี้จริง
 $receiptLookup = $db->query(
-    'SELECT `invoice_id` FROM `thReceipt` WHERE `id` = ? LIMIT 1',
-    $receipt_id
+    'SELECT `id` FROM `thReceipt` WHERE `invoice_id` = ? ORDER BY `id` DESC LIMIT 1',
+    $invoice_id
 )->fetchAll();
 if (empty($receiptLookup[0])) {
     if ($isGet) {
@@ -38,7 +41,6 @@ if (empty($receiptLookup[0])) {
     }
     exit;
 }
-$invoice_id = (int)$receiptLookup[0]['invoice_id'];
 
 // Get previous status before update
 $prevRows = $db->query(
@@ -48,8 +50,8 @@ $prevRows = $db->query(
 $prevStatus = $prevRows[0]['status'] ?? '';
 
 $db->query(
-    'UPDATE `thReceipt` SET `status` = ? WHERE `id` = ?',
-    $status, $receipt_id
+    'UPDATE `thReceipt` SET `status` = ? WHERE `invoice_id` = ?',
+    $status, $invoice_id
 );
 
 $invoiceStatus = $status === 'confirmed' ? 'sent' : 'pending';
@@ -91,7 +93,7 @@ if ($status === 'pending' && $prevStatus === 'rejected') {
         )->fetchAll();
         $receipt   = $receiptRows[0] ?? [];
         $slipPath  = $receipt['slip'] ?? '';
-        $slipUrl   = $slipPath ? 'https://report.localforyou.com/modules/signup2/assets/uploads/' . $slipPath : '';
+        $slipUrl   = $slipPath ? 'https://report.localforyou.com/modules/signup/assets/uploads/' . $slipPath : '';
         $receiptID = $receipt['receiptID'] ?? $row['invoiceID'];
         $thBathRe  = $receipt['thBathRe']  ?? convertToBahtText((float)$row['amount']);
 

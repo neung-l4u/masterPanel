@@ -73,7 +73,7 @@ $baseUrl  = $protocol . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
 $receiptUrl = $baseUrl . '/pages/receiptTH.php?invoice_id=' . $invoice_id;
 
 $slipPath = $receipt['slip'] ?? '';
-$slipUrl  = $slipPath ? $baseUrl . '/modules/signup2/assets/uploads/' . $slipPath : '';
+$slipUrl  = $slipPath ? $baseUrl . '/modules/signup/assets/uploads/' . $slipPath : '';
 $thBathRe = $receipt['thBathRe'] ?? convertToBahtText((float)$row['amount']);
 $receiptID = $receipt['receiptID'] ?? $row['invoiceID'];
 
@@ -127,9 +127,56 @@ if ($curlError) {
     exit;
 }
 
-if ($httpCode >= 200 && $httpCode < 300) {
-    echo json_encode(['success' => true, 'message' => 'ส่ง Receipt สำเร็จ', 'receiptID' => $receiptID, 'webhook_response' => $response]);
-} else {
+if (!($httpCode >= 200 && $httpCode < 300)) {
     echo json_encode(['success' => false, 'message' => 'Webhook error HTTP ' . $httpCode, 'webhook_response' => $response]);
+    exit;
 }
+
+// --- อัป Monday board: reset Charge Customer + Next Charge Date ---
+try {
+    $mondayToken   = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYxNzI4MTY4NiwiYWFpIjoxMSwidWlkIjo1NzY1NDA2MSwiaWFkIjoiMjAyNi0wMi0wNVQwMjowNDo0NC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjIxMTY5MjAsInJnbiI6ImFwc2UyIn0.RIk109S-veeBTyvud8wxzCc656ytoFfVMgA5zyfo3sM';
+    $mondayBoardId = '5029904278';
+    $customerEmail = $row['customerEmail'] ?? '';
+
+    if ($customerEmail) {
+        $searchQuery = 'query($boardId: ID!, $email: String!) { boards(ids: [$boardId]) { items_page(limit: 1, query_params: { rules: [{ column_id: "text_mm58ns1b", compare_value: [$email] }] }) { items { id } } } }';
+        $sCh = curl_init('https://api.monday.com/v2');
+        curl_setopt_array($sCh, [
+            CURLOPT_POST           => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_POSTFIELDS     => json_encode(['query' => $searchQuery, 'variables' => ['boardId' => $mondayBoardId, 'email' => $customerEmail]]),
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
+        ]);
+        $sResp    = curl_exec($sCh);
+        curl_close($sCh);
+        $sData    = json_decode($sResp, true);
+        $targetId = $sData['data']['boards'][0]['items_page']['items'][0]['id'] ?? null;
+
+        if ($targetId) {
+            $updateQuery = 'mutation($boardId: ID!, $itemId: ID!, $colVals: JSON!) { change_multiple_column_values(board_id: $boardId, item_id: $itemId, column_values: $colVals, create_labels_if_missing: true) { id } }';
+            $colVals = json_encode([
+                'color_mm58wjwk' => '',
+                'date_mm586gty'  => '',
+            ]);
+            $uCh = curl_init('https://api.monday.com/v2');
+            curl_setopt_array($uCh, [
+                CURLOPT_POST           => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT        => 15,
+                CURLOPT_POSTFIELDS     => json_encode(['query' => $updateQuery, 'variables' => ['boardId' => $mondayBoardId, 'itemId' => $targetId, 'colVals' => $colVals]]),
+                CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
+            ]);
+            $uResp = curl_exec($uCh);
+            curl_close($uCh);
+            error_log('[sendReceiptTH] Monday reset item=' . $targetId . ' resp=' . $uResp);
+        } else {
+            error_log('[sendReceiptTH] Monday: ไม่พบ item สำหรับ email=' . $customerEmail);
+        }
+    }
+} catch (\Throwable $e) {
+    error_log('[sendReceiptTH Monday] ' . $e->getMessage());
+}
+
+echo json_encode(['success' => true, 'message' => 'ส่ง Receipt สำเร็จ', 'receiptID' => $receiptID, 'webhook_response' => $response]);
 ?>

@@ -38,10 +38,12 @@ if (!$isLoggedIn && $secret !== $allowedSecret) {
 
 // --- Params ---
 $email         = trim($_POST['email']          ?? '');
-$amount        = (float)($_POST['amount']      ?? 0);
+$amountRaw     = $_POST['amount'] ?? '0';
+$amount        = (float)str_replace([',', ' ฿', '฿', ' '], '', $amountRaw);
 $productName   = trim($_POST['product_name']   ?? '');
-$billingDate   = trim($_POST['billing_date']   ?? date('Y-m-d'));
-$mondayItemId  = trim($_POST['monday_item_id'] ?? '');
+$billingDate      = trim($_POST['billing_date']      ?? date('Y-m-d'));
+$mondayItemId     = trim($_POST['monday_item_id']     ?? '');
+$nextChargeDateRaw = trim($_POST['next_charge_date'] ?? '');
 
 if ($email === '') {
     echo json_encode(['success' => false, 'message' => 'ต้องระบุ email']);
@@ -60,7 +62,7 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $billingDate)) {
 
 // --- หา customer จาก email ---
 $custRows = $db->query(
-    'SELECT `id`, `customerCode`, `name`, `address`, `taxNumber`, `email`, `phone`, `type`, `clientType` FROM `thCustomer` WHERE `email` = ? LIMIT 1',
+    'SELECT `id`, `customerCode`, `name`, `address`, `taxNumber`, `email`, `phone`, `type`, `clientType`, `bankName`, `bankNumber`, `bankAccName` FROM `thCustomer` WHERE `email` = ? LIMIT 1',
     $email
 )->fetchAll();
 
@@ -80,16 +82,6 @@ $seqRows = $db->query(
 $lastSeq   = (int)($seqRows[0]['maxSeq'] ?? 0);
 $nextSeq   = $lastSeq + 1;
 $invoiceID = $cust['customerCode'] . '-' . str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
-
-// --- ป้องกัน duplicate ---
-$dupCheck = $db->query(
-    'SELECT `id` FROM `thInvoice` WHERE `customer_id` = ? AND `billingDate` = ? LIMIT 1',
-    $customerId, $billingDate
-)->fetchAll();
-if (!empty($dupCheck[0])) {
-    echo json_encode(['success' => false, 'message' => 'Invoice วันนี้มีอยู่แล้ว: ' . $invoiceID, 'existing_id' => $dupCheck[0]['id']]);
-    exit;
-}
 
 // --- คำนวณ VAT / withholding ---
 $gross    = $amount;
@@ -156,24 +148,99 @@ $db->query(
     'subscription', $customerId
 );
 
+// --- อัป Monday board: text_mm58ay9j = invoiceID ล่าสุด (เช็ค email ตรงกัน) ---
+try {
+    $mondayToken   = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYxNzI4MTY4NiwiYWFpIjoxMSwidWlkIjo1NzY1NDA2MSwiaWFkIjoiMjAyNi0wMi0wNVQwMjowNDo0NC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjIxMTY5MjAsInJnbiI6ImFwc2UyIn0.RIk109S-veeBTyvud8wxzCc656ytoFfVMgA5zyfo3sM';
+    $mondayBoardId = '5029904278';
+
+    $searchQuery = 'query($boardId: ID!, $email: String!) { boards(ids: [$boardId]) { items_page(limit: 1, query_params: { rules: [{ column_id: "text_mm58ns1b", compare_value: [$email] }] }) { items { id name } } } }';
+    $searchCh = curl_init('https://api.monday.com/v2');
+    curl_setopt_array($searchCh, [
+        CURLOPT_POST           => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 15,
+        CURLOPT_POSTFIELDS     => json_encode(['query' => $searchQuery, 'variables' => ['boardId' => $mondayBoardId, 'email' => $email]]),
+        CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
+    ]);
+    $searchResp  = curl_exec($searchCh);
+    curl_close($searchCh);
+
+    $searchData  = json_decode($searchResp, true);
+    $foundItemId = $searchData['data']['boards'][0]['items_page']['items'][0]['id'] ?? null;
+    $targetItemId = $foundItemId ?? ($mondayItemId ?: null);
+
+    if ($targetItemId) {
+        $updateQuery = 'mutation($boardId: ID!, $itemId: ID!, $colVals: JSON!) { change_multiple_column_values(board_id: $boardId, item_id: $itemId, column_values: $colVals, create_labels_if_missing: true) { id } }';
+        $colVals = json_encode(['text_mm58ay9j' => $invoiceID, 'link_mm5867rj' => '']);
+        $updCh = curl_init('https://api.monday.com/v2');
+        curl_setopt_array($updCh, [
+            CURLOPT_POST           => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_POSTFIELDS     => json_encode(['query' => $updateQuery, 'variables' => ['boardId' => $mondayBoardId, 'itemId' => $targetItemId, 'colVals' => $colVals]]),
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
+        ]);
+        $updResp = curl_exec($updCh);
+        curl_close($updCh);
+        error_log('[createSubTH] Monday update text_mm58ay9j item=' . $targetItemId . ' resp=' . $updResp);
+    } else {
+        error_log('[createSubTH] Monday: ไม่พบ item สำหรับ email=' . $email);
+    }
+} catch (\Throwable $e) {
+    error_log('[createSubTH Monday] ' . $e->getMessage());
+}
+
 // --- ส่ง webhook ไป Make.com เพื่อส่งอีเมลให้ลูกค้า ---
 $baseUrl     = 'https://report.localforyou.com';
 $slipFormUrl = $baseUrl . '/modules/customeruploadslip/?invoiceID=' . urlencode($invoiceID);
 
+$receiptUrl  = $baseUrl . '/pages/receiptTH.php?invoice_id=' . $newInvoiceId;
+
 $payload = [
     'invoice_id'     => $newInvoiceId,
     'invoiceID'      => $invoiceID,
-    'shopName'       => $cust['name'],
+    'receiptID'      => $invoiceID,
+    'name'           => $cust['name'],
+    'address'        => $cust['address'],
+    'taxNumber'      => $cust['taxNumber'],
+    'type'           => $taxType,
+    'sale'           => '',
     'customerEmail'  => $cust['email'],
-    'amount'         => $netPay,
+    'customerPhone'  => $cust['phone'],
+    'bankName'       => $cust['bankName']    ?? '',
+    'bankThaiNumber' => $cust['bankNumber']  ?? '',
+    'bankThaiName'   => $cust['bankAccName'] ?? '',
+    'createdAt'      => date('d/m/Y'),
+    'subtotal'       => number_format($net,      2, '.', ''),
+    'vat'            => number_format($vat,      2, '.', ''),
+    'grandtotal'     => number_format($gross,    2, '.', ''),
+    'withholdingTax' => number_format($withhold, 2, '.', ''),
+    'net_payment'    => number_format($netPay,   2, '.', ''),
     'thBathIn'       => $thBathIn,
-    'billingDate'    => $billingDate,
-    'billingSeq'     => $nextSeq,
+    'thBathRe'       => $thBathRe,
+    'items'          => $productItems,
+    'quotation'      => [[
+        'date'   => $billingDateThai,
+        'detail' => [[
+            'company'  => $cust['name'],
+            'address'  => $cust['address'],
+            'tax_id'   => $cust['taxNumber'],
+            'email'    => $cust['email'],
+            'phone'    => $cust['phone'],
+            'tax_type' => $taxType,
+        ]],
+    ]],
     'slip_form_url'  => $slipFormUrl,
-    'monday_item_id' => $mondayItemId,
+    'receipt_url'    => $receiptUrl,
+    'slip_url'       => '',
+    'base_url'       => $baseUrl,
+    'billingDate'      => $billingDate,
+    'billingSeq'       => $nextSeq,
+    'next_charge_date' => $nextChargeDateRaw,
+    'monday_item_id'   => $mondayItemId,
 ];
 
-$webhookUrl = 'https://hook.us1.make.com/gnxfafua86k6mutxg8tr65cuxmrk3v2k';
+$webhookUrl = 'https://hook.us1.make.com/5l2ejqxpj926rmb1j6fvey0ks57yyps8';
 $ch = curl_init($webhookUrl);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));

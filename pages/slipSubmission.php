@@ -33,28 +33,35 @@ $submittedBy = $_SESSION['name'] ?? $_SESSION['nickName'] ?? 'Unknown';
         <div class="row justify-content-center">
             <div class="col-lg-7 col-md-9 col-sm-12">
 
-                <!-- Step 1: ค้นหาร้าน -->
-                <div class="card" id="cardSearch">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="bi bi-search mr-2"></i>ขั้นตอนที่ 1 — ค้นหาร้านค้า</h5>
+                <!-- Step 1: รายการรอส่งสลิป -->
+                <div class="card" id="cardSearch" style="max-width:100%;">
+                    <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0"><i class="bi bi-list-check mr-2"></i>รายการรอส่งหลักฐาน</h5>
+                        <span class="badge badge-light text-primary" id="pendingCount">-</span>
                     </div>
-                    <div class="card-body">
-                        <p class="text-muted" style="font-size:13px;">
-                            กรอกชื่อร้านเพื่อดึงข้อมูล Invoice รอบบิลล่าสุด
-                        </p>
-                        <div class="position-relative">
-                            <div class="input-group">
-                                <input type="text" id="shopSearchInput" class="form-control"
-                                    placeholder="ชื่อร้าน เช่น Great Cafe, Face Holistic..." autocomplete="off">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" id="btnSearchShop" type="button">
-                                        <i class="bi bi-search"></i> ค้นหา
-                                    </button>
-                                </div>
+                    <div class="card-body p-3">
+                        <div class="input-group mb-3" style="max-width:340px;">
+                            <input type="text" id="pendingSearch" class="form-control form-control-sm" placeholder="ค้นหาชื่อร้าน / Invoice ID...">
+                            <div class="input-group-append">
+                                <button class="btn btn-sm btn-outline-secondary" id="btnPendingSearch" type="button"><i class="bi bi-search"></i></button>
                             </div>
-                            <ul id="shopSuggestList" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;list-style:none;margin:0;padding:0;background:#fff;border:1px solid #dee2e6;border-top:none;border-radius:0 0 6px 6px;box-shadow:0 4px 12px rgba(0,0,0,0.1);max-height:240px;overflow-y:auto;"></ul>
                         </div>
-                        <div id="searchError" class="alert alert-warning mt-3" style="display:none;"></div>
+                        <div class="table-responsive">
+                            <table id="pendingSlipTable" class="table table-hover table-sm table-borderless" style="width:100%;font-size:13px;">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>ชื่อร้าน</th>
+                                        <th>Invoice No.</th>
+                                        <th class="text-right">ยอด (฿)</th>
+                                        <th>วันที่บิล</th>
+                                        <th class="text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingSlipBody">
+                                    <tr><td colspan="5" class="text-center text-muted py-3"><span class="spinner-border spinner-border-sm"></span> กำลังโหลด...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -77,7 +84,7 @@ $submittedBy = $_SESSION['name'] ?? $_SESSION['nickName'] ?? 'Unknown';
                             </div>
                         </div>
                         <!-- Countdown timer -->
-                        <div id="countdownBox" class="alert alert-info mb-3" style="display:none; padding:10px 14px; border-radius:8px;">
+                        <!-- <div id="countdownBox" class="alert alert-info mb-3" style="display:none; padding:10px 14px; border-radius:8px;">
                             <div class="d-flex align-items-center justify-content-between">
                                 <span style="font-size:13px;">
                                     <i class="bi bi-clock-history mr-1"></i>
@@ -85,7 +92,7 @@ $submittedBy = $_SESSION['name'] ?? $_SESSION['nickName'] ?? 'Unknown';
                                 </span>
                                 <span id="countdownTimer" style="font-family:'Courier New',monospace; font-size:16px; font-weight:700;">10:00</span>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="row mb-4">
                             <div class="col-6">
@@ -95,6 +102,42 @@ $submittedBy = $_SESSION['name'] ?? $_SESSION['nickName'] ?? 'Unknown';
                             <div class="col-6">
                                 <label class="text-muted" style="font-size:11px;">วันที่ออก Invoice</label>
                                 <div id="labelDate" class="font-weight-bold" style="font-size:14px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Bank info card -->
+                        <div style="border:1px solid #e0e0e0; border-radius:12px; overflow:hidden; margin-bottom:16px;">
+                            <div style="background:#1a6b2f; padding:10px 16px; display:flex; align-items:center;">
+                                <span style="font-size:14px; font-weight:700; color:#fff;">K PLUS</span>
+                                <span style="font-size:11px; color:rgba(255,255,255,.7); margin-left:8px;">ธนาคารกสิกรไทย</span>
+                            </div>
+                            <div class="d-flex" style="min-height:130px;">
+                                <div style="flex:1; padding:14px; border-right:1px solid #f0f0f0;">
+                                    <div class="mb-1">
+                                        <span style="font-size:11px; color:#999;">ชื่อบัญชี</span><br>
+                                        <strong style="font-size:13px;">บจก. โลคอล อีทส์</strong>
+                                    </div>
+                                    <div class="mb-1">
+                                        <span style="font-size:11px; color:#999;">สาขา</span><br>
+                                        <strong style="font-size:13px;">สาขาสำนักแจ้งวัฒนะเมืองทองธานี</strong>
+                                    </div>
+                                    <div class="mb-2">
+                                        <span style="font-size:11px; color:#999;">หมายเลขบัญชี</span><br>
+                                        <strong style="font-size:16px; color:#1a6b2f;" id="slipBankNumber">056-1-85639-7</strong>
+                                    </div>
+                                    <button type="button" class="btn btn-sm"
+                                        style="background:#1a6b2f; color:#fff; border:none; border-radius:6px; padding:4px 14px; font-size:12px;"
+                                        onclick="navigator.clipboard.writeText('ชื่อบัญชี : บจก. โลคอล อีทส์\nสาขา : สาขาสำนักแจ้งวัฒนะเมืองทองธานี\nหมายเลขบัญชี : 056-1-85639-7'); this.innerText='✓ คัดลอกแล้ว'; var b=this; setTimeout(function(){ b.innerText='คัดลอก'; }, 1500);">คัดลอก</button>
+                                </div>
+                                <div style="flex:1; padding:14px; background:#fafafa;">
+                                    <strong style="font-size:12px; color:#555;">วิธีโอนเงิน</strong>
+                                    <ol style="list-style:decimal; font-size:12px; color:#666; padding-left:16px; line-height:1.9; margin-top:8px; margin-bottom:0;">
+                                        <li>คัดลอกหมายเลขบัญชีโดยกดปุ่ม 'คัดลอก'</li>
+                                        <li>ไปที่ 'โอนเงิน' → 'บัญชีกสิกรไทย'</li>
+                                        <li>วางเลขบัญชีและกรอกจำนวนเงิน</li>
+                                        <li>ถ่ายสลิปแล้วอัปโหลดด้านล่าง</li>
+                                    </ol>
+                                </div>
                             </div>
                         </div>
 
@@ -166,78 +209,70 @@ $submittedBy = $_SESSION['name'] ?? $_SESSION['nickName'] ?? 'Unknown';
 window.addEventListener('load', function() {
     const submittedBy = <?php echo json_encode($submittedBy); ?>;
     let currentInvoiceID = '';
-    let countdownInterval = null;
 
-    // --- Countdown timer helpers ---
-    function pad(n) { return n < 10 ? '0' + n : n; }
-    function stopCountdown() {
-        if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
-    }
-    function startCountdown(expireAt) {
-        stopCountdown();
-        const $box = $('#countdownBox');
-        const $timer = $('#countdownTimer');
-        $box.show().removeClass('alert-danger').addClass('alert-info');
-
-        function tick() {
-            const now = Date.now();
-            const diff = expireAt - now;
-            if (diff <= 0) {
-                $timer.text('00:00');
-                $box.removeClass('alert-info').addClass('alert-danger');
-                $box.find('span:first').html('<i class="bi bi-exclamation-circle-fill mr-1"></i> รายการชำระเงินหมดอายุแล้ว');
-                $('#btnSubmitSlip').prop('disabled', true);
-                stopCountdown();
-                return;
-            }
-            const m = Math.floor(diff / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            $timer.text(pad(m) + ':' + pad(s));
-        }
-        tick();
-        countdownInterval = setInterval(tick, 1000);
-    }
-
-    // --- Autocomplete suggest ---
-    let suggestTimeout = null;
-
-    $('#shopSearchInput').on('input', function() {
-        const q = $(this).val().trim();
-        clearTimeout(suggestTimeout);
-        $('#shopSuggestList').hide().empty();
-        if (q.length < 1) return;
-        suggestTimeout = setTimeout(function() {
-            $.ajax({
-                url: 'pages/tableRendering/searchInvoiceTH.php',
-                type: 'POST',
-                dataType: 'json',
-                data: { q: q, mode: 'suggest' },
-                success: function(res) {
-                    if (!res.success || !res.suggestions.length) return;
-                    const $list = $('#shopSuggestList').empty();
-                    res.suggestions.forEach(function(name) {
-                        $('<li>').text(name)
-                            .css({'padding':'9px 14px','cursor':'pointer','font-size':'13px','border-bottom':'1px solid #f1f1f1'})
-                            .on('mouseenter', function() { $(this).css('background','#f0f4ff'); })
-                            .on('mouseleave', function() { $(this).css('background','#fff'); })
-                            .on('click', function() {
-                                $('#shopSearchInput').val(name);
-                                $('#shopSuggestList').hide().empty();
-                                doSearch();
-                            })
-                            .appendTo($list);
-                    });
-                    $list.show();
+    // --- Load pending list ---
+    function loadPendingList(search) {
+        search = search || '';
+        $('#pendingSlipBody').html('<tr><td colspan="5" class="text-center text-muted py-3"><span class="spinner-border spinner-border-sm"></span> กำลังโหลด...</td></tr>');
+        $.ajax({
+            url: 'pages/tableRendering/pendingSlipTH.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { search: search },
+            success: function(res) {
+                if (!res.success || !res.data.length) {
+                    $('#pendingSlipBody').html('<tr><td colspan="5" class="text-center text-muted py-3">ไม่มีรายการรอส่งหลักฐาน</td></tr>');
+                    $('#pendingCount').text('0');
+                    return;
                 }
-            });
-        }, 250);
+                $('#pendingCount').text(res.data.length + ' รายการ');
+                let html = '';
+                res.data.forEach(function(r) {
+                    const dateStr = r.billingDate || r.createdAt || '';
+                    const displayDate = dateStr ? dateStr.substring(0, 10) : '-';
+                    const amount = parseFloat(r.amount || 0).toLocaleString('th-TH', { minimumFractionDigits: 2 });
+                    html += '<tr>'
+                        + '<td class="font-weight-bold">' + $('<span>').text(r.shopName).html() + '</td>'
+                        + '<td class="text-primary">' + $('<span>').text(r.invoiceID).html() + '</td>'
+                        + '<td class="text-right">฿' + amount + '</td>'
+                        + '<td class="text-muted">' + displayDate + '</td>'
+                        + '<td class="text-center"><button class="btn btn-sm btn-success btnSelectRow" '
+                        +   'data-id="' + r.id + '" data-invoiceid="' + $('<span>').text(r.invoiceID).html() + '" '
+                        +   'data-shop="' + $('<span>').text(r.shopName).html() + '" '
+                        +   'data-amount="' + r.amount + '" data-date="' + displayDate + '">'
+                        +   '<i class="bi bi-upload mr-1"></i>ส่งหลักฐาน</button></td>'
+                        + '</tr>';
+                });
+                $('#pendingSlipBody').html(html);
+            },
+            error: function() {
+                $('#pendingSlipBody').html('<tr><td colspan="5" class="text-center text-danger py-3">เกิดข้อผิดพลาดในการโหลด</td></tr>');
+            }
+        });
+    }
+
+    loadPendingList();
+
+    // Search
+    $('#btnPendingSearch').on('click', function() {
+        loadPendingList($('#pendingSearch').val().trim());
+    });
+    $('#pendingSearch').on('keydown', function(e) {
+        if (e.key === 'Enter') loadPendingList($(this).val().trim());
     });
 
-    // ปิด dropdown เมื่อคลิกที่อื่น
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('#shopSearchInput, #shopSuggestList').length) {
-            $('#shopSuggestList').hide();
-        }
+    // Click ปุ่มส่งหลักฐาน
+    $(document).on('click', '.btnSelectRow', function() {
+        const $btn = $(this);
+        currentInvoiceID = $btn.data('invoiceid');
+        $('#invoiceIdHidden').val($btn.data('id'));
+        $('#labelShopName').text($btn.data('shop'));
+        $('#labelInvoiceID').text(currentInvoiceID);
+        $('#labelAmount').text('฿' + parseFloat($btn.data('amount') || 0).toLocaleString('th-TH', { minimumFractionDigits: 2 }));
+        $('#labelDate').text($btn.data('date'));
+        $('#cardSearch').hide();
+        $('#cardInvoice').show();
+        window.scrollTo(0, 0);
     });
 
     // File input label update + preview
@@ -257,63 +292,15 @@ window.addEventListener('load', function() {
         }
     });
 
-    // Search shop
-    function doSearch() {
-        const q = $('#shopSearchInput').val().trim();
-        if (!q) return;
-        const $btn = $('#btnSearchShop');
-        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
-        $('#searchError').hide();
-
-        $.ajax({
-            url: 'pages/tableRendering/searchInvoiceTH.php',
-            type: 'POST',
-            dataType: 'json',
-            data: { q: q },
-            success: function(res) {
-                if (res.success) {
-                    const r = res.data;
-                    currentInvoiceID = r.invoiceID;
-                    $('#invoiceIdHidden').val(r.id);
-                    $('#labelShopName').text(r.shopName);
-                    $('#labelInvoiceID').text(r.invoiceID);
-                    $('#labelAmount').text('฿' + parseFloat(r.amount || 0).toLocaleString('th-TH', { minimumFractionDigits: 2 }));
-                    const d = r.createdAt ? new Date(r.createdAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-';
-                    $('#labelDate').text(d);
-                    $('#cardSearch').hide();
-                    $('#cardInvoice').show();
-
-                    // Start 10-minute expiry countdown from invoice createdAt
-                    const createdAt = r.createdAt ? new Date(r.createdAt).getTime() : Date.now();
-                    startCountdown(createdAt + 10 * 60 * 1000);
-                } else {
-                    $('#searchError').text(res.message || 'ไม่พบข้อมูลร้าน กรุณาตรวจสอบชื่อร้าน').show();
-                }
-            },
-            error: function() {
-                $('#searchError').text('เกิดข้อผิดพลาดในการเชื่อมต่อ').show();
-            },
-            complete: function() {
-                $btn.prop('disabled', false).html('<i class="bi bi-search"></i> ค้นหา');
-            }
-        });
-    }
-
-    $('#btnSearchShop').on('click', doSearch);
-    $('#shopSearchInput').on('keydown', function(e) {
-        if (e.key === 'Enter') doSearch();
-    });
-
-    // Reset to search
+    // Reset to list
     $('#btnResetSearch').on('click', function() {
-        stopCountdown();
-        $('#countdownBox').hide();
         $('#cardInvoice').hide();
         $('#cardSearch').show();
         $('#slipForm')[0].reset();
         $('#slipPreviewWrap').hide();
         $('#slipFile').next('.custom-file-label').text('เลือกไฟล์ (JPG, PNG, PDF, max 10MB)');
         $('#btnSubmitSlip').prop('disabled', false);
+        loadPendingList($('#pendingSearch').val().trim());
     });
 
     // Submit slip form
@@ -338,7 +325,6 @@ window.addEventListener('load', function() {
             dataType: 'json',
             success: function(res) {
                 if (res.success) {
-                    stopCountdown();
                     $('#successInvoiceID').text(currentInvoiceID);
                     $('#cardInvoice').hide();
                     $('#cardSuccess').show();
@@ -356,15 +342,13 @@ window.addEventListener('load', function() {
 
     // Submit another
     $('#btnSubmitAnother').on('click', function() {
-        stopCountdown();
-        $('#countdownBox').hide();
         $('#cardSuccess').hide();
         $('#cardSearch').show();
-        $('#shopSearchInput').val('').trigger('focus');
         $('#slipForm')[0].reset();
         $('#slipPreviewWrap').hide();
         $('#slipFile').next('.custom-file-label').text('เลือกไฟล์ (JPG, PNG, PDF, max 10MB)');
         currentInvoiceID = '';
+        loadPendingList($('#pendingSearch').val().trim());
     });
 
 });

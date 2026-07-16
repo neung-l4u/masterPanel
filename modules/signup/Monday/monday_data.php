@@ -422,7 +422,7 @@ if ($response) {
           $thBathRe     = $receipt['thBathRe']   ?? '';
           $thBathIn     = $row['thBathIn']        ?? convertToBahtText((float)($summary['net_payment'] ?? 0));
           $slipPath     = $receipt['slip']        ?? '';
-          $slipUrl      = $slipPath ? 'https://report.localforyou.com/modules/signup2/assets/uploads/' . $slipPath : '';
+          $slipUrl      = $slipPath ? 'https://report.localforyou.com/modules/signup/assets/uploads/' . $slipPath : '';
 
           $thPayload = [
               'invoice_id'    => (int)$row['id'],

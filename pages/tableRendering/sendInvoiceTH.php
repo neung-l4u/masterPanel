@@ -87,7 +87,7 @@ $receiptRows = $db->query(
 )->fetchAll();
 $slipPath = $receiptRows[0]['slip'] ?? '';
 $thBathRe = $receiptRows[0]['thBathRe'] ?? convertToBahtText((float)$row['amount']);
-$slipUrl  = $slipPath ? $baseUrl . '/modules/signup2/assets/uploads/' . $slipPath : '';
+$slipUrl  = $slipPath ? $baseUrl . '/modules/signup/assets/uploads/' . $slipPath : '';
 
 // --- action=send: ส่ง invoice webhook ---
 $payload = [

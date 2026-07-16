@@ -141,14 +141,15 @@ include ('assets/api/checkSession.php');
                                 <p>ส่งหลักฐานชำระเงิน</p>
                             </a>
                         </li>
-                        <?php if($_SESSION['level'] == 1 || $_SESSION['id'] == 83){ ?>
+                        <?php /* [HIDDEN] billingTH — ซ่อนไว้ก่อน เนื่องจาก invoiceThailand ครอบคลุม feature เดียวกัน
+                        if($_SESSION['level'] == 1 || $_SESSION['id'] == 83){ ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=billingTH" class="nav-link <?php echo $activeMenu["lv2"] == "billingTH" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-clipboard2-check"></i>
                                 <p>Billing TH — ตรวจสลิป</p>
                             </a>
                         </li>
-                        <?php } ?>
+                        <?php } */ ?>
                     </ul>
                 </li>
 

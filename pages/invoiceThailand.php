@@ -256,7 +256,7 @@ window.openSendModal = function(invoiceId) {
             });
 
             var slipViewBtn = r.slip
-                ? '<a href="modules/signup2/assets/uploads/' + r.slip + '" target="_blank" class="btn btn-sm btn-outline-success mr-1"><i class="bi bi-image"></i> ดูสลิป</a>'
+                ? '<a href="modules/signup/assets/uploads/' + r.slip + '" target="_blank" class="btn btn-sm btn-outline-success mr-1"><i class="bi bi-image"></i> ดูสลิป</a>'
                 : '<span class="badge badge-secondary mr-1">ไม่มีสลิป</span>';
             var slipUploadBtn = isRejected
                 ? '<label class="btn btn-sm btn-outline-warning mb-0" style="cursor:pointer;"><i class="bi bi-upload"></i> แก้ไขสลิป<input type="file" id="slipReplaceInput" data-invoice="'+r.id+'" data-shop="'+r.name+'" accept="image/*,application/pdf" style="display:none;"></label>'
@@ -386,7 +386,7 @@ $(document).on('change', '#slipReplaceInput', function() {
     fd.append('quotationID', invoiceId);
 
     $.ajax({
-        url: 'modules/signup2/assets/API/upload_slip.php',
+        url: 'modules/signup/assets/API/upload_slip.php',
         type: 'POST',
         data: fd,
         processData: false,
@@ -394,7 +394,7 @@ $(document).on('change', '#slipReplaceInput', function() {
         success: function(res) {
             if (res.success) {
                 showNotify('success', 'อัปโหลดสลิปเรียบร้อย');
-                var newUrl = 'modules/signup2/assets/uploads/' + res.slipPath;
+                var newUrl = 'modules/signup/assets/uploads/' + res.slipPath;
                 var $viewBtn = $label.closest('div').find('a.btn-outline-success');
                 if ($viewBtn.length) {
                     $viewBtn.attr('href', newUrl);

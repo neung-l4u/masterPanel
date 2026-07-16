@@ -50,7 +50,7 @@ if ($file['size'] > 10 * 1024 * 1024) {
 // Get invoice + customer
 $invRows = $db->query(
     'SELECT i.`id`, i.`invoiceID`, i.`amount`, i.`status`,
-            c.`name` AS shopName
+            c.`name` AS shopName, c.`email` AS customerEmail
      FROM `thInvoice` i
      JOIN `thCustomer` c ON c.`id` = i.`customer_id`
      WHERE i.`id` = ? LIMIT 1',
@@ -146,6 +146,50 @@ try {
     curl_close($ch);
 } catch (\Throwable $e) {
     error_log('[submitSlipTH notify] ' . $e->getMessage());
+}
+
+// --- อัป Monday board: link_mm5867rj = slip URL (เช็ค email ตรงกัน) ---
+try {
+    $mondayToken   = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYxNzI4MTY4NiwiYWFpIjoxMSwidWlkIjo1NzY1NDA2MSwiaWFkIjoiMjAyNi0wMi0wNVQwMjowNDo0NC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjIxMTY5MjAsInJnbiI6ImFwc2UyIn0.RIk109S-veeBTyvud8wxzCc656ytoFfVMgA5zyfo3sM';
+    $mondayBoardId = '5029904278';
+    $customerEmail = $inv['customerEmail'] ?? '';
+
+    if ($customerEmail) {
+        $searchQuery = 'query($boardId: ID!, $email: String!) { boards(ids: [$boardId]) { items_page(limit: 1, query_params: { rules: [{ column_id: "text_mm58ns1b", compare_value: [$email] }] }) { items { id } } } }';
+        $sCh = curl_init('https://api.monday.com/v2');
+        curl_setopt_array($sCh, [
+            CURLOPT_POST           => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_POSTFIELDS     => json_encode(['query' => $searchQuery, 'variables' => ['boardId' => $mondayBoardId, 'email' => $customerEmail]]),
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
+        ]);
+        $sResp    = curl_exec($sCh);
+        curl_close($sCh);
+        $sData    = json_decode($sResp, true);
+        $targetId = $sData['data']['boards'][0]['items_page']['items'][0]['id'] ?? null;
+
+        if ($targetId) {
+            $fullSlipUrl  = 'https://report.localforyou.com/modules/signup/assets/uploads/' . $slipPath;
+            $updateQuery  = 'mutation($boardId: ID!, $itemId: ID!, $colVals: JSON!) { change_multiple_column_values(board_id: $boardId, item_id: $itemId, column_values: $colVals, create_labels_if_missing: true) { id } }';
+            $colVals      = json_encode(['link_mm5867rj' => ['url' => $fullSlipUrl, 'text' => 'ดูสลิป']]);
+            $uCh = curl_init('https://api.monday.com/v2');
+            curl_setopt_array($uCh, [
+                CURLOPT_POST           => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT        => 15,
+                CURLOPT_POSTFIELDS     => json_encode(['query' => $updateQuery, 'variables' => ['boardId' => $mondayBoardId, 'itemId' => $targetId, 'colVals' => $colVals]]),
+                CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
+            ]);
+            $uResp = curl_exec($uCh);
+            curl_close($uCh);
+            error_log('[submitSlipTH] Monday update link_mm5867rj item=' . $targetId . ' resp=' . $uResp);
+        } else {
+            error_log('[submitSlipTH] Monday: ไม่พบ item สำหรับ email=' . $customerEmail);
+        }
+    }
+} catch (\Throwable $e) {
+    error_log('[submitSlipTH Monday] ' . $e->getMessage());
 }
 
 echo json_encode([
