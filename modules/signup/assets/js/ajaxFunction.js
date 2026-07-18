@@ -108,8 +108,9 @@ function getProductList(country) {
                 // กำหนดแบบมาตรฐานไว้ก่อน เพื่อให้ Bundle ขึ้นก่อน Solo
                 categoryConfig = {
                     "bundle":   { order: 1, label: "Bundle" },
-                    "solo":     { order: 2, label: "Solo" }
-                    // ถ้ามี type อื่นๆ ของร้านอาหาร เช่น 'pos' ก็เพิ่มตรงนี้ได้
+                    "solo":     { order: 2, label: "Solo" },
+                    "pos":      { order: 3, label: "POS" },
+                    "addonPOS": { order: 3, label: "POS" }
                 };
             }
 
@@ -309,7 +310,7 @@ function getProductList(country) {
                     classType = "isWebsiteMakeOver";
                 }else if (name.search("Web Hosting")>-1){
                     classType = "isWebHosting";
-                }else if (name.search("POS Devices")>-1){
+                }else if (name === "POS Devices"){
                     classType = "isPOSDevices";
                 }else { classType = ""; }
 
@@ -432,11 +433,11 @@ function getProductList(country) {
 
 
                 let posDevicesSubHTML = "";
-                if (name === "POS Devices") {
+                if (name === "POS - Initial payment plan" || name === "POS - Installment payment plan [24months]") {
                     posDevicesSubHTML = `<div class="pos-devices-sub ms-4 mt-1" id="posDevicesSub-${product_id}" style="display:none;">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="addonPOSDeviceDuelScreen" id="posDeviceDuelScreen-${product_id}" value="Duel Screen">
-                            <label class="form-check-label" for="posDeviceDuelScreen-${product_id}">Duel Screen</label>
+                            <input class="form-check-input" type="checkbox" name="addonPOSDeviceDuelScreen" id="posDeviceDuelScreen-${product_id}" value="Dual Screen">
+                            <label class="form-check-label" for="posDeviceDuelScreen-${product_id}">Dual Screen</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="addonPOSDevicePrinter" id="posDevicePrinter-${product_id}" value="Printer">
@@ -449,6 +450,10 @@ function getProductList(country) {
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="addonPOSDeviceWifi" id="posDeviceWifi-${product_id}" value="Wifi Extension">
                             <label class="form-check-label" for="posDeviceWifi-${product_id}">Wifi Extension</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="addonPOSDeviceZeller" id="posDeviceZeller-${product_id}" value="Zeller">
+                            <label class="form-check-label" for="posDeviceZeller-${product_id}">Zeller</label>
                         </div>
                     </div>`;
                 }
@@ -1241,6 +1246,7 @@ const sendMailToL4UTeam = () => {
         addonPOSDevicePrinter: $("input:checkbox[name='addonPOSDevicePrinter']:checked").val(),
         addonPOSDeviceCashDrawer: $("input:checkbox[name='addonPOSDeviceCashDrawer']:checked").val(),
         addonPOSDeviceWifi: $("input:checkbox[name='addonPOSDeviceWifi']:checked").val(),
+        addonPOSDeviceZeller: $("input:checkbox[name='addonPOSDeviceZeller']:checked").val(),
 
         ///AI ///
         addonARAYA: $("input:checkbox[name='addonAI']:checked").val(),
@@ -2093,6 +2099,7 @@ const saveToDB = (stripePayload, stripeRes) => {
         POSDevicePrinter: $("input:checkbox[name='addonPOSDevicePrinter']:checked").val(),
         POSDeviceCashDrawer: $("input:checkbox[name='addonPOSDeviceCashDrawer']:checked").val(),
         POSDeviceWifi: $("input:checkbox[name='addonPOSDeviceWifi']:checked").val(),
+        POSDeviceZeller: $("input:checkbox[name='addonPOSDeviceZeller']:checked").val(),
         OrderDiscount: $("input[name='discount']:checked").val(),
         OtherDiscount: $("#discountOther").val(),
         mainDiscountCode: $("#couponCode").val(),
@@ -2295,6 +2302,7 @@ const createLogs = (stripePayload) => {
         POSDevicePrinter: $("input:checkbox[name='addonPOSDevicePrinter']:checked").val(),
         POSDeviceCashDrawer: $("input:checkbox[name='addonPOSDeviceCashDrawer']:checked").val(),
         POSDeviceWifi: $("input:checkbox[name='addonPOSDeviceWifi']:checked").val(),
+        POSDeviceZeller: $("input:checkbox[name='addonPOSDeviceZeller']:checked").val(),
         OrderDiscount: $("input[name='discount']:checked").val(),
         OtherDiscount: $("#discountOther").val(),
         mainDiscountCode: $("#couponCode").val(),
