@@ -22,6 +22,15 @@ if ($testMode == "true"){
     $test["note"] = "test mode";
     $test["person"] = randomName();
     $test["refShop"] = randomShop();
+    $test["adsBudget"] = 500;
+    $test["bookingEmail"] = "neung.booking@localforyou.com";
+    $test["cartEmail"] = "neung.cart@localforyou.com";
+    $test["domain"] = "testshop".$randomNumber.".com.au";
+    $test["tableNumber"] = rand(5, 40);
+    // Stripe / bank test values — safe for sandbox only.
+    $test["bsb"] = "123456";
+    $test["account"] = "000123456";
+    $test["routing"] = "110000000";
 }elseif ($testMode == "mark"){
     $randomNumber = sprintf("%03d", mt_rand(1, 999));
     $test["firstname"] = "Mark L4U";
@@ -44,6 +53,15 @@ if ($testMode == "true"){
     $test["note"] = "test mode";
     $test["person"] = randomName();
     $test["refShop"] = randomShop();
+    $test["adsBudget"] = 500;
+    $test["bookingEmail"] = "mark.booking@localforyou.com";
+    $test["cartEmail"] = "mark.cart@localforyou.com";
+    $test["domain"] = "testshop".$randomNumber.".com.au";
+    $test["tableNumber"] = rand(5, 40);
+    // Stripe / bank test values — safe for sandbox only.
+    $test["bsb"] = "123456";
+    $test["account"] = "000123456";
+    $test["routing"] = "110000000";
 }else{
     $randomNumber = "";
     $test["firstname"] = "";
@@ -64,6 +82,14 @@ if ($testMode == "true"){
     $test["note"] = "";
     $test["person"] = "";
     $test["refShop"] = "";
+    $test["adsBudget"] = "";
+    $test["bookingEmail"] = "";
+    $test["cartEmail"] = "";
+    $test["domain"] = "";
+    $test["tableNumber"] = "";
+    $test["bsb"] = "";
+    $test["account"] = "";
+    $test["routing"] = "";
 }
 
 function generateRandomString($length = 10) {

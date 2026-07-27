@@ -818,6 +818,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                     maxlength="80"
                                                                     autocomplete="off"
                                                                     placeholder="$1000"
+                                                                    value="<?php echo $test["adsBudget"]; ?>"
                                                                 />
                                                                 <small id="adsBudgetHelp" class="form-text text-muted">
                                                                     Budget for ads only. It will be gradually spent as your ads run until fully used.
@@ -864,6 +865,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         required
                                                         autocomplete="off"
                                                         placeholder="mail@localforyou.com"
+                                                        value="<?php echo $test["bookingEmail"]; ?>"
                                                     />
                                                     <small id="bookemailHelp" class="form-text text-muted">
                                                         e.g. mail@localforyou.com
@@ -906,6 +908,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         required
                                                         autocomplete="off"
                                                         placeholder="mail@localforyou.com"
+                                                        value="<?php echo $test["cartEmail"]; ?>"
                                                     />
                                                     <small id="emailHelp" class="form-text text-muted">
                                                         e.g. mail@localforyou.com
@@ -978,6 +981,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                     max="100"
                                                                     step="1"
                                                                     maxlength="3"
+                                                                    value="<?php echo $test["tableNumber"]; ?>"
                                                                     style="min-width: 70px;"
                                                                     oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                                                                     onblur="fixNumber(this.value);"
@@ -1412,6 +1416,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                     autocomplete="off"
                                                                     placeholder="www.localforyou.com"
                                                                     oninput="checkDomain(this.value)"
+                                                                    value="<?php echo $test["domain"]; ?>"
                                                                 /> 
                                                             </span>
                                                             <small id="domainHelpAU" class="form-text">
@@ -2263,6 +2268,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                         oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                                                                         autocomplete="off"
                                                                         placeholder="123456"
+                                                                        value="<?php echo $test["bsb"]; ?>"
                                                                 />
                                                                 <small id="emailDirectDebitHelp" class="form-text text-muted bsbDirectDebit_div">
                                                                     Bank-State-Branch Code e.g. 123456
@@ -2282,6 +2288,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                         oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                                                                         onblur="fixDigitDirectDebit();"
                                                                         autocomplete="off"
+                                                                        value="<?php echo $test["account"]; ?>"
                                                                         placeholder="123456890"
                                                                 />
                                                             </div>
@@ -2299,6 +2306,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                         oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                                                                         autocomplete="off"
                                                                         placeholder="12345689"
+                                                                        value="<?php echo $test["routing"]; ?>"
                                                                 />
                                                             </div>
                                                             <div>
