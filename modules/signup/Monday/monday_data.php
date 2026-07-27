@@ -172,6 +172,11 @@ $Step04_SocialNetworks00N9s000000QQl5 = $_POST['selectedPackages'] ?? ''; //  Se
 
 $Step04_SocialNetworks00NMq000000UrZx = $_POST['agreementGenerated'] ?? ''; //  Agreement generated
 
+// Push POS Customer Agreement — only populated when the customer buys POS.
+// TODO: map this into the Monday mutation once a board column exists for it
+// (the marketing agreement above goes to column "text26").
+$pushposAgreementGenerated = $_POST['pushposAgreementGenerated'] ?? '';
+
 $Step04_SocialNetworks00N9s000000QgXl = $_POST['currentlyPackage'] ?? ''; //  Currently package
 
 

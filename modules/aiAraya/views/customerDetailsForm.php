@@ -416,7 +416,7 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
                                 </div>
                                 
 
-                                <div class="mb-3" id="termAndConditionsLink">
+                                <div class="mb-3" id="termAndConditionsLinkGroup">
                                     <label for="termAndConditionsLink" class="form-label">Term and Conditions Link (if you have one) <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="termAndConditionsLink" name="termAndConditionsLink" placeholder="e.g. https://yourbusiness.com/terms">
                                 </div>
@@ -562,7 +562,7 @@ $stripeID = $_GET['stripeID'] ?? '$_get=stripeID';
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
-<script src="../controllers/customerDetailsForm.js?v=1.0.0"></script>
+<script src="../controllers/customerDetailsForm.js?v=1.1.0"></script>
 <script>
 $(function() {
     // Toggle booking credentials when currentBookingSystem has value
@@ -606,7 +606,7 @@ $(function() {
     });
 
     const params = new URLSearchParams(window.location.search);
-    if (params.get('test') === 'true') {
+    if (params.get('testMode') === 'true') {
         // Text / Textarea / Number fields
         $('#businessName').val('Mark Test & Spa');
         $('#businessHours').val('Mon-Fri 9:00 AM - 7:00 PM\nSat 10:00 AM - 5:00 PM\nSun Closed');
@@ -624,6 +624,7 @@ $(function() {
         $('#therapistNames').val('Anna, Brian, Clara, David, Emily');
         $('#promotions').val('20% off first visit, Gift cards available from $50, Buy 5 sessions get 1 free');
         $('#additionalComments').val('Test submission - please ignore.');
+        $('#googleCalendarId').val('marktest123@group.calendar.google.com');
 
         // Radio buttons
         $('#phoneDecisionPromote').prop('checked', true);
@@ -636,6 +637,20 @@ $(function() {
         $('#restroomYes').prop('checked', true);
         $('#voiceFemale').prop('checked', true);
         $('#stripeID').val(params.get('stripeID') || '');
+
+        // Booking Policy - trigger change() so the panels slide down and
+        // their fields get the required flag before we fill them.
+        $('#yesPolicy').prop('checked', true).trigger('change');
+        $('#lateArrivalFee').val('$20 after 15 min late');
+        $('#noshowFee').val('100% of service');
+        $('#freeCancellationWindow').val('24 Hours before');
+        $('#lateCancellationFee').val('50% of service');
+
+        $('#yesDeposit').prop('checked', true).trigger('change');
+        $('#depositAmount').val('$30');
+        $('#depositPaymentLink').val('https://buy.stripe.com/test_marktest123');
+
+        $('#termAndConditionsLink').val('https://www.marktesttest.com/terms');
 
         console.log('🧪 Test mode: form auto-filled with sample data.');
     }

@@ -3,6 +3,16 @@ date_default_timezone_set("Asia/Bangkok");
 $SignedDate = date('d/m/Y');
 $abn = "ABN";
 
+// Guarded: the agreement templates share this helper, and both can be included
+// in the same request when rendering PDFs for DocuSign.
+if (!function_exists('cutColon')) {
+    function cutColon($param){
+        $temp = explode(":",$param);
+        $arr = array_reverse($temp);
+        return trim($arr[0]);
+    }
+}
+
 $log["timestamp"] =  date('Y-m-d H:i:s');
 $log["timestampDash"] =  date('Y-m-d His');
 
@@ -14,6 +24,11 @@ $data["State"] = !empty($_REQUEST["State"]) ? trim($_REQUEST["State"]) : "-- No 
 $data["Country"] = !empty($_REQUEST["Country"]) ? trim($_REQUEST["Country"]) : "-- No Country --";
 
 $data["registrationNumber"] = cutColon($data["registrationNumber"]);
+
+// When rendered for DocuSign, swap the blank signature images for anchor strings
+// (/sig1/, /date1/) that DocuSign uses to position the signature tabs.
+// Set by api/docusign/ContractPdf.php; unset for normal browser previews.
+$docusignMode = !empty($_REQUEST["docusignMode"]);
 
 $contractTitle = "";
 $contractSubTitle = "";
@@ -93,6 +108,13 @@ $title = 'Contract # '.$log["timestampDash"].' '.$data["ShopName"];
         .pageNumber{
             font-size: smaller !important;
             color: #cccccc;
+        }
+        /* DocuSign anchor strings must exist in the PDF text layer for tab
+           placement, but should not be visible to the reader. White-on-white keeps
+           them selectable by DocuSign while staying invisible on the page —
+           display:none or visibility:hidden would remove them from the text layer. */
+        .ds-anchor{
+            color: #ffffff;
         }
         td,th,li{
             font-size: smaller !important;
@@ -296,7 +318,11 @@ $title = 'Contract # '.$log["timestampDash"].' '.$data["ShopName"];
                         </div>
                         <div>
                             <span class="fw-bold">Client Signature:</span>
+                            <?php if ($docusignMode): ?>
+                            <span class="ds-anchor">/sig1/</span>
+                            <?php else: ?>
                             <img src="blank-80.jpg" height="80" alt="">
+                            <?php endif; ?>
                         </div>
                         <div class="col">
                             <span class="fw-bold">Printed Name:</span>
@@ -305,7 +331,11 @@ $title = 'Contract # '.$log["timestampDash"].' '.$data["ShopName"];
                         <div>&nbsp;</div>
                         <div class="col">
                             <span class="fw-bold">Date:</span>
+                            <?php if ($docusignMode): ?>
+                            <span class="ds-anchor">/date1/</span>
+                            <?php else: ?>
                             <img src="blank-30.jpg" height="30" alt="">
+                            <?php endif; ?>
                         </div>
 
                     </div>
@@ -437,9 +467,6 @@ $title = 'Contract # '.$log["timestampDash"].' '.$data["ShopName"];
 </html>
 
 <?php
-function cutColon($param){
-    $temp = explode(":",$param);
-    $arr = array_reverse($temp);
-    return trim($arr[0]);
-}
+// cutColon() is declared near the top of this file so it can be guarded with
+// function_exists() and still be available to the calls above.
 ?>

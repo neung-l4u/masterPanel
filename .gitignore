@@ -155,3 +155,5 @@ out
 /modules/printer/assets/php/config.php
 /vendor/
 /api/aiAraya/stripe_webhook.php
+/api/docusign/docusign_config.php
+/api/docusign/logs/

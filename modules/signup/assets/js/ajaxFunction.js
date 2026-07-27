@@ -1948,6 +1948,8 @@ const saveToDB = (stripePayload, stripeRes) => {
     genLinkPDF();
     const agreementGenerated = $("#agreementGenerated");
     let contractURL = agreementGenerated.val();
+    // Empty unless the customer is buying POS.
+    let contractPushposURL = $("#pushposAgreementGenerated").val();
 
     let cuisineSelected = [];
 
@@ -2105,6 +2107,7 @@ const saveToDB = (stripePayload, stripeRes) => {
             "payload" : payload,
             "country" : Country,
             "contractURL" : contractURL,
+            "contractPushposURL" : contractPushposURL,
             "testMail" : CheckedBoxTestmailValue,
         }
     });
@@ -2407,6 +2410,32 @@ $('#formCountry').on('change', function () {
 
 // ============ Document Upload Section ============
 
+// True when the customer is buying POS, either as the main product or as an add-on.
+// Country-independent: callers apply their own country rules on top of this.
+function isPOSSelected() {
+    // Check main product for "POS" (check value + label text)
+    const productInput = $("input[name='product']:checked");
+    const selectedProduct = (productInput.val() || '') + ' ' +
+        $("label[for='" + productInput.attr('id') + "']").text();
+
+    if (selectedProduct.toUpperCase().includes('POS')) {
+        return true;
+    }
+
+    // Check ALL checked addon checkboxes inside the products/addon container
+    let hasPOS = false;
+    $("#products2 input[type='checkbox']:checked, #addon2 input[type='checkbox']:checked").each(function () {
+        const val = ($(this).val() || '');
+        const lbl = $("label[for='" + $(this).attr('id') + "']").text();
+        if ((val + ' ' + lbl).toUpperCase().includes('POS')) {
+            hasPOS = true;
+            return false; // break
+        }
+    });
+
+    return hasPOS;
+}
+
 // Toggle visibility: show only when country=AU AND (product or addon contains "POS")
 function toggleDocUploadSection() {
     const country = formData.formCountry || $('#formCountry').val();
@@ -2421,25 +2450,7 @@ function toggleDocUploadSection() {
         return;
     }
 
-    // Check main product for "POS" (check value + label text)
-    const productInput = $("input[name='product']:checked");
-    const selectedProduct = (productInput.val() || '') + ' ' +
-        $("label[for='" + productInput.attr('id') + "']").text();
-    let hasPOS = selectedProduct.toUpperCase().includes('POS');
-
-    // Check ALL checked addon checkboxes inside the products/addon container
-    if (!hasPOS) {
-        $("#products2 input[type='checkbox']:checked, #addon2 input[type='checkbox']:checked").each(function () {
-            const val = ($(this).val() || '');
-            const lbl = $("label[for='" + $(this).attr('id') + "']").text();
-            if ((val + ' ' + lbl).toUpperCase().includes('POS')) {
-                hasPOS = true;
-                return false; // break
-            }
-        });
-    }
-
-    if (hasPOS) {
+    if (isPOSSelected()) {
         docSection.show();
         fileInputs.prop('required', true);
         adyenAgree.prop('required', true);

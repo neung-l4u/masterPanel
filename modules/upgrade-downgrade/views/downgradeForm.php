@@ -137,6 +137,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <div class="mb-3 position-relative">
                                 <label for="mondayProjectId" class="form-label">Monday Project / Shop ID <small class="text-muted">(Staff Reference)</small></label>
                                 <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="Type shop name or ID to search..." autocomplete="off">
+                                <input type="hidden" id="boardId" name="boardId" value="">
                                 <div id="projectSearchDropdown" class="project-search-dropdown"></div>
                             </div>
                             <?php endif; ?>

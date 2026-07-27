@@ -10,8 +10,21 @@ $('#customerDetailsForm').on('submit', function (e) {
         return obj;
     }, {});
     const payload = JSON.stringify(formData);
+
+    // Test mode (?testMode=true): skip the DB write, send to the webhook only.
+    if (isTestMode()) {
+        console.log('🧪 Test mode: skipping DB save, sending webhook only.');
+        result.html(`<div class="alert alert-info mt-2"><i class="bi bi-flask"></i> Test mode - webhook only, nothing saved to DB.</div>`);
+        sendData(formData, '');
+        return;
+    }
+
     saveToDB(payload, result, cmdSubmit, formData.stripeID, formData);
 });
+
+function isTestMode() {
+    return new URLSearchParams(window.location.search).get('testMode') === 'true';
+}
 
 function sendData(formData, qualify) {
     const now = new Date();
@@ -62,6 +75,7 @@ function sendData(formData, qualify) {
         formVersion: formData.formVersion || "NULL",
         date: formattedDate,
         qualify: qualify || "",
+        testMode: isTestMode() ? "yes" : "no",
     };
 
     $.ajax({
