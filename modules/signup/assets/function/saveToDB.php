@@ -15,6 +15,9 @@ $dataLogs = !empty($_POST["payload"]) ? $_POST["payload"] : null;
 $dataStripe = !empty($_POST["stripePayload"]) ? $_POST["stripePayload"] : null;
 $country = !empty($_POST["country"]) ? $_POST["country"] : null;
 $contractURL = !empty($_POST["contractURL"]) ? $_POST["contractURL"] : null;
+// Only set when the customer is buying POS; they get this in addition to the
+// marketing agreement above.
+$contractPushposURL = !empty($_POST["contractPushposURL"]) ? $_POST["contractPushposURL"] : null;
 $stripeResult = !empty($_POST["stripeRes"]) ? $_POST["stripeRes"] : null;
 $testMode = !empty($_POST["testMail"]) ? $_POST["testMail"] : 0;
 $logID = !empty($_POST["logID"]) ? $_POST["logID"] : null;
@@ -34,8 +37,8 @@ if (!is_null($stripeResult)) {
 }
 
 if ($act === "add") {
-    $logsToDB =  $db->query('INSERT INTO `logssignup`(`dataLogs`, `dataStripe`, `dataContract`, `countryCode`, `status`, `test`, `createAt`, `createBy`) VALUES (?,?,?,?,?,?,?,?)'
-    , $dataLogs, $dataStripe, $contractURL, $country, $status, $testMode, $timestamp, $signupBy );
+    $logsToDB =  $db->query('INSERT INTO `logssignup`(`dataLogs`, `dataStripe`, `dataContract`, `dataContractPushpos`, `countryCode`, `status`, `test`, `createAt`, `createBy`) VALUES (?,?,?,?,?,?,?,?,?)'
+    , $dataLogs, $dataStripe, $contractURL, $contractPushposURL, $country, $status, $testMode, $timestamp, $signupBy );
 } elseif ($act === "update") {
     $resToDB = $db->query('UPDATE `logssignup` SET `stripeResult`=? WHERE id=?', $stripeResult, $logID);
 }

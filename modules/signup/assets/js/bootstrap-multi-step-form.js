@@ -1866,9 +1866,11 @@ const modalSecretSetupAction = (action) => {
   if (action==="open"){ modalSecretSetup.show();}
 }
 
+const DOCS_BASE_URL = "https://report.localforyou.com/modules/signup/assets/docs/";
+
 const genLinkPDF = () => {
   const agreementGenerated = $("#agreementGenerated");
-  let url = "assets/docs/contract_2024_V02.php";
+  const pushposAgreementGenerated = $("#pushposAgreementGenerated");
   let customerFullName = $("#first_name").val() + " " + $("#last_name").val();
   let ShopName = $("#shopName").val();
   let State = $("#state option:selected").text();
@@ -1890,8 +1892,27 @@ const genLinkPDF = () => {
   let registrationNumber = $("#businessNumber").val();
   let Country = $("#formCountry").val();
 
-  url = "https://report.localforyou.com/modules/signup/assets/docs/contract_2024_V02.php?customerFullName=" + customerFullName + "&ShopName=" + ShopName + "&contractPeriod=" + contractPeriod + "&registrationNumber=" + registrationNumber + "&Country=" + Country + "&State=" + State;
-  agreementGenerated.val(url);
+  // Shared by both agreements; encoded so names/shop names with & or spaces survive.
+  let baseParams = "customerFullName=" + encodeURIComponent(customerFullName) +
+      "&ShopName=" + encodeURIComponent(ShopName) +
+      "&registrationNumber=" + encodeURIComponent(registrationNumber) +
+      "&Country=" + encodeURIComponent(Country) +
+      "&State=" + encodeURIComponent(State);
+
+  agreementGenerated.val(
+      DOCS_BASE_URL + "contract_2024_V02.php?" + baseParams + "&contractPeriod=" + contractPeriod
+  );
+
+  // Customers buying POS also need the Push POS Customer Agreement, in addition
+  // to the marketing agreement above. Applies to every country.
+  if (typeof isPOSSelected === "function" && isPOSSelected()) {
+    pushposAgreementGenerated.val(
+        DOCS_BASE_URL + "pushpos_agreement_V02.php?" + baseParams +
+        "&legalEntity=" + encodeURIComponent($("#company").val() || "")
+    );
+  } else {
+    pushposAgreementGenerated.val("");
+  }
 }
 
 const genPDF = () => {
@@ -1899,6 +1920,12 @@ const genPDF = () => {
   const agreementGenerated = $("#agreementGenerated");
   let url = agreementGenerated.val();
   window.open(url, '_blank').focus();
+
+  // Open the Push POS agreement too when the customer is buying POS.
+  let pushposUrl = $("#pushposAgreementGenerated").val();
+  if (pushposUrl) {
+    window.open(pushposUrl, '_blank');
+  }
 }
 
 const showPolicy = () => {

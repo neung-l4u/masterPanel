@@ -263,7 +263,7 @@ function initStarRating(widgetId, inputId, labelId) {
         }
         const items = matches.map(p => {
             const meta = [p.shopType, p.ownerName, p.phone].filter(Boolean).join(' · ');
-            return `<div class="project-search-item" data-id="${p.shopId}" data-name="${p.shopName}">
+            return `<div class="project-search-item" data-id="${p.shopId}" data-name="${p.shopName}" data-boardid="${p.boardId || ''}">
                 <div class="ps-name">${p.shopName} <small class="text-muted">#${p.shopId}</small></div>
                 ${meta ? `<div class="ps-meta">${meta}</div>` : ''}
             </div>`;
@@ -288,6 +288,7 @@ function initStarRating(widgetId, inputId, labelId) {
 
     $dropdown.on('click', '.project-search-item', function () {
         $input.val($(this).data('id'));
+        $('#boardId').val($(this).data('boardid'));
         $dropdown.removeClass('show').empty();
         loadSubscriptions($(this).data('name'));
     });
@@ -526,8 +527,9 @@ function applyTestAutofill() {
     $('#mobileNumber').val('+1 (555) 010-0000');
 
     // Staff fields
-    $('#country').val('US');
+    $('#country').val('TH');
     $('#mondayProjectId').val('99999');
+    $('#boardId').val('1943203205'); // TH project board
 
     // Request Type
     $('#reqOtherPackage').prop('checked', true).trigger('change');

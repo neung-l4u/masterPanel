@@ -120,6 +120,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <div class="mb-3 position-relative">
                                 <label for="mondayProjectId" class="form-label">Monday Project / Shop ID <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="Type shop name or ID to search..." autocomplete="off" required>
+                                <input type="hidden" id="boardId" name="boardId" value="">
                                 <div id="projectSearchDropdown" class="project-search-dropdown"></div>
                                 <div class="form-text">Search by shop name or ID. Other fields will auto-fill.</div>
                                 <div class="invalid-feedback">Please enter the Monday Project / Shop ID.</div>

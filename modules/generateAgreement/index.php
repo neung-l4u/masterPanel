@@ -26,7 +26,7 @@ $currentDate = date('d/m/Y');
 
 <body>
     <div class="container">
-        <form class="p-5" action="https://report.localforyou.com/modules/signup/assets/docs/contract_2024_V02.php?" method="GET">
+        <form class="p-5" id="agreementForm" action="https://report.localforyou.com/modules/signup/assets/docs/contract_2024_V02.php?" method="GET">
 
             <div class="card">
                 <div class="card-header">
@@ -35,6 +35,21 @@ $currentDate = date('d/m/Y');
 
 
                 <div class="card-body p-4">
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="agreementType" class="font-weight-bold">
+                                    Agreement Type
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select id="agreementType" class="form-control" onchange="switchAgreementType();">
+                                    <option value="marketing" selected="selected">Marketing Service Agreement</option>
+                                    <option value="pushpos">Push POS Customer Agreement</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col">
@@ -97,7 +112,16 @@ $currentDate = date('d/m/Y');
 
                     </div>
 
-                    <div class="row">
+                    <div class="row" id="legalEntityRow" style="display: none;">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="legalEntity" class="font-weight-bold">Legal Entity</label>
+                                <input type="text" id="legalEntity" class="form-control" name="legalEntity" placeholder="Good Restaurant Pty Ltd">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" id="contractPeriodRow">
                         <div class="col">
                             <div class="form-group">
                                 <label for="contractPeriod" class="font-weight-bold">
@@ -116,8 +140,43 @@ $currentDate = date('d/m/Y');
 
                     <div class="row">
                         <div class="col">
+                            <div class="form-group">
+                                <label for="deliveryMode" class="font-weight-bold">
+                                    Delivery
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select id="deliveryMode" class="form-control" onchange="switchDeliveryMode();">
+                                    <option value="preview" selected="selected">Preview only (open in browser)</option>
+                                    <option value="email">DocuSign — email to customer</option>
+                                    <option value="embedded">DocuSign — sign here now</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" id="signerEmailRow" style="display: none;">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="signerEmail" class="font-weight-bold">
+                                    Customer Email
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="email" id="signerEmail" class="form-control" name="signerEmail" placeholder="customer@example.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
                             <button type="submit" class="btn btn-primary mb-1" name="submit">Submit</button>
                             <!-- <input type="submit" name="submit"> -->
+                            <span id="docusignSpinner" class="ml-2 text-muted" style="display: none;">Sending to DocuSign…</span>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div id="docusignResult" class="alert" style="display: none;"></div>
                         </div>
                     </div>
 
@@ -129,6 +188,121 @@ $currentDate = date('d/m/Y');
         </form>
     </div>
     <script>
+        const AGREEMENT_ACTIONS = {
+            marketing: "https://report.localforyou.com/modules/signup/assets/docs/contract_2024_V02.php",
+            pushpos: "https://report.localforyou.com/modules/signup/assets/docs/pushpos_agreement_V02.php"
+        };
+
+        function switchAgreementType() {
+            let type = $("#agreementType").val();
+
+            $("#agreementForm").attr("action", AGREEMENT_ACTIONS[type]);
+
+            if (type === "pushpos") {
+                $("#contractPeriodRow").hide();
+                $("#contractPeriod").prop("disabled", true);
+                $("#legalEntityRow").show();
+                $("#legalEntity").prop("disabled", false);
+            } else {
+                $("#contractPeriodRow").show();
+                $("#contractPeriod").prop("disabled", false);
+                $("#legalEntityRow").hide();
+                $("#legalEntity").prop("disabled", true);
+            }
+        }
+
+        const DOCUSIGN_ENDPOINT = "https://report.localforyou.com/api/docusign/sendAgreement.php";
+
+        function switchDeliveryMode() {
+            let mode = $("#deliveryMode").val();
+            let needsEmail = mode === "email" || mode === "embedded";
+
+            $("#signerEmailRow").toggle(needsEmail);
+            $("#signerEmail").prop("required", needsEmail);
+            $("#docusignResult").hide();
+        }
+
+        function showResult(cssClass, html) {
+            $("#docusignResult")
+                .attr("class", "alert " + cssClass)
+                .html(html)
+                .show();
+        }
+
+        function sendToDocuSign(mode) {
+            let payload = {
+                agreementType: $("#agreementType").val(),
+                deliveryMode: mode,
+                signerEmail: $("#signerEmail").val().trim(),
+                customerFullName: $("#customerFullName").val().trim(),
+                ShopName: $("#ShopName").val().trim(),
+                legalEntity: $("#legalEntity").val().trim(),
+                registrationNumber: $("#registrationNumber").val().trim(),
+                State: $("#State").val().trim(),
+                Country: $("#Country").val(),
+                contractPeriod: $("#contractPeriod").val()
+            };
+
+            $("#docusignSpinner").show();
+            $("#docusignResult").hide();
+
+            $.ajax({
+                url: DOCUSIGN_ENDPOINT,
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload)
+            }).done(function (res) {
+                if (!res.success) {
+                    showResult("alert-danger", "Failed: " + (res.error || "unknown error"));
+                    return;
+                }
+
+                if (res.deliveryMode === "embedded" && res.signingUrl) {
+                    // Single-use URL that expires quickly — go straight there.
+                    window.location.href = res.signingUrl;
+                    return;
+                }
+
+                showResult(
+                    "alert-success",
+                    "Agreement sent to <strong>" + payload.signerEmail + "</strong>.<br>" +
+                    "Envelope ID: <code>" + res.envelopeId + "</code>"
+                );
+            }).fail(function (xhr) {
+                let msg = "Request failed (HTTP " + xhr.status + ")";
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    msg = xhr.responseJSON.error;
+                }
+                showResult("alert-danger", "Failed: " + msg);
+            }).always(function () {
+                $("#docusignSpinner").hide();
+            });
+        }
+
+        $(function () {
+            switchAgreementType();
+            switchDeliveryMode();
+
+            $("#agreementForm").on("submit", function (e) {
+                let mode = $("#deliveryMode").val();
+
+                // "preview" keeps the original behaviour: GET straight to the template.
+                if (mode === "preview") {
+                    return true;
+                }
+
+                e.preventDefault();
+
+                if (!$("#signerEmail").val().trim()) {
+                    showResult("alert-warning", "Customer email is required to send via DocuSign.");
+                    return false;
+                }
+
+                sendToDocuSign(mode);
+                return false;
+            });
+        });
+
         function txt() {
 
             let ct = $("#Country").val();
