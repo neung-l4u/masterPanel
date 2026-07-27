@@ -61,6 +61,24 @@ let classStep = $(".step");
 const allStep = classStep.length;
 const cmdSubmit = $("#cmdSubmit");
 const applicationForm = $("#myForm");
+
+// Guard: block any form submit not authorized by submitToCRM
+window._crmSubmitAuthorized = false;
+(function () {
+  const formEl = document.getElementById('myForm');
+  if (formEl) {
+    const nativeSubmit = HTMLFormElement.prototype.submit;
+    formEl.submit = function () {
+      if (window._crmSubmitAuthorized) {
+        window._crmSubmitAuthorized = false;
+        nativeSubmit.call(this);
+      } else {
+        console.warn('🚫 Blocked unauthorized form submit. Stack:', new Error().stack);
+      }
+    };
+  }
+})();
+
 const formQR = $(".formQR");
 const formCreditCard = $(".formCreditCard");
 const formDebit = $(".formDebit");
@@ -88,6 +106,7 @@ const terms_permission = $("#terms_permission");
 const modalTerms = new bootstrap.Modal(document.getElementById("modalTerms"), {});
 const modalResponse = new bootstrap.Modal(document.getElementById("modalResponse"), {});
 const modalSecretSetup = new bootstrap.Modal(document.getElementById("modalSecretSetup"), {});
+let _thPaymentCountdownTimer = null;
 
 /////price calculation
 let amount, allGST, total, stripeNum, newAmount, newAllGST, newTotal, newStripeNum, setUpFee;
@@ -195,34 +214,27 @@ $(".next").on("click", function () {
   }
 
   // Validate document upload section when visible
-  if ($("#docUploadSection").is(":visible")) {
-    $(".doc-upload-error").remove();
-    let docError = false;
-
-    // Check 3 file inputs
-    const fileInputs = ["file_bizReg", "file_bank", "file_dirId"];
-    const fileLabels = ["Business Registration Document", "Bank Statement", "Director's ID"];
-    for (let i = 0; i < fileInputs.length; i++) {
-      const input = $("#" + fileInputs[i]);
-      if (!input[0].files || input[0].files.length === 0) {
-        input.closest(".file-card").after('<div class="doc-upload-error text-danger mt-1" style="font-size:12px;">Please upload ' + fileLabels[i] + '</div>');
-        if (!docError) { input.closest(".file-card").addClass("border-danger"); }
-        docError = true;
-      } else {
-        input.closest(".file-card").removeClass("border-danger");
-      }
-    }
-
-    // Check Adyen agreement
-    if (!$("#adyenAgreement").is(":checked")) {
-      $("#adyenAgreement").closest(".d-flex").after('<div class="doc-upload-error text-danger mt-1" style="font-size:12px;">Please agree to the Adyen Terms & Conditions</div>');
-      docError = true;
-    }
-
-    if (docError) {
-      nextstep = false;
-    }
-  }
+  // if ($("#docUploadSection").is(":visible")) {
+  //   $(".doc-upload-error").remove();
+  //   let docError = false;
+  //   const fileInputs = ["file_bizReg", "file_bank", "file_dirId"];
+  //   const fileLabels = ["Business Registration Document", "Bank Statement", "Director's ID"];
+  //   for (let i = 0; i < fileInputs.length; i++) {
+  //     const input = $("#" + fileInputs[i]);
+  //     if (!input[0].files || input[0].files.length === 0) {
+  //       input.closest(".file-card").after('<div class="doc-upload-error text-danger mt-1" style="font-size:12px;">Please upload ' + fileLabels[i] + '</div>');
+  //       if (!docError) { input.closest(".file-card").addClass("border-danger"); }
+  //       docError = true;
+  //     } else {
+  //       input.closest(".file-card").removeClass("border-danger");
+  //     }
+  //   }
+  //   if (!$("#adyenAgreement").is(":checked")) {
+  //     $("#adyenAgreement").closest(".d-flex").after('<div class="doc-upload-error text-danger mt-1" style="font-size:12px;">Please agree to the Adyen Terms & Conditions</div>');
+  //     docError = true;
+  //   }
+  //   if (docError) { nextstep = false; }
+  // }
 
   if (nextstep === true) {
     if (step < classStep.length) {
@@ -571,6 +583,9 @@ $('#formCountry').change(function() {
       textGST.html("VAT");
       fakeNumber.html("0895117447");
       countryTextOnly.val("Thailand");
+
+      // ไม่สร้าง Stripe customer สำหรับ TH
+      $("#CheckedBoxMakeCharge").prop('checked', false);
 
       // 1. ซ่อนฟอร์มและแท็บการชำระเงินอื่นๆ ทั้งหมด
       formCreditCard.hide();
@@ -1728,6 +1743,37 @@ const modalTermsAction = (action) => {
   if (action==="open"){ modalTerms.show();}
 }
 
+function startThPaymentCountdown(minutes) {
+  if (_thPaymentCountdownTimer) { clearInterval(_thPaymentCountdownTimer); _thPaymentCountdownTimer = null; }
+  const pad = n => n < 10 ? '0' + n : n;
+  const $box = $('#thCountdownBox');
+  const $timer = $('#thCountdownTimer');
+  if (!$box.length) return;
+  $box.show().css({ borderColor: '#bee5eb', background: '#e8f4f8' });
+  $box.find('span:first').html('<i class="bi bi-clock-history mr-1"></i> รายการชำระเงินจะหมดอายุในอีก');
+  $timer.css('color', '#0c5460');
+  $('button[onclick="sendThTransferProof()"]').prop('disabled', false).css('background', '#1a73e8');
+
+  const expireAt = Date.now() + (minutes || 10) * 60 * 1000;
+  function tick() {
+    const diff = expireAt - Date.now();
+    if (diff <= 0) {
+      $timer.text('00:00').css('color', '#dc2626');
+      $box.css({ borderColor: '#f5c6cb', background: '#f8d7da' });
+      $box.find('span:first').html('<i class="bi bi-exclamation-circle-fill mr-1"></i> รายการชำระเงินหมดอายุแล้ว');
+      $('button[onclick="sendThTransferProof()"]').prop('disabled', true).css('background', '#b0bec5');
+      clearInterval(_thPaymentCountdownTimer);
+      _thPaymentCountdownTimer = null;
+      return;
+    }
+    const m = Math.floor(diff / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    $timer.text(pad(m) + ':' + pad(s));
+  }
+  tick();
+  _thPaymentCountdownTimer = setInterval(tick, 1000);
+}
+
 const modalRespondAction = (action, status, reason) => {
   const respondSuccess = $(".respondSuccess");
   const respondFail = $(".respondFail");
@@ -1735,6 +1781,22 @@ const modalRespondAction = (action, status, reason) => {
   respondFail.hide();
   if (status === "success"){
     respondSuccess.show();
+    const isTH = $("#formCountry").val() === "TH";
+    $("#thPaymentSection").toggle(isTH);
+    if (isTH) {
+      const total = parseFloat($("#grandTotal").val().replace(/,/g, '')) || 0;
+      $("#thTotalAmount").text(total.toLocaleString('th-TH', {minimumFractionDigits: 2}) + ' บาท');
+      // Fallback: ถ้า quotationID ว่าง ให้ดึงจาก #dataInvoice
+      if (!$("#quotationID").val()) {
+        try {
+          const dataInvoice = JSON.parse($("#dataInvoice").val() || '[]');
+          if (Array.isArray(dataInvoice) && dataInvoice.length > 0 && dataInvoice[0].id) {
+            $("#quotationID").val(dataInvoice[0].id);
+          }
+        } catch (e) { console.warn('modalRespondAction dataInvoice parse error:', e); }
+      }
+      startThPaymentCountdown(10);
+    }
   } else if (status === "fail"){
     respondFail.show();
     // เติม reason ลงในกล่อง #failReasonBox ถ้ามี
@@ -1748,7 +1810,18 @@ const modalRespondAction = (action, status, reason) => {
       }
     }
   }
-  if (action === "open"){ modalResponse.show(); }
+  if (action === "open"){
+    // Reset Save-to-Monday state every open to clear any stale timers
+    if (typeof _crmCountdownTimer !== 'undefined' && _crmCountdownTimer !== null) {
+      clearInterval(_crmCountdownTimer);
+      _crmCountdownTimer = null;
+    }
+    $("#enableCRM").prop('checked', false);
+    $("#CRMButton").hide().prop('disabled', true);
+    $("#ballLoading").hide();
+    $("#countdownText").hide();
+    modalResponse.show();
+  }
 }
 
 // Helper: ดึงข้อความ error ที่มีความหมายจาก response (xhr / obj / string)

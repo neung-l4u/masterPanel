@@ -4,7 +4,7 @@ const settings = {
     card: "https://payments.localforyou.com/api/payment",
     invoice: "https://payments.localforyou.com/api/invoice",
   },
-  url_getProductList: "assets/API/B-Price-2604041028-updateNewWebsiteHosting.json",
+  url_getProductList: "assets/API/B-Price-2607171132-SocialMediaAdsandVisibilityBoost.json",
   url_getPrice: "assets/API/price.php",
   url_getStates: "assets/statics/states.json",
   url_authentication: "assets/API/authentication.php",
@@ -13,6 +13,7 @@ const settings = {
   url_saveToDB: "assets/function/saveToDB.php",
   url_saveQuestionToDB: "assets/function/saveQuotationToDB.php",
   url_uploadDocuments: "assets/API/upload_documents.php",
+  url_uploadSlip: "assets/API/upload_slip.php",
   url_saveAdyenDocuments: "assets/function/saveAdyenDocuments.php",
   Payment_Module: {
     CreditCard: true,
