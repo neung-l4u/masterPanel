@@ -24,8 +24,10 @@
   },
   "require": {
     "ext-json": "*",
-    "ext-openssl": "*"
-    "firebase/php-jwt": "^7.0"
+    "ext-openssl": "*",
+    "ext-curl": "*",
+    "firebase/php-jwt": "^7.0",
+    "dompdf/dompdf": "^3.0",
     "google/analytics-data": "^0.23.2",
     "stripe/stripe-php": "^19.4",
     "phpoffice/phpspreadsheet": "^5.5"

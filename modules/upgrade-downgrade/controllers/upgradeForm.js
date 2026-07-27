@@ -195,7 +195,7 @@ function updateSectionVisibility() {
 
         const items = matches.map(p => {
             const meta = [p.shopType, p.ownerName, p.phone].filter(Boolean).join(' · ');
-            return `<div class="project-search-item" data-id="${p.shopId}" data-name="${p.shopName}" data-type="${p.shopType}" data-owner="${p.ownerName}" data-phone="${p.phone}">
+            return `<div class="project-search-item" data-id="${p.shopId}" data-name="${p.shopName}" data-type="${p.shopType}" data-owner="${p.ownerName}" data-phone="${p.phone}" data-boardid="${p.boardId || ''}">
                 <div class="ps-name">${p.shopName} <small class="text-muted">#${p.shopId}</small></div>
                 ${meta ? `<div class="ps-meta">${meta}</div>` : ''}
             </div>`;
@@ -236,6 +236,7 @@ function updateSectionVisibility() {
         $('#shopType').val($item.data('type'));
         $('#ownerName').val($item.data('owner'));
         $('#phoneNumber').val($item.data('phone'));
+        $('#boardId').val($item.data('boardid'));
         $input.removeClass('is-invalid');
         $dropdown.removeClass('show').empty();
         loadSubscriptions($item.data('name'));
@@ -563,6 +564,7 @@ function applyTestAutofill() {
 
     setTimeout(function () {
         $('#mondayProjectId').prop('disabled', false).val('99999');
+        $('#boardId').val('1943203205'); // TH project board
         $('#shopName').val('Test Shop');
         $('#shopType').val('Restaurant');
         $('#ownerName').val('Test Owner');

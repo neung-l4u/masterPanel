@@ -223,6 +223,7 @@ for ($page = 0; $page < $maxPages; $page++) {
     $nextCursor = null;
 
     foreach ($resp['data']['boards'] as $board) {
+        $boardId = (string) ($board['id'] ?? '');
         $page_data = $board['items_page'] ?? [];
         $nextCursor = $page_data['cursor'] ?? null;
         $items = $page_data['items'] ?? [];
@@ -315,6 +316,7 @@ for ($page = 0; $page < $maxPages; $page++) {
                 'ownerName' => $ownerName,
                 'phone'     => $phone,
                 'country'   => $detectedCountry,
+                'boardId'   => $boardId,
             ];
         }
     }

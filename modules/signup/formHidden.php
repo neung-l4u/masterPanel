@@ -11,6 +11,7 @@
     <input type="hidden" id="usageMainDiscountCode">
     <input type="hidden" id="usageAddonDiscountCode">
     <input  id="agreementGenerated" name="agreementGenerated" type="hidden" />
+    <input  id="pushposAgreementGenerated" name="pushposAgreementGenerated" type="hidden" />
 
     <select id="currentlyPackage" name="currentlyPackage" class="none" title="Hidden Currently Package">
         <option value="Pro Online Ordering System">Pro Online Ordering System</option>
