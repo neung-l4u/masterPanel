@@ -1821,6 +1821,33 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
     };
 
     // Payload ส่ง Ajax
+    const signupPayload = {};
+    const signupPayloadValues = {};
+    $("#myForm").serializeArray().forEach(function(field) {
+        const key = field.name.replace(/\[\]$/, '');
+        signupPayloadValues[key] = signupPayloadValues[key] || [];
+        if (!signupPayloadValues[key].includes(field.value)) {
+            signupPayloadValues[key].push(field.value);
+        }
+    });
+    Object.keys(signupPayloadValues).forEach(function(key) {
+        signupPayload[key] = signupPayloadValues[key].join(', ');
+    });
+    [
+        'creditCardNumber', 'creditExpireDate', 'creditCCV', 'stripePassword',
+        'ref_Domain_P', 'ref_IHD_Password', 'passwordBooking',
+        'bsbDirectDebit', 'acnDirectDebit', 'routingDirectDebit'
+    ].forEach(function(key) {
+        delete signupPayload[key];
+    });
+    signupPayload.country_code = signupPayload.country_code || $("#formCountry").val() || 'TH';
+    signupPayload.countryTextOnly = signupPayload.countryTextOnly || 'Thailand';
+    signupPayload.currency = signupPayload.currency || 'THB';
+    signupPayload.company = signupPayload.company || $("#shopName").val() || shopNameQuotation;
+    signupPayload.shopName = signupPayload.shopName || $("#shopName").val() || shopNameQuotation;
+    signupPayload.email = signupPayload.email || emailQuotation;
+    signupPayload.phone = signupPayload.phone || phoneQuotation;
+
     let payload = {
         "act": "add",
         "checkBoxWantTAX" : checkBoxWantTAX,
@@ -1838,7 +1865,8 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
         "bankThaiNumber" : bankThaiNumber,
         "bankThaiName" : bankThaiName,
         "test" : CheckedBoxTestmailValue,
-        "date" : currentDate
+        "date" : currentDate,
+        "signupPayload" : JSON.stringify(signupPayload)
     };
 
     console.log("Saving Tax/Quotation Payload:", payload);

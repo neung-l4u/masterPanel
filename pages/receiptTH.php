@@ -134,7 +134,7 @@ function fmt($n) { return number_format((float)$n, 2, '.', ','); }
             <div class="invoice-div"><strong>เลขที่:</strong> <?= htmlspecialchars($receiptID) ?></div>
             <div class="invoice-div"><strong>วันที่:</strong> <?= htmlspecialchars($receiptDate) ?></div>
             <?php if (!empty($row['sale'])): ?>
-            <div class="invoice-div"><strong>ผู้ขาย:</strong> <?= htmlspecialchars($row['sale']) ?></div>
+            <div class="invoice-div"><strong>ผู้ขาย:</strong> ปิยะกร จ้อยเอม</div>
             <?php endif; ?>
             <hr style="border-top: 1px solid #ccc; margin-top: 20px;">
         </div>

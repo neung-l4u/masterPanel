@@ -41,6 +41,28 @@ try {
 try {
     $db->query("ALTER TABLE `thInvoice` ADD COLUMN `billingDate` DATE DEFAULT NULL AFTER `billingSeq`");
 } catch (Throwable $e) { /* column already exists */ }
+try {
+    $db->query("ALTER TABLE `thInvoice` ADD COLUMN `monday_item_id` VARCHAR(50) DEFAULT NULL AFTER `billingDate`");
+} catch (Throwable $e) { /* column already exists */ }
+
+// --- สร้าง thApoMonday สำหรับ queue payload ก่อนส่ง ---
+try {
+    $db->query("
+        CREATE TABLE IF NOT EXISTS `thApoMonday` (
+            `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            `invoice_id` INT UNSIGNED NOT NULL,
+            `customer_id` INT UNSIGNED DEFAULT NULL,
+            `payload` LONGTEXT NOT NULL,
+            `send` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+            `response` TEXT DEFAULT NULL,
+            `sentAt` DATETIME DEFAULT NULL,
+            `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
+            `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY `uk_invoice_id` (`invoice_id`),
+            KEY `idx_send` (`send`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+} catch (Throwable $e) { /* table already exists */ }
 
 // --- 2. อัปเดท invoice เก่าให้ billingSeq=1, billingDate=createdAt ---
 $db->query("UPDATE `thInvoice` SET `billingSeq`=1, `billingDate`=DATE(`createdAt`) WHERE `billingDate` IS NULL");

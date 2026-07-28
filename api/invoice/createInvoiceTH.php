@@ -22,8 +22,14 @@ $docRoot = dirname(__DIR__, 2);
 include $docRoot . '/assets/db/db.php';
 include $docRoot . '/assets/db/initDB.php';
 require_once $docRoot . '/api/invoice/convertToBahtText.php';
+require_once $docRoot . '/api/invoice/thApoMondayHelper.php';
 ob_clean();
 header('Content-Type: application/json');
+
+// --- Ensure monday_item_id column exists (idempotent) ---
+try {
+    $db->query("ALTER TABLE `thInvoice` ADD COLUMN `monday_item_id` VARCHAR(50) DEFAULT NULL AFTER `billingDate`");
+} catch (Throwable $e) { /* column already exists */ }
 
 // --- Auth ---
 $secret        = $_POST['secret'] ?? $_GET['secret'] ?? '';
@@ -144,11 +150,14 @@ $productJson = json_encode([
 
 // --- INSERT thInvoice ---
 $db->query(
-    'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `type`, `product`, `amount`, `thBathIn`, `status`, `source`, `billingSeq`, `billingDate`, `createdAt`)
-     VALUES (?,?,?,?,?,?,?,?,?,?,NOW())',
-    $customerId, $invoiceID, 'subscription', $productJson, $netPay, $thBathIn, 'pending', 'monday', $nextSeq, $billingDate
+    'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `type`, `product`, `amount`, `thBathIn`, `status`, `source`, `billingSeq`, `billingDate`, `monday_item_id`, `createdAt`)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())',
+    $customerId, $invoiceID, 'subscription', $productJson, $netPay, $thBathIn, 'pending', 'monday', $nextSeq, $billingDate, $mondayItemId
 );
 $newInvoiceId = $db->lastInsertId();
+
+// --- Queue payload for confirmed Monday webhook ---
+queueThApoMondayPayload($db, (int)$newInvoiceId);
 
 // --- อัป clientType: first_time → subscription หลัง invoice แรกถูกสร้าง ---
 if ($clientType === 'first_time' && $lastSeq >= 1) {
@@ -161,7 +170,7 @@ if ($clientType === 'first_time' && $lastSeq >= 1) {
 // --- ส่ง email invoice ผ่าน Make.com webhook ---
 $protocol   = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $baseUrl    = $protocol . '://' . ($_SERVER['HTTP_HOST'] ?? 'report.localforyou.com');
-$slipFormUrl = $baseUrl . '/modules/customeruploadslip/?invoiceID=' . urlencode($invoiceID);
+$slipFormUrl = $baseUrl . '/modules/customerMailUpSlip/index.php?invoice_id=' . (int)$newInvoiceId;
 
 $payload = [
     'invoice_id'    => (int)$newInvoiceId,
@@ -188,7 +197,6 @@ curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 $response  = curl_exec($ch);
 $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
-curl_close($ch);
 
 if ($curlError) {
     echo json_encode(['success' => true, 'invoice_created' => true, 'invoiceID' => $invoiceID, 'warning' => 'Invoice สร้างแล้ว แต่ส่ง webhook ไม่ได้: ' . $curlError]);

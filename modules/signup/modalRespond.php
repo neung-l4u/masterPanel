@@ -198,13 +198,17 @@
                                 ">
                         </div>
                         <!-- Submit button -->
-                        <button type="button"
+                        <button type="button" id="thSendSlipButton"
                             style="width:100%; padding:14px; border:none; border-radius:10px; background:#1a73e8; color:#fff; font-size:16px; font-weight:600; cursor:pointer; margin-bottom:8px;"
                             onclick="sendThTransferProof()">ส่งหลักฐานการโอน</button>
+                        <button type="button" id="thFinishButton" disabled
+                            class="btn btn-success w-100"
+                            style="display:none; padding:14px; border-radius:10px; font-size:16px; font-weight:600;"
+                            onclick="window.location.href='https://localforyou.com/thank-you/';">เสร็จสิ้น</button>
                     </div>
                     <!-- end TH Payment Section -->
 
-                    <div class="pt-2">
+                    <div class="pt-2" id="crmControls">
                         <div class="form-switch">
                             <input class="form-check-input" type="checkbox" role="switch" id="enableCRM" onclick="enableCRMButton();">
                             <label class="form-check-label text-danger" for="enableCRM">Save to Monday</label>
@@ -251,7 +255,7 @@ function sendThTransferProof() {
     let quotationID = $("#quotationID").val();
     const shopName = $("#shopName").val();
     const country = $("#formCountry").val();
-    const sendBtn = $("button[onclick='sendThTransferProof()']");
+    const sendBtn = $("#thSendSlipButton");
 
     if (!slipInput.files || slipInput.files.length === 0) {
         alert('กรุณาเลือกไฟล์สลิปโอนเงินก่อน');
@@ -292,6 +296,7 @@ function sendThTransferProof() {
             if (res.success) {
                 sendBtn.text('ส่งสำเร็จ ✓').removeClass('btn-primary').css({'background':'#198754','color':'#fff'});
                 $("#thSlipFileName").text(slipInput.files[0].name + ' (อัปโหลดพร้อมแล้ว)').css('color', '#0d6efd');
+                $("#thFinishButton").prop('disabled', false).fadeIn("slow");
             } else {
                 alert('เกิดข้อผิดพลาด: ' + res.message);
                 sendBtn.prop('disabled', false).text('ส่งหลักฐานการโอน');

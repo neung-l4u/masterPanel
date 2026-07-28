@@ -462,6 +462,7 @@ if ($response) {
           curl_exec($thCh);
           curl_close($thCh);
 
+          /*
           // --- Create Item + Update บน Monday board "Past billing (Receipt TH)" (ID: 1784022923) ---
           try {
               $receiptBoardId  = 5029904278;
@@ -518,6 +519,7 @@ if ($response) {
           } catch (\Throwable $e) {
               error_log('[Monday Receipt TH] ' . $e->getMessage());
           }
+          */
       }
     } catch (\Throwable $e) {
         error_log('[TH webhook] ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());

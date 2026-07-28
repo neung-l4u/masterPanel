@@ -43,9 +43,10 @@ if ($action === 'confirm') {
 
     // อัป thReceipt → confirmed
     $existing = $db->query(
-        'SELECT `id` FROM `thReceipt` WHERE `invoice_id` = ? ORDER BY `id` DESC LIMIT 1',
+        'SELECT `id`, `status` FROM `thReceipt` WHERE `invoice_id` = ? ORDER BY `id` DESC LIMIT 1',
         $invoiceId
     )->fetchAll();
+    $prevReceiptStatus = $existing[0]['status'] ?? '';
 
     if (!empty($existing[0])) {
         $db->query(
@@ -59,6 +60,12 @@ if ($action === 'confirm') {
         'UPDATE `thInvoice` SET `status` = ? WHERE `id` = ?',
         'confirmed', $invoiceId
     );
+
+    // Fire thApoMonday webhook when receipt becomes confirmed for the first invoice (signup)
+    if ($prevReceiptStatus !== 'confirmed') {
+        require_once dirname(__DIR__, 2) . '/api/invoice/thApoMondayHelper.php';
+        sendThApoMondayPayload($db, $invoiceId);
+    }
 
     echo json_encode(['success' => true, 'message' => 'Confirmed เรียบร้อย']);
 

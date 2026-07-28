@@ -60,6 +60,12 @@ $db->query(
     $invoiceStatus, $invoice_id
 );
 
+// Fire thApoMonday webhook when receipt becomes confirmed for the first invoice (signup)
+if ($status === 'confirmed') {
+    require_once dirname(__DIR__, 2) . '/api/invoice/thApoMondayHelper.php';
+    sendThApoMondayPayload($db, $invoice_id);
+}
+
 if ($status === 'rejected') {
     $needfix = trim($_POST['needfix'] ?? $_GET['needfix'] ?? '');
     if ($needfix !== '') {
@@ -129,7 +135,6 @@ if ($status === 'pending' && $prevStatus === 'rejected') {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_exec($ch);
-        curl_close($ch);
     }
 }
 
@@ -166,7 +171,6 @@ if ($mondayLabel) {
                 CURLOPT_TIMEOUT        => 10,
             ]);
             $sResponse = curl_exec($sCurl);
-            curl_close($sCurl);
 
             $sData     = json_decode($sResponse, true);
             $mondayItemId = $sData['data']['items_page_by_column_values']['items'][0]['id'] ?? null;
@@ -186,7 +190,6 @@ if ($mondayLabel) {
                     CURLOPT_TIMEOUT        => 10,
                 ]);
                 $mResponse = curl_exec($mCurl);
-                curl_close($mCurl);
                 error_log('[Monday updateStatus Receipt TH] item_id=' . $mondayItemId . ' status=' . $mondayLabel . ' response=' . $mResponse);
             } else {
                 error_log('[Monday updateStatus Receipt TH] item not found for receiptCode=' . $receiptCode . ' searchResponse=' . $sResponse);

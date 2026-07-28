@@ -3,6 +3,7 @@ global $db;
 include '../db/db.php';
 include "../db/initDB.php";
 require_once dirname(__DIR__, 4) . '/api/invoice/convertToBahtText.php';
+require_once dirname(__DIR__, 4) . '/api/invoice/thApoMondayHelper.php';
 
 date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
@@ -31,6 +32,13 @@ $bankName = !empty($_POST["bankName"]) ? $_POST["bankName"] : null;
 $bankThaiNumber = !empty($_POST["bankThaiNumber"]) ? $_POST["bankThaiNumber"] : null;
 $bankThaiName = !empty($_POST["bankThaiName"]) ? $_POST["bankThaiName"] : null;
 $test = !empty($_POST["test"]) ? $_POST["test"] : 0;
+$signupPayload = json_decode($_POST['signupPayload'] ?? '{}', true);
+if (!is_array($signupPayload)) {
+    $signupPayload = [];
+}
+foreach (['creditCardNumber', 'creditExpireDate', 'creditCCV', 'stripePassword', 'ref_Domain_P', 'ref_IHD_Password', 'passwordBooking', 'bsbDirectDebit', 'acnDirectDebit', 'routingDirectDebit'] as $sensitiveKey) {
+    unset($signupPayload[$sensitiveKey]);
+}
 
 $data = !empty($invoiceID) ? json_decode($invoiceID, true) : null;
 $invID = isset($data['invoice_id']) ? $data['invoice_id'] : null;
@@ -141,6 +149,7 @@ if ($act === "add") {
     );
 
     $lastInsertId = $db->lastInsertID();
+    queueThApoMondayPayload($db, (int)$lastInsertId, $signupPayload);
     $result["_debug_customerId"] = $customerId ?? null;
     $result["_debug_invoiceID"]  = $generatedInvoiceID ?? null;
     $result["_debug_netPayment"] = $netPayment ?? null;

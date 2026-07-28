@@ -1779,10 +1779,11 @@ const modalRespondAction = (action, status, reason) => {
   const respondFail = $(".respondFail");
   respondSuccess.hide();
   respondFail.hide();
+  const isTH = $("#formCountry").val() === "TH";
   if (status === "success"){
     respondSuccess.show();
-    const isTH = $("#formCountry").val() === "TH";
     $("#thPaymentSection").toggle(isTH);
+    $("#crmControls").toggle(!isTH);
     if (isTH) {
       const total = parseFloat($("#grandTotal").val().replace(/,/g, '')) || 0;
       $("#thTotalAmount").text(total.toLocaleString('th-TH', {minimumFractionDigits: 2}) + ' บาท');
@@ -1820,6 +1821,8 @@ const modalRespondAction = (action, status, reason) => {
     $("#CRMButton").hide().prop('disabled', true);
     $("#ballLoading").hide();
     $("#countdownText").hide();
+    $("#crmControls").toggle(!isTH);
+    $("#thFinishButton").toggle(isTH).prop('disabled', true);
     modalResponse.show();
   }
 }

@@ -24,8 +24,14 @@ $docRoot = dirname(__DIR__, 2);
 include $docRoot . '/assets/db/db.php';
 include $docRoot . '/assets/db/initDB.php';
 require_once $docRoot . '/api/invoice/convertToBahtText.php';
+require_once $docRoot . '/api/invoice/thApoMondayHelper.php';
 ob_clean();
 header('Content-Type: application/json');
+
+// --- Ensure monday_item_id column exists (idempotent) ---
+try {
+    $db->query("ALTER TABLE `thInvoice` ADD COLUMN `monday_item_id` VARCHAR(50) DEFAULT NULL AFTER `billingDate`");
+} catch (Throwable $e) { /* column already exists */ }
 
 // --- Auth ---
 $secret        = $_POST['secret'] ?? $_GET['secret'] ?? '';
@@ -129,9 +135,9 @@ $productJson = json_encode([
 
 // --- INSERT thInvoice ---
 $db->query(
-    'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `type`, `product`, `amount`, `thBathIn`, `status`, `source`, `billingSeq`, `billingDate`, `createdAt`)
-     VALUES (?,?,?,?,?,?,?,?,?,?,NOW())',
-    $customerId, $invoiceID, 'subscription', $productJson, $netPay, $thBathIn, 'pending', 'monday', $nextSeq, $billingDate
+    'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `type`, `product`, `amount`, `thBathIn`, `status`, `source`, `billingSeq`, `billingDate`, `monday_item_id`, `createdAt`)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())',
+    $customerId, $invoiceID, 'subscription', $productJson, $netPay, $thBathIn, 'pending', 'monday', $nextSeq, $billingDate, $mondayItemId
 );
 $newInvoiceId = (int)$db->lastInsertId();
 
@@ -141,6 +147,9 @@ $db->query(
     'INSERT INTO `thReceipt`(`invoice_id`, `receiptID`, `amount_paid`, `thBathRe`, `status`) VALUES (?,?,?,?,?)',
     $newInvoiceId, $invoiceID, $netPay, $thBathRe, 'pending'
 );
+
+// --- Queue payload for confirmed Monday webhook ---
+queueThApoMondayPayload($db, $newInvoiceId);
 
 // --- UPDATE clientType → subscription เสมอ ---
 $db->query(
@@ -163,7 +172,6 @@ try {
         CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
     ]);
     $searchResp  = curl_exec($searchCh);
-    curl_close($searchCh);
 
     $searchData  = json_decode($searchResp, true);
     $foundItemId = $searchData['data']['boards'][0]['items_page']['items'][0]['id'] ?? null;
@@ -181,7 +189,6 @@ try {
             CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
         ]);
         $updResp = curl_exec($updCh);
-        curl_close($updCh);
         error_log('[createSubTH] Monday update text_mm58ay9j item=' . $targetItemId . ' resp=' . $updResp);
     } else {
         error_log('[createSubTH] Monday: ไม่พบ item สำหรับ email=' . $email);
@@ -192,7 +199,7 @@ try {
 
 // --- ส่ง webhook ไป Make.com เพื่อส่งอีเมลให้ลูกค้า ---
 $baseUrl     = 'https://report.localforyou.com';
-$slipFormUrl = $baseUrl . '/modules/customeruploadslip/?invoiceID=' . urlencode($invoiceID);
+$slipFormUrl = $baseUrl . '/modules/customerMailUpSlip/index.php?invoice_id=' . (int)$newInvoiceId;
 
 $receiptUrl  = $baseUrl . '/pages/receiptTH.php?invoice_id=' . $newInvoiceId;
 
@@ -250,7 +257,6 @@ curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 $response  = curl_exec($ch);
 $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
-curl_close($ch);
 
 if ($curlError) {
     echo json_encode([
