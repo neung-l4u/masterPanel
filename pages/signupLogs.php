@@ -21,6 +21,9 @@ $password = "Localeats#".date("Y");
     .thead-dark {
         background-color: #212529;
     }
+    #signupTable thead th {
+        white-space: nowrap;
+    }
 </style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -103,13 +106,14 @@ $password = "Localeats#".date("Y");
                                        style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:17%">Timestamp</th>
-                                        <th style="width:10%">Country</th>
-                                        <th style="width:10%">Shop Type</th>
-                                        <th style="width:40%">Shop name</th>
+                                        <th style="width:15%">Timestamp</th>
+                                        <th style="width:9%">Country</th>
+                                        <th style="width:9%">Shop Type</th>
+                                        <th style="width:33%">Shop name</th>
                                         <th style="width:5%">Signup</th>
                                         <!-- <th style="width:5%">Stripe</th> -->
-                                        <th style="width:5%">Contract</th>
+                                        <th style="width:6%">Contract</th>
+                                        <th style="width:6%">Push POS</th>
                                         <!-- <th style="width:5%">Status</th> -->
                                         <th style="width:12%">Sale</th>
                                     </tr>
@@ -193,8 +197,8 @@ $password = "Localeats#".date("Y");
         ],columnDefs: [
             { targets: [0,3], className: 'dt-left' },
             { targets: [4], className: 'dt-center', "orderable": "false" },
-            { targets: [5], className: 'dt-right', "orderable": "false" },
-            { targets: [6], className: 'dt-left' }
+            { targets: [5,6], className: 'dt-right', "orderable": "false" },
+            { targets: [7], className: 'dt-left' }
         ]
     } );
 

@@ -21,6 +21,9 @@ $password = "Localeats#".date("Y");
     .thead-dark {
         background-color: #212529;
     }
+    #signupTable thead th {
+        white-space: nowrap;
+    }
 </style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -61,15 +64,15 @@ $password = "Localeats#".date("Y");
                                        style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:11%">Timestamp</th>
-                                        <th style="width:10%">Country</th>
-                                        <th style="width:10%">Shop Type</th>
-                                        <th style="width:49%">Shop name</th>
-                                        <th style="width:5%">Signup</th>
-                                        <th style="width:5%">Stripe</th>
-                                        <th style="width:5%">Contract</th>
-                                        <th style="width:5%">Push POS</th>
-                                        <th style="width:5%">Status</th>
+                                        <th style="width:10%">Timestamp</th>
+                                        <th style="width:9%">Country</th>
+                                        <th style="width:9%">Shop Type</th>
+                                        <th style="width:40%">Shop name</th>
+                                        <th style="width:6%">Signup</th>
+                                        <th style="width:6%">Stripe</th>
+                                        <th style="width:7%">Contract</th>
+                                        <th style="width:7%">Push POS</th>
+                                        <th style="width:6%">Status</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -136,14 +139,19 @@ $password = "Localeats#".date("Y");
             dataSrc: 'data'
         },
         "pageLength": 8,
+        "autoWidth": false,
         order: [[0, 'desc']],
         lengthMenu: [
             [8, 25, 50, -1],
             ['Fit', 25, 50, 'All']
         ],columnDefs: [
-            { targets: [0], className: 'dt-left' },
-            { targets: [4, 5], className: 'dt-center', "orderable": "false" },
-            { targets: [6, 7], className: 'dt-right' , "orderable": "false"}
+            { targets: [0], className: 'dt-left', width: '10%' },
+            { targets: [1], width: '9%' },
+            { targets: [2], width: '9%' },
+            { targets: [3], width: '38%' },
+            { targets: [4, 5], className: 'dt-center', "orderable": "false", width: '6%' },
+            { targets: [6, 7], className: 'dt-right' , "orderable": "false", width: '8%' },
+            { targets: [8], width: '6%' }
         ]
     } );
 

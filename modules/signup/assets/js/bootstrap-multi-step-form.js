@@ -2088,6 +2088,19 @@ const genLinkPDF = () => {
     "&State=" +
     State;
   agreementGenerated.val(url);
+
+  let pushposUrl =
+    "https://report.localforyou.com/modules/signup/assets/docs/pushpos_agreement_V02.php?customerFullName=" +
+    customerFullName +
+    "&ShopName=" +
+    ShopName +
+    "&registrationNumber=" +
+    registrationNumber +
+    "&Country=" +
+    Country +
+    "&State=" +
+    State;
+  pushposAgreementGenerated.val(pushposUrl);
 };
 
 const genPDF = () => {
