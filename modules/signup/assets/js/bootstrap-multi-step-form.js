@@ -16,44 +16,44 @@ let readAddonProduct = [];
 let couponObjectList = {};
 
 let cart = {
-  "subscription": [],
-  "add_on": []
+  subscription: [],
+  add_on: [],
 };
 
 let Price = {
-  "SubTotal": 0,
-  "GST": 0,
-  "SetUPFee": 0,
-  "MainDiscount": 0,
-  "SubDiscount": 0,
-  "GrandTotal": 0
-}
+  SubTotal: 0,
+  GST: 0,
+  SetUPFee: 0,
+  MainDiscount: 0,
+  SubDiscount: 0,
+  GrandTotal: 0,
+};
 
 let showPrice = {
-  "SubTotal": "0",
-  "GST": "0",
-  "SetUPFee": "0",
-  "MainDiscount": "0",
-  "SubDiscount": "0",
-  "GrandTotal": "0"
-}
+  SubTotal: "0",
+  GST: "0",
+  SetUPFee: "0",
+  MainDiscount: "0",
+  SubDiscount: "0",
+  GrandTotal: "0",
+};
 
 let bag = {
-  "subscription": [],
-  "add_on": []
+  subscription: [],
+  add_on: [],
 };
 
 let productsForShow = [];
 let addonForShow = [];
 let leftNavOpen = true;
 let offeringProduct = {
-  "type" : "",
-  "current" : "",
-  "old" : "",
-  "new" : "",
-  "code" : "",
-  "name" : "",
-  "promotion" : ""
+  type: "",
+  current: "",
+  old: "",
+  new: "",
+  code: "",
+  name: "",
+  promotion: "",
 }; //เอาไว้เก็บว่าลูกค้าเลือกอะไรบ้างในตอนสมัครทีแรก
 
 /// element selector
@@ -65,7 +65,7 @@ const applicationForm = $("#myForm");
 // Guard: block any form submit not authorized by submitToCRM
 window._crmSubmitAuthorized = false;
 (function () {
-  const formEl = document.getElementById('myForm');
+  const formEl = document.getElementById("myForm");
   if (formEl) {
     const nativeSubmit = HTMLFormElement.prototype.submit;
     formEl.submit = function () {
@@ -73,7 +73,10 @@ window._crmSubmitAuthorized = false;
         window._crmSubmitAuthorized = false;
         nativeSubmit.call(this);
       } else {
-        console.warn('🚫 Blocked unauthorized form submit. Stack:', new Error().stack);
+        console.warn(
+          "🚫 Blocked unauthorized form submit. Stack:",
+          new Error().stack,
+        );
       }
     };
   }
@@ -93,23 +96,37 @@ const input_credit_full_name = $("#creditFullName");
 const input_quotation_name = $("#quotationName");
 const optionDelivery = $(".optionDelivery");
 const inputExpireDate = $("#creditExpireDate");
-const inputFormType = $('#formType');
-const inputFormTypeOption = $('#formType option');
-const inputInitialProductOffering = $('#initialProductOffering');
+const inputFormType = $("#formType");
+const inputFormTypeOption = $("#formType option");
+const inputInitialProductOffering = $("#initialProductOffering");
 const terms_permission = $("#terms_permission");
-
-
-
 
 //////////////////
 
-const modalTerms = new bootstrap.Modal(document.getElementById("modalTerms"), {});
-const modalResponse = new bootstrap.Modal(document.getElementById("modalResponse"), {});
-const modalSecretSetup = new bootstrap.Modal(document.getElementById("modalSecretSetup"), {});
+const modalTerms = new bootstrap.Modal(
+  document.getElementById("modalTerms"),
+  {},
+);
+const modalResponse = new bootstrap.Modal(
+  document.getElementById("modalResponse"),
+  {},
+);
+const modalSecretSetup = new bootstrap.Modal(
+  document.getElementById("modalSecretSetup"),
+  {},
+);
 let _thPaymentCountdownTimer = null;
 
 /////price calculation
-let amount, allGST, total, stripeNum, newAmount, newAllGST, newTotal, newStripeNum, setUpFee;
+let amount,
+  allGST,
+  total,
+  stripeNum,
+  newAmount,
+  newAllGST,
+  newTotal,
+  newStripeNum,
+  setUpFee;
 amount = 0;
 allGST = 0;
 total = 0;
@@ -127,16 +144,17 @@ let testMode = true;
 ///////////
 
 $(document).ready(function () {
-
   stepProgress(step);
   $("#formVersion").html($("#signupFormVersion").val());
 
   $('[data-toggle="popover"]').popover();
-  $('i[rel=popover]').popover({
+  $("i[rel=popover]").popover({
     html: true,
-    trigger: 'hover',
-    placement: 'right',
-    content: function(){return '<img alt="image" src="'+$(this).data('img') + '" />';}
+    trigger: "hover",
+    placement: "right",
+    content: function () {
+      return '<img alt="image" src="' + $(this).data("img") + '" />';
+    },
   });
   $(".firstStepFormLoading").hide();
   $(".boxSocial").hide();
@@ -144,7 +162,7 @@ $(document).ready(function () {
   $(".firstStepForm").show();
   $("#datePOSBox").hide();
   $("#posBoxDate").hide();
-  $("#formCountry").on("change", function() {
+  $("#formCountry").on("change", function () {
     if ($(this).val() === "TH") {
       $(".quotationDetail").show();
     } else {
@@ -159,34 +177,35 @@ $(document).ready(function () {
   // Auto-clean ช่องอีเมลทุกช่องเมื่อ user ออกจาก input
   // ลบ space ทั้งหมด (รวมถึง space กลางอีเมล เช่น "areeyahemsanit @gmail.com")
   // + lowercase ทั้งหมด
-  $(document).on("blur",
+  $(document).on(
+    "blur",
     "input[type='email'], #email, #emailShoppingCart, #emailInvoiceOther, #emailDirectDebit, #emailBooking, #customerStripeEmail, #quotationEmail, .mainEmail",
     function () {
       const cleaned = ($(this).val() || "").replace(/\s+/g, "").toLowerCase();
       if ($(this).val() !== cleaned) {
         $(this).val(cleaned).trigger("change");
       }
-    }
+    },
   );
 
   // ลบ space ทั้งหมดในช่องเบอร์โทร/เลขธนาคาร เมื่อ user ออกจาก input
   // เช่น "+61 425 957 778" -> "+61425957778"
-  $(document).on("blur",
+  $(document).on(
+    "blur",
     "input[type='tel'], #mobile, #ownerMobile, #shopNumber, #shopPhoneFormatted, #physicalShopNumber, #shipNumber, #quotationPhone, #bsbDirectDebit, #acnDirectDebit, #routingDirectDebit",
     function () {
       const cleaned = ($(this).val() || "").replace(/\s+/g, "");
       if ($(this).val() !== cleaned) {
         $(this).val(cleaned).trigger("change");
       }
-    }
+    },
   );
-
-});//ready
+}); //ready
 
 //on click Next button
 $(".next").on("click", function () {
   let nextstep = true;
-  if (step === 1){
+  if (step === 1) {
     addCuisines();
     $("#firstName").focus();
   }
@@ -197,14 +216,22 @@ $(".next").on("click", function () {
     let hasError = false;
 
     if (!$("#mobile").val() || $("#mobile").val().trim() === "") {
-      $("#mobile").after('<span class="step2-validate-error padding-right-2" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your mobile number</span>');
-      if (!hasError) { $("#mobile").focus(); }
+      $("#mobile").after(
+        '<span class="step2-validate-error padding-right-2" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your mobile number</span>',
+      );
+      if (!hasError) {
+        $("#mobile").focus();
+      }
       hasError = true;
     }
 
     if (!$("#shopNumber").val() || $("#shopNumber").val().trim() === "") {
-      $("#shopNumber").after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your shop phone number</span>');
-      if (!hasError) { $("#shopNumber").focus(); }
+      $("#shopNumber").after(
+        '<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your shop phone number</span>',
+      );
+      if (!hasError) {
+        $("#shopNumber").focus();
+      }
       hasError = true;
     }
 
@@ -239,9 +266,7 @@ $(".next").on("click", function () {
   if (nextstep === true) {
     if (step < classStep.length) {
       classStep.show();
-      classStep
-          .not(":eq(" + step++ + ")")
-          .hide();
+      classStep.not(":eq(" + step++ + ")").hide();
       stepProgress(step);
     }
     hideButtons(step);
@@ -254,11 +279,14 @@ function goToStep(n) {
   n = Math.max(1, Math.min(max, n)); // กันเลขเพี้ยน
   step = n;
 
-  $(".step").show().not(":eq(" + (n - 1) + ")").hide();
+  $(".step")
+    .show()
+    .not(":eq(" + (n - 1) + ")")
+    .hide();
 
   stepProgress(step);
   hideButtons(step);
-  jumpTop(); 
+  jumpTop();
 }
 
 // ON CLICK BACK BUTTON
@@ -275,22 +303,29 @@ function checkAcceptAgreement() {
   const acceptAgreement = $("#acceptAgreement").is(":checked");
   const acceptTerms = $("#acceptTerms").is(":checked");
 
-
-  if (acceptAgreement && acceptTerms){
-    cmdSubmit.removeClass("btn-outline-danger").addClass("btn-outline-success").prop("disabled", false);
-  }else{
-    cmdSubmit.removeClass("btn-outline-success").addClass("btn-outline-danger").prop("disabled", true);
+  if (acceptAgreement && acceptTerms) {
+    cmdSubmit
+      .removeClass("btn-outline-danger")
+      .addClass("btn-outline-success")
+      .prop("disabled", false);
+  } else {
+    cmdSubmit
+      .removeClass("btn-outline-success")
+      .addClass("btn-outline-danger")
+      .prop("disabled", true);
   }
 }
 
 // ON CLICK Submit BUTTON
 cmdSubmit.on("click", async function () {
   if ($("#emailExist").val() === "used") {
-    alert("This email is already in use. The form cannot be submitted with this email.");
+    alert(
+      "This email is already in use. The form cannot be submitted with this email.",
+    );
 
     // กระโดดกลับไป Step 2 แล้วโฟกัสช่องอีเมล
     goToStep(2);
-    const $email = $("#email");        // เปลี่ยน selector ให้ตรงกับฟอร์มจริงถ้า id ไม่ใช่ #email
+    const $email = $("#email"); // เปลี่ยน selector ให้ตรงกับฟอร์มจริงถ้า id ไม่ใช่ #email
     $email.focus().addClass("is-invalid");
 
     // เลื่อนหน้าไปให้ช่องอีเมลอยู่กลางจอ (กันกรณีฟอร์มสูง)
@@ -304,37 +339,34 @@ cmdSubmit.on("click", async function () {
   }
 });
 
-
 // CALCULATE PROGRESS BAR
 stepProgress = function (currentStep) {
   let divide = 100 / $(".step").length;
-  let percent = divide * (currentStep);
+  let percent = divide * currentStep;
   percent = percent.toFixed();
   $(".progress-bar")
-      .css("width", percent + "%")
-      .html("Step" + currentStep + "/" + allStep);
+    .css("width", percent + "%")
+    .html("Step" + currentStep + "/" + allStep);
 };
 
 //Show Date Cilck Start Project Date to Othrt
-function setdateProjectOther(){
+function setdateProjectOther() {
   $("#dateproject").show();
 }
 
-function setdateProjectAs(){
+function setdateProjectAs() {
   $("#dateproject").hide();
 }
 
-function yesPosPro(){
+function yesPosPro() {
   $("#posBoxDate").fadeIn(300);
   $("#noPOSProvider").prop("checked", false);
 }
 
-function noPosPro(){
+function noPosPro() {
   $("#posBoxDate").fadeOut(300);
   $("#yesPOSProvider").prop("checked", false);
 }
-
-
 
 // DISPLAY AND HIDE "NEXT", "BACK" AND "SUBMIT" BUTTONS
 hideButtons = function (step) {
@@ -353,41 +385,37 @@ hideButtons = function (step) {
 };
 
 // enable Others input box when Others checkbox is checked
-function allowOther(){
+function allowOther() {
   const others = $("#others");
   const cuisineOther = $("#cuisineOther");
   const cuisines = $(".cuisines");
   const cuisinesOther = $(".cuisinesOther");
   const cuisinesOther2 = $("#cuisinesOther");
-  if(others.is(":checked")){
-    cuisineOther.prop( "disabled", false );
-    cuisines.prop( "checked", false );
-    cuisinesOther.prop( "checked", true );
-    cuisines.prop( "disabled", true );
-    cuisinesOther2.prop( "disabled", false );
-  }
-  else if(others.is(":not(:checked)")){
-    cuisineOther.val("").prop( "disabled", true );
-    cuisinesOther.prop( "checked", false );
-    cuisines.prop( "disabled", false );
-    cuisinesOther2.prop( "disabled", true );
+  if (others.is(":checked")) {
+    cuisineOther.prop("disabled", false);
+    cuisines.prop("checked", false);
+    cuisinesOther.prop("checked", true);
+    cuisines.prop("disabled", true);
+    cuisinesOther2.prop("disabled", false);
+  } else if (others.is(":not(:checked)")) {
+    cuisineOther.val("").prop("disabled", true);
+    cuisinesOther.prop("checked", false);
+    cuisines.prop("disabled", false);
+    cuisinesOther2.prop("disabled", true);
   }
 }
 
-
-
 // enable Others Discount input box when Others checkbox is checked
-function allowOtherDiscount(){
+function allowOtherDiscount() {
   const others = $("#othersDiscount");
   const discountOther = $("#discountOther");
   const FirstOnlineOrderDiscount = $("#FirstOnlineOrderDiscount");
 
-  if(others.is(":checked")){
-    discountOther.prop( "disabled", false );
+  if (others.is(":checked")) {
+    discountOther.prop("disabled", false);
     FirstOnlineOrderDiscount.val("");
-  }
-  else if(others.is(":not(:checked)")){
-    discountOther.val("").prop( "disabled", true );
+  } else if (others.is(":not(:checked)")) {
+    discountOther.val("").prop("disabled", true);
     let val = $("input[name='discount']:checked").val();
     FirstOnlineOrderDiscount.val(val);
   }
@@ -395,33 +423,29 @@ function allowOtherDiscount(){
 
 const copyToFirstOnlineOrderDiscount = (val) => {
   $("#FirstOnlineOrderDiscount").val(val);
-}
+};
 
 // auto add slash to Expire date
-inputExpireDate.bind('keyup','keydown', function(e){
-  if(e.which !== 8) {
+inputExpireDate.bind("keyup", "keydown", function (e) {
+  if (e.which !== 8) {
     let thisVal = inputExpireDate.val();
-    let out = thisVal.replace(/\D/g, '');
+    let out = thisVal.replace(/\D/g, "");
     let numChars = out.length;
 
     if (numChars > 1 && numChars < 5) {
-      out = out.substring(0, 2) + '/' + out.substring(2, 4);
+      out = out.substring(0, 2) + "/" + out.substring(2, 4);
     }
     inputExpireDate.val(out);
   }
 });
 
-
-
-
 //Set country value to hidden input and label when country change
-$('#formCountry').change(function() {
-
+$("#formCountry").change(function () {
   formData.formCountry = $(this).val();
 
-  const labelBusinessNumber = $('#labelBusinessNumber');
-  const inputBusinessNumber = $('#businessNumber');
-  const classBusinessNumber = $('.businessNumber');
+  const labelBusinessNumber = $("#labelBusinessNumber");
+  const inputBusinessNumber = $("#businessNumber");
+  const classBusinessNumber = $(".businessNumber");
   const countryValue = $(".countryValue");
   const countryName = $(".countryName");
   const selectState = $(".selectState");
@@ -440,15 +464,13 @@ $('#formCountry').change(function() {
   const iconDomain = $("#iconDomain");
   const iconPlay = $("#iconPlay");
 
-
-
   countryValue.val($(this).val());
   inputBusinessNumber.removeClass("is-invalid");
   resetForm();
 
   switch ($(this).val()) {
     case "AU":
-      inputBusinessNumber.attr('required', true);
+      inputBusinessNumber.attr("required", true);
       labelBusinessNumber.html("ABN");
       classBusinessNumber.show();
       countryName.html("Australia");
@@ -456,7 +478,7 @@ $('#formCountry').change(function() {
       currency.html("AUD");
       formData.formCurrency = "AUD";
       inputCurrency.val("AUD");
-      lookup.prop( "href", "https://abr.business.gov.au" ).show();
+      lookup.prop("href", "https://abr.business.gov.au").show();
       zipLabel.html("Postal Code");
       textGST.html("GST");
       fakeNumber.html("0408084722");
@@ -466,7 +488,9 @@ $('#formCountry').change(function() {
       methodDebit.show();
       bsbDirectDebit_div.show();
       routing_number_div.hide();
-      terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
+      terms_permission.html(
+        'I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.',
+      );
       domainHelpAU.show();
       domainHelpUS.hide();
       iconDomain.hide();
@@ -474,14 +498,16 @@ $('#formCountry').change(function() {
       break;
     case "NZ":
       labelBusinessNumber.html("NZBN");
-      inputBusinessNumber.attr('required', true);
+      inputBusinessNumber.attr("required", true);
       classBusinessNumber.show();
       countryName.html("New Zealand");
       selectState.show();
       currency.html("NZD");
       formData.formCurrency = "NZD";
       inputCurrency.val("NZD");
-      lookup.prop( "href", "https://companies-register.companiesoffice.govt.nz" ).show();
+      lookup
+        .prop("href", "https://companies-register.companiesoffice.govt.nz")
+        .show();
       zipLabel.html("Postcode");
       textGST.html("GST");
       fakeNumber.html("31781138");
@@ -491,14 +517,16 @@ $('#formCountry').change(function() {
       routing_number_div.hide();
       bsbDirectDebit_div.hide();
       methodDebit.hide();
-      terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
+      terms_permission.html(
+        'I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.',
+      );
       domainHelpAU.show();
       domainHelpUS.hide();
       iconDomain.hide();
       iconPlay.hide();
       break;
     case "UK":
-      inputBusinessNumber.attr('required', true);
+      inputBusinessNumber.attr("required", true);
       labelBusinessNumber.html("CRN");
       classBusinessNumber.show();
       countryName.html("United Kingdom");
@@ -507,14 +535,16 @@ $('#formCountry').change(function() {
       formData.formCurrency = "GBP";
       inputCurrency.val("GBP");
       lookup.hide();
-      zipLabel.html("Zip Code")
+      zipLabel.html("Zip Code");
       textGST.html("VAT");
       fakeNumber.html("12345678");
       countryTextOnly.val("United Kingdom");
       methodDebit.hide();
       routing_number_div.hide();
       bsbDirectDebit_div.hide();
-      terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
+      terms_permission.html(
+        'I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.',
+      );
       getProductList("UK");
       domainHelpAU.show();
       domainHelpUS.hide();
@@ -522,7 +552,7 @@ $('#formCountry').change(function() {
       iconPlay.hide();
       break;
     case "CA":
-      inputBusinessNumber.attr('required', true);
+      inputBusinessNumber.attr("required", true);
       labelBusinessNumber.html("EIN");
       classBusinessNumber.show();
       countryName.html("Canada");
@@ -531,14 +561,16 @@ $('#formCountry').change(function() {
       formData.formCurrency = "CAD";
       inputCurrency.val("CAD");
       lookup.hide();
-      zipLabel.html("Zip Code")
+      zipLabel.html("Zip Code");
       textGST.html("TAX");
       fakeNumber.html("2025550175");
       countryTextOnly.val("CAD");
       methodDebit.show();
       routing_number_div.show();
       bsbDirectDebit_div.hide();
-      terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
+      terms_permission.html(
+        'I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.',
+      );
       getProductList("CA");
       domainHelpAU.hide();
       domainHelpUS.show();
@@ -546,7 +578,7 @@ $('#formCountry').change(function() {
       iconPlay.hide();
       break;
     case "US":
-      inputBusinessNumber.attr('required', true);
+      inputBusinessNumber.attr("required", true);
       labelBusinessNumber.html("EIN");
       classBusinessNumber.show();
       countryName.html("United States");
@@ -555,14 +587,16 @@ $('#formCountry').change(function() {
       formData.formCurrency = "USD";
       inputCurrency.val("USD");
       lookup.hide();
-      zipLabel.html("Zip Code")
+      zipLabel.html("Zip Code");
       textGST.html("TAX");
       fakeNumber.html("2025550175");
       countryTextOnly.val("USA");
       methodDebit.show();
       routing_number_div.show();
       bsbDirectDebit_div.hide();
-      terms_permission.html('I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.');
+      terms_permission.html(
+        'I Give Permission to Manaexito T/as "Local For You LLC" to withdraw monthly payments as agreed from this Credit Card.',
+      );
       getProductList("US");
       domainHelpAU.hide();
       domainHelpUS.show();
@@ -570,7 +604,7 @@ $('#formCountry').change(function() {
       iconPlay.hide();
       break;
     case "TH":
-      inputBusinessNumber.attr('required', true);
+      inputBusinessNumber.attr("required", true);
       labelBusinessNumber.html("TAX ID");
       classBusinessNumber.show();
       countryName.html("Thailand");
@@ -579,13 +613,13 @@ $('#formCountry').change(function() {
       formData.formCurrency = "THB";
       inputCurrency.val("THB");
       lookup.hide();
-      zipLabel.html("Zip Code")
+      zipLabel.html("Zip Code");
       textGST.html("VAT");
       fakeNumber.html("0895117447");
       countryTextOnly.val("Thailand");
 
       // ไม่สร้าง Stripe customer สำหรับ TH
-      $("#CheckedBoxMakeCharge").prop('checked', false);
+      $("#CheckedBoxMakeCharge").prop("checked", false);
 
       // 1. ซ่อนฟอร์มและแท็บการชำระเงินอื่นๆ ทั้งหมด
       formCreditCard.hide();
@@ -602,19 +636,21 @@ $('#formCountry').change(function() {
       $(".nav-item.formInvoice").show();
 
       // 3. สั่งให้โปรแกรมตั้งค่า payment method เป็น "Invoice"
-      setMethod('Invoice'); //
+      setMethod("Invoice"); //
 
       // 4. อัปเดต UI ให้แท็บ "Invoice" เป็น active
-      $(".nav-item.formInvoice a.nav-link").addClass('active');
-      $(".nav-item.formCreditCard a.nav-link").removeClass('active');
+      $(".nav-item.formInvoice a.nav-link").addClass("active");
+      $(".nav-item.formCreditCard a.nav-link").removeClass("active");
 
       // 5. อัปเดต UI ให้เนื้อหา "Invoice" เป็น active
-      $("#formInvoice").addClass('active');
-      $("#formCreditCard").removeClass('active');
+      $("#formInvoice").addClass("active");
+      $("#formCreditCard").removeClass("active");
 
       routing_number_div.hide();
       bsbDirectDebit_div.hide();
-      terms_permission.html('I Give Permission to Manaexito T/as "Local Eats Co., Ltd" to withdraw monthly payments as agreed from this Credit Card.');
+      terms_permission.html(
+        'I Give Permission to Manaexito T/as "Local Eats Co., Ltd" to withdraw monthly payments as agreed from this Credit Card.',
+      );
       getProductList("TH");
       domainHelpAU.show();
       domainHelpUS.hide();
@@ -623,23 +659,25 @@ $('#formCountry').change(function() {
       break;
     default:
       labelBusinessNumber.html("ABN");
-      inputBusinessNumber.attr('required', true);
+      inputBusinessNumber.attr("required", true);
       countryName.html("please select country");
       currency.html("AUD");
       formData.formCurrency = "AUD";
       inputCurrency.val("AUD");
-      lookup.prop( "href", "https://abr.business.gov.au" ).show();
+      lookup.prop("href", "https://abr.business.gov.au").show();
       zipLabel.html("Postal Code");
       textGST.html("GST");
       fakeNumber.html("0408084722");
       countryTextOnly.val("Australia");
-      terms_permission.html('I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.');
+      terms_permission.html(
+        'I Give Permission to Manaexito T/as "Local For You" to withdraw monthly payments as agreed from this Credit Card.',
+      );
       selectState.show();
       methodDebit.show();
       bsbDirectDebit_div.show();
-      // routing_number_div.hide();
-      // domainHelpAU.show();
-      // domainHelpUS.hide();
+    // routing_number_div.hide();
+    // domainHelpAU.show();
+    // domainHelpUS.hide();
   }
   optionState();
 });
@@ -653,80 +691,81 @@ function setMethod(arg) {
 
   forLegalEntity.show();
 
-
   paymentMethod.val(arg);
 
-  if (paymentMethod.val()==="Invoice" && countryCheck === "Thailand"){
+  if (paymentMethod.val() === "Invoice" && countryCheck === "Thailand") {
     $(".quotationDetail").show();
     // ลบ required จาก credit card fields ที่ถูกซ่อน เพื่อไม่ให้ browser validate
     $("#creditExpireDate").removeAttr("required");
     $("#creditCCV").removeAttr("required");
     $("#emailBooking").removeAttr("required");
-  }else{
+  } else {
     $(".quotationDetail").hide();
     // คืน required กลับเมื่อไม่ใช่ Invoice
     $("#creditExpireDate").attr("required", true);
     $("#creditCCV").attr("required", true);
     $("#emailBooking").attr("required", true);
   }
-
 }
 
-function quolegalEntity(){
+function quolegalEntity() {
   const checkLeg = $("input:radio[name='taxType']:checked").val();
 
- if (checkLeg === "นิติบุคคล"){
-   $('#forIndividual').show();
-   $('#nameQuotation').hide();
-   $('#forThaiBank').show();
-   $('label[for="quotationShopName"] span').text('ชื่อบริษัท');
- }else if(checkLeg === "บุคคลธรรมดา"){
-   $('#forIndividual').show();
-   $('#nameQuotation').show();
-   $('#forThaiBank').hide();
-   $('label[for="quotationShopName"] span').text('ชื่อร้าน');
- }
+  if (checkLeg === "นิติบุคคล") {
+    $("#forIndividual").show();
+    $("#nameQuotation").hide();
+    $("#forThaiBank").show();
+    $('label[for="quotationShopName"] span').text("ชื่อบริษัท");
+  } else if (checkLeg === "บุคคลธรรมดา") {
+    $("#forIndividual").show();
+    $("#nameQuotation").show();
+    $("#forThaiBank").hide();
+    $('label[for="quotationShopName"] span').text("ชื่อร้าน");
+  }
 
   // Auto-fill quotation fields from main form
-  $('#quotationShopName').val($('#shopName').val());
-  $('#quotationName').val($('#first_name').val() + ' ' + $('#last_name').val());
-  $('#quotationPhone').val($('#shopNumber').val());
-  formatMobile($('#shopNumber').val().replace(/[^0-9]/g, ''), 'quotationPhoneFormatted');
+  $("#quotationShopName").val($("#shopName").val());
+  $("#quotationName").val($("#first_name").val() + " " + $("#last_name").val());
+  $("#quotationPhone").val($("#shopNumber").val());
+  formatMobile(
+    $("#shopNumber")
+      .val()
+      .replace(/[^0-9]/g, ""),
+    "quotationPhoneFormatted",
+  );
 
   // Build address from source fields directly
   var addrParts = [
-    $('#streetAddress1').val().trim(),
-    $('#city').val().trim(),
-    $('#state').find(':selected').text().trim(),
-    $('#zip').val().trim(),
-    $('#formCountry').find(':selected').text().trim()
+    $("#streetAddress1").val().trim(),
+    $("#city").val().trim(),
+    $("#state").find(":selected").text().trim(),
+    $("#zip").val().trim(),
+    $("#formCountry").find(":selected").text().trim(),
   ].filter(Boolean);
-  $('#quotationAddress').val(addrParts.join(' ,'));
+  $("#quotationAddress").val(addrParts.join(" ,"));
 }
 
-
-
-function wantTax(){
+function wantTax() {
   $("#quotationContact").show();
 }
 
 //add string @google.com
 function addGoogle(name) {
-  let box = $("."+name);
+  let box = $("." + name);
   let value = box.val();
   const mainOwnerEmail = $(".mainOwnerEmail");
 
-  if (value.length<=0){
+  if (value.length <= 0) {
     return true;
-  }else if(value.includes('@')){
+  } else if (value.includes("@")) {
     return true;
-  }else if (/^([A-Za-z0-9_\-\.])+\@([gmail|GMAIL])+\.(com)$/.test(value)) {
+  } else if (/^([A-Za-z0-9_\-\.])+\@([gmail|GMAIL])+\.(com)$/.test(value)) {
     return true;
-  }else {
-    value = value+"@gmail.com";
+  } else {
+    value = value + "@gmail.com";
     box.val(value);
     formData.owner.email = value;
-    if (name==="mainEmail"){
+    if (name === "mainEmail") {
       mainOwnerEmail.html(value);
     }
   }
@@ -734,21 +773,21 @@ function addGoogle(name) {
 
 //add clear box
 function clearGoogle(name) {
-  let box = $("."+name);
+  let box = $("." + name);
   box.val("");
   formData.owner.email = "";
 }
 
 //Save form type to Master form data
-$('#formType').change(function() {
+$("#formType").change(function () {
   formData.formType = $(this).val();
   let sectionHideForThaiMassage = $(".hideForThaiMassage");
   let sectionHideForThaiRestaurant = $(".hideForThaiRestaurant");
-  if($(this).val()==="Thai Massage"){
+  if ($(this).val() === "Thai Massage") {
     sectionCuisineSelector.hide();
     sectionHideForThaiMassage.hide();
     sectionHideForThaiRestaurant.show();
-  }else {
+  } else {
     sectionHideForThaiRestaurant.hide();
     sectionCuisineSelector.show();
     sectionHideForThaiMassage.show();
@@ -756,138 +795,160 @@ $('#formType').change(function() {
 
   getProductList(formData.formCountry);
   let findMassage = formData.formType.search("Massage");
-  let tmpType = (findMassage>=0) ? "Massage" : "Restaurant"; //find exactly shop type
+  let tmpType = findMassage >= 0 ? "Massage" : "Restaurant"; //find exactly shop type
   $(".stripeFee").html(settings.PaymentFee[formData.formCountry][tmpType]); //set stripe fee value for shop type
 });
 
 //Generate all state options from selected country
-function optionState(){
+function optionState() {
   let shopCountry = formData.formCountry;
-  let optionState = $('.optionState');
+  let optionState = $(".optionState");
   let allState = {};
 
   const reqState = $.ajax({
     url: settings.url_getStates,
-    method: 'POST',
+    method: "POST",
     async: true,
-    dataType: 'json',
+    dataType: "json",
     crossDomain: true,
-    data: { "token": Math.random() }
+    data: { token: Math.random() },
   });
 
-  reqState.done(function(res) {
+  reqState.done(function (res) {
     allState = res[shopCountry];
     optionState.empty().show();
-    jQuery.each( allState.state, function( i, val ) {
-      optionState.append("<option value='"+val.text+"'>"+val.code+" : "+val.text+"</option>");
+    jQuery.each(allState.state, function (i, val) {
+      optionState.append(
+        "<option value='" +
+          val.text +
+          "'>" +
+          val.code +
+          " : " +
+          val.text +
+          "</option>",
+      );
     });
   });
 
-  reqState.fail(function(xhr, status, error) {
+  reqState.fail(function (xhr, status, error) {
     console.log("ajax request State fail!!");
-    console.log(status + ': ' + error);
+    console.log(status + ": " + error);
   });
-
-}//optionState
+} //optionState
 
 //Generate cuisines checkbox from array
-function addCuisines(){
+function addCuisines() {
   let cuisinesSelector = $("#cuisinesSelector");
   cuisinesSelector.empty();
-  jQuery.each( Cuisines, function( i, val ) {
-    if (val!=="Other") {
-      cuisinesSelector.append("<li><input class='form-check-input cuisines' onclick='chkCuisine();' type='checkbox' value='" + val + "' name='cuisinesOther' id='cuisine" + i + "'><label class='form-check-label' for='cuisine" + i + "'>" + val + "</label></li>");
-    }else {
-      cuisinesSelector.append("<li><input class='form-check-input cuisines cuisinesOther' onclick='chkCuisineOther();' type='checkbox' value='"+val+"' name='cuisinesOther' id='cuisine"+i+"'><label class='form-check-label' for='cuisine"+i+"'>"+val+"</label></li>");
+  jQuery.each(Cuisines, function (i, val) {
+    if (val !== "Other") {
+      cuisinesSelector.append(
+        "<li><input class='form-check-input cuisines' onclick='chkCuisine();' type='checkbox' value='" +
+          val +
+          "' name='cuisinesOther' id='cuisine" +
+          i +
+          "'><label class='form-check-label' for='cuisine" +
+          i +
+          "'>" +
+          val +
+          "</label></li>",
+      );
+    } else {
+      cuisinesSelector.append(
+        "<li><input class='form-check-input cuisines cuisinesOther' onclick='chkCuisineOther();' type='checkbox' value='" +
+          val +
+          "' name='cuisinesOther' id='cuisine" +
+          i +
+          "'><label class='form-check-label' for='cuisine" +
+          i +
+          "'>" +
+          val +
+          "</label></li>",
+      );
     }
-
   });
 }
 
 //Generate cuisines checkbox from array
-function chkCuisineOther(){
+function chkCuisineOther() {
   const cuisines = $(".cuisines");
   const others = $("#others");
   const cuisinesOther = $(".cuisinesOther");
   const cuisinesOther2 = $("#cuisinesOther");
 
-  cuisines.prop( "checked", false );
-  cuisinesOther.prop( "checked", true );
-  others.prop( "checked", true );
-  cuisines.prop( "disabled", true );
-  cuisinesOther2.prop( "disabled", false );
-  allowOther()
-
+  cuisines.prop("checked", false);
+  cuisinesOther.prop("checked", true);
+  others.prop("checked", true);
+  cuisines.prop("disabled", true);
+  cuisinesOther2.prop("disabled", false);
+  allowOther();
 }
 
 //Allow max 3 cuisines checked
-function chkCuisine(){
+function chkCuisine() {
   let maxCuisines = 3;
-  if ($('.cuisines:checked').length >= maxCuisines) {
-    $(".cuisines").not(":checked").attr("disabled",true);
-  }
-  else {
-    $(".cuisines").not(":checked").removeAttr('disabled');
+  if ($(".cuisines:checked").length >= maxCuisines) {
+    $(".cuisines").not(":checked").attr("disabled", true);
+  } else {
+    $(".cuisines").not(":checked").removeAttr("disabled");
   }
 }
 
 //Show and Hide shipping address
-$('#sameShippingAddress').on('click',function(){
+$("#sameShippingAddress").on("click", function () {
   let shippingForm = $(".shippingForm");
-  if(this.checked){
+  if (this.checked) {
     shippingForm.slideUp(500);
-  }else{
+  } else {
     shippingForm.slideDown(1000);
   }
 });
 
 //Checkbox All for Payment option
-function paymentOption(){
+function paymentOption() {
   const payAll = $("#payAll");
   const paymentOption = $(".paymentOption");
-  if(payAll.is(":checked")){
-    paymentOption.prop( "checked", true );
-  }
-  else if(payAll.is(":not(:checked)")){
-    paymentOption.prop( "checked", false );
+  if (payAll.is(":checked")) {
+    paymentOption.prop("checked", true);
+  } else if (payAll.is(":not(:checked)")) {
+    paymentOption.prop("checked", false);
   }
 }
 
 //Checkbox All for Service option
-function serviceOption(){
+function serviceOption() {
   const serviceAll = $("#serviceAll");
   const serviceOption = $(".serviceOption");
-  if(serviceAll.is(":checked")){
-    serviceOption.prop( "checked", true );
-  }
-  else if(serviceOption.is(":not(:checked)")){
-    serviceOption.prop( "checked", false );
+  if (serviceAll.is(":checked")) {
+    serviceOption.prop("checked", true);
+  } else if (serviceOption.is(":not(:checked)")) {
+    serviceOption.prop("checked", false);
   }
 }
 
 //correct format of input mobile number
-function formatMobile(param,place) {
-  let mobileFormatted = $("."+place);
+function formatMobile(param, place) {
+  let mobileFormatted = $("." + place);
   const shopNumber = $(".shopNumber");
   const quotationPhone = $(".quotationPhone");
-  if (param.length>=1){
-    let newNum = countryCode[formData.formCountry]+parseInt(param, 10);
+  if (param.length >= 1) {
+    let newNum = countryCode[formData.formCountry] + parseInt(param, 10);
     mobileFormatted.html(newNum);
     mobileFormatted.val(newNum);
-    if (place==="mobileFormatted"){
+    if (place === "mobileFormatted") {
       formData.owner.mobile = newNum;
-    }else if(place==="shopNumberFormatted") {
+    } else if (place === "shopNumberFormatted") {
       shopNumber.val(newNum);
-    }else if(place==="quotationPhoneFormatted") {
+    } else if (place === "quotationPhoneFormatted") {
       quotationPhone.val(newNum);
     }
-  }else {
+  } else {
     mobileFormatted.html("Formatted number will show here.");
   }
 }
 
 //set default setShipAddress
-function setShipAddress(){
+function setShipAddress() {
   const inputStreetAddress1 = $("#streetAddress1");
   const inputCity = $("#city");
   const inputZip = $("#zip");
@@ -899,23 +960,25 @@ function setShipAddress(){
   let zip = inputZip.val().trim();
   let country = $("#formCountry").find(":selected").text();
 
-  let shipAddress = [streetAddress1, city, state, zip, country].filter(Boolean).join(" ,");
+  let shipAddress = [streetAddress1, city, state, zip, country]
+    .filter(Boolean)
+    .join(" ,");
   shipAddress1.val(shipAddress);
 }
 
 function sanitizeInput(input) {
-  return input.replace(/[ \r\n\t\f\v]+/g, ' ').trim(); // Replace multiple spaces/newlines with a single space
+  return input.replace(/[ \r\n\t\f\v]+/g, " ").trim(); // Replace multiple spaces/newlines with a single space
 }
 
 const fillFacebook = () => {
   let inputFacebook = $("#facebookAddress");
-  if (inputFacebook.val().length <= 0){
+  if (inputFacebook.val().length <= 0) {
     inputFacebook.val("www.facebook.com/");
   }
-}
+};
 
 //copy webURL value to Domain name value
-function setDomainName(){
+function setDomainName() {
   const webURL = $("#webURL").val();
   const websiteDomainName = $("#websiteDomainName");
   websiteDomainName.val(webURL);
@@ -925,14 +988,14 @@ function setDomainName(){
 function showDelivery() {
   const delivery = $("#delivery");
   let selectDelivery = $("#selectDelivery");
-  if(delivery.is(":checked")){
+  if (delivery.is(":checked")) {
     selectDelivery.fadeIn("slow");
-  }else if(delivery.is(":not(:checked)")){
+  } else if (delivery.is(":not(:checked)")) {
     selectDelivery.fadeOut("fast");
     $("#ihdDirectDelivery").val("");
     $("#shopsOwnDriver").val("");
-    $("#ownDriver").prop( "checked", false );
-    $("#systemDriver").prop( "checked", false );
+    $("#ownDriver").prop("checked", false);
+    $("#systemDriver").prop("checked", false);
     $("#IHDLogin").hide();
   }
 }
@@ -950,11 +1013,11 @@ function showTable() {
 
 //price using for show in form only
 const addDotToPrice = (price) => {
-  return (parseFloat(price)/100).toFixed(2);
-}
+  return (parseFloat(price) / 100).toFixed(2);
+};
 
 ///add product to cart
-function addMainCart(name, price, amount, special, product_id){
+function addMainCart(name, price, amount, special, product_id) {
   let currentPriceID = "";
   let oldPrice = 0;
 
@@ -973,7 +1036,7 @@ function addMainCart(name, price, amount, special, product_id){
     "Local Ultimate Bundle",
     "Local Starter Solo",
     "Local Growth Solo",
-    "Local Ultimate Solo"
+    "Local Ultimate Solo",
   ];
   const adsBudgetDiv = $(".adsBudget");
   const adsBudgetInput = $("#adsBudget");
@@ -985,30 +1048,29 @@ function addMainCart(name, price, amount, special, product_id){
     adsBudgetInput.prop("required", false).val("");
   }
 
-
-
-
-
-
   //mirror to init value
   let packageFullName = `${name} - $${price} ${special}/Month`;
   initPackage.val(packageFullName);
-  offeringProduct.current = typeJsonKey(formData.formType) + " - " + currentProduct;
+  offeringProduct.current =
+    typeJsonKey(formData.formType) + " - " + currentProduct;
   offeringProduct.name = currentProduct;
   inputInitialProductOffering.val(offeringProduct.current);
   /////
 
-  if(cart.subscription.length>0){
+  if (cart.subscription.length > 0) {
     currentPriceID = cart.subscription[0];
-    let index = readMainProduct.map(function(e) { return e.price_id; }).indexOf(currentPriceID);
-    if(index>=0){
+    let index = readMainProduct
+      .map(function (e) {
+        return e.price_id;
+      })
+      .indexOf(currentPriceID);
+    if (index >= 0) {
       oldPrice = readMainProduct[index].amount;
     }
   }
 
   //Check POS
   const productPOS = $("input[name='product']");
-
 
   /*ใส่คำค้นหาที่ต้องการให้แสดง section checkbox
    ตัวอย่าง ["POS", "Partner", "Mega"] */
@@ -1018,14 +1080,14 @@ function addMainCart(name, price, amount, special, product_id){
   productPOS.on("change", function () {
     const selectedVal = $("input[name='product']:checked").val();
 
-    const matched = keywords.some(k => selectedVal.includes(k));
+    const matched = keywords.some((k) => selectedVal.includes(k));
     if (matched) {
       $(".posUsing").hide();
       $("#boxPOScheck").show();
       console.log("Matched:", selectedVal);
     } else {
       $("#boxPOScheck").hide();
-      $("#posCheck").val('');
+      $("#posCheck").val("");
       $(".posUsing").show();
       console.log("No match:", selectedVal);
     }
@@ -1038,24 +1100,26 @@ function addMainCart(name, price, amount, special, product_id){
   let itemName = `${name} <b class="text-primary"> <br> <small>${price} ${special}/Month</b></small>`;
   productsForShow.push(itemName);
   cart.subscription.push(product_id);
-  bag.subscription.push({"key": product_id, "val":price});
+  bag.subscription.push({ key: product_id, val: price });
 
   //calPrice("add", amount);
   listProductItems();
-  if (typeof toggleDocUploadSection === 'function') toggleDocUploadSection();
+  if (typeof toggleDocUploadSection === "function") toggleDocUploadSection();
 }
 
 //function for search text in array and return first match array index
 const textSearchInArray = (str, strArray) => {
-  for (let j=0; j<strArray.length; j++) {
-    if (strArray[j].match(str)) { return j; }
+  for (let j = 0; j < strArray.length; j++) {
+    if (strArray[j].match(str)) {
+      return j;
+    }
   }
   return -1;
-}
+};
 
 //function for search text in array and return first match array index
 const getAmountFromAddonList = (str, strArray) => {
-  let i =-1;
+  let i = -1;
   let discountPrice = 0;
   let amount = 0;
   //รายการ Add On ที่จะให้ส่วนลด 15%
@@ -1075,47 +1139,54 @@ const getAmountFromAddonList = (str, strArray) => {
     "price_1NYOP5AVc0AdHeDfxX6brAla",
     "price_1NYOVtAVc0AdHeDfouFOlJpm",
     "price_1NYOYHAVc0AdHeDfk9qUKzOx",
-    "price_1NYOasAVc0AdHeDfdr12he0O"
+    "price_1NYOasAVc0AdHeDfdr12he0O",
   ];
-  for (let j=0; j<strArray.length; j++) {
+  for (let j = 0; j < strArray.length; j++) {
     if (strArray[j]["price_id"].match(str)) {
       i = j;
       break;
     }
-  }//for
+  } //for
 
   amount = readAddonProduct[i]["amount"];
 
-  if (addOnPriceIDGivenDiscount.includes(str)){
-    discountPrice = (amount-Math.round((amount*15)/100));
-  }else{
+  if (addOnPriceIDGivenDiscount.includes(str)) {
+    discountPrice = amount - Math.round((amount * 15) / 100);
+  } else {
     discountPrice = amount;
   }
   return discountPrice;
-}
+};
 
 //delete selected addon item
 function deleteAddOn(id) {
-  let findIndexForShow = textSearchInArray(id,addonForShow);
-  let findIndexAddonCart = textSearchInArray(id,cart.add_on);
+  let findIndexForShow = textSearchInArray(id, addonForShow);
+  let findIndexAddonCart = textSearchInArray(id, cart.add_on);
   let findAmount = 0;
-  if(findIndexForShow>-1){
+  if (findIndexForShow > -1) {
     addonForShow.splice(findIndexForShow, 1);
-    if(findIndexAddonCart>-1){
+    if (findIndexAddonCart > -1) {
       cart.add_on.splice(findIndexAddonCart, 1);
     }
-    findAmount = getAmountFromAddonList(id,readAddonProduct);
+    findAmount = getAmountFromAddonList(id, readAddonProduct);
     calShowPrice();
     listProductItems();
-    if (typeof toggleDocUploadSection === 'function') toggleDocUploadSection();
-  }else {
+    if (typeof toggleDocUploadSection === "function") toggleDocUploadSection();
+  } else {
     console.log("Not found item in array, nothing to delete!!");
   }
 }
 
 ///add product to cart
-function addAddonCart(name, price, amount, special, product_id, checkID, checkClass){
-
+function addAddonCart(
+  name,
+  price,
+  amount,
+  special,
+  product_id,
+  checkID,
+  checkClass,
+) {
   let country = $("#formCountry").find(":selected").text();
   function calculateVAT(price) {
     // 1. Price before VAT
@@ -1130,45 +1201,48 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
     return { a, b, c };
   }
 
+  if (checkClass.length > 0) {
+    let inputClass = $("." + checkClass);
+    let inputID = $("#" + checkID);
 
-
-  if (checkClass.length>0){
-    let inputClass = $("."+checkClass);
-    let inputID = $("#"+checkID);
-
-    if(inputID.is(":checked")){
-      inputClass.prop( "disabled", true );
-      inputID.prop( "disabled", false );
-      inputClass.prop( "checked", false );
-      inputID.prop( "checked", true );
+    if (inputID.is(":checked")) {
+      inputClass.prop("disabled", true);
+      inputID.prop("disabled", false);
+      inputClass.prop("checked", false);
+      inputID.prop("checked", true);
 
       if (country === "Thailand") {
         let priceVAT = calculateVAT(price);
         price = priceVAT.c;
 
         let initAddon = `${name} - ${price}${special}`;
-        if ((checkClass==="isFlyer")||(checkClass==="isUSFlyer")||(checkClass==="isYelpAdSpend")) {
+        if (
+          checkClass === "isFlyer" ||
+          checkClass === "isUSFlyer" ||
+          checkClass === "isYelpAdSpend"
+        ) {
           initAddOnPrintedFlyers.val(initAddon);
-        }else if (checkClass==="isFridge") {
+        } else if (checkClass === "isFridge") {
           initAddOnFridgeMagnet.val(initAddon);
-        }else if (checkClass==="isYelpAdSpend") {
+        } else if (checkClass === "isYelpAdSpend") {
           initAddOnYelpAdSpend.val(initAddon);
         }
       }
-    }
-    else if(inputID.is(":not(:checked)")){
-      inputClass.prop( "disabled", false );
-      inputClass.prop( "checked", false );
-      if ((checkClass==="isFlyer")||(checkClass==="isUSFlyer")||(checkClass==="isYelpAdSpend")) {
+    } else if (inputID.is(":not(:checked)")) {
+      inputClass.prop("disabled", false);
+      inputClass.prop("checked", false);
+      if (
+        checkClass === "isFlyer" ||
+        checkClass === "isUSFlyer" ||
+        checkClass === "isYelpAdSpend"
+      ) {
         initAddOnPrintedFlyers.val("");
-      }else if (checkClass==="isFridge") {
+      } else if (checkClass === "isFridge") {
         initAddOnFridgeMagnet.val("");
-      }else if (checkClass==="isYelpAdSpend") {
+      } else if (checkClass === "isYelpAdSpend") {
         initAddOnYelpAdSpend.val("");
       }
     }
-
-
   }
 
   let itemName = `${name} <b class="text-primary"> <br> <small>$${price} ${special}</b>
@@ -1189,11 +1263,11 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
     // add to array
     addonForShow.push(itemName);
     cart.add_on.push(product_id);
-    let tempBag = {"key": product_id, "val": price}
+    let tempBag = { key: product_id, val: price };
     bag.add_on.push(tempBag);
     //calPrice("add", amount);
-  }else {
-    addonForShow = addonForShow.filter(val => val !== itemName);
+  } else {
+    addonForShow = addonForShow.filter((val) => val !== itemName);
     ///////
     // Remove duplicate entry
     let keysToRemove = [];
@@ -1203,13 +1277,16 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
 
     setTimeout(() => {
       for (let key in cart.add_on) {
-        if (cart.add_on[key] === product_id) { //ถ้าเจอว่ามีข้อมูลนั้นอยู่แล้ว
+        if (cart.add_on[key] === product_id) {
+          //ถ้าเจอว่ามีข้อมูลนั้นอยู่แล้ว
           flagNotFound = false;
-          if(allItem<=1){ //ถ้าเหลือแค่ตัวเดียว ให้เซ็ตเป็นว่าง
+          if (allItem <= 1) {
+            //ถ้าเหลือแค่ตัวเดียว ให้เซ็ตเป็นว่าง
             cart.add_on = []; //เซ็ตเป็นว่าง
             bag.add_on = []; //เซ็ตเป็นว่าง
             setShowPrice();
-          }else{ //ถ้ามีมากกว่า 1 ตัวให้ลบตัวที่เจอ
+          } else {
+            //ถ้ามีมากกว่า 1 ตัวให้ลบตัวที่เจอ
             let newArr = cart.add_on.filter(function (item) {
               return item !== product_id;
             });
@@ -1222,19 +1299,19 @@ function addAddonCart(name, price, amount, special, product_id, checkID, checkCl
             setShowPrice();
           }
         }
+      } //for
 
-      }//for
-
-      if(flagNotFound){ // ถ้าไม่เจอ
+      if (flagNotFound) {
+        // ถ้าไม่เจอ
         cart.add_on.push(product_id); // ให้เพิ่มข้อมูลใหม่ลงไป
-        let tempBag = {"key": product_id, "val": price}
+        let tempBag = { key: product_id, val: price };
         bag.add_on.push(tempBag); // ให้เพิ่มข้อมูลใหม่ลงไป
       }
     }, 100);
-  }//else
+  } //else
   setShowPrice();
   listProductItems();
-  if (typeof toggleDocUploadSection === 'function') toggleDocUploadSection();
+  if (typeof toggleDocUploadSection === "function") toggleDocUploadSection();
 }
 
 //set hidden select delevery value
@@ -1244,38 +1321,41 @@ const setDeliveryOption = (val) => {
   let inputShopsOwnDriver = $("#shopsOwnDriver");
   let inputIHDLogin = $("#IHDLogin");
 
-  if (inputDelivery.prop('checked')){
-    if (val === "Delivery by own driver"){
+  if (inputDelivery.prop("checked")) {
+    if (val === "Delivery by own driver") {
       inputShopsOwnDriver.val("Requested");
       inputIhdDirectDelivery.val("");
       inputIHDLogin.fadeOut("fast");
-    }else if (val === "Delivery with delivery system"){
+    } else if (val === "Delivery with delivery system") {
       inputShopsOwnDriver.val("");
       inputIhdDirectDelivery.val("Requested");
       inputIHDLogin.fadeIn("fast");
-    }else {
+    } else {
       inputShopsOwnDriver.val("");
       inputIhdDirectDelivery.val("");
       inputIHDLogin.fadeOut("fast");
     }
-  }else {
+  } else {
     inputShopsOwnDriver.val("");
     inputIhdDirectDelivery.val("");
     inputIHDLogin.fadeOut("fast");
   }
-}
+};
 
 ///// jump to top of form
 function jump(h) {
   let top = document.getElementById(h).offsetTop,
-      left = document.getElementById(h).offsetLeft;
-  let animator = createAnimator({
-    start: [0,0],
-    end: [left, top],
-    duration: 1000
-  }, function(vals){
-    window.scrollTo(vals[0], vals[1]);
-  });
+    left = document.getElementById(h).offsetLeft;
+  let animator = createAnimator(
+    {
+      start: [0, 0],
+      end: [left, top],
+      duration: 1000,
+    },
+    function (vals) {
+      window.scrollTo(vals[0], vals[1]);
+    },
+  );
 
   //run
   animator();
@@ -1283,20 +1363,22 @@ function jump(h) {
 
 //set payment request timestamp
 const paymentTimestamp = () => {
-  let brisbaneDate = new Date().toLocaleString('en-AU', timezoneOptions);
+  let brisbaneDate = new Date().toLocaleString("en-AU", timezoneOptions);
   $("#paymentRequestTimestamp").val(brisbaneDate);
-}
+};
 
 //Animator
 function createAnimator(config, callback, done) {
-  if (typeof config !== "object") throw new TypeError("Argument config expect an Object");
+  if (typeof config !== "object")
+    throw new TypeError("Argument config expect an Object");
 
   let start = config.start,
-      mid = $.extend({}, start), //clone object
-      math = $.extend({}, start), //precalculate the math
-      end = config.end,
-      duration = config.duration || 1000,
-      startTime, endTime;
+    mid = $.extend({}, start), //clone object
+    math = $.extend({}, start), //precalculate the math
+    end = config.end,
+    duration = config.duration || 1000,
+    startTime,
+    endTime;
 
   function precalculate(a, b, c, d) {
     return [(b - d) / (a - c), (a * d - b * c) / (a - c)];
@@ -1332,19 +1414,18 @@ function createAnimator(config, callback, done) {
 
     listProductItems();
     step();
-  }
+  };
 }
 
 function listProductItems() {
   const mainSelectedPackage = $("#mainSelectedPackage");
   const mainSelectedAddOn = $("#mainSelectedAddOn");
 
-
   applyCoupon();
   setShowPrice();
 
   let ele;
-/////////
+  /////////
   mainSelectedPackage.empty();
 
   productsForShow.forEach((item) => {
@@ -1353,13 +1434,13 @@ function listProductItems() {
                 <small><span class="text-secondary">Package</span> : </small>
                 <ol><li>${item}</li></ol>
           </li>`;
-    $(ele).appendTo( "#mainSelectedPackage" );
+    $(ele).appendTo("#mainSelectedPackage");
   });
   setShowPrice();
 
-/////////
+  /////////
   mainSelectedAddOn.empty();
-  if(addonForShow.length>0){
+  if (addonForShow.length > 0) {
     ele = `<li class="list-group-item">
                 <small><span class="text-secondary">Add On</span> : </small>
                 <ol>`;
@@ -1367,61 +1448,70 @@ function listProductItems() {
       ele += `<li>${item}</li>`;
     });
     ele += `</ol></li>`;
-    $(ele).appendTo( "#mainSelectedAddOn" );
+    $(ele).appendTo("#mainSelectedAddOn");
   }
 
   setShowPrice();
-////////
+  ////////
 }
 
-function updateSetupFee(name, price, amount, special, product_id, allSetupFeeIds) {
+function updateSetupFee(
+  name,
+  price,
+  amount,
+  special,
+  product_id,
+  allSetupFeeIds,
+) {
   // Step 1: ล้าง Setup Fee เก่าทั้งหมดออกจากตัวแปรตะกร้าสินค้า
   // โดยการกรอง (filter) ให้เหลือแต่ item ที่ไม่ใช่ Setup Fee
-  cart.add_on = cart.add_on.filter(id => !allSetupFeeIds.includes(id));
-  bag.add_on = bag.add_on.filter(item => !allSetupFeeIds.includes(item.key));
+  cart.add_on = cart.add_on.filter((id) => !allSetupFeeIds.includes(id));
+  bag.add_on = bag.add_on.filter((item) => !allSetupFeeIds.includes(item.key));
 
   // Step 2: ล้าง Setup Fee เก่าออกจาก Array ที่ใช้แสดงผล (addonForShow)
-  addonForShow = addonForShow.filter(htmlString => {
+  addonForShow = addonForShow.filter((htmlString) => {
     // ตรวจสอบว่าในข้อความ HTML มี product_id ของ Setup Fee อยู่หรือไม่
     // ถ้าไม่มี ให้เก็บไว้, ถ้ามี ให้ลบทิ้ง
-    return !allSetupFeeIds.some(id => htmlString.includes(id));
+    return !allSetupFeeIds.some((id) => htmlString.includes(id));
   });
 
   // Step 3: เพิ่ม Setup Fee ตัวใหม่ที่เพิ่งเลือกเข้ามา
   // โดยเรียกใช้ฟังก์ชันเดิม แต่ตอนนี้ตะกร้าว่างจาก Setup Fee อื่นๆ แล้ว
-  addAddonCart(name, price, amount, special, product_id, '', '');
+  addAddonCart(name, price, amount, special, product_id, "", "");
 }
 
 const loadCouponObject = () => {
   let payload = {
-    mode : "read",
-    token: Math.random()
+    mode: "read",
+    token: Math.random(),
   };
 
   const loadCoupon = $.ajax({
     url: "assets/API/couponCode.json",
-    method: 'POST',
+    method: "POST",
     async: false,
     cache: false,
-    dataType: 'json',
-    data: payload
+    dataType: "json",
+    data: payload,
   });
 
-  loadCoupon.done(function(res) {
+  loadCoupon.done(function (res) {
     //console.log(res);
     couponObjectList = res;
     return true;
   });
 
-  loadCoupon.fail(function(xhr, status, error) {
+  loadCoupon.fail(function (xhr, status, error) {
     console.log("ajax Load Coupon Json fail!!");
-    console.log(status + ': ' + error);
+    console.log(status + ": " + error);
     return false;
   });
-}//loadCouponObject
+}; //loadCouponObject
 
 function applyCoupon() {
-  if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
+  if (Object.keys(couponObjectList).length <= 0) {
+    loadCouponObject();
+  } //if empty couponObjectList then load it via ajax
   const objCode = $("#couponCode");
   let inputCode = objCode.val().trim().toUpperCase();
   objCode.val(inputCode);
@@ -1436,58 +1526,85 @@ function applyCoupon() {
   //formData.formCountry << AU NZ CA UK US
   let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
 
-  let Settings_Coupon_Obj = settings.Payment_Detail.coupon_Code[formData.formCountry];
+  let Settings_Coupon_Obj =
+    settings.Payment_Detail.coupon_Code[formData.formCountry];
   let discountValue = 0;
   let gstDecimal = 0;
 
   //ถ้าไม่ได้กรอกอะไรมา
-  if (inputCode.length<1){
+  if (inputCode.length < 1) {
     couponCurrency.hide();
     discountAmount.removeClass("text-danger").html("no coupon apply");
     inputInitialProductOffering.val(offeringProduct.current);
     discountFlag = false;
-    $("#couponCode2").removeAttr('disabled');
+    $("#couponCode2").removeAttr("disabled");
     cal = 0;
     discountNumber.val(cal);
     return false;
-  }else{
-    $("#couponCode2").attr('disabled', 'disabled');
+  } else {
+    $("#couponCode2").attr("disabled", "disabled");
   }
 
-  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB", "PARTNER96", "PARTNER98", "PARTNER195", "PARTNER198", "PARTNER246", "PARTNER268", "PARTNER118","PARTNER298","PARTNER368","ONCE108","ONCE158","ONCE198","ONCE246","ONCE268","ONCE348","AIUS","ARAYAAI"]);
-
+  const availableCoupon = new Set([
+    "1TRIAL",
+    "1SMILE",
+    "WAWIO",
+    "FREEWEB",
+    "PARTNER96",
+    "PARTNER98",
+    "PARTNER195",
+    "PARTNER198",
+    "PARTNER246",
+    "PARTNER268",
+    "PARTNER118",
+    "PARTNER298",
+    "PARTNER368",
+    "ONCE108",
+    "ONCE158",
+    "ONCE198",
+    "ONCE246",
+    "ONCE268",
+    "ONCE348",
+    "AIUS",
+    "ARAYAAI",
+  ]);
 
   inputCode = inputCode.toUpperCase();
-  const foundCoupon = availableCoupon.has(inputCode)
+  const foundCoupon = availableCoupon.has(inputCode);
 
-  if(foundCoupon) {
+  if (foundCoupon) {
     let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
     let discountObject = discountList[formData.formCountry];
 
-    if (typeof discountObject !== "undefined") { //Check if this coupon code is available in your settings list.
+    if (typeof discountObject !== "undefined") {
+      //Check if this coupon code is available in your settings list.
       discountFlag = true;
       discountValue = discountObject.discount; //get the discount value of this coupon
     }
 
     if (!discountFlag) {
-      discountAmount.removeClass("text-success").addClass("text-danger").html("does not match any coupon code");
+      discountAmount
+        .removeClass("text-success")
+        .addClass("text-danger")
+        .html("does not match any coupon code");
       cal = 0;
     } else if (discountFlag) {
       cal = discountValue;
       couponCurrency.show();
-      discountAmount.removeClass("text-danger").addClass("text-success").html(cal);
+      discountAmount
+        .removeClass("text-danger")
+        .addClass("text-success")
+        .html(cal);
     }
 
     discountNumber.val(cal);
     setShowPrice();
-  }else {
+  } else {
     console.log("Code not match");
   }
-
-}//function applyCoupon
+} //function applyCoupon
 
 function applyCoupon2() {
-
   const objCode = $("#couponCode2");
   let inputCode = objCode.val().trim().toUpperCase();
   objCode.val(inputCode);
@@ -1499,52 +1616,58 @@ function applyCoupon2() {
 
   let discountFlag = false;
   let cal = 0;
-  let Settings_Coupon_Obj = settings.Payment_Detail.coupon_Code[formData.formCountry];
+  let Settings_Coupon_Obj =
+    settings.Payment_Detail.coupon_Code[formData.formCountry];
   let discountValue = 0;
   let gstDecimal = 0;
 
   //ถ้าไม่ได้กรอกอะไรมา
-  if (inputCode.length<1){
+  if (inputCode.length < 1) {
     couponCurrency.hide();
     discountAmount.removeClass("text-danger").html("no coupon apply");
     inputInitialProductOffering.val(offeringProduct.current);
     discountFlag = false;
-    $("#couponCode").removeAttr('disabled');
+    $("#couponCode").removeAttr("disabled");
     cal = 0;
     discountNumber.val(cal);
     return false;
-  }else{
-    $("#couponCode").attr('disabled', 'disabled');
+  } else {
+    $("#couponCode").attr("disabled", "disabled");
   }
 
-  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in a setting list
+  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") {
+    //check this coupon code is exist in a setting list
     discountFlag = true;
-    discountValue =  Settings_Coupon_Obj[inputCode].discount; //get the discount value of this coupon
+    discountValue = Settings_Coupon_Obj[inputCode].discount; //get the discount value of this coupon
   }
   //
 
-  if (!discountFlag){
-    discountAmount.removeClass("text-success").addClass("text-danger").html("does not match any coupon code");
+  if (!discountFlag) {
+    discountAmount
+      .removeClass("text-success")
+      .addClass("text-danger")
+      .html("does not match any coupon code");
     cal = 0;
-  }else if(discountFlag){
+  } else if (discountFlag) {
     cal = discountValue;
     couponCurrency.show();
-    discountAmount.removeClass("text-danger").addClass("text-success").html(cal);
+    discountAmount
+      .removeClass("text-danger")
+      .addClass("text-success")
+      .html(cal);
   }
 
   discountNumber.val(cal);
   setShowPrice();
+} //function applyCoupon
 
-}//function applyCoupon
-
-function resetForm(){
-  const formControl = $('.form-control');
+function resetForm() {
+  const formControl = $(".form-control");
   formControl.removeClass("is-invalid");
 }
 
-
 /// add ABN, NZBN to Business number
-function setBusinessNumber(){
+function setBusinessNumber() {
   const businessNumber = $("#businessNumber");
   const abnField = $("#abnField");
 
@@ -1553,7 +1676,7 @@ function setBusinessNumber(){
 
   let country = formData.formCountry;
   let newNumber = "";
-  if (myArray[0].length>=1) {
+  if (myArray[0].length >= 1) {
     switch (country) {
       case "AU":
         newNumber = "ABN:" + myArray[0];
@@ -1586,7 +1709,7 @@ function setBusinessNumber(){
 }
 
 /// set emailShoppingCart follow owner email
-function setEmailShoppingCart(email){
+function setEmailShoppingCart(email) {
   const emailShoppingCart = $(".mainEmail");
   const mainOwnerEmail = $(".mainOwnerEmail");
   const customerStripeEmail = $("#customerStripeEmail");
@@ -1596,8 +1719,12 @@ function setEmailShoppingCart(email){
   customerStripeEmail.val(email);
   emailQuotation.val(email);
   let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
-  if (formTypeJsonKey==="Restaurant"){ $("#emailBooking").val(""); }
-  if (formTypeJsonKey==="Massage"){ $("#emailShoppingCart").val(""); }
+  if (formTypeJsonKey === "Restaurant") {
+    $("#emailBooking").val("");
+  }
+  if (formTypeJsonKey === "Massage") {
+    $("#emailShoppingCart").val("");
+  }
 }
 //////
 
@@ -1627,23 +1754,21 @@ const backupPayment = (param) => {
       url = "https://buy.stripe.com/bIY4kceT713SdgY7sx";
       break;
   }
-  window.open(url, '_blank').focus();
-}
+  window.open(url, "_blank").focus();
+};
 
 /// jump to anchor
-function jumpTop(){
+function jumpTop() {
   let url = location.href;
   location.href = "#topForm";
-  history.replaceState(null,null,url);
+  history.replaceState(null, null, url);
 }
 
 //remove HTML tag from string
 function removeTags(str) {
-  if ((str===null) || (str===''))
-    return false;
-  else
-    str = str.toString();
-  return str.replace( /(<([^>]+)>)/ig, '');
+  if (str === null || str === "") return false;
+  else str = str.toString();
+  return str.replace(/(<([^>]+)>)/gi, "");
 }
 
 ///fill data
@@ -1672,64 +1797,73 @@ function setRestaurantName(val) {
   formData.business.company = val;
 }
 
-const setCreditFullName = () =>{
-  let text = input_first_name.val()+" "+input_last_name.val();
+const setCreditFullName = () => {
+  let text = input_first_name.val() + " " + input_last_name.val();
   input_quotation_name.val(text.trim());
   input_credit_full_name.val(text.trim());
-}
+};
 
 //Toggle left sidebar
 const toggleLeftNav = () => {
   leftNavOpen = !leftNavOpen;
   const toolElements = $(".toolElements");
 
-  if (leftNavOpen){
+  if (leftNavOpen) {
     toolElements.fadeOut(100);
     setTimeout(() => {
       document.getElementById("mySidebar").style.width = "0";
     }, 100);
-  }else if(!leftNavOpen){
+  } else if (!leftNavOpen) {
     document.getElementById("mySidebar").style.width = "250px";
     setTimeout(() => {
       toolElements.fadeIn(500);
     }, 200);
   }
   return leftNavOpen;
-}
+};
 
 //force to 10 digits
 function fixDigitDirectDebit() {
   const inputAcnDirectDebit = $("#acnDirectDebit");
   let newValue = "";
   let currentValue = inputAcnDirectDebit.val().trim();
-  newValue = currentValue.padStart(10, '0');
+  newValue = currentValue.padStart(10, "0");
   inputAcnDirectDebit.val(newValue);
   return true;
 }
 
 //fixNumber to be decimal
 function fixNumber(val) {
-  let num = parseInt(val,10);
+  let num = parseInt(val, 10);
   let boxTable = $("#tableNumber");
   boxTable.val("");
   boxTable.val(num);
   initDineInTableOrdering.val(num);
 }
 
-
 //synchronize note in left sidebar and not in main form
 const syncComment = (val) => {
   $("#additionComment").val(val);
   $("#stickyComment").val(val);
   return true;
-}
+};
 
 // Hide Payment method
-if(!settings.Payment_Module.CreditCard) { formCreditCard.hide(); }
-if(!settings.Payment_Module.DirectDebit) { formDebit.hide(); }
-if(!settings.Payment_Module.Stripe) { formStripe.hide(); }
-if(!settings.Payment_Module.QR) { formQR.hide(); }
-if(!settings.Payment_Module.Invoice) { formInvoice.hide(); }
+if (!settings.Payment_Module.CreditCard) {
+  formCreditCard.hide();
+}
+if (!settings.Payment_Module.DirectDebit) {
+  formDebit.hide();
+}
+if (!settings.Payment_Module.Stripe) {
+  formStripe.hide();
+}
+if (!settings.Payment_Module.QR) {
+  formQR.hide();
+}
+if (!settings.Payment_Module.Invoice) {
+  formInvoice.hide();
+}
 
 //open url in new tab
 function readAgreement() {
@@ -1740,35 +1874,52 @@ function readAgreement() {
   checkAcceptAgreement();
 }
 const modalTermsAction = (action) => {
-  if (action==="open"){ modalTerms.show();}
-}
+  if (action === "open") {
+    modalTerms.show();
+  }
+};
 
 function startThPaymentCountdown(minutes) {
-  if (_thPaymentCountdownTimer) { clearInterval(_thPaymentCountdownTimer); _thPaymentCountdownTimer = null; }
-  const pad = n => n < 10 ? '0' + n : n;
-  const $box = $('#thCountdownBox');
-  const $timer = $('#thCountdownTimer');
+  if (_thPaymentCountdownTimer) {
+    clearInterval(_thPaymentCountdownTimer);
+    _thPaymentCountdownTimer = null;
+  }
+  const pad = (n) => (n < 10 ? "0" + n : n);
+  const $box = $("#thCountdownBox");
+  const $timer = $("#thCountdownTimer");
   if (!$box.length) return;
-  $box.show().css({ borderColor: '#bee5eb', background: '#e8f4f8' });
-  $box.find('span:first').html('<i class="bi bi-clock-history mr-1"></i> รายการชำระเงินจะหมดอายุในอีก');
-  $timer.css('color', '#0c5460');
-  $('button[onclick="sendThTransferProof()"]').prop('disabled', false).css('background', '#1a73e8');
+  $box.show().css({ borderColor: "#bee5eb", background: "#e8f4f8" });
+  $box
+    .find("span:first")
+    .html(
+      '<i class="bi bi-clock-history mr-1"></i> รายการชำระเงินจะหมดอายุในอีก',
+    );
+  $timer.css("color", "#0c5460");
+  $('button[onclick="sendThTransferProof()"]')
+    .prop("disabled", false)
+    .css("background", "#1a73e8");
 
   const expireAt = Date.now() + (minutes || 10) * 60 * 1000;
   function tick() {
     const diff = expireAt - Date.now();
     if (diff <= 0) {
-      $timer.text('00:00').css('color', '#dc2626');
-      $box.css({ borderColor: '#f5c6cb', background: '#f8d7da' });
-      $box.find('span:first').html('<i class="bi bi-exclamation-circle-fill mr-1"></i> รายการชำระเงินหมดอายุแล้ว');
-      $('button[onclick="sendThTransferProof()"]').prop('disabled', true).css('background', '#b0bec5');
+      $timer.text("00:00").css("color", "#dc2626");
+      $box.css({ borderColor: "#f5c6cb", background: "#f8d7da" });
+      $box
+        .find("span:first")
+        .html(
+          '<i class="bi bi-exclamation-circle-fill mr-1"></i> รายการชำระเงินหมดอายุแล้ว',
+        );
+      $('button[onclick="sendThTransferProof()"]')
+        .prop("disabled", true)
+        .css("background", "#b0bec5");
       clearInterval(_thPaymentCountdownTimer);
       _thPaymentCountdownTimer = null;
       return;
     }
     const m = Math.floor(diff / 60000);
     const s = Math.floor((diff % 60000) / 1000);
-    $timer.text(pad(m) + ':' + pad(s));
+    $timer.text(pad(m) + ":" + pad(s));
   }
   tick();
   _thPaymentCountdownTimer = setInterval(tick, 1000);
@@ -1780,25 +1931,33 @@ const modalRespondAction = (action, status, reason) => {
   respondSuccess.hide();
   respondFail.hide();
   const isTH = $("#formCountry").val() === "TH";
-  if (status === "success"){
+  if (status === "success") {
     respondSuccess.show();
     $("#thPaymentSection").toggle(isTH);
     $("#crmControls").toggle(!isTH);
     if (isTH) {
-      const total = parseFloat($("#grandTotal").val().replace(/,/g, '')) || 0;
-      $("#thTotalAmount").text(total.toLocaleString('th-TH', {minimumFractionDigits: 2}) + ' บาท');
+      const total = parseFloat($("#grandTotal").val().replace(/,/g, "")) || 0;
+      $("#thTotalAmount").text(
+        total.toLocaleString("th-TH", { minimumFractionDigits: 2 }) + " บาท",
+      );
       // Fallback: ถ้า quotationID ว่าง ให้ดึงจาก #dataInvoice
       if (!$("#quotationID").val()) {
         try {
-          const dataInvoice = JSON.parse($("#dataInvoice").val() || '[]');
-          if (Array.isArray(dataInvoice) && dataInvoice.length > 0 && dataInvoice[0].id) {
+          const dataInvoice = JSON.parse($("#dataInvoice").val() || "[]");
+          if (
+            Array.isArray(dataInvoice) &&
+            dataInvoice.length > 0 &&
+            dataInvoice[0].id
+          ) {
             $("#quotationID").val(dataInvoice[0].id);
           }
-        } catch (e) { console.warn('modalRespondAction dataInvoice parse error:', e); }
+        } catch (e) {
+          console.warn("modalRespondAction dataInvoice parse error:", e);
+        }
       }
       startThPaymentCountdown(10);
     }
-  } else if (status === "fail"){
+  } else if (status === "fail") {
     respondFail.show();
     // เติม reason ลงในกล่อง #failReasonBox ถ้ามี
     const $reasonBox = $("#failReasonBox");
@@ -1811,21 +1970,30 @@ const modalRespondAction = (action, status, reason) => {
       }
     }
   }
-  if (action === "open"){
+  if (action === "open") {
     // Reset Save-to-Monday state every open to clear any stale timers
-    if (typeof _crmCountdownTimer !== 'undefined' && _crmCountdownTimer !== null) {
+    if (
+      typeof _crmCountdownTimer !== "undefined" &&
+      _crmCountdownTimer !== null
+    ) {
       clearInterval(_crmCountdownTimer);
       _crmCountdownTimer = null;
     }
-    $("#enableCRM").prop('checked', false);
-    $("#CRMButton").hide().prop('disabled', true);
+    $("#enableCRM").prop("checked", false);
+    $("#CRMButton").hide().prop("disabled", true);
     $("#ballLoading").hide();
     $("#countdownText").hide();
     $("#crmControls").toggle(!isTH);
-    $("#thFinishButton").toggle(isTH).prop('disabled', true);
+    $("#thFinishButton").toggle(isTH).prop("disabled", true);
+    // Clear any DocuSign result left over from a previous submission
+    $("#docusignSendBtn").prop("disabled", false).val("Send for Signature");
+    $("#docusignStatus")
+      .hide()
+      .text("")
+      .removeClass("text-danger text-success text-muted");
     modalResponse.show();
   }
-}
+};
 
 // Helper: ดึงข้อความ error ที่มีความหมายจาก response (xhr / obj / string)
 // รองรับหลายรูปแบบ เช่น
@@ -1840,11 +2008,17 @@ const extractPaymentError = (input) => {
     // jQuery xhr
     if (input && typeof input === "object" && "responseText" in input) {
       const raw = input.responseText || "";
-      try { obj = JSON.parse(raw); }
-      catch (e) { return raw ? String(raw).slice(0, 500) : (input.statusText || ""); }
+      try {
+        obj = JSON.parse(raw);
+      } catch (e) {
+        return raw ? String(raw).slice(0, 500) : input.statusText || "";
+      }
     } else if (typeof input === "string") {
-      try { obj = JSON.parse(input); }
-      catch (e) { return input.slice(0, 500); }
+      try {
+        obj = JSON.parse(input);
+      } catch (e) {
+        return input.slice(0, 500);
+      }
     }
     if (!obj) return "";
     if (typeof obj === "string") return obj;
@@ -1853,20 +2027,31 @@ const extractPaymentError = (input) => {
     if (obj.error) {
       if (typeof obj.error === "string") return obj.error;
       if (obj.error.message) return obj.error.message;
-      try { return JSON.stringify(obj.error); } catch (e) { return String(obj.error); }
+      try {
+        return JSON.stringify(obj.error);
+      } catch (e) {
+        return String(obj.error);
+      }
     }
     if (obj.message && obj.message !== "Success") return obj.message;
-    try { return JSON.stringify(obj); } catch (e) { return ""; }
+    try {
+      return JSON.stringify(obj);
+    } catch (e) {
+      return "";
+    }
   } catch (e) {
     return "";
   }
-}
+};
 
 const modalSecretSetupAction = (action) => {
-  if (action==="open"){ modalSecretSetup.show();}
-}
+  if (action === "open") {
+    modalSecretSetup.show();
+  }
+};
 
-const DOCS_BASE_URL = "https://report.localforyou.com/modules/signup/assets/docs/";
+const DOCS_BASE_URL =
+  "https://report.localforyou.com/modules/signup/assets/docs/";
 
 const genLinkPDF = () => {
   const agreementGenerated = $("#agreementGenerated");
@@ -1876,7 +2061,7 @@ const genLinkPDF = () => {
   let State = $("#state option:selected").text();
   let contractPeriod = 0;
   let contractPeriodSelected = $("input[name='contractPeriod']:checked").val();
-  switch (contractPeriodSelected){
+  switch (contractPeriodSelected) {
     case "0":
       contractPeriod = 0;
       break;
@@ -1893,56 +2078,183 @@ const genLinkPDF = () => {
   let Country = $("#formCountry").val();
 
   // Shared by both agreements; encoded so names/shop names with & or spaces survive.
-  let baseParams = "customerFullName=" + encodeURIComponent(customerFullName) +
-      "&ShopName=" + encodeURIComponent(ShopName) +
-      "&registrationNumber=" + encodeURIComponent(registrationNumber) +
-      "&Country=" + encodeURIComponent(Country) +
-      "&State=" + encodeURIComponent(State);
+  let baseParams =
+    "customerFullName=" +
+    encodeURIComponent(customerFullName) +
+    "&ShopName=" +
+    encodeURIComponent(ShopName) +
+    "&registrationNumber=" +
+    encodeURIComponent(registrationNumber) +
+    "&Country=" +
+    encodeURIComponent(Country) +
+    "&State=" +
+    encodeURIComponent(State);
 
   agreementGenerated.val(
-      DOCS_BASE_URL + "contract_2024_V02.php?" + baseParams + "&contractPeriod=" + contractPeriod
+    DOCS_BASE_URL +
+      "contract_2024_V02.php?" +
+      baseParams +
+      "&contractPeriod=" +
+      contractPeriod,
   );
 
   // Customers buying POS also need the Push POS Customer Agreement, in addition
   // to the marketing agreement above. Applies to every country.
   if (typeof isPOSSelected === "function" && isPOSSelected()) {
     pushposAgreementGenerated.val(
-        DOCS_BASE_URL + "pushpos_agreement_V02.php?" + baseParams +
-        "&legalEntity=" + encodeURIComponent($("#company").val() || "")
+      DOCS_BASE_URL +
+        "pushpos_agreement_V02.php?" +
+        baseParams +
+        "&legalEntity=" +
+        encodeURIComponent($("#company").val() || ""),
     );
   } else {
     pushposAgreementGenerated.val("");
   }
-}
+};
 
 const genPDF = () => {
   genLinkPDF();
   const agreementGenerated = $("#agreementGenerated");
   let url = agreementGenerated.val();
-  window.open(url, '_blank').focus();
+  window.open(url, "_blank").focus();
 
   // Open the Push POS agreement too when the customer is buying POS.
   let pushposUrl = $("#pushposAgreementGenerated").val();
   if (pushposUrl) {
-    window.open(pushposUrl, '_blank');
+    window.open(pushposUrl, "_blank");
   }
-}
+};
+
+// Fields both agreement templates read. Mirrors the query string built by
+// genLinkPDF(), but posted as JSON so the server can re-render the same
+// templates into a PDF for DocuSign.
+const collectAgreementFields = () => {
+  const contractPeriodSelected = $(
+    "input[name='contractPeriod']:checked",
+  ).val();
+
+  return {
+    customerFullName: (
+      $("#first_name").val() +
+      " " +
+      $("#last_name").val()
+    ).trim(),
+    signerEmail: ($("#email").val() || "").trim().toLowerCase(),
+    ShopName: $("#shopName").val() || "",
+    legalEntity: $("#company").val() || "",
+    registrationNumber: $("#businessNumber").val() || "",
+    State: $("#state option:selected").text() || "",
+    Country: $("#formCountry").val() || "",
+    contractPeriod: ["0", "6", "12"].includes(contractPeriodSelected)
+      ? contractPeriodSelected
+      : "0",
+  };
+};
+
+// Send one agreement to DocuSign. Resolves to the API payload, rejects with an
+// Error carrying the server-side message so the caller can show it verbatim.
+const sendAgreementToDocuSign = (agreementType, fields) => {
+  return $.ajax({
+    url: settings.url_docusignSend,
+    method: "POST",
+    dataType: "json",
+    contentType: "application/json",
+    data: JSON.stringify(
+      Object.assign(
+        { agreementType: agreementType, deliveryMode: "email" },
+        fields,
+      ),
+    ),
+  }).then(
+    (res) => {
+      if (!res || res.success !== true) {
+        return $.Deferred()
+          .reject(
+            new Error(extractPaymentError(res) || "DocuSign request failed"),
+          )
+          .promise();
+      }
+      return res;
+    },
+    (xhr) =>
+      $.Deferred()
+        .reject(
+          new Error(extractPaymentError(xhr) || "DocuSign request failed"),
+        )
+        .promise(),
+  );
+};
+
+// Modal button handler: emails the marketing agreement, plus the Push POS
+// agreement when the customer is buying POS. Both must succeed for the button
+// to report success.
+const sendContractsForSignature = () => {
+  const $btn = $("#docusignSendBtn");
+  const $status = $("#docusignStatus");
+  const fields = collectAgreementFields();
+
+  if (fields.customerFullName === "") {
+    $status
+      .removeClass("text-success")
+      .addClass("text-danger")
+      .text("Customer name is missing.")
+      .show();
+    return;
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(fields.signerEmail)) {
+    $status
+      .removeClass("text-success")
+      .addClass("text-danger")
+      .text("A valid customer email is required.")
+      .show();
+    return;
+  }
+
+  const alsoPushPos = typeof isPOSSelected === "function" && isPOSSelected();
+
+  $btn.prop("disabled", true).val("Sending...");
+  $status
+    .removeClass("text-danger text-success")
+    .addClass("text-muted")
+    .text("Sending to DocuSign...")
+    .show();
+
+  sendAgreementToDocuSign("marketing", fields)
+    .then(() =>
+      alsoPushPos ? sendAgreementToDocuSign("pushpos", fields) : null,
+    )
+    .then(() => {
+      const label = alsoPushPos ? "2 agreements" : "1 agreement";
+      $btn.val("Sent ✓");
+      $status
+        .removeClass("text-muted text-danger")
+        .addClass("text-success")
+        .text(label + " emailed to " + fields.signerEmail);
+    })
+    .catch((err) => {
+      $btn.prop("disabled", false).val("Send for Signature");
+      $status
+        .removeClass("text-muted text-success")
+        .addClass("text-danger")
+        .text(err && err.message ? err.message : "DocuSign request failed");
+    });
+};
 
 const showPolicy = () => {
   let url = "https://report.localforyou.com/modules/policy/";
-  window.open(url, '_blank').focus();
-}
+  window.open(url, "_blank").focus();
+};
 
 const showFormGenAgreement = () => {
   let url = "https://report.localforyou.com/modules/generateAgreement/";
-  window.open(url, '_blank').focus();
-}
+  window.open(url, "_blank").focus();
+};
 
 //คำนวนราคาของทุกส่วนเก็บไว้ในตัวแปร และเซ็ตค่าตัวแปรที่จะเอาไปแสดงผล
 const calShowPrice = () => {
-
-let chooseProduct = cart.subscription;
-let chooseAddon = cart.add_on;
+  let chooseProduct = cart.subscription;
+  let chooseAddon = cart.add_on;
 
   const discountNumber = $("#discountNumber");
 
@@ -1958,27 +2270,29 @@ let chooseAddon = cart.add_on;
   loadingAjax.html(loadGif);
   const reqProductList = $.ajax({
     url: settings.url_getProductList,
-    method: 'POST',
+    method: "POST",
     async: true,
-    dataType: 'json',
+    dataType: "json",
     crossDomain: true,
     data: {
-      "env": "'"+settings.env_mode+"'",
-      "country": formCountry,
-      "period": contractPeriod
-    }
+      env: "'" + settings.env_mode + "'",
+      country: formCountry,
+      period: contractPeriod,
+    },
   });
 
-  reqProductList.done(function(res) {
-    let jsonData = res['data'][formCountry];
-    let jsonAddons = jsonData[formTypeJsonKey]['Addons'];
-    let jsonAll = jsonData['All'];
+  reqProductList.done(function (res) {
+    let jsonData = res["data"][formCountry];
+    let jsonAddons = jsonData[formTypeJsonKey]["Addons"];
+    let jsonAll = jsonData["All"];
 
     let contractPeriodKeyIndex = 0;
-    let contractPeriodKeyIndexSub = 'all';
-    let contractPeriodSelected = $("input[name='contractPeriod']:checked").val();
+    let contractPeriodKeyIndexSub = "all";
+    let contractPeriodSelected = $(
+      "input[name='contractPeriod']:checked",
+    ).val();
 
-    switch (contractPeriodSelected){
+    switch (contractPeriodSelected) {
       case "0":
         contractPeriodKeyIndex = 0;
         break;
@@ -1992,42 +2306,60 @@ let chooseAddon = cart.add_on;
         contractPeriodKeyIndex = 0;
     }
 
-    let jsonMainProduct = jsonData[formTypeJsonKey]['Products'][contractPeriodKeyIndex]['items'].concat(jsonAll['Products'][0]['items']);
-    let jsonAddonsSubscriptions = jsonAddons['Subscriptions'][0]['items'].concat(jsonAll['Addons']['Subscriptions'][0]['items']);
-    let jsonAddonsOnetime = jsonAddons['Onetime'][0]['items'].concat(jsonAll['Addons']['Onetime'][0]['items']);
-    let jsonAddonsMaterials = jsonAddons['Materials'][0]['items'].concat(jsonAll['Addons']['Materials'][0]['items']);
-    let jsonAddonsOthers = jsonAddons['Others'][0]['items'].concat(jsonAll['Addons']['Others'][0]['items']);
-    let jsonAddonsSetupFee = jsonAll['Special']['SetupFee'];
+    let jsonMainProduct = jsonData[formTypeJsonKey]["Products"][
+      contractPeriodKeyIndex
+    ]["items"].concat(jsonAll["Products"][0]["items"]);
+    let jsonAddonsSubscriptions = jsonAddons["Subscriptions"][0][
+      "items"
+    ].concat(jsonAll["Addons"]["Subscriptions"][0]["items"]);
+    let jsonAddonsOnetime = jsonAddons["Onetime"][0]["items"].concat(
+      jsonAll["Addons"]["Onetime"][0]["items"],
+    );
+    let jsonAddonsMaterials = jsonAddons["Materials"][0]["items"].concat(
+      jsonAll["Addons"]["Materials"][0]["items"],
+    );
+    let jsonAddonsOthers = jsonAddons["Others"][0]["items"].concat(
+      jsonAll["Addons"]["Others"][0]["items"],
+    );
+    let jsonAddonsSetupFee = jsonAll["Special"]["SetupFee"];
 
     let checkIsOptionWebHosting = "";
     let bundleHeader = false;
 
     readMainProduct = jsonMainProduct;
-    readAddonProduct = jsonAddonsMaterials.concat(jsonAddonsSubscriptions).concat(jsonAddonsOnetime).concat(jsonAddonsOthers).concat(jsonAddonsSetupFee);
+    readAddonProduct = jsonAddonsMaterials
+      .concat(jsonAddonsSubscriptions)
+      .concat(jsonAddonsOnetime)
+      .concat(jsonAddonsOthers)
+      .concat(jsonAddonsSetupFee);
   });
 
   //filter ข้อมูลสินค้าทุกตัวว่า object ไหนบ้างที่ price_id ตรงกับสินค้าที่เลือกไว้
-  const selectedProductList = readMainProduct.filter((item) => item.price_id === chooseProduct[0]);
-
+  const selectedProductList = readMainProduct.filter(
+    (item) => item.price_id === chooseProduct[0],
+  );
 
   //filter ข้อมูล add on ทุกตัวว่า object ไหนบ้างที่ price_id ตรงกับสินค้าที่เลือกไว้
   const selectedAddOnList = readAddonProduct.filter((item) => {
-      return chooseAddon.some((filtering) => {
-        return filtering === item.price_id;
-      });
+    return chooseAddon.some((filtering) => {
+      return filtering === item.price_id;
     });
+  });
 
   let gstMultiply = 0;
-  if(formData.formCountry === "AU"){
+  if (formData.formCountry === "AU") {
     gstMultiply = 0.1;
-  }else if(formData.formCountry === "TH"){
+  } else if (formData.formCountry === "TH") {
     gstMultiply = 0.07;
   }
 
   //รวมราคาจากช่อง amount ของ addon ทุกตัวใน selectedAddOnList
   let Summary = {};
   //ราคา product หลัก
-  Summary.Product = (selectedProductList.length > 0 && selectedProductList[0]) ? selectedProductList[0].amount : 0;
+  Summary.Product =
+    selectedProductList.length > 0 && selectedProductList[0]
+      ? selectedProductList[0].amount
+      : 0;
 
   //ราคารวมของ addon ทั้งหมด
   Summary.Addon = selectedAddOnList.reduce((accumulator, object) => {
@@ -2036,39 +2368,37 @@ let chooseAddon = cart.add_on;
   //ราคา setup fee product หลัก
   Summary.MainDiscount = discountNumber.val();
 
-
   //คำนวนราคารวม
-  if (formData.formCountry === "TH"){
-    let priceInclVAT = (Summary.Product + Summary.Addon) - Summary.MainDiscount;
+  if (formData.formCountry === "TH") {
+    let priceInclVAT = Summary.Product + Summary.Addon - Summary.MainDiscount;
     Summary.SubTotal = priceInclVAT / (1 + gstMultiply); // แยกเป็นราคาก่อน VAT
-    Summary.GST = priceInclVAT - Summary.SubTotal;      // ส่วนต่างคือ VAT
+    Summary.GST = priceInclVAT - Summary.SubTotal; // ส่วนต่างคือ VAT
     Summary.GrandTotal = priceInclVAT;
-  }else{
-    Summary.SubTotal = (Summary.Product + Summary.Addon)-Summary.MainDiscount;
+  } else {
+    Summary.SubTotal = Summary.Product + Summary.Addon - Summary.MainDiscount;
     Summary.GST = Summary.SubTotal * gstMultiply;
-    Summary.GrandTotal = Summary.SubTotal +  Summary.GST;
+    Summary.GrandTotal = Summary.SubTotal + Summary.GST;
   }
-
 
   Price = {
-    "SubTotal": Summary.SubTotal,
-    "MainDiscount": Summary.MainDiscount,
-    "SubDiscount": 0,
-    "GST": Summary.GST,
-    "SetUPFee": 0,
-    "GrandTotal": Summary.GrandTotal
-  }
+    SubTotal: Summary.SubTotal,
+    MainDiscount: Summary.MainDiscount,
+    SubDiscount: 0,
+    GST: Summary.GST,
+    SetUPFee: 0,
+    GrandTotal: Summary.GrandTotal,
+  };
 
   ///แปลงให้เป็นตัวเลขมีจุดทศนิยม 2 หลัก
   showPrice = {
-    "SubTotal": (Price.SubTotal*0.01).toFixed(2),
-    "GST": (Price.GST*0.01).toFixed(2),
-    "SetUPFee": (Price.SetUPFee*0.01).toFixed(2),
-    "MainDiscount": (Price.MainDiscount*0.01).toFixed(2),
-    "SubDiscount": (Price.SubDiscount*0.01).toFixed(2),
-    "GrandTotal": (Price.GrandTotal*0.01).toFixed(2)
-  }
-}
+    SubTotal: (Price.SubTotal * 0.01).toFixed(2),
+    GST: (Price.GST * 0.01).toFixed(2),
+    SetUPFee: (Price.SetUPFee * 0.01).toFixed(2),
+    MainDiscount: (Price.MainDiscount * 0.01).toFixed(2),
+    SubDiscount: (Price.SubDiscount * 0.01).toFixed(2),
+    GrandTotal: (Price.GrandTotal * 0.01).toFixed(2),
+  };
+};
 
 //เอาตัวแปรราคาทั้งหมดที่เซ็ตไว้ไปใส่ใน input และ html ที่แสดงราคารวมก่อนคิดเงิน
 const setShowPrice = () => {
@@ -2095,36 +2425,43 @@ const setShowPrice = () => {
   subTotalText.html(showPrice.SubTotal);
   gstText.html(showPrice.GST);
   amountText.html(showPrice.GrandTotal);
-
-}
+};
 
 function trimSpace(param, place) {
   //console.log("Old Card = "+param);
   //console.log("Place = "+place);
   let newText = "";
-  newText = param.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');
+  newText = param.replace(/[^0-9]/g, "").replace(/(\..*?)\..*/g, "$1");
   newText = newText.trim();
   //console.log("New Card = "+newText);
   //return(newText);
 
-  if(place === 1){ //cardNumber
+  if (place === 1) {
+    //cardNumber
     $("#creditCardNumber").val(newText);
-  } else if(place === 2){ //dateNumber
+  } else if (place === 2) {
+    //dateNumber
     $("#creditExpireDate").val(newText);
-  } 
-}//trimSpace
+  }
+} //trimSpace
 
 function checkDomain(param) {
   const domainName = param;
-  const baseUrlAU = 'https://localforyoudomains.com/domain-names/search/?domain=';
-  const baseUrlUS = 'https://www.secureserver.net/products/domain-registration/find?plid=596413&domainToCheck=';
+  const baseUrlAU =
+    "https://localforyoudomains.com/domain-names/search/?domain=";
+  const baseUrlUS =
+    "https://www.secureserver.net/products/domain-registration/find?plid=596413&domainToCheck=";
   //const baseUrlUS = 'https://www.godaddy.com/th-th/domainsearch/find?domainToCheck=';
 
-  $('#domainHelpAU').find('a').attr('href', baseUrlAU + domainName);
-  $('#domainHelpUS').find('a').attr('href', baseUrlUS + domainName);
-}//checkDomain
+  $("#domainHelpAU")
+    .find("a")
+    .attr("href", baseUrlAU + domainName);
+  $("#domainHelpUS")
+    .find("a")
+    .attr("href", baseUrlUS + domainName);
+} //checkDomain
 
-$("#byAgent").change(function(){
+$("#byAgent").change(function () {
   if ($(this).val() === "Other") {
     $("#byAgent").css("width", "35%");
     $("#otherAgent").fadeIn().css("display", "inline-block");
@@ -2134,16 +2471,15 @@ $("#byAgent").change(function(){
   }
 });
 
-
-$("#posSystem").change(function(){
+$("#posSystem").change(function () {
   if ($(this).val() === "other") {
     $("#datePOSBox").fadeIn(300);
-  }else{
+  } else {
     $("#datePOSBox").fadeOut(300);
   }
-})
+});
 
-$("#CheckedBoxSkipEmailCheck").on("change", function() {
+$("#CheckedBoxSkipEmailCheck").on("change", function () {
   if ($(this).is(":checked")) {
     $("#emailUsed").hide();
     $("#emailunUsed").hide();
@@ -2152,8 +2488,12 @@ $("#CheckedBoxSkipEmailCheck").on("change", function() {
 });
 
 function checkEmailUsed(email) {
-  if ($("#CheckedBoxSkipEmailCheck").is(":checked")) { return false; }
-  if (email.length<5){ return false; }
+  if ($("#CheckedBoxSkipEmailCheck").is(":checked")) {
+    return false;
+  }
+  if (email.length < 5) {
+    return false;
+  }
   const checkEmail = email;
   const emailunUsed = $("#emailunUsed");
   const emailUsed = $("#emailUsed");
@@ -2161,22 +2501,24 @@ function checkEmailUsed(email) {
 
   $.ajax({
     url: "assets/function/checkEmail.php",
-    method: 'POST',
-    dataType: 'json',
+    method: "POST",
+    dataType: "json",
     data: {
-      "email": checkEmail,
+      email: checkEmail,
     },
-  }).done(function(res) {
-    if (res.result === "used") {
-      emailExist.val(res.result);
-      emailUsed.show();
-      emailunUsed.hide();
-    } else if (res.result === "unused") {
-      emailExist.val(res.result);
-      emailunUsed.show();
-      emailUsed.hide();
-    }
-  }).fail(function(xhr, status, error) {
-    console.error("Error checking email:", status, error);
-  });
+  })
+    .done(function (res) {
+      if (res.result === "used") {
+        emailExist.val(res.result);
+        emailUsed.show();
+        emailunUsed.hide();
+      } else if (res.result === "unused") {
+        emailExist.val(res.result);
+        emailunUsed.show();
+        emailUsed.hide();
+      }
+    })
+    .fail(function (xhr, status, error) {
+      console.error("Error checking email:", status, error);
+    });
 }

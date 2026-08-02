@@ -107,6 +107,9 @@
 
                     <div class="mb-3">
                         <input class="btn btn-warning" type="button" value="Contract" onclick="genPDF();">
+                        <input class="btn btn-warning" id="docusignSendBtn" type="button"
+                               value="Send for Signature" onclick="sendContractsForSignature();">
+                        <div id="docusignStatus" class="small mt-2" style="display:none;"></div>
                     </div>
 
                     <!-- TH Payment Section -->

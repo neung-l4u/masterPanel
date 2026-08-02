@@ -9,34 +9,42 @@ $level = $_SESSION['level'];
 <link rel="stylesheet" href="../../../plugins/fontawesome-free/css/all.min.css">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="main.php">
-            <img src="../assets/img/logo-login2.png" alt="logo"/>
-            Template submission system
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+     <div class="container-fluid">
+          <a class="navbar-brand" href="main.php">
+               <img src="../assets/img/logo-login2.png" alt="logo" />
+               Template submission system
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+               <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+               <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                     <li class="nav-item <?php echo (empty($menu) or ($menu == 'home')) ? 'active':''; ?>">
-                        <a class="nav-link" href="main.php?m=home"><i class="bi bi-file-earmark-medical"></i> Home</a>
+                         <a class="nav-link" href="main.php?m=home"><i class="bi bi-file-earmark-medical"></i> Home</a>
                     </li>
                     <li class="nav-item <?php echo (($menu == 'project') or ($menu == 'detail')) ? 'active':''; ?>">
-                        <a class="nav-link" href="main.php?m=project"><i class="bi bi-cast"></i> Projects</a>
+                         <a class="nav-link" href="main.php?m=project"><i class="bi bi-cast"></i> Projects</a>
                     </li>
                     <li class="nav-item <?php echo (($menu == 'preview') or ($menu == 'custom')) ? 'active':''; ?>">
-                        <a class="nav-link" href="main.php?m=preview"><i class="bi bi-palette"></i> Preview</a>
+                         <a class="nav-link" href="main.php?m=preview"><i class="bi bi-palette"></i> Preview</a>
                     </li>
-                </ul>
-            <form class="d-flex gap-3" role="search">
-            <?php if($level<=3){ ?>
+                    <li
+                         class="nav-item <?php echo (($menu == 'custom-template') or ($menu == 'custom')) ? 'active':''; ?>">
+                         <a class="nav-link" href="main.php?m=custom-template"><i class="bi bi-file-richtext"></i> Custom
+                              Template</a>
+                    </li>
+               </ul>
+               <form class="d-flex gap-3" role="search">
+                    <?php if($level<=3){ ?>
 
-                <a class="nav-link text-white mr-3" href="main.php?m=settings" title="Settings"><img src="../assets/img/icon-setting.png" style="width: 1.5em;" alt="Settings"></a>
-                <?php }?>
+                    <a class="nav-link text-white mr-3" href="main.php?m=settings" title="Settings"><img
+                              src="../assets/img/icon-setting.png" style="width: 1.5em;" alt="Settings"></a>
+                    <?php }?>
 
-                <a class="nav-link text-white mr-3" href="../assets/API/chkLogin.php?act=logout" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
-            </form>
-        </div>
-    </div>
+                    <a class="nav-link text-white mr-3" href="../assets/API/chkLogin.php?act=logout" title="Logout"><i
+                              class="fas fa-sign-out-alt"></i></a>
+               </form>
+          </div>
+     </div>
 </nav>

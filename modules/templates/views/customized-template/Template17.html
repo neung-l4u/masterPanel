@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoEats — Authentic Thai · Brisbane & Melbourne</title>
+<meta name="description" content="DemoEats — Authentic Thai. Fresh local flavors, best enjoyed at our table. Two kitchens in Brisbane & Melbourne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F5ECDC;
+  --cream-tint:#F0E3C9;
+  --cobalt:#2020C4;
+  --cobalt-deep:#1717A8;
+  --powder:#BCD6F5;
+  --powder-deep:#A8C9F2;
+  --crimson:#C22742;
+  --white:#FFFDF8;
+  --grot:'Schibsted Grotesk',sans-serif;
+  --mono:'Courier Prime',monospace;
+  --radius-panel:24px;
+  --radius-frame:14px;
+  --pad: clamp(20px, 4.5vw, 64px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--cream);
+  color:var(--cobalt);
+  font-family:var(--grot);
+  font-size:clamp(15px,1.05vw,17px);
+  line-height:1.55;
+  overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+a{color:inherit}
+h1,h2,h3{font-weight:500;line-height:1.04;letter-spacing:-.01em}
+.mono{font-family:var(--mono)}
+button{font-family:inherit;cursor:pointer}
+::selection{background:var(--cobalt);color:var(--cream)}
+:focus-visible{outline:3px solid var(--cobalt);outline-offset:3px;border-radius:4px}
+
+/* ---------- announcement bar ---------- */
+.announce{
+  background:var(--crimson);color:var(--white);
+  font-family:var(--mono);font-size:12px;letter-spacing:.18em;
+  text-align:center;padding:8px 16px;text-transform:uppercase;
+}
+
+/* ---------- nav ---------- */
+.nav{
+  position:sticky;top:0;z-index:60;
+  background:var(--cream);
+  transition:box-shadow .3s ease, background .3s ease;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled{background:var(--white);border-bottom:1px solid var(--cobalt)}
+.nav-inner{
+  max-width:1440px;margin:0 auto;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  padding:14px var(--pad);gap:16px;
+}
+.nav-links{display:flex;gap:clamp(14px,2.4vw,34px);align-items:center}
+.nav-links a{
+  text-decoration:none;font-weight:700;font-size:14px;letter-spacing:.02em;
+  padding:12px 2px;position:relative;
+}
+.nav-links a::after{
+  content:"";position:absolute;left:0;right:100%;bottom:8px;height:2px;
+  background:var(--cobalt);transition:right .28s ease;
+}
+.nav-links a:hover::after{right:0}
+.brand{justify-self:center;text-decoration:none;text-align:center;line-height:1}
+.brand .wordmark{font-size:clamp(24px,2.4vw,32px);font-weight:700;letter-spacing:-.02em;font-style:italic}
+.brand .sub{font-family:var(--mono);font-size:9px;letter-spacing:.42em;text-transform:uppercase;display:block;margin-top:3px}
+.nav-cta{justify-self:end;display:flex;align-items:center;gap:14px}
+.pill{
+  display:inline-block;background:var(--cobalt);color:var(--white);
+  text-decoration:none;font-weight:700;font-size:13px;letter-spacing:.06em;
+  padding:14px 22px;border-radius:6px;border:1px solid var(--cobalt);
+  transition:background .2s ease,color .2s ease, transform .2s ease;
+  min-height:44px;display:inline-flex;align-items:center;
+}
+.pill:hover{background:var(--cream);color:var(--cobalt)}
+.pill.ghost{background:transparent;color:var(--cobalt)}
+.pill.ghost:hover{background:var(--cobalt);color:var(--white)}
+.burger{display:none;background:none;border:2px solid var(--cobalt);border-radius:6px;width:44px;height:44px;flex-direction:column;gap:5px;align-items:center;justify-content:center}
+.burger span{display:block;width:20px;height:2px;background:var(--cobalt)}
+
+/* mobile menu */
+.mmenu{
+  display:none;position:fixed;inset:0;z-index:70;background:var(--cream);
+  padding:24px var(--pad);flex-direction:column;
+}
+.mmenu.open{display:flex}
+.mmenu-top{display:flex;justify-content:space-between;align-items:center}
+.mmenu a.mlink{
+  font-size:clamp(34px,9vw,52px);font-weight:500;text-decoration:none;
+  padding:14px 0;border-bottom:1px solid var(--cobalt);
+}
+.mmenu nav{margin-top:40px;display:flex;flex-direction:column}
+.close-m{background:none;border:2px solid var(--cobalt);border-radius:6px;width:44px;height:44px;font-size:20px;color:var(--cobalt)}
+
+/* ---------- hero ---------- */
+.hero{
+  max-width:1440px;margin:0 auto;
+  display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(24px,4vw,64px);
+  align-items:center;padding:clamp(24px,4vw,56px) var(--pad) clamp(40px,6vw,80px);
+  min-height:calc(100vh - 130px);
+}
+.hero-visual{position:relative}
+.hero-stack{position:relative;transform-style:preserve-3d;will-change:transform}
+.hero-frame{
+  border:1.5px solid var(--cobalt);border-radius:var(--radius-frame);
+  overflow:hidden;background:var(--powder);
+  transform:rotate(-1.4deg);
+}
+.hero-frame img{width:100%;height:clamp(340px,58vh,620px);object-fit:cover}
+.sticker{
+  position:absolute;font-family:var(--mono);font-size:12px;line-height:1.3;
+  background:var(--powder);color:var(--cobalt);border:1.5px solid var(--cobalt);
+  padding:14px 18px;letter-spacing:.04em;text-align:center;
+  border-radius:58% 42% 55% 45% / 48% 55% 45% 52%;
+  transform:rotate(-9deg);
+  z-index:3;
+}
+.sticker.hero-sticker{top:-26px;left:-14px}
+.hero-copy{max-width:560px}
+.hero-copy .eyebrow{
+  font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;
+  margin-bottom:18px;display:flex;align-items:center;gap:10px;
+}
+.hero-copy .eyebrow::before{content:"";width:34px;height:1.5px;background:var(--cobalt)}
+.hero-copy h1{
+  font-size:clamp(42px,5.6vw,84px);font-weight:500;margin-bottom:22px;
+}
+.hero-copy h1 .line{display:block;overflow:hidden}
+.hero-copy h1 .line span{display:inline-block;transform:translateY(110%);transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+.hero-copy h1.in .line span{transform:translateY(0)}
+.hero-copy h1 .line:nth-child(2) span{transition-delay:.12s}
+.hero-copy h1 .line:nth-child(3) span{transition-delay:.24s}
+.hero-copy h1 em{font-style:italic;font-weight:500}
+.hero-copy p.lede{font-size:clamp(16px,1.3vw,19px);margin-bottom:30px;max-width:44ch}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.scroll-cue{
+  margin-top:clamp(30px,4vw,54px);font-family:var(--mono);font-size:11px;
+  letter-spacing:.28em;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px;
+}
+.scroll-cue .dot{width:8px;height:8px;border-radius:50%;background:var(--cobalt);animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(-3px)}50%{transform:translateY(5px)}}
+.drag-hint{
+  position:absolute;bottom:-14px;right:6px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.2em;text-transform:uppercase;background:var(--white);
+  border:1.5px solid var(--cobalt);border-radius:20px;padding:8px 14px;transform:rotate(2deg);
+}
+
+/* ---------- ticker (typewriter cycle — nothing slides) ---------- */
+.strip{
+  background:var(--white);border-top:1.5px solid var(--cobalt);border-bottom:1.5px solid var(--cobalt);
+  padding:16px var(--pad);
+}
+.strip-inner{
+  max-width:1440px;margin:0 auto;display:flex;justify-content:space-between;gap:24px;
+  font-family:var(--mono);font-size:clamp(12px,1vw,14px);letter-spacing:.14em;
+}
+.strip-item{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.strip-item .ic{font-size:15px}
+.strip-item .tw{min-width:20ch}
+.strip-item .caret{display:inline-block;width:8px;height:1.1em;background:var(--cobalt);vertical-align:text-bottom;animation:blink 1s steps(1) infinite;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+@media(max-width:1000px){.strip-item:nth-child(3){display:none}}
+@media(max-width:640px){.strip-item:nth-child(2){display:none}.strip-item .tw{min-width:0}}
+
+/* ---------- generic section shell ---------- */
+.section{max-width:1440px;margin:0 auto;padding:clamp(56px,8vw,120px) var(--pad)}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:clamp(28px,4vw,48px)}
+.sec-head h2{font-size:clamp(30px,3.4vw,52px)}
+.sec-head .mono-link{
+  font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+  text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:10px 0;white-space:nowrap;
+}
+.sec-head .mono-link .arr{display:inline-flex;width:26px;height:26px;border:1.5px solid var(--cobalt);border-radius:50%;align-items:center;justify-content:center;transition:transform .25s ease}
+.sec-head .mono-link:hover .arr{transform:translateX(5px)}
+
+/* ---------- menu / dish showcase (gravity drop cards) ---------- */
+.dish-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.dish-card{
+  background:var(--cream-tint);border-radius:var(--radius-frame);
+  padding:16px 16px 22px;position:relative;
+  transform:translateY(-70vh) rotate(var(--r,0deg));
+  transition:transform 1s cubic-bezier(.3,1.35,.45,1);
+  transition-delay:var(--d,0s);
+}
+.dish-grid.landed .dish-card{transform:translateY(0) rotate(0deg)}
+.dish-card.feature{background:var(--powder)}
+.dish-card .ph{border-radius:10px;overflow:hidden;margin-bottom:16px}
+.dish-card .ph img{width:100%;aspect-ratio:1/1.05;object-fit:cover;transition:transform .5s ease}
+.dish-card:hover .ph img{transform:scale(1.06) rotate(.5deg)}
+.dish-card h3{font-size:clamp(19px,1.6vw,24px);margin-bottom:6px}
+.dish-card .desc{font-size:14px;opacity:.92}
+.dish-card .tag{
+  position:absolute;top:6px;left:8px;z-index:2;
+  font-family:var(--mono);font-size:11px;letter-spacing:.05em;
+  padding:10px 14px;background:var(--cream);border:1.5px solid var(--cobalt);
+  border-radius:56% 44% 52% 48%/50% 56% 44% 50%;transform:rotate(-8deg);
+}
+.dish-card .shop{
+  margin-top:14px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:8px 0;
+}
+.dish-card .shop:hover{text-decoration:underline}
+@media(max-width:1020px){.dish-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.dish-grid{grid-template-columns:1fr}}
+
+/* ---------- story panel (powder blue, edge slide-ins) ---------- */
+.story-panel{
+  background:var(--powder);border-radius:var(--radius-panel);
+  padding:clamp(40px,6vw,90px) var(--pad);
+  max-width:1360px;margin:0 auto;
+}
+.story-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,80px);
+  align-items:center;
+}
+.story-row + .story-row{margin-top:clamp(56px,8vw,110px)}
+.story-frame{
+  border:1.5px solid var(--cobalt);border-radius:var(--radius-frame);overflow:hidden;
+  transform:rotate(-2deg) translateX(-16vw);opacity:0;
+  transition:transform 1s cubic-bezier(.2,.8,.2,1),opacity .8s ease;
+}
+.story-row.rev .story-frame{transform:rotate(2deg) translateX(16vw)}
+.story-row.vis .story-frame{transform:rotate(-2deg) translateX(0);opacity:1}
+.story-row.rev.vis .story-frame{transform:rotate(2deg) translateX(0)}
+.story-frame img{width:100%;height:clamp(280px,40vw,460px);object-fit:cover}
+.story-copy{position:relative}
+.story-copy .rot-label{
+  font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+  display:inline-block;transform:rotate(-3deg);background:var(--white);
+  border:1.5px solid var(--cobalt);padding:8px 14px;border-radius:20px;margin-bottom:22px;
+}
+.story-copy h2{font-size:clamp(30px,3.6vw,54px);margin-bottom:20px}
+.story-copy p{max-width:52ch;margin-bottom:14px}
+.story-copy .dropcap::first-letter{
+  font-size:3.4em;font-weight:600;float:left;line-height:.82;padding:4px 10px 0 0;font-style:italic;
+}
+@media(max-width:860px){
+  .story-row{grid-template-columns:1fr}
+  .story-row.rev .story-frame{order:-1}
+}
+
+/* ---------- quote (word illumination) ---------- */
+.quote-wrap{position:relative;max-width:1360px;margin:0 auto;padding:0 var(--pad)}
+.quote-panel{
+  background:var(--cream-tint);border-radius:var(--radius-panel);
+  padding:clamp(56px,8vw,110px) clamp(24px,7vw,120px);
+  text-align:center;position:relative;
+}
+.quote-panel blockquote{
+  font-size:clamp(24px,3.3vw,46px);line-height:1.22;font-weight:500;max-width:22ch;margin:0 auto;
+}
+.quote-panel blockquote .w{opacity:.18;transition:opacity .35s ease}
+.quote-panel blockquote .w.lit{opacity:1}
+.quote-panel cite{
+  display:block;margin-top:26px;font-style:normal;font-family:var(--mono);
+  font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+}
+.float-cut{
+  position:absolute;border:1.5px solid var(--cobalt);border-radius:var(--radius-frame);
+  overflow:hidden;width:clamp(110px,14vw,190px);z-index:2;will-change:transform;
+}
+.float-cut img{width:100%;aspect-ratio:1;object-fit:cover}
+.fc1{top:-40px;right:4%;transform:rotate(6deg)}
+.fc2{bottom:-34px;left:5%;transform:rotate(-7deg)}
+@media(max-width:640px){.float-cut{display:none}}
+
+/* ---------- gallery (curtain / clip-path reveals) ---------- */
+.gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.gal-item{position:relative;border-radius:var(--radius-frame);overflow:hidden;border:1.5px solid var(--cobalt)}
+.gal-item:nth-child(2),.gal-item:nth-child(5){transform:translateY(clamp(12px,2vw,28px))}
+.gal-item .mask{clip-path:inset(0 0 100% 0);transition:clip-path .9s cubic-bezier(.6,.05,.2,1);transition-delay:var(--d,0s)}
+.gal-item.vis .mask{clip-path:inset(0 0 0% 0)}
+.gal-item img{width:100%;height:clamp(220px,26vw,360px);object-fit:cover;transition:transform .6s ease}
+.gal-item:hover img{transform:scale(1.07)}
+.gal-item .idx{
+  position:absolute;bottom:10px;left:12px;font-family:var(--mono);font-size:12px;
+  letter-spacing:.12em;background:var(--cream);border:1.5px solid var(--cobalt);
+  padding:6px 10px;border-radius:14px;
+}
+@media(max-width:860px){.gal-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.gal-grid{grid-template-columns:1fr}.gal-item:nth-child(2),.gal-item:nth-child(5){transform:none}}
+
+/* ---------- locations (ticket cards, tabbed hours) ---------- */
+.loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.loc-card{
+  border-radius:var(--radius-panel);padding:clamp(24px,3vw,40px);
+  position:relative;background:var(--cream-tint);
+  border:1.5px solid var(--cobalt);
+}
+.loc-card.melb{background:var(--powder)}
+.loc-card .city-mono{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:10px}
+.loc-card h3{font-size:clamp(28px,2.8vw,44px);margin-bottom:16px}
+.loc-card .addr{margin-bottom:6px}
+.loc-card .tel{font-family:var(--mono);font-size:14px;letter-spacing:.08em;text-decoration:none;display:inline-block;padding:8px 0}
+.loc-card .tel:hover{text-decoration:underline}
+.badge-24{
+  position:absolute;top:-20px;right:22px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-align:center;line-height:1.35;
+  background:var(--crimson);color:var(--white);border:1.5px solid var(--cobalt);
+  padding:16px 14px;border-radius:56% 44% 52% 48%/50% 56% 44% 50%;
+  transform:rotate(7deg);animation:wob 5s ease-in-out infinite;
+}
+@keyframes wob{0%,100%{transform:rotate(7deg)}50%{transform:rotate(3deg)}}
+.hours-tabs{display:flex;gap:8px;margin:20px 0 0;flex-wrap:wrap}
+.hours-tabs button{
+  font-family:var(--mono);font-size:12px;letter-spacing:.1em;
+  background:transparent;border:1.5px solid var(--cobalt);color:var(--cobalt);
+  padding:11px 16px;border-radius:20px;min-height:44px;
+  transition:background .2s ease,color .2s ease;
+}
+.hours-tabs button[aria-selected="true"]{background:var(--cobalt);color:var(--white)}
+.hours-pane{
+  margin-top:14px;font-family:var(--mono);font-size:14px;letter-spacing:.04em;
+  border-top:1.5px dashed var(--cobalt);padding-top:14px;min-height:52px;
+}
+.loc-map{
+  margin-top:22px;border:1.5px solid var(--cobalt);border-radius:var(--radius-frame);overflow:hidden;
+}
+.loc-map iframe{width:100%;height:210px;border:0;display:block;filter:saturate(.9)}
+.loc-card .order-btn{margin-top:22px;width:100%;justify-content:center;font-size:14px;padding:16px 22px}
+@media(max-width:900px){.loc-grid{grid-template-columns:1fr}.badge-24{right:14px}}
+
+/* ---------- big CTA (scroll expansion) ---------- */
+.cta-outer{padding:clamp(56px,8vw,120px) 0}
+.cta-panel{
+  background:var(--cobalt);color:var(--cream);
+  border-radius:var(--radius-panel);
+  margin:0 auto;max-width:1360px;
+  width:min(88%,1360px);
+  padding:clamp(56px,9vw,130px) var(--pad);
+  text-align:center;
+  transform:scale(.92);transition:transform .9s cubic-bezier(.2,.7,.2,1),width .9s cubic-bezier(.2,.7,.2,1);
+}
+.cta-panel.vis{transform:scale(1);width:min(96%,1400px)}
+.cta-panel .cookie-mark{font-size:34px;margin-bottom:18px;display:inline-block}
+.cta-panel h2{font-size:clamp(34px,5vw,72px);max-width:16ch;margin:0 auto 18px}
+.cta-panel p{max-width:46ch;margin:0 auto 32px;color:var(--powder)}
+.cta-panel .pill{background:var(--cream);color:var(--cobalt);border-color:var(--cream);font-size:15px;padding:18px 30px}
+.cta-panel .pill:hover{background:var(--cobalt);color:var(--cream);border-color:var(--cream)}
+
+/* ---------- contact ---------- */
+.contact-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(28px,5vw,80px)}
+.contact-side h2{font-size:clamp(30px,3.4vw,52px);margin-bottom:16px}
+.contact-side p{max-width:38ch;margin-bottom:22px}
+.contact-side .mono-note{font-family:var(--mono);font-size:13px;letter-spacing:.06em;border:1.5px dashed var(--cobalt);border-radius:14px;padding:16px 18px;transform:rotate(-1deg);display:inline-block}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field.full{grid-column:1/-1}
+.field label{font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.field input,.field textarea{
+  font-family:var(--mono);font-size:15px;color:var(--cobalt);
+  background:var(--white);border:1.5px solid var(--cobalt);border-radius:10px;
+  padding:15px 16px;min-height:44px;
+  transition:box-shadow .15s ease;
+}
+.field textarea{min-height:140px;resize:vertical}
+.field input:focus,.field textarea:focus{outline:none;box-shadow:0 0 0 4px var(--powder), 0 0 0 5.5px var(--cobalt)}
+.form .submit{grid-column:1/-1;justify-self:start;font-size:15px;padding:17px 34px;border:none;will-change:transform}
+.form-status{grid-column:1/-1;font-family:var(--mono);font-size:13px;letter-spacing:.06em;min-height:20px}
+@media(max-width:860px){.contact-grid{grid-template-columns:1fr}.form{grid-template-columns:1fr}}
+
+/* ---------- footer ---------- */
+.footer-wrap{padding:0 var(--pad) 26px;max-width:1440px;margin:0 auto}
+.footer-panel{
+  background:var(--cobalt);color:var(--cream);border-radius:var(--radius-panel);
+  padding:clamp(44px,6vw,80px) clamp(24px,5vw,80px);
+  display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:clamp(28px,4vw,60px);align-items:start;
+  text-align:center;
+}
+.footer-panel nav{display:flex;flex-direction:column;gap:14px}
+.footer-panel nav a{color:var(--cream);text-decoration:none;font-weight:600;padding:4px 0}
+.footer-panel nav a:hover{text-decoration:underline}
+.footer-mid .mark{font-size:30px;display:inline-block;margin-bottom:14px}
+.footer-mid h3{font-size:clamp(22px,2vw,30px);margin-bottom:10px}
+.footer-mid p{color:var(--powder);font-size:14px;max-width:40ch;margin:0 auto 20px}
+.footer-mid .tagline{font-style:italic}
+.sub-footer{
+  display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:22px 4px 0;font-size:13px;
+}
+.sub-footer .mono{letter-spacing:.06em}
+.sub-footer a{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:860px){.footer-panel{grid-template-columns:1fr}}
+
+/* ---------- mobile order bar ---------- */
+.order-bar{display:none}
+@media(max-width:840px){
+  .order-bar{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:65;
+    background:var(--cobalt);border-top:1.5px solid var(--cream);
+  }
+  .order-bar a{
+    flex:1;text-align:center;color:var(--white);text-decoration:none;font-weight:700;
+    font-size:14px;letter-spacing:.08em;padding:17px 10px;min-height:44px;
+  }
+  .order-bar a + a{border-left:1px solid rgba(245,236,220,.35)}
+  body{padding-bottom:58px}
+  .nav-links,.nav-cta .pill{display:none}
+  .burger{display:flex}
+  .hero{grid-template-columns:1fr;min-height:0}
+  .hero-visual{order:-1}
+  .drag-hint{display:none}
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .dish-card{transform:none!important}
+  .story-frame{transform:rotate(-2deg)!important;opacity:1!important}
+  .story-row.rev .story-frame{transform:rotate(2deg)!important}
+  .quote-panel blockquote .w{opacity:1!important}
+  .gal-item .mask{clip-path:none!important}
+  .cta-panel{transform:none!important;width:min(96%,1400px)!important}
+  .hero-copy h1 .line span{transform:none!important}
+  .hero-stack{transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="announce mono">Now open 24 hours in Somerton · Two kitchens, one standard</div>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#story">About</a>
+      <a href="#menu">Menu</a>
+      <a href="#locations">Locations</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="brand" href="#top" aria-label="DemoEats home">
+      <span class="wordmark">DemoEats</span>
+      <span class="sub">Authentic Thai</span>
+    </a>
+    <div class="nav-cta">
+      <a class="pill" href="#locations">Order Online</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="mmenu-top">
+    <a class="brand" href="#top"><span class="wordmark">DemoEats</span><span class="sub">Authentic Thai</span></a>
+    <button class="close-m" id="closeM" aria-label="Close menu">✕</button>
+  </div>
+  <nav>
+    <a class="mlink" href="#story">About</a>
+    <a class="mlink" href="#menu">Menu</a>
+    <a class="mlink" href="#locations">Locations</a>
+    <a class="mlink" href="#contact">Contact</a>
+  </nav>
+</div>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-visual">
+      <div class="hero-stack" id="heroStack">
+        <div class="sticker hero-sticker">Pastes pounded<br>by hand!</div>
+        <div class="hero-frame">
+          <img src="https://ucarecdn.com/2f265086-389d-4073-b52c-271b054178bf/-/format/auto/-/progressive/yes/HeroImg.png" alt="Signature Thai dishes served family style at DemoEats" fetchpriority="high">
+        </div>
+        <div class="drag-hint mono" aria-hidden="true">← move your cursor →</div>
+      </div>
+    </div>
+    <div class="hero-copy">
+      <p class="eyebrow">Brisbane · Melbourne</p>
+      <h1 id="heroH1">
+        <span class="line"><span>Fresh local</span></span>
+        <span class="line"><span><em>flavors,</em> best</span></span>
+        <span class="line"><span>enjoyed at our table.</span></span>
+      </h1>
+      <p class="lede">Generational recipes, curry pastes pounded by hand, produce from local farmers — nothing from a jar, everything served family style.</p>
+      <div class="hero-ctas">
+        <a class="pill" href="#locations">Order Online</a>
+        <a class="pill ghost" href="#menu">See the Menu</a>
+      </div>
+      <p class="scroll-cue"><span class="dot" aria-hidden="true"></span> Scroll for the good stuff</p>
+    </div>
+  </section>
+
+  <!-- TICKER STRIP — typewriter cycle -->
+  <div class="strip" aria-label="What we stand for">
+    <div class="strip-inner">
+      <div class="strip-item"><span class="ic" aria-hidden="true">✳</span><span class="tw" data-words='["Generational recipes","Nothing from a jar","Two kitchens, one standard"]'></span><span class="caret" aria-hidden="true"></span></div>
+      <div class="strip-item"><span class="ic" aria-hidden="true">✳</span><span class="tw" data-words='["Pastes pounded by hand","Local farm produce","Served family style"]'></span><span class="caret" aria-hidden="true"></span></div>
+      <div class="strip-item"><span class="ic" aria-hidden="true">✳</span><span class="tw" data-words='["Open 24 hours in Somerton","Wok-fresh, every order","Authentic Thai"]'></span><span class="caret" aria-hidden="true"></span></div>
+    </div>
+  </div>
+
+  <!-- MENU / DISH SHOWCASE -->
+  <section class="section" id="menu">
+    <div class="sec-head">
+      <h2>From Our Wok to Your Table</h2>
+      <a class="mono-link" href="#locations">Order All <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+    <div class="dish-grid" id="dishGrid">
+      <article class="dish-card" style="--r:-3deg;--d:0s">
+        <span class="tag">House<br>Favorite</span>
+        <div class="ph"><img loading="lazy" src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt="Tom Yum soup with prawns and herbs"></div>
+        <h3>Tom Yum</h3>
+        <p class="desc">Hot, sour and honest — lemongrass, galangal and lime leaf simmered the way it's been done for three generations.</p>
+        <a class="shop" href="#locations">Order Now →</a>
+      </article>
+      <article class="dish-card" style="--r:4deg;--d:.08s">
+        <span class="tag">Wok<br>Classic</span>
+        <div class="ph"><img loading="lazy" src="https://ucarecdn.com/2b466717-9310-42dd-b8ef-50711b4768ad/-/format/auto/-/progressive/yes/g2.webp" alt="Pad Thai with fresh lime and crushed peanuts"></div>
+        <h3>Pad Thai</h3>
+        <p class="desc">Tamarind pulp we soak ourselves, rice noodles tossed hard and fast, finished with lime and crushed peanuts.</p>
+        <a class="shop" href="#locations">Order Now →</a>
+      </article>
+      <article class="dish-card" style="--r:-4deg;--d:.16s">
+        <span class="tag">Pounded<br>by Hand</span>
+        <div class="ph"><img loading="lazy" src="https://ucarecdn.com/0829a4ea-e255-4b00-b85e-839e935f2c36/-/format/auto/-/progressive/yes/g3.webp" alt="Green curry with vegetables and jasmine rice"></div>
+        <h3>Green Curry</h3>
+        <p class="desc">Green chillies, Thai basil and coconut cream — the paste is pounded in a mortar every morning, never poured from a jar.</p>
+        <a class="shop" href="#locations">Order Now →</a>
+      </article>
+      <article class="dish-card feature" style="--r:3deg;--d:.24s">
+        <span class="tag">Family<br>Style</span>
+        <div class="ph"><img loading="lazy" src="https://ucarecdn.com/a761527c-a84e-42b1-b3e5-b510bc6f38ff/-/format/auto/-/progressive/yes/g4.webp" alt="A shared spread of Thai dishes at the table"></div>
+        <h3>The Shared Table</h3>
+        <p class="desc">Everything lands in the middle. Pick three dishes, add rice for the table, and pass the plates like family.</p>
+        <a class="shop" href="#locations">Order Now →</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- STORY PANEL -->
+  <section class="section" id="story" style="padding-left:0;padding-right:0">
+    <div class="story-panel">
+      <div class="story-row" data-story>
+        <div class="story-frame">
+          <img loading="lazy" src="https://ucarecdn.com/bcdb1f0c-a350-42b3-94cb-c143f16ca96a/-/format/auto/-/progressive/yes/g5.webp" alt="Fresh Thai dishes prepared in the DemoEats kitchen">
+        </div>
+        <div class="story-copy">
+          <span class="rot-label">Our Story</span>
+          <h2>Recipes That Crossed an Ocean</h2>
+          <p class="dropcap">Every curry we serve began in a family kitchen in Thailand, long before it reached Australia. The recipes weren't written down — they were watched, tasted and corrected over generations, then carried here whole.</p>
+          <p>We still make them the slow way: pastes pounded by hand each morning, stocks that simmer for hours, and nothing — truly nothing — from a jar.</p>
+        </div>
+      </div>
+      <div class="story-row rev" data-story>
+        <div class="story-copy">
+          <span class="rot-label">Our Farmers</span>
+          <h2>Two Kitchens, One Standard</h2>
+          <p>Brisbane and Melbourne run on the same rule: if it isn't fresh from a local farmer, it doesn't go in the wok. Herbs, chillies and greens arrive daily, and the menu bends to what the season gives us.</p>
+          <p>It's why the same dish tastes right in both cities — and why it's best enjoyed at our table, served family style.</p>
+        </div>
+        <div class="story-frame">
+          <img loading="lazy" src="https://ucarecdn.com/52910dc8-8d77-44bf-ac9c-62a1afc1f2fc/-/format/auto/-/progressive/yes/onsite.webp" alt="Inside the DemoEats dining room">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <section class="section" style="padding-left:0;padding-right:0">
+    <div class="quote-wrap">
+      <div class="quote-panel">
+        <div class="float-cut fc1" data-float="18"><img loading="lazy" src="https://ucarecdn.com/53f7255e-7c04-4cfb-80ef-a549a251d7d0/-/format/auto/-/progressive/yes/g6.webp" alt=""></div>
+        <div class="float-cut fc2" data-float="-14"><img loading="lazy" src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt=""></div>
+        <blockquote id="quoteBlock">"The kind of Thai food that tastes like someone's grandmother is still checking the seasoning — because, in a way, she is."</blockquote>
+        <cite>— A Regular Since Week One</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="section" id="gallery">
+    <div class="sec-head">
+      <h2>Fresh From the Pass</h2>
+      <a class="mono-link" href="#contact">Book the Table <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+    <div class="gal-grid" id="galGrid">
+      <figure class="gal-item" style="--d:0s"><div class="mask"><img loading="lazy" src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt="Dish one from the DemoEats kitchen"></div><figcaption class="idx">01</figcaption></figure>
+      <figure class="gal-item" style="--d:.1s"><div class="mask"><img loading="lazy" src="https://ucarecdn.com/2b466717-9310-42dd-b8ef-50711b4768ad/-/format/auto/-/progressive/yes/g2.webp" alt="Dish two from the DemoEats kitchen"></div><figcaption class="idx">02</figcaption></figure>
+      <figure class="gal-item" style="--d:.2s"><div class="mask"><img loading="lazy" src="https://ucarecdn.com/0829a4ea-e255-4b00-b85e-839e935f2c36/-/format/auto/-/progressive/yes/g3.webp" alt="Dish three from the DemoEats kitchen"></div><figcaption class="idx">03</figcaption></figure>
+      <figure class="gal-item" style="--d:.05s"><div class="mask"><img loading="lazy" src="https://ucarecdn.com/a761527c-a84e-42b1-b3e5-b510bc6f38ff/-/format/auto/-/progressive/yes/g4.webp" alt="Dish four from the DemoEats kitchen"></div><figcaption class="idx">04</figcaption></figure>
+      <figure class="gal-item" style="--d:.15s"><div class="mask"><img loading="lazy" src="https://ucarecdn.com/bcdb1f0c-a350-42b3-94cb-c143f16ca96a/-/format/auto/-/progressive/yes/g5.webp" alt="Dish five from the DemoEats kitchen"></div><figcaption class="idx">05</figcaption></figure>
+      <figure class="gal-item" style="--d:.25s"><div class="mask"><img loading="lazy" src="https://ucarecdn.com/53f7255e-7c04-4cfb-80ef-a549a251d7d0/-/format/auto/-/progressive/yes/g6.webp" alt="Dish six from the DemoEats kitchen"></div><figcaption class="idx">06</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- LOCATIONS -->
+  <section class="section" id="locations">
+    <div class="sec-head">
+      <h2>Find Your Table</h2>
+      <span class="mono-link" style="cursor:default">Two Kitchens · One Standard</span>
+    </div>
+    <div class="loc-grid">
+
+      <article class="loc-card">
+        <p class="city-mono">Demo2 · Albion</p>
+        <h3>Brisbane</h3>
+        <p class="addr">346 Sandgate Road, Albion QLD 4010</p>
+        <a class="tel mono" href="tel:0732624972">07 3262 4972</a>
+        <div class="hours-tabs" role="tablist" aria-label="Brisbane opening hours">
+          <button role="tab" aria-selected="true" data-pane="Mon &amp; Tue — 5:00pm to 9:00pm">Mon–Tue</button>
+          <button role="tab" aria-selected="false" data-pane="Wed to Fri — 11:30am to 3:00pm, then 5:00pm to 9:00pm">Wed–Fri</button>
+          <button role="tab" aria-selected="false" data-pane="Sat &amp; Sun — 5:00pm to 9:00pm">Sat–Sun</button>
+        </div>
+        <div class="hours-pane" role="tabpanel">Mon &amp; Tue — 5:00pm to 9:00pm</div>
+        <div class="loc-map"><iframe title="Map to DemoEats Brisbane, Albion" src="https://www.google.com/maps?q=-27.428973,153.04233&amp;output=embed" loading="lazy"></iframe></div>
+        <a class="pill order-btn" href="https://demo4.localforyoucarts.com">Order Brisbane →</a>
+      </article>
+
+      <article class="loc-card melb">
+        <span class="badge-24">Open<br>24 hours</span>
+        <p class="city-mono">Somerton</p>
+        <h3>Melbourne</h3>
+        <p class="addr">19 North Park Dr, Somerton VIC 3062</p>
+        <a class="tel mono" href="tel:0407505997">0407 505 997</a>
+        <div class="hours-tabs" role="tablist" aria-label="Melbourne opening hours">
+          <button role="tab" aria-selected="true" data-pane="Every day — open 24 hours. Midnight Pad Thai is not a hypothetical.">All Week</button>
+          <button role="tab" aria-selected="false" data-pane="Yes, even public holidays. The wok never sleeps.">Holidays</button>
+        </div>
+        <div class="hours-pane" role="tabpanel">Every day — open 24 hours. Midnight Pad Thai is not a hypothetical.</div>
+        <div class="loc-map"><iframe title="Map to DemoEats Melbourne, Somerton" src="https://www.google.com/maps?q=-37.6406811,144.9686265&amp;output=embed" loading="lazy"></iframe></div>
+        <a class="pill order-btn" href="https://orders.demoeats.com">Order Melbourne →</a>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- BIG CTA -->
+  <div class="cta-outer">
+    <div class="cta-panel" id="ctaPanel">
+      <span class="cookie-mark" aria-hidden="true">✳</span>
+      <h2>Hungry Now? The Wok Is Already Hot.</h2>
+      <p>Order online from either kitchen — Brisbane by night, Melbourne around the clock. Fresh local flavors, best enjoyed at our table (or yours).</p>
+      <a class="pill" href="#locations">Order Online</a>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <div class="contact-grid">
+      <div class="contact-side">
+        <h2>Say Hello</h2>
+        <p>Booking the family table, planning an event, or just missing our green curry? Write to us — a real person in one of our kitchens reads every message.</p>
+        <p class="mono-note">Tip: for tables of 6+,<br>call the restaurant direct.</p>
+      </div>
+      <form class="form" id="contactForm" novalidate>
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field full">
+          <label for="f-phone">Phone</label>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel">
+        </div>
+        <div class="field full">
+          <label for="f-msg">Message</label>
+          <textarea id="f-msg" name="message" required></textarea>
+        </div>
+        <button class="pill submit" type="submit" id="submitBtn">Send Message</button>
+        <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer-wrap">
+  <div class="footer-panel">
+    <nav aria-label="Footer">
+      <a href="#story">About</a>
+      <a href="#menu">Menu</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#locations">Locations</a>
+    </nav>
+    <div class="footer-mid">
+      <span class="mark" aria-hidden="true">✳</span>
+      <h3>DemoEats — Authentic Thai</h3>
+      <p class="tagline">"Fresh local flavors, best enjoyed at our table."</p>
+      <p>Generational recipes · Pastes pounded by hand · Local farm produce · Served family style</p>
+      <a class="pill" style="background:var(--cream);color:var(--cobalt);border-color:var(--cream)" href="#locations">Order Online</a>
+    </div>
+    <nav aria-label="Locations">
+      <a href="tel:0732624972">Brisbane · 07 3262 4972</a>
+      <a href="tel:0407505997">Melbourne · 0407 505 997</a>
+      <a href="https://demo4.localforyoucarts.com">Order Brisbane</a>
+      <a href="https://orders.demoeats.com">Order Melbourne</a>
+    </nav>
+  </div>
+  <div class="sub-footer">
+    <span class="mono">© DemoEats 2026 · Powered by Local For You</span>
+    <a class="mono" href="https://www.localforyou.com/terms">Terms</a>
+  </div>
+</footer>
+
+<!-- MOBILE ORDER BAR -->
+<div class="order-bar" role="navigation" aria-label="Order online">
+  <a href="https://demo4.localforyoucarts.com">Order Brisbane</a>
+  <a href="https://orders.demoeats.com">Order Melbourne</a>
+</div>
+
+<script>
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* nav shadow */
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', ()=> nav.classList.toggle('scrolled', scrollY > 8), {passive:true});
+
+  /* mobile menu */
+  const mmenu = document.getElementById('mmenu'), burger = document.getElementById('burger');
+  const setMenu = o => { mmenu.classList.toggle('open', o); burger.setAttribute('aria-expanded', o); document.body.style.overflow = o ? 'hidden':''; };
+  burger.addEventListener('click', ()=>setMenu(true));
+  document.getElementById('closeM').addEventListener('click', ()=>setMenu(false));
+  mmenu.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>setMenu(false)));
+
+  /* HERO — headline reveal + cursor-driven 3D tilt */
+  requestAnimationFrame(()=>document.getElementById('heroH1').classList.add('in'));
+  const stack = document.getElementById('heroStack');
+  if(!reduced && matchMedia('(pointer:fine)').matches){
+    const hero = document.querySelector('.hero');
+    let raf=null, tx=0, ty=0;
+    hero.addEventListener('mousemove', e=>{
+      const r = hero.getBoundingClientRect();
+      tx = ((e.clientX - r.left)/r.width - .5);
+      ty = ((e.clientY - r.top)/r.height - .5);
+      if(!raf) raf = requestAnimationFrame(()=>{
+        stack.style.transform = `perspective(900px) rotateY(${tx*7}deg) rotateX(${ty*-6}deg) translate(${tx*10}px, ${ty*8}px)`;
+        raf=null;
+      });
+    });
+    hero.addEventListener('mouseleave', ()=>{ stack.style.transform='perspective(900px) rotateY(0) rotateX(0)'; });
+  }
+
+  /* TICKER — typewriter cycling (no horizontal motion) */
+  document.querySelectorAll('.tw').forEach((el,i)=>{
+    const words = JSON.parse(el.dataset.words);
+    if(reduced){ el.textContent = words[0]; return; }
+    let w=0;
+    function type(word, ci, del){
+      if(del){ if(ci>=0){ el.textContent = word.slice(0,ci); setTimeout(()=>type(word,ci-1,true),28);} else { w=(w+1)%words.length; setTimeout(()=>type(words[w],0,false),300);} }
+      else { if(ci<=word.length){ el.textContent = word.slice(0,ci); setTimeout(()=>type(word,ci+1,false),55);} else setTimeout(()=>type(word,word.length,true),2600); }
+    }
+    setTimeout(()=>type(words[0],0,false), 400 + i*600);
+  });
+
+  /* observers */
+  const io = new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add(e.target.dataset.cls || 'vis'); io.unobserve(e.target); }
+  }),{threshold:.25});
+
+  /* dishes drop */
+  const dg = document.getElementById('dishGrid'); dg.dataset.cls='landed';
+  reduced ? dg.classList.add('landed') : io.observe(dg);
+
+  /* story slide-ins */
+  document.querySelectorAll('[data-story]').forEach(el=> reduced ? el.classList.add('vis') : io.observe(el));
+
+  /* gallery curtains */
+  document.querySelectorAll('.gal-item').forEach(el=> reduced ? el.classList.add('vis') : io.observe(el));
+
+  /* CTA expansion */
+  const cta = document.getElementById('ctaPanel');
+  reduced ? cta.classList.add('vis') : io.observe(cta);
+
+  /* QUOTE — word-by-word illumination tied to scroll */
+  const q = document.getElementById('quoteBlock');
+  const words = q.textContent.trim().split(/\s+/);
+  q.innerHTML = words.map(w=>`<span class="w">${w}</span>`).join(' ');
+  const spans = q.querySelectorAll('.w');
+  if(reduced){ spans.forEach(s=>s.classList.add('lit')); }
+  else{
+    addEventListener('scroll', ()=>{
+      const r = q.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, (innerHeight*0.85 - r.top) / (r.height + innerHeight*0.45)));
+      const n = Math.floor(p * spans.length);
+      spans.forEach((s,i)=>s.classList.toggle('lit', i < n));
+    },{passive:true});
+  }
+
+  /* floating cutouts parallax */
+  if(!reduced){
+    const floats = document.querySelectorAll('[data-float]');
+    addEventListener('scroll', ()=>{
+      floats.forEach(f=>{
+        const r = f.parentElement.getBoundingClientRect();
+        const p = (r.top + r.height/2 - innerHeight/2) / innerHeight;
+        const amt = parseFloat(f.dataset.float);
+        const rot = f.classList.contains('fc1') ? 6 : -7;
+        f.style.transform = `translateY(${p*amt*3}px) rotate(${rot}deg)`;
+      });
+    },{passive:true});
+  }
+
+  /* location hour tabs */
+  document.querySelectorAll('.hours-tabs').forEach(tabs=>{
+    const pane = tabs.parentElement.querySelector('.hours-pane');
+    tabs.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected','false'));
+        btn.setAttribute('aria-selected','true');
+        pane.innerHTML = btn.dataset.pane;
+      });
+    });
+  });
+
+  /* magnetic submit button */
+  const sub = document.getElementById('submitBtn');
+  if(!reduced && matchMedia('(pointer:fine)').matches){
+    sub.addEventListener('mousemove', e=>{
+      const r = sub.getBoundingClientRect();
+      sub.style.transform = `translate(${(e.clientX-r.left-r.width/2)*.25}px, ${(e.clientY-r.top-r.height/2)*.35}px)`;
+    });
+    sub.addEventListener('mouseleave', ()=> sub.style.transform='');
+  }
+
+  /* form */
+  document.getElementById('contactForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const f = e.target, st = document.getElementById('formStatus');
+    if(!f.name.value.trim() || !f.email.value.trim() || !f.message.value.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.value)){
+      st.textContent = '→ Please add your name, a valid email, and a message.'; return;
+    }
+    st.textContent = '→ Message sent. We\u2019ll reply from the kitchen soon.';
+    f.reset();
+  });
+})();
+</script>
+</body>
+</html>

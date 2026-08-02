@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoEats — Authentic Thai · Brisbane & Melbourne</title>
+<meta name="description" content="Fresh local flavors, best enjoyed at our table. Authentic Thai in Brisbane & Melbourne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6E7CE;
+  --accent:#4B7A3A;
+  --ink:#22231F;
+  --char:#26272A;
+  --char-2:#1D1E20;
+  --cream:#DED6C6;
+  --sans:'Plus Jakarta Sans',sans-serif;
+  --mono:'Space Mono',monospace;
+  --pad:clamp(1.1rem,4vw,3.2rem);
+  --r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  font-family:var(--sans);font-weight:400;color:var(--ink);
+  background:var(--bg);overflow-x:hidden;line-height:1.55;font-size:15px;
+  transition:background .9s cubic-bezier(.65,0,.35,1),color .9s;
+}
+img{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--ink);color:var(--bg)}
+
+/* ===== nav ===== */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:.85rem var(--pad);background:var(--bg);
+  border-bottom:1px solid transparent;transition:background .9s,border-color .4s;
+}
+.nav.solid{border-bottom-color:rgba(34,35,31,.3)}
+.nav__set{display:flex;gap:clamp(.7rem,2vw,1.8rem);list-style:none;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase}
+.nav__set a{display:inline-flex;align-items:center;gap:.45rem;text-decoration:none;padding:.5rem .1rem;min-height:40px}
+.nav__set .dot{width:8px;height:8px;border-radius:50%;border:1px solid currentColor;transition:background .3s}
+.nav__set a.on .dot,.nav__set a:hover .dot{background:currentColor}
+.nav__mark{position:absolute;left:50%;transform:translateX(-50%);font-weight:700;font-size:1.05rem;letter-spacing:-.03em;text-decoration:none;
+  opacity:0;transition:opacity .4s}
+.nav.solid .nav__mark{opacity:1}
+.nav__cta{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;
+  border:1px solid var(--ink);border-radius:999px;padding:.6rem 1.1rem;min-height:40px;display:inline-flex;align-items:center;
+  position:relative;overflow:hidden;z-index:1;transition:color .35s}
+.nav__cta::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--ink);transform:translateY(101%);transition:transform .4s cubic-bezier(.76,0,.24,1)}
+.nav__cta:hover::before{transform:translateY(0)}
+.nav__cta:hover{color:var(--bg)}
+@media(max-width:720px){.nav__set li:nth-child(n+3){display:none}}
+
+/* ===== HERO: colour-morphing flipword ===== */
+.hero{padding:5.6rem 0 0;text-align:center;position:relative}
+.hero__logo{font-weight:700;font-size:clamp(3.4rem,11vw,9rem);letter-spacing:-.055em;line-height:1;padding:0 var(--pad) 1.4rem;position:relative;display:inline-block}
+.hero__logo sup{font-size:.16em;vertical-align:super;font-weight:500;letter-spacing:0}
+.hero__logo i{font-style:normal;display:inline-block;opacity:0;transform:translateY(.35em) scale(.9);animation:pop .8s cubic-bezier(.34,1.4,.5,1) forwards}
+@keyframes pop{to{opacity:1;transform:none}}
+.hero__rule{height:1px;background:rgba(34,35,31,.35);width:100%}
+.hero__line{padding:clamp(2rem,5vw,3.6rem) var(--pad) clamp(1.5rem,4vw,2.6rem);
+  font-size:clamp(1.6rem,4.6vw,3.4rem);font-weight:500;letter-spacing:-.03em;line-height:1.14}
+.flip{display:block;color:var(--accent);transition:color .9s;position:relative;height:1.2em;overflow:hidden}
+.flip span{position:absolute;inset:0;display:grid;place-items:center;
+  opacity:0;transform:translateY(70%) rotateX(-40deg);transform-origin:top;transition:opacity .55s,transform .65s cubic-bezier(.22,1,.36,1)}
+.flip span.on{opacity:1;transform:none}
+.flip span.out{opacity:0;transform:translateY(-70%) rotateX(40deg)}
+/* dish glyph row */
+.glyphs{display:flex;justify-content:center;align-items:flex-end;gap:clamp(.6rem,3vw,3.4rem);padding:0 var(--pad) clamp(2rem,5vw,3.5rem);flex-wrap:wrap}
+.glyphs button{background:none;border:0;cursor:pointer;padding:.4rem;min-width:44px;min-height:44px;
+  color:var(--ink);transition:transform .45s cubic-bezier(.34,1.4,.5,1),color .7s;
+  opacity:0;transform:translateY(26px)}
+.hero.in .glyphs button{opacity:1;transform:none;transition:opacity .6s ease,transform .7s cubic-bezier(.34,1.35,.5,1),color .7s}
+.hero.in .glyphs button:nth-child(2){transition-delay:.07s}
+.hero.in .glyphs button:nth-child(3){transition-delay:.14s}
+.hero.in .glyphs button:nth-child(4){transition-delay:.21s}
+.hero.in .glyphs button:nth-child(5){transition-delay:.28s}
+.glyphs svg{width:clamp(38px,7vw,74px);height:auto;display:block}
+.glyphs button:hover{transform:translateY(-8px) rotate(-4deg)}
+.glyphs button[aria-pressed="true"]{color:var(--accent)}
+@media(prefers-reduced-motion:reduce){
+  .hero__logo i{opacity:1;transform:none;animation:none}
+  .glyphs button{opacity:1;transform:none}
+  .flip span{transition:none}
+}
+
+/* ===== reveal helper ===== */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .9s cubic-bezier(.22,1,.36,1)}
+.in .rv,.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+
+/* ===== RECIPE (pill gravity drop) ===== */
+.recipe{padding:clamp(2.5rem,6vw,5rem) var(--pad);display:grid;gap:2rem;max-width:1250px;margin:0 auto}
+@media(min-width:900px){.recipe{grid-template-columns:.9fr 1.1fr;align-items:center;gap:4rem}}
+.recipe h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:600;letter-spacing:-.03em;line-height:1.16;margin-bottom:1rem;max-width:18ch}
+.recipe p{font-size:.92rem;max-width:44ch;margin-bottom:1.8rem;color:#4a4b45}
+.lnk{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;
+  border:1px solid var(--ink);border-radius:6px;padding:.7rem 1.1rem;display:inline-flex;align-items:center;min-height:44px;
+  position:relative;overflow:hidden;z-index:1;transition:color .35s}
+.lnk::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--ink);transform:translateY(101%);transition:transform .4s cubic-bezier(.76,0,.24,1)}
+.lnk:hover::before{transform:translateY(0)}
+.lnk:hover{color:var(--bg)}
+.stack{background:var(--char);border-radius:var(--r);padding:clamp(2rem,4vw,3.4rem);display:grid;justify-items:center;gap:.9rem}
+.stack .p{background:transparent;border:1px solid var(--cream);color:var(--cream);border-radius:999px;
+  padding:.55rem 2.2rem;font-size:clamp(1.3rem,2.6vw,2rem);font-weight:500;letter-spacing:-.02em;
+  opacity:0;transform:translateY(-46px);transition:opacity .5s,transform .75s cubic-bezier(.34,1.5,.5,1)}
+.stack .x{width:38px;height:38px;border:1px solid rgba(222,214,198,.6);border-radius:50%;display:grid;place-items:center;color:var(--cream);font-size:.9rem;
+  opacity:0;transform:scale(.4);transition:opacity .4s,transform .5s cubic-bezier(.34,1.6,.5,1)}
+.recipe.in .stack .p,.recipe.in .stack .x{opacity:1;transform:none}
+.recipe.in .stack>*:nth-child(2){transition-delay:.12s}
+.recipe.in .stack>*:nth-child(3){transition-delay:.2s}
+.recipe.in .stack>*:nth-child(4){transition-delay:.32s}
+.recipe.in .stack>*:nth-child(5){transition-delay:.4s}
+.recipe.in .stack>*:nth-child(6){transition-delay:.52s}
+.recipe.in .stack>*:nth-child(7){transition-delay:.6s}
+@media(prefers-reduced-motion:reduce){.stack .p,.stack .x{opacity:1;transform:none}}
+
+/* ===== CAROUSEL ===== */
+.carou{max-width:1250px;margin:0 auto;padding:0 var(--pad) clamp(2.5rem,6vw,4.5rem)}
+.carou__box{background:var(--accent);border-radius:var(--r);overflow:hidden;display:grid;transition:background .9s}
+@media(min-width:860px){.carou__box{grid-template-columns:1fr 1fr}}
+.carou__stage{position:relative;overflow:hidden;min-height:280px;margin:clamp(.6rem,1.4vw,1rem);border-radius:calc(var(--r) - 6px)}
+.carou__stage figure{position:absolute;inset:0;opacity:0;transform:scale(1.08);transition:opacity .8s,transform 1.2s cubic-bezier(.22,1,.36,1)}
+.carou__stage figure.on{opacity:1;transform:none}
+.carou__stage img{width:100%;height:100%;object-fit:cover}
+.carou__text{padding:clamp(1.6rem,4vw,3.4rem);display:grid;align-content:center;gap:.8rem;color:#fff}
+.carou__text h3{font-size:clamp(1.3rem,2.6vw,2rem);font-weight:600;letter-spacing:-.03em;line-height:1.15;max-width:16ch}
+.carou__text p{font-size:.9rem;max-width:36ch;opacity:.92}
+.carou__text .slot{min-height:5.6em}
+.carou__ctl{display:flex;align-items:center;justify-content:space-between;margin-top:1.2rem}
+.carou__dots{display:flex;gap:.5rem}
+.carou__dots button{width:8px;height:8px;border-radius:50%;border:1px solid #fff;background:transparent;cursor:pointer;padding:0;position:relative;transition:background .3s}
+.carou__dots button::after{content:"";position:absolute;inset:-14px}
+.carou__dots button[aria-current="true"]{background:#fff}
+.carou__arrows{display:flex;gap:.5rem}
+.carou__arrows button{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.7);background:transparent;color:#fff;cursor:pointer;
+  display:grid;place-items:center;transition:background .3s,color .3s,transform .3s}
+.carou__arrows button:hover{background:#fff;color:var(--accent);transform:scale(1.06)}
+
+/* ===== BIG CARDS ===== */
+.cards{max-width:1250px;margin:0 auto;padding:0 var(--pad) clamp(2.5rem,6vw,4.5rem);display:grid;gap:1.4rem}
+@media(min-width:860px){.cards{grid-template-columns:1fr 1fr}}
+.card{position:relative;border:1px solid rgba(34,35,31,.4);border-radius:var(--r);padding:.7rem;
+  opacity:0;transform:translateY(40px);transition:opacity .8s,transform .9s cubic-bezier(.22,1,.36,1)}
+.cards.in .card{opacity:1;transform:none}
+.cards.in .card:nth-child(2){transition-delay:.14s}
+.card__inner{position:relative;border-radius:calc(var(--r) - 5px);overflow:hidden;min-height:clamp(280px,34vw,420px);display:flex;align-items:flex-end}
+.card__inner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.1s cubic-bezier(.22,1,.36,1)}
+.card:hover .card__inner img{transform:scale(1.05)}
+.card__inner::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(15,15,15,.78))}
+.card__body{position:relative;z-index:2;padding:1.6rem;color:var(--cream)}
+.card__body h3{font-size:clamp(1.4rem,3vw,2.3rem);font-weight:600;letter-spacing:-.03em;line-height:1.08;margin-bottom:1.2rem}
+.card__go{display:inline-flex;align-items:center;gap:.8rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none}
+.card__go i{font-style:normal;width:38px;height:38px;border-radius:8px;border:1px solid var(--cream);display:grid;place-items:center;transition:background .3s,color .3s,transform .3s}
+.card__go:hover i{background:var(--cream);color:var(--char);transform:translateX(5px)}
+@media(prefers-reduced-motion:reduce){.card{opacity:1;transform:none}}
+
+/* ===== STATS ===== */
+.stats{max-width:1250px;margin:0 auto;padding:0 var(--pad) clamp(2.5rem,6vw,4.5rem)}
+.stats h2{text-align:center;font-size:clamp(1.3rem,2.8vw,2rem);font-weight:600;letter-spacing:-.03em;max-width:34ch;margin:0 auto clamp(1.8rem,4vw,3rem);line-height:1.2}
+.stats__grid{display:grid;gap:1.2rem}
+@media(min-width:800px){.stats__grid{grid-template-columns:repeat(3,1fr)}}
+.stat{background:var(--char);color:var(--cream);border-radius:var(--r);padding:1.6rem;min-height:clamp(180px,20vw,240px);
+  display:flex;flex-direction:column;justify-content:space-between;
+  opacity:0;transform:translateY(-46px);transition:opacity .6s,transform .8s cubic-bezier(.34,1.35,.5,1)}
+.stats.in .stat{opacity:1;transform:none}
+.stats.in .stat:nth-child(2){transition-delay:.12s}
+.stats.in .stat:nth-child(3){transition-delay:.24s}
+.stat b{font-size:clamp(2rem,4.4vw,3.2rem);font-weight:500;letter-spacing:-.04em;line-height:1}
+.stat p{font-size:.8rem;font-weight:500;opacity:.86;max-width:32ch}
+.stat__src{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;margin-top:.5rem;opacity:.7}
+@media(prefers-reduced-motion:reduce){.stat{opacity:1;transform:none}}
+
+/* ===== FAQ ===== */
+.faq{border-top:1px solid rgba(34,35,31,.3);padding:clamp(2.8rem,7vw,5.5rem) var(--pad);max-width:1250px;margin:0 auto}
+.faq__eyebrow{text-align:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:1.2rem}
+.faq h2{text-align:center;font-size:clamp(1.6rem,4vw,3rem);font-weight:600;letter-spacing:-.035em;line-height:1.14;max-width:20ch;margin:0 auto clamp(2rem,5vw,3.5rem)}
+.q{border-bottom:1px solid rgba(34,35,31,.3);opacity:0;transform:translateY(20px);transition:opacity .6s,transform .7s cubic-bezier(.22,1,.36,1)}
+.faq.in .q{opacity:1;transform:none}
+.faq.in .q:nth-child(4){transition-delay:.08s}
+.faq.in .q:nth-child(5){transition-delay:.16s}
+.faq.in .q:nth-child(6){transition-delay:.24s}
+.q__btn{width:100%;background:none;border:0;cursor:pointer;display:flex;align-items:center;gap:1.4rem;justify-content:space-between;
+  padding:1.3rem .2rem;min-height:56px;text-align:left;font-family:var(--sans);font-size:clamp(.95rem,1.7vw,1.1rem);font-weight:500;color:var(--ink);
+  transition:padding-left .35s}
+.q__btn:hover{padding-left:.8rem}
+.q__ic{width:34px;height:34px;border:1px solid var(--ink);border-radius:7px;display:grid;place-items:center;flex:0 0 auto;transition:transform .45s cubic-bezier(.76,0,.24,1),background .3s,color .3s}
+.q.open .q__ic{transform:rotate(135deg);background:var(--ink);color:var(--bg)}
+.q__panel{overflow:hidden;height:0;transition:height .5s cubic-bezier(.76,0,.24,1)}
+.q__panel p{padding:0 .2rem 1.4rem;font-size:.9rem;max-width:64ch;color:#4a4b45}
+@media(prefers-reduced-motion:reduce){.q{opacity:1;transform:none}.q__panel{transition:none}}
+
+/* ===== LOCATIONS ===== */
+.locs{max-width:1250px;margin:0 auto;padding:clamp(2.5rem,6vw,4.5rem) var(--pad)}
+.locs__eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;text-align:center;margin-bottom:1rem}
+.locs h2{text-align:center;font-size:clamp(1.6rem,3.6vw,2.6rem);font-weight:600;letter-spacing:-.035em;margin-bottom:clamp(1.8rem,4vw,3rem)}
+.locs__grid{display:grid;gap:1.4rem}
+@media(min-width:880px){.locs__grid{grid-template-columns:1fr 1fr}}
+.loc{border:1px solid rgba(34,35,31,.4);border-radius:var(--r);padding:.7rem;
+  opacity:0;transform:translateY(34px);transition:opacity .8s,transform .9s cubic-bezier(.22,1,.36,1)}
+.locs.in .loc{opacity:1;transform:none}
+.locs.in .loc:nth-child(2){transition-delay:.14s}
+.loc figure{position:relative;border-radius:calc(var(--r) - 5px);overflow:hidden;margin-bottom:1.2rem}
+.loc figure img{width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform 1s cubic-bezier(.22,1,.36,1)}
+.loc:hover figure img{transform:scale(1.05)}
+.loc__tag{position:absolute;top:.8rem;left:.8rem;background:var(--accent);color:#fff;border-radius:999px;
+  font-family:var(--mono);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;padding:.45rem .8rem;transition:background .9s}
+.loc__body{padding:0 .8rem .8rem}
+.loc h3{font-size:clamp(1.3rem,2.4vw,1.8rem);font-weight:600;letter-spacing:-.03em;margin-bottom:.8rem}
+.loc h3 .sw{display:inline-block;transition:transform .3s}
+.loc dl{display:grid;grid-template-columns:auto 1fr;gap:.35rem 1.1rem;font-size:.86rem;margin-bottom:1.1rem}
+.loc dt{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding-top:.5em;opacity:.7}
+.loc dd a{text-decoration:none;border-bottom:1px solid var(--accent);transition:border-color .9s}
+.seg{display:flex;gap:.4rem;margin-bottom:.9rem}
+.seg button{flex:1;border:1px solid rgba(34,35,31,.4);border-radius:999px;background:transparent;cursor:pointer;
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding:.7rem;min-height:44px;color:var(--ink);transition:all .3s}
+.seg button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pnl{animation:pin .4s cubic-bezier(.22,1,.36,1)}
+.pnl[hidden]{display:none}
+@keyframes pin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pnl table{width:100%;border-collapse:collapse;font-size:.85rem}
+.pnl td{padding:.5rem 0;border-bottom:1px solid rgba(34,35,31,.2)}
+.pnl td:last-child{text-align:right;font-weight:500}
+.pnl .map{width:100%;height:190px;border:0;border-radius:8px;display:block}
+.loc .lnk{margin-top:1.1rem;width:100%;justify-content:center}
+@media(prefers-reduced-motion:reduce){.loc{opacity:1;transform:none}}
+
+/* ===== CONTACT ===== */
+.contact{max-width:1250px;margin:0 auto;padding:0 var(--pad) clamp(3rem,7vw,5rem)}
+.contact__box{background:var(--char);color:var(--cream);border-radius:var(--r);padding:clamp(1.8rem,5vw,3.6rem);display:grid;gap:2.4rem}
+@media(min-width:880px){.contact__box{grid-template-columns:.85fr 1.15fr;align-items:start}}
+.contact h2{font-size:clamp(1.5rem,3vw,2.3rem);font-weight:600;letter-spacing:-.035em;line-height:1.14;margin-bottom:.8rem}
+.contact__aside p{font-size:.88rem;opacity:.8;max-width:32ch}
+.form{display:grid;gap:1.4rem}
+@media(min-width:640px){.form{grid-template-columns:1fr 1fr}.form .wide,.form .sub,.form .note{grid-column:1/-1}}
+.field{position:relative}
+.field label{display:block;font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:.4rem}
+.field input,.field textarea{width:100%;background:transparent;border:0;border-bottom:1px solid rgba(222,214,198,.35);
+  font-family:var(--sans);font-size:1rem;color:var(--cream);padding:.6rem 0;border-radius:0;min-height:44px}
+.field::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--accent);transition:width .5s cubic-bezier(.22,1,.36,1),background .9s}
+.field:focus-within::after{width:100%}
+.field textarea{min-height:88px;resize:vertical}
+.field input:focus,.field textarea:focus{outline:none}
+.sub button{background:var(--accent);border:0;border-radius:999px;color:#fff;cursor:pointer;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;padding:1.1rem 2.4rem;min-height:48px;
+  transition:transform .3s,background .9s,filter .3s}
+.sub button:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.note{font-family:var(--mono);font-size:.68rem;color:var(--accent);transition:color .9s}
+
+/* ===== FOOTER ===== */
+.footer{background:var(--char-2);color:var(--cream);border-radius:var(--r) var(--r) 0 0;padding:clamp(2.5rem,6vw,4rem) var(--pad) 6.5rem;overflow:hidden}
+.footer__grid{max-width:1250px;margin:0 auto;display:grid;gap:2rem}
+@media(min-width:800px){.footer__grid{grid-template-columns:1.2fr 1fr 1fr}}
+.footer__grid h4{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;opacity:.55;margin-bottom:1rem}
+.footer__grid ul{list-style:none;display:grid;gap:.5rem;font-size:1rem;font-weight:500}
+.footer a{text-decoration:none;transition:color .3s}
+.footer__grid a:hover{color:var(--accent)}
+.footer__word{max-width:1250px;margin:clamp(2.5rem,6vw,4rem) auto 0;font-weight:700;font-size:clamp(3.5rem,17vw,13rem);
+  letter-spacing:-.06em;line-height:.85;color:var(--accent);transition:color .9s;display:flex;flex-wrap:wrap}
+.footer__word i{font-style:normal;display:inline-block;transition:transform .35s}
+.footer__word:hover i:nth-child(odd){transform:translateY(-9px)}
+.footer__word:hover i:nth-child(even){transform:translateY(7px)}
+.footer__word sup{font-size:.12em;vertical-align:super;letter-spacing:0}
+.footer__bottom{max-width:1250px;margin:2.4rem auto 0;padding-top:1.2rem;border-top:1px solid rgba(222,214,198,.16);
+  display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;opacity:.7}
+@media(min-width:840px){.footer{padding-bottom:3rem}}
+
+.mobilebar{position:fixed;left:0;right:0;bottom:0;z-index:250;padding:.6rem 1rem;background:var(--bg);border-top:1px solid rgba(34,35,31,.3);display:flex;justify-content:center;transition:background .9s}
+.mobilebar a{width:100%;max-width:440px;text-align:center;justify-content:center}
+@media(min-width:840px){.mobilebar{display:none}}
+
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--bg);padding:1rem;z-index:900}
+.skip:focus{left:0}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <ul class="nav__set">
+    <li><a href="#top" class="on"><span class="dot"></span>Home</a></li>
+    <li><a href="#recipe"><span class="dot"></span>The Food</a></li>
+    <li><a href="#stats"><span class="dot"></span>The Craft</a></li>
+  </ul>
+  <a class="nav__mark" href="#top">demoeats</a>
+  <ul class="nav__set" style="margin-left:auto">
+    <li><a href="#faq"><span class="dot"></span>FAQs</a></li>
+  </ul>
+  <a class="nav__cta" href="https://orders.demoeats.com" target="_blank" rel="noopener">Order</a>
+</header>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <h1 class="hero__logo" id="logo" aria-label="DemoEats">demoeats<sup>®</sup></h1>
+  <div class="hero__rule"></div>
+  <p class="hero__line">
+    Fresh local flavor, best enjoyed as
+    <span class="flip" id="flip" aria-live="polite"></span>
+  </p>
+  <div class="glyphs" id="glyphs" role="group" aria-label="Choose a dish">
+    <button type="button" aria-pressed="true" aria-label="Tom Yum">
+      <svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M6 28h52c0 14-11 24-26 24S6 42 6 28zm10-8c-3-5 2-7 0-12 5 3 3 8 1 12zm10-2c-2-4 2-6 0-10 4 3 3 7 1 10zm10 2c-3-5 2-7 0-12 5 3 3 8 1 12z"/><circle cx="24" cy="36" r="3"/><circle cx="36" cy="40" r="4"/><circle cx="44" cy="34" r="2.5"/></svg>
+    </button>
+    <button type="button" aria-pressed="false" aria-label="Pad Thai">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><path d="M10 42c8-18 18 4 26-12s14 6 18-6"/><path d="M8 50c9-16 19 2 27-14s15 4 19-8"/><path d="M14 34c7-14 15 2 22-10"/><circle cx="20" cy="20" r="3" fill="currentColor" stroke="none"/><circle cx="46" cy="46" r="3" fill="currentColor" stroke="none"/></svg>
+    </button>
+    <button type="button" aria-pressed="false" aria-label="Green Curry">
+      <svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M32 6c-4 8 4 10 0 18-8-6-4-14 0-18z"/><path d="M8 30h48v6c0 12-10 22-24 22S8 48 8 36v-6z"/><rect x="4" y="24" width="56" height="6" rx="3"/></svg>
+    </button>
+    <button type="button" aria-pressed="false" aria-label="Som Tum">
+      <svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M32 8c6 6 4 12 0 16-4-4-6-10 0-16z"/><path d="M12 26c8-4 14 0 18 6-8 4-14 2-18-6zm40 0c-8-4-14 0-18 6 8 4 14 2 18-6z"/><path d="M16 40c8-4 12 0 16 6-8 4-12 2-16-6zm32 0c-8-4-12 0-16 6 8 4 12 2 16-6z"/><circle cx="32" cy="52" r="4"/></svg>
+    </button>
+    <button type="button" aria-pressed="false" aria-label="Mango Sticky Rice">
+      <svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M42 10c10 4 14 18 6 30-8 12-22 16-30 10-8-6-4-20 6-30 8-8 14-12 18-10z"/><circle cx="22" cy="46" r="3.5" opacity=".55"/><circle cx="32" cy="52" r="3" opacity=".55"/><circle cx="42" cy="46" r="2.5" opacity=".55"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- RECIPE -->
+<section class="recipe" id="recipe">
+  <div class="rv">
+    <h2>DemoEats borrows from tradition to build every plate</h2>
+    <p>Our method is simple. Fire, herbs, and hands that have done it for three generations — no jars, no shortcuts, no pastes we didn't pound ourselves.</p>
+    <a class="lnk" href="#stats">The Craft</a>
+  </div>
+  <div class="stack">
+    <span class="p">Wok</span>
+    <span class="x" aria-hidden="true">+</span>
+    <span class="p">Herbs</span>
+    <span class="x" aria-hidden="true">+</span>
+    <span class="p">Fire</span>
+    <span class="x" aria-hidden="true">+</span>
+    <span class="p">Time</span>
+  </div>
+</section>
+
+<!-- CAROUSEL -->
+<section class="carou" id="carousel">
+  <div class="carou__box">
+    <div class="carou__stage" id="stage">
+      <figure class="on"><img src="https://ucarecdn.com/2f265086-389d-4073-b52c-271b054178bf/-/format/auto/-/progressive/yes/HeroImg.png" alt="Signature dish" fetchpriority="high"></figure>
+      <figure><img loading="lazy" src="https://ucarecdn.com/a761527c-a84e-42b1-b3e5-b510bc6f38ff/-/format/auto/-/progressive/yes/g4.webp" alt="Fresh herbs from local farms"></figure>
+      <figure><img loading="lazy" src="https://ucarecdn.com/bcdb1f0c-a350-42b3-94cb-c143f16ca96a/-/format/auto/-/progressive/yes/g5.webp" alt="Dishes served family style"></figure>
+    </div>
+    <div class="carou__text">
+      <div class="slot">
+        <h3 id="cTitle">Pounded, never poured</h3>
+        <p id="cBody">Every curry paste starts in a granite mortar the morning it's served — the reason the aroma reaches the table before the plate does.</p>
+      </div>
+      <div class="carou__ctl">
+        <div class="carou__dots" id="cDots">
+          <button aria-current="true" aria-label="Slide 1"></button>
+          <button aria-current="false" aria-label="Slide 2"></button>
+          <button aria-current="false" aria-label="Slide 3"></button>
+        </div>
+        <div class="carou__arrows">
+          <button id="cPrev" aria-label="Previous">‹</button>
+          <button id="cNext" aria-label="Next">›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BIG CARDS -->
+<section class="cards" id="cards">
+  <article class="card">
+    <div class="card__inner">
+      <img loading="lazy" src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt="Green curry">
+      <div class="card__body">
+        <h3>Big flavour.<br>Simple ingredients.</h3>
+        <a class="card__go" href="#carousel">The Food <i>→</i></a>
+      </div>
+    </div>
+  </article>
+  <article class="card">
+    <div class="card__inner">
+      <img loading="lazy" src="https://ucarecdn.com/52910dc8-8d77-44bf-ac9c-62a1afc1f2fc/-/format/auto/-/progressive/yes/onsite.webp" alt="The dining room">
+      <div class="card__body">
+        <h3>More table.<br>Less rush.</h3>
+        <a class="card__go" href="#locations">The Rooms <i>→</i></a>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- STATS -->
+<section class="stats" id="stats">
+  <h2 class="rv">Thai cooking is a balance of four things — sweet, sour, salty, hot. We chase all four, every service.</h2>
+  <div class="stats__grid">
+    <div class="stat">
+      <b><span data-count="3">0</span></b>
+      <div>
+        <p>Generations of recipes, carried from one kitchen to the next without a single shortcut.</p>
+        <p class="stat__src">Source: Family</p>
+      </div>
+    </div>
+    <div class="stat">
+      <b><span data-count="40">0</span>+</b>
+      <div>
+        <p>Dishes on the list, all built around what our local farmers bring in that morning.</p>
+        <p class="stat__src">Source: The Kitchen</p>
+      </div>
+    </div>
+    <div class="stat">
+      <b><span data-count="24">0</span>/7</b>
+      <div>
+        <p>Melbourne never closes. Pad Thai at 3am is a right, not a privilege.</p>
+        <p class="stat__src">Source: Somerton VIC</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <p class="faq__eyebrow rv">Questions we get asked</p>
+  <h2 class="rv">We're always working on the next plate</h2>
+  <div class="q">
+    <button class="q__btn" aria-expanded="false">What if I can't take much heat?<span class="q__ic" aria-hidden="true">+</span></button>
+    <div class="q__panel"><p>Tell your server. Every curry and stir-fry is built to order, so we can dial the chili from barely-there to properly fierce without touching the rest of the balance.</p></div>
+  </div>
+  <div class="q">
+    <button class="q__btn" aria-expanded="false">Can you cook for a table of twelve?<span class="q__ic" aria-hidden="true">+</span></button>
+    <div class="q__panel"><p>Yes — both rooms run a shared banquet for groups of eight or more, served the way we eat at home. Everything in the middle, nothing rushed. Send us a note and we'll build it around you.</p></div>
+  </div>
+  <div class="q">
+    <button class="q__btn" aria-expanded="false">Where does the produce come from?<span class="q__ic" aria-hidden="true">+</span></button>
+    <div class="q__panel"><p>Local farms we visit ourselves. Lemongrass, holy basil, bird's eye chili and galangal arrive at both kitchens before service, picked the same morning.</p></div>
+  </div>
+  <div class="q">
+    <button class="q__btn" aria-expanded="false">Do you deliver?<span class="q__ic" aria-hidden="true">+</span></button>
+    <div class="q__panel"><p>Both kitchens run pick-up and delivery. Melbourne is open around the clock; Brisbane follows its dining hours. Order links are on each location below.</p></div>
+  </div>
+</section>
+
+<!-- LOCATIONS -->
+<section class="locs" id="locations">
+  <p class="locs__eyebrow rv">Find us</p>
+  <h2 class="rv">Two kitchens, one standard</h2>
+  <div class="locs__grid">
+    <article class="loc">
+      <figure>
+        <img loading="lazy" src="https://ucarecdn.com/0829a4ea-e255-4b00-b85e-839e935f2c36/-/format/auto/-/progressive/yes/g3.webp" alt="DemoEats Brisbane">
+        <span class="loc__tag">Demo2 · Albion</span>
+      </figure>
+      <div class="loc__body">
+        <h3 data-swap="Brisbane">Brisbane</h3>
+        <dl>
+          <dt>Address</dt><dd>346 Sandgate Road, Albion QLD 4010</dd>
+          <dt>Phone</dt><dd><a href="tel:0732624972">07 3262 4972</a></dd>
+        </dl>
+        <div class="seg" role="tablist" aria-label="Brisbane details">
+          <button role="tab" id="tb-h" aria-controls="pb-h" aria-selected="true">Hours</button>
+          <button role="tab" id="tb-m" aria-controls="pb-m" aria-selected="false">Map</button>
+        </div>
+        <div class="pnl" role="tabpanel" id="pb-h" aria-labelledby="tb-h">
+          <table><tbody>
+            <tr><td>Mon / Tue</td><td>5–9pm</td></tr>
+            <tr><td>Wed – Fri</td><td>11:30am–3pm · 5–9pm</td></tr>
+            <tr><td>Sat / Sun</td><td>5–9pm</td></tr>
+          </tbody></table>
+        </div>
+        <div class="pnl" role="tabpanel" id="pb-m" aria-labelledby="tb-m" hidden>
+          <iframe class="map" title="Map to DemoEats Brisbane" loading="lazy" src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <a class="lnk" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Order Brisbane</a>
+      </div>
+    </article>
+
+    <article class="loc">
+      <figure>
+        <img loading="lazy" src="https://ucarecdn.com/52910dc8-8d77-44bf-ac9c-62a1afc1f2fc/-/format/auto/-/progressive/yes/onsite.webp" alt="DemoEats Melbourne">
+        <span class="loc__tag">Open 24 hours</span>
+      </figure>
+      <div class="loc__body">
+        <h3 data-swap="Melbourne">Melbourne</h3>
+        <dl>
+          <dt>Address</dt><dd>19 North Park Dr, Somerton VIC 3062</dd>
+          <dt>Phone</dt><dd><a href="tel:0407505997">0407 505 997</a></dd>
+        </dl>
+        <div class="seg" role="tablist" aria-label="Melbourne details">
+          <button role="tab" id="tm-h" aria-controls="pm-h" aria-selected="true">Hours</button>
+          <button role="tab" id="tm-m" aria-controls="pm-m" aria-selected="false">Map</button>
+        </div>
+        <div class="pnl" role="tabpanel" id="pm-h" aria-labelledby="tm-h">
+          <table><tbody><tr><td>Every day</td><td>Open 24 hours</td></tr></tbody></table>
+        </div>
+        <div class="pnl" role="tabpanel" id="pm-m" aria-labelledby="tm-m" hidden>
+          <iframe class="map" title="Map to DemoEats Melbourne" loading="lazy" src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <a class="lnk" href="https://orders.demoeats.com" target="_blank" rel="noopener">Order Melbourne</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact__box">
+    <div class="contact__aside">
+      <h2>Book a table, or just say hello</h2>
+      <p>Bookings, big groups, catering, press. Send a note and the kitchen will get back to you.</p>
+    </div>
+    <form class="form" onsubmit="event.preventDefault();this.querySelector('.note').textContent='Thanks — we will be in touch shortly.';this.reset();">
+      <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" type="text" autocomplete="name" required></div>
+      <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel"></div>
+      <div class="field"><label for="f-guests">Guests</label><input id="f-guests" name="guests" type="text" inputmode="numeric"></div>
+      <div class="field wide"><label for="f-msg">Message</label><textarea id="f-msg" name="message" required></textarea></div>
+      <div class="sub"><button type="submit">Send it</button></div>
+      <p class="note" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__grid">
+    <div>
+      <h4>© DemoEats 2026</h4>
+      <p style="font-size:.85rem;opacity:.7;max-width:30ch">Fresh local flavors, best enjoyed at our table. Brisbane &amp; Melbourne.</p>
+    </div>
+    <div>
+      <h4>Kitchens</h4>
+      <ul>
+        <li><a href="tel:0732624972">Brisbane</a></li>
+        <li><a href="tel:0407505997">Melbourne</a></li>
+        <li><a href="#locations">Directions</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>DemoEats</h4>
+      <ul>
+        <li><a href="#recipe">The Food</a></li>
+        <li><a href="#faq">FAQs</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="https://www.instagram.com" target="_blank" rel="noopener">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <a class="footer__word" href="#top" id="footWord" aria-label="DemoEats — back to top">demoeats<sup>®</sup></a>
+  <div class="footer__bottom">
+    <span>Privacy policy &amp; terms of use</span>
+    <a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Powered by Local For You</a>
+  </div>
+</footer>
+
+<div class="mobilebar">
+  <a class="lnk" href="https://orders.demoeats.com" target="_blank" rel="noopener">Order Online</a>
+</div>
+
+<script>
+(function(){
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* logo letters pop */
+  (function(){
+    var el = document.getElementById('logo');
+    var sup = el.querySelector('sup').outerHTML;
+    var t = 'demoeats';
+    el.innerHTML = '';
+    t.split('').forEach(function(ch,i){
+      var s = document.createElement('i');
+      s.textContent = ch; s.style.animationDelay = (0.15 + i*0.055) + 's';
+      el.appendChild(s);
+    });
+    el.insertAdjacentHTML('beforeend', sup);
+  })();
+  /* footer word letters */
+  (function(){
+    var el = document.getElementById('footWord');
+    var sup = el.querySelector('sup').outerHTML;
+    el.innerHTML = '';
+    'demoeats'.split('').forEach(function(ch){ var i = document.createElement('i'); i.textContent = ch; el.appendChild(i); });
+    el.insertAdjacentHTML('beforeend', sup);
+  })();
+
+  /* ===== THEME MORPH + FLIPWORD ===== */
+  var themes = [
+    {word:'tom yum',   bg:'#F3D9CF', accent:'#C4442A', ink:'#2A1A16'},
+    {word:'pad thai',  bg:'#F6E7BE', accent:'#9A6410', ink:'#2A2216'},
+    {word:'green curry',bg:'#E1EBCD', accent:'#3F7233', ink:'#1E2418'},
+    {word:'som tum',   bg:'#E4EDE4', accent:'#2F6B54', ink:'#1A2420'},
+    {word:'mango sticky rice', bg:'#F7EDC9', accent:'#C08A16', ink:'#2A2415'}
+  ];
+  var flip = document.getElementById('flip'), glyphs = [].slice.call(document.querySelectorAll('#glyphs button'));
+  var cur = -1, spans = [], timer;
+
+  themes.forEach(function(t){
+    var s = document.createElement('span'); s.textContent = t.word; flip.appendChild(s); spans.push(s);
+  });
+
+  function setTheme(i){
+    if(i === cur) return;
+    var t = themes[i];
+    var root = document.documentElement.style;
+    root.setProperty('--bg', t.bg);
+    root.setProperty('--accent', t.accent);
+    root.setProperty('--ink', t.ink);
+    spans.forEach(function(s,k){
+      s.classList.toggle('on', k===i);
+      s.classList.toggle('out', k===cur);
+    });
+    glyphs.forEach(function(g,k){ g.setAttribute('aria-pressed', String(k===i)); });
+    cur = i;
+  }
+  function auto(){ clearInterval(timer); if(!reduced) timer = setInterval(function(){ setTheme((cur+1)%themes.length); }, 3400); }
+  glyphs.forEach(function(g,k){
+    g.addEventListener('click', function(){ setTheme(k); auto(); });
+    g.addEventListener('mouseenter', function(){ setTheme(k); clearInterval(timer); });
+    g.addEventListener('mouseleave', auto);
+  });
+  setTheme(0); auto();
+
+  /* nav border */
+  var nav = document.getElementById('nav');
+  addEventListener('scroll', function(){ nav.classList.toggle('solid', scrollY > 60); }, {passive:true});
+
+  /* reveal + counters */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting) return;
+      e.target.classList.add('in');
+      e.target.querySelectorAll('[data-count]').forEach(function(n){
+        var t = +n.dataset.count;
+        if(reduced){ n.textContent = t; return; }
+        var s0 = null;
+        requestAnimationFrame(function step(ts){
+          if(!s0) s0 = ts;
+          var p = Math.min((ts-s0)/1100, 1);
+          n.textContent = Math.round(t * (1 - Math.pow(1-p,3)));
+          if(p<1) requestAnimationFrame(step);
+        });
+      });
+      io.unobserve(e.target);
+    });
+  }, {threshold:.2});
+  document.querySelectorAll('.hero,.recipe,.cards,.stats,.faq,.locs,.rv').forEach(function(el){ io.observe(el); });
+
+  /* ===== CAROUSEL ===== */
+  (function(){
+    var figs = [].slice.call(document.querySelectorAll('#stage figure'));
+    var dots = [].slice.call(document.querySelectorAll('#cDots button'));
+    var title = document.getElementById('cTitle'), body = document.getElementById('cBody');
+    var copy = [
+      ['Pounded, never poured', "Every curry paste starts in a granite mortar the morning it's served — the reason the aroma reaches the table before the plate does."],
+      ['Picked before service', 'Lemongrass, holy basil and bird\u2019s eye chili arrive from local farms the same morning they hit the wok.'],
+      ['Built to be shared', 'Nothing here is a solo course. Everything lands in the middle of the table, and stays there.']
+    ];
+    var i = 0, iv;
+    function go(n){
+      i = (n + figs.length) % figs.length;
+      figs.forEach(function(f,k){ f.classList.toggle('on', k===i); });
+      dots.forEach(function(d,k){ d.setAttribute('aria-current', String(k===i)); });
+      title.style.opacity = 0; body.style.opacity = 0;
+      setTimeout(function(){
+        title.textContent = copy[i][0]; body.textContent = copy[i][1];
+        title.style.opacity = 1; body.style.opacity = 1;
+      }, 220);
+    }
+    [title, body].forEach(function(el){ el.style.transition = 'opacity .35s'; });
+    document.getElementById('cNext').addEventListener('click', function(){ go(i+1); restart(); });
+    document.getElementById('cPrev').addEventListener('click', function(){ go(i-1); restart(); });
+    dots.forEach(function(d,k){ d.addEventListener('click', function(){ go(k); restart(); }); });
+    function restart(){ clearInterval(iv); if(!reduced) iv = setInterval(function(){ go(i+1); }, 6000); }
+    restart();
+  })();
+
+  /* ===== FAQ accordion ===== */
+  document.querySelectorAll('.q').forEach(function(q){
+    var btn = q.querySelector('.q__btn'), panel = q.querySelector('.q__panel');
+    btn.addEventListener('click', function(){
+      var open = q.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+      panel.style.height = open ? panel.scrollHeight + 'px' : '0px';
+      if(open){
+        document.querySelectorAll('.q.open').forEach(function(o){
+          if(o!==q){ o.classList.remove('open'); o.querySelector('.q__panel').style.height='0px'; o.querySelector('.q__btn').setAttribute('aria-expanded','false'); }
+        });
+      }
+    });
+  });
+
+  /* ===== LOCATION titles: letter swap on hover ===== */
+  document.querySelectorAll('[data-swap]').forEach(function(h){
+    var word = h.dataset.swap;
+    h.innerHTML = '';
+    word.split('').forEach(function(ch,i){
+      var s = document.createElement('span');
+      s.className = 'sw'; s.textContent = ch;
+      s.style.transitionDelay = (i * 0.03) + 's';
+      h.appendChild(s);
+    });
+    if(reduced) return;
+    var loc = h.closest('.loc');
+    loc.addEventListener('mouseenter', function(){
+      h.querySelectorAll('.sw').forEach(function(s,i){ s.style.transform = 'translateY(' + (i%2 ? 5 : -5) + 'px)'; });
+    });
+    loc.addEventListener('mouseleave', function(){
+      h.querySelectorAll('.sw').forEach(function(s){ s.style.transform = ''; });
+    });
+  });
+
+  /* location tabs */
+  document.querySelectorAll('.seg').forEach(function(seg){
+    var btns = seg.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        btns.forEach(function(o){
+          o.setAttribute('aria-selected', String(o===b));
+          document.getElementById(o.getAttribute('aria-controls')).hidden = (o!==b);
+        });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

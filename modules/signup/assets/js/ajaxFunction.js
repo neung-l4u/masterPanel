@@ -2546,8 +2546,12 @@ function toggleDocUploadSection() {
         fileInputs.prop('required', false);
         adyenAgree.prop('required', false);
     }
-// Toggle visibility: show only when country=AU AND (product or addon contains "POS")
-function toggleDocUploadSection() {
+}
+
+// Unconditionally hides the upload section, ignoring country and POS selection.
+// Kept as a kill switch: call this from the toggleDocUploadSection() call sites
+// instead when the Adyen document upload needs to be turned off entirely.
+function hideDocUploadSection() {
     const docSection = $('#docUploadSection');
     const fileInputs = docSection.find('input[type="file"]');
     const adyenAgree = $('#adyenAgreement');

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoEats — Authentic Thai · Brisbane & Melbourne</title>
+<meta name="description" content="Fresh local flavors, best enjoyed at our table. Authentic Thai in Brisbane & Melbourne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FBF6E6;
+  --cream-2:#F3EEDC;
+  --forest:#1F5A17;
+  --forest-2:#2A4720;
+  --forest-dk:#31462A;
+  --honey:#F7CF7C;
+  --peach:#F5B183;
+  --sage:#BFDDA0;
+  --ink:#1F5A17;
+  --serif:'Newsreader',serif;
+  --sans:'DM Sans',sans-serif;
+  --pad:clamp(1.1rem,4vw,4rem);
+  --r:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{font-family:var(--sans);background:var(--cream);color:var(--forest);overflow-x:hidden;line-height:1.6;font-size:15px}
+img{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--honey);color:var(--forest)}
+h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:-.01em;line-height:1.06}
+
+/* ===== nav ===== */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;background:var(--cream);
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:.9rem var(--pad);border-bottom:1px solid rgba(31,90,23,.25);
+  transition:transform .45s cubic-bezier(.76,0,.24,1);
+}
+.nav.hide{transform:translateY(-110%)}
+.nav ul{display:flex;gap:clamp(.9rem,2.4vw,2.2rem);list-style:none;font-size:.95rem}
+.nav a{text-decoration:none;padding:.4rem .1rem;min-height:40px;display:inline-flex;align-items:center;position:relative}
+.nav a::after{content:"";position:absolute;left:0;bottom:.35rem;height:1px;width:0;background:currentColor;transition:width .3s}
+.nav a:hover::after{width:100%}
+.nav__mark{position:absolute;left:50%;transform:translateX(-50%);font-family:var(--serif);font-size:1.15rem;
+  letter-spacing:.18em;text-transform:uppercase;text-decoration:none}
+.nav__mark::after{display:none}
+@media(max-width:760px){.nav__mark{position:static;transform:none}.nav ul:last-of-type li:first-child{display:none}}
+
+/* ===== pill button ===== */
+.pill{
+  display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+  background:var(--honey);color:var(--forest);border:0;border-radius:999px;
+  font-family:var(--sans);font-size:.95rem;font-weight:500;text-decoration:none;
+  padding:.95rem 2.2rem;min-height:48px;cursor:pointer;
+  transition:transform .35s cubic-bezier(.34,1.4,.5,1),background .3s,box-shadow .35s;
+}
+.pill:hover,.pill:focus-visible{transform:translateY(-3px) scale(1.03);box-shadow:0 12px 26px rgba(31,90,23,.18)}
+.pill--out{background:transparent;border:1px solid currentColor}
+.pill--out:hover{background:var(--forest);color:var(--cream);border-color:var(--forest)}
+.pill--cream{background:var(--cream);color:var(--forest)}
+
+/* ===== HERO: scroll expansion, headline inverts ===== */
+.hero{position:relative;height:230vh}
+.hero__sticky{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;place-items:center;padding-top:3.4rem}
+.hero__title{position:absolute;z-index:5;text-align:center;padding:0 1.2rem;top:clamp(5rem,16vh,10rem);width:100%;display:grid;justify-items:center;gap:clamp(1.4rem,3.5vw,2.4rem)}
+.hero__title h1{font-size:clamp(2.3rem,6.4vw,5.4rem);max-width:16ch;color:var(--h,var(--forest));transition:color .5s}
+.hero__title h1 .ln{display:block;overflow:hidden}
+.hero__title h1 .ln>span{display:inline-block;transform:translateY(105%);animation:rise 1s cubic-bezier(.22,1,.36,1) forwards}
+.hero__title h1 .ln:nth-child(2)>span{animation-delay:.12s}
+@keyframes rise{to{transform:none}}
+.hero__title .pill{opacity:0;animation:fade .8s .7s ease forwards}
+@keyframes fade{to{opacity:1}}
+.hero__frame{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:var(--w,84%);height:var(--h2,52%);
+  border-radius:var(--br,26px) var(--br,26px) 0 0;overflow:hidden;
+}
+.hero__frame img{width:100%;height:100%;object-fit:cover;transform:scale(var(--s,1.14));will-change:transform}
+.hero__frame::after{content:"";position:absolute;inset:0;background:rgba(20,40,16,.34);opacity:var(--o,0);transition:opacity .2s}
+/* floating vines */
+.vine{position:absolute;z-index:4;pointer-events:none;will-change:transform}
+.vine--l{left:0;bottom:6%;width:clamp(90px,15vw,230px)}
+.vine--r{right:0;bottom:10%;width:clamp(90px,15vw,230px);transform:scaleX(-1)}
+.vine path{fill:none;stroke:var(--forest);stroke-width:5;stroke-linecap:round}
+.vine .leaf{fill:var(--forest);stroke:none}
+.vine .seed{fill:#EBD9A8;stroke:none}
+.hero__cue{position:absolute;bottom:1.2rem;left:50%;transform:translateX(-50%);z-index:6;
+  font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:#fff;opacity:var(--cue,0);transition:opacity .4s}
+@media(prefers-reduced-motion:reduce){
+  .hero{height:auto}
+  .hero__sticky{position:static;height:auto;padding-bottom:0}
+  .hero__frame{position:relative;left:auto;transform:none;width:100%;height:60svh;border-radius:0}
+  .hero__title{position:static;margin:2rem 0}
+  .hero__title h1 .ln>span,.hero__title .pill{transform:none;opacity:1;animation:none}
+}
+
+/* ===== GREEN STATEMENT ===== */
+.stmt{background:var(--forest);color:var(--cream);padding:clamp(3rem,8vw,6rem) var(--pad);text-align:center}
+.stmt p{font-family:var(--serif);font-size:clamp(1.4rem,3.6vw,2.7rem);max-width:22ch;margin:0 auto clamp(1.8rem,4vw,2.6rem);line-height:1.2}
+.stmt p w{display:inline-block;opacity:0;transform:translateY(18px);transition:opacity .5s,transform .6s cubic-bezier(.22,1,.36,1)}
+.stmt.in p w{opacity:1;transform:none}
+.stmt p em{font-style:normal;display:inline-block;transform-origin:center}
+.stmt.in p em{animation:wiggle 3s ease-in-out infinite}
+@keyframes wiggle{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(8deg)}}
+.badges{background:var(--forest-2);color:var(--sage);display:flex;flex-wrap:wrap;justify-content:center;
+  gap:1rem clamp(1rem,4vw,3rem);padding:.9rem var(--pad);font-size:.76rem}
+.badges span{display:inline-flex;align-items:center;gap:.5rem}
+.badges i{width:14px;height:14px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.5rem}
+@media(prefers-reduced-motion:reduce){.stmt p w{opacity:1;transform:none}.stmt.in p em{animation:none}}
+
+/* ===== BENEFIT ROWS (hover tint + drawer) ===== */
+.bene{background:var(--tint,var(--cream));transition:background .6s ease;padding:clamp(2.5rem,6vw,4.5rem) var(--pad)}
+.bene__eyebrow{text-align:center;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;margin-bottom:2rem}
+.brow{
+  max-width:1150px;margin:0 auto;width:100%;background:none;border:0;cursor:pointer;color:inherit;
+  display:flex;align-items:center;gap:1.5rem;justify-content:space-between;
+  padding:clamp(1.2rem,3vw,2.2rem) 0;border-bottom:1px solid rgba(31,90,23,.5);
+  opacity:0;transform:translateY(24px);transition:opacity .7s,transform .8s cubic-bezier(.22,1,.36,1);
+}
+.bene.in .brow{opacity:1;transform:none}
+.bene.in .brow:nth-of-type(2){transition-delay:.1s}
+.bene.in .brow:nth-of-type(3){transition-delay:.2s}
+.brow:first-of-type{border-top:1px solid rgba(31,90,23,.5)}
+.brow span{font-family:var(--serif);font-size:clamp(1.5rem,4.6vw,3.4rem);flex:1;text-align:center;
+  transition:font-style .3s,transform .4s cubic-bezier(.22,1,.36,1)}
+.brow:hover span,.brow:focus-visible span{font-style:italic;transform:scale(1.02)}
+.brow i{font-style:normal;width:52px;height:32px;border:1px solid currentColor;border-radius:999px;
+  display:grid;place-items:center;flex:0 0 auto;font-size:.8rem;transition:background .35s,color .35s,transform .35s}
+.brow:hover i{background:var(--forest);color:var(--cream);transform:translateX(6px)}
+.bene .pill{display:block;width:max-content;margin:2.4rem auto 0}
+@media(prefers-reduced-motion:reduce){.brow{opacity:1;transform:none}}
+/* drawer */
+.drawer{position:fixed;inset:0;z-index:300;pointer-events:none}
+.drawer__scrim{position:absolute;inset:0;background:rgba(20,30,16,.55);opacity:0;transition:opacity .5s}
+.drawer__panel{position:absolute;top:0;right:0;bottom:0;width:min(560px,92vw);background:var(--cream);
+  padding:clamp(2rem,5vw,3.4rem);overflow-y:auto;transform:translateX(101%);transition:transform .6s cubic-bezier(.76,0,.24,1)}
+.drawer.on{pointer-events:auto}
+.drawer.on .drawer__scrim{opacity:1}
+.drawer.on .drawer__panel{transform:none}
+.drawer__close{position:absolute;top:1.2rem;right:1.2rem;width:48px;height:48px;border-radius:50%;border:0;background:var(--cream-2);
+  color:var(--forest);font-size:1.2rem;cursor:pointer;transition:background .3s,transform .3s}
+.drawer__close:hover{background:var(--honey);transform:rotate(90deg)}
+.drawer h3{font-size:clamp(1.5rem,3vw,2.2rem);margin:3rem 0 1.2rem;max-width:18ch}
+.drawer p{font-size:.95rem;margin-bottom:1rem;max-width:52ch}
+
+/* ===== HONEY SPLIT + spinning badge ===== */
+.honey{background:var(--honey);display:grid;gap:2rem;padding:clamp(2rem,5vw,3.4rem) var(--pad)}
+@media(min-width:880px){.honey{grid-template-columns:1fr 1fr;align-items:center;gap:clamp(2rem,5vw,4rem)}}
+.honey figure{border-radius:var(--r);overflow:hidden;clip-path:inset(0 0 100% 0);transition:clip-path 1.1s cubic-bezier(.76,0,.24,1)}
+.honey.in figure{clip-path:inset(0 0 0 0)}
+.honey figure img{width:100%;aspect-ratio:4/3.6;object-fit:cover;transform:scale(1.14);transition:transform 1.5s cubic-bezier(.22,1,.36,1) .1s}
+.honey.in figure img{transform:scale(1)}
+.honey__text{position:relative;display:grid;gap:1rem;justify-items:start;padding:1rem 0}
+.honey h2{font-size:clamp(1.8rem,4.4vw,3.2rem)}
+.honey p{max-width:40ch;font-size:.95rem}
+.honey .go{display:inline-flex;align-items:center;gap:.7rem;text-decoration:none;font-size:1.05rem;font-weight:500}
+.honey .go i{font-style:normal;transition:transform .35s}
+.honey .go:hover i{transform:translateX(8px)}
+.rotor{position:relative;width:150px;height:150px;display:grid;place-items:center;margin-top:1.5rem;align-self:center;justify-self:center}
+.rotor svg{position:absolute;inset:0;animation:spin 20s linear infinite}
+.rotor .core{width:12px;height:12px;border-radius:50%;background:var(--forest)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.honey figure{clip-path:none}.honey figure img{transform:none}.rotor svg{animation:none}}
+
+/* ===== FLAVORS ===== */
+.flav{padding:clamp(3rem,7vw,5.5rem) var(--pad);text-align:center}
+.flav__mark{font-size:1.6rem;margin-bottom:.8rem;display:inline-block;transition:transform .5s}
+.flav.in .flav__mark{animation:bloom .9s cubic-bezier(.34,1.5,.5,1)}
+@keyframes bloom{from{transform:scale(0) rotate(-90deg)}to{transform:none}}
+.flav h2{font-size:clamp(1.8rem,4.6vw,3.2rem);margin-bottom:2.6rem}
+.flav__grid{max-width:1150px;margin:0 auto;display:grid;gap:1.2rem;grid-template-columns:repeat(2,1fr)}
+@media(min-width:900px){.flav__grid{grid-template-columns:repeat(4,1fr)}}
+.fcard{background:var(--cream-2);border-radius:var(--r);padding:1rem 1rem 1.4rem;text-decoration:none;
+  opacity:0;transform:translateY(-40px);transition:opacity .6s,transform .8s cubic-bezier(.34,1.35,.5,1),background .35s}
+.flav.in .fcard{opacity:1;transform:none}
+.flav.in .fcard:nth-child(2){transition-delay:.09s}
+.flav.in .fcard:nth-child(3){transition-delay:.18s}
+.flav.in .fcard:nth-child(4){transition-delay:.27s}
+.fcard:hover{background:var(--sage)}
+.fcard__img{border-radius:14px;overflow:hidden;margin-bottom:.9rem}
+.fcard img{width:100%;aspect-ratio:3/4;object-fit:cover;transition:transform .7s cubic-bezier(.22,1,.36,1)}
+.fcard:hover img{transform:scale(1.06)}
+.fcard b{display:block;font-weight:500;font-size:.95rem}
+.fcard small{font-size:.78rem;opacity:.75}
+@media(prefers-reduced-motion:reduce){.fcard{opacity:1;transform:none}.flav.in .flav__mark{animation:none}}
+
+/* ===== SAGE PICKY ===== */
+.picky{background:var(--sage);padding:clamp(3rem,7vw,5.5rem) var(--pad);text-align:center}
+.picky h2{font-size:clamp(1.8rem,4.6vw,3.2rem);margin-bottom:2.4rem}
+.picky__grid{max-width:1150px;margin:0 auto;display:grid;gap:2rem}
+@media(min-width:880px){.picky__grid{grid-template-columns:1fr 1fr;align-items:center}}
+.picky figure{border-radius:var(--r);overflow:hidden;
+  opacity:0;transform:translateX(-40px);transition:opacity .9s,transform 1s cubic-bezier(.22,1,.36,1)}
+.picky.in figure{opacity:1;transform:none}
+.picky figure img{width:100%;aspect-ratio:4/3.4;object-fit:cover}
+.acc{display:grid;gap:.7rem;text-align:left}
+.ai{background:rgba(31,90,23,.12);border-radius:16px;overflow:hidden;
+  opacity:0;transform:translateY(20px);transition:opacity .6s,transform .7s cubic-bezier(.22,1,.36,1)}
+.picky.in .ai{opacity:1;transform:none}
+.picky.in .ai:nth-child(2){transition-delay:.08s}
+.picky.in .ai:nth-child(3){transition-delay:.16s}
+.picky.in .ai:nth-child(4){transition-delay:.24s}
+.picky.in .ai:nth-child(5){transition-delay:.32s}
+.ai__btn{width:100%;background:none;border:0;cursor:pointer;color:var(--forest);
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.1rem 1.3rem;min-height:56px;
+  font-family:var(--sans);font-size:1.05rem;font-weight:500;text-align:left}
+.ai__ic{width:34px;height:34px;border:1px solid currentColor;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;
+  transition:transform .45s cubic-bezier(.76,0,.24,1),background .3s,color .3s}
+.ai.open .ai__ic{transform:rotate(135deg);background:var(--forest);color:var(--sage)}
+.ai__panel{overflow:hidden;height:0;transition:height .5s cubic-bezier(.76,0,.24,1)}
+.ai__panel p{padding:0 1.3rem 1.2rem;font-size:.9rem;max-width:52ch}
+@media(prefers-reduced-motion:reduce){.picky figure,.ai{opacity:1;transform:none}.ai__panel{transition:none}}
+
+/* ===== TESTIMONIALS ===== */
+.gut{padding:clamp(3rem,7vw,5.5rem) var(--pad);overflow:hidden}
+.gut__head{max-width:1150px;margin:0 auto 1.8rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.gut__head h2{font-size:clamp(1.6rem,3.6vw,2.6rem)}
+.gut__arrows{display:flex;gap:.5rem}
+.gut__arrows button{width:42px;height:42px;border-radius:50%;border:1px solid var(--forest);background:var(--sage);color:var(--forest);
+  cursor:pointer;display:grid;place-items:center;transition:background .3s,transform .3s}
+.gut__arrows button:hover{background:var(--forest);color:var(--cream);transform:scale(1.05)}
+.gut__rail{max-width:1150px;margin:0 auto;display:flex;gap:1.2rem;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:.5rem;cursor:grab}
+.gut__rail::-webkit-scrollbar{display:none}
+.gut__rail.drag{cursor:grabbing;scroll-snap-type:none}
+.tcard{flex:0 0 auto;width:min(84vw,520px);scroll-snap-align:start;display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:var(--r);overflow:hidden;background:var(--cream-2)}
+.tcard figure{position:relative;overflow:hidden}
+.tcard img{width:100%;height:100%;min-height:230px;object-fit:cover}
+.tcard__who{position:absolute;left:.7rem;bottom:.7rem;background:var(--cream);border-radius:999px;padding:.35rem .8rem;font-size:.75rem;font-weight:500}
+.tcard__body{padding:1.4rem;display:grid;align-content:center;gap:.8rem}
+.tcard__body p{font-family:var(--serif);font-size:clamp(1rem,1.6vw,1.2rem);line-height:1.3}
+.tcard__body small{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;opacity:.7}
+
+/* ===== LOCATIONS ===== */
+.locs{padding:clamp(3rem,7vw,5.5rem) var(--pad)}
+.locs h2{text-align:center;font-size:clamp(1.8rem,4.4vw,3rem);margin-bottom:2.6rem}
+.locs__grid{max-width:1150px;margin:0 auto;display:grid;gap:1.4rem}
+@media(min-width:880px){.locs__grid{grid-template-columns:1fr 1fr}}
+.loc{background:var(--cream-2);border-radius:var(--r);padding:1rem 1rem 1.6rem;
+  opacity:0;transform:translateY(34px);transition:opacity .8s,transform .9s cubic-bezier(.22,1,.36,1)}
+.locs.in .loc{opacity:1;transform:none}
+.locs.in .loc:nth-child(2){transition-delay:.14s}
+.loc figure{border-radius:14px;overflow:hidden;position:relative;margin-bottom:1.2rem}
+.loc figure img{width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform 1s cubic-bezier(.22,1,.36,1)}
+.loc:hover figure img{transform:scale(1.05)}
+.loc__tag{position:absolute;left:.8rem;top:.8rem;background:var(--honey);border-radius:999px;font-size:.7rem;font-weight:500;padding:.4rem .85rem}
+.loc__body{padding:0 .6rem}
+.loc h3{font-size:clamp(1.4rem,2.6vw,2rem);margin-bottom:.8rem}
+.loc dl{display:grid;grid-template-columns:auto 1fr;gap:.35rem 1.1rem;font-size:.88rem;margin-bottom:1.2rem}
+.loc dt{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;opacity:.65;padding-top:.5em}
+.loc dd a{text-decoration:none;border-bottom:1px solid var(--honey)}
+.seg{display:flex;gap:.5rem;margin-bottom:1rem}
+.seg button{flex:1;border:1px solid rgba(31,90,23,.4);border-radius:999px;background:transparent;color:var(--forest);cursor:pointer;
+  font-family:var(--sans);font-size:.72rem;padding:.65rem;min-height:44px;transition:all .3s}
+.seg button[aria-selected="true"]{background:var(--forest);color:var(--cream);border-color:var(--forest)}
+.pnl{animation:pin .4s cubic-bezier(.22,1,.36,1)}
+.pnl[hidden]{display:none}
+@keyframes pin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pnl table{width:100%;border-collapse:collapse;font-size:.86rem}
+.pnl td{padding:.5rem 0;border-bottom:1px solid rgba(31,90,23,.15)}
+.pnl td:last-child{text-align:right;font-weight:500}
+.pnl .map{width:100%;height:190px;border:0;border-radius:12px;display:block}
+.loc .pill{width:100%;margin-top:1.2rem}
+@media(prefers-reduced-motion:reduce){.loc{opacity:1;transform:none}}
+
+/* ===== CLOSER + FOOTER ===== */
+.closer{padding:clamp(2.5rem,6vw,4.5rem) var(--pad) 1rem;max-width:1150px;margin:0 auto;
+  display:flex;justify-content:space-between;align-items:center;gap:2rem;flex-wrap:wrap}
+.closer h2{font-size:clamp(1.7rem,4vw,2.9rem);max-width:16ch}
+.footer{padding:clamp(1rem,3vw,2rem) var(--pad) 6.5rem;max-width:1150px;margin:0 auto;display:grid;gap:1.4rem}
+@media(min-width:900px){.footer{grid-template-columns:1.6fr 1fr}}
+.fbox{position:relative;background:var(--forest-dk);color:var(--sage);border-radius:var(--r);padding:clamp(1.6rem,4vw,2.8rem);overflow:hidden;display:grid;gap:2rem}
+@media(min-width:640px){.fbox{grid-template-columns:1.2fr .8fr}}
+.fbox h4{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:1rem}
+.nlform{display:flex;background:var(--cream-2);border-radius:12px;overflow:hidden;max-width:420px}
+.nlform input{flex:1;background:transparent;border:0;padding:1rem;font-family:var(--sans);font-size:.95rem;color:var(--forest);min-height:52px}
+.nlform input::placeholder{color:rgba(31,90,23,.55)}
+.nlform input:focus{outline:none}
+.nlform button{background:var(--sage);border:0;color:var(--forest);width:64px;cursor:pointer;font-size:1.1rem;transition:background .3s}
+.nlform button:hover{background:var(--honey)}
+.fbox .help{margin-top:1.4rem;font-size:.95rem}
+.fbox .help a{text-decoration:underline;text-underline-offset:3px}
+.fbox ul{list-style:none;display:grid;gap:.7rem;font-size:1.05rem;align-content:start;position:relative;z-index:2}
+.fbox ul a{text-decoration:none;transition:color .3s}
+.fbox ul a:hover{color:var(--honey)}
+.fbox__ghost{position:absolute;left:clamp(1.6rem,4vw,2.8rem);bottom:-.4rem;z-index:0;pointer-events:none;user-select:none;
+  font-family:var(--serif);font-size:clamp(2.6rem,8vw,6rem);letter-spacing:.12em;color:rgba(191,221,160,.14);white-space:nowrap}
+.fnote{position:relative;border-radius:var(--r);overflow:hidden;min-height:260px}
+.fnote img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.fnote span{position:absolute;left:.9rem;bottom:.9rem;background:var(--cream);border-radius:999px;padding:.4rem .9rem;font-size:.78rem;font-weight:500;z-index:2}
+.fbottom{max-width:1150px;margin:0 auto;padding:1rem var(--pad) 6rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.75rem;opacity:.75}
+.fbottom a{text-decoration:underline;text-underline-offset:3px}
+@media(min-width:840px){.fbottom{padding-bottom:2rem}}
+
+.mobilebar{position:fixed;left:0;right:0;bottom:0;z-index:250;padding:.6rem 1rem;background:var(--cream);border-top:1px solid rgba(31,90,23,.2);display:flex;justify-content:center}
+.mobilebar .pill{width:100%;max-width:440px}
+@media(min-width:840px){.mobilebar{display:none}}
+
+.skip{position:absolute;left:-9999px;top:0;background:var(--forest);color:var(--cream);padding:1rem;z-index:900}
+.skip:focus{left:0}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <ul>
+    <li><a href="#menu">Our Food</a></li>
+    <li><a href="#story">Our Story</a></li>
+  </ul>
+  <a class="nav__mark" href="#top">DemoEats</a>
+  <ul>
+    <li><a href="#locations">Locations</a></li>
+    <li><a href="https://orders.demoeats.com" target="_blank" rel="noopener">Order (0)</a></li>
+  </ul>
+</header>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero__sticky">
+    <div class="hero__title" id="heroTitle">
+      <h1>
+        <span class="ln"><span>The Easy Table</span></span>
+        <span class="ln"><span>for Authentic Thai</span></span>
+      </h1>
+      <a class="pill" href="https://orders.demoeats.com" target="_blank" rel="noopener">Get Started</a>
+    </div>
+
+    <svg class="vine vine--l" viewBox="0 0 200 260" aria-hidden="true">
+      <path d="M20 250C40 190 10 150 60 120 100 96 90 50 140 30"/>
+      <path class="leaf" d="M30 120c-24-14-28-52-4-74 22 20 24 56 4 74z"/>
+      <path class="leaf" d="M74 60c-22-16-22-52 2-70 20 22 18 54-2 70z"/>
+      <ellipse class="seed" cx="52" cy="86" rx="11" ry="7" transform="rotate(-30 52 86)"/>
+      <ellipse class="seed" cx="96" cy="42" rx="11" ry="7" transform="rotate(-20 96 42)"/>
+      <ellipse class="seed" cx="28" cy="176" rx="11" ry="7" transform="rotate(20 28 176)"/>
+    </svg>
+    <svg class="vine vine--r" viewBox="0 0 200 260" aria-hidden="true">
+      <path d="M20 250C40 190 10 150 60 120 100 96 90 50 140 30"/>
+      <path class="leaf" d="M30 120c-24-14-28-52-4-74 22 20 24 56 4 74z"/>
+      <path class="leaf" d="M74 60c-22-16-22-52 2-70 20 22 18 54-2 70z"/>
+      <ellipse class="seed" cx="52" cy="86" rx="11" ry="7" transform="rotate(-30 52 86)"/>
+      <ellipse class="seed" cx="96" cy="42" rx="11" ry="7" transform="rotate(-20 96 42)"/>
+    </svg>
+
+    <div class="hero__frame" id="heroFrame">
+      <img src="https://ucarecdn.com/2f265086-389d-4073-b52c-271b054178bf/-/format/auto/-/progressive/yes/HeroImg.png" alt="A table of Thai dishes at DemoEats" fetchpriority="high">
+    </div>
+    <span class="hero__cue" id="heroCue" aria-hidden="true">Scroll</span>
+  </div>
+</section>
+
+<!-- GREEN STATEMENT -->
+<section class="stmt" id="story">
+  <p id="stmtText">The fire-charred, herb-heavy, hand-pounded Thai cooking that fills a table and slows everybody down.</p>
+  <a class="pill" href="#menu">See the Menu</a>
+</section>
+<div class="badges" aria-label="What we promise">
+  <span><i>✓</i>No jars, ever</span>
+  <span><i>✓</i>Local farmers</span>
+  <span><i>✓</i>Pastes pounded daily</span>
+  <span><i>✓</i>Family style</span>
+  <span><i>✓</i>Heat to order</span>
+</div>
+
+<!-- BENEFIT ROWS -->
+<section class="bene" id="bene">
+  <p class="bene__eyebrow">DemoEats will</p>
+  <button class="brow" data-i="0"><span>Wake Up Your Palate</span><i>→</i></button>
+  <button class="brow" data-i="1"><span>Slow The Table Down</span><i>→</i></button>
+  <button class="brow" data-i="2"><span>Feed Everybody At Once</span><i>→</i></button>
+  <a class="pill" href="#menu">Get Started</a>
+</section>
+
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer__scrim" data-close></div>
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <button class="drawer__close" data-close aria-label="Close">✕</button>
+    <h3 id="drawerTitle"></h3>
+    <div id="drawerBody"></div>
+  </div>
+</div>
+
+<!-- HONEY SPLIT -->
+<section class="honey" id="menu">
+  <figure><img loading="lazy" src="https://ucarecdn.com/bcdb1f0c-a350-42b3-94cb-c143f16ca96a/-/format/auto/-/progressive/yes/g5.webp" alt="Thai dishes served family style"></figure>
+  <div class="honey__text">
+    <h2>The heat of our being</h2>
+    <p>Bird's eye chili, galangal, holy basil and lemongrass have anchored this kitchen for three generations. We pound the paste each morning; the aroma reaches the table before the plate does.</p>
+    <a class="go" href="#locations">Find a table <i>→</i></a>
+    <div class="rotor" aria-hidden="true">
+      <svg viewBox="0 0 150 150">
+        <defs><path id="ring" d="M75,75 m-56,0 a56,56 0 1,1 112,0 a56,56 0 1,1 -112,0"/></defs>
+        <text style="font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2.6px;fill:#1F5A17">
+          <textPath href="#ring">NO JARS · LOCAL FARMERS · POUNDED DAILY · FAMILY STYLE ·</textPath>
+        </text>
+      </svg>
+      <span class="core"></span>
+    </div>
+  </div>
+</section>
+
+<!-- FLAVORS -->
+<section class="flav" id="flavors">
+  <span class="flav__mark" aria-hidden="true">✽</span>
+  <h2>Meet The Dishes</h2>
+  <div class="flav__grid">
+    <a class="fcard" href="https://orders.demoeats.com" target="_blank" rel="noopener">
+      <span class="fcard__img"><img loading="lazy" src="https://ucarecdn.com/53f7255e-7c04-4cfb-80ef-a549a251d7d0/-/format/auto/-/progressive/yes/g6.webp" alt="Tom Yum"></span>
+      <b>Tom Yum Goong</b><small>Hot &amp; sour · lemongrass</small>
+    </a>
+    <a class="fcard" href="https://orders.demoeats.com" target="_blank" rel="noopener">
+      <span class="fcard__img"><img loading="lazy" src="https://ucarecdn.com/2b466717-9310-42dd-b8ef-50711b4768ad/-/format/auto/-/progressive/yes/g2.webp" alt="Pad Thai"></span>
+      <b>Pad Thai</b><small>Tamarind · peanut</small>
+    </a>
+    <a class="fcard" href="https://orders.demoeats.com" target="_blank" rel="noopener">
+      <span class="fcard__img"><img loading="lazy" src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt="Green Curry"></span>
+      <b>Green Curry</b><small>Coconut · Thai basil</small>
+    </a>
+    <a class="fcard" href="https://orders.demoeats.com" target="_blank" rel="noopener">
+      <span class="fcard__img"><img loading="lazy" src="https://ucarecdn.com/0829a4ea-e255-4b00-b85e-839e935f2c36/-/format/auto/-/progressive/yes/g3.webp" alt="Som Tum"></span>
+      <b>Som Tum</b><small>Green papaya · lime</small>
+    </a>
+  </div>
+</section>
+
+<!-- SAGE PICKY -->
+<section class="picky" id="picky">
+  <h2>We're Picky</h2>
+  <div class="picky__grid">
+    <figure><img loading="lazy" src="https://ucarecdn.com/a761527c-a84e-42b1-b3e5-b510bc6f38ff/-/format/auto/-/progressive/yes/g4.webp" alt="Fresh herbs and spices"></figure>
+    <div class="acc">
+      <div class="ai">
+        <button class="ai__btn" aria-expanded="false">Heat to order<span class="ai__ic" aria-hidden="true">+</span></button>
+        <div class="ai__panel"><p>Every curry and stir-fry is built when you order it, so the chili can go from barely-there to properly fierce without touching the rest of the balance.</p></div>
+      </div>
+      <div class="ai">
+        <button class="ai__btn" aria-expanded="false">Gluten-free options<span class="ai__ic" aria-hidden="true">+</span></button>
+        <div class="ai__panel"><p>Most of the list is naturally gluten-free — rice noodles, rice, fresh herbs. Tell your server and we'll steer you clear of the soy.</p></div>
+      </div>
+      <div class="ai">
+        <button class="ai__btn" aria-expanded="false">Nothing from a jar<span class="ai__ic" aria-hidden="true">+</span></button>
+        <div class="ai__panel"><p>Curry pastes are pounded in a granite mortar each morning. Stocks simmer all day. There is no shortcut in this kitchen and never has been.</p></div>
+      </div>
+      <div class="ai">
+        <button class="ai__btn" aria-expanded="false">Local growers only<span class="ai__ic" aria-hidden="true">+</span></button>
+        <div class="ai__panel"><p>Lemongrass, holy basil, bird's eye chili and galangal arrive from farms we visit ourselves, picked the same morning they hit the wok.</p></div>
+      </div>
+      <div class="ai">
+        <button class="ai__btn" aria-expanded="false">Built to share<span class="ai__ic" aria-hidden="true">+</span></button>
+        <div class="ai__panel"><p>Nothing here is a solo course. Everything lands in the middle of the table, and stays there until it's gone.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="gut" id="reviews">
+  <div class="gut__head">
+    <h2>Table Talk</h2>
+    <div class="gut__arrows">
+      <button id="tPrev" aria-label="Previous">‹</button>
+      <button id="tNext" aria-label="Next">›</button>
+    </div>
+  </div>
+  <div class="gut__rail" id="rail">
+    <article class="tcard">
+      <figure><img loading="lazy" src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt=""><span class="tcard__who">Ashley V.</span></figure>
+      <div class="tcard__body"><p>"The green curry actually steams up your glasses. I've never had one like it outside of Chiang Mai."</p><small>Favourite · Green Curry</small></div>
+    </article>
+    <article class="tcard">
+      <figure><img loading="lazy" src="https://ucarecdn.com/2b466717-9310-42dd-b8ef-50711b4768ad/-/format/auto/-/progressive/yes/g2.webp" alt=""><span class="tcard__who">Jess H.</span></figure>
+      <div class="tcard__body"><p>"We came at 2am after a flight and got the best Pad Thai of our lives. Somerton never closes."</p><small>Favourite · Pad Thai</small></div>
+    </article>
+    <article class="tcard">
+      <figure><img loading="lazy" src="https://ucarecdn.com/53f7255e-7c04-4cfb-80ef-a549a251d7d0/-/format/auto/-/progressive/yes/g6.webp" alt=""><span class="tcard__who">Marcus T.</span></figure>
+      <div class="tcard__body"><p>"You smell the Tom Yum before it lands. Booked a table of twelve and they built the whole banquet around us."</p><small>Favourite · Tom Yum</small></div>
+    </article>
+    <article class="tcard">
+      <figure><img loading="lazy" src="https://ucarecdn.com/bcdb1f0c-a350-42b3-94cb-c143f16ca96a/-/format/auto/-/progressive/yes/g5.webp" alt=""><span class="tcard__who">Priya S.</span></figure>
+      <div class="tcard__body"><p>"Everything lands in the middle and nobody looks at their phone for an hour. That's the whole point."</p><small>Favourite · Som Tum</small></div>
+    </article>
+  </div>
+</section>
+
+<!-- LOCATIONS -->
+<section class="locs" id="locations">
+  <h2>Two Kitchens</h2>
+  <div class="locs__grid">
+    <article class="loc">
+      <figure>
+        <img loading="lazy" src="https://ucarecdn.com/0829a4ea-e255-4b00-b85e-839e935f2c36/-/format/auto/-/progressive/yes/g3.webp" alt="DemoEats Brisbane">
+        <span class="loc__tag">Demo2 · Albion</span>
+      </figure>
+      <div class="loc__body">
+        <h3>Brisbane</h3>
+        <dl>
+          <dt>Address</dt><dd>346 Sandgate Road, Albion QLD 4010</dd>
+          <dt>Phone</dt><dd><a href="tel:0732624972">07 3262 4972</a></dd>
+        </dl>
+        <div class="seg" role="tablist" aria-label="Brisbane details">
+          <button role="tab" id="tb-h" aria-controls="pb-h" aria-selected="true">Hours</button>
+          <button role="tab" id="tb-m" aria-controls="pb-m" aria-selected="false">Map</button>
+        </div>
+        <div class="pnl" role="tabpanel" id="pb-h" aria-labelledby="tb-h">
+          <table><tbody>
+            <tr><td>Mon / Tue</td><td>5–9pm</td></tr>
+            <tr><td>Wed – Fri</td><td>11:30am–3pm · 5–9pm</td></tr>
+            <tr><td>Sat / Sun</td><td>5–9pm</td></tr>
+          </tbody></table>
+        </div>
+        <div class="pnl" role="tabpanel" id="pb-m" aria-labelledby="tb-m" hidden>
+          <iframe class="map" title="Map to DemoEats Brisbane" loading="lazy" src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <a class="pill" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Order Brisbane</a>
+      </div>
+    </article>
+
+    <article class="loc">
+      <figure>
+        <img loading="lazy" src="https://ucarecdn.com/52910dc8-8d77-44bf-ac9c-62a1afc1f2fc/-/format/auto/-/progressive/yes/onsite.webp" alt="DemoEats Melbourne">
+        <span class="loc__tag">Open 24 hours</span>
+      </figure>
+      <div class="loc__body">
+        <h3>Melbourne</h3>
+        <dl>
+          <dt>Address</dt><dd>19 North Park Dr, Somerton VIC 3062</dd>
+          <dt>Phone</dt><dd><a href="tel:0407505997">0407 505 997</a></dd>
+        </dl>
+        <div class="seg" role="tablist" aria-label="Melbourne details">
+          <button role="tab" id="tm-h" aria-controls="pm-h" aria-selected="true">Hours</button>
+          <button role="tab" id="tm-m" aria-controls="pm-m" aria-selected="false">Map</button>
+        </div>
+        <div class="pnl" role="tabpanel" id="pm-h" aria-labelledby="tm-h">
+          <table><tbody><tr><td>Every day</td><td>Open 24 hours</td></tr></tbody></table>
+        </div>
+        <div class="pnl" role="tabpanel" id="pm-m" aria-labelledby="tm-m" hidden>
+          <iframe class="map" title="Map to DemoEats Melbourne" loading="lazy" src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <a class="pill" href="https://orders.demoeats.com" target="_blank" rel="noopener">Order Melbourne</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- CLOSER -->
+<section class="closer">
+  <h2>Go with your gut for the most important meal of the day.</h2>
+  <a class="pill" href="https://orders.demoeats.com" target="_blank" rel="noopener">Order Online</a>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="fbox">
+    <div>
+      <h4>Sign up for our newsletter</h4>
+      <form class="nlform" onsubmit="event.preventDefault();this.querySelector('input').value='';this.nextElementSibling.textContent='Thanks — you are on the list.';">
+        <label for="nl" class="skip">Email address</label>
+        <input id="nl" type="email" placeholder="Email address" autocomplete="email" required>
+        <button type="submit" aria-label="Subscribe">→</button>
+      </form>
+      <p class="help" role="status" aria-live="polite"></p>
+      <p class="help">Need a big table? <a href="#locations">Get in touch</a></p>
+    </div>
+    <ul>
+      <li><a href="#story">Our Story</a></li>
+      <li><a href="#picky">FAQ</a></li>
+      <li><a href="#locations">Locations</a></li>
+      <li><a href="https://www.instagram.com" target="_blank" rel="noopener">Instagram</a></li>
+      <li><a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Terms of Service</a></li>
+    </ul>
+    <span class="fbox__ghost" aria-hidden="true">DEMOEATS</span>
+  </div>
+  <div class="fnote">
+    <img loading="lazy" src="https://ucarecdn.com/52910dc8-8d77-44bf-ac9c-62a1afc1f2fc/-/format/auto/-/progressive/yes/onsite.webp" alt="A full table at DemoEats">
+    <span>@demoeats</span>
+  </div>
+</footer>
+<div class="fbottom">
+  <span>© 2026 DemoEats</span>
+  <span>Powered by Local For You · <a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Terms</a></span>
+</div>
+
+<div class="mobilebar">
+  <a class="pill" href="https://orders.demoeats.com" target="_blank" rel="noopener">Order Online</a>
+</div>
+
+<script>
+(function(){
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* nav hide on scroll down */
+  var nav = document.getElementById('nav'), lastY = 0;
+  addEventListener('scroll', function(){
+    var y = scrollY;
+    nav.classList.toggle('hide', y > 500 && y > lastY);
+    lastY = y;
+  }, {passive:true});
+
+  /* ===== HERO scroll expansion + headline inversion ===== */
+  var hero = document.querySelector('.hero'), frame = document.getElementById('heroFrame'),
+      title = document.getElementById('heroTitle'), cue = document.getElementById('heroCue');
+  var vines = [].slice.call(document.querySelectorAll('.vine'));
+  if(!reduced){
+    addEventListener('scroll', function(){
+      var r = hero.getBoundingClientRect();
+      var total = hero.offsetHeight - innerHeight;
+      var p = Math.min(Math.max(-r.top / total, 0), 1);
+      var e = 1 - Math.pow(1-p, 2);
+      frame.style.setProperty('--w', (84 + e*16) + '%');
+      frame.style.setProperty('--h2', (52 + e*48) + '%');
+      frame.style.setProperty('--br', (26 - e*26) + 'px');
+      frame.style.setProperty('--s', (1.14 - e*0.12).toFixed(3));
+      frame.style.setProperty('--o', (e*0.9).toFixed(3));
+      title.style.setProperty('--h', p > 0.42 ? '#FBF6E6' : '#1F5A17');
+      cue.style.setProperty('--cue', String(Math.min(p*2, 1) - Math.max(0,(p-0.7))*3));
+      vines.forEach(function(v,i){
+        var dir = i ? 1 : -1;
+        v.style.transform = 'translate(' + (dir * e * 60) + 'px,' + (e * 90) + 'px)' + (i ? ' scaleX(-1)' : '');
+        v.style.opacity = String(1 - e*1.3);
+      });
+    }, {passive:true});
+  }
+
+  /* ===== STATEMENT word rise ===== */
+  (function(){
+    var p = document.getElementById('stmtText');
+    var accents = {'fire-charred':'🔥','herb-heavy':'🌿','hand-pounded':'🥣','slows':'🌸'};
+    var ws = p.textContent.trim().split(' ');
+    p.textContent = '';
+    ws.forEach(function(x,i){
+      var w = document.createElement('w');
+      w.textContent = x + '\u00A0';
+      w.style.transitionDelay = (i * 0.035) + 's';
+      p.appendChild(w);
+      var key = x.replace(/[^a-z-]/gi,'');
+      if(accents[key]){
+        var em = document.createElement('em');
+        em.textContent = accents[key] + '\u00A0';
+        p.appendChild(em);
+      }
+    });
+  })();
+
+  /* section reveal */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:.2});
+  document.querySelectorAll('.stmt,.bene,.honey,.flav,.picky,.locs').forEach(function(el){ io.observe(el); });
+
+  /* ===== BENEFIT rows: tint the section + open drawer ===== */
+  var bene = document.getElementById('bene');
+  var tints = ['#F5B183','#BFDDA0','#F7CF7C'];
+  var content = [
+    ['Wake Up Your Palate','<p>Thai cooking is a balance of four things — sweet, sour, salty, hot. We chase all four in every dish, and we build the heat to your order.</p><p>Bird\u2019s eye chili, palm sugar, fish sauce and lime, adjusted at the wok rather than at the end.</p>'],
+    ['Slow The Table Down','<p>Everything lands in the middle of the table and stays there. No courses marching out, no plates whisked away, no rush.</p><p>Our banquet menu for eight or more is built the way we eat at home.</p>'],
+    ['Feed Everybody At Once','<p>Two kitchens, one standard. Brisbane runs lunch and dinner; Melbourne never closes.</p><p>Order in, take away, or take a seat — the food is the same either way.</p>']
+  ];
+  var drawer = document.getElementById('drawer'),
+      dTitle = document.getElementById('drawerTitle'),
+      dBody = document.getElementById('drawerBody');
+  document.querySelectorAll('.brow').forEach(function(b){
+    var i = +b.dataset.i;
+    b.addEventListener('mouseenter', function(){ bene.style.setProperty('--tint', tints[i]); });
+    b.addEventListener('mouseleave', function(){ bene.style.setProperty('--tint', 'var(--cream)'); });
+    b.addEventListener('click', function(){
+      dTitle.textContent = content[i][0];
+      dBody.innerHTML = content[i][1];
+      drawer.classList.add('on');
+      drawer.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+  drawer.querySelectorAll('[data-close]').forEach(function(c){
+    c.addEventListener('click', function(){
+      drawer.classList.remove('on'); drawer.setAttribute('aria-hidden','true'); document.body.style.overflow='';
+    });
+  });
+  addEventListener('keydown', function(e){ if(e.key==='Escape' && drawer.classList.contains('on')) drawer.querySelector('[data-close]').click(); });
+
+  /* ===== PICKY accordion ===== */
+  document.querySelectorAll('.ai').forEach(function(item){
+    var btn = item.querySelector('.ai__btn'), panel = item.querySelector('.ai__panel');
+    btn.addEventListener('click', function(){
+      var open = item.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+      panel.style.height = open ? panel.scrollHeight + 'px' : '0px';
+      if(open) document.querySelectorAll('.ai.open').forEach(function(o){
+        if(o!==item){ o.classList.remove('open'); o.querySelector('.ai__panel').style.height='0px'; o.querySelector('.ai__btn').setAttribute('aria-expanded','false'); }
+      });
+    });
+  });
+
+  /* ===== TESTIMONIAL rail: arrows + drag ===== */
+  (function(){
+    var rail = document.getElementById('rail');
+    function w(){ var c = rail.querySelector('.tcard'); return c ? c.getBoundingClientRect().width + 19 : 400; }
+    document.getElementById('tNext').addEventListener('click', function(){ rail.scrollBy({left:w(), behavior: reduced?'auto':'smooth'}); });
+    document.getElementById('tPrev').addEventListener('click', function(){ rail.scrollBy({left:-w(), behavior: reduced?'auto':'smooth'}); });
+    var down=false,sx=0,sl=0,moved=false;
+    rail.addEventListener('mousedown', function(e){ down=true;moved=false;sx=e.pageX;sl=rail.scrollLeft;rail.classList.add('drag'); });
+    addEventListener('mouseup', function(){ down=false; rail.classList.remove('drag'); });
+    rail.addEventListener('mousemove', function(e){ if(!down)return; e.preventDefault(); if(Math.abs(e.pageX-sx)>4) moved=true; rail.scrollLeft = sl-(e.pageX-sx); });
+    rail.addEventListener('click', function(e){ if(moved) e.preventDefault(); }, true);
+  })();
+
+  /* location tabs */
+  document.querySelectorAll('.seg').forEach(function(seg){
+    var btns = seg.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        btns.forEach(function(o){
+          o.setAttribute('aria-selected', String(o===b));
+          document.getElementById(o.getAttribute('aria-controls')).hidden = (o!==b);
+        });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
