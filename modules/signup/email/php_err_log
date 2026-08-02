@@ -1,0 +1,336 @@
+[28-Mar-2025 14:53:55 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[28-Mar-2025 14:53:55 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[31-Mar-2025 13:03:00 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[31-Mar-2025 13:03:00 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[31-Mar-2025 16:22:04 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[31-Mar-2025 16:22:04 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[31-Mar-2025 21:03:31 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[31-Mar-2025 21:03:31 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[01-Apr-2025 15:10:52 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[01-Apr-2025 15:10:52 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[02-Apr-2025 18:08:16 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[02-Apr-2025 18:08:16 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[03-Apr-2025 11:16:09 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[03-Apr-2025 11:16:09 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[06-Apr-2025 22:17:28 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[06-Apr-2025 22:17:28 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[08-Apr-2025 17:00:27 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[08-Apr-2025 17:00:27 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[09-Apr-2025 03:07:46 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[09-Apr-2025 03:07:46 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[09-Apr-2025 18:02:26 America/New_York] PHP Warning:  Undefined array key "allData" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 4
+[09-Apr-2025 18:02:26 America/New_York] PHP Warning:  Undefined array key "acceptAI" in /home/localfor/report.localforyou.com/modules/signup/email/sendMail.php on line 46
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined variable $param in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 62
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Trying to access array offset on value of type null in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 62
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined variable $param in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 63
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Trying to access array offset on value of type null in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 63
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined variable $param in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 78
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Trying to access array offset on value of type null in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 78
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined variable $param in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 79
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Trying to access array offset on value of type null in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 79
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 323
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 398
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 399
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 495
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 496
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 537
+[11-Apr-2025 13:30:05 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 538
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 230
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 231
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 246
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 247
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 325
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 400
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 401
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 497
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 498
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 539
+[11-Apr-2025 13:34:09 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 540
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 230
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 231
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 246
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 247
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 333
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 408
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 409
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 505
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 506
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 547
+[11-Apr-2025 13:38:14 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 548
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 230
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 231
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 246
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 247
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 340
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 415
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 416
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 512
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 513
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 554
+[11-Apr-2025 13:53:02 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 555
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 230
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 231
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 246
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 247
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 336
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 411
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 412
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 508
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 509
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 550
+[11-Apr-2025 13:59:16 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 551
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 227
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 228
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 243
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 244
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 333
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 408
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 409
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 505
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 506
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 547
+[11-Apr-2025 14:09:43 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 548
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 227
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 228
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 243
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 244
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 333
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 408
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 409
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 505
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 506
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 547
+[11-Apr-2025 14:16:16 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 548
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 231
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 232
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 247
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 248
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 337
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 412
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 413
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 508
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 509
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 550
+[11-Apr-2025 14:21:43 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 551
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 231
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 232
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 247
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 248
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 337
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 412
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 413
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 505
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 506
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 547
+[11-Apr-2025 14:25:33 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 548
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 231
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 232
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 247
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 248
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 345
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 422
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 423
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 534
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 535
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 584
+[12-Apr-2025 13:00:52 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 585
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 231
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 232
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 247
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 248
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 345
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 422
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 423
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 534
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 535
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectAs" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 584
+[12-Apr-2025 13:07:13 Asia/Bangkok] PHP Warning:  Undefined array key "formstartProjectOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 585
+[12-Apr-2025 13:11:20 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 232
+[12-Apr-2025 13:11:20 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 233
+[12-Apr-2025 13:11:20 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 346
+[12-Apr-2025 13:11:20 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 423
+[12-Apr-2025 13:11:20 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 424
+[12-Apr-2025 13:11:20 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 535
+[12-Apr-2025 13:11:20 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 536
+[12-Apr-2025 13:14:08 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 232
+[12-Apr-2025 13:14:08 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 233
+[12-Apr-2025 13:14:08 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 346
+[12-Apr-2025 13:14:08 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 423
+[12-Apr-2025 13:14:08 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 424
+[12-Apr-2025 13:14:08 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 535
+[12-Apr-2025 13:14:08 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 536
+[12-Apr-2025 13:31:55 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 232
+[12-Apr-2025 13:31:55 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 233
+[12-Apr-2025 13:31:55 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 346
+[12-Apr-2025 13:31:55 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 423
+[12-Apr-2025 13:31:55 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 424
+[12-Apr-2025 13:31:55 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 533
+[12-Apr-2025 13:31:55 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 534
+[12-Apr-2025 13:37:36 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 232
+[12-Apr-2025 13:37:36 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 233
+[12-Apr-2025 13:37:36 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 346
+[12-Apr-2025 13:37:36 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 423
+[12-Apr-2025 13:37:36 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 424
+[12-Apr-2025 13:37:36 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 533
+[12-Apr-2025 13:37:36 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 534
+[12-Apr-2025 13:55:42 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 232
+[12-Apr-2025 13:55:42 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 233
+[12-Apr-2025 13:55:42 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 346
+[12-Apr-2025 13:55:42 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 423
+[12-Apr-2025 13:55:42 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 424
+[12-Apr-2025 13:55:42 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 538
+[12-Apr-2025 13:55:42 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 539
+[12-Apr-2025 14:22:36 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 262
+[12-Apr-2025 14:22:36 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[12-Apr-2025 14:22:36 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 267
+[12-Apr-2025 14:22:36 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 365
+[12-Apr-2025 14:22:36 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 366
+[12-Apr-2025 14:22:36 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 480
+[12-Apr-2025 14:22:36 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 481
+[12-Apr-2025 14:22:36 Asia/Bangkok] PHP Warning:  Undefined variable $cuisine in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 562
+[12-Apr-2025 14:25:53 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 262
+[12-Apr-2025 14:25:53 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[12-Apr-2025 14:25:53 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 267
+[12-Apr-2025 14:25:53 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 367
+[12-Apr-2025 14:25:53 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 368
+[12-Apr-2025 14:25:53 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 482
+[12-Apr-2025 14:25:53 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 483
+[12-Apr-2025 14:25:53 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 564
+[12-Apr-2025 14:27:57 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 262
+[12-Apr-2025 14:27:57 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[12-Apr-2025 14:27:57 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 267
+[12-Apr-2025 14:27:57 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 368
+[12-Apr-2025 14:27:57 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 369
+[12-Apr-2025 14:27:57 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 483
+[12-Apr-2025 14:27:57 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 484
+[12-Apr-2025 14:31:57 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 262
+[12-Apr-2025 14:31:57 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[12-Apr-2025 14:31:57 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 267
+[12-Apr-2025 14:31:57 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 367
+[12-Apr-2025 14:31:57 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 368
+[12-Apr-2025 14:31:57 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 482
+[12-Apr-2025 14:31:57 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 483
+[12-Apr-2025 14:52:12 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 262
+[12-Apr-2025 14:52:12 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[12-Apr-2025 14:52:12 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 267
+[12-Apr-2025 14:52:12 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 368
+[12-Apr-2025 14:52:12 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 369
+[12-Apr-2025 14:52:12 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 483
+[12-Apr-2025 14:52:12 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 484
+[12-Apr-2025 14:52:12 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 643
+[12-Apr-2025 14:52:46 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 262
+[12-Apr-2025 14:52:46 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[12-Apr-2025 14:52:46 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 267
+[12-Apr-2025 14:52:46 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 368
+[12-Apr-2025 14:52:46 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 369
+[12-Apr-2025 14:52:46 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 483
+[12-Apr-2025 14:52:46 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 484
+[12-Apr-2025 14:54:33 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 262
+[12-Apr-2025 14:54:33 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[12-Apr-2025 14:54:33 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 267
+[12-Apr-2025 14:54:33 Asia/Bangkok] PHP Warning:  Undefined array key "formLoginEmailBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 368
+[12-Apr-2025 14:54:33 Asia/Bangkok] PHP Warning:  Undefined array key "formPasswordBookingSystem" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 369
+[12-Apr-2025 14:54:33 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 483
+[12-Apr-2025 14:54:33 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 484
+[12-Apr-2025 15:11:01 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 264
+[12-Apr-2025 15:11:01 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 268
+[12-Apr-2025 15:11:01 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 269
+[12-Apr-2025 15:11:01 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 480
+[12-Apr-2025 15:11:01 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 481
+[12-Apr-2025 15:13:31 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 264
+[12-Apr-2025 15:13:31 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 268
+[12-Apr-2025 15:13:31 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 269
+[12-Apr-2025 15:13:31 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 480
+[12-Apr-2025 15:13:31 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 481
+[12-Apr-2025 15:36:52 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 264
+[12-Apr-2025 15:36:52 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 268
+[12-Apr-2025 15:36:52 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 269
+[12-Apr-2025 15:36:52 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 476
+[12-Apr-2025 15:36:52 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 477
+[12-Apr-2025 15:36:52 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 558
+[12-Apr-2025 15:42:45 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 264
+[12-Apr-2025 15:42:45 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 268
+[12-Apr-2025 15:42:45 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 269
+[12-Apr-2025 15:42:45 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 481
+[12-Apr-2025 15:42:45 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 482
+[12-Apr-2025 15:42:45 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 563
+[12-Apr-2025 15:44:26 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 264
+[12-Apr-2025 15:44:26 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 268
+[12-Apr-2025 15:44:26 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 269
+[12-Apr-2025 15:44:26 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 481
+[12-Apr-2025 15:44:26 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 482
+[12-Apr-2025 15:44:26 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 563
+[12-Apr-2025 15:46:41 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 264
+[12-Apr-2025 15:46:41 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 268
+[12-Apr-2025 15:46:41 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 269
+[12-Apr-2025 15:46:41 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 473
+[12-Apr-2025 15:46:41 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 474
+[12-Apr-2025 15:46:41 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 555
+[12-Apr-2025 15:49:41 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 264
+[12-Apr-2025 15:49:41 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 268
+[12-Apr-2025 15:49:41 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 269
+[12-Apr-2025 15:49:41 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 475
+[12-Apr-2025 15:49:41 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 476
+[12-Apr-2025 15:49:41 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 557
+[13-Apr-2025 20:58:47 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[13-Apr-2025 20:58:47 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 270
+[13-Apr-2025 20:58:47 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 271
+[13-Apr-2025 20:58:47 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 477
+[13-Apr-2025 20:58:47 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 478
+[13-Apr-2025 20:58:47 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 559
+[13-Apr-2025 21:02:32 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[13-Apr-2025 21:02:32 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 270
+[13-Apr-2025 21:02:32 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 271
+[13-Apr-2025 21:02:32 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 477
+[13-Apr-2025 21:02:32 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 478
+[13-Apr-2025 21:02:32 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 566
+[13-Apr-2025 21:59:35 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[13-Apr-2025 21:59:35 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 270
+[13-Apr-2025 21:59:35 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 271
+[13-Apr-2025 21:59:35 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 477
+[13-Apr-2025 21:59:35 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 478
+[13-Apr-2025 22:12:54 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[13-Apr-2025 22:12:54 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 270
+[13-Apr-2025 22:12:54 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 271
+[13-Apr-2025 22:12:54 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 477
+[13-Apr-2025 22:12:54 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 478
+[13-Apr-2025 22:27:14 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[13-Apr-2025 22:27:14 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 270
+[13-Apr-2025 22:27:14 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 271
+[13-Apr-2025 22:27:14 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 477
+[13-Apr-2025 22:27:14 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 478
+[13-Apr-2025 22:27:14 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 567
+[13-Apr-2025 22:30:31 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisineOther" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 266
+[13-Apr-2025 22:30:31 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 270
+[13-Apr-2025 22:30:31 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 271
+[13-Apr-2025 22:30:31 Asia/Bangkok] PHP Warning:  Undefined array key "formNoPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 477
+[13-Apr-2025 22:30:31 Asia/Bangkok] PHP Warning:  Undefined array key "formYesPOSProvider" in /home/localfor/report.localforyou.com/modules/signup/email/testEmail.php on line 478
+[13-Apr-2025 23:12:22 Asia/Bangkok] PHP Warning:  Array to string conversion in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php on line 524
+[14-Apr-2025 00:26:39 Asia/Bangkok] PHP Fatal error:  Uncaught TypeError: implode(): Argument #2 ($array) must be of type ?array, string given in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php:224
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php(224): implode(', ', '-')
+#1 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php on line 224
+[14-Apr-2025 00:55:14 Asia/Bangkok] PHP Fatal error:  Uncaught TypeError: implode(): Argument #2 ($array) must be of type ?array, string given in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php:224
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php(224): implode(', ', '-')
+#1 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php on line 224
+[13-Apr-2025 14:05:33 America/New_York] PHP Parse error:  syntax error, unexpected variable "$param" in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php on line 445
+[14-Apr-2025 10:12:16 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisine" in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php on line 435
+[14-Apr-2025 10:21:56 Asia/Bangkok] PHP Warning:  Undefined array key "formCuisine" in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php on line 435
+[14-Apr-2025 10:57:08 Asia/Bangkok] PHP Fatal error:  Uncaught TypeError: implode(): Argument #1 ($pieces) must be of type array, string given in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php:314
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php(314): implode('-')
+#1 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php on line 314
+[14-Apr-2025 10:59:04 Asia/Bangkok] PHP Fatal error:  Uncaught TypeError: implode(): Argument #2 ($array) must be of type ?array, string given in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php:314
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php(314): implode(',', '-')
+#1 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php on line 314
+[14-Apr-2025 11:01:38 Asia/Bangkok] PHP Fatal error:  Uncaught TypeError: implode(): Argument #2 ($array) must be of type ?array, string given in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php:314
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php(314): implode(',', '-')
+#1 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/email/L4UEmailAlert.php on line 314

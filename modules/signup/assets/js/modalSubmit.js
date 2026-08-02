@@ -1,8 +1,16 @@
+let _crmCountdownTimer = null;
+
 const enableCRMButton = () => {
     const isChecked = $("#enableCRM").is(':checked');
     const CRMButton = $("#CRMButton");
     const ballLoading = $("#ballLoading");
     const countdownText = $("#countdownText");
+
+    // Always clear any existing timer first
+    if (_crmCountdownTimer !== null) {
+        clearInterval(_crmCountdownTimer);
+        _crmCountdownTimer = null;
+    }
 
     if (isChecked) {
         // กำลังเปิดการใช้งาน CRM
@@ -14,23 +22,24 @@ const enableCRMButton = () => {
         let showText = progressText(countdown);
         countdownText.text(`${showText} ... ${countdown} sec.`);
 
-        const timer = setInterval(() => {
+        _crmCountdownTimer = setInterval(() => {
             countdown--;
             showText = progressText(countdown);
             countdownText.text(`${showText} ... ${countdown} sec.`);
             if (countdown <= 0) {
-                clearInterval(timer);
+                clearInterval(_crmCountdownTimer);
+                _crmCountdownTimer = null;
                 ballLoading.hide();
                 countdownText.hide();
                 CRMButton.prop('disabled', false).fadeIn("slow");
             }
         }, 1000);
-        } else {
-            // ปิดการใช้งาน CRM
-            ballLoading.hide();
-            countdownText.hide();
-            CRMButton.hide().prop('disabled', true);
-        }
+    } else {
+        // ปิดการใช้งาน CRM
+        ballLoading.hide();
+        countdownText.hide();
+        CRMButton.hide().prop('disabled', true);
+    }
 };
 
 function progressText(sec) {

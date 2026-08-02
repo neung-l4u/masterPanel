@@ -2,6 +2,8 @@
 global $db;
 include '../db/db.php';
 include "../db/initDB.php";
+require_once dirname(__DIR__, 4) . '/api/invoice/convertToBahtText.php';
+require_once dirname(__DIR__, 4) . '/api/invoice/thApoMondayHelper.php';
 
 date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
@@ -30,6 +32,13 @@ $bankName = !empty($_POST["bankName"]) ? $_POST["bankName"] : null;
 $bankThaiNumber = !empty($_POST["bankThaiNumber"]) ? $_POST["bankThaiNumber"] : null;
 $bankThaiName = !empty($_POST["bankThaiName"]) ? $_POST["bankThaiName"] : null;
 $test = !empty($_POST["test"]) ? $_POST["test"] : 0;
+$signupPayload = json_decode($_POST['signupPayload'] ?? '{}', true);
+if (!is_array($signupPayload)) {
+    $signupPayload = [];
+}
+foreach (['creditCardNumber', 'creditExpireDate', 'creditCCV', 'stripePassword', 'ref_Domain_P', 'ref_IHD_Password', 'passwordBooking', 'bsbDirectDebit', 'acnDirectDebit', 'routingDirectDebit'] as $sensitiveKey) {
+    unset($signupPayload[$sensitiveKey]);
+}
 
 $data = !empty($invoiceID) ? json_decode($invoiceID, true) : null;
 $invID = isset($data['invoice_id']) ? $data['invoice_id'] : null;
@@ -95,40 +104,88 @@ $thaiPrice = ThaiRead($grandTotal);
 
 
 
-if ($act === "add") {
-    $logsToDB =  $db->query('INSERT INTO `invoice`(`checkdata`, `type`, `name`, `address`, `sale`,`thaiPrice`, `product`, `taxNumber`, `customerEmail`,`customerPhone`,`bankName`,`bankThaiNumber`,`bankThaiName`,`test`,`dateThai`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-    , $checkBoxWantTAX, $taxType, $nameQuotation, $addressQuotation,$shopAgent, $thaiPrice,$productQuotation, $taxNumberQuotation, $emailQuotation, $phoneQuotation, $bankName ,$bankThaiNumber ,$bankThaiName ,$test , $dateThai );
+$lastInsertId = null;
+$idInvoice    = null;
+$dataInvoice  = [];
 
-    $lastInsertId = $db->lastInsertId();
+if ($act === "add") {
+    // --- Always create new thCustomer per submit ---
+    $chars  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $customerCode = '';
+    for ($i = 0; $i < 8; $i++) {
+        $customerCode .= $chars[random_int(0, strlen($chars) - 1)];
+    }
+    $db->query(
+        'INSERT INTO `thCustomer`(`customerCode`, `name`, `address`, `taxNumber`, `email`, `phone`, `type`, `sale`, `bankName`, `bankNumber`, `bankAccName`) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+        $customerCode, $nameQuotation, $addressQuotation, $taxNumberQuotation, $emailQuotation, $phoneQuotation, $taxType, $shopAgent, $bankName, $bankThaiNumber, $bankThaiName
+    );
+    $customerId = $db->lastInsertID();
+
+    // --- Generate invoiceID (prefix-XXXX) ---
+    $lastInvoiceRows = $db->query(
+        'SELECT `invoiceID` FROM `thInvoice` WHERE `customer_id` = ? ORDER BY `id` DESC LIMIT 1',
+        $customerId
+    )->fetchAll();
+    $lastInvoiceRow = $lastInvoiceRows[0] ?? [];
+
+    if (!empty($lastInvoiceRow['invoiceID'])) {
+        $parts  = explode('-', $lastInvoiceRow['invoiceID']);
+        $seq    = isset($parts[1]) ? (int)$parts[1] : 0;
+        $newSeq = str_pad($seq + 1, 4, '0', STR_PAD_LEFT);
+        $generatedInvoiceID = $customerCode . '-' . $newSeq;
+    } else {
+        $generatedInvoiceID = $customerCode . '-0001';
+    }
+    // --- End invoiceID generation ---
+
+    // Extract net_payment from productQuotation for amount
+    $productArr = json_decode($productQuotation, true);
+    $netPayment = isset($productArr['summary']['net_payment']) ? (float)str_replace(',', '', $productArr['summary']['net_payment']) : (float)$grandTotal;
+
+    $thBathIn = convertToBahtText($netPayment);
+    $db->query(
+        'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `type`, `product`, `amount`, `thBathIn`, `status`, `source`) VALUES (?,?,?,?,?,?,?,?)',
+        $customerId, $generatedInvoiceID, 'one_time', $productQuotation, $netPayment, $thBathIn, 'pending', 'signup'
+    );
+
+    $lastInsertId = $db->lastInsertID();
+    queueThApoMondayPayload($db, (int)$lastInsertId, $signupPayload);
+    $result["_debug_customerId"] = $customerId ?? null;
+    $result["_debug_invoiceID"]  = $generatedInvoiceID ?? null;
+    $result["_debug_netPayment"] = $netPayment ?? null;
 
 } elseif ($act === "update") {
-    $resToDB = $db->query('UPDATE `invoice` SET `invoiceID`=? WHERE id=?', $invID, $quotationID);
+    $resToDB = $db->query('UPDATE `thInvoice` SET `invoiceID`=? WHERE id=?', $invID, $quotationID);
 } elseif ($act === "callDataBase"){
-    $logsInDatabase =  $db->query('SELECT * FROM `invoice` WHERE `id` = ?', $quotationID)->fetchAll();
+    $logsInDatabase = $db->query(
+        'SELECT i.*, c.`email` AS customerEmail, c.`phone` AS customerPhone,
+                c.`taxNumber`, c.`bankName`, c.`bankNumber` AS bankThaiNumber, c.`bankAccName` AS bankThaiName,
+                c.`type`, c.`sale`, c.`name`, c.`address`
+         FROM `thInvoice` i
+         JOIN `thCustomer` c ON c.`id` = i.`customer_id`
+         WHERE i.`id` = ?',
+        $quotationID
+    )->fetchAll();
     $dataInvoice = [];
     foreach ($logsInDatabase as $row) {
         $idInvoice = $row['id'];
-
         $dataInvoice[] = [
-            'id' => $row['id'],
-            'checkdata' => $row['checkdata'],
-            'type' => $row['type'],
-            'name' => $row['name'],
-            'address' => $row['address'],
-            'country' => $row['country'],
-            'sale' => $row['sale'],
-            'thaiPrice' => $row['thaiPrice'],
-            'product' => $row['product'],
-            'taxNumber' => $row['taxNumber'],
-            'invoiceID' => $row['invoiceID'],
+            'id'            => $row['id'],
+            'type'          => $row['type'],
+            'name'          => $row['name'],
+            'address'       => $row['address'],
+            'sale'          => $row['sale'],
+            'product'       => $row['product'],
+            'taxNumber'     => $row['taxNumber'],
+            'invoiceID'     => $row['invoiceID'],
             'customerEmail' => $row['customerEmail'],
             'customerPhone' => $row['customerPhone'],
-            'dateThai' => $row['dateThai'],
-            'bankName' => $row['bankName'],
-            'bankThaiNumber' => $row['bankThaiNumber'],
-            'bankThaiName' => $row['bankThaiName'],
-            'test' => $row['test'],
-            'createAt' => $row['createAt'],
+            'bankName'      => $row['bankName'],
+            'bankThaiNumber'=> $row['bankThaiNumber'],
+            'bankThaiName'  => $row['bankThaiName'],
+            'amount'        => $row['amount'],
+            'status'        => $row['status'],
+            'createdAt'     => $row['createdAt'],
         ];
     }
 }

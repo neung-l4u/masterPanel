@@ -1,0 +1,42 @@
+[15-Jul-2026 00:14:25 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '' for key 'invoiceID' in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/modules/signup/assets/function/saveQuotationToDB.php(149): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php on line 42
+[15-Jul-2026 09:05:22 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '' for key 'invoiceID' in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/modules/signup/assets/function/saveQuotationToDB.php(149): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php on line 42
+[15-Jul-2026 11:29:35 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '' for key 'invoiceID' in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/modules/signup/assets/function/saveQuotationToDB.php(149): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php on line 42
+[15-Jul-2026 14:13:35 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '' for key 'invoiceID' in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/modules/signup/assets/function/saveQuotationToDB.php(149): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php on line 42
+[23-Jul-2026 14:48:27 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '' for key 'invoiceID' in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/modules/signup/assets/function/saveQuotationToDB.php(149): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php on line 42
+[24-Jul-2026 09:25:10 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '' for key 'invoiceID' in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/modules/signup/assets/function/saveQuotationToDB.php(149): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php on line 42
+[28-Jul-2026 10:01:49 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '' for key 'invoiceID' in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php:42
+Stack trace:
+#0 /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php(42): mysqli_stmt->execute()
+#1 /home/localfor/report.localforyou.com/modules/signup/assets/function/saveQuotationToDB.php(158): db->query()
+#2 {main}
+  thrown in /home/localfor/report.localforyou.com/modules/signup/assets/db/db.php on line 42

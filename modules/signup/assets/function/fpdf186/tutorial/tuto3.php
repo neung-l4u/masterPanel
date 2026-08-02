@@ -1,7 +1,4 @@
 <?php
-
-use cancellation\assets\function\fpdf186\FPDF;
-
 require('../fpdf.php');
 
 class PDF extends FPDF
@@ -74,7 +71,7 @@ function PrintChapter($num, $title, $file)
 }
 }
 
-$pdf = new \cancellation\assets\function\fpdf186\tutorial\PDF();
+$pdf = new PDF();
 $title = '20000 Leagues Under the Seas';
 $pdf->SetTitle($title);
 $pdf->SetAuthor('Jules Verne');

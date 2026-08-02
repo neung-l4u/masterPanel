@@ -7,8 +7,6 @@
 * Author:  Olivier PLATHEY                                                     *
 *******************************************************************************/
 
-use cancellation\assets\function\fpdf186\makefont\TTFParser;
-
 require('ttfparser.php');
 
 function Message($txt, $severity='')

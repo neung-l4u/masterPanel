@@ -1,7 +1,4 @@
 <?php
-
-use cancellation\assets\function\fpdf186\FPDF;
-
 require('../fpdf.php');
 
 $pdf = new FPDF();

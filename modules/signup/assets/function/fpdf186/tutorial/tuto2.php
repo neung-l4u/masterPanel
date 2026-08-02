@@ -1,7 +1,4 @@
 <?php
-
-use cancellation\assets\function\fpdf186\FPDF;
-
 require('../fpdf.php');
 
 class PDF extends FPDF
@@ -34,7 +31,7 @@ function Footer()
 }
 
 // Instanciation of inherited class
-$pdf = new \cancellation\assets\function\fpdf186\tutorial\PDF();
+$pdf = new PDF();
 $pdf->AliasNbPages();
 $pdf->AddPage();
 $pdf->SetFont('Times','',12);

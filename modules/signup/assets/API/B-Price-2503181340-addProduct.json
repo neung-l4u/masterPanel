@@ -3711,6 +3711,39 @@
                 "gst": false
               },
               {
+                "name": "Partner - Social Media Marketing Bundle",
+                "product_id": "prod_S1cVKnyT1ia6ny",
+                "price_id": "price_1R7ZGOI6vmxJT6OmeH2kkQm6",
+                "currency": "usd",
+                "amount": 24700,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Direct Marketing Bundle",
+                "product_id": "prod_S1cfzDPPqcCMem",
+                "price_id": "price_1R7ZQaI6vmxJT6OmpSXy0suw",
+                "currency": "usd",
+                "amount": 24700,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Mega Marketing Bundle",
+                "product_id": "prod_S1cq7HNbH3wZwY",
+                "price_id": "price_1R7ZaXI6vmxJT6OmDSuXqEUB",
+                "currency": "usd",
+                "amount": 44700,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
                 "name": "Social Media Marketing Solo",
                 "product_id": "prod_R89mHj3CglLzs9",
                 "price_id": "price_1QFtTDI6vmxJT6OmA2Zgya7V",
@@ -3791,6 +3824,39 @@
                 "name": "Promotion - Mega Marketing Solo",
                 "product_id": "prod_RiRkBjA9i1RHVX",
                 "price_id": "price_1Qp0rPI6vmxJT6OmJTdALMZp",
+                "currency": "usd",
+                "amount": 39900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Social Media Marketing Solo",
+                "product_id": "prod_S1cQLodb0h8Pon",
+                "price_id": "price_1R7ZBQI6vmxJT6OmkwGsDbJ2",
+                "currency": "usd",
+                "amount": 19900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Direct Marketing Solo",
+                "product_id": "prod_S1cbifrClg3dWG",
+                "price_id": "price_1R7ZMLI6vmxJT6Omzpp6VwLq",
+                "currency": "usd",
+                "amount": 19900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Mega Marketing Solo",
+                "product_id": "prod_S1cmqOcI8eUqKy",
+                "price_id": "price_1R7ZWYI6vmxJT6Omahcwt4fD",
                 "currency": "usd",
                 "amount": 39900,
                 "type": "solo",
@@ -4297,6 +4363,50 @@
                 "gst": false
               },
               {
+                "name": "Partner - Localforyou Booking System (Incl Website Hosting and Booking System)",
+                "product_id": "prod_S1cvZPRtLeWsSh",
+                "price_id": "price_1R7ZfeI6vmxJT6OmDIq0zSnb",
+                "currency": "usd",
+                "amount": 9700,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Social Media Marketing Bundle (Incl Website Hosting and Booking System)",
+                "product_id": "prod_S1cZQMhFqmHMpc",
+                "price_id": "price_1R7ZJuI6vmxJT6OmK9Bk8K5h",
+                "currency": "usd",
+                "amount": 24700,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Direct Marketing Bundle (Incl Website Hosting and Booking System)",
+                "product_id": "prod_S1ci0GI7kLmuTD",
+                "price_id": "price_1R7ZStI6vmxJT6OmUlTxG7bh",
+                "currency": "usd",
+                "amount": 24700,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Mega Marketing Bundle (Incl Website Hosting and Booking System)",
+                "product_id": "prod_S1csQ6zZtfSHna",
+                "price_id": "price_1R7ZcOI6vmxJT6OmHypBj3Pi",
+                "currency": "usd",
+                "amount": 44700,
+                "type": "bundle",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
                 "name": "Social Media Marketing Solo",
                 "product_id": "prod_R89GaZqsV9B2yj",
                 "price_id": "price_1QFsxeI6vmxJT6OmvHw80H2D",
@@ -4377,6 +4487,39 @@
                 "name": "Promotion - Mega Marketing Solo",
                 "product_id": "prod_RiUIAf4BkfhKX1",
                 "price_id": "price_1Qp3JSI6vmxJT6Oma8z0j7FD",
+                "currency": "usd",
+                "amount": 39900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Social Media Marketing Solo",
+                "product_id": "prod_S1cT49zRoe8IMr",
+                "price_id": "price_1R7ZEJI6vmxJT6OmmmU4M5BB",
+                "currency": "usd",
+                "amount": 19900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Direct Marketing Solo",
+                "product_id": "prod_S1cdhnK7feIscT",
+                "price_id": "price_1R7ZOdI6vmxJT6OmLlboewiz",
+                "currency": "usd",
+                "amount": 19900,
+                "type": "solo",
+                "status": "show",
+                "ext": "/Month",
+                "gst": false
+              },
+              {
+                "name": "Partner - Mega Marketing Solo",
+                "product_id": "prod_S1coYBeE8QBaND",
+                "price_id": "price_1R7ZYgI6vmxJT6OmlPqjf2mf",
                 "currency": "usd",
                 "amount": 39900,
                 "type": "solo",

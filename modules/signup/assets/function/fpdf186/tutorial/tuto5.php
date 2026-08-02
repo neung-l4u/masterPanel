@@ -1,7 +1,4 @@
 <?php
-
-use cancellation\assets\function\fpdf186\FPDF;
-
 require('../fpdf.php');
 
 class PDF extends FPDF
@@ -89,7 +86,7 @@ function FancyTable($header, $data)
 }
 }
 
-$pdf = new \cancellation\assets\function\fpdf186\tutorial\PDF();
+$pdf = new PDF();
 // Column headings
 $header = array('Country', 'Capital', 'Area (sq km)', 'Pop. (thousands)');
 // Data loading
