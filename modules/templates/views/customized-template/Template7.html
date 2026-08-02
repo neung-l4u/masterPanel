@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoEats — Proud &amp; Loud Thai Flavors · Brisbane &amp; Melbourne</title>
+<meta name="description" content="Fresh local flavors, best enjoyed at our table. Tom Yum, Pad Thai, Green Curry — Brisbane & Melbourne.">
+<link rel="icon" href="https://ucarecdn.com/cf7c769c-8c0b-4146-9fbe-4c744b4f15a0/-/format/auto/-/progressive/yes/Logoeiei.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+/* ═════════ TOKENS — OMSOM-ENERGY PALETTE ═════════ */
+:root{
+  --acid:#eef23d;        /* acid chartreuse */
+  --tang:#f4501e;        /* tangerine red-orange */
+  --tang-deep:#d63a10;
+  --lilac:#ecd0f5;
+  --lilac-deep:#b96fd6;
+  --mint:#aee39f;
+  --mint-deep:#2c7a3f;
+  --cream:#f6efdb;
+  --plum:#4a1338;        /* deep plum for text on light */
+  --disp:'Anton',Impact,sans-serif;
+  --body:'Bricolage Grotesque',system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.9,.3,1.2);
+  --easeo:cubic-bezier(.19,1,.22,1);
+  --pad:clamp(1.1rem,4vw,4rem);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);color:var(--plum);background:var(--cream);
+  font-size:clamp(.9375rem,.9rem + .2vw,1.0625rem);line-height:1.6;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--tang);color:var(--acid)}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--lilac-deep);outline-offset:3px}
+
+.disp{font-family:var(--disp);text-transform:uppercase;line-height:.95;letter-spacing:.015em;font-weight:400}
+
+/* wavy stripe backgrounds (Omsom swirls) */
+.waves{
+  background-color:var(--cream);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cpath d='M-20 30 Q 45 -10 130 30 T 280 30 M-20 95 Q 45 55 130 95 T 280 95 M-20 160 Q 45 120 130 160 T 280 160 M-20 225 Q 45 185 130 225 T 280 225' fill='none' stroke='%23ecd0f5' stroke-width='34'/%3E%3C/svg%3E");
+  background-size:260px 260px;
+}
+.waves--tang{
+  background-color:var(--tang);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cpath d='M-20 30 Q 45 -10 130 30 T 280 30 M-20 95 Q 45 55 130 95 T 280 95 M-20 160 Q 45 120 130 160 T 280 160 M-20 225 Q 45 185 130 225 T 280 225' fill='none' stroke='%23d63a10' stroke-width='34'/%3E%3C/svg%3E");
+  background-size:260px 260px;
+}
+@keyframes waveDrift{to{background-position:260px 260px}}
+.waves.drift{animation:waveDrift 22s linear infinite}
+@media (prefers-reduced-motion:reduce){.waves.drift{animation:none}}
+
+/* starburst badge */
+.burst{
+  position:relative;display:inline-grid;place-items:center;text-align:center;
+  background:var(--acid);color:var(--tang-deep);
+  padding:clamp(1.6rem,3.5vw,2.8rem) clamp(1.8rem,4vw,3.2rem);
+  clip-path:polygon(50% 0%,57% 9%,68% 3%,71% 14%,83% 12%,82% 24%,94% 26%,88% 36%,99% 42%,90% 50%,99% 58%,88% 64%,94% 74%,82% 76%,83% 88%,71% 86%,68% 97%,57% 91%,50% 100%,43% 91%,32% 97%,29% 86%,17% 88%,18% 76%,6% 74%,12% 64%,1% 58%,10% 50%,1% 42%,12% 36%,6% 26%,18% 24%,17% 12%,29% 14%,32% 3%,43% 9%);
+}
+.burst strong{font-family:var(--disp);font-weight:400;text-transform:uppercase;letter-spacing:.04em;display:block;font-size:clamp(1.1rem,2.4vw,1.9rem);line-height:1.05}
+.burst small{display:block;font-weight:600;font-size:clamp(.7rem,1.2vw,.85rem);margin-top:.5em;max-width:26ch}
+@keyframes wobble{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(3deg)}}
+.wobble{animation:wobble 4.5s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.wobble{animation:none}}
+
+/* sticker pill */
+.sticker{
+  display:inline-block;font-weight:800;font-size:.6875rem;letter-spacing:.2em;
+  text-transform:uppercase;padding:.6em 1.2em;border-radius:999px;
+  background:var(--acid);color:var(--tang-deep);border:3px solid var(--tang-deep);
+  box-shadow:3px 4px 0 var(--tang-deep);transform:rotate(-3deg);
+}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.55em;
+  font-family:var(--disp);font-size:clamp(.95rem,1.4vw,1.15rem);letter-spacing:.08em;
+  text-transform:uppercase;text-decoration:none;cursor:pointer;
+  padding:.95rem 2.2rem;min-height:52px;border-radius:999px;
+  border:3px solid var(--plum);background:var(--tang);color:var(--cream);
+  box-shadow:5px 6px 0 var(--plum);
+  transition:transform .18s var(--ease),box-shadow .18s var(--ease),background .25s;
+}
+.btn:hover{transform:translate(-2px,-3px) rotate(-1deg);box-shadow:8px 10px 0 var(--plum)}
+.btn:active{transform:translate(3px,4px);box-shadow:1px 1px 0 var(--plum)}
+.btn--acid{background:var(--acid);color:var(--tang-deep)}
+.btn--plum{background:var(--plum);color:var(--acid)}
+
+/* reveals */
+.rv{opacity:0;transform:translateY(34px) scale(.98);transition:opacity .85s var(--easeo),transform .85s var(--easeo)}
+.rv.in{opacity:1;transform:none}
+.rv-d1{transition-delay:.12s}.rv-d2{transition-delay:.24s}.rv-d3{transition-delay:.36s}
+.pop{opacity:0;transform:scale(.5) rotate(-10deg);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.pop.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv,.pop{opacity:1;transform:none}}
+
+/* ═════════ NAV — acid bar ═════════ */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:var(--acid);border-bottom:4px solid var(--tang);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.55rem var(--pad);
+  transition:box-shadow .3s;
+}
+.nav.on{box-shadow:0 6px 0 rgba(74,19,56,.15)}
+.nav__logo img{height:44px;width:auto}
+.nav__links{display:flex;align-items:center;gap:2rem;list-style:none}
+.nav__links a:not(.btn){
+  font-family:var(--disp);font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tang-deep);text-decoration:none;position:relative;padding:.55rem 0;
+}
+.nav__links a:not(.btn)::after{
+  content:"";position:absolute;left:0;right:0;bottom:.25rem;height:4px;border-radius:4px;
+  background:var(--tang-deep);transform:scaleX(0);transition:transform .3s var(--easeo);
+}
+.nav__links a:not(.btn):hover::after{transform:none}
+.nav .btn{min-height:44px;padding:.6rem 1.5rem;font-size:.9rem;box-shadow:4px 4px 0 var(--plum)}
+.nav__burger{display:none;background:none;border:none;cursor:pointer;z-index:120;padding:.55rem}
+.nav__burger span{display:block;width:30px;height:4px;border-radius:4px;background:var(--tang-deep);margin:5px 0;transition:.35s var(--ease)}
+.nav__burger[aria-expanded="true"] span:nth-child(1){transform:translateY(9px) rotate(45deg)}
+.nav__burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.nav__burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-9px) rotate(-45deg)}
+@media (max-width:860px){
+  .nav__burger{display:block}
+  .nav__links{
+    position:fixed;inset:0;background:var(--tang);
+    flex-direction:column;justify-content:center;gap:2.2rem;
+    transform:translateY(-102%);transition:transform .5s var(--easeo);
+  }
+  .nav__links.open{transform:none}
+  .nav__links a:not(.btn){color:var(--acid);font-size:2.2rem}
+  .nav__links a:not(.btn)::after{background:var(--acid);height:5px}
+}
+
+/* ═════════ HERO — photo + outline wordmark + burst ═════════ */
+.hero{position:relative;min-height:92svh;overflow:hidden;background:var(--plum)}
+.hero__img{position:absolute;inset:0}
+.hero__img img{
+  width:100%;height:100%;object-fit:cover;
+  transform:scale(1.15);filter:saturate(1.1) brightness(.94);
+}
+.hero.in .hero__img img{transition:transform 2.8s var(--easeo);transform:scale(1.02)}
+.hero__mark{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  pointer-events:none;z-index:2;
+}
+.hero__mark span{
+  font-family:var(--disp);text-transform:uppercase;line-height:.85;
+  font-size:clamp(4.2rem,17vw,15rem);letter-spacing:.02em;text-align:center;
+  color:transparent;-webkit-text-stroke:clamp(2px,.3vw,4px) var(--tang);
+  display:block;transform:translateY(60px);opacity:0;
+  transition:transform 1.1s var(--easeo) .2s,opacity 1.1s var(--easeo) .2s;
+}
+.hero.in .hero__mark span{transform:none;opacity:1}
+.hero__burst{
+  position:absolute;z-index:3;right:clamp(.5rem,6vw,7rem);bottom:clamp(5rem,14vh,9rem);
+  max-width:min(76vw,420px);text-decoration:none;
+  filter:drop-shadow(5px 7px 0 var(--tang-deep));
+}
+.hero__burst .burst{transition:transform .3s var(--ease)}
+.hero__burst:hover .burst{transform:scale(1.04) rotate(1deg)}
+.hero__scroll{
+  position:absolute;left:50%;bottom:1.2rem;transform:translateX(-50%);z-index:3;
+  width:52px;height:52px;border-radius:50%;background:var(--acid);border:3px solid var(--tang-deep);
+  display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--tang-deep);
+  font-size:1.3rem;box-shadow:3px 4px 0 var(--tang-deep);
+}
+@keyframes bounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+.hero__scroll{animation:bounce 1.8s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.hero__scroll{animation:none}}
+@media (max-width:640px){.hero__burst{right:50%;transform:translateX(50%)}}
+
+/* ═════════ FLAVOR STICKERS — lilac wave section ═════════ */
+.flavors{
+  position:relative;padding:clamp(4.5rem,11vh,8rem) var(--pad);
+  border-top:4px solid var(--tang);border-bottom:4px solid var(--tang);
+  overflow:hidden;
+}
+.flavors__inner{
+  max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;
+  justify-content:center;gap:clamp(2rem,6vw,5rem);align-items:center;
+}
+.fcard{
+  background:var(--cream);border:4px solid var(--tang);border-radius:26px;
+  padding:1.4rem 1.4rem 1.6rem;width:min(100%,300px);text-align:center;
+  box-shadow:7px 8px 0 var(--tang);position:relative;
+  transition:transform .3s var(--ease);
+}
+.fcard:hover{transform:translateY(-8px) rotate(-1.5deg)}
+.fcard:nth-child(2):hover{transform:translateY(-8px) rotate(1.5deg)}
+.fcard img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:16px;border:3px solid var(--plum)}
+.fcard h3{font-family:var(--disp);font-size:1.7rem;text-transform:uppercase;color:var(--tang-deep);margin:.8rem 0 .2rem}
+.fcard p{font-weight:600;font-size:.875rem}
+.fcard .tag{
+  position:absolute;top:-1.1rem;left:50%;transform:translateX(-50%) rotate(-3deg);
+  white-space:nowrap;
+}
+/* idle float — each card its own rhythm */
+@keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -10px}}
+.fcard{animation:floaty 5s ease-in-out infinite}
+.fcard:nth-child(2){animation-duration:6.2s;animation-delay:.8s}
+.fcard:nth-child(3){animation-duration:5.6s;animation-delay:1.6s}
+@media (prefers-reduced-motion:reduce){.fcard{animation:none}}
+
+/* ═════════ STORY — mint block + burst ═════════ */
+.story{
+  background:var(--mint);border-bottom:4px solid var(--tang);
+  padding:clamp(5rem,12vh,9rem) var(--pad);position:relative;overflow:hidden;
+}
+.story__grid{
+  max-width:1240px;margin:0 auto;display:grid;
+  grid-template-columns:.9fr 1.1fr;gap:clamp(2.5rem,6vw,6rem);align-items:center;
+}
+.story__burstwrap{display:flex;justify-content:center;filter:drop-shadow(5px 7px 0 var(--tang-deep))}
+.story__burstwrap .burst{background:var(--acid);max-width:340px}
+.story__text h2{
+  font-family:var(--disp);font-size:clamp(2.2rem,5.5vw,4rem);text-transform:uppercase;
+  color:var(--tang-deep);line-height:1;margin-bottom:1.4rem;
+}
+.story__text p{margin-bottom:1.2rem;font-weight:500;max-width:56ch}
+.story__text p b{font-weight:800}
+.story__pics{display:flex;gap:1rem;margin-top:1.8rem;flex-wrap:wrap}
+.story__pics img{
+  width:110px;height:110px;object-fit:cover;border-radius:18px;
+  border:3px solid var(--plum);box-shadow:4px 5px 0 var(--plum);
+  transition:transform .3s var(--ease);
+}
+.story__pics img:nth-child(1){transform:rotate(-4deg)}
+.story__pics img:nth-child(2){transform:rotate(3deg)}
+.story__pics img:nth-child(3){transform:rotate(-2deg)}
+.story__pics img:hover{transform:rotate(0) scale(1.12);z-index:2;position:relative}
+@media (max-width:860px){.story__grid{grid-template-columns:1fr}.story__burstwrap{order:-1}}
+
+/* ═════════ GALLERY — scattered collage ═════════ */
+.gallery{
+  position:relative;background:var(--cream);
+  padding:clamp(5rem,12vh,9rem) var(--pad) clamp(6rem,14vh,10rem);
+  overflow:hidden;
+}
+.gallery__ghost{
+  position:absolute;top:48%;left:50%;transform:translate(-50%,-50%);
+  font-family:var(--disp);font-size:clamp(5rem,20vw,18rem);text-transform:uppercase;
+  color:transparent;-webkit-text-stroke:3px var(--lilac-deep);opacity:.35;
+  white-space:nowrap;pointer-events:none;user-select:none;line-height:1;
+}
+.gallery__head{max-width:1240px;margin:0 auto 3rem;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.gallery__head h2{font-family:var(--disp);font-size:clamp(2.4rem,6vw,4.6rem);text-transform:uppercase;color:var(--tang-deep)}
+.gallery__head .sticker{transform:rotate(2deg)}
+.collage{
+  position:relative;max-width:1240px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(.9rem,2vw,1.6rem);
+}
+.gpic{
+  position:relative;border-radius:20px;overflow:hidden;cursor:zoom-in;
+  border:4px solid var(--plum);background:var(--plum);
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+}
+.gpic img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--easeo)}
+.gpic:hover{transform:rotate(0)!important;box-shadow:8px 10px 0 var(--lilac-deep);z-index:3}
+.gpic:hover img{transform:scale(1.09)}
+.gpic i{
+  position:absolute;top:.7rem;left:.8rem;font-style:normal;
+  font-family:var(--disp);font-size:1.1rem;color:var(--cream);
+  background:var(--tang);border:2px solid var(--plum);border-radius:999px;
+  padding:.25em .7em;
+}
+.gpic:nth-child(1){grid-column:1/3;aspect-ratio:3/4;transform:rotate(-2deg)}
+.gpic:nth-child(2){grid-column:3/5;aspect-ratio:4/3;transform:rotate(1.5deg);margin-top:2.5rem}
+.gpic:nth-child(3){grid-column:5/7;aspect-ratio:3/4;transform:rotate(-1deg)}
+.gpic:nth-child(4){grid-column:1/3;aspect-ratio:4/3;transform:rotate(1deg);margin-top:-1.5rem}
+.gpic:nth-child(5){grid-column:3/5;aspect-ratio:3/4;transform:rotate(-1.5deg)}
+.gpic:nth-child(6){grid-column:5/7;aspect-ratio:4/3;transform:rotate(2deg);margin-top:1.8rem}
+@media (max-width:760px){
+  .gpic:nth-child(n){grid-column:span 3;margin-top:0;aspect-ratio:1}
+}
+/* lightbox */
+.lb{
+  position:fixed;inset:0;z-index:300;background:rgba(74,19,56,.95);
+  display:flex;align-items:center;justify-content:center;padding:4vh 4vw;
+  opacity:0;pointer-events:none;transition:opacity .35s;
+}
+.lb.open{opacity:1;pointer-events:auto}
+.lb img{max-width:90vw;max-height:82vh;object-fit:contain;border:4px solid var(--acid);border-radius:20px}
+.lb button{
+  position:absolute;width:56px;height:56px;border-radius:50%;cursor:pointer;
+  background:var(--acid);color:var(--tang-deep);border:3px solid var(--tang-deep);
+  font-size:1.3rem;font-weight:800;box-shadow:3px 4px 0 var(--tang-deep);transition:.2s;
+}
+.lb button:hover{transform:rotate(-6deg) scale(1.06)}
+.lb__x{top:1rem;right:1rem}
+.lb__p{left:1rem;top:50%;transform:translateY(-50%)}
+.lb__n{right:1rem;top:50%;transform:translateY(-50%)}
+
+/* ═════════ LOCATIONS — flip tickets on tang waves ═════════ */
+.locs{
+  position:relative;padding:clamp(5rem,12vh,9.5rem) var(--pad);
+  border-top:4px solid var(--plum);color:var(--cream);overflow:hidden;
+}
+.locs__head{max-width:1240px;margin:0 auto 3.2rem;text-align:center}
+.locs__head h2{font-family:var(--disp);font-size:clamp(2.6rem,7vw,5.4rem);text-transform:uppercase;color:var(--acid);text-shadow:4px 5px 0 var(--plum)}
+.locs__head p{font-weight:700;letter-spacing:.18em;text-transform:uppercase;font-size:.75rem;margin-top:.8rem}
+.locs__grid{
+  max-width:1240px;margin:0 auto;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));
+  gap:clamp(1.8rem,4vw,3.5rem);
+}
+.flip{perspective:1400px;min-height:600px}
+.flip__inner{
+  position:relative;width:100%;height:100%;min-height:inherit;
+  transform-style:preserve-3d;transition:transform .8s var(--easeo);
+}
+.flip.flipped .flip__inner{transform:rotateY(180deg)}
+.flip__face{
+  position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:var(--cream);color:var(--plum);border:4px solid var(--plum);
+  border-radius:26px;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:8px 9px 0 var(--plum);
+}
+.flip__back{transform:rotateY(180deg)}
+.flip__map{width:100%;aspect-ratio:16/9;border:none;border-bottom:4px solid var(--plum);flex-shrink:0}
+.flip__body{padding:clamp(1.3rem,2.5vw,2rem);display:flex;flex-direction:column;flex:1;gap:.3rem}
+.flip__badge{
+  align-self:flex-start;font-weight:800;font-size:.625rem;letter-spacing:.22em;text-transform:uppercase;
+  background:var(--acid);color:var(--tang-deep);border:2px solid var(--tang-deep);
+  border-radius:999px;padding:.5em 1.1em;transform:rotate(-2deg);margin-bottom:.6rem;
+}
+.flip__badge--24{background:var(--mint);color:var(--mint-deep);border-color:var(--mint-deep)}
+.flip h3{font-family:var(--disp);font-size:clamp(1.9rem,3.4vw,2.6rem);text-transform:uppercase;color:var(--tang-deep);line-height:1}
+.flip__city{font-weight:800;font-size:.6875rem;letter-spacing:.3em;text-transform:uppercase;color:var(--lilac-deep)}
+.flip__meta{font-weight:600;font-size:.9375rem}
+.flip__meta a{text-decoration:none;border-bottom:3px solid var(--acid);font-weight:800}
+.flip__meta a:hover{color:var(--tang-deep)}
+.flip__actions{margin-top:auto;display:flex;gap:.8rem;flex-wrap:wrap;padding-top:1.2rem}
+.flip__hoursbtn{
+  font-family:var(--body);font-weight:800;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;
+  background:var(--lilac);color:var(--plum);border:3px solid var(--plum);border-radius:999px;
+  padding:.7em 1.4em;min-height:48px;cursor:pointer;box-shadow:4px 5px 0 var(--plum);
+  transition:transform .18s var(--ease),box-shadow .18s var(--ease);
+}
+.flip__hoursbtn:hover{transform:translate(-2px,-2px) rotate(-1deg);box-shadow:6px 8px 0 var(--plum)}
+.flip__back .flip__body{justify-content:flex-start}
+.flip__back h4{font-family:var(--disp);font-size:1.6rem;text-transform:uppercase;color:var(--tang-deep);margin-bottom:1rem}
+.flip__back table{width:100%;border-collapse:collapse;font-size:.9375rem}
+.flip__back td{padding:.55rem 0;border-bottom:2px dashed rgba(74,19,56,.25);font-weight:600}
+.flip__back td:last-child{text-align:right;font-weight:800}
+.flip__back .today td{color:var(--tang-deep)}
+.flip__back .flip__actions{padding-top:1.4rem}
+@media (max-width:480px){.flip{min-height:640px}}
+
+/* ═════════ BIG CTA — cloud bubble on plum photo ═════════ */
+.bigcta{
+  position:relative;overflow:hidden;border-top:4px solid var(--plum);
+  border-bottom:4px solid var(--plum);
+}
+.bigcta__bg{position:absolute;inset:0}
+.bigcta__bg img{width:100%;height:100%;object-fit:cover}
+.bigcta__bg::after{content:"";position:absolute;inset:0;background:rgba(74,19,56,.72)}
+.bigcta__inner{
+  position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;
+  padding:clamp(5.5rem,15vh,10rem) var(--pad);text-align:center;
+}
+.cloud{
+  background:var(--acid);color:var(--tang-deep);
+  border-radius:48% 52% 55% 45%/55% 48% 52% 45%;
+  padding:clamp(2.6rem,6vw,4.5rem) clamp(2.8rem,7vw,6rem);
+  filter:drop-shadow(6px 8px 0 var(--tang));
+  transition:transform .5s var(--ease);
+}
+.cloud:hover{transform:rotate(-1.5deg) scale(1.02)}
+.cloud h2{font-family:var(--disp);font-size:clamp(2.8rem,9vw,7rem);text-transform:uppercase;line-height:.95}
+.cloud p{font-weight:700;letter-spacing:.18em;text-transform:uppercase;font-size:.75rem;margin-top:.8rem}
+.bigcta .btn{margin-top:2.2rem;font-size:clamp(1.05rem,1.8vw,1.4rem);padding:1.1rem 2.8rem}
+/* spinning star orbiting the button */
+.orbit{position:relative;display:inline-block}
+.orbit::after{
+  content:"✦";position:absolute;top:-1.4rem;right:-1.6rem;
+  font-size:2rem;color:var(--acid);animation:spin 6s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.orbit::after{animation:none}}
+
+/* ═════════ CONTACT — lilac waves, chunky form ═════════ */
+.contact{
+  position:relative;padding:clamp(5rem,12vh,9.5rem) var(--pad);
+  overflow:hidden;
+}
+.contact__wrap{
+  max-width:1240px;margin:0 auto;display:grid;
+  grid-template-columns:.9fr 1.1fr;gap:clamp(2.5rem,6vw,6rem);
+}
+.contact__intro h2{font-family:var(--disp);font-size:clamp(2.4rem,6vw,4.6rem);text-transform:uppercase;color:var(--tang-deep);line-height:.98;margin:.8rem 0 1.2rem}
+.contact__intro p{font-weight:600;max-width:36ch}
+.cform{
+  display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;align-content:start;
+  background:var(--cream);border:4px solid var(--plum);border-radius:28px;
+  padding:clamp(1.6rem,3.5vw,2.6rem);box-shadow:9px 10px 0 var(--plum);
+}
+.cf{display:flex;flex-direction:column;gap:.45rem}
+.cf--full{grid-column:1/-1}
+.cf label{font-weight:800;font-size:.6875rem;letter-spacing:.24em;text-transform:uppercase;color:var(--tang-deep)}
+.cf input,.cf textarea{
+  font-family:var(--body);font-size:1rem;font-weight:600;color:var(--plum);
+  background:#fff;border:3px solid var(--plum);border-radius:16px;
+  padding:.85rem 1rem;min-height:52px;transition:.2s var(--ease);
+}
+.cf textarea{min-height:130px;resize:vertical}
+.cf input:focus,.cf textarea:focus{
+  outline:none;border-color:var(--tang);box-shadow:5px 6px 0 var(--lilac-deep);
+  transform:translate(-2px,-2px);
+}
+.cform .btn{grid-column:1/-1;justify-self:start}
+.cform__ok{grid-column:1/-1;font-weight:800;color:var(--mint-deep);display:none}
+.cform__ok.show{display:block}
+@media (max-width:900px){.contact__wrap{grid-template-columns:1fr}.cform{grid-template-columns:1fr}}
+
+/* ═════════ FOOTER — tang swirls + giant wordmark ═════════ */
+.footer{position:relative;color:var(--cream);overflow:hidden;border-top:4px solid var(--plum)}
+.footer__grid{
+  position:relative;z-index:1;max-width:1280px;margin:0 auto;
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:2.5rem;
+  padding:clamp(3.5rem,8vh,6rem) var(--pad) 2rem;
+}
+.footer__brand img{height:56px;margin-bottom:1rem;background:var(--cream);border-radius:16px;padding:.4rem .7rem;border:3px solid var(--plum)}
+.footer__brand p{font-weight:700;max-width:22ch}
+.footer__col h4{font-family:var(--disp);font-size:1rem;letter-spacing:.14em;text-transform:uppercase;color:var(--acid);margin-bottom:1rem}
+.footer__col ul{list-style:none}
+.footer__col li{margin-bottom:.55rem}
+.footer__col a{text-decoration:none;font-weight:600;border-bottom:2px solid transparent;transition:.2s}
+.footer__col a:hover{border-color:var(--acid);color:var(--acid)}
+.socials{display:flex;gap:.8rem;margin-top:1.2rem}
+.socials a{
+  width:50px;height:50px;border-radius:50%;background:var(--acid);
+  border:3px solid var(--plum);display:flex;align-items:center;justify-content:center;
+  box-shadow:3px 4px 0 var(--plum);transition:transform .2s var(--ease);
+}
+.socials a:hover{transform:rotate(-8deg) scale(1.08)}
+.socials svg{width:20px;height:20px;fill:var(--tang-deep)}
+.footer__word{
+  position:relative;z-index:1;text-align:center;font-family:var(--disp);
+  font-size:clamp(3.6rem,15vw,13rem);text-transform:uppercase;line-height:.9;
+  color:var(--acid);text-shadow:5px 6px 0 var(--plum);
+  user-select:none;transition:letter-spacing .5s var(--easeo);
+}
+.footer__word:hover{letter-spacing:.06em}
+.footer__legal{
+  position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;
+  max-width:1280px;margin:0 auto;padding:1.6rem var(--pad) 2rem;
+  font-weight:600;font-size:.8125rem;
+}
+.footer__legal a{color:var(--acid)}
+
+/* ═════════ MOBILE ORDER BAR ═════════ */
+.obar{
+  position:fixed;left:0;right:0;bottom:0;z-index:90;display:none;
+  background:var(--acid);border-top:4px solid var(--tang);
+  padding:.45rem .8rem calc(.45rem + env(safe-area-inset-bottom));
+}
+.obar a{
+  display:block;text-align:center;text-decoration:none;
+  font-family:var(--disp);font-size:1.15rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tang-deep);padding:.65rem;min-height:48px;
+}
+@media (max-width:860px){
+  .obar{display:block}
+  .footer__legal{padding-bottom:6.2rem}
+}
+</style>
+</head>
+<body id="top">
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <a href="#top" class="nav__logo" aria-label="DemoEats home">
+    <img src="https://ucarecdn.com/cf7c769c-8c0b-4146-9fbe-4c744b4f15a0/-/format/auto/-/progressive/yes/Logoeiei.png" alt="DemoEats logo" width="106" height="44">
+  </a>
+  <button class="nav__burger" aria-expanded="false" aria-controls="navlinks" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav__links" id="navlinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#locations">Locations</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a class="btn" href="https://orders.demoeats.com" target="_blank" rel="noopener">Order Online</a></li>
+  </ul>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero__img">
+    <img src="https://ucarecdn.com/2f265086-389d-4073-b52c-271b054178bf/-/format/auto/-/progressive/yes/HeroImg.png" alt="Signature Thai dishes at DemoEats" fetchpriority="high">
+  </div>
+  <div class="hero__mark" aria-hidden="true"><span>Demo<br>Eats</span></div>
+  <a class="hero__burst wobble" href="#about">
+    <span class="burst">
+      <strong>Proud + Loud<br>Thai Flavors</strong>
+      <small>Fresh local flavors, best enjoyed at our table. Brisbane &amp; Melbourne.</small>
+    </span>
+  </a>
+  <a class="hero__scroll" href="#flavors" aria-label="Scroll down">↓</a>
+</section>
+
+<!-- FLAVOR STICKER CARDS -->
+<section class="flavors waves drift" id="flavors">
+  <div class="flavors__inner">
+    <article class="fcard pop">
+      <span class="tag sticker">The Classic</span>
+      <img src="https://ucarecdn.com/0829a4ea-e255-4b00-b85e-839e935f2c36/-/format/auto/-/progressive/yes/g3.webp" alt="Tom Yum" loading="lazy">
+      <h3>Tom Yum</h3>
+      <p>Real fire. Real lime. No mercy.</p>
+    </article>
+    <article class="fcard pop">
+      <span class="tag sticker">The Favourite</span>
+      <img src="https://ucarecdn.com/bcdb1f0c-a350-42b3-94cb-c143f16ca96a/-/format/auto/-/progressive/yes/g5.webp" alt="Pad Thai" loading="lazy">
+      <h3>Pad Thai</h3>
+      <p>Straight from a family wok since forever.</p>
+    </article>
+    <article class="fcard pop">
+      <span class="tag sticker">The Debate</span>
+      <img src="https://ucarecdn.com/a761527c-a84e-42b1-b3e5-b510bc6f38ff/-/format/auto/-/progressive/yes/g4.webp" alt="Green Curry" loading="lazy">
+      <h3>Green Curry</h3>
+      <p>Grandma-approved. Argument-starting.</p>
+    </article>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="story" id="about">
+  <div class="story__grid">
+    <div class="story__burstwrap pop">
+      <span class="burst wobble">
+        <strong>DemoEats owns<br>this flavor<br>proudly</strong>
+      </span>
+    </div>
+    <div class="story__text rv">
+      <h2>Generational recipes, zero chill</h2>
+      <p><b>DemoEats started with a hand-written recipe book</b> — splattered, stained, and passed down through three generations of cooks who never once measured a thing.</p>
+      <p>We pound our curry pastes by hand, buy from local farmers who pick up the phone, and balance every plate across hot, sour, sweet and salty until it sings. Two rooms, one recipe book, no jar sauces — and no apologies for the chili.</p>
+      <div class="story__pics">
+        <img src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt="Cooking at DemoEats" loading="lazy">
+        <img src="https://ucarecdn.com/2b466717-9310-42dd-b8ef-50711b4768ad/-/format/auto/-/progressive/yes/g2.webp" alt="Dining at DemoEats" loading="lazy">
+        <img src="https://ucarecdn.com/53f7255e-7c04-4cfb-80ef-a549a251d7d0/-/format/auto/-/progressive/yes/g6.webp" alt="DemoEats ambience" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="gallery__ghost" aria-hidden="true">Yum</div>
+  <div class="gallery__head rv">
+    <h2>The good stuff</h2>
+    <span class="sticker">Tap any pic ✦</span>
+  </div>
+  <div class="collage">
+    <figure class="gpic pop" tabindex="0" role="button" aria-label="Enlarge photo 1"><i>01</i><img src="https://ucarecdn.com/0829a4ea-e255-4b00-b85e-839e935f2c36/-/format/auto/-/progressive/yes/g3.webp" alt="Plated Thai dish" loading="lazy"></figure>
+    <figure class="gpic pop rv-d1" tabindex="0" role="button" aria-label="Enlarge photo 2"><i>02</i><img src="https://ucarecdn.com/a761527c-a84e-42b1-b3e5-b510bc6f38ff/-/format/auto/-/progressive/yes/g4.webp" alt="Fresh ingredients" loading="lazy"></figure>
+    <figure class="gpic pop rv-d2" tabindex="0" role="button" aria-label="Enlarge photo 3"><i>03</i><img src="https://ucarecdn.com/bcdb1f0c-a350-42b3-94cb-c143f16ca96a/-/format/auto/-/progressive/yes/g5.webp" alt="Signature curry" loading="lazy"></figure>
+    <figure class="gpic pop" tabindex="0" role="button" aria-label="Enlarge photo 4"><i>04</i><img src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt="Chef at the wok" loading="lazy"></figure>
+    <figure class="gpic pop rv-d1" tabindex="0" role="button" aria-label="Enlarge photo 5"><i>05</i><img src="https://ucarecdn.com/2b466717-9310-42dd-b8ef-50711b4768ad/-/format/auto/-/progressive/yes/g2.webp" alt="Dining at DemoEats" loading="lazy"></figure>
+    <figure class="gpic pop rv-d2" tabindex="0" role="button" aria-label="Enlarge photo 6"><i>06</i><img src="https://ucarecdn.com/53f7255e-7c04-4cfb-80ef-a549a251d7d0/-/format/auto/-/progressive/yes/g6.webp" alt="Evening ambience" loading="lazy"></figure>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="lb__x" id="lbX" aria-label="Close">✕</button>
+  <button class="lb__p" id="lbP" aria-label="Previous">←</button>
+  <img id="lbImg" src="" alt="">
+  <button class="lb__n" id="lbN" aria-label="Next">→</button>
+</div>
+
+<!-- LOCATIONS -->
+<section class="locs waves waves--tang drift" id="locations">
+  <div class="locs__head rv">
+    <h2>Two rooms, one recipe book</h2>
+    <p>Flip a card for opening hours ↻</p>
+  </div>
+  <div class="locs__grid">
+
+    <article class="flip rv" id="flipB">
+      <div class="flip__inner">
+        <div class="flip__face flip__front">
+          <iframe class="flip__map" src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed" title="Map — DemoEats Demo2, Albion QLD" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <div class="flip__body">
+            <span class="flip__badge">Lunch + Dinner</span>
+            <span class="flip__city">Brisbane · QLD</span>
+            <h3>Demo2</h3>
+            <p class="flip__meta">346 Sandgate Road, Albion QLD 4010</p>
+            <p class="flip__meta"><a href="tel:0732624972">07 3262 4972</a></p>
+            <div class="flip__actions">
+              <button class="flip__hoursbtn" data-flip="flipB">Hours ↻</button>
+              <a class="btn btn--acid" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Order</a>
+            </div>
+          </div>
+        </div>
+        <div class="flip__face flip__back">
+          <div class="flip__body">
+            <h4>Demo2 — Hours</h4>
+            <table>
+              <tr data-day="1"><td>Mon</td><td>5–9pm</td></tr>
+              <tr data-day="2"><td>Tue</td><td>5–9pm</td></tr>
+              <tr data-day="3"><td>Wed</td><td>11:30am–3pm · 5–9pm</td></tr>
+              <tr data-day="4"><td>Thu</td><td>11:30am–3pm · 5–9pm</td></tr>
+              <tr data-day="5"><td>Fri</td><td>11:30am–3pm · 5–9pm</td></tr>
+              <tr data-day="6"><td>Sat</td><td>5–9pm</td></tr>
+              <tr data-day="0"><td>Sun</td><td>5–9pm</td></tr>
+            </table>
+            <div class="flip__actions">
+              <button class="flip__hoursbtn" data-flip="flipB">↺ Back</button>
+              <a class="btn btn--acid" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Order</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="flip rv rv-d1" id="flipM">
+      <div class="flip__inner">
+        <div class="flip__face flip__front">
+          <iframe class="flip__map" src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed" title="Map — DemoEats Melbourne, Somerton VIC" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <div class="flip__body">
+            <span class="flip__badge flip__badge--24">Open 24 Hours</span>
+            <span class="flip__city">Melbourne · VIC</span>
+            <h3>Melbourne</h3>
+            <p class="flip__meta">19 North Park Dr, Somerton VIC 3062</p>
+            <p class="flip__meta"><a href="tel:0407505997">0407 505 997</a></p>
+            <div class="flip__actions">
+              <button class="flip__hoursbtn" data-flip="flipM">Hours ↻</button>
+              <a class="btn btn--acid" href="https://orders.demoeats.com" target="_blank" rel="noopener">Order</a>
+            </div>
+          </div>
+        </div>
+        <div class="flip__face flip__back">
+          <div class="flip__body">
+            <h4>Melbourne — Hours</h4>
+            <table>
+              <tr data-day="1"><td>Mon</td><td>Open 24h</td></tr>
+              <tr data-day="2"><td>Tue</td><td>Open 24h</td></tr>
+              <tr data-day="3"><td>Wed</td><td>Open 24h</td></tr>
+              <tr data-day="4"><td>Thu</td><td>Open 24h</td></tr>
+              <tr data-day="5"><td>Fri</td><td>Open 24h</td></tr>
+              <tr data-day="6"><td>Sat</td><td>Open 24h</td></tr>
+              <tr data-day="0"><td>Sun</td><td>Open 24h</td></tr>
+            </table>
+            <div class="flip__actions">
+              <button class="flip__hoursbtn" data-flip="flipM">↺ Back</button>
+              <a class="btn btn--acid" href="https://orders.demoeats.com" target="_blank" rel="noopener">Order</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- BIG CTA -->
+<section class="bigcta">
+  <div class="bigcta__bg">
+    <img src="https://ucarecdn.com/52910dc8-8d77-44bf-ac9c-62a1afc1f2fc/-/format/auto/-/progressive/yes/onsite.webp" alt="" loading="lazy" aria-hidden="true">
+  </div>
+  <div class="bigcta__inner">
+    <div class="cloud rv">
+      <h2>Hungry yet?</h2>
+      <p>Wok's already hot — don't keep it waiting</p>
+    </div>
+    <span class="orbit rv rv-d1">
+      <a class="btn btn--acid" href="#locations">Order Online</a>
+    </span>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact waves drift" id="contact">
+  <div class="contact__wrap">
+    <div class="contact__intro rv">
+      <span class="sticker">Say hi!</span>
+      <h2>Talk to us</h2>
+      <p>Group bookings, functions, feedback — or a friendly argument about whose Green Curry is correct. We read everything.</p>
+    </div>
+    <form class="cform rv rv-d1" id="cform" novalidate>
+      <div class="cf">
+        <label for="cfName">Name</label>
+        <input id="cfName" name="name" type="text" autocomplete="name" required placeholder="Your name">
+      </div>
+      <div class="cf">
+        <label for="cfEmail">Email</label>
+        <input id="cfEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+      </div>
+      <div class="cf cf--full">
+        <label for="cfPhone">Phone</label>
+        <input id="cfPhone" name="phone" type="tel" autocomplete="tel" placeholder="Optional">
+      </div>
+      <div class="cf cf--full">
+        <label for="cfMsg">Message</label>
+        <textarea id="cfMsg" name="message" required placeholder="Say it loud"></textarea>
+      </div>
+      <button class="btn" type="submit">Send it ✦</button>
+      <p class="cform__ok" id="cformOk" role="status">Got it — we'll reply within a day!</p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer waves waves--tang">
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <img src="https://ucarecdn.com/cf7c769c-8c0b-4146-9fbe-4c744b4f15a0/-/format/auto/-/progressive/yes/Logoeiei.png" alt="DemoEats" loading="lazy">
+      <p>Fresh local flavors, best enjoyed at our table.</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V21h3.4z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.1 15.6 2 15.2 2 12s0-3.6.1-4.8C2.3 4 3.8 2.4 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 4.7a5.1 5.1 0 100 10.2 5.1 5.1 0 000-10.2zm0 8.4a3.3 3.3 0 110-6.6 3.3 3.3 0 010 6.6zm5.3-9.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></a>
+        <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.6 3c.4 2.1 1.7 3.4 3.9 3.6v2.9c-1.4 0-2.7-.4-3.9-1.2v6.3c0 4-3.1 6.5-6.6 5.9-3.1-.6-5-3.5-4.3-6.5.6-2.8 3.2-4.6 6.1-4.2v3c-.4-.1-.8-.1-1.2 0-1.4.3-2.2 1.5-2 2.9.2 1.3 1.4 2.2 2.8 2.1 1.3-.1 2.3-1.2 2.3-2.6V3h2.9z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer__col">
+      <h4>Menu</h4>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#locations">Locations</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Brisbane</h4>
+      <ul>
+        <li><a href="tel:0732624972">07 3262 4972</a></li>
+        <li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Order online</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Melbourne</h4>
+      <ul>
+        <li><a href="tel:0407505997">0407 505 997</a></li>
+        <li><a href="https://orders.demoeats.com" target="_blank" rel="noopener">Order online</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__word" aria-hidden="true">DemoEats</div>
+  <div class="footer__legal">
+    <p>© <span id="yr"></span> DemoEats. All rights reserved.</p>
+    <p>Powered by <a href="https://www.localforyou.com" target="_blank" rel="noopener">Local For You</a> · <a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Terms</a></p>
+  </div>
+</footer>
+
+<!-- MOBILE ORDER BAR -->
+<div class="obar">
+  <a href="#locations">Order Online ✦</a>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* nav shadow */
+  var nav = document.getElementById('nav');
+  window.addEventListener('scroll', function(){
+    nav.classList.toggle('on', window.scrollY > 10);
+  }, {passive:true});
+
+  /* mobile menu */
+  var burger = document.querySelector('.nav__burger');
+  var links = document.getElementById('navlinks');
+  burger.addEventListener('click', function(){
+    var open = links.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+  });
+  links.addEventListener('click', function(e){
+    if(e.target.closest('a')){ links.classList.remove('open'); burger.setAttribute('aria-expanded','false'); }
+  });
+
+  /* hero entrance (slow zoom + wordmark rise) */
+  requestAnimationFrame(function(){
+    document.getElementById('hero').classList.add('in');
+  });
+
+  /* scroll reveals */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:.15, rootMargin:'0px 0px -5% 0px'});
+  document.querySelectorAll('.rv, .pop').forEach(function(el){ io.observe(el); });
+
+  /* lightbox */
+  var pics = Array.prototype.slice.call(document.querySelectorAll('.gpic'));
+  var lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg');
+  var idx = 0, lastFocus = null;
+  function show(i){
+    idx = (i + pics.length) % pics.length;
+    var img = pics[idx].querySelector('img');
+    lbImg.src = img.src; lbImg.alt = img.alt;
+  }
+  function openLb(i){ lastFocus = document.activeElement; show(i); lb.classList.add('open'); document.body.style.overflow='hidden'; document.getElementById('lbX').focus(); }
+  function closeLb(){ lb.classList.remove('open'); document.body.style.overflow=''; if(lastFocus) lastFocus.focus(); }
+  pics.forEach(function(p,i){
+    p.addEventListener('click', function(){ openLb(i); });
+    p.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openLb(i);} });
+  });
+  document.getElementById('lbX').addEventListener('click', closeLb);
+  document.getElementById('lbP').addEventListener('click', function(){ show(idx-1); });
+  document.getElementById('lbN').addEventListener('click', function(){ show(idx+1); });
+  lb.addEventListener('click', function(e){ if(e.target===lb) closeLb(); });
+  document.addEventListener('keydown', function(e){
+    if(!lb.classList.contains('open')) return;
+    if(e.key==='Escape') closeLb();
+    if(e.key==='ArrowLeft') show(idx-1);
+    if(e.key==='ArrowRight') show(idx+1);
+  });
+
+  /* location flip cards */
+  document.querySelectorAll('[data-flip]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.getElementById(btn.getAttribute('data-flip')).classList.toggle('flipped');
+    });
+  });
+  /* today highlight */
+  var day = new Date().getDay();
+  document.querySelectorAll('.flip__back tr[data-day="'+day+'"]').forEach(function(tr){ tr.classList.add('today'); });
+
+  /* gentle parallax on CTA bg */
+  if(!reduce){
+    var ctaImg = document.querySelector('.bigcta__bg img');
+    window.addEventListener('scroll', function(){
+      var r = ctaImg.closest('.bigcta').getBoundingClientRect();
+      if(r.top < innerHeight && r.bottom > 0){
+        ctaImg.style.transform = 'translateY(' + ((r.top - innerHeight/2) * .07) + 'px) scale(1.12)';
+      }
+    }, {passive:true});
+  }
+
+  /* contact form */
+  var form = document.getElementById('cform');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){ form.reportValidity(); return; }
+    document.getElementById('cformOk').classList.add('show');
+    form.reset();
+  });
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>

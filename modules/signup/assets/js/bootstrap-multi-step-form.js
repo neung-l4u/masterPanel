@@ -1820,6 +1820,9 @@ const modalRespondAction = (action, status, reason) => {
     $("#CRMButton").hide().prop('disabled', true);
     $("#ballLoading").hide();
     $("#countdownText").hide();
+    // Clear any DocuSign result left over from a previous submission
+    $("#docusignSendBtn").prop('disabled', false).val("Send for Signature");
+    $("#docusignStatus").hide().text("").removeClass("text-danger text-success text-muted");
     modalResponse.show();
   }
 }
@@ -1923,6 +1926,84 @@ const genPDF = () => {
   if (pushposUrl) {
     window.open(pushposUrl, '_blank');
   }
+}
+
+// Fields both agreement templates read. Mirrors the query string built by
+// genLinkPDF(), but posted as JSON so the server can re-render the same
+// templates into a PDF for DocuSign.
+const collectAgreementFields = () => {
+  const contractPeriodSelected = $("input[name='contractPeriod']:checked").val();
+
+  return {
+    customerFullName:   ($("#first_name").val() + " " + $("#last_name").val()).trim(),
+    signerEmail:        ($("#email").val() || "").trim().toLowerCase(),
+    ShopName:           $("#shopName").val() || "",
+    legalEntity:        $("#company").val() || "",
+    registrationNumber: $("#businessNumber").val() || "",
+    State:              $("#state option:selected").text() || "",
+    Country:            $("#formCountry").val() || "",
+    contractPeriod:     ["0", "6", "12"].includes(contractPeriodSelected) ? contractPeriodSelected : "0",
+  };
+}
+
+// Send one agreement to DocuSign. Resolves to the API payload, rejects with an
+// Error carrying the server-side message so the caller can show it verbatim.
+const sendAgreementToDocuSign = (agreementType, fields) => {
+  return $.ajax({
+    url: settings.url_docusignSend,
+    method: "POST",
+    dataType: "json",
+    contentType: "application/json",
+    data: JSON.stringify(Object.assign({ agreementType: agreementType, deliveryMode: "email" }, fields)),
+  }).then(
+    (res) => {
+      if (!res || res.success !== true) {
+        return $.Deferred().reject(new Error(extractPaymentError(res) || "DocuSign request failed")).promise();
+      }
+      return res;
+    },
+    (xhr) => $.Deferred().reject(new Error(extractPaymentError(xhr) || "DocuSign request failed")).promise()
+  );
+}
+
+// Modal button handler: emails the marketing agreement, plus the Push POS
+// agreement when the customer is buying POS. Both must succeed for the button
+// to report success.
+const sendContractsForSignature = () => {
+  const $btn = $("#docusignSendBtn");
+  const $status = $("#docusignStatus");
+  const fields = collectAgreementFields();
+
+  if (fields.customerFullName === "") {
+    $status.removeClass("text-success").addClass("text-danger")
+        .text("Customer name is missing.").show();
+    return;
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(fields.signerEmail)) {
+    $status.removeClass("text-success").addClass("text-danger")
+        .text("A valid customer email is required.").show();
+    return;
+  }
+
+  const alsoPushPos = typeof isPOSSelected === "function" && isPOSSelected();
+
+  $btn.prop("disabled", true).val("Sending...");
+  $status.removeClass("text-danger text-success").addClass("text-muted")
+      .text("Sending to DocuSign...").show();
+
+  sendAgreementToDocuSign("marketing", fields)
+      .then(() => alsoPushPos ? sendAgreementToDocuSign("pushpos", fields) : null)
+      .then(() => {
+        const label = alsoPushPos ? "2 agreements" : "1 agreement";
+        $btn.val("Sent ✓");
+        $status.removeClass("text-muted text-danger").addClass("text-success")
+            .text(label + " emailed to " + fields.signerEmail);
+      })
+      .catch((err) => {
+        $btn.prop("disabled", false).val("Send for Signature");
+        $status.removeClass("text-muted text-success").addClass("text-danger")
+            .text(err && err.message ? err.message : "DocuSign request failed");
+      });
 }
 
 const showPolicy = () => {

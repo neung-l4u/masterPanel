@@ -16,6 +16,11 @@ switch ($menu) {
         $view = 'colorPreview.php';
         $menu = 'preview';
         break;
+    case 'custom-template':
+        $title = 'Custom Template';
+        $view = 'custom-template.php';
+        $menu = 'custom-template';
+        break;
     case 'res1':
         $title = 'Template Restaurant 1';
         $view = 'res1.php';

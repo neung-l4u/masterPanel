@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEMOEATS — Thai Cooking, Brisbane & Melbourne</title>
+<meta name="description" content="DemoEats. Fresh local flavors, best enjoyed at our table. Authentic Thai cooking in Brisbane & Melbourne.">
+<link rel="icon" href="https://ucarecdn.com/cf7c769c-8c0b-4146-9fbe-4c744b4f15a0/-/format/auto/-/progressive/yes/Logoeiei.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DEMOEATS — one color, one voice.
+   Red on white. White on red. Nothing else.
+   ============================================================ */
+:root{
+  --red:#D6231F;
+  --red-deep:#A8130F;
+  --paper:#FFFFFF;
+  --gutter:clamp(16px,3vw,44px);
+  --nav-h:60px;
+  --ease:cubic-bezier(.19,1,.22,1);
+  --ease-io:cubic-bezier(.77,0,.18,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+::selection{background:var(--red);color:var(--paper)}
+body{
+  font-family:"Archivo",Helvetica,Arial,sans-serif;
+  background:var(--paper);
+  color:var(--red);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+/* ---------- utility type ---------- */
+.tag{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+.rule{border:0;border-top:2px solid var(--red)}
+
+/* ---------- custom cursor ---------- */
+.cursor{
+  position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;
+  background:var(--red);pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width .3s var(--ease),height .3s var(--ease),background .3s;
+  mix-blend-mode:multiply;
+}
+.cursor.is-hover{width:56px;height:56px}
+.cursor.is-white{mix-blend-mode:normal;background:var(--paper)}
+@media (hover:none),(pointer:coarse){.cursor{display:none}}
+
+/* ---------- preloader ---------- */
+.loader{
+  position:fixed;inset:0;background:var(--red);z-index:9000;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .9s var(--ease-io);
+}
+.loader.done{transform:translateY(-101%)}
+.loader-word{
+  color:var(--paper);font-weight:900;letter-spacing:-.03em;
+  font-size:clamp(2.4rem,9vw,7rem);display:flex;overflow:hidden;
+}
+.loader-word span{
+  display:inline-block;transform:translateY(110%);
+  animation:loadUp .7s var(--ease) forwards;
+}
+@keyframes loadUp{to{transform:translateY(0)}}
+.loader-count{
+  position:absolute;bottom:var(--gutter);right:var(--gutter);
+  color:var(--paper);font-weight:800;font-size:clamp(1rem,2.5vw,1.5rem);
+  font-variant-numeric:tabular-nums;
+}
+
+/* ---------- masthead ---------- */
+.masthead{padding:clamp(10px,1.6vw,24px) var(--gutter) 0;position:relative}
+.masthead-word{
+  font-weight:900;line-height:.82;letter-spacing:-.035em;
+  font-size:clamp(4.2rem,15.8vw,15.8vw);
+  display:flex;justify-content:space-between;width:100%;
+  user-select:none;
+}
+.masthead-word .wrap{overflow:hidden;display:inline-block}
+.masthead-word .wrap span{
+  display:inline-block;
+  transform:translateY(115%) rotate(4deg);
+  transition:transform 1s var(--ease);
+}
+.is-loaded .masthead-word .wrap span{transform:translateY(0) rotate(0)}
+.masthead-sub{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin:clamp(8px,1.2vw,14px) 0 clamp(10px,1.4vw,18px);
+  gap:12px;flex-wrap:wrap;
+}
+.masthead-sub .tag{opacity:0;transform:translateY(10px);transition:all .8s var(--ease) .5s}
+.is-loaded .masthead-sub .tag{opacity:1;transform:none}
+
+/* collage under masthead — the split */
+.collage{
+  display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.4vw,20px);
+  padding:0 var(--gutter);align-items:stretch;position:relative;
+}
+.collage-cell{position:relative;overflow:hidden;height:clamp(300px,52vw,640px);
+  clip-path:inset(100% 0 0 0);transition:clip-path 1.1s var(--ease-io)}
+.collage-cell img{
+  width:100%;height:100%;object-fit:cover;
+  transform:scale(1.12);transition:transform 1.4s var(--ease);
+}
+.is-loaded .collage-cell{clip-path:inset(0 0 0 0)}
+.is-loaded .collage-cell img{transform:scale(1)}
+.collage-cell:nth-child(2){transition-delay:.25s}
+.collage-cell:nth-child(3){transition-delay:.4s}
+.collage-caption{
+  position:absolute;left:0;bottom:0;background:var(--paper);color:var(--red);
+  padding:10px 16px 10px 0;font-size:11px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;padding-left:12px;
+}
+.hero-stamp{
+  position:absolute;right:clamp(24px,4vw,60px);top:clamp(-30px,-2.5vw,-48px);
+  width:clamp(72px,9vw,120px);height:clamp(72px,9vw,120px);
+  animation:spin 14s linear infinite;z-index:3;pointer-events:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero-stamp text{font-size:12.5px;font-weight:800;letter-spacing:.3em;fill:var(--paper)}
+.hero-stamp circle.bg{fill:var(--red)}
+
+/* scroll cue */
+.scroll-cue{display:flex;align-items:center;gap:10px;padding:clamp(12px,1.6vw,20px) var(--gutter)}
+.scroll-cue .line{flex:1;height:2px;background:var(--red);transform-origin:left;transform:scaleX(0);transition:transform 1.2s var(--ease) .8s}
+.is-loaded .scroll-cue .line{transform:scaleX(1)}
+.scroll-cue .tag{animation:blink 1.6s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* ---------- nav ---------- */
+.nav{
+  position:sticky;top:0;z-index:800;background:var(--paper);
+  border-top:2px solid var(--red);border-bottom:2px solid var(--red);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--gutter);height:var(--nav-h);
+  transition:box-shadow .4s;
+}
+.nav.is-stuck{box-shadow:0 8px 30px rgba(214,35,31,.14)}
+.nav-brand{font-weight:900;font-size:clamp(1rem,2vw,1.35rem);letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.nav-brand img{height:30px;width:auto}
+.nav-links{display:flex;gap:clamp(16px,3vw,40px);align-items:center}
+.nav-links a{position:relative;font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:6px 0}
+.nav-links a:not(.pill)::after{
+  content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;
+  background:var(--red);transform:scaleX(0);transform-origin:right;
+  transition:transform .45s var(--ease);
+}
+.nav-links a:not(.pill):hover::after{transform:scaleX(1);transform-origin:left}
+.pill{
+  border:2px solid var(--red);border-radius:99px;
+  padding:10px 22px;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  position:relative;overflow:hidden;display:inline-block;
+  transition:color .35s var(--ease);min-height:44px;line-height:1.6;z-index:1;
+}
+.pill::before{
+  content:"";position:absolute;inset:0;background:var(--red);
+  transform:translateY(101%);transition:transform .4s var(--ease);z-index:-1;
+}
+.pill:hover{color:var(--paper)}
+.pill:hover::before{transform:translateY(0)}
+.pill.solid{background:var(--red);color:var(--paper)}
+.pill.solid::before{background:var(--red-deep)}
+@media(max-width:760px){.nav-links a:not(.pill){display:none}}
+
+/* ---------- red statement band ---------- */
+.band{
+  background:var(--red);color:var(--paper);
+  padding:clamp(48px,8vw,110px) 0 0;position:relative;overflow:hidden;
+}
+.band-inner{padding:0 var(--gutter)}
+.statement{
+  font-weight:700;letter-spacing:-.015em;line-height:1.12;
+  font-size:clamp(1.55rem,4.2vw,3.4rem);max-width:24ch;
+}
+.statement .mask{display:block;overflow:hidden}
+.statement .mask span{display:block;transform:translateY(110%);transition:transform .9s var(--ease)}
+.statement.in .mask span{transform:none}
+.statement .mask:nth-child(2) span{transition-delay:.08s}
+.statement .mask:nth-child(3) span{transition-delay:.16s}
+.band .tag{display:inline-block;margin-bottom:22px;border:2px solid var(--paper);padding:7px 14px;border-radius:99px}
+
+/* drifting photo strip inside band */
+.drift-clip{overflow:hidden;padding-bottom:clamp(48px,8vw,110px)}
+.drift{
+  margin-top:clamp(40px,6vw,80px);
+  display:flex;gap:clamp(10px,1.4vw,20px);
+  width:max-content;will-change:transform;
+}
+.drift figure{position:relative;overflow:hidden;flex:none;height:clamp(220px,32vw,420px)}
+.drift figure:nth-child(odd){width:clamp(180px,24vw,320px);margin-top:clamp(18px,3vw,44px)}
+.drift figure:nth-child(even){width:clamp(260px,36vw,480px)}
+.drift img{width:100%;height:100%;object-fit:cover;transition:transform .9s var(--ease)}
+.drift figure:hover img{transform:scale(1.08) rotate(.6deg)}
+.drift figcaption{
+  position:absolute;top:0;left:0;background:var(--paper);color:var(--red);
+  font-weight:900;font-size:13px;padding:6px 12px;letter-spacing:.1em;
+}
+
+/* ---------- wordline (quiet index strip) ---------- */
+.wordline{
+  border-top:2px solid var(--red);border-bottom:2px solid var(--red);
+  overflow:hidden;padding:clamp(16px,2.2vw,30px) var(--gutter);background:var(--paper);
+  display:flex;justify-content:space-between;align-items:baseline;
+  gap:clamp(14px,3vw,40px);flex-wrap:wrap;
+}
+.wordline .wl{
+  display:inline-block;overflow:hidden;white-space:nowrap;
+  font-weight:900;letter-spacing:-.02em;
+  font-size:clamp(1.05rem,2.6vw,2rem);
+}
+.wordline .wl>span{
+  display:inline-block;transform:translateY(115%);
+  transition:transform .9s var(--ease);transition-delay:var(--wd,0s);
+}
+.wordline.in .wl>span{transform:translateY(0)}
+.wordline .dot{
+  width:7px;height:7px;border-radius:50%;background:var(--red);
+  align-self:center;flex:none;opacity:0;transition:opacity .8s var(--ease) .5s;
+}
+.wordline.in .dot{opacity:1}
+.wordline .wl>span{will-change:transform}
+@media(max-width:760px){
+  .wordline{justify-content:flex-start}
+  .wordline .dot{display:none}
+}
+.o{-webkit-text-stroke:2px var(--red);color:transparent;font-style:normal}
+.band .o,.cta .o,.footer .o{-webkit-text-stroke-color:var(--paper)}
+
+/* ---------- footer giant wordmark (quiet) ---------- */
+.foot-giant{
+  border-bottom:2px solid var(--paper);
+  padding:clamp(20px,3.4vw,44px) var(--gutter);
+  text-align:center;overflow:hidden;
+}
+.foot-giant .mask{display:block;overflow:hidden}
+.foot-giant .mask span{
+  display:inline-block;font-weight:900;letter-spacing:-.03em;line-height:.9;
+  font-size:clamp(3.2rem,11vw,10rem);color:var(--paper);
+  transform:translateY(110%);transition:transform 1.1s var(--ease-io);
+}
+.foot-giant.in .mask span{transform:translateY(0)}
+
+/* ---------- section shell ---------- */
+.section{padding:clamp(64px,10vw,150px) var(--gutter);position:relative}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:clamp(32px,5vw,64px);flex-wrap:wrap}
+.sec-head h2,.contact-grid h2{font-weight:900;letter-spacing:-.03em;line-height:.9;font-size:clamp(2.6rem,7.5vw,6.5rem)}
+.side-label{
+  position:absolute;left:8px;top:clamp(64px,10vw,150px);
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font-size:11px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;opacity:.55;
+}
+@media(max-width:760px){.side-label{display:none}}
+
+/* reveal primitives */
+.rv{opacity:0;transform:translateY(36px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv-img{clip-path:inset(0 0 100% 0);transition:clip-path 1s var(--ease-io)}
+.rv-img.in{clip-path:inset(0 0 0 0)}
+.rv-line{transform:scaleX(0);transform-origin:left;transition:transform 1.1s var(--ease)}
+.rv-line.in{transform:scaleX(1)}
+.split-h2 .mask{display:block;overflow:hidden}
+.split-h2 .mask span{display:block;transform:translateY(110%);transition:transform .85s var(--ease)}
+.split-h2.in .mask span{transform:none}
+.split-h2 .mask:nth-child(2) span{transition-delay:.1s}
+
+/* ---------- story ---------- */
+.story-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,5vw,80px);align-items:start}
+.story-media{position:relative;overflow:hidden}
+.story-media img{width:100%;height:auto;will-change:transform}
+.story-media .idx{
+  position:absolute;top:0;right:0;background:var(--red);color:var(--paper);
+  font-weight:900;padding:8px 14px;font-size:14px;letter-spacing:.08em;
+}
+.story-copy{position:sticky;top:calc(var(--nav-h) + 24px)}
+.story-copy .lede{
+  font-weight:700;font-size:clamp(1.35rem,2.6vw,2rem);line-height:1.2;
+  letter-spacing:-.01em;margin-bottom:28px;text-wrap:balance;
+}
+.story-copy .lede::first-letter{
+  font-size:2.6em;font-weight:900;float:left;line-height:.8;padding:4px 10px 0 0;
+}
+.story-copy p{font-size:clamp(.95rem,1.3vw,1.05rem);line-height:1.65;font-weight:500;max-width:52ch;margin-bottom:18px}
+.story-copy .rule{margin:26px 0}
+.story-stats{display:flex;gap:clamp(24px,4vw,60px);flex-wrap:wrap}
+.story-stats b{display:block;font-size:clamp(1.8rem,3.4vw,2.8rem);font-weight:900;letter-spacing:-.02em;line-height:1}
+.story-stats i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.story-side-img{margin:clamp(20px,3vw,32px) 0 0 auto;width:70%;overflow:hidden}
+.story-side-img img{width:100%;transition:transform .9s var(--ease)}
+.story-side-img:hover img{transform:scale(1.06) rotate(-.6deg)}
+@media(max-width:860px){
+  .story-grid{grid-template-columns:1fr}
+  .story-copy{position:static}
+  .story-side-img{width:85%}
+}
+
+/* giant ghost word behind story */
+.ghost{
+  position:absolute;left:0;right:0;top:9%;
+  font-weight:900;font-size:clamp(6rem,21vw,21vw);line-height:1;
+  letter-spacing:-.03em;text-align:center;
+  -webkit-text-stroke:2px rgba(214,35,31,.14);color:transparent;
+  pointer-events:none;user-select:none;white-space:nowrap;z-index:0;
+}
+.section > *:not(.ghost){position:relative;z-index:1}
+
+/* ---------- gallery collage ---------- */
+.gal{display:grid;gap:clamp(10px,1.6vw,22px);grid-template-columns:repeat(12,1fr)}
+.gal figure{position:relative;overflow:hidden}
+.gal img{width:100%;height:100%;object-fit:cover;transition:transform .9s var(--ease)}
+.gal figure:hover img{transform:scale(1.07) rotate(.8deg)}
+.gal figure::after{
+  content:"";position:absolute;inset:0;background:var(--red);
+  transform:translateY(101%);transition:transform .45s var(--ease);
+  mix-blend-mode:multiply;opacity:.28;
+}
+.gal figure:hover::after{transform:translateY(0)}
+.gal figcaption{
+  position:absolute;left:0;bottom:0;background:var(--paper);color:var(--red);
+  font-weight:900;font-size:12px;letter-spacing:.14em;padding:7px 12px;z-index:2;
+}
+.g1{grid-column:1/6;height:clamp(240px,34vw,480px)}
+.g2{grid-column:6/10;height:clamp(200px,28vw,400px);margin-top:clamp(30px,5vw,80px)}
+.g3{grid-column:10/13;height:clamp(180px,24vw,340px)}
+.g4{grid-column:1/4;height:clamp(180px,24vw,340px);margin-top:clamp(-40px,-2vw,-20px)}
+.g5{grid-column:4/9;height:clamp(240px,32vw,460px)}
+.g6{grid-column:9/13;height:clamp(200px,28vw,400px);margin-top:clamp(30px,5vw,80px)}
+@media(max-width:760px){
+  .g1{grid-column:1/9}.g2{grid-column:9/13;margin-top:40px}
+  .g3{grid-column:1/6;margin-top:-16px}.g4{grid-column:6/13;margin:0}
+  .g5{grid-column:1/8}.g6{grid-column:8/13;margin-top:30px}
+  .g1,.g2,.g3,.g4,.g5,.g6{height:clamp(150px,32vw,300px)}
+}
+
+/* ---------- locations ---------- */
+.loc-wrap{border-top:2px solid var(--red)}
+.loc{
+  display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr) minmax(0,1fr);
+  gap:clamp(20px,3.5vw,56px);padding:clamp(36px,5vw,64px) 0;
+  border-bottom:2px solid var(--red);align-items:start;
+}
+.loc-num{font-weight:900;font-size:clamp(3rem,8vw,7rem);line-height:.85;letter-spacing:-.03em}
+.loc-num small{display:block;font-size:11px;font-weight:800;letter-spacing:.28em;margin-top:12px}
+.loc-city{
+  font-weight:900;font-size:clamp(1.7rem,4.2vw,3.4rem);letter-spacing:-.025em;line-height:.95;margin-bottom:16px;
+}
+.loc-meta{font-size:clamp(.92rem,1.2vw,1rem);font-weight:500;line-height:1.7}
+.loc-meta a{text-decoration:underline;text-underline-offset:3px;font-weight:700}
+.badge{
+  display:inline-block;border:2px dashed var(--red);border-radius:6px;
+  padding:6px 12px;font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;
+  margin:14px 0;transform:rotate(-2deg);
+}
+.hours-tabs{display:flex;gap:8px;margin:18px 0 10px}
+.hours-tabs button{
+  border:2px solid var(--red);border-radius:99px;padding:8px 16px;
+  font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  min-height:44px;transition:background .3s,color .3s;
+}
+.hours-tabs button[aria-selected="true"]{background:var(--red);color:var(--paper)}
+.hours-panel{font-size:.95rem;font-weight:600;line-height:1.7;min-height:3.4em}
+.hours-panel[hidden]{display:none}
+.loc-map{position:relative;overflow:hidden;height:clamp(220px,26vw,340px)}
+.loc-map iframe{width:100%;height:100%;border:0;filter:grayscale(1) sepia(1) saturate(6) hue-rotate(-38deg) contrast(.95)}
+.loc-map .frame{position:absolute;inset:0;border:2px solid var(--red);pointer-events:none}
+.loc-actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+@media(max-width:900px){
+  .loc{grid-template-columns:1fr}
+  .loc-num{display:flex;align-items:baseline;gap:14px}
+  .loc-num small{margin:0}
+}
+
+/* ---------- big CTA ---------- */
+.cta{
+  position:relative;overflow:hidden;color:var(--paper);
+  min-height:min(92vh,860px);display:flex;align-items:center;
+}
+.cta-bg{position:absolute;inset:-12% 0;z-index:0}
+.cta-bg img{width:100%;height:100%;object-fit:cover;will-change:transform}
+.cta-bg::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.42);z-index:1}
+.cta-bg::after{content:"";position:absolute;inset:0;background:rgba(150,15,10,.55);mix-blend-mode:multiply;z-index:1}
+.cta-inner{position:relative;z-index:2;width:100%;padding:clamp(64px,10vw,140px) var(--gutter)}
+.cta-giant{
+  font-weight:900;letter-spacing:-.03em;line-height:.85;
+  font-size:clamp(3.4rem,13vw,13vw);white-space:nowrap;will-change:transform;
+}
+.cta-row{display:flex;align-items:center;gap:clamp(20px,4vw,48px);margin-top:clamp(28px,4vw,48px);flex-wrap:wrap}
+.cta .pill{border-color:var(--paper);color:var(--paper);font-size:14px;padding:18px 40px}
+.cta .pill::before{background:var(--paper)}
+.cta .pill:hover{color:var(--red)}
+.cta-note{font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;max-width:26ch;line-height:1.7}
+
+/* ---------- contact ---------- */
+.contact-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:clamp(32px,6vw,90px)}
+.contact-grid h2{margin-bottom:24px}
+.contact-side p{font-weight:600;line-height:1.7;max-width:34ch;margin-bottom:20px}
+.field{position:relative;margin-bottom:clamp(20px,3vw,32px)}
+.field label{
+  display:block;font-size:11px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;margin-bottom:8px;
+}
+.field input,.field textarea{
+  width:100%;border:0;border-bottom:2px solid var(--red);background:transparent;
+  font:inherit;font-weight:700;font-size:clamp(1.05rem,1.6vw,1.3rem);color:var(--red);
+  padding:10px 2px 12px;border-radius:0;
+}
+.field input::placeholder,.field textarea::placeholder{color:rgba(214,35,31,.35)}
+.field input:focus,.field textarea:focus{outline:none}
+.field .bar{position:absolute;left:0;bottom:0;height:4px;width:100%;background:var(--red-deep);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
+.field input:focus~.bar,.field textarea:focus~.bar{transform:scaleX(1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.4vw,32px)}
+@media(max-width:820px){.contact-grid{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}}
+.submit{margin-top:8px;font-size:13px;padding:16px 44px}
+.form-ok{margin-top:16px;font-weight:800;letter-spacing:.1em;display:none}
+.form-ok.show{display:block;animation:pop .5s var(--ease)}
+@keyframes pop{from{transform:translateY(8px);opacity:0}}
+
+/* ---------- footer ---------- */
+.footer{background:var(--red);color:var(--paper);overflow:hidden}
+.footer-grid{
+  display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  padding:clamp(32px,5vw,56px) var(--gutter);
+}
+.footer-grid a{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;position:relative;padding:4px 0;width:max-content}
+.footer-grid a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:2px;background:var(--paper);transform:scaleX(0);transform-origin:right;transition:transform .4s var(--ease)}
+.footer-grid a:hover::after{transform:scaleX(1);transform-origin:left}
+.footer-col{display:flex;flex-direction:column;gap:12px}
+.footer-col .tag{opacity:.7;margin-bottom:4px}
+.footer-bottom{
+  border-top:2px solid var(--paper);
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:18px var(--gutter);
+  font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+}
+@media(max-width:760px){.footer-bottom{padding-bottom:calc(18px + 64px)}}
+.footer-bottom a{text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- mobile order bar ---------- */
+.mobile-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:900;
+  display:none;background:var(--red);color:var(--paper);
+  border-top:2px solid var(--red-deep);
+}
+.mobile-bar a{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  min-height:56px;font-weight:900;letter-spacing:.2em;font-size:13px;text-transform:uppercase;
+}
+@media(max-width:760px){.mobile-bar{display:block}}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important;animation-iteration-count:1!important}
+  html{scroll-behavior:auto}
+  .drift{transform:none!important}
+  .cursor{display:none}
+  .rv,.rv-img,.rv-line,.split-h2 .mask span,.statement .mask span,.masthead-word .wrap span,.wordline .wl>span,.wordline .dot,.foot-giant .mask span{opacity:1!important;transform:none!important;clip-path:none!important}
+}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.cta :focus-visible,.footer :focus-visible,.band :focus-visible{outline-color:var(--paper)}
+</style>
+</head>
+<body>
+
+<div class="cursor" aria-hidden="true"></div>
+
+<!-- PRELOADER -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-word" id="loaderWord"></div>
+  <div class="loader-count" id="loaderCount">0%</div>
+</div>
+
+<!-- MASTHEAD -->
+<header class="masthead" id="top">
+  <h1 class="masthead-word" id="mast" aria-label="DEMOEATS"></h1>
+  <div class="masthead-sub">
+    <span class="tag">Thai cooking · EST. Local</span>
+    <span class="tag">Brisbane — Melbourne, AU</span>
+    <span class="tag">Fresh daily since day one</span>
+  </div>
+</header>
+
+<div class="collage">
+  <svg class="hero-stamp" viewBox="0 0 100 100" aria-hidden="true">
+    <circle class="bg" cx="50" cy="50" r="50"></circle>
+    <path id="stampPath" d="M50,50 m-33,0 a33,33 0 1,1 66,0 a33,33 0 1,1 -66,0" fill="none"></path>
+    <text><textPath href="#stampPath">FRESH · LOCAL · THAI · DAILY</textPath></text>
+  </svg>
+  <div class="collage-cell">
+    <img src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt="Thai dishes laid across the table at DemoEats" fetchpriority="high">
+    <span class="collage-caption">AT OUR TABLE&nbsp;&nbsp;01</span>
+  </div>
+  <div class="collage-cell">
+    <img src="https://ucarecdn.com/2f265086-389d-4073-b52c-271b054178bf/-/format/auto/-/progressive/yes/HeroImg.png" alt="Signature DemoEats plate" fetchpriority="high">
+    <span class="collage-caption">THE KITCHEN&nbsp;&nbsp;02</span>
+  </div>
+</div>
+
+<div class="scroll-cue" aria-hidden="true">
+  <span class="tag">Scroll</span>
+  <span class="line"></span>
+  <span class="tag">↓ Fresh local flavors, best enjoyed at our table</span>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="nav" aria-label="Main">
+  <a class="nav-brand" href="#top">
+    <img src="https://ucarecdn.com/cf7c769c-8c0b-4146-9fbe-4c744b4f15a0/-/format/auto/-/progressive/yes/Logoeiei.png" alt="" loading="lazy">
+    DEMOEATS
+  </a>
+  <div class="nav-links">
+    <a href="#story">About</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#locations">Locations</a>
+    <a href="#contact">Contact</a>
+    <a class="pill solid" href="https://orders.demoeats.com" data-magnet>Order Online</a>
+  </div>
+</nav>
+
+<!-- RED STATEMENT BAND -->
+<section class="band">
+  <div class="band-inner">
+    <span class="tag rv">What we do</span>
+    <h2 class="statement" id="statement">
+      <span class="mask"><span>Authentic Thai cooking, generational</span></span>
+      <span class="mask"><span>recipes and local farmers — an emphasis</span></span>
+      <span class="mask"><span>on quality ingredients, every single day.</span></span>
+    </h2>
+  </div>
+  <div class="drift-clip">
+    <div class="drift" id="drift">
+      <figure><img loading="lazy" src="https://ucarecdn.com/0829a4ea-e255-4b00-b85e-839e935f2c36/-/format/auto/-/progressive/yes/g3.webp" alt="Tom Yum, ladled hot"><figcaption>TOM YUM</figcaption></figure>
+      <figure><img loading="lazy" src="https://ucarecdn.com/a761527c-a84e-42b1-b3e5-b510bc6f38ff/-/format/auto/-/progressive/yes/g4.webp" alt="Pad Thai tossed in the wok"><figcaption>PAD THAI</figcaption></figure>
+      <figure><img loading="lazy" src="https://ucarecdn.com/bcdb1f0c-a350-42b3-94cb-c143f16ca96a/-/format/auto/-/progressive/yes/g5.webp" alt="Green curry, fresh herbs"><figcaption>GREEN CURRY</figcaption></figure>
+      <figure><img loading="lazy" src="https://ucarecdn.com/2b466717-9310-42dd-b8ef-50711b4768ad/-/format/auto/-/progressive/yes/g2.webp" alt="Market vegetables ready for prep"><figcaption>MARKET FRESH</figcaption></figure>
+      <figure><img loading="lazy" src="https://ucarecdn.com/53f7255e-7c04-4cfb-80ef-a549a251d7d0/-/format/auto/-/progressive/yes/g6.webp" alt="Plates crossing the pass"><figcaption>THE PASS</figcaption></figure>
+      <figure><img loading="lazy" src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt="Table set with shared plates"><figcaption>SHARED</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- WORDLINE -->
+<div class="wordline rv" aria-hidden="true">
+  <span class="wl" style="--wd:0s"><span>TOM YUM</span></span>
+  <span class="dot"></span>
+  <span class="wl" style="--wd:.1s"><span class="o">PAD THAI</span></span>
+  <span class="dot"></span>
+  <span class="wl" style="--wd:.2s"><span>GREEN CURRY</span></span>
+  <span class="dot"></span>
+  <span class="wl" style="--wd:.3s"><span class="o">FRESH DAILY</span></span>
+</div>
+
+<!-- STORY -->
+<section class="section" id="story">
+  <div class="ghost" aria-hidden="true">DEMOEATS</div>
+  <span class="side-label">Our story — 01</span>
+  <div class="sec-head">
+    <h2 class="split-h2"><span class="mask"><span>COOKED LIKE</span></span><span class="mask"><span>WE MEAN IT.</span></span></h2>
+    <span class="tag rv">Generational recipes · Local farmers</span>
+  </div>
+  <div class="story-grid">
+    <div>
+      <div class="story-media rv-img" data-parallax="0.08">
+        <img loading="lazy" src="https://ucarecdn.com/53f7255e-7c04-4cfb-80ef-a549a251d7d0/-/format/auto/-/progressive/yes/g6.webp" alt="Inside the DemoEats kitchen">
+        <span class="idx">01</span>
+      </div>
+      <div class="story-side-img rv-img">
+        <img loading="lazy" src="https://ucarecdn.com/2b466717-9310-42dd-b8ef-50711b4768ad/-/format/auto/-/progressive/yes/g2.webp" alt="Fresh produce from local farms">
+      </div>
+    </div>
+    <div class="story-copy">
+      <p class="lede rv">Fresh local flavors, best enjoyed at our table. That line isn't marketing — it's the whole operating manual.</p>
+      <p class="rv">Our recipes came over in notebooks and memories: Tom Yum built on stock that simmers all morning, Pad Thai pulled from the wok at the exact right second, Green Curry pounded from scratch — never from a jar.</p>
+      <p class="rv">The produce doesn't travel far. Australian farmers grow our herbs, chillies and greens, and what arrives in the morning is on plates by evening. Two rooms, two cities, one standard.</p>
+      <hr class="rule rv-line">
+      <div class="story-stats">
+        <div class="rv"><b data-count="2">0</b><i>Locations</i></div>
+        <div class="rv"><b data-count="3">0</b><i>Signature dishes</i></div>
+        <div class="rv"><b data-count="100">0</b><i>% made fresh</i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORDLINE -->
+<div class="wordline rv" aria-hidden="true">
+  <span class="wl" style="--wd:0s"><span class="o">LOCAL FARMERS</span></span>
+  <span class="dot"></span>
+  <span class="wl" style="--wd:.1s"><span>GENERATIONAL RECIPES</span></span>
+  <span class="dot"></span>
+  <span class="wl" style="--wd:.2s"><span class="o">MADE TO ORDER</span></span>
+  <span class="dot"></span>
+  <span class="wl" style="--wd:.3s"><span>NO SHORTCUTS</span></span>
+</div>
+
+<!-- GALLERY -->
+<section class="section" id="gallery">
+  <span class="side-label">From the pass — 02</span>
+  <div class="sec-head">
+    <h2 class="split-h2"><span class="mask"><span>STRAIGHT FROM</span></span><span class="mask"><span>THE WOK.</span></span></h2>
+    <span class="tag rv">Six frames · zero filters</span>
+  </div>
+  <div class="gal">
+    <figure class="g1 rv-img"><img loading="lazy" src="https://ucarecdn.com/0829a4ea-e255-4b00-b85e-839e935f2c36/-/format/auto/-/progressive/yes/g3.webp" alt="Tom Yum in the bowl"><figcaption>01 — TOM YUM</figcaption></figure>
+    <figure class="g2 rv-img"><img loading="lazy" src="https://ucarecdn.com/a761527c-a84e-42b1-b3e5-b510bc6f38ff/-/format/auto/-/progressive/yes/g4.webp" alt="Pad Thai served hot"><figcaption>02 — PAD THAI</figcaption></figure>
+    <figure class="g3 rv-img"><img loading="lazy" src="https://ucarecdn.com/bcdb1f0c-a350-42b3-94cb-c143f16ca96a/-/format/auto/-/progressive/yes/g5.webp" alt="Green curry with herbs"><figcaption>03 — GREEN CURRY</figcaption></figure>
+    <figure class="g4 rv-img"><img loading="lazy" src="https://ucarecdn.com/932b6bff-7c33-4a4e-a570-5ee6db63ca59/-/format/auto/-/progressive/yes/g1.webp" alt="Shared plates across the table"><figcaption>04 — SHARED</figcaption></figure>
+    <figure class="g5 rv-img"><img loading="lazy" src="https://ucarecdn.com/2b466717-9310-42dd-b8ef-50711b4768ad/-/format/auto/-/progressive/yes/g2.webp" alt="Market vegetables"><figcaption>05 — MARKET</figcaption></figure>
+    <figure class="g6 rv-img"><img loading="lazy" src="https://ucarecdn.com/53f7255e-7c04-4cfb-80ef-a549a251d7d0/-/format/auto/-/progressive/yes/g6.webp" alt="The pass at service"><figcaption>06 — SERVICE</figcaption></figure>
+  </div>
+</section>
+
+<!-- LOCATIONS -->
+<section class="section" id="locations">
+  <span class="side-label">Find us — 03</span>
+  <div class="sec-head">
+    <h2 class="split-h2"><span class="mask"><span>TWO CITIES,</span></span><span class="mask"><span>ONE STANDARD.</span></span></h2>
+    <span class="tag rv">Walk in · or order ahead</span>
+  </div>
+
+  <div class="loc-wrap">
+    <!-- BRISBANE -->
+    <article class="loc rv">
+      <div class="loc-num">01<small>QLD · 4010</small></div>
+      <div>
+        <h3 class="loc-city">DEMO2 <span class="o">BRISBANE</span></h3>
+        <p class="loc-meta">
+          346 Sandgate Road, Albion QLD 4010<br>
+          <a href="tel:0732624972">07 3262 4972</a> — <a href="https://demo4.localforyoucarts.com">Order online ↗</a>
+        </p>
+        <div class="hours-tabs" role="tablist" aria-label="Brisbane hours">
+          <button role="tab" aria-selected="true" data-panel="bne-dinner">Dinner</button>
+          <button role="tab" aria-selected="false" data-panel="bne-lunch">Lunch</button>
+        </div>
+        <div class="hours-panel" id="bne-dinner" role="tabpanel">
+          Mon · Tue · Sat · Sun — 5:00pm to 9:00pm<br>
+          Wed – Fri — 5:00pm to 9:00pm
+        </div>
+        <div class="hours-panel" id="bne-lunch" role="tabpanel" hidden>
+          Wed – Fri — 11:30am to 3:00pm<br>
+          Weekends — dinner service only
+        </div>
+        <div class="loc-actions">
+          <a class="pill" href="https://demo4.localforyoucarts.com">Order Brisbane</a>
+          <a class="pill" href="https://www.google.com/maps?q=-27.428973,153.04233">Directions</a>
+        </div>
+      </div>
+      <div class="loc-map rv-img">
+        <iframe loading="lazy" title="Map — DemoEats Brisbane" src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed"></iframe>
+        <span class="frame"></span>
+      </div>
+    </article>
+
+    <!-- MELBOURNE -->
+    <article class="loc rv">
+      <div class="loc-num">02<small>VIC · 3062</small></div>
+      <div>
+        <h3 class="loc-city">DEMOEATS <span class="o">MELBOURNE</span></h3>
+        <p class="loc-meta">
+          19 North Park Dr, Somerton VIC 3062<br>
+          <a href="tel:0407505997">0407 505 997</a> — <a href="https://orders.demoeats.com">Order online ↗</a>
+        </p>
+        <br><span class="badge">Open 24 hours</span>
+        <div class="hours-panel">
+          Around the clock, seven days.<br>
+          The wok never cools in Somerton.
+        </div>
+        <div class="loc-actions">
+          <a class="pill" href="https://orders.demoeats.com">Order Melbourne</a>
+          <a class="pill" href="https://www.google.com/maps?q=-37.6406811,144.9686265">Directions</a>
+        </div>
+      </div>
+      <div class="loc-map rv-img">
+        <iframe loading="lazy" title="Map — DemoEats Melbourne" src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed"></iframe>
+        <span class="frame"></span>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- BIG CTA -->
+<section class="cta" id="order">
+  <div class="cta-bg" data-parallax="0.16">
+    <img loading="lazy" src="https://ucarecdn.com/52910dc8-8d77-44bf-ac9c-62a1afc1f2fc/-/format/auto/-/progressive/yes/onsite.webp" alt="">
+  </div>
+  <div class="cta-inner">
+    <div class="cta-giant" data-scrub="-0.12">HUNGRY <span class="o">YET?</span></div>
+    <div class="cta-giant" data-scrub="0.12" style="margin-top:.05em"><span class="o">GOOD.</span> SAME.</div>
+    <div class="cta-row">
+      <a class="pill" href="https://orders.demoeats.com" data-magnet>Order Online Now</a>
+      <p class="cta-note">Brisbane til 9pm — Melbourne never closes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <span class="side-label">Say hello — 04</span>
+  <div class="contact-grid">
+    <div class="contact-side">
+      <h2 class="split-h2"><span class="mask"><span>TALK</span></span><span class="mask"><span>TO US.</span></span></h2>
+      <p class="rv">Bookings, big tables, feedback, or just letting us know how the Green Curry treated you — it all lands in the same inbox, and we read every word.</p>
+      <hr class="rule rv-line" style="max-width:200px">
+      <p class="tag rv" style="margin-top:20px">Replies within one service</p>
+    </div>
+    <form id="contactForm" novalidate>
+      <div class="form-row">
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input id="f-name" name="name" type="text" placeholder="Your name" required autocomplete="name">
+          <span class="bar"></span>
+        </div>
+        <div class="field">
+          <label for="f-phone">Phone</label>
+          <input id="f-phone" name="phone" type="tel" placeholder="04XX XXX XXX" autocomplete="tel">
+          <span class="bar"></span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-email">Email</label>
+        <input id="f-email" name="email" type="email" placeholder="you@example.com" required autocomplete="email">
+        <span class="bar"></span>
+      </div>
+      <div class="field">
+        <label for="f-msg">Message</label>
+        <textarea id="f-msg" name="message" rows="4" placeholder="What can we cook up?" required></textarea>
+        <span class="bar"></span>
+      </div>
+      <button class="pill solid submit" type="submit" data-magnet>Send Message</button>
+      <p class="form-ok" id="formOk">Got it. We'll be in touch before the next service.</p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="foot-giant" aria-hidden="true">
+    <span class="mask"><span>DEMOEATS</span></span>
+  </div>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <span class="tag">Visit</span>
+      <a href="#story">About</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#locations">Locations</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <span class="tag">Order</span>
+      <a href="https://demo4.localforyoucarts.com">Brisbane ↗</a>
+      <a href="https://orders.demoeats.com">Melbourne ↗</a>
+    </div>
+    <div class="footer-col">
+      <span class="tag">Follow</span>
+      <a href="#" rel="noopener">Instagram ↗</a>
+      <a href="#" rel="noopener">Facebook ↗</a>
+      <a href="#" rel="noopener">TikTok ↗</a>
+    </div>
+    <div class="footer-col">
+      <span class="tag">Fine print</span>
+      <a href="https://www.localforyou.com/terms">Terms ↗</a>
+      <a href="tel:0732624972">BNE 07 3262 4972</a>
+      <a href="tel:0407505997">MEL 0407 505 997</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 DemoEats — All flavors reserved</span>
+    <span>Powered by <a href="https://www.localforyou.com">Local For You</a></span>
+  </div>
+</footer>
+
+<!-- MOBILE ORDER BAR -->
+<div class="mobile-bar">
+  <a href="https://orders.demoeats.com">Order Online</a>
+</div>
+
+<script>
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- split masthead + loader word ---------- */
+  const WORD = 'DEMOEATS';
+  const mast = document.getElementById('mast');
+  WORD.split('').forEach((ch,i)=>{
+    const w=document.createElement('span');w.className='wrap';
+    const s=document.createElement('span');s.textContent=ch;
+    s.style.transitionDelay=(0.05*i+0.15)+'s';
+    w.appendChild(s);mast.appendChild(w);
+  });
+  const lw=document.getElementById('loaderWord');
+  WORD.split('').forEach((ch,i)=>{
+    const s=document.createElement('span');s.textContent=ch;
+    s.style.animationDelay=(0.04*i)+'s';lw.appendChild(s);
+  });
+
+  /* ---------- preloader ---------- */
+  const loader=document.getElementById('loader');
+  const count=document.getElementById('loaderCount');
+  let p=0;
+  const finish=()=>{
+    loader.classList.add('done');
+    document.body.classList.add('is-loaded');
+    setTimeout(()=>loader.remove(),1200);
+  };
+  if(reduced){finish();}
+  else{
+    const t=setInterval(()=>{
+      p=Math.min(100,p+Math.ceil(Math.random()*14));
+      count.textContent=p+'%';
+      if(p>=100){clearInterval(t);setTimeout(finish,250);}
+    },70);
+  }
+
+  /* ---------- custom cursor ---------- */
+  const cur=document.querySelector('.cursor');
+  if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+    let cx=innerWidth/2,cy=innerHeight/2,tx=cx,ty=cy;
+    addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;},{passive:true});
+    (function loop(){
+      cx+=(tx-cx)*.2;cy+=(ty-cy)*.2;
+      cur.style.transform=`translate(${cx}px,${cy}px) translate(-50%,-50%)`;
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('a,button,.gal figure').forEach(el=>{
+      el.addEventListener('mouseenter',()=>cur.classList.add('is-hover'));
+      el.addEventListener('mouseleave',()=>cur.classList.remove('is-hover'));
+    });
+    document.querySelectorAll('.band,.cta,.footer').forEach(el=>{
+      el.addEventListener('mouseenter',()=>cur.classList.add('is-white'));
+      el.addEventListener('mouseleave',()=>cur.classList.remove('is-white'));
+    });
+  }
+
+  /* ---------- sticky nav shadow ---------- */
+  const nav=document.getElementById('nav');
+  const navObs=new IntersectionObserver(([e])=>{
+    nav.classList.toggle('is-stuck',!e.isIntersecting);
+  },{rootMargin:'-1px 0px 0px 0px',threshold:0});
+  navObs.observe(document.querySelector('.scroll-cue'));
+
+  /* ---------- reveals ---------- */
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+    });
+  },{threshold:.15,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv,.rv-img,.rv-line,.split-h2,#statement,.wordline,.foot-giant').forEach(el=>io.observe(el));
+
+  /* ---------- counters ---------- */
+  const cObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      const el=e.target,end=+el.dataset.count,dur=reduced?1:1100,t0=performance.now();
+      (function tick(t){
+        const k=Math.min(1,(t-t0)/dur);
+        el.textContent=Math.round(end*(1-Math.pow(1-k,3)));
+        if(k<1)requestAnimationFrame(tick);
+      })(t0);
+      cObs.unobserve(el);
+    });
+  },{threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(el=>cObs.observe(el));
+
+  /* ---------- drifting strip (auto + pause on hover) ---------- */
+  const drift=document.getElementById('drift');
+  if(drift&&!reduced){
+    drift.innerHTML+=drift.innerHTML; // duplicate for seamless loop
+    let x=0,paused=false;
+    drift.addEventListener('mouseenter',()=>paused=true);
+    drift.addEventListener('mouseleave',()=>paused=false);
+    (function dloop(){
+      const half=drift.scrollWidth/2;
+      if(!paused&&half>0){x-=.6;if(-x>=half)x=0;drift.style.transform=`translateX(${x}px)`;}
+      requestAnimationFrame(dloop);
+    })();
+  }
+
+  /* ---------- parallax + scrub ---------- */
+  const pEls=[...document.querySelectorAll('[data-parallax]')];
+  const sEls=[...document.querySelectorAll('[data-scrub]')];
+  if(!reduced&&(pEls.length||sEls.length)){
+    let ticking=false;
+    const update=()=>{
+      const vh=innerHeight;
+      pEls.forEach(el=>{
+        const r=el.getBoundingClientRect();
+        if(r.bottom<0||r.top>vh)return;
+        const prog=(r.top+r.height/2-vh/2)/vh;
+        const target=el.querySelector('img')||el;
+        target.style.transform=`translateY(${prog*-100*parseFloat(el.dataset.parallax)}px)`;
+      });
+      sEls.forEach(el=>{
+        const r=el.getBoundingClientRect();
+        if(r.bottom<0||r.top>vh)return;
+        const prog=(r.top+r.height/2-vh/2)/vh;
+        el.style.transform=`translateX(${prog*100*parseFloat(el.dataset.scrub)*-8}px)`;
+      });
+      ticking=false;
+    };
+    addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true;}},{passive:true});
+    update();
+  }
+
+  /* ---------- magnetic buttons ---------- */
+  if(!reduced&&matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('[data-magnet]').forEach(el=>{
+      el.style.transition='transform .35s cubic-bezier(.19,1,.22,1)';
+      el.addEventListener('mousemove',e=>{
+        const r=el.getBoundingClientRect();
+        const dx=(e.clientX-r.left-r.width/2)*.25;
+        const dy=(e.clientY-r.top-r.height/2)*.35;
+        el.style.transform=`translate(${dx}px,${dy}px)`;
+      });
+      el.addEventListener('mouseleave',()=>el.style.transform='');
+    });
+  }
+
+  /* ---------- hours tabs ---------- */
+  document.querySelectorAll('.hours-tabs').forEach(tabs=>{
+    const btns=tabs.querySelectorAll('button');
+    btns.forEach(b=>b.addEventListener('click',()=>{
+      btns.forEach(x=>{
+        x.setAttribute('aria-selected',x===b);
+        document.getElementById(x.dataset.panel).hidden=(x!==b);
+      });
+    }));
+  });
+
+  /* ---------- form ---------- */
+  document.getElementById('contactForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    const f=e.target;
+    if(!f.checkValidity()){f.reportValidity();return;}
+    document.getElementById('formOk').classList.add('show');
+    f.reset();
+  });
+})();
+</script>
+</body>
+</html>

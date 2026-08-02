@@ -15,6 +15,7 @@ const settings = {
   url_uploadDocuments: "assets/API/upload_documents.php",
   url_uploadSlip: "assets/API/upload_slip.php",
   url_saveAdyenDocuments: "assets/function/saveAdyenDocuments.php",
+  url_docusignSend: "https://report.localforyou.com/api/docusign/sendAgreement.php",
   Payment_Module: {
     CreditCard: true,
     DirectDebit: true,

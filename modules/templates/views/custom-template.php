@@ -1,7 +1,7 @@
 <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Template submission : Preview</title>
+     <title>Template submission : Customized Template</title>
      <style>
      /* ---- Design tokens (hook into your color system as needed) ---- */
      :root {
@@ -76,59 +76,31 @@
 <div class="row">
      <div class="col">
           <div class="d-flex justify-content-between">
-               <h4><i class="bi bi-palette"></i> Template Color Preview</h4>
+               <h4><i class="bi bi-file-richtext"></i> Customized Template</h4>
           </div>
      </div>
 </div>
 
-<div class="template-hero d-flex align-items-center justify-content-center" style="height: 60vh;">
+<div class="template-hero d-flex justify-content-center py-4">
      <div class="w-100" style="max-width: 1200px;">
           <div id="templates" class="row row-cols-2 row-cols-md-4 g-3 g-lg-4 justify-content-center">
+               <?php
+               $customizedTemplates = ['1', '1.2', '2', '3', '4', '5', '5.5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '17', '18'];
+               foreach ($customizedTemplates as $tpl) {
+                    ?>
                <div class="col">
-                    <a href="customRes1.php" class="template-card" aria-label="Open Restaurant Template 1">
-                         <div class=" template-thumb">
-                              <img src="../assets/img/Res1Home-min.png" alt="Restaurant 1 preview" loading="lazy"
-                                   decoding="async">
+                    <a href="customized-template/Template<?php echo $tpl; ?>.html" class="template-card"
+                         aria-label="Open Template <?php echo $tpl; ?>">
+                         <div class="template-thumb">
+                              <img src="../assets/img/custom-template/thumbnail<?php echo $tpl; ?> (Custom).png"
+                                   alt="Template <?php echo $tpl; ?> preview" loading="lazy" decoding="async">
                          </div>
                          <div class="template-meta">
-                              <span class="template-title">Restaurant - 1</span>
+                              <span class="template-title">Template <?php echo $tpl; ?></span>
                          </div>
                     </a>
                </div>
-
-               <!-- <div class="col pt-5">
-            <a href="customRes2.php" class="template-card" aria-label="Open Restaurant Template 2">
-            <div class=" template-thumb">
-                <img src="../assets/img/Res2Home-min.png" alt="Restaurant 2 preview" loading="lazy" decoding="async">
-            </div>
-            <div class="template-meta">
-                <span class="template-title">Restaurant - 2</span>
-            </div>
-            </a>
-        </div>
-
-        <div class="col">
-            <a href="customRes3.php" class="template-card" aria-label="Open Restaurant Template 3">
-            <div class=" template-thumb">
-                <img src="../assets/img/Res3Home-min.png" alt="Restaurant 3 preview" loading="lazy" decoding="async">
-            </div>
-            <div class="template-meta">
-                <span class="template-title">Restaurant - 3</span>
-            </div>
-            </a>
-        </div> -->
-
-               <div class="col ">
-                    <a href="customMas1.php" class="template-card" aria-label="Open Massage Template 1">
-                         <div class=" template-thumb">
-                              <img src="../assets/img/Mas1Home-min.png" alt="Massage 1 preview" loading="lazy"
-                                   decoding="async">
-                         </div>
-                         <div class="template-meta">
-                              <span class="template-title">Massage - 1</span>
-                         </div>
-                    </a>
-               </div>
+               <?php } ?>
           </div>
      </div>
 </div>
