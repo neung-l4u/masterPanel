@@ -68,6 +68,7 @@ $password = "Localeats#".date("Y");
                                         <th style="width:5%">Signup</th>
                                         <th style="width:5%">Stripe</th>
                                         <th style="width:5%">Contract</th>
+                                        <th style="width:5%">Push POS</th>
                                         <th style="width:5%">Status</th>
                                     </tr>
                                     </thead>
@@ -142,7 +143,7 @@ $password = "Localeats#".date("Y");
         ],columnDefs: [
             { targets: [0], className: 'dt-left' },
             { targets: [4, 5], className: 'dt-center', "orderable": "false" },
-            { targets: [6], className: 'dt-right' , "orderable": "false"}
+            { targets: [6, 7], className: 'dt-right' , "orderable": "false"}
         ]
     } );
 
