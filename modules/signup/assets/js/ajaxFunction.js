@@ -948,6 +948,9 @@ function requestToPay() {
                             genLinkPDF();
                         } catch (e) { console.error('genLinkPDF error:', e); }
                         try {
+                            sendPushposToDocuSign();
+                        } catch (e) { console.error('sendPushposToDocuSign error:', e); }
+                        try {
                             modalRespondAction('open', 'success');
                         } catch (e) { console.error('modalRespondAction error:', e); }
                         try {
@@ -1003,6 +1006,7 @@ function requestToPay() {
         $(cusID).appendTo(".paymentResult");
         uploadDocuments().finally(function () {
             try { genLinkPDF(); } catch (e) { console.error('genLinkPDF error:', e); }
+            try { sendPushposToDocuSign(); } catch (e) { console.error('sendPushposToDocuSign error:', e); }
             try { sendMailToL4UTeam(); } catch (e) { console.error('sendMailToL4UTeam error:', e); }
             try { signupToCustomerProjectID(); } catch (e) { console.error('signupToCustomerProjectID error:', e); }
             try { modalRespondAction('open', 'success'); } catch (e) { console.error('modalRespondAction error:', e); }
@@ -2202,6 +2206,43 @@ const saveToDB = (stripePayload, stripeRes) => {
         console.log("Save to DB fail!!");
         console.log(status + ': ' + error);
         return false;
+    });
+}
+
+// Push the Push POS agreement to DocuSign for signature. Only called when
+// the customer actually bought POS (isPOSSelected()) — genLinkPDF() must
+// have run first so #pushposAgreementGenerated / form fields are populated.
+function sendPushposToDocuSign() {
+    if (!isPOSSelected()) return;
+
+    let shopAgent = $("#byAgent").val();
+    if (shopAgent === "Other") { shopAgent = $("#otherAgent").val(); }
+
+    const payload = {
+        agreementType: "pushpos",
+        signerEmail: $("#email").val().trim().toLowerCase(),
+        customerFullName: (formData.owner.firstName + " " + formData.owner.lastName).trim(),
+        deliveryMode: "email",
+        ShopName: $("#shopName").val().trim(),
+        legalEntity: $("#company").val().trim(),
+        registrationNumber: $("#businessNumber").val(),
+        State: $("#state option:selected").text(),
+        Country: formData.formCountry,
+        contractPeriod: $("input[name='contractPeriod']:checked").val() || "0"
+    };
+
+    $.ajax({
+        url: settings.url_docusignSend,
+        method: 'POST',
+        async: true,
+        cache: false,
+        dataType: 'json',
+        data: payload
+    }).done(function (res) {
+        console.log('DocuSign pushpos envelope sent:', res);
+    }).fail(function (xhr, status, error) {
+        console.log("DocuSign pushpos sendAgreement fail!!");
+        console.log(status + ': ' + error);
     });
 }
 
