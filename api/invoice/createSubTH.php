@@ -43,16 +43,17 @@ if (!$isLoggedIn && $secret !== $allowedSecret) {
 }
 
 // --- Params ---
-$email         = trim($_POST['email']          ?? '');
-$amountRaw     = $_POST['amount'] ?? '0';
-$amount        = (float)str_replace([',', ' ฿', '฿', ' '], '', $amountRaw);
-$productName   = trim($_POST['product_name']   ?? '');
-$billingDate      = trim($_POST['billing_date']      ?? date('Y-m-d'));
-$mondayItemId     = trim($_POST['monday_item_id']     ?? '');
+$pulseName       = trim($_POST['pulse_name']        ?? '');
+$email           = trim($_POST['email']             ?? '');
+$amountRaw       = $_POST['amount'] ?? '0';
+$amount          = (float)str_replace([',', ' ฿', '฿', ' '], '', $amountRaw);
+$productName     = trim($_POST['product_name']      ?? '');
+$billingDate     = trim($_POST['billing_date']      ?? date('Y-m-d'));
+$mondayItemId    = trim($_POST['monday_item_id']    ?? '');
 $nextChargeDateRaw = trim($_POST['next_charge_date'] ?? '');
 
-if ($email === '') {
-    echo json_encode(['success' => false, 'message' => 'ต้องระบุ email']);
+if ($email === '' || !preg_match('/^\d+$/', $mondayItemId)) {
+    echo json_encode(['success' => false, 'message' => 'ต้องระบุ email และ monday_item_id']);
     exit;
 }
 
@@ -147,9 +148,7 @@ $db->query(
     'INSERT INTO `thReceipt`(`invoice_id`, `receiptID`, `amount_paid`, `thBathRe`, `status`) VALUES (?,?,?,?,?)',
     $newInvoiceId, $invoiceID, $netPay, $thBathRe, 'pending'
 );
-
-// --- Queue payload for confirmed Monday webhook ---
-queueThApoMondayPayload($db, $newInvoiceId);
+$receiptId = (int)$db->lastInsertId();
 
 // --- UPDATE clientType → subscription เสมอ ---
 $db->query(
@@ -157,123 +156,27 @@ $db->query(
     'subscription', $customerId
 );
 
-// --- อัป Monday board: text_mm58ay9j = invoiceID ล่าสุด (เช็ค email ตรงกัน) ---
-try {
-    $mondayToken   = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYxNzI4MTY4NiwiYWFpIjoxMSwidWlkIjo1NzY1NDA2MSwiaWFkIjoiMjAyNi0wMi0wNVQwMjowNDo0NC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjIxMTY5MjAsInJnbiI6ImFwc2UyIn0.RIk109S-veeBTyvud8wxzCc656ytoFfVMgA5zyfo3sM';
-    $mondayBoardId = '5029904278';
-
-    $searchQuery = 'query($boardId: ID!, $email: String!) { boards(ids: [$boardId]) { items_page(limit: 1, query_params: { rules: [{ column_id: "text_mm58ns1b", compare_value: [$email] }] }) { items { id name } } } }';
-    $searchCh = curl_init('https://api.monday.com/v2');
-    curl_setopt_array($searchCh, [
-        CURLOPT_POST           => true,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT        => 15,
-        CURLOPT_POSTFIELDS     => json_encode(['query' => $searchQuery, 'variables' => ['boardId' => $mondayBoardId, 'email' => $email]]),
-        CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
-    ]);
-    $searchResp  = curl_exec($searchCh);
-
-    $searchData  = json_decode($searchResp, true);
-    $foundItemId = $searchData['data']['boards'][0]['items_page']['items'][0]['id'] ?? null;
-    $targetItemId = $foundItemId ?? ($mondayItemId ?: null);
-
-    if ($targetItemId) {
-        $updateQuery = 'mutation($boardId: ID!, $itemId: ID!, $colVals: JSON!) { change_multiple_column_values(board_id: $boardId, item_id: $itemId, column_values: $colVals, create_labels_if_missing: true) { id } }';
-        $colVals = json_encode(['text_mm58ay9j' => $invoiceID, 'link_mm5867rj' => '']);
-        $updCh = curl_init('https://api.monday.com/v2');
-        curl_setopt_array($updCh, [
-            CURLOPT_POST           => true,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 15,
-            CURLOPT_POSTFIELDS     => json_encode(['query' => $updateQuery, 'variables' => ['boardId' => $mondayBoardId, 'itemId' => $targetItemId, 'colVals' => $colVals]]),
-            CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
-        ]);
-        $updResp = curl_exec($updCh);
-        error_log('[createSubTH] Monday update text_mm58ay9j item=' . $targetItemId . ' resp=' . $updResp);
-    } else {
-        error_log('[createSubTH] Monday: ไม่พบ item สำหรับ email=' . $email);
-    }
-} catch (\Throwable $e) {
-    error_log('[createSubTH Monday] ' . $e->getMessage());
-}
-
-// --- ส่ง webhook ไป Make.com เพื่อส่งอีเมลให้ลูกค้า ---
-$baseUrl     = 'https://report.localforyou.com';
-$slipFormUrl = $baseUrl . '/modules/customerMailUpSlip/index.php?invoice_id=' . (int)$newInvoiceId;
-
-$receiptUrl  = $baseUrl . '/pages/receiptTH.php?invoice_id=' . $newInvoiceId;
-
-$payload = [
-    'invoice_id'     => $newInvoiceId,
-    'invoiceID'      => $invoiceID,
-    'receiptID'      => $invoiceID,
-    'name'           => $cust['name'],
-    'address'        => $cust['address'],
-    'taxNumber'      => $cust['taxNumber'],
-    'type'           => $taxType,
-    'sale'           => '',
-    'customerEmail'  => $cust['email'],
-    'customerPhone'  => $cust['phone'],
-    'bankName'       => $cust['bankName']    ?? '',
-    'bankThaiNumber' => $cust['bankNumber']  ?? '',
-    'bankThaiName'   => $cust['bankAccName'] ?? '',
-    'createdAt'      => date('d/m/Y'),
-    'subtotal'       => number_format($net,      2, '.', ''),
-    'vat'            => number_format($vat,      2, '.', ''),
-    'grandtotal'     => number_format($gross,    2, '.', ''),
-    'withholdingTax' => number_format($withhold, 2, '.', ''),
-    'net_payment'    => number_format($netPay,   2, '.', ''),
-    'thBathIn'       => $thBathIn,
-    'thBathRe'       => $thBathRe,
-    'items'          => $productItems,
-    'quotation'      => [[
-        'date'   => $billingDateThai,
-        'detail' => [[
-            'company'  => $cust['name'],
-            'address'  => $cust['address'],
-            'tax_id'   => $cust['taxNumber'],
-            'email'    => $cust['email'],
-            'phone'    => $cust['phone'],
-            'tax_type' => $taxType,
-        ]],
-    ]],
-    'slip_form_url'  => $slipFormUrl,
-    'receipt_url'    => $receiptUrl,
-    'slip_url'       => '',
-    'base_url'       => $baseUrl,
-    'billingDate'      => $billingDate,
-    'billingSeq'       => $nextSeq,
-    'next_charge_date' => $nextChargeDateRaw,
-    'monday_item_id'   => $mondayItemId,
-];
-
-$webhookUrl = 'https://hook.us1.make.com/5l2ejqxpj926rmb1j6fvey0ks57yyps8';
-$ch = curl_init($webhookUrl);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-$response  = curl_exec($ch);
-$httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-
-if ($curlError) {
-    echo json_encode([
-        'success'         => true,
-        'invoice_created' => true,
-        'invoiceID'       => $invoiceID,
-        'warning'         => 'Invoice สร้างแล้ว แต่ส่ง webhook ไม่ได้: ' . $curlError,
-    ]);
-    exit;
-}
+$baseUrl = 'https://report.localforyou.com';
 
 echo json_encode([
-    'success'          => true,
-    'invoice_id'       => $newInvoiceId,
-    'invoiceID'        => $invoiceID,
-    'billingSeq'       => $nextSeq,
-    'webhook_http'     => $httpCode,
-    'webhook_response' => $response,
-]);
+    'success' => true,
+    'message' => 'Subscription invoice and receipt created',
+    'pulse_name' => $pulseName,
+    'monday_item_id' => $mondayItemId,
+    'customer_id' => $customerId,
+    'customer_name' => $cust['name'],
+    'customer_email' => $cust['email'],
+    'invoice_id' => $newInvoiceId,
+    'invoiceID' => $invoiceID,
+    'receipt_id' => $receiptId,
+    'receiptID' => $invoiceID,
+    'billingSeq' => $nextSeq,
+    'billing_date' => $billingDate,
+    'next_charge_date' => $nextChargeDateRaw,
+    'amount' => $netPay,
+    'currency' => 'THB',
+    'status' => 'pending',
+    'slip_form_url' => $baseUrl . '/modules/customerMailUpSlip/index.php?invoice_id=' . $newInvoiceId,
+    'receipt_url' => $baseUrl . '/pages/receiptTH.php?invoice_id=' . $newInvoiceId,
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>

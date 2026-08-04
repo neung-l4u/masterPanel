@@ -13,7 +13,7 @@ $searchVal  = $_POST['search_val'] ?? '';
 
 $params = [];
 $query = "SELECT r.`id` AS receiptId, r.`invoice_id` AS id, r.`receiptID`, r.`amount_paid`, r.`status` AS receiptStatus, r.`slip`, r.`createdAt`, r.`sentAt`,
-                 i.`invoiceID`, i.`product`, i.`amount` AS invoiceAmount, i.`status` AS invoiceStatus,
+                 i.`invoiceID`, i.`product`, i.`amount` AS invoiceAmount, i.`status` AS invoiceStatus, i.`wantGM`,
                  c.`name`, c.`email` AS customerEmail, c.`phone` AS customerPhone,
                  c.`type`, c.`clientType`, c.`bankName`, c.`bankNumber` AS bankThaiNumber
           FROM `thReceipt` r
@@ -38,6 +38,7 @@ if (!empty($searchVal)) {
     $params[] = $s;
 }
 
+$query .= ' AND (c.`clientType` != "subscription" OR (c.`clientType` = "subscription" AND i.`wantGM` = "1"))';
 $query .= ' ORDER BY r.id DESC';
 
 $rows = empty($params) ? $db->query($query)->fetchAll() : $db->query($query, ...$params)->fetchAll();
@@ -64,8 +65,10 @@ foreach ($rows as $row) {
 
     // Client Type badge (first_time / subscription)
     $clientType = $row['clientType'] ?? 'first_time';
+    $wantGM = $row['wantGM'] ?? '0';
     if ($clientType === 'subscription') {
-        $clientBadge = '<span class="badge badge-success"><i class="bi bi-arrow-repeat mr-1"></i>Sub</span>';
+        $gmLabel = ($wantGM === '1' || $wantGM === 1) ? ' ✓' : '';
+        $clientBadge = '<span class="badge badge-success"><i class="bi bi-arrow-repeat mr-1"></i>Sub' . $gmLabel . '</span>';
     } else {
         $clientBadge = '<span class="badge badge-primary"><i class="bi bi-star mr-1"></i>First</span>';
     }

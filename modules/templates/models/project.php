@@ -9,6 +9,7 @@ require_once ("../assets/php/share_function.php");
 //รับค่าที่ส่งมาเก็บใน Array $param
 $param['act'] = (!empty($_POST['act'])) ? trim($_POST['act']) : ''; //ใช้เลือกเคสด้านล่างที่ต้องทำ
 $param['name'] = (!empty($_POST['name'])) ? trim($_POST['name']) : ''; //ชื่อโปรเจคที่ส่งมา
+$param['branch'] = (!empty($_POST['branch'])) ? trim($_POST['branch']) : ''; //สาขาของโปรเจค
 $param['shopTypeID'] = (!empty($_POST['shopTypeID'])) ? trim($_POST['shopTypeID']) : '';
 $param['selectedTemplate'] = (!empty($_POST['selectedTemplate'])) ? trim($_POST['selectedTemplate']) : null;
 $param['status'] = (!empty($_POST['status'])) ? trim($_POST['status']) : '1'; //1=Draft , 2=Send
@@ -65,15 +66,15 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
     $return['result'] = 'success';
     $return['data'] = $row;
 }else if ( $param['act'] == 'update' ) { //อัพเดท project
-    $project = $db->query('UPDATE tb_project SET `projectName` = ?, `shopTypeID` = ?, `selectedTemplate` = ?, `countryID` = ?  WHERE `projectID` = ?'
-        , $param['name'], $param['shopTypeID'], $param['selectedTemplate'], $param['country'], $param['editID']);
+    $project = $db->query('UPDATE tb_project SET `projectName` = ?, `projectBranch` = ?, `shopTypeID` = ?, `selectedTemplate` = ?, `countryID` = ?  WHERE `projectID` = ?'
+        , $param['name'], $param['branch'], $param['shopTypeID'], $param['selectedTemplate'], $param['country'], $param['editID']);
 
     $return['result'] = 'success';
     $return['msg'] = 'project updated';
 }else if ( $param['act'] == 'add' ) {  //เพิ่ม project
 
-    $project = $db->query('INSERT INTO `tb_project`(`projectName`, `shopTypeID`, `selectedTemplate`, `statusID`, `projectOwner`, `countryID`) VALUES (?,?,?,?,?,?)'
-        , $param['name'], $param['shopTypeID'], $param['selectedTemplate'], 1, $param['ownerID'], $param['country']);
+    $project = $db->query('INSERT INTO `tb_project`(`projectName`, `projectBranch`, `shopTypeID`, `selectedTemplate`, `statusID`, `projectOwner`, `countryID`) VALUES (?,?,?,?,?,?,?)'
+        , $param['name'], $param['branch'], $param['shopTypeID'], $param['selectedTemplate'], 1, $param['ownerID'], $param['country']);
 
     $projectID = $db->lastInsertId(); 
     $row = $db->query('SELECT `projectName` FROM `tb_project` WHERE `projectID` = ?', $projectID)->fetchArray();
