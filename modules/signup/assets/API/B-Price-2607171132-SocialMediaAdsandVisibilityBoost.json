@@ -1674,7 +1674,6 @@
                   "gst": true
                 }
               ]
-              
             }
           ],
           "Materials": [
@@ -6352,7 +6351,7 @@
               },
               {
                 "name": "Massage AI + Social Media Ads",
-                "product_id": "prod_UskX7Y9ULzsdU4",
+                "product_id": "prod_UskX7Y9ULzsdU1",
                 "price_id": "price_1Tsz2lI6vmxJT6OmUlokq5S4",
                 "currency": "usd",
                 "amount": 27900,
@@ -8041,7 +8040,7 @@
               },
               {
                 "name": "Massage AI + Social Media Ads",
-                "product_id": "prod_UskX7Y9ULzsdU4",
+                "product_id": "prod_UskX7Y9ULzsdU3",
                 "price_id": "price_1Tsz2lI6vmxJT6OmRoQHfbcg",
                 "currency": "cad",
                 "amount": 27900,

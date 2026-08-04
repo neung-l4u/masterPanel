@@ -1,6 +1,7 @@
 const modalFormEl = $('#modalForm');
 const modalForm = new bootstrap.Modal(document.getElementById('modalForm'));
 const inputProjectName = $("#projectName");
+const inputBranch = $("#branch");
 const inputShopTypeID = $("#shopType");
 const inputCountry = $("#country");
 const inputEditID = $("#editID");
@@ -248,8 +249,10 @@ const setEdit = (id) => {
             let row = res.data;
 
             row.forEach( item => {
-                let {projectID : id, projectName : name, shopTypeID, selectedTemplate, countryID : country} = item;
+                let {projectID : id, projectName : name, projectBranch : branch, shopTypeID, selectedTemplate, countryID : country} = item;
+                
                 inputProjectName.val(name);
+                inputBranch.val(branch || '');
                 inputShopTypeID.val(shopTypeID);
                 $("#selectedTemplate").val(selectedTemplate);
                 inputCountry.val(country);
@@ -306,7 +309,14 @@ const setDel = (id) => {
 const saveForm = () => {
     const pname = inputProjectName.val();
     const countPname = pname.trim().length;
+    const branch = inputBranch.val();
+    const countBranch = branch.trim().length;
 
+    // Reset all error styles
+    $('label').css('color', '');
+    $('#projectName, #branch').css('border-color', '').css('box-shadow', '');
+
+    // Validate projectName
     if (countPname < 1) {
         $('label[for="projectName"]').css('color', 'red');
         inputProjectName.css('border-color', 'red');
@@ -315,9 +325,39 @@ const saveForm = () => {
         return;
     }
 
+    // Validate branch
+    if (countBranch < 1) {
+        $('label[for="branch"]').css('color', 'red');
+        inputBranch.css('border-color', 'red');
+        inputBranch.css('box-shadow', '0 0 0 .2rem rgb(255 0 0 / 25%)');
+        inputBranch.focus();
+        return;
+    }
+
+    // Validate shopType
+    const shopTypeVal = inputShopTypeID.val();
+    if (!shopTypeVal || shopTypeVal === "0") {
+        $('label[for="shopType"]').css('color', 'red');
+        inputShopTypeID.css('border-color', 'red');
+        inputShopTypeID.css('box-shadow', '0 0 0 .2rem rgb(255 0 0 / 25%)');
+        inputShopTypeID.focus();
+        return;
+    }
+
+    // Validate country
+    const countryVal = inputCountry.val();
+    if (!countryVal || countryVal === "0") {
+        $('label[for="country"]').css('color', 'red');
+        inputCountry.css('border-color', 'red');
+        inputCountry.css('box-shadow', '0 0 0 .2rem rgb(255 0 0 / 25%)');
+        inputCountry.focus();
+        return;
+    }
+
     payload = {
         act: inputAction.val(),
-        name: inputProjectName.val(),
+        name: pname.trim(),
+        branch: branch.trim(),
         shopTypeID: inputShopTypeID.val(),
         selectedTemplate: selectedTemplate.val(),
         country: inputCountry.val(),

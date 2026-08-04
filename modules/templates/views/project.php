@@ -89,6 +89,13 @@ if (in_array($loginPerson['sEmail'], $CSemail)){
                     <label for="projectName">Project name <span style="color:red;"> *</span></label>
                     <input type="text" class="form-control" id="projectName" placeholder="HoonHay" autocomplete="off">
                 </div>
+
+                <div class="form-group">
+                    <label for="branch">Branch <span style="color:red;"> *</span></label>
+                    <span style="color:red; font-size: 0.9em;">Please specify the branch.</span>
+                    <input type="text" class="form-control" id="branch" placeholder="e.g. Christchurch" autocomplete="off">
+                </div>
+                
                 <div class="form-group">
                     <label for="shopType">Shop type<span style="color:red;"> *</span></label>
                     <select class="form-control" id="shopType" onchange="updateTemplates()">

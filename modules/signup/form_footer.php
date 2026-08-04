@@ -44,3 +44,4 @@
 <script src="assets/js/bootstrap-multi-step-form.js?v=2.0.60"></script>
 
 <input type="hidden" id="signupFormVersion" name="signupFormVersion" value="2.10.58" />
+<input type="hidden" id="signupFormVersion" name="signupFormVersion" value="2.10.58" />

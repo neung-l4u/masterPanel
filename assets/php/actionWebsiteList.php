@@ -46,6 +46,8 @@ if ($params ["action"] == "setStatus"){
     $params["wSystemGloriaFood"] = $row["wSystemGloriaFood"];
     $params["wSystemAmelia"] = $row["wSystemAmelia"];
     $params["wSystemVoucher"] = $row["wSystemVoucher"];
+    $params["wSystemCloudwaitress"] = $row["wSystemCloudwaitress"];
+    $params["wSystemOther"] = $row["wSystemOther"];
     $params["wDomain"] = $row["wDomain"];
     $params["domainProvidersName"] = $row["domainProvidersName"];
     $params["wServerName"] = $row["wServerName"];
@@ -90,6 +92,8 @@ if ($params ["action"] == "setStatus"){
     $params["wSystemGloriaFood"] = $row["wSystemGloriaFood"];
     $params["wSystemAmelia"] = $row["wSystemAmelia"];
     $params["wSystemVoucher"] = $row["wSystemVoucher"];
+    $params["wSystemCloudwaitress"] = $row["wSystemCloudwaitress"];
+    $params["wSystemOther"] = $row["wSystemOther"];
     $params["wDomain"] = $row["wDomain"];
     $params["wDomainProvidersID"] = $row["wDomainProvidersID"];
     $params["wPublishedDate"] = $row["wPublishedDate"];
@@ -109,6 +113,8 @@ if ($params ["action"] == "setStatus"){
     $params["inputGloriaFood"] = $row["wSystemGloriaFood"] == 1 ? 1 : 0;
     $params["inputAmelia"] = $row["wSystemAmelia"] == 1 ? 1 : 0;
     $params["inputVoucher"] = $row["wSystemVoucher"] == 1 ? 1 : 0;
+    $params["wSystemCloudwaitress"] = $row["wSystemCloudwaitress"];
+    $params["wSystemOther"] = $row["wSystemOther"];
 
 
 }elseif ($params ["action"] == "save"){
@@ -138,23 +144,25 @@ if ($params ["action"] == "setStatus"){
     $params["inputGloriaFood"] = !empty($_POST['inputGloriaFood']) ? $_POST['inputGloriaFood'] : 0; 
     $params["inputAmelia"] = !empty($_POST['inputAmelia']) ? $_POST['inputAmelia'] : 0;
     $params["inputVoucher"] = !empty($_POST['inputVoucher']) ? $_POST['inputVoucher'] : 0;
+    $params["inputCloudwaitress"] = !empty($_POST['inputCloudwaitress']) ? $_POST['inputCloudwaitress'] : 0;
+    $params["inputOther"] = isset($_POST['inputOther']) ? substr($_POST['inputOther'], 0, 300) : '';
 
     $params["by"] = $_SESSION['id'];
 
     if($params ["formAction"]=='add'){
         $insert = $db->query('INSERT INTO `websiteList` 
-                                (`wProject`, `countryID`,`wLocation`, `wOwner`,`wOwnerEmail`,`wDomain`,`wDomainProvidersID`, `wPublishedDate`, `wLiveStatus`,`wIndustry`,`wTemplateUsed`, `svID`, `wCPanelUser`, `wCPanelPass`, `wWordpressUser`, `wWordpressPass`, `wWordpressURL`, `wSMTPEmailUser`, `wSMTPEmailPass`, `wSMTPRemark`, `wContactEmailUser`, `wContactEmailPass`, `wContactEmailRemark`,`wSystemGloriaFood`,`wSystemAmelia`,`wSystemVoucher`, `create_by`)
-                                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-            ,$params["inputProject"],$params["inputCountry"],$params["inputLocation"],$params["inputOwner"],$params["inputOwnerEmail"],$params["inputDomain"],$params["inputDomainProvider"],$params["inputPublishedDate"],$params["inputLiveStatus"],$params["inputShopType"],$params["inputTemplate"],$params["inputServer"],$params["inputCPanelUser"],$params["inputCPanelPass"],$params["inputWordpressUser"],$params["inputWordpressPass"],$params["inputWordpressURL"],$params["inputSMTPUser"],$params["inputSMTPPass"],$params["inputSMTPRemark"],$params["inputContactEmailUser"],$params["inputContactEmailPass"],$params["inputContactEmailRemark"],$params["inputGloriaFood"],$params["inputAmelia"],$params["inputVoucher"],$myID
+                                (`wProject`, `countryID`,`wLocation`, `wOwner`,`wOwnerEmail`,`wDomain`,`wDomainProvidersID`, `wPublishedDate`, `wLiveStatus`,`wIndustry`,`wTemplateUsed`, `svID`, `wCPanelUser`, `wCPanelPass`, `wWordpressUser`, `wWordpressPass`, `wWordpressURL`, `wSMTPEmailUser`, `wSMTPEmailPass`, `wSMTPRemark`, `wContactEmailUser`, `wContactEmailPass`, `wContactEmailRemark`,`wSystemGloriaFood`,`wSystemAmelia`,`wSystemVoucher`,`wSystemCloudwaitress`,`wSystemOther`, `create_by`)
+                                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+            ,$params["inputProject"],$params["inputCountry"],$params["inputLocation"],$params["inputOwner"],$params["inputOwnerEmail"],$params["inputDomain"],$params["inputDomainProvider"],$params["inputPublishedDate"],$params["inputLiveStatus"],$params["inputShopType"],$params["inputTemplate"],$params["inputServer"],$params["inputCPanelUser"],$params["inputCPanelPass"],$params["inputWordpressUser"],$params["inputWordpressPass"],$params["inputWordpressURL"],$params["inputSMTPUser"],$params["inputSMTPPass"],$params["inputSMTPRemark"],$params["inputContactEmailUser"],$params["inputContactEmailPass"],$params["inputContactEmailRemark"],$params["inputGloriaFood"],$params["inputAmelia"],$params["inputVoucher"],$params["inputCloudwaitress"],$params["inputOther"],$myID
         );
 
         $params["affected"] = $insert->affectedRows();
         $params["insertedID"] = $db->lastInsertID();
     }elseif($params ["formAction"]=='edit'){
 
-        $update = $db->query('UPDATE `websiteList` SET `wProject` = ?, `countryID` = ?, `wLocation` = ?, `wOwner` = ?, `wOwnerEmail` = ?, `wDomain` = ?, `wDomainProvidersID` = ?, `wPublishedDate` = ?, `wLiveStatus` = ?, `wIndustry` = ?, `wTemplateUsed` = ?, `svID` = ?, `wCPanelUser` = ?, `wCPanelPass` = ?, `wWordpressUser` = ?, `wWordpressPass` = ?, `wWordpressURL` = ?, `wSMTPEmailUser` = ?, `wSMTPEmailPass` = ?, `wSMTPRemark` = ?, `wContactEmailUser` = ?, `wContactEmailPass` = ?, `wContactEmailRemark` = ?, `wSystemGloriaFood` = ?, `wSystemAmelia` = ?, `wSystemVoucher` = ?,`update_by` = ? 
+        $update = $db->query('UPDATE `websiteList` SET `wProject` = ?, `countryID` = ?, `wLocation` = ?, `wOwner` = ?, `wOwnerEmail` = ?, `wDomain` = ?, `wDomainProvidersID` = ?, `wPublishedDate` = ?, `wLiveStatus` = ?, `wIndustry` = ?, `wTemplateUsed` = ?, `svID` = ?, `wCPanelUser` = ?, `wCPanelPass` = ?, `wWordpressUser` = ?, `wWordpressPass` = ?, `wWordpressURL` = ?, `wSMTPEmailUser` = ?, `wSMTPEmailPass` = ?, `wSMTPRemark` = ?, `wContactEmailUser` = ?, `wContactEmailPass` = ?, `wContactEmailRemark` = ?, `wSystemGloriaFood` = ?, `wSystemAmelia` = ?, `wSystemVoucher` = ?, `wSystemCloudwaitress` = ?, `wSystemOther` = ?, `update_by` = ? 
                                 WHERE wID = ?;'
-            ,$params["inputProject"],$params["inputCountry"],$params["inputLocation"],$params["inputOwner"],$params["inputOwnerEmail"],$params["inputDomain"],$params["inputDomainProvider"],$params["inputPublishedDate"],$params["inputLiveStatus"],$params["inputShopType"],$params["inputTemplate"],$params["inputServer"],$params["inputCPanelUser"],$params["inputCPanelPass"],$params["inputWordpressUser"],$params["inputWordpressPass"],$params["inputWordpressURL"],$params["inputSMTPUser"],$params["inputSMTPPass"],$params["inputSMTPRemark"],$params["inputContactEmailUser"],$params["inputContactEmailPass"],$params["inputContactEmailRemark"],$params["inputGloriaFood"],$params["inputAmelia"],$params["inputVoucher"], $myID,$params ["editID"] , 
+            ,$params["inputProject"],$params["inputCountry"],$params["inputLocation"],$params["inputOwner"],$params["inputOwnerEmail"],$params["inputDomain"],$params["inputDomainProvider"],$params["inputPublishedDate"],$params["inputLiveStatus"],$params["inputShopType"],$params["inputTemplate"],$params["inputServer"],$params["inputCPanelUser"],$params["inputCPanelPass"],$params["inputWordpressUser"],$params["inputWordpressPass"],$params["inputWordpressURL"],$params["inputSMTPUser"],$params["inputSMTPPass"],$params["inputSMTPRemark"],$params["inputContactEmailUser"],$params["inputContactEmailPass"],$params["inputContactEmailRemark"],$params["inputGloriaFood"],$params["inputAmelia"],$params["inputVoucher"],$params["inputCloudwaitress"],$params["inputOther"],$myID,$params["editID"]
         );
 
         $params["affected"] = $update->affectedRows();

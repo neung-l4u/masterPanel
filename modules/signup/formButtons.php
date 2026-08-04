@@ -7,7 +7,7 @@
     </button>
     <div class="float-end">
         <span class="paymentResult"></span>
-        <button type="submit" class="action submit btn btn-sm btn-outline-danger"
+        <button type="button" class="action submit btn btn-sm btn-outline-danger"
                 id="cmdSubmit" style="display: none" disabled>Submit your application
         </button>
     </div>

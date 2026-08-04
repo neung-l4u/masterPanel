@@ -127,6 +127,29 @@ include ('assets/api/checkSession.php');
                                 <p>AI Management</p>
                             </a>
                         </li>
+                        <?php if($_SESSION['level'] == 1 || $_SESSION['id'] == 83){ ?>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=invoiceThailand" class="nav-link <?php echo $activeMenu["lv2"] == "invoiceThailand" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-receipt"></i>
+                                <p>Customer Thailand</p>
+                            </a>
+                        </li>
+                        <?php } ?>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=slipSubmission" class="nav-link <?php echo $activeMenu["lv2"] == "slipSubmission" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-upload"></i>
+                                <p>ส่งหลักฐานชำระเงิน</p>
+                            </a>
+                        </li>
+                        <?php /* [HIDDEN] billingTH — ซ่อนไว้ก่อน เนื่องจาก invoiceThailand ครอบคลุม feature เดียวกัน
+                        if($_SESSION['level'] == 1 || $_SESSION['id'] == 83){ ?>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=billingTH" class="nav-link <?php echo $activeMenu["lv2"] == "billingTH" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-clipboard2-check"></i>
+                                <p>Billing TH — ตรวจสลิป</p>
+                            </a>
+                        </li>
+                        <?php } */ ?>
                     </ul>
                 </li>
 
