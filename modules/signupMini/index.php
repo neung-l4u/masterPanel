@@ -4,7 +4,7 @@ $currentDate = date('d/m/Y');
 
 // Fetch shop types from Monday.com API
 $shopTypes = [];
-$apiUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/api/monday/selectBoardLeads/getShopType.php';
+$apiUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/api/monday/selectBoardLeads/getShopTypeForMini.php';
 
 $ch = curl_init($apiUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -20,12 +20,22 @@ if ($httpCode === 200 && $response) {
     }
 }
 
-// Fallback to default options if API fails
+// Fallback to default options if API fails.
+// These MUST match the exact labels on the Lead Management board's "Shop Type"
+// status column, otherwise Make.com rejects the value with "missingLabel".
 if (empty($shopTypes)) {
     $shopTypes = [
-        ['id' => '1', 'label' => 'Thai Restaurants & Takeaways'],
+        ['id' => '0', 'label' => 'Nail&Spa'],
+        ['id' => '1', 'label' => 'Thai Restaurant'],
         ['id' => '2', 'label' => 'Thai Massage'],
-        ['id' => '3', 'label' => 'Restaurants & Takeaways']
+        ['id' => '3', 'label' => 'Others'],
+        ['id' => '4', 'label' => 'Tutor'],
+        ['id' => '6', 'label' => 'home stay'],
+        ['id' => '7', 'label' => 'Clinic'],
+        ['id' => '8', 'label' => 'Cafe'],
+        ['id' => '9', 'label' => 'Restaurants & Takeaways'],
+        ['id' => '10', 'label' => 'Restaurant'],
+        ['id' => '11', 'label' => 'Travel']
     ];
 }
 
@@ -259,10 +269,24 @@ $shopTypes = array_filter($shopTypes, function($shopType) {
 
     const miniForm = $("#miniForm");
 
+    // Guard against duplicate submissions (double-click, slow network, Enter spam).
+    let isSubmitting = false;
+
+    const cmdSubmit = $("#cmdSubmit");
+    const submitDefaultLabel = cmdSubmit.val();
+
+    function setSubmitting(state) {
+        isSubmitting = state;
+        cmdSubmit.prop("disabled", state);
+        cmdSubmit.val(state ? "Submitting..." : submitDefaultLabel);
+    }
+
     miniForm.submit(function (e) {
-        //$("#cmdSubmit").prop("disabled", true);
-        //$("#cmdSubmit").attr("value", "Submitting...");
         e.preventDefault();
+
+        // Block re-entry while a request is already in flight.
+        if (isSubmitting) return false;
+
         const isValid = validateForm(miniForm);
         if (!isValid) return false;
 
@@ -271,6 +295,8 @@ $shopTypes = array_filter($shopTypes, function($shopType) {
         const payload = getPayload(miniForm);
         const utm = getUTMParams();
         Object.assign(payload, utm);
+
+        setSubmitting(true);
 
         // ส่ง payload แล้วค่อยยิง pixel ใน success callback
         $.ajax({
@@ -287,13 +313,18 @@ $shopTypes = array_filter($shopTypes, function($shopType) {
                     ...utm
                 });
                 $("#successMessage").show();
+                // Keep the button disabled — we are redirecting away.
                 setTimeout(() => {
                 window.location.href = "https://localforyou.com/thank-you/";
                 }, 1500);
+            } else {
+                // Unexpected response: let the user try again.
+                setSubmitting(false);
             }
             },
             error: function (xhr, status, error) {
             console.error("❌ Webhook Failed:", status, error);
+            setSubmitting(false);
             }
         });
     });

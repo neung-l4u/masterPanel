@@ -12,6 +12,19 @@ $raw = file_get_contents("php://input");
 //         }';
 $data = json_decode($raw, true);
 
+// Optional shared-secret gate. Backward compatible: requests that send NO
+// "secret" field behave exactly as before (existing callers keep working).
+// When a "secret" IS present it must match the configured value.
+// Shared secret: env first, then a hardcoded fallback (no env loader under plain
+// Apache). Must match L4U-Docs auth-config $AUTH_SECRET fallback.
+$expectedSecret = getenv('SSO_SHARED_SECRET') ?: 'd55ed0906f301cfd13f91dd3fda7786dc568322ec75c0019';
+if (isset($data['secret']) && $data['secret'] !== '') {
+    if ($expectedSecret === '' || !hash_equals($expectedSecret, (string)$data['secret'])) {
+        echo json_encode(["status" => false, "msg" => "Unauthorized"]);
+        exit;
+    }
+}
+
 $user     = base64_decode($data['user']);
 $pass     = base64_decode($data['pass']);
 $system   = base64_decode($data['system']);
@@ -20,7 +33,7 @@ $requestAt = $data['requestAt'];
 $passwordAddSalt = $salt . $pass;
 $passwordHash = md5($passwordAddSalt);
 
-$account = $db->query('SELECT s.sID, s.sEmail, s.sMobile, s.sName, s.sLevel, l.lName, s.teamID ,s.sPic, s.sL4U, s.sCEO
+$account = $db->query('SELECT s.sID, s.sEmail, s.sMobile, s.sName, s.sNickName, s.sLevel, l.lName, s.teamID ,s.sPic, s.sL4U, s.sCEO
                                      FROM `staffs` s , `userLevel` l
                                      WHERE s.sDeleteAt IS NULL 
                                      AND s.sStatus = ? 
@@ -34,6 +47,7 @@ count($account);
 if (count($account) !== 0) {
     $staffID = $account['sID'];
     $staffName = $account['sName'];
+    $staffNickName = $account['sNickName'];
 
     $sql = "SELECT `$system` FROM isAdmin WHERE staffID = ?";
     $getRole = $db->query($sql, $staffID)->fetchArray();
@@ -46,9 +60,11 @@ if (count($account) !== 0) {
 
     echo json_encode([
         "status" => true,
-        "userID" => $staffID,
-        "name"   => $staffName,
-        "role"   => $role,
+        "userID"   => $staffID,
+        "name"     => $staffName,
+        "nickName" => $staffNickName,
+        "role"     => $role,
+        "teamID"   => $account['teamID'],
         "system" => $system,
         "iss"    => $iss,
         "iat"    => $currentTimestamp,

@@ -338,6 +338,22 @@ include ('assets/api/checkSession.php');
                     </ul>
                 </li>
 
+                <!-- User Tools -->
+                <li class="nav-item <?php echo $activeMenu["lv1"] == "userTools" ? "menu-is-opening menu-open":""; ?>">
+                    <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "userTools" ? "active":""; ?>">
+                        <i class="nav-icon mr-2 bi bi-tools"></i>
+                        <p>Tools <i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=userTools" class="nav-link <?php echo $activeMenu["lv2"] == "userToolsHome" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-grid-3x3-gap"></i>
+                                <p>All Tools</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <?php if(in_array($staffType, ['partTime', 'intern']) || $userLevel <= 2){ ?>
                         <li class="nav-item pl-2">
                             <a href="https://report.localforyou.com/modules/checkin/views/main.php" target="_blank" class="nav-link">
