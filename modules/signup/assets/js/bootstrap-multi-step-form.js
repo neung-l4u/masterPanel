@@ -1925,52 +1925,6 @@ function startThPaymentCountdown(minutes) {
   _thPaymentCountdownTimer = setInterval(tick, 1000);
 }
 
-function startThPaymentCountdown(minutes) {
-  if (_thPaymentCountdownTimer) {
-    clearInterval(_thPaymentCountdownTimer);
-    _thPaymentCountdownTimer = null;
-  }
-  const pad = (n) => (n < 10 ? "0" + n : n);
-  const $box = $("#thCountdownBox");
-  const $timer = $("#thCountdownTimer");
-  if (!$box.length) return;
-  $box.show().css({ borderColor: "#bee5eb", background: "#e8f4f8" });
-  $box
-    .find("span:first")
-    .html(
-      '<i class="bi bi-clock-history mr-1"></i> รายการชำระเงินจะหมดอายุในอีก',
-    );
-  $timer.css("color", "#0c5460");
-  $('button[onclick="sendThTransferProof()"]')
-    .prop("disabled", false)
-    .css("background", "#1a73e8");
-
-  const expireAt = Date.now() + (minutes || 10) * 60 * 1000;
-  function tick() {
-    const diff = expireAt - Date.now();
-    if (diff <= 0) {
-      $timer.text("00:00").css("color", "#dc2626");
-      $box.css({ borderColor: "#f5c6cb", background: "#f8d7da" });
-      $box
-        .find("span:first")
-        .html(
-          '<i class="bi bi-exclamation-circle-fill mr-1"></i> รายการชำระเงินหมดอายุแล้ว',
-        );
-      $('button[onclick="sendThTransferProof()"]')
-        .prop("disabled", true)
-        .css("background", "#b0bec5");
-      clearInterval(_thPaymentCountdownTimer);
-      _thPaymentCountdownTimer = null;
-      return;
-    }
-    const m = Math.floor(diff / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    $timer.text(pad(m) + ":" + pad(s));
-  }
-  tick();
-  _thPaymentCountdownTimer = setInterval(tick, 1000);
-}
-
 const modalRespondAction = (action, status, reason) => {
   const respondSuccess = $(".respondSuccess");
   const respondFail = $(".respondFail");
