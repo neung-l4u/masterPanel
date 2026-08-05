@@ -1250,6 +1250,7 @@ const sendMailToL4UTeam = () => {
 
         ///AI ///
         addonARAYA: $("input:checkbox[name='addonAI']:checked").val(),
+        arayaAccept: $("input:checkbox[name='arayaAccept']:checked").val(),
 
         //END NEW//
         testMail: CheckedBoxTestmailValue,

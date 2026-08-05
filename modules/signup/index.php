@@ -806,6 +806,28 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         <div id="products2" class="text-start">
                                                             product 2 will show here
                                                         </div>
+
+                                                        <!-- Araya AI Acceptance Checkbox -->
+                                                        <div id="boxArayaAccept" class="d-none mt-4">
+                                                            <hr class="row">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="arayaAccept" name="arayaAccept" value="yes"
+                                                                       onclick="$('#arayaDetail').toggle();">
+                                                                <label class="form-check-label" for="arayaAccept">
+                                                                    Accept: AI Araya (contract 3 months) Free! Booking system I understand that:
+                                                                </label>
+                                                            </div>
+                                                            <div id="arayaDetail" style="display:none; margin-top: 15px; padding-left: 30px;">
+                                                                <b>Detail</b>
+                                                                <ul style="margin-top: 10px;">
+                                                                    <li>This promotion requires a minimum commitment of 3 months.</li>
+                                                                    <li>Amelia Booking is included at no additional charge while my Araya subscription remains active.</li>
+                                                                    <li>If I cancel Araya before completing the 3-month minimum commitment, I agree to pay the Amelia subscription fees that were waived under this promotion.</li>
+                                                                    <li>After completing the minimum commitment, I may cancel Araya at any time. If I wish to continue using Amelia, standard Amelia subscription fees will apply.</li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+
                                                         <div class="form-group row pt-2 adsBudget d-none">
                                                             <label for="adsBudget" class="col-2 control-label col-form-label">
                                                                 Ads Budget <b class="red">*</b></label>
@@ -1914,7 +1936,6 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 </label>
                                             </span>
                                         </div>
-
 
                                 </div>
                             </div>

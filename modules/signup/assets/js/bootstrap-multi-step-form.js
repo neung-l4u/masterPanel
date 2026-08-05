@@ -1031,6 +1031,42 @@ function addMainCart(name, price, amount, special, product_id){
     }
   });
 
+  // Check for AI/Araya products and show acceptance checkbox
+  const arayaKeywords = ["AI"];
+  const arayaMatched = arayaKeywords.some(k => name.includes(k));
+  
+  // Remove existing Araya checkbox if present
+  $(".boxArayaAcceptProduct").remove();
+  
+  if (arayaMatched) {
+    // Create Araya acceptance checkbox
+    const arayaHTML = `
+      <div class="boxArayaAcceptProduct mt-3 ms-4 p-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd; border-radius: 4px;">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="arayaAccept" name="arayaAccept" value="yes"
+                 onclick="$('#arayaDetail').toggle();" style="width: 20px; height: 20px;">
+          <label class="form-check-label" for="arayaAccept" style="margin-left: 10px; font-weight: 500; cursor: pointer;">
+            Accept: AI Araya (contract 3 months) Free! Booking system I understand that:
+          </label>
+        </div>
+        <div id="arayaDetail" style="display:none; margin-top: 15px; padding-left: 30px;">
+          <b style="color: #333; font-size: 14px;">Details:</b>
+          <ul style="margin-top: 12px; margin-bottom: 0; padding-left: 20px;">
+            <li style="margin-bottom: 8px; line-height: 1.5; color: #555; font-size: 13px;">This promotion requires a minimum commitment of 3 months.</li>
+            <li style="margin-bottom: 8px; line-height: 1.5; color: #555; font-size: 13px;">Amelia Booking is included at no additional charge while my Araya subscription remains active.</li>
+            <li style="margin-bottom: 8px; line-height: 1.5; color: #555; font-size: 13px;">If I cancel Araya before completing the 3-month minimum commitment, I agree to pay the Amelia subscription fees that were waived under this promotion.</li>
+            <li style="line-height: 1.5; color: #555; font-size: 13px;">After completing the minimum commitment, I may cancel Araya at any time. If I wish to continue using Amelia, standard Amelia subscription fees will apply.</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    // Find the checked product radio and insert after its parent div
+    const checkedRadio = $("input[name='product']:checked");
+    if (checkedRadio.length > 0) {
+      $(arayaHTML).insertAfter(checkedRadio.closest(".form-check"));
+    }
+  }
+
   cart.subscription = [];
   bag.subscription = [];
   productsForShow = [];
