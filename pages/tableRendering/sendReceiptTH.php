@@ -62,8 +62,14 @@ $receiptRows = $db->query(
 
 $receipt = $receiptRows[0] ?? [];
 
-if (empty($receipt) || ($receipt['status'] ?? '') !== 'confirmed') {
-    echo json_encode(['success' => false, 'message' => 'Receipt not confirmed']);
+if (empty($receipt)) {
+    echo json_encode(['success' => false, 'message' => 'Receipt not found']);
+    exit;
+}
+
+$receiptStatus = $receipt['status'] ?? '';
+if (!in_array($receiptStatus, ['confirmed', 'rejected'])) {
+    echo json_encode(['success' => false, 'message' => 'Receipt status is not confirmed or rejected']);
     exit;
 }
 
@@ -132,14 +138,31 @@ if (!($httpCode >= 200 && $httpCode < 300)) {
     exit;
 }
 
-// --- อัป Monday board: reset Charge Customer + Next Charge Date ---
+// --- อัป Monday board: reset Charge Customer + Charge Status + Failure message ---
 try {
     $mondayToken   = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYxNzI4MTY4NiwiYWFpIjoxMSwidWlkIjo1NzY1NDA2MSwiaWFkIjoiMjAyNi0wMi0wNVQwMjowNDo0NC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjIxMTY5MjAsInJnbiI6ImFwc2UyIn0.RIk109S-veeBTyvud8wxzCc656ytoFfVMgA5zyfo3sM';
     $mondayBoardId = '5029904278';
     $customerEmail = $row['customerEmail'] ?? '';
 
     if ($customerEmail) {
-        $searchQuery = 'query($boardId: ID!, $email: String!) { boards(ids: [$boardId]) { items_page(limit: 1, query_params: { rules: [{ column_id: "text_mm58ns1b", compare_value: [$email] }] }) { items { id } } } }';
+        // --- ค้นหา Monday item ที่ตรงกับ email และ Receipt Code ---
+        $searchQuery = 'query($boardId: ID!, $email: String!) { 
+            boards(ids: [$boardId]) { 
+                items_page(limit: 100, query_params: { 
+                    rules: [
+                        { column_id: "text_mm58ns1b", compare_value: [$email] }
+                    ] 
+                }) { 
+                    items { 
+                        id 
+                        column_values(ids: ["text_mm58ay9j"]) {
+                            id
+                            text
+                        }
+                    } 
+                } 
+            } 
+        }';
         $sCh = curl_init('https://api.monday.com/v2');
         curl_setopt_array($sCh, [
             CURLOPT_POST           => true,
@@ -151,14 +174,70 @@ try {
         $sResp    = curl_exec($sCh);
         curl_close($sCh);
         $sData    = json_decode($sResp, true);
-        $targetId = $sData['data']['boards'][0]['items_page']['items'][0]['id'] ?? null;
+        
+        // --- Logging search response ---
+        error_log('[sendReceiptTH] Search Monday items - Email: ' . $customerEmail . ' Receipt Code: ' . $receiptID);
+        error_log('[sendReceiptTH] Search Response: ' . $sResp);
+        
+        // --- หา item ที่ Receipt Code ตรงกัน ---
+        $targetId = null;
+        $items = $sData['data']['boards'][0]['items_page']['items'] ?? [];
+        error_log('[sendReceiptTH] Found ' . count($items) . ' items with email=' . $customerEmail);
+        
+        foreach ($items as $item) {
+            $itemReceiptCode = '';
+            foreach ($item['column_values'] as $col) {
+                if ($col['id'] === 'text_mm58ay9j') {
+                    $itemReceiptCode = $col['text'] ?? '';
+                    break;
+                }
+            }
+            error_log('[sendReceiptTH] Item ID: ' . $item['id'] . ' Receipt Code: ' . $itemReceiptCode);
+            if ($itemReceiptCode === $receiptID) {
+                $targetId = $item['id'];
+                error_log('[sendReceiptTH] MATCH FOUND! Item ID: ' . $targetId);
+                break;
+            }
+        }
+        
+        // --- ถ้าไม่เจอ ใช้ item แรก (fallback) ---
+        if (!$targetId && !empty($items)) {
+            $targetId = $items[0]['id'];
+            error_log('[sendReceiptTH] No match found, using first item (fallback): ' . $targetId);
+        }
 
         if ($targetId) {
             $updateQuery = 'mutation($boardId: ID!, $itemId: ID!, $colVals: JSON!) { change_multiple_column_values(board_id: $boardId, item_id: $itemId, column_values: $colVals, create_labels_if_missing: true) { id } }';
-            $colVals = json_encode([
-                'color_mm58wjwk' => '',
-                'date_mm586gty'  => '',
-            ]);
+            
+            // --- กำหนด Charge Status และ Failure message ตามสถานะ receipt ---
+            $receiptStatus = $receipt['status'] ?? 'pending';
+            $chargeStatusLabel = '';
+            $failureMessage = '';
+            
+            if ($receiptStatus === 'confirmed') {
+                $chargeStatusLabel = 'Completed';
+                $failureMessage = '';
+            } elseif ($receiptStatus === 'rejected') {
+                $chargeStatusLabel = 'Failed';
+                // ดึง needfix จากฐานข้อมูล
+                $needfixRows = $db->query(
+                    'SELECT `needfix` FROM `thReceipt` WHERE `invoice_id` = ? ORDER BY `id` DESC LIMIT 1',
+                    $invoice_id
+                )->fetchAll();
+                $failureMessage = $needfixRows[0]['needfix'] ?? '';
+            }
+            
+            // --- สร้าง column values พร้อมกับ status JSON object ---
+            $colValsArray = [
+                'text_mm5ggbv2'   => $failureMessage,       // "Failure message"
+            ];
+            
+            // --- เพิ่ม Charge Status เป็น JSON object ---
+            if (!empty($chargeStatusLabel)) {
+                $colValsArray['color_mm5gpk06'] = ['label' => $chargeStatusLabel];
+            }
+            
+            $colVals = json_encode($colValsArray);
             $uCh = curl_init('https://api.monday.com/v2');
             curl_setopt_array($uCh, [
                 CURLOPT_POST           => true,
@@ -168,8 +247,26 @@ try {
                 CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: ' . $mondayToken, 'API-Version: 2024-01'],
             ]);
             $uResp = curl_exec($uCh);
+            $uHttpCode = curl_getinfo($uCh, CURLINFO_HTTP_CODE);
             curl_close($uCh);
-            error_log('[sendReceiptTH] Monday reset item=' . $targetId . ' resp=' . $uResp);
+            
+            // --- Logging ---
+            error_log('[sendReceiptTH] Monday update START');
+            error_log('[sendReceiptTH] Item ID: ' . $targetId);
+            error_log('[sendReceiptTH] Charge Status Label: ' . $chargeStatusLabel);
+            error_log('[sendReceiptTH] Failure Message: ' . $failureMessage);
+            error_log('[sendReceiptTH] Column Values: ' . $colVals);
+            error_log('[sendReceiptTH] HTTP Code: ' . $uHttpCode);
+            error_log('[sendReceiptTH] Response: ' . $uResp);
+            
+            // --- Parse response ---
+            $uData = json_decode($uResp, true);
+            if (isset($uData['errors'])) {
+                error_log('[sendReceiptTH] Monday API Error: ' . json_encode($uData['errors']));
+            } else if (isset($uData['data'])) {
+                error_log('[sendReceiptTH] Monday API Success: ' . json_encode($uData['data']));
+            }
+            error_log('[sendReceiptTH] Monday update END');
         } else {
             error_log('[sendReceiptTH] Monday: ไม่พบ item สำหรับ email=' . $customerEmail);
         }

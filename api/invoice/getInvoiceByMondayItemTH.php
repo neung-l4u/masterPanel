@@ -45,6 +45,9 @@ $invoice = $invRows[0];
 $invoiceId = (int)$invoice['id'];
 $customerId = (int)$invoice['customer_id'];
 
+// --- อัปเดต wantGM = 1 ---
+$db->query('UPDATE `thInvoice` SET `wantGM` = "1" WHERE `id` = ?', $invoiceId);
+
 // --- ดึงข้อมูล customer ---
 $custRows = $db->query(
     'SELECT `id`, `name`, `address`, `taxNumber`, `type`, `email`, `phone`, `bankName`, `bankNumber`, `bankAccName`

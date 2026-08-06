@@ -175,8 +175,11 @@
                     <button type="button" class="btn btn-outline-info" id="btnPreviewReceipt">
                         <i class="bi bi-receipt"></i> ดูตัวอย่าง Receipt
                     </button>
-                    <button type="button" class="btn btn-secondary" id="btnSendReceipt" disabled>
+                    <button type="button" class="btn btn-primary" id="btnSendReceipt" style="display:none;">
                         <i class="bi bi-send"></i> ส่ง Receipt
+                    </button>
+                    <button type="button" class="btn btn-danger" id="btnSendReceiptFix" style="display:none;">
+                        <i class="bi bi-send"></i> ส่ง Report
                     </button>
                 </div>
             </div>
@@ -353,11 +356,18 @@ window.openSendModal = function(invoiceId) {
 
     function updateSendReceiptBtn() {
         const status = $('#sendModalStatusSelect').val();
-        const $btn = $('#btnSendReceipt');
+        const $btnConfirmed = $('#btnSendReceipt');
+        const $btnFix = $('#btnSendReceiptFix');
+        
         if (status === 'confirmed') {
-            $btn.prop('disabled', false).removeClass('btn-secondary').addClass('btn-primary');
+            $btnConfirmed.show();
+            $btnFix.hide();
+        } else if (status === 'rejected') {
+            $btnConfirmed.hide();
+            $btnFix.show();
         } else {
-            $btn.prop('disabled', true).removeClass('btn-primary').addClass('btn-secondary');
+            $btnConfirmed.hide();
+            $btnFix.hide();
         }
     }
 
@@ -473,10 +483,6 @@ $(document).on('click', '.ief-btn-ok', function() {
     $(document).on('click', '#btnSendReceipt', function() {
         if (!pendingInvoiceId) return;
         const btn = $(this);
-        if ($('#sendModalStatusSelect').val() !== 'confirmed') {
-            showNotify('error', 'สามารถส่ง Receipt ได้เมื่อสถานะ "ยืนยันเรียบร้อย" เท่านั้น');
-            return;
-        }
         btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> กำลังส่ง...');
 
         $.ajax({
@@ -498,6 +504,39 @@ $(document).on('click', '.ief-btn-ok', function() {
             },
             complete: function() {
                 btn.prop('disabled', false).html('<i class="bi bi-send"></i> ส่ง Receipt');
+            }
+        });
+    });
+
+    $(document).on('click', '#btnSendReceiptFix', function() {
+        if (!pendingInvoiceId) return;
+        const btn = $(this);
+        const needfix = $('#needfixText').val().trim();
+        if (!needfix) {
+            showNotify('error', 'กรุณาระบุสาเหตุที่ต้องแก้ไข');
+            return;
+        }
+        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> กำลังส่ง...');
+
+        $.ajax({
+            url: 'pages/tableRendering/sendReceiptTH.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { id: pendingInvoiceId },
+            success: function(res) {
+                $('#sendModal').modal('hide');
+                if (res.success) {
+                    showNotify('success', 'ส่ง Receipt (แก้ไข) สำเร็จแล้ว');
+                    invoiceThTable.ajax.reload(null, false);
+                } else {
+                    showNotify('error', 'เกิดข้อผิดพลาด: ' + res.message);
+                }
+            },
+            error: function() {
+                showNotify('error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
+            },
+            complete: function() {
+                btn.prop('disabled', false).html('<i class="bi bi-send"></i> ส่ง Receipt (แก้ไข)');
             }
         });
     });
