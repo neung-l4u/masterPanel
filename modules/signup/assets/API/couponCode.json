@@ -82,6 +82,30 @@
         }
       }
     },
+    "AMELIA": {
+      "Massage": {
+        "AU": {
+          "discount": 19900,
+          "code": "AMELIAAU199"
+        },
+        "NZ": {
+          "discount": 19900,
+          "code": "AMELIANZ199"
+        },
+        "UK": {
+          "discount": 9900,
+          "code": "AMELIAUK99"
+        },
+        "US": {
+          "discount": 19900,
+          "code": "AMELIAUS199"
+        },
+        "CA": {
+          "discount": 19900,
+          "code": "AMELIACA199"
+        }
+      }
+    },
     "PARTNER298": {
       "Restaurant": {
         "US": {

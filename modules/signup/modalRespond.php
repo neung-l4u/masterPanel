@@ -294,4 +294,80 @@ function sendThTransferProof() {
         }
     });
 }
+
+function enableCRMButton() {
+    const checkbox = document.getElementById('enableCRM');
+    const btn = document.getElementById('CRMButton');
+    if (checkbox.checked) {
+        btn.style.display = 'inline-block';
+        btn.prop('disabled', false);
+    } else {
+        btn.style.display = 'none';
+        btn.prop('disabled', true);
+    }
+}
+
+function submitToCRM() {
+    const btn = document.getElementById('CRMButton');
+    const loading = document.getElementById('ballLoading');
+    const countdown = document.getElementById('countdownText');
+    
+    btn.prop('disabled', true);
+    loading.style.display = 'inline-block';
+    countdown.style.display = 'inline';
+    
+    // Collect form data
+    const formData = {
+        first_name: $("#first_name").val() || '',
+        last_name: $("#last_name").val() || '',
+        email: $("#email").val() || '',
+        mobile: $("#mobile").val() || '',
+        shopName: $("#shopName").val() || '',
+        country_code: $("#formCountry").val() || '',
+        countryTextOnly: $("#formCountry").find('option:selected').text() || '',
+        company: $("#company").val() || '',
+        businessNumber: $("#businessNumber").val() || '',
+        tradingName: $("#tradingName").val() || '',
+        phone: $("#phone").val() || '',
+        url: $("#url").val() || '',
+        supportLanguage: $("#supportLanguage").val() || '',
+        physicalShopNumber: $("#physicalShopNumber").val() || '',
+        street: $("#street").val() || '',
+        city: $("#city").val() || '',
+        state_codexxx: $("#state_codexxx").val() || '',
+        zip: $("#zip").val() || '',
+        shopCountry: $("#shopCountry").val() || '',
+        shipNumber: $("#shipNumber").val() || '',
+        shipAddress1: $("#shipAddress1").val() || '',
+        contractPeriod: $("#contractPeriod").val() || '',
+        product: $("#product").val() || '',
+        emailBooking: $("#emailBooking").val() || '',
+        passwordBooking: $("#passwordBooking").val() || '',
+        payCheck: $("#payCheck").val() || '',
+        socialFacebook: $("#socialFacebook").val() || '',
+        socialInstagram: $("#socialInstagram").val() || '',
+        currency: $("#currency").val() || 'USD',
+        formType: $("#formType").val() || '',
+    };
+    
+    // Send to webhook
+    $.ajax({
+        url: 'Monday/monday_data.php',
+        type: 'POST',
+        data: formData,
+        dataType: 'json',
+        success: function(res) {
+            loading.style.display = 'none';
+            countdown.style.display = 'none';
+            btn.text('Saved ✓').removeClass('btn-primary').css({'background':'#198754','color':'#fff'});
+        },
+        error: function(xhr, status, error) {
+            loading.style.display = 'none';
+            countdown.style.display = 'none';
+            btn.prop('disabled', false);
+            alert('เกิดข้อผิดพลาดในการบันทึก: ' + error);
+            btn.text('Save');
+        }
+    });
+}
 </script>
