@@ -337,46 +337,14 @@ if ($response) {
 
 
   // Webhook URL
+  // Note: izna04q2cdj68bqylepknapxa4l0wkaz webhook will be sent from sendReceiptTH.php when admin clicks "Send Receipt"
+  // Do NOT send here during signup - only send after customer uploads slip and admin approves
 
   //$webhookUrl = "https://hook.eu1.make.com/xmrmdjm7lst6gg8qj1yxy1fdklcsoudo";
   //$webhookUrl = "https://hook.us1.make.com/w5le4gjhr9m4oprgwn2ogzpl6un7xtab";
   //$webhookUrl = "https://hook.us1.make.com/udh53vpfeeeithv4rvu5oqsbb7z308vf";
   //$webhookUrl = "https://hook.us1.make.com/myqks921kn2ono23uszzxnfg1dmseag8";
-    $webhookUrl = "https://hook.us1.make.com/izna04q2cdj68bqylepknapxa4l0wkaz";
-
-
-
-  // Make POST request to webhook URL with form data
-
-  $ch = curl_init($webhookUrl);
-
-  curl_setopt($ch, CURLOPT_POST, 1);
-
-  curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($formData));
-
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-  $response = curl_exec($ch);
-
-  curl_close($ch);
-
-
-
-  // Check if the request was successful
-
-  if ($response === false) {
-
-      // Handle error
-
-      // Failed to send data to webhook
-
-  } else {
-
-      // Webhook request successful
-
-      // Data sent to webhook successfully
-
-  }
+  // $webhookUrl = "https://hook.us1.make.com/izna04q2cdj68bqylepknapxa4l0wkaz"; // DISABLED - send from sendReceiptTH.php instead
 
   // Send to TH invoice webhook if country is Thailand
   if (($formData['country_code'] ?? '') === 'TH') {

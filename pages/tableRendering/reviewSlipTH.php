@@ -61,11 +61,7 @@ if ($action === 'confirm') {
         'confirmed', $invoiceId
     );
 
-    // Fire thApoMonday webhook when receipt becomes confirmed for the first invoice (signup)
-    if ($prevReceiptStatus !== 'confirmed') {
-        require_once dirname(__DIR__, 2) . '/api/invoice/thApoMondayHelper.php';
-        sendThApoMondayPayload($db, $invoiceId);
-    }
+    // Note: thApoMonday webhook will be sent when admin clicks "Send Receipt" in sendReceiptTH.php
 
     echo json_encode(['success' => true, 'message' => 'Confirmed เรียบร้อย']);
 

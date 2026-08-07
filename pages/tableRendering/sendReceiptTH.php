@@ -275,5 +275,16 @@ try {
     error_log('[sendReceiptTH Monday] ' . $e->getMessage());
 }
 
+// --- Fire thApoMonday webhook when receipt is confirmed (signup only) ---
+if ($receiptStatus === 'confirmed') {
+    try {
+        require_once dirname(__DIR__, 2) . '/api/invoice/thApoMondayHelper.php';
+        sendThApoMondayPayload($db, $invoice_id);
+        error_log('[sendReceiptTH] thApoMonday webhook sent for invoice_id=' . $invoice_id);
+    } catch (\Throwable $e) {
+        error_log('[sendReceiptTH thApoMonday] ' . $e->getMessage());
+    }
+}
+
 echo json_encode(['success' => true, 'message' => 'ส่ง Receipt สำเร็จ', 'receiptID' => $receiptID, 'webhook_response' => $response]);
 ?>
