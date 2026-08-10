@@ -27,6 +27,10 @@ if (!$row) {
 }
 
 $logoName = $row["logo"] ?: "";
+// สร้าง logo path ที่ถูกต้อง: ../upload/projectID-projectName/logoFilename
+$folderName = sanitizeFolderName($row['projectName']);
+$logoPath = !empty($logoName) ? '../upload/' . $row['projectID'] . '-' . $folderName . '/' . $logoName : '../assets/img/default.png';
+
 $opening = $row['openingCustom'] == 0 ? explode('__', $row['openingHours']) : $row['openingHours'];
 $delivery = $row['deliveryCustom'] == 0 ? explode('__', $row['pickupAndDelivery']) : $row['pickupAndDelivery'];
 
@@ -282,7 +286,7 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formLogo">
                         <div class="row">
                             <div class="d-flex flex-column col-6 gap-2">
-                                <img style="aspect-ratio: 1/1;" class="preview" src="<?php echo !empty($logoName) ? $logoName : '../assets/img/default.png'; ?>" alt="place">
+                                <img style="aspect-ratio: 1/1;" class="preview" src="<?php echo $logoPath; ?>" alt="place">
                                 <input class="picname" type="hidden" id="picname" value="<?php echo $logoName; ?>">
                             </div>
                             <div class="d-flex flex-column col-6 gap-2 justify-content-end">
