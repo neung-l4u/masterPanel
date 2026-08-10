@@ -282,7 +282,7 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formLogo">
                         <div class="row">
                             <div class="d-flex flex-column col-6 gap-2">
-                                <img style="aspect-ratio: 1/1;" class="preview" src="../assets/img/default.png" alt="place">
+                                <img style="aspect-ratio: 1/1;" class="preview" src="<?php echo !empty($logoName) ? $logoName : '../assets/img/default.png'; ?>" alt="place">
                                 <input class="picname" type="hidden" id="picname" value="<?php echo $logoName; ?>">
                             </div>
                             <div class="d-flex flex-column col-6 gap-2 justify-content-end">
@@ -483,17 +483,17 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
             <div id="masSystem" class="form-check">
                 
                 <div>
-                    <input class="form-check-input amelia" type="checkbox" value="" id="amelia" <?php echo $row['amelia'] == 1 ? 'checked' : ''; ?>>
+                    <input class="form-check-input amelia" type="checkbox" name="amelia" value="1" id="amelia" <?php echo $row['amelia'] == 1 ? 'checked' : ''; ?>>
                     <label for="amelia">Amelia</label>
                 </div>
 
                 <div>
-                    <input class="form-check-input voucher" type="checkbox" value="" id="voucher" <?php echo $row['	voucher'] == 1 ? 'checked' : ''; ?>>
+                    <input class="form-check-input voucher" type="checkbox" name="voucher" value="1" id="voucher" <?php echo $row['voucher'] == 1 ? 'checked' : ''; ?>>
                     <label for="voucher">Voucher</label>
                 </div>
 
                 <div>
-                    <input class="form-check-input bookOther" type="checkbox" value="" id="bookOther" <?php echo $row['bookOther'] == 1 ? 'checked' : ''; ?>>
+                    <input class="form-check-input bookOther" type="checkbox" name="bookOther" value="1" id="bookOther" <?php echo $row['bookOther'] == 1 ? 'checked' : ''; ?>>
                     <label for="bookOther">Other Booking System</label>
                     <div class="masOtherSystem">
                         <label for="masOtherSystem">System Name</label>
@@ -637,6 +637,13 @@ $socials = [
     }); //ready
 
     $("#cmdSubmit").click(function () {
+        // ✅ Debug: ตรวจสอบค่า checkbox
+        console.log("DEBUG - chkAmelia checked:", chkAmelia.prop("checked"));
+        console.log("DEBUG - chkVoucher checked:", chkVoucher.prop("checked"));
+        console.log("DEBUG - chkBookOther checked:", chkBookOther.prop("checked"));
+        console.log("DEBUG - chkAmelia is:", chkAmelia);
+        console.log("DEBUG - chkVoucher is:", chkVoucher);
+        
         let payload = {
             mode : "save",
             projectName: inputName.val(),
@@ -669,23 +676,23 @@ $socials = [
             colorTheme3: selTheme3Hex.val(),
             domainName: domainName.val(),
             hostingName: hostingName.val(),
-            domainHave: !!chkDomainHave.prop("checked"),
+            domainHave: chkDomainHave.prop("checked") ? 1 : 0,
             domainProvidersID: selDomainProvider.val(),
             domainUser: inputDomainUser.val(),
             domainPass: inputDomainPass.val(),
-            hostingHave: !!chkHostingHave.prop("checked"),
+            hostingHave: chkHostingHave.prop("checked") ? 1 : 0,
             hostingProvidersID: selHostingProvider.val(),
             hostingUser: inputHostingUser.val(),
             hostingPass: inputHostingPass.val(),
-            gloriaHave: !!chkGloriaHave.prop("checked"),
+            gloriaHave: chkGloriaHave.prop("checked") ? 1 : 0,
             orderURL: inputOrderURL.val(),
             tableURL: inputTableURL.val(),
-            orderOther: !!chkOrderOther.prop("checked"),
+            orderOther: chkOrderOther.prop("checked") ? 1 : 0,
             resOtherSystem: inputResOtherSystem.val(),
-            amelia: !!chkAmelia.prop("checked"),
-            voucher: !!chkVoucher.prop("checked"),
-            bookOther: !!chkBookOther.prop("checked"),
-            needEmail: !!chkNeedEmail.prop("checked"),
+            amelia: chkAmelia.prop("checked") ? 1 : 0,
+            voucher: chkVoucher.prop("checked") ? 1 : 0,
+            bookOther: chkBookOther.prop("checked") ? 1 : 0,
+            needEmail: chkNeedEmail.prop("checked") ? 1 : 0,
             masOtherSystem: inputMasOtherSystem.val(),
             facebookURL: inputFacebookURL.val(),
             instagramURL: inputInstagramURL.val(),
@@ -699,6 +706,9 @@ $socials = [
         };
 
         console.log("Payload", payload);
+        console.log("Payload amelia:", payload.amelia);
+        console.log("Payload voucher:", payload.voucher);
+        console.log("Payload bookOther:", payload.bookOther);
 
         const callAjax = $.ajax({
             url: "../models/project_detail.php",

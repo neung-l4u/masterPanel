@@ -1,7 +1,6 @@
-
 <?php
-global $db;
 session_start();
+global $db;
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 include "../assets/php/share_function.php";
@@ -29,20 +28,20 @@ $data['domainHave'] = ($_POST['domainHave']=='true') ?  1 : 0;
 $data['domainProvidersID'] = !empty($_POST['domainProvidersID']) ? $_POST['domainProvidersID'] : "0";
 $data['domainUser'] = !empty($_POST['domainUser']) ? trim($_POST['domainUser']) : null;
 $data['domainPass'] = !empty($_POST['domainPass']) ? trim($_POST['domainPass']) : null;
-$data['hostingHave'] = ($_POST['hostingHave']=='true') ?  1 : 0;
+$data['hostingHave'] = (!empty($_POST['hostingHave']) && ($_POST['hostingHave'] == 1 || $_POST['hostingHave'] == 'true')) ?  1 : 0;
 $data['hostingProvidersID'] = !empty($_POST['hostingProvidersID']) ? $_POST['hostingProvidersID'] : "0";
 $data['hostingUser'] = !empty($_POST['hostingUser']) ? trim($_POST['hostingUser']) : null;
 $data['hostingPass'] = !empty($_POST['hostingPass']) ? trim($_POST['hostingPass']) : null;
-$data['gloriaHave'] = ($_POST['gloriaHave']=='true') ? 1 : 0;
+$data['gloriaHave'] = (!empty($_POST['gloriaHave']) && ($_POST['gloriaHave'] == 1 || $_POST['gloriaHave'] == 'true')) ? 1 : 0;
 $data['orderURL'] = !empty($_POST['orderURL']) ? trim($_POST['orderURL']) : null;
 $data['tableURL'] = !empty($_POST['tableURL']) ? trim($_POST['tableURL']) : null;
-$data['orderOther'] = ($_POST['orderOther']=='true') ?  1 : 0;
+$data['orderOther'] = (!empty($_POST['orderOther']) && ($_POST['orderOther'] == 1 || $_POST['orderOther'] == 'true')) ?  1 : 0;
 $data['resOtherSystem'] = !empty($_POST['resOtherSystem']) ? trim($_POST['resOtherSystem']) : null;
-$data['amelia'] = ($_POST['amelia']=='true') ?  1 : 0;
-$data['voucher'] = ($_POST['voucher']=='true') ?  1 : 0;
-$data['bookOther'] = ($_POST['bookOther']=='true') ?  1 : 0;
+$data['amelia'] = (!empty($_POST['amelia']) && ($_POST['amelia'] == 1 || $_POST['amelia'] == 'true')) ?  1 : 0;
+$data['voucher'] = (!empty($_POST['voucher']) && ($_POST['voucher'] == 1 || $_POST['voucher'] == 'true')) ?  1 : 0;
+$data['bookOther'] = (!empty($_POST['bookOther']) && ($_POST['bookOther'] == 1 || $_POST['bookOther'] == 'true')) ?  1 : 0;
 $data['masOtherSystem'] = !empty($_POST['masOtherSystem']) ? trim($_POST['masOtherSystem']) : null;
-$data['needEmail'] = ($_POST['needEmail']=='true') ?  1 : 0;
+$data['needEmail'] = (!empty($_POST['needEmail']) && ($_POST['needEmail'] == 1 || $_POST['needEmail'] == 'true')) ?  1 : 0;
 $data['facebookURL'] = !empty($_POST['facebookURL']) ? trim($_POST['facebookURL']) : null;
 $data['instagramURL'] = !empty($_POST['instagramURL']) ? trim($_POST['instagramURL']) : null;
 $data['youtubeURL'] = !empty($_POST['youtubeURL']) ? trim($_POST['youtubeURL']) : null;
