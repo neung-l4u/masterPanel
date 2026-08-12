@@ -134,6 +134,12 @@ include ('assets/api/checkSession.php');
                                 <p>Customer Thailand</p>
                             </a>
                         </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=dataCustomer" class="nav-link <?php echo $activeMenu["lv2"] == "dataCustomer" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-person-vcard"></i>
+                                <p>Data Customer</p>
+                            </a>
+                        </li>
                         <?php } ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=slipSubmission" class="nav-link <?php echo $activeMenu["lv2"] == "slipSubmission" ? "active":""; ?>">

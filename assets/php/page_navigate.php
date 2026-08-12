@@ -405,6 +405,14 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : ส่งหลักฐานชำระเงิน";
         break;
+    case "dataCustomer":
+        $showPage = "dataCustomer.php";
+        $activeMenu["lv1"] = "formMgmt";
+        $activeMenu["lv2"] = "dataCustomer";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Data Customer";
+        break;
     // [HIDDEN] billingTH — ซ่อนไว้ก่อน เนื่องจาก invoiceThailand ครอบคลุม feature เดียวกัน
     // case "billingTH":
     //     $showPage = "billingTH.php";

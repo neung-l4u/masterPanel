@@ -251,11 +251,29 @@ window.openSendModal = function(invoiceId) {
             var detail = (p.quotation && p.quotation[0] && p.quotation[0].detail) ? p.quotation[0].detail[0] : {};
 
             var itemsHtml = '';
-            items.forEach(function(item) {
+            items.forEach(function(item, idx) {
                 var label = item.product || item.setupfee || item.addon || '-';
-                itemsHtml += '<tr><td>' + label + '</td>'
-                    + '<td class="text-center">' + (item.qyt||'-') + '</td>'
-                    + '<td class="text-right">฿' + parseFloat(item.amount||0).toLocaleString('th-TH',{minimumFractionDigits:2}) + '</td></tr>';
+                var qyt = item.qyt || 1;
+                var amount = parseFloat(item.amount||0);
+                
+                itemsHtml += '<tr data-item-idx="'+idx+'">'
+                    + '<td>'
+                    + '<div class="item-display">'+label+'</div>'
+                    + '<input type="text" class="form-control form-control-sm item-edit" data-field="product" style="display:none;" value="'+label+'">'
+                    + '</td>'
+                    + '<td class="text-center">'
+                    + '<div class="item-display">'+qyt+'</div>'
+                    + '<input type="number" class="form-control form-control-sm item-edit" data-field="qyt" style="display:none;" value="'+qyt+'" min="1">'
+                    + '</td>'
+                    + '<td class="text-right">'
+                    + '<div class="item-display">฿' + amount.toLocaleString('th-TH',{minimumFractionDigits:2}) + '</div>'
+                    + '<input type="number" class="form-control form-control-sm item-edit" data-field="amount" style="display:none;" value="'+amount+'" step="0.01" min="0">'
+                    + '</td>'
+                    + '<td class="text-center" style="width:120px;">'
+                    + '<button class="btn btn-xs btn-warning btn-edit-item" style="padding:2px 6px;font-size:11px;" title="แก้ไข"><i class="bi bi-pencil"></i></button>'
+                    + '<button class="btn btn-xs btn-success btn-save-item" style="display:none;padding:2px 6px;font-size:11px;" title="บันทึก"><i class="bi bi-check"></i></button>'
+                    + '<button class="btn btn-xs btn-secondary btn-cancel-item" style="display:none;padding:2px 6px;font-size:11px;" title="ยกเลิก"><i class="bi bi-x"></i></button>'
+                    + '</tr>';
             });
 
             var slipViewBtn = r.slip
@@ -331,7 +349,7 @@ window.openSendModal = function(invoiceId) {
 
                 // Items table
                 +'<table class="table table-sm" style="font-size:13px;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;">'
-                +'<thead style="background:#1e3a8a;color:#fff;"><tr><th>รายการ</th><th class="text-center" style="width:70px;">จำนวน</th><th class="text-right" style="width:100px;">ราคา</th></tr></thead>'
+                +'<thead style="background:#1e3a8a;color:#fff;"><tr><th>รายการ</th><th class="text-center" style="width:70px;">จำนวน</th><th class="text-right" style="width:100px;">ราคา</th><th class="text-center" style="width:120px;">การกระทำ</th></tr></thead>'
                 +'<tbody>' + itemsHtml + '</tbody>'
                 +'</table>'
 
@@ -737,6 +755,143 @@ $(document).on('click', '#btnSaveStatus', function() {
         complete: function() { btn.prop('disabled', false).html('<i class="bi bi-check2"></i> บันทึก'); }
     });
 });
+
+// ===== Items Editor =====
+$(document).on('click', '.btn-edit-item', function() {
+    const $btn = $(this);
+    const $row = $btn.closest('tr');
+    $row.find('.item-display').hide();
+    $row.find('.item-edit').show();
+    $row.find('.btn-edit-item').hide();
+    $row.find('.btn-save-item, .btn-cancel-item').show();
+});
+
+$(document).on('click', '.btn-cancel-item', function() {
+    const $btn = $(this);
+    const $row = $btn.closest('tr');
+    $row.find('.item-edit').hide();
+    $row.find('.item-display').show();
+    $row.find('.btn-save-item, .btn-cancel-item').hide();
+    $row.find('.btn-edit-item').show();
+});
+
+$(document).on('click', '.btn-save-item', function() {
+    const $btn = $(this);
+    const $row = $btn.closest('tr');
+    const product = $row.find('input[data-field="product"]').val();
+    const qyt = $row.find('input[data-field="qyt"]').val();
+    const amount = parseFloat($row.find('input[data-field="amount"]').val() || 0);
+    
+    if (!product || !qyt || amount <= 0) {
+        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+        return;
+    }
+    
+    // Update display
+    $row.find('.item-display').eq(0).text(product);
+    $row.find('.item-display').eq(1).text(qyt);
+    $row.find('.item-display').eq(2).text('฿' + amount.toLocaleString('th-TH', {minimumFractionDigits: 2}));
+    
+    // Hide edit, show display
+    $row.find('.item-edit').hide();
+    $row.find('.item-display').show();
+    $row.find('.btn-save-item, .btn-cancel-item').hide();
+    $row.find('.btn-edit-item').show();
+    
+    // Update invoice
+    updateInvoiceItems();
+});
+
+function updateInvoiceItems() {
+    const invoiceId = pendingInvoiceId;
+    if (!invoiceId) return;
+    
+    // Collect all items from table
+    const items = [];
+    $('#sendModalBody table tbody tr[data-item-idx]').each(function() {
+        const $row = $(this);
+        
+        // Get values from input if visible, otherwise from display
+        let product = $row.find('input[data-field="product"]').is(':visible') 
+            ? $row.find('input[data-field="product"]').val()
+            : $row.find('.item-display').eq(0).text();
+        
+        let qyt = $row.find('input[data-field="qyt"]').is(':visible')
+            ? $row.find('input[data-field="qyt"]').val()
+            : $row.find('.item-display').eq(1).text();
+        
+        let amountText = $row.find('input[data-field="amount"]').is(':visible')
+            ? $row.find('input[data-field="amount"]').val()
+            : $row.find('.item-display').eq(2).text();
+        
+        // Clean amount text (remove ฿ and commas)
+        let amount = parseFloat(amountText.toString().replace(/[^0-9.]/g, '') || 0);
+        
+        console.log('Item:', {product, qyt, amount});
+        
+        items.push({
+            product: product || '-',
+            qyt: parseInt(qyt || 1),
+            amount: amount
+        });
+    });
+    
+    console.log('All items:', items);
+    
+    if (items.length === 0) {
+        alert('ต้องมีอย่างน้อย 1 รายการ');
+        return;
+    }
+    
+    // Validate items
+    let totalAmount = 0;
+    for (let item of items) {
+        if (!item.product || item.amount <= 0) {
+            alert('กรุณาตรวจสอบข้อมูล - ทุกรายการต้องมีชื่อและราคา > 0');
+            return;
+        }
+        totalAmount += item.amount;
+    }
+    
+    console.log('Total amount:', totalAmount);
+    
+    // Call API
+    $.ajax({
+        url: 'api/invoice/updateInvoiceItems.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            invoice_id: invoiceId,
+            items: JSON.stringify(items)
+        },
+        success: function(res) {
+            if (res.success) {
+                console.log('Invoice updated:', res.data);
+                alert('บันทึกข้อมูลสำเร็จ\nยอดรวม: ฿' + res.data.total_amount.toLocaleString('th-TH', {minimumFractionDigits: 2}));
+                // Reload invoice data
+                $.ajax({
+                    url: 'pages/tableRendering/getInvoiceTH.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: invoiceId },
+                    success: function(d) {
+                        if (d.success) {
+                            currentInvoiceData = d.data;
+                            // Reload modal content
+                            openSendModal(invoiceId);
+                        }
+                    }
+                });
+            } else {
+                alert('เกิดข้อผิดพลาด: ' + res.message);
+            }
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr);
+            alert('เกิดข้อผิดพลาดในการบันทึก\nกรุณาตรวจสอบ Console');
+        }
+    });
+}
 
 }); // end window load
 </script>
