@@ -35,6 +35,7 @@ $testMode = $_GET['testMode'] ?? 'false';
         <section style="min-height: 50vh;">
             <div class="form-layout">
                 <nav class="info-sidebar">
+                    <?php if ($mode !== 'customer'): ?>
                     <div class="sidebar-section">
                         <h6 class="sidebar-title">Form Type</h6>
                         <a href="upgradeForm.php?mode=<?php echo htmlspecialchars($mode); ?>&stripeID=<?php echo urlencode($stripeID); ?>" class="sidebar-item sidebar-form sidebar-form-upgrade">
@@ -59,6 +60,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                         </a>
                     </div>
                     <div class="sidebar-divider"></div>
+                    <?php endif; ?>
                     <div class="sidebar-section">
                         <h6 class="sidebar-title">Information</h6>
                         <button class="sidebar-item sidebar-action" data-bs-toggle="modal" data-bs-target="#modalPackageRef">
@@ -69,10 +71,12 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <i class="bi bi-info-circle"></i>
                             <span>Important Info</span>
                         </button>
+                        <?php if ($mode !== 'customer'): ?>
                         <button class="sidebar-item sidebar-action" data-bs-toggle="modal" data-bs-target="#modalStaffKB">
                             <i class="bi bi-book"></i>
                             <span>Knowledge Base</span>
                         </button>
+                        <?php endif; ?>
                     </div>
                 </nav>
             <div class="form-div">
@@ -173,20 +177,8 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <div class="mb-3">
                                 <div class="radio-card-group-vertical">
                                     <div class="radio-card-v">
-                                        <input type="radio" name="requestType" id="reqWebsiteOnly" value="Downgrade to website service only" required>
-                                        <label for="reqWebsiteOnly"><i class="bi bi-globe"></i> Downgrade to website service only</label>
-                                    </div>
-                                    <div class="radio-card-v">
-                                        <input type="radio" name="requestType" id="reqOrderingOnly" value="Downgrade to online ordering system/booking system only">
-                                        <label for="reqOrderingOnly"><i class="bi bi-bag-check"></i> Downgrade to online ordering system / booking system only</label>
-                                    </div>
-                                    <div class="radio-card-v">
-                                        <input type="radio" name="requestType" id="reqMarketingOnly" value="Downgrade to marketing only (Solo)">
-                                        <label for="reqMarketingOnly"><i class="bi bi-megaphone"></i> Downgrade to marketing only (Solo)</label>
-                                    </div>
-                                    <div class="radio-card-v">
-                                        <input type="radio" name="requestType" id="reqOtherPackage" value="Downgrade to other package">
-                                        <label for="reqOtherPackage"><i class="bi bi-box-arrow-down"></i> Downgrade to other package</label>
+                                        <input type="radio" name="requestType" id="reqOtherProduct" value="Downgrade to other product" required>
+                                        <label for="reqOtherProduct"><i class="bi bi-box-arrow-down"></i> Downgrade to other product</label>
                                     </div>
                                     <div class="radio-card-v radio-card-v-danger">
                                         <input type="radio" name="requestType" id="reqUnsubscribe" value="Unsubscribe all services">
@@ -195,73 +187,31 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 </div>
                                 <div class="invalid-feedback d-block" id="requestTypeError" style="display:none!important;"></div>
                             </div>
+                            <!-- Second level: which product to downgrade to -->
+                            <div class="mb-3" id="downgradeTargetGroup" style="display:none;">
+                                <label class="form-label">Which product would you like to downgrade to? <span class="text-danger">*</span></label>
+                                <div class="radio-card-group-vertical">
+                                    <div class="radio-card-v">
+                                        <input type="radio" name="downgradeTarget" id="tgtWebsiteOnly" value="Downgrade to website service only">
+                                        <label for="tgtWebsiteOnly"><i class="bi bi-globe"></i> Website service only</label>
+                                    </div>
+                                    <div class="radio-card-v">
+                                        <input type="radio" name="downgradeTarget" id="tgtOrderingOnly" value="Downgrade to online ordering system/booking system only">
+                                        <label for="tgtOrderingOnly"><i class="bi bi-bag-check"></i> Online ordering system / booking system only</label>
+                                    </div>
+                                    <div class="radio-card-v">
+                                        <input type="radio" name="downgradeTarget" id="tgtMarketingOnly" value="Downgrade to marketing only (Solo)">
+                                        <label for="tgtMarketingOnly"><i class="bi bi-megaphone"></i> Marketing only (Solo)</label>
+                                    </div>
+                                </div>
+                                <div class="invalid-feedback d-block" id="downgradeTargetError" style="display:none!important;"></div>
+                            </div>
                         </div>
 
-                        <!-- ========== SECTION: Downgrade Information (shown for "Downgrade to other package") ========== -->
-                        <div class="form-section" id="downgradeInfoSection" style="display:none;">
-                            <h5 class="section-title"><i class="bi bi-arrow-repeat"></i> Downgrade Information</h5>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Current Product (Active Subscriptions) <span class="text-danger">*</span></label>
-                                    <?php if ($mode === 'staff'): ?>
-                                    <div id="originalProductList" class="subscription-list">
-                                        <span class="subscription-placeholder">Select a project first</span>
-                                    </div>
-                                    <input type="hidden" id="originalProduct" name="originalProduct">
-                                    <?php else: ?>
-                                    <select class="form-select" id="originalProduct" name="originalProduct">
-                                        <option value="">-- Select Current Product --</option>
-                                        <optgroup label="Pro Plans">
-                                            <option value="pro_starter">Pro - Local Starter</option>
-                                            <option value="pro_growth">Pro - Local Growth</option>
-                                            <option value="pro_ultimate">Pro - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Solo Plans">
-                                            <option value="solo_starter">Solo - Local Starter</option>
-                                            <option value="solo_growth">Solo - Local Growth</option>
-                                            <option value="solo_ultimate">Solo - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Bundle Plans">
-                                            <option value="bundle_starter">Bundle - Local Starter</option>
-                                            <option value="bundle_growth">Bundle - Local Growth</option>
-                                            <option value="bundle_ultimate">Bundle - Local Ultimate</option>
-                                        </optgroup>
-                                    </select>
-                                    <?php endif; ?>
-                                    <div class="invalid-feedback">Please select the current product.</div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="newProduct" class="form-label">New Product <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="newProduct" name="newProduct">
-                                        <option value="">-- Select New Product --</option>
-                                        <optgroup label="Pro Plan (Website Only)">
-                                            <option value="pro_plan">Pro Plan (No Marketing)</option>
-                                        </optgroup>
-                                        <optgroup label="Pro Marketing Plans">
-                                            <option value="pro_starter">Pro - Local Starter</option>
-                                            <option value="pro_growth">Pro - Local Growth</option>
-                                            <option value="pro_ultimate">Pro - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Solo Plans">
-                                            <option value="solo_starter">Solo - Local Starter</option>
-                                            <option value="solo_growth">Solo - Local Growth</option>
-                                            <option value="solo_ultimate">Solo - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Bundle Plans">
-                                            <option value="bundle_starter">Bundle - Local Starter</option>
-                                            <option value="bundle_growth">Bundle - Local Growth</option>
-                                            <option value="bundle_ultimate">Bundle - Local Ultimate</option>
-                                        </optgroup>
-                                    </select>
-                                    <div class="invalid-feedback">Please select the new product.</div>
-                                </div>
-                            </div>
-
-                            <!-- Dynamic Downgrade Comparison Card -->
-                            <div id="downgradeComparisonCard" class="mb-3" style="display:none;"></div>
-
-                            <?php if ($mode === 'staff'): ?>
+                        <?php if ($mode === 'staff'): ?>
+                        <!-- ========== SECTION: Internal Details (staff only) ========== -->
+                        <div class="form-section">
+                            <h5 class="section-title"><i class="bi bi-briefcase"></i> Internal Details</h5>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="contractPeriod" class="form-label">Contract Period</label>
@@ -282,8 +232,8 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <label for="staffDowngradeNote" class="form-label">Internal Note</label>
                                 <textarea class="form-control" id="staffDowngradeNote" name="staffDowngradeNote" rows="2" placeholder="Any internal notes about this downgrade request..."></textarea>
                             </div>
-                            <?php endif; ?>
                         </div>
+                        <?php endif; ?>
 
                         <!-- ========== SECTION: Effective Date ========== -->
                         <div class="form-section">
@@ -324,6 +274,10 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <p class="text-muted mb-3" style="font-size:.84rem;">Select all that apply.</p>
                             <div class="checkbox-grid mb-3">
                                 <div class="check-card">
+                                    <input type="checkbox" id="reasonObjectives" name="reasons[]" value="Achieved Objectives">
+                                    <label for="reasonObjectives"><i class="bi bi-trophy"></i> Achieved Objectives</label>
+                                </div>
+                                <div class="check-card">
                                     <input type="checkbox" id="reasonSelling" name="reasons[]" value="Selling or transferring my business">
                                     <label for="reasonSelling"><i class="bi bi-building-check"></i> Selling or transferring my business</label>
                                 </div>
@@ -356,10 +310,6 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     <label for="reasonOwnership"><i class="bi bi-people"></i> Change in ownership or management direction</label>
                                 </div>
                                 <div class="check-card">
-                                    <input type="checkbox" id="reasonObjectives" name="reasons[]" value="Achieved Objectives">
-                                    <label for="reasonObjectives"><i class="bi bi-trophy"></i> Achieved Objectives</label>
-                                </div>
-                                <div class="check-card">
                                     <input type="checkbox" id="reasonOther" name="reasons[]" value="Other">
                                     <label for="reasonOther"><i class="bi bi-three-dots"></i> Other</label>
                                 </div>
@@ -378,10 +328,6 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <div class="check-card">
                                     <input type="checkbox" id="keepAraya" name="featuresKeep[]" value="Araya (Massage) $199/month">
                                     <label for="keepAraya"><i class="bi bi-robot"></i> Araya (Massage) <small>$199/mo</small></label>
-                                </div>
-                                <div class="check-card">
-                                    <input type="checkbox" id="keepAiMarketing" name="featuresKeep[]" value="AI Marketing (Restaurant) 10% per order">
-                                    <label for="keepAiMarketing"><i class="bi bi-stars"></i> AI Marketing (Restaurant) <small>10%/order</small></label>
                                 </div>
                                 <div class="check-card">
                                     <input type="checkbox" id="keepNone" name="featuresKeep[]" value="None">
@@ -422,18 +368,6 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     <textarea class="form-control" id="feedbackComments" name="feedbackComments" rows="2" placeholder="Any specific feedback about your account manager or support experience..."></textarea>
                                 </div>
 
-                                <div class="mb-2">
-                                    <label class="form-label">How was your experience? (1–5 stars)</label>
-                                    <div class="star-rating-widget" id="experienceRatingWidget">
-                                        <span class="star" data-value="1"><i class="bi bi-star-fill"></i></span>
-                                        <span class="star" data-value="2"><i class="bi bi-star-fill"></i></span>
-                                        <span class="star" data-value="3"><i class="bi bi-star-fill"></i></span>
-                                        <span class="star" data-value="4"><i class="bi bi-star-fill"></i></span>
-                                        <span class="star" data-value="5"><i class="bi bi-star-fill"></i></span>
-                                        <span class="star-label" id="expRatingLabel"></span>
-                                    </div>
-                                    <input type="hidden" name="experienceRating" id="experienceRating" value="">
-                                </div>
                             </div>
 
                             <div class="mb-3">
@@ -587,6 +521,7 @@ $testMode = $_GET['testMode'] ?? 'false';
     </div>
 </div>
 
+<?php if ($mode !== 'customer'): ?>
 <!-- ===== Modal: Staff Knowledge Base ===== -->
 <div class="modal fade" id="modalStaffKB" tabindex="-1" aria-labelledby="modalStaffKBLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
@@ -625,6 +560,7 @@ $testMode = $_GET['testMode'] ?? 'false';
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>

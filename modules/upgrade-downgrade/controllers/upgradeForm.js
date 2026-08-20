@@ -2,6 +2,12 @@
    Upgrade Form v2.0.0 - JavaScript Controller
    ============================================================ */
 
+// ===== Form Mode =====
+// 'customer' hides staff-only fields (Monday project search, sales agent,
+// billing date), so those must not be validated as required.
+const FORM_MODE = document.body.dataset.mode || 'customer';
+const IS_STAFF = (FORM_MODE === 'staff');
+
 // ===== Package Comparison Data =====
 const comparisonData = {
     'starter_to_growth': {
@@ -233,7 +239,6 @@ function updateSectionVisibility() {
         const $item = $(item);
         $input.val($item.data('id'));
         $('#shopName').val($item.data('name'));
-        $('#shopType').val($item.data('type'));
         $('#ownerName').val($item.data('owner'));
         $('#phoneNumber').val($item.data('phone'));
         $('#boardId').val($item.data('boardid'));
@@ -242,10 +247,14 @@ function updateSectionVisibility() {
         loadSubscriptions($item.data('name'));
     }
 
+    // Project search is staff-only; in customer mode the shop fields are typed
+    // by hand and must never be cleared by a country change.
+    if (!IS_STAFF) return;
+
     $('#country').on('change', function () {
         const country = $(this).val();
         $input.val('').prop('disabled', !country);
-        $('#shopName, #shopType, #ownerName, #phoneNumber').val('');
+        $('#shopName, #ownerName, #phoneNumber').val('');
         $dropdown.removeClass('show').empty();
         allProjects = [];
         if (country) fetchProjects(country);
@@ -485,8 +494,10 @@ function validateForm() {
     // Re-enable mondayProjectId before serializing (it may be disabled when country not selected)
     $('#mondayProjectId').prop('disabled', false);
 
-    // Always required fields
-    const alwaysRequired = ['mondayProjectId', 'bestTimeContact', 'emailAddress'];
+    // Always required fields (Monday project ID is staff-only)
+    const alwaysRequired = IS_STAFF
+        ? ['mondayProjectId', 'bestTimeContact', 'emailAddress']
+        : ['shopName', 'bestTimeContact', 'emailAddress'];
     alwaysRequired.forEach(id => {
         const el = document.getElementById(id);
         if (el && !el.value.trim()) {
@@ -516,7 +527,9 @@ function validateForm() {
 
     // If upgrade package, validate upgrade info fields
     if (isUpgradePackage) {
-        const upgradeFields = ['contractPeriod', 'upgradeReason', 'salesAgent', 'billingDate'];
+        const upgradeFields = IS_STAFF
+            ? ['contractPeriod', 'upgradeReason', 'salesAgent', 'billingDate']
+            : ['upgradeReason'];
         upgradeFields.forEach(id => {
             const el = document.getElementById(id);
             if (el && !el.value.trim()) {
@@ -527,8 +540,10 @@ function validateForm() {
             }
         });
 
-        // Select fields
-        ['originalProduct', 'newProduct'].forEach(id => {
+        // Select fields (originalProduct is auto-filled from the staff-only
+        // project search, so it cannot be required in customer mode)
+        const productFields = IS_STAFF ? ['originalProduct', 'newProduct'] : ['newProduct'];
+        productFields.forEach(id => {
             const el = document.getElementById(id);
             if (el && !el.value) {
                 el.classList.add('is-invalid');
@@ -599,7 +614,6 @@ function applyTestAutofill() {
         $('#mondayProjectId').prop('disabled', false).val('99999');
         $('#boardId').val('1943203205'); // TH project board
         $('#shopName').val('Test Shop');
-        $('#shopType').val('Restaurant');
         $('#ownerName').val('Test Owner');
         $('#phoneNumber').val('555-010-0000');
         $('#bestTimeContact').val('Weekdays 9am-5pm PST');

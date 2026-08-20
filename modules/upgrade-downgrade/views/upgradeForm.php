@@ -35,6 +35,7 @@ $testMode = $_GET['testMode'] ?? 'false';
         <section style="min-height: 50vh;">
             <div class="form-layout"> ิ
                 <nav class="info-sidebar">
+                    <?php if ($mode !== 'customer'): ?>
                     <div class="sidebar-section">
                         <h6 class="sidebar-title">Form Type</h6>
                         <a href="upgradeForm.php?mode=<?php echo htmlspecialchars($mode); ?>&stripeID=<?php echo urlencode($stripeID); ?>" class="sidebar-item sidebar-form sidebar-form-upgrade sidebar-mode-active">
@@ -59,6 +60,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                         </a>
                     </div>
                     <div class="sidebar-divider"></div>
+                    <?php endif; ?>
                     <div class="sidebar-section">
                         <h6 class="sidebar-title">Information</h6>
                         <button class="sidebar-item sidebar-action" data-bs-toggle="modal" data-bs-target="#modalPackageDetails">
@@ -69,10 +71,12 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <i class="bi bi-info-circle"></i>
                             <span>Important Info</span>
                         </button>
+                        <?php if ($mode !== 'customer'): ?>
                         <button class="sidebar-item sidebar-action" data-bs-toggle="modal" data-bs-target="#modalStaffKB">
                             <i class="bi bi-book"></i>
                             <span>Knowledge Base</span>
                         </button>
+                        <?php endif; ?>
                     </div>
                 </nav>
             <div class="form-div">
@@ -117,6 +121,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <div class="invalid-feedback">Please select a country.</div>
                             </div>
 
+                            <?php if ($mode === 'staff'): ?>
                             <div class="mb-3 position-relative">
                                 <label for="mondayProjectId" class="form-label">Monday Project / Shop ID <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="Type shop name or ID to search..." autocomplete="off" required>
@@ -125,26 +130,27 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <div class="form-text">Search by shop name or ID. Other fields will auto-fill.</div>
                                 <div class="invalid-feedback">Please enter the Monday Project / Shop ID.</div>
                             </div>
+                            <?php else: ?>
+                            <input type="hidden" id="mondayProjectId" name="mondayProjectId" value="">
+                            <input type="hidden" id="boardId" name="boardId" value="">
+                            <div id="projectSearchDropdown" class="project-search-dropdown d-none"></div>
+                            <?php endif; ?>
 
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-12 mb-3">
                                     <label for="shopName" class="form-label">Shop Name</label>
-                                    <input type="text" class="form-control" id="shopName" name="shopName" placeholder="Auto-filled from ID">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="shopType" class="form-label">Shop Type</label>
-                                    <input type="text" class="form-control" id="shopType" name="shopType" placeholder="Auto-filled from ID">
+                                    <input type="text" class="form-control" id="shopName" name="shopName" placeholder="<?php echo $mode === 'staff' ? 'Auto-filled from ID' : 'e.g. Bangkok Thai Kitchen'; ?>">
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="ownerName" class="form-label">Owner's Name</label>
-                                    <input type="text" class="form-control" id="ownerName" name="ownerName" placeholder="Auto-filled from ID">
+                                    <input type="text" class="form-control" id="ownerName" name="ownerName" placeholder="<?php echo $mode === 'staff' ? 'Auto-filled from ID' : 'e.g. John D.'; ?>">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Auto-filled from ID">
+                                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="<?php echo $mode === 'staff' ? 'Auto-filled from ID' : 'e.g. +1 555 123 4567'; ?>">
                                 </div>
                             </div>
 
@@ -187,11 +193,33 @@ $testMode = $_GET['testMode'] ?? 'false';
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
+                                    <?php if ($mode === 'staff'): ?>
                                     <label class="form-label">Original Product (Active Subscriptions)</label>
                                     <div id="originalProductList" class="subscription-list">
                                         <span class="subscription-placeholder">Select a project first</span>
                                     </div>
                                     <input type="hidden" id="originalProduct" name="originalProduct">
+                                    <?php else: ?>
+                                    <label for="originalProduct" class="form-label">Current Product</label>
+                                    <select class="form-select" id="originalProduct" name="originalProduct">
+                                        <option value="">-- Select Current Product --</option>
+                                        <optgroup label="Pro Plans">
+                                            <option value="pro_starter">Pro - Local Starter</option>
+                                            <option value="pro_growth">Pro - Local Growth</option>
+                                            <option value="pro_ultimate">Pro - Local Ultimate</option>
+                                        </optgroup>
+                                        <optgroup label="Solo Plans">
+                                            <option value="solo_starter">Solo - Local Starter</option>
+                                            <option value="solo_growth">Solo - Local Growth</option>
+                                            <option value="solo_ultimate">Solo - Local Ultimate</option>
+                                        </optgroup>
+                                        <optgroup label="Bundle Plans">
+                                            <option value="bundle_starter">Bundle - Local Starter</option>
+                                            <option value="bundle_growth">Bundle - Local Growth</option>
+                                            <option value="bundle_ultimate">Bundle - Local Ultimate</option>
+                                        </optgroup>
+                                    </select>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="newProduct" class="form-label">New Product <span class="text-danger">*</span></label>
@@ -219,11 +247,13 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     <label for="promotion" class="form-label">Promotion</label>
                                     <input type="text" class="form-control" id="promotion" name="promotion" placeholder="e.g. 20% off first 3 months">
                                 </div>
+                                <?php if ($mode === 'staff'): ?>
                                 <div class="col-md-6 mb-3">
                                     <label for="contractPeriod" class="form-label">Contract Period <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="contractPeriod" name="contractPeriod" placeholder="e.g. 12 months">
                                     <div class="invalid-feedback">Please enter the contract period.</div>
                                 </div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="mb-3">
@@ -232,6 +262,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <div class="invalid-feedback">Please enter the reason for upgrade.</div>
                             </div>
 
+                            <?php if ($mode === 'staff'): ?>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="salesAgent" class="form-label">Sales Agent / Upgrade Person <span class="text-danger">*</span></label>
@@ -244,6 +275,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     <div class="invalid-feedback">Please enter the billing date.</div>
                                 </div>
                             </div>
+                            <?php endif; ?>
 
                             <div class="mb-3">
                                 <label for="upgradeNote" class="form-label">Note</label>
@@ -593,6 +625,7 @@ $testMode = $_GET['testMode'] ?? 'false';
     </div>
 </div>
 
+<?php if ($mode !== 'customer'): ?>
 <!-- ===== Modal: Staff Knowledge Base ===== -->
 <div class="modal fade" id="modalStaffKB" tabindex="-1" aria-labelledby="modalStaffKBLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
@@ -633,9 +666,10 @@ $testMode = $_GET['testMode'] ?? 'false';
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../assets/img/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
+<script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
 <script src="../controllers/upgradeForm.js?v=2.0.0"></script>
 </body>
 </html>

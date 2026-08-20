@@ -39,137 +39,17 @@ const downgradeData = {
     }
 };
 
-// ===== Helpers =====
-function getTier(val) {
-    if (!val) return null;
-    if (val === 'pro_plan') return 'pro';
-    if (val.includes('starter')) return 'starter';
-    if (val.includes('growth'))  return 'growth';
-    if (val.includes('ultimate')) return 'ultimate';
-    return null;
-}
-
-function getPlanType(val) {
-    if (!val) return null;
-    if (val === 'pro_plan') return 'pro_plan';
-    if (val.startsWith('pro_'))    return 'pro';
-    if (val.startsWith('solo_'))   return 'solo';
-    if (val.startsWith('bundle_')) return 'bundle';
-    return null;
-}
-
-// ===== Build Downgrade Comparison HTML =====
-function buildDowngradeComparisonHTML(origVal, newVal) {
-    const origTier   = getTier(origVal);
-    const newTier    = getTier(newVal);
-    const newPlan    = getPlanType(newVal);
-
-    if (!origTier) return '';
-
-    // Any → Pro Plan: remove all marketing features
-    if (newPlan === 'pro_plan') {
-        return `<div class="downgrade-comparison-card">
-            <h6><i class="bi bi-arrow-down-circle-fill"></i> Downgrading to Pro Plan (Website Only)</h6>
-            <div class="pro-plan-note">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                <div>
-                    <strong>All marketing features will be removed:</strong>
-                    <ul class="mt-2 mb-0" style="font-size:.83rem;line-height:1.9;">
-                        <li>All GMB Posts</li>
-                        <li>All Social Media Posts</li>
-                        <li>All Email Campaigns</li>
-                        <li>All SMS Campaigns</li>
-                        <li>Advanced SEO Components</li>
-                        <li>Ad Management (Google, FB/IG, Yelp)</li>
-                        <li>Monthly Strategy Call</li>
-                        <li>Proactive Review Replies</li>
-                    </ul>
-                </div>
-            </div>
-        </div>`;
-    }
-
-    let key = null;
-    if (origTier === 'ultimate' && newTier === 'growth')  key = 'ultimate_to_growth';
-    else if (origTier === 'ultimate' && newTier === 'starter') key = 'ultimate_to_starter';
-    else if (origTier === 'growth'   && newTier === 'starter') key = 'growth_to_starter';
-
-    if (!key || !downgradeData[key]) return '';
-
-    const data = downgradeData[key];
-    let html = '<div class="downgrade-comparison-card">';
-    html += '<h6><i class="bi bi-arrow-down-circle-fill"></i> ' + data.title + '</h6>';
-    html += '<p class="downgrade-note-text">The following changes will take effect upon downgrade:</p>';
-
-    data.items.forEach(item => {
-        const icon = item.removed ? 'bi-dash-circle-fill' : 'bi-arrow-down-circle';
-        const valClass = item.removed ? 'val-removed' : 'val-reduced';
-        html += '<div class="downgrade-item">';
-        html += '<i class="bi ' + icon + '"></i>';
-        html += '<div>';
-        html += '<span class="feature-name">' + item.feature + '</span>';
-        html += ' <i class="bi bi-arrow-right" style="font-size:.72rem;color:#aaa;vertical-align:middle;"></i> ';
-        html += '<span class="' + valClass + '">' + item.to + '</span>';
-        html += '<br><span class="was-val">Was: ' + item.from + '</span>';
-        html += '</div>';
-        html += '</div>';
-    });
-
-    html += '</div>';
-    return html;
-}
-
-// ===== Load Active Subscriptions (staff mode) =====
-function loadSubscriptions(shopName) {
-    const $list = $('#originalProductList');
-    if (!$list.length) return;
-    $list.html('<span class="subscription-loading"><span class="spinner-border spinner-border-sm"></span> Loading...</span>');
-    $('#originalProduct').val('');
-
-    $.getJSON('../assets/API/getSubscriptions.php', { shopName: shopName }, function (data) {
-        if (!data.length) {
-            $list.html('<span class="subscription-placeholder">No active subscriptions found</span>');
-            return;
-        }
-        const names = data.map(p => p.name);
-        $('#originalProduct').val(names.join(', '));
-        const html = data.map(p => `
-            <div class="subscription-item">
-                <i class="bi bi-check-circle-fill"></i>
-                <div>
-                    <div class="sub-name">${p.name}</div>
-                    ${p.price ? `<div class="sub-price">${p.currency} ${p.price}/mo</div>` : ''}
-                </div>
-            </div>`).join('');
-        $list.html(html);
-    }).fail(function () {
-        $list.html('<span class="subscription-placeholder">Failed to load subscriptions</span>');
-    });
-}
-
 // ===== Section Visibility =====
 function updateSectionVisibility() {
-    const requestType      = $('input[name="requestType"]:checked').val();
-    const isDowngradePkg   = (requestType === 'Downgrade to other package');
-    const origVal          = $('#originalProduct').val();
-    const newVal           = $('#newProduct').val();
+    const requestType    = $('input[name="requestType"]:checked').val();
+    const isDowngradePkg = (requestType === 'Downgrade to other product');
 
+    // Second-level target choice appears only for "Downgrade to other product"
     if (isDowngradePkg) {
-        $('#downgradeInfoSection').slideDown(200);
+        $('#downgradeTargetGroup').slideDown(200);
     } else {
-        $('#downgradeInfoSection').slideUp(200);
-        $('#downgradeComparisonCard').slideUp(200).empty();
-    }
-
-    if (isDowngradePkg && origVal && newVal) {
-        const html = buildDowngradeComparisonHTML(origVal, newVal);
-        if (html) {
-            $('#downgradeComparisonCard').html(html).slideDown(200);
-        } else {
-            $('#downgradeComparisonCard').slideUp(200).empty();
-        }
-    } else if (!isDowngradePkg) {
-        $('#downgradeComparisonCard').slideUp(200).empty();
+        $('#downgradeTargetGroup').slideUp(200);
+        $('input[name="downgradeTarget"]').prop('checked', false);
     }
 }
 
@@ -290,7 +170,6 @@ function initStarRating(widgetId, inputId, labelId) {
         $input.val($(this).data('id'));
         $('#boardId').val($(this).data('boardid'));
         $dropdown.removeClass('show').empty();
-        loadSubscriptions($(this).data('name'));
     });
 
     $(document).on('click', function (e) {
@@ -304,9 +183,6 @@ $(function () {
 
     // --- Request type toggle ---
     $('input[name="requestType"]').on('change', updateSectionVisibility);
-
-    // --- Product selection ---
-    $('#originalProduct, #newProduct').on('change', updateSectionVisibility);
 
     // --- Custom date toggle ---
     $('input[name="effectiveDate"]').on('change', function () {
@@ -327,7 +203,6 @@ $(function () {
     });
 
     // --- Init star ratings ---
-    initStarRating('experienceRatingWidget', 'experienceRating', 'expRatingLabel');
     initStarRating('overallRatingWidget',    'overallRating',    'overallRatingLabel');
 
     // --- Initial state ---
@@ -390,7 +265,11 @@ function sendData(formData) {
         date: formattedDate,
         // ---- Normalized fields (shared upgrade/downgrade webhook schema) ----
         formType: 'downgrade',
-        changeType: formData.requestType || '',
+        // "Downgrade to other product" carries a second-level target; report the
+        // specific target as changeType so downstream keeps the old granularity.
+        changeType: formData.downgradeTarget || formData.requestType || '',
+        requestType: formData.requestType || '',
+        downgradeTarget: formData.downgradeTarget || '',
         email: formData.emailAddress || '',
         shopName: formData.shopName || '',
         mondayProjectId: formData.mondayProjectId || '',
@@ -446,7 +325,7 @@ function saveToDB(payload, result, cmdSubmit) {
 function validateForm() {
     let isValid = true;
     const requestType    = $('input[name="requestType"]:checked').val();
-    const isDowngradePkg = (requestType === 'Downgrade to other package');
+    const isDowngradePkg = (requestType === 'Downgrade to other product');
 
     // Always required text fields
     ['shopName', 'address', 'contactPerson', 'emailAddress', 'mobileNumber'].forEach(id => {
@@ -467,6 +346,15 @@ function validateForm() {
     } else {
         const errEl = document.getElementById('requestTypeError');
         if (errEl) errEl.style.display = 'none';
+    }
+
+    // Downgrade target (second level) required when downgrading to another product
+    const tgtErrEl = document.getElementById('downgradeTargetError');
+    if (isDowngradePkg && !$('input[name="downgradeTarget"]:checked').val()) {
+        if (tgtErrEl) { tgtErrEl.style.display = ''; tgtErrEl.textContent = 'Please select a product to downgrade to.'; }
+        isValid = false;
+    } else if (tgtErrEl) {
+        tgtErrEl.style.display = 'none';
     }
 
     // Effective date
@@ -493,29 +381,6 @@ function validateForm() {
     } else {
         const errEl = document.getElementById('contactPreferenceError');
         if (errEl) errEl.style.display = 'none';
-    }
-
-    // Downgrade package — product selects
-    if (isDowngradePkg) {
-        // originalProduct: hidden input (staff) or select (customer)
-        const origEl = document.getElementById('originalProduct');
-        const origList = document.getElementById('originalProductList');
-        if (origEl && !origEl.value) {
-            if (origList) origList.classList.add('is-invalid');
-            else origEl.classList.add('is-invalid');
-            isValid = false;
-        } else if (origEl) {
-            if (origList) origList.classList.remove('is-invalid');
-            else origEl.classList.remove('is-invalid');
-        }
-
-        const newEl = document.getElementById('newProduct');
-        if (newEl && !newEl.value) {
-            newEl.classList.add('is-invalid');
-            isValid = false;
-        } else if (newEl) {
-            newEl.classList.remove('is-invalid');
-        }
     }
 
     if (!isValid) {
@@ -565,22 +430,8 @@ function applyTestAutofill() {
     $('#boardId').val('1943203205'); // TH project board
 
     // Request Type
-    $('#reqOtherPackage').prop('checked', true).trigger('change');
-
-    // Current Product: staff mode = hidden input + list; customer mode = select
-    if ($('#originalProductList').length) {
-        $('#originalProduct').val('Pro - Local Growth');
-        $('#originalProductList').html(`
-            <div class="subscription-item">
-                <i class="bi bi-check-circle-fill"></i>
-                <div><div class="sub-name">Pro - Local Growth (Test)</div></div>
-            </div>`);
-    } else {
-        $('#originalProduct').val('pro_growth').trigger('change');
-    }
-
-    // New Product
-    $('#newProduct').val('pro_starter').trigger('change');
+    $('#reqOtherProduct').prop('checked', true).trigger('change');
+    $('#tgtOrderingOnly').prop('checked', true).trigger('change');
 
     // Staff downgrade fields
     $('#contractPeriod').val('12 months');
@@ -604,8 +455,6 @@ function applyTestAutofill() {
     $('#feedbackComments').val('Test mode - feedback');
 
     // Star Ratings
-    $('#experienceRating').val('4');
-    setStarUI('experienceRatingWidget', 4, 'expRatingLabel');
     $('#overallRating').val('5');
     setStarUI('overallRatingWidget', 5, 'overallRatingLabel');
 
