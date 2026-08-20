@@ -642,6 +642,7 @@ $('#formCountry').change(function() {
       // domainHelpUS.hide();
   }
   optionState();
+  loadCouponOptions(); //the coupon lists depend on the country
 });
 
 //set selected Payment Method
@@ -758,6 +759,7 @@ $('#formType').change(function() {
   let findMassage = formData.formType.search("Massage");
   let tmpType = (findMassage>=0) ? "Massage" : "Restaurant"; //find exactly shop type
   $(".stripeFee").html(settings.PaymentFee[formData.formCountry][tmpType]); //set stripe fee value for shop type
+  loadCouponOptions(); //the coupon lists depend on the shop type
 });
 
 //Generate all state options from selected country
@@ -1456,11 +1458,57 @@ const loadCouponObject = () => {
   });
 }//loadCouponObject
 
+//Read one group ("Main" or "Addons") out of the coupon JSON
+function couponGroup(group) {
+  const list = (couponObjectList && couponObjectList.Coupon) ? couponObjectList.Coupon : {};
+  return (typeof list[group] !== "undefined") ? list[group] : {};
+}//couponGroup
+
+//Find the discount object of one coupon code for this shop type + country, or undefined when it is not offered there
+function couponDiscountObject(group, code, formTypeJsonKey, country) {
+  const byCode = couponGroup(group)[code];
+  if (typeof byCode === "undefined") { return undefined; }
+  const byType = byCode[formTypeJsonKey];
+  if (typeof byType === "undefined") { return undefined; }
+  return byType[country];
+}//couponDiscountObject
+
+//Build the <option> list of every coupon in a group that is offered for this shop type + country
+function couponOptionsHtml(couponList, formTypeJsonKey, country) {
+  let options = "";
+  Object.keys(couponList).forEach(function(code) {
+    const byType = couponList[code][formTypeJsonKey];
+    if (typeof byType === "undefined") { return; }
+    if (typeof byType[country] === "undefined") { return; }
+    options += '<option value="' + code + '">' + code + '</option>';
+  });
+  return options;
+}//couponOptionsHtml
+
+//Build the coupon dropdown lists for the country/shop type that was chosen in the earlier steps.
+function loadCouponOptions() {
+  if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
+
+  const country = formData.formCountry;
+  const formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
+  const mainSelect = $("#couponCode");
+  const addonSelect = $("#couponCode2");
+  const blankOption = '<option value="">-- No coupon --</option>';
+
+  //Both lists come from assets/API/couponCode.json, keeping only the codes that exist for this country + shop type
+  mainSelect.html(blankOption + couponOptionsHtml(couponGroup("Main"), formTypeJsonKey, country)).val("");
+  addonSelect.html(blankOption + couponOptionsHtml(couponGroup("Addons"), formTypeJsonKey, country)).val("");
+
+  //nothing is selected any more, so both lists are usable again and no discount is left over
+  mainSelect.removeAttr('disabled');
+  addonSelect.removeAttr('disabled');
+  applyCoupon();
+}//loadCouponOptions
+
 function applyCoupon() {
   if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
   const objCode = $("#couponCode");
-  let inputCode = objCode.val().trim().toUpperCase();
-  objCode.val(inputCode);
+  let inputCode = (objCode.val() || "").trim().toUpperCase();
   const discountAmount = $("#discountAmount");
   const discountNumber = $("#discountNumber");
   const couponCurrency = $(".couponCurrency");
@@ -1472,7 +1520,6 @@ function applyCoupon() {
   //formData.formCountry << AU NZ CA UK US
   let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
 
-  let Settings_Coupon_Obj = settings.Payment_Detail.coupon_Code[formData.formCountry];
   let discountValue = 0;
   let gstDecimal = 0;
 
@@ -1490,15 +1537,11 @@ function applyCoupon() {
     $("#couponCode2").attr('disabled', 'disabled');
   }
 
-  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB", "PARTNER96", "PARTNER98", "PARTNER195", "PARTNER198", "PARTNER246", "PARTNER268", "PARTNER118","PARTNER298","PARTNER368","ONCE108","ONCE158","ONCE198","ONCE246","ONCE268","ONCE348","AIUS","ARAYAAI","AMELIA"]);
-
-
-  inputCode = inputCode.toUpperCase();
-  const foundCoupon = availableCoupon.has(inputCode)
+  //the options are built from couponCode.json, so the list itself is the whitelist
+  const foundCoupon = typeof couponGroup("Main")[inputCode] !== "undefined";
 
   if(foundCoupon) {
-    let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
-    let discountObject = discountList[formData.formCountry];
+    let discountObject = couponDiscountObject("Main", inputCode, formTypeJsonKey, formData.formCountry);
 
     if (typeof discountObject !== "undefined") { //Check if this coupon code is available in your settings list.
       discountFlag = true;
@@ -1523,10 +1566,9 @@ function applyCoupon() {
 }//function applyCoupon
 
 function applyCoupon2() {
-
+  if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
   const objCode = $("#couponCode2");
-  let inputCode = objCode.val().trim().toUpperCase();
-  objCode.val(inputCode);
+  let inputCode = (objCode.val() || "").trim().toUpperCase();
   const discountAmount = $("#discountAmount");
   const discountNumber = $("#discountNumber");
   const couponCurrency = $(".couponCurrency");
@@ -1535,7 +1577,7 @@ function applyCoupon2() {
 
   let discountFlag = false;
   let cal = 0;
-  let Settings_Coupon_Obj = settings.Payment_Detail.coupon_Code[formData.formCountry];
+  let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
   let discountValue = 0;
   let gstDecimal = 0;
 
@@ -1553,9 +1595,10 @@ function applyCoupon2() {
     $("#couponCode").attr('disabled', 'disabled');
   }
 
-  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in a setting list
+  const discountObject = couponDiscountObject("Addons", inputCode, formTypeJsonKey, formData.formCountry);
+  if (typeof discountObject !== "undefined") { //check this coupon code is exist in the Addons list of the coupon JSON
     discountFlag = true;
-    discountValue =  Settings_Coupon_Obj[inputCode].discount; //get the discount value of this coupon
+    discountValue = discountObject.discount; //get the discount value of this coupon
   }
   //
 

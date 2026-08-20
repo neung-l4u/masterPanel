@@ -726,16 +726,14 @@ function requestToPay() {
     /////
     if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
     const objCode = $("#couponCode");
-    let inputCode = objCode.val().trim().toUpperCase();
+    let inputCode = (objCode.val() || "").trim().toUpperCase();
     let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
-    let textDiscount2 = couponCode2.val().trim().toUpperCase();
+    let textDiscount2 = (couponCode2.val() || "").trim().toUpperCase();
     let Payment_Coupon_Obj = {};
     let Payment_Coupon_Obj2 = {};
 
-    try { //try to create discountList form JSON file *this will error if nothing filled in the main coupon code field
-        let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
-        let discountObject = discountList[formData.formCountry];
-        let textDiscount = couponCode.val().trim().toUpperCase();
+    try { //try to read the Main coupon from the JSON file *this will error if nothing was selected in the main coupon field
+        let discountObject = couponObjectList.Coupon.Main[inputCode][formTypeJsonKey][formData.formCountry];
         Payment_Coupon_Obj = discountObject;
         Payment_Coupon_Obj2 = discountObject;
     } catch (error) {
@@ -774,13 +772,13 @@ function requestToPay() {
 
     let addOnDiscountCode = {};
     let materialDiscountCode = (formCountry==="US" || formCountry==="CA" || formCountry==="TH") ? "" : "";
-    let freewebDiscountCode = "Freeweb";
 
-    let applyAddonCode = "";
-    if (textDiscount2 === "FREEWEB"){
-        applyAddonCode = freewebDiscountCode;
-    }else{
-        applyAddonCode = materialDiscountCode;
+    //the Addon coupon code comes from the Addons group of the JSON file
+    let applyAddonCode = materialDiscountCode;
+    try {
+        applyAddonCode = couponObjectList.Coupon.Addons[textDiscount2][formTypeJsonKey][formCountry].code;
+    } catch (error) {
+        applyAddonCode = materialDiscountCode; //no addon coupon selected, or it is not offered for this country
     }
 
     let addonArray = cloneCart["add_on"];
@@ -1080,16 +1078,28 @@ const sendMailToL4UTeam = () => {
     let checkProduct = $("input[name='product']:checked").val();
     let toTeam = "";
 
+    //ดูจากชื่อสินค้าหลักว่ามีของทีมไหนอยู่บ้าง  CS = ทีม CS, AM = ทีม AC, All = ทั้งสองทีม
+    //เทียบจากต้นคำ (\b) เพื่อให้ "YelpBoost Pro" เข้าคำว่า Yelp และ "Booking+ Social" เข้าคำว่า Booking ได้
+    //ส่วน Pro กับ Local ต้องตรงทั้งคำ กัน "Promotions Add-on" กับ "Localforyou Booking System" เข้าผิดทีม
+    const csKeyword = [/\bPro\b/i, /\bBooking/i, /\bPOS\b/i, /\bPrinter/i ,/\bMassage AI\b/i];
+    const acKeyword = [/\bSocial/i, /\bVisibility/i, /\bLocal\b/i, /\bYelp/i];
+
     if(!checkProduct){
         toTeam = "All";
-    }else if(checkProduct.includes("Bundle")){
-        toTeam = "All";
-    }else if(checkProduct.includes("Solo") || checkProduct.includes("Yelp")){
-        toTeam = "AM";
-    }else if(checkProduct.includes("System")){
-        toTeam = "CS";
     }else{
-        toTeam = "All";
+        let isAC = acKeyword.some(word => word.test(checkProduct));
+        //"YelpBoost Pro" เป็นสินค้าของทีม AC ล้วน คำว่า Pro ในชื่อไม่ได้แปลว่าเป็นงานของทีม CS
+        let isCS = !/\bYelp/i.test(checkProduct) && csKeyword.some(word => word.test(checkProduct));
+
+        if(isCS && isAC){
+            toTeam = "All";
+        }else if(isCS){
+            toTeam = "CS";
+        }else if(isAC){
+            toTeam = "AM";
+        }else{
+            toTeam = "All";
+        }
     }
 
     console.log(toTeam);

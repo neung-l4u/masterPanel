@@ -8,8 +8,8 @@
 <meta http-equiv="Expires" content="0">
 
 <link rel="stylesheet" href="assets/css/bootstrap.5.2.3.min.css">
-<link rel='stylesheet' href='assets/css/FontAwesomeFree.5.15.2.all.min.css'>
+<link rel='stylesheet' href='assets/css/FontAwesomeFree.6.5.2.all.min.css?v=6.5.2'>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="assets/css/defaultForm.css?v=2.0.1">
+<link rel="stylesheet" href="assets/css/defaultForm.css?v=2.0.2">
 <link rel="stylesheet" href="assets/css/tooltips.css">
 <script src="assets/js/FontAwesomeKitConfig.js?v=2.0.1"></script>

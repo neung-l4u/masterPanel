@@ -2007,17 +2007,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <div class="col">
                                                         <div class="d-flex flex-row align-items-center">
                                                             <span class="input-group pe-2">
-                                                             <span class="input-group-text">#</span>
-                                                             <input
-                                                                     type="text"
-                                                                     class="form-control"
+                                                             <select
+                                                                     class="form-select"
                                                                      id="couponCode"
                                                                      name="couponCode"
-                                                                     maxlength="30"
-                                                                     autocomplete="off"
-                                                                     placeholder="1trial"
-                                                                     onkeyup="applyCoupon();"
-                                                             />
+                                                                     onchange="applyCoupon();"
+                                                             >
+                                                                 <option value="">-- No coupon --</option>
+                                                             </select>
                                                              </span>
 <!--                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">-->
 <!--                                                                <i class="fa-solid fa-magnifying-glass"></i>-->
@@ -2034,17 +2031,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <div class="col">
                                                         <div class="d-flex flex-row align-items-center">
                                                             <span class="input-group pe-2">
-                                                             <span class="input-group-text">#</span>
-                                                             <input
-                                                                     type="text"
-                                                                     class="form-control"
+                                                             <select
+                                                                     class="form-select"
                                                                      id="couponCode2"
                                                                      name="couponCode2"
-                                                                     maxlength="30"
-                                                                     autocomplete="off"
-                                                                     placeholder="freeweb"
-                                                                     onkeyup="applyCoupon2();"
-                                                             />
+                                                                     onchange="applyCoupon2();"
+                                                             >
+                                                                 <option value="">-- No coupon --</option>
+                                                             </select>
                                                              </span>
 <!--                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">-->
 <!--                                                                <i class="fa-solid fa-magnifying-glass"></i>-->
