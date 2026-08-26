@@ -1,12 +1,3 @@
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-LGKDYHL23T"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-LGKDYHL23T');
-</script>
 <?php
 global $db, $topData, $topDate;
 require_once "../assets/db/db.php";
@@ -245,11 +236,40 @@ if ($project['hostingHave'] == 0){
     $topData .= '</table><br>';
 }
 
+// The on-screen view renders the Elementor download form; the email body
+// (act=sendProject) keeps using the plain $topData tables above.
+$renderer = null;
+$templateFolder = null;
+$placeholderLabels = array(
+    'shopName'      => 'Shop Name',
+    'city'          => 'City',
+    'localtion'     => 'Location',
+    'phone'         => 'Phone',
+    'email'         => 'Email',
+    'opening'       => 'Opening Hours',
+    'mapLink'       => 'Map Link',
+    'ggReview'      => 'Google Review Link',
+    'writeUsReview' => 'Write Us A Review',
+    'facebook'      => 'Facebook',
+    'instagram'     => 'Instagram',
+    'order'         => 'Order URL',
+    'table'         => 'Table URL',
+);
+
+if ($act != "sendProject") {
+    require_once "../assets/php/ElementorTemplateRenderer.php";
+
+    $renderer = new ElementorTemplateRenderer();
+    $renderer->setProjectData($project, $json, $openingHours);
+    $templateFolder = $renderer->resolveTemplateFolder($project['shopType'], $project['selectedTemplate']);
+}
+
 if ($act == "sendProject") {
     $linkDetails = '<a href="https://report.localforyou.com/pages/tpSubmittedDetails.php?act=readProject&projectID='.$id.'">Click to View Template Submission Details</a>';
     $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr>'.$linkDetails.'</body></html>';
-} else {
-    $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'. $prettyJson .'</pre></body></html>';
+    echo $message;
+    return;
 }
 
-echo $message;
+// Browser view: compact dashboard layout instead of the stacked email tables.
+include __DIR__ . '/tpSubmittedView.php';

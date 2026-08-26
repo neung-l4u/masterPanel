@@ -19,6 +19,7 @@ $data['projectName'] = !empty($_POST['projectName']) ? trim($_POST['projectName'
 $data['email'] = !empty($_POST['email']) ? trim($_POST['email']) : null;
 $data['phone'] = !empty($_POST['phone']) ? trim($_POST['phone']) : null;
 $data['address'] = !empty($_POST['address']) ? trim($_POST['address']) : null;
+$data['city'] = !empty($_POST['city']) ? trim($_POST['city']) : null;
 $data['logo'] = !empty($_POST['logo']) ? $_POST['logo'] : getRandomPic($data['shopType'],'logo');
 $data['colorTheme1'] = !empty($_POST['colorTheme1']) ? $_POST['colorTheme1'] : null;
 $data['colorTheme2'] = !empty($_POST['colorTheme2']) ? $_POST['colorTheme2'] : null;
@@ -91,7 +92,7 @@ if (!empty($_POST['customDeliChk']) && $_POST['customDeliChk'] === 'true') {
 
 if ($data['mode'] ==  "save") {
     $select = $db->query('UPDATE `tb_project` SET 
-        `projectCode`=?, `saveFlag`=?, `email`=?, `phone`=?, `address`=?, `openingCustom`=?, `openingHours`=?, 
+        `projectCode`=?, `saveFlag`=?, `email`=?, `phone`=?, `address`=?, `city`=?, `openingCustom`=?, `openingHours`=?, 
         `deliveryCustom`=?, `pickupAndDelivery`=?, `logo`=?, `colorTheme1`=?, `colorTheme2`=?, 
         `colorTheme3`=?, `domainName`=?, `domainHave`=?, `domainProvidersID`=?, `domainUser`=?, 
         `domainPass`=?, `hostingName`=?, `hostingHave`=?, `hostingProvidersID`=?, `hostingUser`=?, 
@@ -104,6 +105,7 @@ if ($data['mode'] ==  "save") {
         $data['email'],
         $data['phone'],
         $data['address'],
+        $data['city'],
         $data['openingCustom'],
         $data['openingHours'],
         $data['deliveryCustom'],

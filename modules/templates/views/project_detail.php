@@ -165,6 +165,15 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <label for="bsCity" class="input-group-text" id="basic-addon-city">City</label>
+                        <input type="text" class="form-control" id="bsCity" maxlength="100" placeholder="Sydney" value="<?php echo $row['city'] ?? ''; ?>">
+                    </div>
+                </div>
+            </div>
+
             <div class="row mb-3">
                 <div class="col">
                     <div class="row">
@@ -579,6 +588,7 @@ $socials = [
     const inputEmail = $("#bsEmail");
     const inputPhone = $("#bsPhone");
     const inputAddress = $("#bsAddress");
+    const inputCity = $("#bsCity");
     const dayOpenChk = $("#7dayOpenChk");
     const customOpenChk = $("#customOpenChk");
     const inputSunOpen = $("#sunday-open");
@@ -643,6 +653,7 @@ $socials = [
             email: inputEmail.val(),
             phone: inputPhone.val(),
             address: inputAddress.val(),
+            city: inputCity.val(),
             dayOpenChk: dayOpenChk.prop("checked"),
             customOpenChk: customOpenChk.prop("checked"),
             sunOpen: inputSunOpen.val(),

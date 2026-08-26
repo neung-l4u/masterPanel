@@ -80,6 +80,84 @@ $password = "Localeats#".date("Y");
     div.dataTables_wrapper div.dataTables_length select {
         width: 100%;
     }
+
+    /* Save progress steps */
+    .save-progress {
+        font-size: 0.8rem;
+        text-align: left;
+    }
+    .save-step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 2px 0;
+        color: #adb5bd;
+        transition: color .3s ease;
+    }
+    .save-step-icon {
+        flex: 0 0 14px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid currentColor;
+        position: relative;
+    }
+    .save-step.is-running {
+        color: #007bff;
+    }
+    .save-step.is-running .save-step-icon {
+        border-color: #007bff;
+        border-top-color: transparent;
+        animation: saveStepSpin .7s linear infinite;
+    }
+    .save-step.is-done {
+        color: #28a745;
+    }
+    .save-step.is-done .save-step-icon {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    .save-step.is-done .save-step-icon::after {
+        content: '';
+        position: absolute;
+        left: 3px;
+        top: 0;
+        width: 3px;
+        height: 7px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+    .save-step.is-failed {
+        color: #dc3545;
+    }
+    .save-step.is-failed .save-step-icon {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+    .save-step.is-failed .save-step-icon::after {
+        content: '!';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -3px;
+        color: #fff;
+        font-size: 10px;
+        font-weight: bold;
+        line-height: 14px;
+        text-align: center;
+    }
+    .save-step.is-skipped {
+        color: #ffc107;
+    }
+    .save-step-detail {
+        display: block;
+        font-size: 0.7rem;
+        color: #6c757d;
+    }
+    @keyframes saveStepSpin {
+        to { transform: rotate(360deg); }
+    }
 </style>
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
@@ -204,6 +282,14 @@ $password = "Localeats#".date("Y");
                                     </select>
                                 </select>
                             </div>
+                            <div class="filterCol">
+                                <label for="filterProjectLink" class="form-label filterLabel">Project link</label>
+                                <select class="form-select filterSelect" id="filterProjectLink" onchange="filterChange()" aria-label="Default select example">
+                                    <option value="" selected>All</option>
+                                    <option value="linked">Linked to a template submission</option>
+                                    <option value="unlinked">Not linked yet</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -219,7 +305,7 @@ $password = "Localeats#".date("Y");
                                     <th >URL</th>
                                     <th width="16%">Server</th>
                                     <th width="7%">Status</th>
-                                    <th width="7%"></th>
+                                    <th width="12%"></th>
                                 </tr>
                                 </thead>
                             </table>
@@ -280,7 +366,13 @@ $password = "Localeats#".date("Y");
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="inputDomain">Domain</label>
-                                        <input type="text" class="form-control" id="inputDomain" maxlength="255" placeholder="e.g. www.hoonhaythaimassage.com">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="inputDomain" maxlength="255" placeholder="e.g. www.hoonhaythaimassage.com">
+                                            <button class="btn btn-outline-primary" type="button" id="btnUpdateDomain" onclick="updateDomain()" title="Apply this domain to the cPanel account and WordPress" style="display:none;">
+                                                <i class="bi bi-arrow-repeat"></i> Update
+                                            </button>
+                                        </div>
+                                        <small class="text-muted" id="inputDomainHint" style="display:none;">Updates the cPanel account domain and the WordPress site URL</small>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputDomainProvider">Domain Provider</label>
@@ -360,22 +452,34 @@ $password = "Localeats#".date("Y");
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="inputCPanelUser">CPanel User</label>
-                                        <input type="text" class="form-control" id="inputCPanelUser" placeholder="Hoonhay">
+                                        <input type="text" class="form-control" id="inputCPanelUser" maxlength="16" placeholder="hoonhay">
+                                        <small class="text-muted"><span id="inputCPanelUserCount">0</span>/16 &mdash; WHM limit, lowercase letters and digits only</small>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputCPanelPass">CPanel Pass</label>
-                                        <input type="text" class="form-control" id="inputCPanelPass" placeholder="bXWR8r&8Vb">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="inputCPanelPass" placeholder="bXWR8r&8Vb">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="generatePassword('inputCPanelPass')" title="Generate a secure password">
+                                                <i class="bi bi-shuffle"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="inputWordpressUser">Wordpress User</label>
-                                        <input type="text" class="form-control" id="inputWordpressUser" placeholder="Hoonhay">
+                                        <input type="text" class="form-control" id="inputWordpressUser" placeholder="hoonhay">
+                                        <small class="text-muted">Kept in step with the cPanel user</small>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputWordpressPass">Wordpress Pass</label>
-                                        <input type="text" class="form-control" id="inputWordpressPass" placeholder="99U@VFe~Ypm+">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="inputWordpressPass" placeholder="99U@VFe~Ypm+">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="generatePassword('inputWordpressPass')" title="Generate a secure password">
+                                                <i class="bi bi-shuffle"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -452,9 +556,30 @@ $password = "Localeats#".date("Y");
 
                     </div> <!-- modal-body -->
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="newModalFormAction('close')">Close</button>
-                        <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit">Save changes</button>
+                    <div class="modal-footer flex-column align-items-stretch">
+                        <div id="saveProgress" class="save-progress w-100 mb-2" style="display:none;">
+                            <div class="progress mb-2" style="height:4px;">
+                                <div id="saveProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:0%;"></div>
+                            </div>
+                            <ul class="list-unstyled mb-0" id="saveProgressSteps">
+                                <li class="save-step" data-step="db">
+                                    <span class="save-step-icon"></span>
+                                    <span class="save-step-label">Saving website record</span>
+                                </li>
+                                <li class="save-step" data-step="cpanel">
+                                    <span class="save-step-icon"></span>
+                                    <span class="save-step-label">Creating cPanel account on WHM</span>
+                                </li>
+                                <li class="save-step" data-step="wordpress">
+                                    <span class="save-step-icon"></span>
+                                    <span class="save-step-label">Installing WordPress</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="newModalFormAction('close')">Close</button>
+                            <button onclick="formSave();" type="button" class="btn btn-primary" name="cmdSubmit" id="cmdSubmit">Save changes</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -725,6 +850,47 @@ $password = "Localeats#".date("Y");
         $("#inputOtherCount").text(len);
     });
 
+    // cPanel usernames are capped at 16 chars and must be lowercase alphanumeric
+    inputCPanelUser.on('input', function() {
+        const cleaned = $(this).val().toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 16);
+        if ($(this).val() !== cleaned) {
+            $(this).val(cleaned);
+        }
+        $("#inputCPanelUserCount").text(cleaned.length);
+        // WordPress logs in with the same account name
+        inputWordpressUser.val(cleaned);
+    });
+
+    // Password the provisioning APIs will accept: mixed case, digits and
+    // punctuation that survives being passed through a URL query string.
+    const generatePassword = (targetID) => {
+        const sets = [
+            "abcdefghijkmnopqrstuvwxyz",
+            "ABCDEFGHJKLMNPQRSTUVWXYZ",
+            "23456789",
+            "!@#$%^*_-+="
+        ];
+        const all = sets.join('');
+        const bytes = new Uint32Array(20);
+        window.crypto.getRandomValues(bytes);
+
+        // Guarantee one character from each set, then fill the rest
+        let chars = sets.map((set, i) => set[bytes[i] % set.length]);
+        for (let i = sets.length; i < 20; i++) {
+            chars.push(all[bytes[i] % all.length]);
+        }
+
+        // Shuffle so the guaranteed characters are not always at the front
+        const order = new Uint32Array(chars.length);
+        window.crypto.getRandomValues(order);
+        for (let i = chars.length - 1; i > 0; i--) {
+            const j = order[i] % (i + 1);
+            [chars[i], chars[j]] = [chars[j], chars[i]];
+        }
+
+        $("#" + targetID).val(chars.join('')).trigger('input');
+    }//generatePassword
+
     // Modal Form Detail
     const ProjectName = $("#wProject");
     const Location = $("#wLocation");
@@ -756,6 +922,7 @@ $password = "Localeats#".date("Y");
     const filterTemplate = $("#filterTemplate");
     const filterCountry = $("#filterCountry");
     const filterServer = $("#filterServer");
+    const filterProjectLink = $("#filterProjectLink");
 
     const newModalForm = new bootstrap.Modal(document.getElementById("formModal"), {});
 
@@ -773,7 +940,18 @@ $password = "Localeats#".date("Y");
     let iconCopy = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>';
     let iconLink = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"/><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"/></svg>';
 
+    const cmdSubmit = $("#cmdSubmit");
+
+    // The domain update only makes sense once the site has been provisioned
+    function toggleDomainUpdate(show) {
+        $("#btnUpdateDomain").toggle(show);
+        $("#inputDomainHint").toggle(show);
+    }
+
     function openFormModal() {
+        toggleDomainUpdate(false);
+        $("#saveProgress").hide();
+        cmdSubmit.prop("disabled", false);
         newModalForm.show();
     }
 
@@ -867,6 +1045,7 @@ $password = "Localeats#".date("Y");
             inputTemplate.val(res.wTemplateUsed).prop("selected", true);
             inputServer.val(res.wServerID);
             inputCPanelUser.val(res.wCPanelUser);
+            $("#inputCPanelUserCount").text((res.wCPanelUser || '').length);
             inputCPanelPass.val(res.wCPanelPass);
             inputWordpressUser.val(res.wWordpressUser);
             inputWordpressPass.val(res.wWordpressPass);
@@ -896,6 +1075,8 @@ $password = "Localeats#".date("Y");
             }
             editID.val(res.id);
             formAction.val("edit");
+            // Only a provisioned site has a cPanel account to move
+            toggleDomainUpdate(!!res.wCPanelUser);
             newModalFormAction("open");
         });
 
@@ -941,28 +1122,127 @@ $password = "Localeats#".date("Y");
             };
 
             console.log("payload=",payload);
-            
+
+        const isAdd = formAction.val() === 'add';
+
+        progressStart(isAdd);
+        cmdSubmit.prop("disabled", true);
+
         const reqAjax = $.ajax({
             url: "assets/php/actionWebsiteList.php",
             method: "POST",
-            async: false,
             cache: false,
             dataType: "json",
             data: payload
         });
-            
+
         reqAjax.done(function (res) {
             console.log(res);
-            resetForm();
-            newModalFormAction("close");
+            progressFinish(res, isAdd);
         });
 
         reqAjax.fail(function (xhr, status, error) {
             console.log("ajax save fail!!");
             console.log(status + ": " + error);
+            progressStepState("db", "failed", status + ": " + error);
+            cmdSubmit.prop("disabled", false);
         });
-        
+
     }//formSave
+
+    // ---- Save progress panel -------------------------------------------------
+
+    const progressStepState = (step, state, detail) => {
+        const $step = $('.save-step[data-step="' + step + '"]');
+        $step.removeClass("is-running is-done is-failed is-skipped").addClass("is-" + state);
+        $step.find(".save-step-detail").remove();
+        if (detail) {
+            $step.append('<span class="save-step-detail"></span>');
+            $step.find(".save-step-detail").text(detail);
+        }
+    }//progressStepState
+
+    const progressBar = (percent) => {
+        $("#saveProgressBar").css("width", percent + "%");
+    }//progressBar
+
+    // Reset the panel and show the first step as running
+    const progressStart = (isAdd) => {
+        $(".save-step").removeClass("is-running is-done is-failed is-skipped");
+        $(".save-step-detail").remove();
+        $('.save-step[data-step="cpanel"]').toggle(isAdd);
+        $('.save-step[data-step="wordpress"]').toggle(isAdd);
+        $("#saveProgressBar").removeClass("bg-danger bg-warning bg-success");
+        progressBar(10);
+        $("#saveProgress").show();
+        progressStepState("db", "running");
+    }//progressStart
+
+    // Walk the panel through the server's reported outcome, then close the modal
+    const progressFinish = (res, isAdd) => {
+        progressStepState("db", "done", isAdd ? "Website record #" + res.insertedID + " created" : "Website record updated");
+        progressBar(isAdd ? 45 : 100);
+
+        if (!isAdd) {
+            finishAndClose(600);
+            return;
+        }
+
+        progressStepState("cpanel", "running");
+
+        // Small delay so the step change is visible rather than instant
+        setTimeout(function () {
+            const whm = res.whm;
+
+            if (!whm) {
+                progressStepState("cpanel", "skipped", "No result returned from the server");
+            } else if (whm.success) {
+                progressStepState("cpanel", "done", whm.username + " @ " + whm.domain);
+            } else if (whm.attempted) {
+                progressStepState("cpanel", "failed", whm.message);
+                $("#saveProgressBar").addClass("bg-danger");
+            } else {
+                progressStepState("cpanel", "skipped", whm.message);
+                $("#saveProgressBar").addClass("bg-warning");
+            }
+
+            progressBar(75);
+
+            const wp = res.wordpress;
+
+            if (!wp) {
+                progressStepState("wordpress", "skipped", "No result returned from the server");
+            } else if (wp.success) {
+                progressStepState("wordpress", "done", wp.adminUrl);
+            } else if (wp.attempted) {
+                progressStepState("wordpress", "failed", wp.message);
+                $("#saveProgressBar").addClass("bg-danger");
+            } else {
+                progressStepState("wordpress", "skipped", wp.message);
+            }
+
+            progressBar(100);
+
+            // Leave failures on screen until the user closes the modal
+            const cpanelFailed = whm && whm.attempted && !whm.success;
+            const wpFailed = wp && wp.attempted && !wp.success;
+            if (cpanelFailed || wpFailed) {
+                cmdSubmit.prop("disabled", false);
+                reloadTable_bs5();
+            } else {
+                finishAndClose(1500);
+            }
+        }, 500);
+    }//progressFinish
+
+    const finishAndClose = (delay) => {
+        setTimeout(function () {
+            cmdSubmit.prop("disabled", false);
+            $("#saveProgress").hide();
+            resetForm();
+            newModalFormAction("close");
+        }, delay);
+    }//finishAndClose
 
     const resetForm = () => {
         inputProject.val('');
@@ -978,6 +1258,7 @@ $password = "Localeats#".date("Y");
         inputTemplate.val('');
         inputServer.val('');
         inputCPanelUser.val('');
+        $("#inputCPanelUserCount").text('0');
         inputCPanelPass.val('');
         inputWordpressUser.val('');
         inputWordpressPass.val('');
@@ -999,8 +1280,109 @@ $password = "Localeats#".date("Y");
         $("#inputOtherCount").text('0');
         editID.val('');
         formAction.val('add');
+        toggleDomainUpdate(false);
         reloadTable_bs5();
     }//resetForm
+
+    // Apply the domain in the form to the live cPanel account and WordPress install.
+    const updateDomain = () => {
+        const wID = editID.val();
+        const newDomain = inputDomain.val().trim();
+
+        if (!wID) {
+            alert("Save the website first, then update its domain.");
+            return;
+        }
+
+        if (newDomain === "") {
+            alert("Enter the new domain first.");
+            return;
+        }
+
+        const answer = confirm(
+            "This changes the live site, not just this record.\n\n" +
+            "The cPanel account's primary domain and the WordPress site URL will both be set to:\n\n" +
+            "    " + newDomain + "\n\n" +
+            "Continue?"
+        );
+
+        if (!answer) return;
+
+        const $btn = $("#btnUpdateDomain");
+        const originalHtml = $btn.html();
+        $btn.prop("disabled", true).html('<i class="bi bi-hourglass-split"></i> Updating');
+
+        $.ajax({
+            url: "assets/php/actionWebsiteList.php",
+            method: "POST",
+            cache: false,
+            dataType: "json",
+            data: {
+                act: "updateDomain",
+                id: wID,
+                newDomain: newDomain
+            }
+        }).done(function (res) {
+            console.log(res);
+            if (res.success) {
+                alert("Domain updated.\n\n" + res.message);
+                reloadTable_bs5();
+            } else {
+                alert("Domain was not fully updated.\n\n" + (res.message || "Unknown error."));
+            }
+        }).fail(function (xhr, status, error) {
+            console.log("ajax updateDomain fail!!");
+            console.log(status + ": " + error);
+            alert("Domain update failed.\n\n" + status + ": " + error);
+        }).always(function () {
+            $btn.prop("disabled", false).html(originalHtml);
+        });
+    }//updateDomain
+
+    // Ask WHM for a one-time cPanel session URL and open it, either on the
+    // account home or straight on phpMyAdmin.
+    // The tab is opened up front so the browser does not treat it as a popup,
+    // then redirected once WHM answers.
+    const openCpanel = (wID, el, target) => {
+        const label = target === "phpmyadmin" ? "phpMyAdmin" : "cPanel";
+        const tab = window.open('', '_blank');
+        const $icon = $(el).find('i');
+        const originalIcon = $icon.attr('class');
+        $icon.attr('class', 'bi bi-hourglass-split text-primary');
+
+        $.ajax({
+            url: "assets/php/actionWebsiteList.php",
+            method: "POST",
+            cache: false,
+            dataType: "json",
+            data: {
+                act: "cpanelLogin",
+                id: wID,
+                target: target || "cpanel"
+            }
+        }).done(function (res) {
+            console.log(res);
+            if (res.success && res.url) {
+                if (tab) {
+                    tab.location.href = res.url;
+                } else {
+                    window.open(res.url, '_blank');
+                }
+            } else {
+                if (tab) tab.close();
+                alert("Could not open " + label + ".\n\n" + (res.message || "Unknown error."));
+            }
+        }).fail(function (xhr, status, error) {
+            if (tab) tab.close();
+            console.log("ajax cpanelLogin fail!!");
+            console.log(status + ": " + error);
+            alert("Could not open " + label + ".\n\n" + status + ": " + error);
+        }).always(function () {
+            $icon.attr('class', originalIcon);
+        });
+
+        return false;
+    }//openCpanel
 
     const setDel = (delID) => {
 
@@ -1045,6 +1427,8 @@ $password = "Localeats#".date("Y");
     function newModalFormAction(action) {
         console.log("goNew = " + action);
         if (action === "open") {
+            $("#saveProgress").hide();
+            cmdSubmit.prop("disabled", false);
             newModalForm.show();
         } else {
             newModalForm.hide();
@@ -1063,6 +1447,7 @@ $password = "Localeats#".date("Y");
         filterTemplate.val('');
         filterCountry.val('');
         filterServer.val('');
+        filterProjectLink.val('');
         reloadTable_bs5();
     }
 
@@ -1088,6 +1473,7 @@ $password = "Localeats#".date("Y");
                     d.template  = $("#filterTemplate").val();
                     d.country   = $("#filterCountry").val();
                     d.server    = $("#filterServer").val();
+                    d.projectLink = $("#filterProjectLink").val();
                 }
             },
             columnDefs: [
