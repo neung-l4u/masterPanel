@@ -85,7 +85,11 @@ function tpSchedule($html)
     }
 
     if ($matched === 0) {
-        return '<div class="v">' . nl2br(htmlspecialchars($text, ENT_QUOTES, 'UTF-8')) . '</div>';
+        // Free-text hours: still wrap it in a row so it picks up the same
+        // horizontal padding as the day-per-line version.
+        return '<div class="row"><span class="v">'
+            . nl2br(htmlspecialchars($text, ENT_QUOTES, 'UTF-8'))
+            . '</span></div>';
     }
 
     return $out;
@@ -126,22 +130,29 @@ foreach ($socialLinks as $url) {
     gtag('config', 'G-LGKDYHL23T');
 </script>
 <style>
-    /* Glassmorphism: a deep gradient-mesh ground with frosted panels floating
-       above it. Glass only reads as glass when there is something coloured
-       behind it, so the background does the heavy lifting. */
+    /* Bento: solid white cards floating on a saturated blue wash. The colour
+       lives entirely in the background - every panel stays white so the data
+       inside it reads cleanly. */
     :root {
-        --brand: #1359cc;
-        --brand-ink: #0b4bb8;
-        --ink: #0f1b33;
-        --muted: #4c5a78;
-        --line: rgba(19, 48, 99, 0.13);
-        --line-strong: rgba(19, 48, 99, 0.24);
-        --bg: #eaf2fd;
-        --accent: #b03806;
+        --brand: #0a66d6;
+        --brand-ink: #084ea8;
+        --ink: #1c1c1e;
+        --muted: #6b7180;
+        --line: #e8e9ed;
+        --line-strong: #d8dae0;
+        --bg: #3d8bf0;
+        --card: #ffffff;
+        --card-tint: #f6f8fc;
+        --accent: #c2410c;
         --accent-2: #6f5bd6;
-        --glass: rgba(255, 255, 255, 0.52);
-        --glass-hi: rgba(255, 255, 255, 0.72);
-        --radius: 18px;
+        --radius: 22px;
+        --radius-sm: 14px;
+        /* Soft, wide, low-opacity: the shadow of something light resting on
+           a coloured surface. */
+        --shadow: 0 10px 34px -12px rgba(12, 48, 110, 0.34),
+                  0 2px 8px -3px rgba(12, 48, 110, 0.16);
+        --shadow-lift: 0 20px 48px -14px rgba(12, 48, 110, 0.44),
+                       0 4px 12px -4px rgba(12, 48, 110, 0.2);
     }
 
     * { box-sizing: border-box; }
@@ -158,31 +169,19 @@ foreach ($socialLinks as $url) {
         -webkit-font-smoothing: antialiased;
     }
 
-    /* Gradient mesh: four wide colour pools that the glass samples from.
-       Fixed so the panels appear to slide over a still surface. */
+    /* A single blue wash, brighter towards the top left, with a soft light
+       source behind the content. Nothing textured: the cards supply all the
+       structure and the background just holds them. */
     body::before {
-        content: "";
-        position: fixed;
-        inset: -20%;
-        z-index: -2;
-        background:
-            radial-gradient(44% 40% at 16% 10%, rgba(96, 156, 255, 0.62), transparent 68%),
-            radial-gradient(40% 44% at 86% 18%, rgba(126, 200, 255, 0.58), transparent 66%),
-            radial-gradient(48% 42% at 76% 86%, rgba(150, 190, 255, 0.50), transparent 68%),
-            radial-gradient(42% 46% at 20% 80%, rgba(178, 214, 255, 0.55), transparent 66%);
-        filter: blur(20px);
-    }
-
-    /* Fine grain over the mesh so the gradients do not band. */
-    body::after {
         content: "";
         position: fixed;
         inset: 0;
         z-index: -1;
-        pointer-events: none;
-        opacity: 0.16;
-        mix-blend-mode: multiply;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+        background:
+            radial-gradient(120% 90% at 18% 4%, #79b4fb 0%, transparent 58%),
+            radial-gradient(110% 80% at 92% 22%, #4f97f4 0%, transparent 62%),
+            radial-gradient(120% 100% at 50% 108%, #2f6fd8 0%, transparent 66%),
+            linear-gradient(168deg, #4e9bf5 0%, #3d8bf0 46%, #2d76dd 100%);
     }
 
     .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px 72px; }
@@ -190,8 +189,8 @@ foreach ($socialLinks as $url) {
     /* One page-load reveal, staggered per card, rather than scattered
        micro-interactions. */
     @keyframes riseIn {
-        from { opacity: 0; transform: translateY(18px) scale(.985); filter: blur(6px); }
-        to   { opacity: 1; transform: none; filter: blur(0); }
+        from { opacity: 0; transform: translateY(16px) scale(.98); }
+        to   { opacity: 1; transform: none; }
     }
     @media (prefers-reduced-motion: no-preference) {
         .card {
@@ -208,40 +207,22 @@ foreach ($socialLinks as $url) {
         .card:nth-child(8) { animation-delay: .39s; }
     }
 
-    /* Masthead: a frosted bar the page scrolls beneath. */
+    /* Masthead: the page title sits directly on the blue, no bar behind it,
+       so the first white shape the eye meets is a card. */
     header.topbar {
-        position: sticky;
-        top: 0;
+        position: relative;
         z-index: 20;
-        background: rgba(255, 255, 255, 0.62);
-        backdrop-filter: blur(22px) saturate(165%);
-        -webkit-backdrop-filter: blur(22px) saturate(165%);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.7);
-        box-shadow: 0 1px 24px -8px rgba(21, 62, 130, 0.28);
-    }
-    /* A thin luminous seam along the bottom edge of the glass. */
-    .topbar::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: -1px;
-        height: 1px;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(19, 89, 204, 0.42) 22%,
-            rgba(111, 91, 214, 0.36) 55%,
-            rgba(224, 86, 42, 0.32) 78%,
-            transparent
-        );
+        /* A faint scrim so white text clears contrast over the lightest part
+           of the wash, without reading as a bar. */
+        background: linear-gradient(180deg, rgba(10, 46, 105, 0.28), transparent);
+        border: 0;
     }
     /* One line: a marker, the project name, and its metadata trailing
        behind it. Everything else lives in the cards below. */
     .topbar-inner {
         max-width: 1180px;
         margin: 0 auto;
-        padding: 14px 28px;
+        padding: 30px 28px 4px;
         display: flex;
         align-items: baseline;
         gap: 14px;
@@ -254,11 +235,10 @@ foreach ($socialLinks as $url) {
         flex: 0 0 auto;
     }
     .eyebrow .mark {
-        width: 7px;
-        height: 7px;
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
-        background: var(--accent);
-        box-shadow: 0 0 0 3px rgba(176, 56, 6, 0.16);
+        background: #ffffff;
         flex: 0 0 auto;
     }
     .eyebrow .no {
@@ -266,19 +246,21 @@ foreach ($socialLinks as $url) {
         font-size: 10px;
         letter-spacing: 0.14em;
         text-transform: uppercase;
-        color: var(--muted);
+        color: #ffffff;
     }
 
+    /* Everything in the masthead sits on the blue, so it is white. */
     .topbar h1 {
         margin: 0;
         font-family: "Poppins", Helvetica, sans-serif;
-        font-size: 19px;
+        font-size: 22px;
         font-weight: 600;
         line-height: 1.25;
         /* Poppins is geometric and already wide; it needs less negative
            tracking than a grotesque at the same size. */
         letter-spacing: -0.005em;
-        color: var(--ink);
+        color: #ffffff;
+        text-shadow: 0 1px 12px rgba(12, 48, 110, 0.28);
     }
 
     /* Metadata reads as quiet trailing text, not a table. */
@@ -290,11 +272,11 @@ foreach ($socialLinks as $url) {
         margin-left: auto;
         font-family: "Chivo Mono", ui-monospace, Consolas, monospace;
         font-size: 11px;
-        color: var(--muted);
+        color: #ffffff;
     }
     .meta-cell { min-width: 0; }
     .meta-cell .val { letter-spacing: 0; }
-    .meta-cell .accent { color: var(--accent); }
+    .meta-cell .accent { color: #ffe0b8; }
 
     /* Bento grid: a fixed four-column track so cards can claim their own
        width and height. Cards stretch to fill the row rather than sitting at
@@ -346,140 +328,107 @@ foreach ($socialLinks as $url) {
         .card.span2 .k { flex: none; }
     }
 
+    /* Solid white tiles with generous corners, resting on the blue. */
     .card {
         position: relative;
-        background: var(--glass);
-        backdrop-filter: blur(26px) saturate(160%);
-        -webkit-backdrop-filter: blur(26px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.75);
+        background: var(--card);
+        border: 0;
         border-radius: var(--radius);
-        padding: 0 20px 18px;
+        padding: 0 0 6px;
         /* Grid items default to min-content width; without this a long
            unbroken value (a URL, a path) stretches the whole track. */
         min-width: 0;
         overflow-wrap: anywhere;
         overflow: hidden;
-        /* Outer depth plus an inner top highlight: the lit edge of a pane. */
-        box-shadow:
-            0 16px 38px -20px rgba(21, 62, 130, 0.42),
-            0 2px 8px -4px rgba(21, 62, 130, 0.18),
-            inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        transition: background .22s ease, border-color .22s ease,
-                    box-shadow .22s ease, transform .22s ease;
-    }
-    /* A specular sheen sitting on the top-left of the pane. */
-    .card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        pointer-events: none;
-        background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.6) 0%,
-            rgba(255, 255, 255, 0.14) 28%,
-            transparent 56%
-        );
+        box-shadow: var(--shadow);
+        transition: box-shadow .24s ease, transform .24s ease;
     }
     .card:hover {
-        background: var(--glass-hi);
-        border-color: #ffffff;
         transform: translateY(-3px);
-        box-shadow:
-            0 26px 50px -22px rgba(21, 62, 130, 0.5),
-            0 3px 10px -4px rgba(21, 62, 130, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 1);
+        box-shadow: var(--shadow-lift);
     }
     /* Counter drives the index number printed on each card header. */
     .grid { counter-reset: card; }
     .card { counter-increment: card; }
+    /* Title bar: a rounded colour tile carrying the section number, the name
+       beside it, and a hairline separating it from the rows below. */
     .card h2 {
-        /* Header sits flush to the card edges and is separated by a heavy
-           rule rather than a fill. The index number is printed at the right,
-           the way a section is numbered in a technical document. */
         position: relative;
         display: flex;
-        align-items: baseline;
-        gap: 10px;
-        margin: 0 -20px 16px;
-        padding: 14px 20px 11px;
-        /* A brighter pane of glass sitting on the panel it labels. */
-        background: rgba(255, 255, 255, 0.45);
-        border-bottom: 1px solid rgba(19, 48, 99, 0.09);
+        align-items: center;
+        gap: 11px;
+        margin: 0 0 4px;
+        padding: 16px 18px 14px;
+        background: linear-gradient(180deg, #d7e1ee, #e8f1fa);
+        border-bottom: 1px solid var(--line);
         font-family: "Poppins", Helvetica, sans-serif;
-        font-size: 11.5px;
+        font-size: 15.5px;
         font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.07em;
+        letter-spacing: -0.012em;
+        text-transform: none;
         color: var(--ink);
     }
-    /* Coloured seam under the header, echoing the masthead. */
     .card h2::before {
-        content: "";
-        position: absolute;
-        left: 20px;
-        right: 20px;
-        bottom: -1px;
-        height: 1px;
-        background: linear-gradient(90deg, var(--brand), transparent 72%);
-        opacity: .7;
-    }
-    .card h2::after {
         content: counter(card, decimal-leading-zero);
-        margin-left: auto;
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        background: linear-gradient(160deg, #4f9bf5, #2f6fd8);
+        color: #ffffff;
         font-family: "Chivo Mono", ui-monospace, Consolas, monospace;
-        font-size: 11px;
-        font-weight: 500;
+        font-size: 12px;
+        font-weight: 600;
         letter-spacing: 0;
-        color: var(--accent);
+        box-shadow: 0 4px 10px -4px rgba(24, 76, 160, 0.7);
     }
-    /* The anchor card gets the warm seam, so the eye starts there. */
+    /* A few tiles pick up their own hue, the way each app does in iCloud. */
+    .card:nth-child(3) h2::before { background: linear-gradient(160deg, #ffd25e, #f0a72c); }
+    .card:nth-child(4) h2::before { background: linear-gradient(160deg, #7fd3a0, #35a86a); }
+    .card:nth-child(5) h2::before { background: linear-gradient(160deg, #9db4ff, #5a6ee0); }
+    .card:nth-child(6) h2::before { background: linear-gradient(160deg, #ffa987, #ef6d3d); }
+    .card:nth-child(7) h2::before { background: linear-gradient(160deg, #b79bff, #7d5ae0); }
+    /* The anchor card leads with the accent tile. */
     .card.b-project h2::before {
-        background: linear-gradient(90deg, var(--accent), transparent 72%);
-        opacity: .85;
+        background: linear-gradient(160deg, #ff9f6b, #e2570f);
     }
 
-    /* The one card you act on rather than read. It sits on a tinted pane with
-       a coloured rim so it separates from the reference panels above it. */
+    /* The card you act on takes a tinted body so it reads as the one
+       interactive tile among the reference panels. */
     .card.b-action {
-        background:
-            linear-gradient(180deg, rgba(232, 240, 255, 0.72), rgba(255, 255, 255, 0.6));
-        border-color: rgba(19, 89, 204, 0.28);
-        box-shadow:
-            0 20px 44px -22px rgba(19, 60, 140, 0.5),
-            0 2px 10px -4px rgba(19, 60, 140, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        background: linear-gradient(180deg, #f4f8ff 0%, #ffffff 40%);
     }
-    .card.b-action h2 {
-        background: linear-gradient(90deg, rgba(19, 89, 204, 0.13), rgba(19, 89, 204, 0.03));
-        color: var(--brand-ink);
-    }
+    .card.b-action h2 { color: var(--brand-ink); }
     .card.b-action h2::before {
-        background: linear-gradient(90deg, var(--brand), var(--accent-2) 55%, transparent 88%);
-        opacity: 1;
-        height: 2px;
+        background: linear-gradient(160deg, #6aa8f7, #1f5fc4);
     }
     .card.b-action:hover {
-        border-color: rgba(19, 89, 204, 0.4);
         transform: none; /* it holds a form; lifting it under the cursor is noise */
+        box-shadow: var(--shadow);
     }
+    /* Cards carry no padding of their own, so the block-level content inside
+       the action card supplies its own gutter. */
+    .card > form,
+    .card > .muted-empty { padding: 4px 18px 14px; }
 
-    /* Label above value by default: in a one-column card a fixed label
-       column squeezes the value into a narrow strip. */
+    /* Rows are list items: hairline between them, indented so the rule stops
+       short of the tile edge. */
     .row {
         display: flex;
         flex-direction: column;
         gap: 1px;
-        padding: 6px 0;
-        border-bottom: 1px solid rgba(19, 48, 99, 0.08);
+        margin: 0 18px;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--line);
     }
     .row:last-child { border-bottom: 0; }
     .k {
-        font-family: "Chivo Mono", ui-monospace, Consolas, monospace;
-        font-size: 9.5px;
-        font-weight: 500;
-        letter-spacing: 0.13em;
-        text-transform: uppercase;
+        font-size: 11.5px;
+        font-weight: 400;
+        letter-spacing: 0;
+        text-transform: none;
         color: var(--muted);
     }
     .v {
@@ -521,10 +470,9 @@ foreach ($socialLinks as $url) {
         font-variant-numeric: tabular-nums;
     }
 
-    /* The project name is the one serif moment on the page. */
+    /* The owner is the one emphasised value in the anchor card. */
     .card.b-project .row:first-child .v {
-        font-family: "Newsreader", Georgia, serif;
-        font-size: 18px;
+        font-size: 15px;
         font-weight: 500;
         letter-spacing: -0.01em;
     }
@@ -556,10 +504,8 @@ foreach ($socialLinks as $url) {
         width: 54px;
         height: 40px;
         border-radius: 8px;
-        border: 1px solid rgba(19, 48, 99, 0.18);
-        box-shadow:
-            0 5px 14px -7px rgba(21, 62, 130, 0.5),
-            inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        border: 1px solid var(--line-strong);
+        box-shadow: 0 3px 8px -4px rgba(12, 48, 110, 0.4);
     }
     .sw-name { color: var(--ink); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
     .sw-hex { margin-top: -3px; }
@@ -579,7 +525,7 @@ foreach ($socialLinks as $url) {
         letter-spacing: 2px;
     }
     .eye {
-        border: 1.5px solid rgba(19, 89, 204, 0.28);
+        border: 1px solid var(--line-strong);
         background: #ffffff;
         color: var(--brand-ink);
         border-radius: 999px;
@@ -591,7 +537,7 @@ foreach ($socialLinks as $url) {
         text-transform: uppercase;
         cursor: pointer;
         flex: 0 0 auto;
-        box-shadow: 0 2px 6px -3px rgba(19, 60, 140, 0.5);
+        box-shadow: none;
         transition: background .16s ease, color .16s ease, border-color .16s ease,
                     box-shadow .16s ease, transform .14s ease;
     }
@@ -600,12 +546,12 @@ foreach ($socialLinks as $url) {
         border-color: var(--brand);
         color: #ffffff;
         transform: translateY(-1px);
-        box-shadow: 0 6px 12px -6px rgba(19, 60, 140, 0.8);
+        box-shadow: 0 4px 10px -4px rgba(12, 48, 110, 0.45);
     }
     .eye:active { transform: translateY(0); box-shadow: none; }
     .eye:focus-visible {
         outline: none;
-        box-shadow: 0 0 0 3px rgba(19, 89, 204, 0.26);
+        box-shadow: 0 0 0 3px rgba(10, 102, 214, 0.24);
     }
 
     /* Download + edit panel */
@@ -617,12 +563,11 @@ foreach ($socialLinks as $url) {
     }
     .field label {
         display: block;
-        font-family: "Chivo Mono", ui-monospace, Consolas, monospace;
-        font-size: 9.5px;
+        font-size: 12px;
         font-weight: 500;
-        letter-spacing: 0.13em;
-        text-transform: uppercase;
-        color: var(--brand-ink);
+        letter-spacing: 0;
+        text-transform: none;
+        color: var(--ink);
         margin-bottom: 5px;
     }
     .field .token {
@@ -640,25 +585,24 @@ foreach ($socialLinks as $url) {
     .field input {
         width: 100%;
         padding: 11px 13px;
-        border: 1.5px solid rgba(19, 89, 204, 0.22);
+        border: 1px solid var(--line-strong);
         border-radius: 10px;
         font-family: "Chivo Mono", ui-monospace, Consolas, monospace;
         font-size: 12.5px;
         background: #ffffff;
         color: var(--ink);
-        box-shadow: inset 0 1px 3px rgba(19, 60, 140, 0.09);
+        box-shadow: none;
         transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
     }
     .field input::placeholder { color: rgba(76, 90, 120, 0.55); }
-    .field input:hover { border-color: rgba(19, 89, 204, 0.42); }
+    .field input:hover { border-color: #b9c0cc; }
     .field input:focus {
         outline: none;
         border-color: var(--brand);
         transform: translateY(-1px);
         box-shadow:
-            0 0 0 4px rgba(19, 89, 204, 0.16),
-            0 8px 18px -10px rgba(19, 60, 140, 0.55),
-            inset 0 1px 2px rgba(19, 60, 140, 0.05);
+            0 0 0 4px rgba(10, 102, 214, 0.16),
+            0 6px 16px -10px rgba(12, 48, 110, 0.4);
     }
     /* An underline that draws itself across the focused field. */
     .field::after {
@@ -677,7 +621,7 @@ foreach ($socialLinks as $url) {
 
     .note {
         border-left: 2px solid var(--accent);
-        background: rgba(224, 86, 42, 0.09);
+        background: #fff4ec;
         color: var(--ink);
         border-radius: 0 10px 10px 0;
         padding: 8px 12px;
@@ -695,9 +639,9 @@ foreach ($socialLinks as $url) {
         margin-top: 18px;
         padding: 16px 18px;
         border-radius: 14px;
-        background: rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(19, 89, 204, 0.16);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        background: var(--card-tint);
+        border: 1px solid var(--line);
+        box-shadow: none;
     }
 
     /* Per-page buttons stay on one line and scroll sideways when there are
@@ -717,94 +661,64 @@ foreach ($socialLinks as $url) {
     .actions-single > .btn { flex: 0 0 auto; }
     .actions-single::-webkit-scrollbar { height: 6px; }
     .actions-single::-webkit-scrollbar-thumb {
-        background: rgba(19, 89, 204, 0.25);
+        background: var(--line-strong);
         border-radius: 3px;
     }
 
     .btn {
         position: relative;
         overflow: hidden;
-        padding: 13px 24px;
+        padding: 11px 20px;
         border-radius: 999px;
         border: 1px solid transparent;
-        background: linear-gradient(135deg, #1360d4, #4b46c9);
+        background: linear-gradient(160deg, #2f86f0, #1360d4);
         color: #ffffff;
         font-family: "Poppins", Helvetica, sans-serif;
-        font-size: 11.5px;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
         cursor: pointer;
-        box-shadow:
-            0 12px 26px -12px rgba(19, 60, 140, 0.85),
-            0 2px 6px -2px rgba(19, 60, 140, 0.35),
-            inset 0 1px 0 rgba(255, 255, 255, 0.28);
+        box-shadow: 0 6px 16px -8px rgba(12, 48, 110, 0.7);
         transition: box-shadow .18s ease, transform .14s ease, filter .18s ease;
     }
-    /* A sheen that sweeps across the button on hover. */
-    .btn::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: -60%;
-        width: 45%;
-        background: linear-gradient(
-            100deg,
-            transparent,
-            rgba(255, 255, 255, 0.42),
-            transparent
-        );
-        transform: skewX(-18deg);
-        transition: left .55s cubic-bezier(.25,.8,.35,1);
-        pointer-events: none;
-    }
-    .btn:hover::after { left: 130%; }
     .btn:hover {
         transform: translateY(-2px);
-        box-shadow:
-            0 18px 34px -12px rgba(19, 60, 140, 0.95),
-            0 3px 8px -2px rgba(19, 60, 140, 0.4),
-            inset 0 1px 0 rgba(255, 255, 255, 0.36);
+        box-shadow: 0 12px 24px -10px rgba(12, 48, 110, 0.8);
         filter: brightness(1.05);
     }
     /* Press feedback: the button settles back onto the surface. */
     .btn:active {
         transform: translateY(0);
-        box-shadow:
-            0 4px 10px -6px rgba(19, 60, 140, 0.8),
-            inset 0 2px 5px rgba(6, 26, 70, 0.3);
-        filter: brightness(0.97);
+        box-shadow: 0 2px 6px -4px rgba(12, 48, 110, 0.7);
+        filter: brightness(0.95);
     }
     .btn:focus-visible {
         outline: none;
         box-shadow:
-            0 0 0 4px rgba(19, 89, 204, 0.3),
-            0 12px 26px -12px rgba(19, 60, 140, 0.85);
+            0 0 0 4px rgba(10, 102, 214, 0.28),
+            0 6px 16px -8px rgba(12, 48, 110, 0.7);
     }
 
     .btn.ghost {
-        padding: 11px 18px;
-        background: rgba(255, 255, 255, 0.86);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1.5px solid rgba(19, 89, 204, 0.26);
-        color: var(--brand-ink);
-        font-weight: 600;
-        box-shadow: 0 4px 12px -8px rgba(19, 60, 140, 0.5);
-    }
-    .btn.ghost::after { display: none; }
-    .btn.ghost:hover {
-        background: #ffffff;
-        border-color: var(--brand);
+        padding: 10px 16px;
+        background: var(--card-tint);
+        border: 1px solid var(--line-strong);
         color: var(--brand);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px -12px rgba(19, 60, 140, 0.7);
+        font-weight: 500;
+        box-shadow: none;
+    }
+    .btn.ghost:hover {
+        background: #eef3fb;
+        border-color: #c3cbd8;
+        color: var(--brand-ink);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px -10px rgba(12, 48, 110, 0.6);
         filter: none;
     }
     .btn.ghost:active {
         transform: translateY(0);
-        box-shadow: inset 0 2px 4px rgba(19, 60, 140, 0.14);
+        box-shadow: none;
     }
     .btn.ghost:focus-visible {
         outline: none;
@@ -825,32 +739,26 @@ foreach ($socialLinks as $url) {
     details.raw { margin-top: 16px; }
     details.raw > summary {
         cursor: pointer;
-        background: var(--glass);
-        backdrop-filter: blur(20px) saturate(150%);
-        -webkit-backdrop-filter: blur(20px) saturate(150%);
-        border: 1px solid rgba(255, 255, 255, 0.75);
+        background: var(--card);
+        border: 0;
         border-radius: var(--radius);
-        padding: 13px 18px;
-        font-family: "Chivo Mono", ui-monospace, Consolas, monospace;
-        font-size: 10.5px;
+        padding: 15px 18px;
+        font-size: 13.5px;
         font-weight: 500;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
+        letter-spacing: 0;
+        text-transform: none;
         color: var(--ink);
         list-style: none;
-        box-shadow:
-            0 10px 26px -18px rgba(21, 62, 130, 0.4),
-            inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        transition: background .18s ease;
+        box-shadow: var(--shadow);
+        transition: background .18s ease, color .18s ease;
     }
     details.raw > summary:hover {
-        background: #ffffff;
-        border-color: rgba(19, 89, 204, 0.3);
-        color: var(--brand-ink);
+        background: var(--card-tint);
+        color: var(--brand);
     }
     details.raw > summary:focus-visible {
         outline: none;
-        box-shadow: 0 0 0 4px rgba(19, 89, 204, 0.22);
+        box-shadow: var(--shadow), 0 0 0 4px rgba(10, 102, 214, 0.24);
     }
     details.raw > summary::-webkit-details-marker { display: none; }
     details.raw > summary::before { content: "▸ "; color: var(--brand); }
@@ -860,14 +768,12 @@ foreach ($socialLinks as $url) {
         margin: 0;
         /* The raw payload keeps a dark surface - long JSON is easier to scan
            against one, and it reads as a distinct technical panel. */
-        background: rgba(14, 26, 54, 0.9);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        border-top: 0;
+        background: #10182c;
+        border: 0;
         color: #d5e2ff;
-        padding: 16px 18px;
+        padding: 18px;
         border-radius: 0 0 var(--radius) var(--radius);
+        box-shadow: var(--shadow);
         overflow: auto;
         max-height: 460px;
         font-family: "Chivo Mono", ui-monospace, Consolas, monospace;
@@ -876,24 +782,13 @@ foreach ($socialLinks as $url) {
     }
 
     @media (max-width: 640px) {
-        .topbar-inner { padding: 12px 16px; gap: 10px; }
+        .topbar-inner { padding: 20px 16px 4px; gap: 10px; }
         .wrap { padding: 0 16px 44px; }
-        .card { padding: 0 15px 15px; }
-        .card h2 { margin: 0 -15px 13px; padding: 12px 15px 9px; }
-        .card h2::before { left: 15px; right: 15px; }
-        .topbar h1 { font-size: 16.5px; }
+        .card h2 { padding: 14px 15px 12px; font-size: 14.5px; }
+        .row { margin: 0 15px; }
+        .topbar h1 { font-size: 18px; }
         /* The due date drops below the title rather than being squeezed. */
         .meta-strip { margin-left: 0; flex-basis: 100%; }
-    }
-
-    /* Where backdrop-filter is unavailable, fall back to opaque panels so
-       nothing turns into unreadable low-contrast text. */
-    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-        .card,
-        details.raw > summary { background: rgba(255, 255, 255, 0.94); }
-        .card.b-action { background: #eef4ff; }
-        .card h2 { background: rgba(255, 255, 255, 0.6); }
-        header.topbar { background: rgba(255, 255, 255, 0.96); }
     }
 </style>
 </head>
