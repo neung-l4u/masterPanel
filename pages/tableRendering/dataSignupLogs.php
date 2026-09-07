@@ -141,6 +141,11 @@ foreach ($result as $row) {
         }
     }
 
+    // Placeholder cell - filled in over AJAX by getFirstPaidStatus.php once the
+    // table has rendered, so a slow Stripe lookup never blocks the page.
+    $firstPaidCell = '<span class="first-paid-cell text-muted" data-log-id="'.(int)$row["id"].'">'
+        . '<i class="bi bi-hourglass-split"></i></span>';
+
     $data["data"][] = array(
         $date,
         $country,
@@ -150,6 +155,7 @@ foreach ($result as $row) {
         // $stripeLogsBtn,
         $contractLogsBtn,
         // $row["status"]
+        $firstPaidCell,
         $saleHtml
     );//array
 }//foreach

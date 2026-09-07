@@ -62,12 +62,13 @@ $password = "Localeats#".date("Y");
                                     <thead class="thead-dark">
                                     <tr>
                                         <th style="width:11%">Timestamp</th>
-                                        <th style="width:10%">Country</th>
-                                        <th style="width:10%">Shop Type</th>
-                                        <th style="width:49%">Shop name</th>
+                                        <th style="width:9%">Country</th>
+                                        <th style="width:9%">Shop Type</th>
+                                        <th style="width:37%">Shop name</th>
                                         <th style="width:5%">Signup</th>
                                         <th style="width:5%">Stripe</th>
                                         <th style="width:5%">Contract</th>
+                                        <th style="width:14%">First Paid</th>
                                         <th style="width:5%">Status</th>
                                     </tr>
                                     </thead>
@@ -142,8 +143,14 @@ $password = "Localeats#".date("Y");
         ],columnDefs: [
             { targets: [0], className: 'dt-left' },
             { targets: [4, 5], className: 'dt-center', "orderable": "false" },
-            { targets: [6], className: 'dt-right' , "orderable": "false"}
-        ]
+            { targets: [6], className: 'dt-right' , "orderable": "false"},
+            { targets: [7], className: 'dt-center', "orderable": false }
+        ],
+        drawCallback: function() {
+            // The partial defining loadFirstPaid loads later in the page, so the
+            // first draw can fire before it exists.
+            if (typeof loadFirstPaid === 'function') loadFirstPaid();
+        }
     } );
 
     function viewJson(data, result) {
@@ -180,4 +187,6 @@ $password = "Localeats#".date("Y");
         showCopy();
     }
 </script>
+
+<?php include __DIR__ . '/partials/firstPaidColumn.php'; ?>
 

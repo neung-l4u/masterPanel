@@ -1,0 +1,10 @@
+# Cached Stripe payloads contain customer billing data and hosted invoice links
+# that open without authentication. They are read from PHP by file path only,
+# so nothing should ever fetch them over HTTP.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

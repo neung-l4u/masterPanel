@@ -103,15 +103,16 @@ $password = "Localeats#".date("Y");
                                        style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:17%">Timestamp</th>
-                                        <th style="width:10%">Country</th>
-                                        <th style="width:10%">Shop Type</th>
-                                        <th style="width:40%">Shop name</th>
+                                        <th style="width:15%">Timestamp</th>
+                                        <th style="width:9%">Country</th>
+                                        <th style="width:9%">Shop Type</th>
+                                        <th style="width:30%">Shop name</th>
                                         <th style="width:5%">Signup</th>
                                         <!-- <th style="width:5%">Stripe</th> -->
                                         <th style="width:5%">Contract</th>
                                         <!-- <th style="width:5%">Status</th> -->
-                                        <th style="width:12%">Sale</th>
+                                        <th style="width:16%">First Paid</th>
+                                        <th style="width:11%">Sale</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -194,8 +195,14 @@ $password = "Localeats#".date("Y");
             { targets: [0,3], className: 'dt-left' },
             { targets: [4], className: 'dt-center', "orderable": "false" },
             { targets: [5], className: 'dt-right', "orderable": "false" },
-            { targets: [6], className: 'dt-left' }
-        ]
+            { targets: [6], className: 'dt-center', "orderable": false },
+            { targets: [7], className: 'dt-left' }
+        ],
+        drawCallback: function() {
+            // The partial defining loadFirstPaid loads later in the page, so the
+            // first draw can fire before it exists.
+            if (typeof loadFirstPaid === 'function') loadFirstPaid();
+        }
     } );
 
     // Load sale agents for filter dropdown
@@ -261,3 +268,5 @@ $password = "Localeats#".date("Y");
         showCopy();
     }
 </script>
+
+<?php include __DIR__ . '/partials/firstPaidColumn.php'; ?>
