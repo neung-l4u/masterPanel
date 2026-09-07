@@ -2,6 +2,7 @@
 global $db;
 include '../db/db.php';
 include "../db/initDB.php";
+include_once __DIR__ . '/../../../../assets/php/notify.php';
 
 date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
@@ -38,6 +39,38 @@ if ($act === "add") {
     , $dataLogs, $dataStripe, $contractURL, $country, $status, $testMode, $timestamp, $signupBy );
 } elseif ($act === "update") {
     $resToDB = $db->query('UPDATE `logssignup` SET `stripeResult`=? WHERE id=?', $stripeResult, $logID);
+
+    // Alert IT when the signup finished without a usable Stripe result, so the
+    // billing gap is caught the same day instead of surfacing in a later audit.
+    // Test Mode is a deliberate no-charge path and is not a problem.
+    $decoded = json_decode((string)$stripeResult, true);
+    $isTestMode = is_string($decoded) && stripos($decoded, 'test mode') !== false;
+    $hasCustomer = is_array($decoded) && !empty($decoded['customer_id']);
+
+    if (!$isTestMode && !$hasCustomer) {
+        $shop = '';
+        $logRow = $db->query('SELECT dataLogs FROM logssignup WHERE id = ?', $logID)->fetchAll();
+        if (!empty($logRow)) {
+            $logJson = json_decode($logRow[0]['dataLogs'], true);
+            $shop = $logJson['ShopName'] ?? '';
+        }
+
+        $reason = 'No Stripe result recorded';
+        if (is_array($decoded) && !empty($decoded['error'])) {
+            $reason = 'Stripe error: ' . $decoded['error'];
+        } elseif (is_string($decoded) && $decoded !== '') {
+            $reason = 'Stripe returned: ' . $decoded;
+        }
+
+        notifyTeam(
+            5,                                  // IT
+            'signup_no_stripe',
+            'Signup without Stripe result',
+            trim(($shop !== '' ? $shop . ' - ' : '') . $reason),
+            'main.php?p=viewLogs',
+            (int)$logID
+        );
+    }
 }
 
 $lastInsertId = $db->lastInsertId();

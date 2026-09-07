@@ -54,6 +54,51 @@ $navDisplayName = $navNickName ? $navNickName . ' ' . $navFirstName : $navFirstN
         $unreadCount = $db->query('SELECT COUNT(*) as count FROM CoinLogs WHERE ownerID = ? AND is_read = 0', $myID)->fetchAll();
         $navActivityCount = $unreadCount[0]['count'];
         
+        // Team notifications (e.g. signups that never got a Stripe result).
+        // Kept in their own table so Coin activity stays untouched; read state
+        // is per person via notification_reads.
+        include_once __DIR__ . '/assets/php/notify.php';
+        $navNotis = [];
+        $notiUnread = 0;
+        $myTeamID = $_SESSION['teamID'] ?? 0;
+        // The notifications tables may not exist yet on an environment that has
+        // not been migrated. The bell is on every page, so a missing table must
+        // never take the whole site down - check for it first, and note that
+        // db::error() calls exit(), so a try/catch alone would not be enough.
+        $hasNotiTable = false;
+        try {
+            $t = $db->query("SHOW TABLES LIKE 'notifications'")->fetchAll();
+            $hasNotiTable = !empty($t);
+        } catch (\Throwable $e) {
+            $hasNotiTable = false;
+        }
+
+        try {
+        if (!empty($myTeamID) && $hasNotiTable) {
+            $navNotis = $db->query(
+                'SELECT n.id, n.title, n.message, n.link, n.createAt,
+                        (nr.staffID IS NOT NULL) AS isRead
+                 FROM notifications n
+                 LEFT JOIN notification_reads nr ON nr.notificationID = n.id AND nr.staffID = ?
+                 WHERE n.teamID = ?
+                 ORDER BY n.createAt DESC LIMIT 5', $myID, $myTeamID
+            )->fetchAll();
+
+            $notiUnreadRow = $db->query(
+                'SELECT COUNT(*) AS count FROM notifications n
+                 LEFT JOIN notification_reads nr ON nr.notificationID = n.id AND nr.staffID = ?
+                 WHERE n.teamID = ? AND nr.staffID IS NULL', $myID, $myTeamID
+            )->fetchAll();
+            $notiUnread = (int)($notiUnreadRow[0]['count'] ?? 0);
+        }
+        } catch (\Throwable $e) {
+            error_log('navBar notifications unavailable: ' . $e->getMessage());
+            $navNotis = [];
+            $notiUnread = 0;
+        }
+
+        $navActivityCount += $notiUnread;
+
         // Show badge if there are any unread activities
         $showBadge = ($navActivityCount > 0);
         $latestActivityId = count($navActivities) > 0 ? $navActivities[0]['id'] : 0;
@@ -71,6 +116,20 @@ $navDisplayName = $navNickName ? $navNickName . ' ' . $navFirstName : $navFirstN
                     <span style="font-size:0.7rem;color:#94a3b8;background:#f1f5f9;padding:0.15rem 0.5rem;border-radius:8px;"><?php echo $navActivityCount; ?> unread</span>
                 </div>
                 <div style="max-height:320px;overflow-y:auto;">
+                    <?php foreach($navNotis as $noti){ ?>
+                        <a href="<?php echo htmlspecialchars($noti['link'] ?: '#'); ?>" style="display:flex;align-items:flex-start;gap:0.5rem;padding:0.75rem 1.25rem;border-bottom:1px solid #f8fafc;text-decoration:none;background:<?php echo $noti['isRead'] ? 'transparent' : '#fff7ed'; ?>;">
+                            <i class="bi bi-exclamation-triangle-fill" style="color:#f59e0b;font-size:1rem;flex-shrink:0;margin-top:2px;"></i>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-weight:600;font-size:0.8rem;color:#0f172a;"><?php echo htmlspecialchars($noti['title']); ?></div>
+                                <div style="font-size:0.72rem;color:#64748b;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                    <?php echo htmlspecialchars($noti['message']); ?>
+                                </div>
+                                <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px;">
+                                    <?php echo date("d M H:i", strtotime($noti['createAt'])); ?>
+                                </div>
+                            </div>
+                        </a>
+                    <?php } ?>
                     <?php if(count($navActivities) >= 1){ foreach($navActivities as $act){ ?>
                         <div class="d-flex align-items-start gap-2" style="padding:0.75rem 1.25rem;border-bottom:1px solid #f8fafc;transition:background 0.2s;cursor:pointer;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
                             <img src="dist/img/crews/<?php echo $act['pic']; ?>" class="rounded-circle" style="width:32px;height:32px;object-fit:cover;flex-shrink:0;margin-top:2px;">
@@ -85,7 +144,7 @@ $navDisplayName = $navNickName ? $navNickName . ' ' . $navFirstName : $navFirstN
                                 </div>
                             </div>
                         </div>
-                    <?php } } else { ?>
+                    <?php } } elseif(count($navNotis) === 0){ ?>
                         <div style="padding:2rem;text-align:center;color:#94a3b8;">
                             <i class="bi bi-bell-slash" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;"></i>
                             <span style="font-size:0.8rem;">No activity yet</span>
