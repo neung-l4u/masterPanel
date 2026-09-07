@@ -653,3 +653,1183 @@ table.dataTable tbody tr td:last-child {
 .pe-1 { padding-right: 0.25rem !important; }
 .me-1 { margin-right: 0.25rem !important; }
 .rounded-circle { border-radius: 50% !important; }
+
+/* ============================================
+   Responsive / Mobile
+   --------------------------------------------
+   The theme rules above hard-code the desktop layout with !important
+   (300px sidebar, 300px content offset, 100vh body). That overrides the
+   responsive behaviour AdminLTE ships with, so on a phone the content is
+   squeezed into whatever is left of the screen and the hamburger button is
+   pushed off-canvas. The blocks below restore AdminLTE's own mobile model:
+   the sidebar slides off-canvas and is toggled by .sidebar-open, which
+   AdminLTE's PushMenu already sets (it also injects #sidebar-overlay).
+   ============================================ */
+
+/* ---- Tablet and phone: below AdminLTE's lg breakpoint ---- */
+@media (max-width: 991.98px) {
+
+  /* Content and navbar take the full width; nothing is reserved for the
+     sidebar because it is off-canvas at this size. */
+  .content-wrapper,
+  .main-header.navbar,
+  .sidebar-collapse .content-wrapper,
+  .sidebar-collapse .main-header.navbar {
+    margin-left: 0 !important;
+  }
+
+  /* Slide the sidebar off-canvas instead of collapsing it to width:0, so it
+     can animate back in. Width is kept below the narrowest common phone
+     (360px) so the overlay stays visible and tappable to close. */
+  .main-sidebar,
+  .sidebar-collapse .main-sidebar {
+    width: 280px !important;
+    margin-left: -280px !important;
+    overflow: visible !important;
+    transition: margin-left 0.3s ease !important;
+  }
+
+  /* .sidebar-open is toggled by AdminLTE's PushMenu on the hamburger. */
+  .sidebar-open .main-sidebar,
+  .sidebar-open .main-sidebar::before {
+    margin-left: 0 !important;
+  }
+
+  /* 2rem of padding costs 64px of a 360px screen. */
+  .content-wrapper {
+    padding: 1rem !important;
+  }
+
+  .content-wrapper .content-header .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* iOS Safari counts the address bar in 100vh, so a fixed 100vh body with
+     overflow:hidden cuts off the bottom of the page and it cannot be
+     scrolled to. Let the document scroll normally on touch devices. */
+  body {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+  }
+
+  /* On desktop the navbar stays put because .content-wrapper is the element
+     that scrolls. Once the document scrolls instead (above), the navbar
+     scrolls away with it, taking the hamburger button off screen. AdminLTE
+     sets .main-header{position:static} for this layout, so it has to be
+     pinned back here: sticky keeps it in flow, which avoids having to
+     reserve space for it the way position:fixed would. */
+  .main-header.navbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1034 !important;
+    background: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(32, 34, 36, 0.08) !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  /* navBar.php gives the hamburger's <li> a .pl-5 (3rem) indent, which on
+     desktop separates it from the sidebar edge. With no sidebar on screen it
+     just pushes the button towards the middle of the bar. */
+  .main-header.navbar .nav-item.pl-5 {
+    padding-left: 0 !important;
+  }
+
+  .content-wrapper {
+    max-height: none !important;
+    min-height: auto !important;
+    overflow-y: visible !important;
+  }
+
+  /* Tables: keep horizontal scrolling contained in the wrapper and give it
+     momentum scrolling, so a wide table never widens the page itself. */
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto !important;
+  }
+
+  /* Card padding is 1.5rem on every side by default. */
+  .card-body {
+    padding: 1rem !important;
+  }
+}
+
+/* ---- Phone ---- */
+@media (max-width: 767.98px) {
+
+  .content-wrapper {
+    padding: 0.75rem !important;
+  }
+
+  .card-body {
+    padding: 0.75rem !important;
+  }
+
+  /* Filter bars are built as rows of fixed/min-width selects and inputs.
+     On a phone they overflow sideways, so let each one take the full row. */
+  .card-body .form-control,
+  .card-body .form-control-sm,
+  .card-body .custom-select,
+  .card-body select {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* DataTables' length/search/info/paging controls sit on one line and push
+     the page wider than the viewport. */
+  .dataTables_wrapper .dataTables_length,
+  .dataTables_wrapper .dataTables_filter,
+  .dataTables_wrapper .dataTables_info,
+  .dataTables_wrapper .dataTables_paginate {
+    text-align: center !important;
+    white-space: normal !important;
+  }
+
+  .dataTables_wrapper .dataTables_filter input {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  /* A table with 10-30 columns cannot be squeezed into 360px: forcing it to
+     fit turns every cell into a one-letter-per-line column. Give each cell a
+     floor instead and let the wrapper scroll sideways, so text stays on
+     normal lines and the page itself never widens. */
+  .table {
+    width: auto !important;
+    min-width: 100% !important;
+  }
+
+  .table td,
+  .table th {
+    white-space: nowrap !important;
+    min-width: 90px;
+    word-break: normal !important;
+  }
+
+  /* Free-text columns may wrap, but only once they are wide enough to hold
+     real words rather than single letters. */
+  .table td.wrap,
+  .table th.wrap {
+    white-space: normal !important;
+    min-width: 180px;
+    word-break: break-word;
+  }
+
+  /* Many log pages set percentage widths on <th> (width:5%, width:21%, ...).
+     Those percentages are of the 360px viewport, which is what collapses a
+     column to a couple of characters. The min-width above can only win once
+     the percentage is dropped. */
+  .table th[style*="width"],
+  .table td[style*="width"] {
+    width: auto !important;
+  }
+
+  /* ---- Compact table ----
+     A 9-30 column table cannot be read on a 360px screen, but turning every
+     row into a stack of labels makes the list impossible to scan. Following
+     the reference, the table stays a table: only the first few columns are
+     shown, sized to the screen, and tapping a row opens the rest.
+
+     Which columns survive is decided in assets/js/responsive-tables.js,
+     which marks the others .mobile-hidden. */
+
+  /* Every column is shown and the table is allowed to be wider than the
+     screen; the wrapper below scrolls it sideways. auto sizing lets each
+     column take what its content needs rather than a forced share. */
+  .table {
+    width: auto !important;
+    min-width: 100% !important;
+    max-width: none !important;
+    table-layout: auto !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* The first column is the row's identity, so it stays put while the rest
+     scrolls under it — without it, scrolling right loses track of which row
+     is which.
+
+     The background is essential, not decoration: a sticky cell sits over the
+     cells it is scrolled past, and a transparent one lets them show straight
+     through, which is why the row number appeared printed on top of the name
+     beside it. The theme's striping paints the row, not the cell, so the
+     colour has to be restated here. */
+  .table > thead > tr > [data-mobile-col="0"],
+  .table > tbody > tr > [data-mobile-col="0"] {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 2 !important;
+    background-color: #ffffff !important;
+    box-shadow: 1px 0 0 #eef0f4 !important;
+  }
+
+  .table > thead > tr > [data-mobile-col="0"] {
+    z-index: 3 !important;
+    background-color: #212529 !important;
+  }
+
+  /* Every sticky cell needs an opaque fill, not only the striped ones: a row
+     that inherits the plain background left its cell transparent, and the
+     columns scrolling underneath showed through it. White is the page's own
+     table surface, and the stripe colour is restated for the rows that have
+     one. */
+  .table > tbody > tr > [data-mobile-col="0"],
+  .table.table-striped > tbody > tr > [data-mobile-col="0"],
+  .table.dataTable > tbody > tr > [data-mobile-col="0"] {
+    background-color: #ffffff !important;
+  }
+
+  .table.table-striped > tbody > tr:nth-of-type(odd) > [data-mobile-col="0"],
+  .table.dataTable.table-striped > tbody > tr.odd > [data-mobile-col="0"] {
+    background-color: #fafbfc !important;
+  }
+
+  /* Cells sized to their content, but never so narrow that a value is
+     unreadable nor so wide that one column fills the screen. */
+  .table > thead > tr > th,
+  .table > tbody > tr > td {
+    min-width: 5.5rem !important;
+    max-width: 12rem !important;
+  }
+
+  /* A "#" or id column holds a couple of characters and does not need the
+     general minimum; taking 112px of a 360px screen for a row number leaves
+     too little for the data. */
+  .table > thead > tr > [data-mobile-col="0"],
+  .table > tbody > tr > [data-mobile-col="0"] {
+    min-width: 0 !important;
+    max-width: 8rem !important;
+    width: auto !important;
+    white-space: nowrap !important;
+  }
+
+  /* A narrow first column must not squeeze its own text to one character per
+     line either. */
+  .table > tbody > tr > [data-mobile-col="0"] {
+    padding-right: 0.625rem !important;
+  }
+
+  /* Columns the script dropped, and the footer that repeats the headers.
+     display:none on a table cell must win over any page rule, hence the
+     element-qualified selectors. */
+  .table td.mobile-hidden,
+  .table th.mobile-hidden,
+  .table thead th.mobile-hidden,
+  .table tbody td.mobile-hidden,
+  .table tfoot {
+    display: none !important;
+  }
+
+  /* The table must never be wider than the card, whatever widths the page
+     put on its columns. */
+  .table,
+  .table > thead,
+  .table > tbody,
+  .table > thead > tr,
+  .table > tbody > tr {
+    max-width: 100% !important;
+  }
+
+  /* overflow-x:hidden here was the reason the table would not scroll under
+     the pointer. Per spec, giving one axis a value other than visible forces
+     the other axis to become auto, so this quietly turned the card into its
+     own scroll container. With its content fitting exactly, that container
+     had nothing to scroll and swallowed the wheel events instead of letting
+     them reach the page. Both axes stay visible; the column hiding already
+     keeps the table inside the screen. */
+  /* The wrapper is the one element allowed to scroll, and only sideways:
+     overflow-x:auto with overflow-y:visible is invalid per spec (the other
+     axis is forced to auto), which is what created the dead vertical scroll
+     trap before. Clipping the y axis instead keeps vertical wheel events
+     going to the page while the table still pans horizontally. */
+  .card-body.table-responsive,
+  .card-body > .dataTables_wrapper {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: clip !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .table-responsive {
+    overflow-x: auto !important;
+    overflow-y: clip !important;
+  }
+
+  /* A <date> input has a browser-imposed minimum width of roughly 150px, so
+     the two of them plus the word "to" cannot fit side by side on a 360px
+     screen and the pair overflows its column. They stack instead. */
+  .card-header .d-flex,
+  .card-body .d-flex {
+    flex-wrap: wrap !important;
+  }
+
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="time"] {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* The "to" separator between the two dates now sits on its own line. */
+  .card-header .d-flex > span,
+  .card-body .d-flex > span {
+    flex: 0 0 auto;
+  }
+
+  /* Filter columns are col-md-3 and so full width here; give them breathing
+     room from each other. */
+  .card-header [class*="col-"] {
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Percentage widths on <th> are of the 360px viewport, which is what
+     collapses a column to a couple of characters. */
+  .table th[style*="width"],
+  .table td[style*="width"] {
+    width: auto !important;
+  }
+
+  /* nowrap made long headers overlap their neighbours ("TIMESTAMP" running
+     under "USER"), because the header row has no room to lay them out side
+     by side. They wrap instead. */
+  .table thead th {
+    font-size: 0.6875rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .02em !important;
+    text-transform: none !important;
+    padding: 0.5rem !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    vertical-align: bottom !important;
+    line-height: 1.25 !important;
+  }
+
+  /* DataTables' sort arrows are absolutely positioned and reserve 26px of
+     padding, which is most of a narrow column. */
+  .table.dataTable thead > tr > th.sorting,
+  .table.dataTable thead > tr > th.sorting_asc,
+  .table.dataTable thead > tr > th.sorting_desc {
+    padding-right: 0.875rem !important;
+  }
+
+  .table.dataTable thead > tr > th::before,
+  .table.dataTable thead > tr > th::after {
+    right: 0.25rem !important;
+  }
+
+  /* A <td> must keep display:table-cell. Setting -webkit-box on it to clamp
+     the text took the cell out of the table entirely, so every column
+     stacked into one while the untouched <th> row stayed horizontal. The
+     clamp lives on an inner wrapper the script adds instead. */
+  /* The theme sets table.dataTable tbody td{padding:1rem} outside any media
+     query, and that selector outweighs .table tbody td, so the phone padding
+     has to be written at the same weight or higher. */
+  .table tbody td,
+  table.dataTable tbody td,
+  table.dataTable.table tbody td {
+    font-size: 0.8125rem !important;
+    padding: 0.6875rem 0.5rem !important;
+    vertical-align: middle !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .table tbody td .mobile-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Two short values per column ("United States", "Shop Type") only fit if
+     the columns are not fighting over the same 300px. The identity column
+     needs the least help, so the two text columns get a slightly larger
+     share and a smaller face. */
+  .table tbody td:not(.mobile-hidden),
+  .table thead th:not(.mobile-hidden) {
+    font-size: 0.75rem !important;
+  }
+
+  /* break-word splits mid-word once a column is narrow, producing
+     "Australi / a". Break only between words, and let a genuinely
+     unbreakable string (a URL, an id) fall back to breaking anywhere. */
+  .table tbody td,
+  .table tbody td .mobile-clamp {
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    hyphens: none !important;
+  }
+
+  /* The rows still read as separate floating blocks because the theme's card
+     styling reaches them. One surface, hairline separators. */
+  .table.table-striped > tbody > tr,
+  .table.table-hover > tbody > tr,
+  .table > tbody > tr {
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+
+  .table > tbody > tr > td {
+    background: transparent !important;
+  }
+
+  /* Room is made by dropping the padding and letting the identity column
+     take what it needs. */
+  .table tbody td:first-child,
+  .table thead th:first-child {
+    padding-left: 0.25rem !important;
+  }
+
+  .table tbody td:last-child,
+  .table thead th:last-child {
+    padding-right: 0.25rem !important;
+  }
+
+  /* The chevron marking the row as expandable. It is drawn on the last
+     visible cell rather than in a column of its own, because adding a cell
+     would give DataTables more columns than it built the table with. */
+  .table tbody tr > td:not(.mobile-hidden):last-of-type {
+    position: relative !important;
+    padding-right: 1.125rem !important;
+  }
+
+  .table tbody tr > td:not(.mobile-hidden):last-of-type::after {
+    content: "\203A";
+    position: absolute;
+    right: 0.25rem;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    font-size: 1rem;
+    line-height: 1;
+    color: #b4b8c2;
+    transition: transform 0.15s ease;
+  }
+
+  .table tbody tr.is-open > td:not(.mobile-hidden):last-of-type::after {
+    transform: translateY(-50%) rotate(270deg);
+  }
+
+  /* The first shown column is the row's identity, so it gets the emphasis. */
+  .table tbody td.mobile-primary {
+    font-weight: 600 !important;
+    color: #202224 !important;
+  }
+
+  /* Values are bolded by several pages for the desktop table; on a narrow
+     column that just makes every cell equally heavy. */
+  .table tbody td:not(.mobile-primary) b,
+  .table tbody td:not(.mobile-primary) strong {
+    font-weight: 400 !important;
+  }
+
+  .table tbody tr {
+    cursor: pointer;
+  }
+
+  /* The card holding the table carries a fixed inline pixel height (630px,
+     820px). Replacing it with height:auto made the card grow to fit every
+     row instead, so a 10-row table produced a 5800px-tall page. Cap it
+     against the viewport and let it scroll inside. */
+  /* The inline height (630px, 820px) made the card its own scroll container.
+     Nested inside the page scroll that is unusable on a touch screen: a swipe
+     starting on the table moves the page, and the rows below the card's
+     620px cap can never be reached. The card is released to its natural
+     height and the page does the only scrolling. */
+  /* Only the inline HEIGHT is being undone here. Leaving overflow out of it
+     matters: this rule sits after the wrapper rule above and would otherwise
+     reset the sideways scrolling the table needs. */
+  .card-body.table-responsive[style*="height"],
+  .card-body.table-responsive.p-4[style*="height"],
+  div.card-body.table-responsive[style] {
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* These pages nest a card inside a card, and every level pays 24px of
+     padding plus its column gutter: 360 -> 335 -> 320 -> 296 -> 287 -> 272,
+     leaving the table 272px of a 360px screen. The inner card is pure
+     chrome on a phone, so its frame and side padding come off. */
+  .card .card {
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* The element also carries Bootstrap's .p-4 utility, which matches with
+     the same weight, so the selector has to out-specify it rather than rely
+     on !important alone. */
+  .card .card > .card-body,
+  .card .card > .card-body.table-responsive,
+  .card .card > .card-body.table-responsive.p-4,
+  .card-body.table-responsive.p-4 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* The outer card body pays another 12px each side on top of the inner one,
+     which is what still held the table at 296px of a 360px screen. */
+  .content-wrapper .card > .card-body {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  /* "10 entries per page" and "Search:" are inline labels wrapping a control;
+     with the control forced to its own block the label text is left dangling
+     beside it. Put the label on its own line and let the control fill the
+     row. */
+  .dataTables_wrapper .dataTables_length label,
+  .dataTables_wrapper .dataTables_filter label {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .dataTables_wrapper .dataTables_length select {
+    width: 100% !important;
+  }
+
+  /* Modal footers laid out as a horizontal d-flex row of several buttons
+     (invoiceThailand's send modal: status select + button, then up to four
+     action buttons) do not fit 344px and Bootstrap's own modal-footer
+     default is nowrap, so the row runs past the dialog edge instead of
+     wrapping. */
+  .modal-footer,
+  .modal-footer .d-flex,
+  .modal-body .d-flex {
+    flex-wrap: wrap !important;
+  }
+
+  .modal-footer .d-flex > *,
+  .modal-body .d-flex > * {
+    max-width: 100% !important;
+  }
+
+  /* A select given a fixed min-width in the markup (200px here) claims most
+     of the dialog on its own before the wrap can help. */
+  .modal-footer select,
+  .modal-body select {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  /* justify-content:end keeps every button on the right once they wrap,
+     which pushes the first one off the left edge instead of starting a new
+     line at the left margin. */
+  .modal-footer .d-flex.justify-content-end {
+    justify-content: flex-start !important;
+  }
+
+  .modal-footer .btn,
+  .modal-body .btn {
+    white-space: normal !important;
+  }
+
+  /* Filter toolbars: pages lay these out as fixed-width columns or inline
+     button groups that add up past the screen (checkinLogs reached 435px,
+     websiteList 408px). Let every control take the full row. */
+  /* websiteList sets .filterLabel{width:100px} beside a full-width select,
+     so each filter row demands 100px + the select's own minimum. */
+  .filterLabel {
+    width: auto !important;
+    max-width: 100% !important;
+  }
+
+  .filterCol,
+  .card-header .btn-group,
+  .card-body .btn-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+
+  .card-header .btn,
+  .card-body > .btn,
+  .btn-group > .btn {
+    max-width: 100% !important;
+    white-space: normal !important;
+  }
+
+  .form-select,
+  .form-control,
+  .custom-select {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* A table narrower than its container leaves the columns cramped while
+     empty space sits beside them (setStaffs 232px, tools 129px of 304). */
+  .card-body table.table,
+  .card-body table.dataTable {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+
+  /* The header row wraps "TIMESTAMP" onto two lines and reads as shouting.
+     Sentence case, and enough room that the common headers fit one line. */
+  .table thead th {
+    text-transform: none !important;
+    font-size: 0.625rem !important;
+    letter-spacing: 0 !important;
+    padding: 0.5rem 0.375rem !important;
+  }
+
+  .table tbody td,
+  table.dataTable tbody td {
+    padding: 0.5rem 0.375rem !important;
+  }
+
+  /* Rows were 86-158px tall because a wrapped link plus an inline icon each
+     added their own line box. One line per cell, clipped, keeps the list
+     scannable and every row the same height. */
+  .table tbody td:not(.mobile-hidden) {
+    max-height: 2.75rem !important;
+    overflow: hidden !important;
+  }
+
+  .table tbody td a,
+  .table tbody td svg,
+  .table tbody td i {
+    vertical-align: middle !important;
+  }
+
+  /* Striped rows render as separate white cards against the tinted page,
+     which breaks the table into floating blocks. Keep one surface. */
+  .table.table-striped > tbody > tr > *,
+  .table.table-striped > tbody > tr.odd > * {
+    box-shadow: none !important;
+    background-color: transparent !important;
+  }
+
+  .table > tbody > tr {
+    border-bottom: 1px solid #eef0f4 !important;
+  }
+
+  .table > tbody > tr:last-child {
+    border-bottom: none !important;
+  }
+
+  /* Bootstrap's row/col gutters inside the DataTables wrapper are the rest. */
+  .card-body .dt-container > .row,
+  .card-body .dataTables_wrapper > .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .card-body .dt-container [class^="col-"],
+  .card-body .dt-container [class*=" col-"],
+  .card-body .dataTables_wrapper [class^="col-"],
+  .card-body .dataTables_wrapper [class*=" col-"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* ---- Row detail ----
+     Tapping a row appends one row holding every column, including the ones
+     hidden above, as label/value pairs. */
+  .table tr.mobile-detail > td {
+    display: table-cell !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    max-width: none !important;
+    padding-right: 0.875rem !important;
+    padding: 0.75rem 0.875rem 0.875rem !important;
+    background: #f7f9fc !important;
+    border-top: none !important;
+  }
+
+  .table tbody tr.mobile-detail > td::after {
+    content: none !important;
+  }
+
+  .mobile-detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .mobile-detail-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: #202224;
+    text-align: right;
+    word-break: break-word;
+  }
+
+  .mobile-detail-label {
+    flex: 0 0 auto;
+    text-align: left;
+    color: #8b8d97;
+    font-weight: 400;
+  }
+
+  .mobile-detail-value {
+    min-width: 0;
+  }
+
+  .mobile-detail-value b,
+  .mobile-detail-value strong {
+    font-weight: 500 !important;
+  }
+
+  /* An actions cell in the detail keeps its buttons on one row. */
+  .mobile-detail-item.is-actions {
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+  }
+
+  .mobile-detail-item.is-actions .mobile-detail-label {
+    display: none;
+  }
+
+  .mobile-detail-value > * {
+    margin: 0 !important;
+    float: none !important;
+  }
+
+  /* DataTables' own controls. The search input is an inline-block inside its
+     label, sitting after the "Search:" text, so a full-width label pushes it
+     past the right edge. Making the input its own block puts it on a line of
+     its own, where 100% means the card rather than the rest of that line. */
+  .dataTables_wrapper .dataTables_length,
+  .dataTables_wrapper .dataTables_filter {
+    text-align: left !important;
+    margin-bottom: 0.625rem !important;
+  }
+
+  .dataTables_wrapper .dataTables_filter label,
+  .dataTables_wrapper .dataTables_length label {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 0 !important;
+    font-size: 0.6875rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: #8b8d97 !important;
+  }
+
+  .dataTables_wrapper .dataTables_filter input,
+  .dataTables_wrapper .dataTables_length select {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0.25rem 0 0 0 !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    border: 1px solid #e0e4ec !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+  }
+
+  .dataTables_wrapper .dataTables_paginate {
+    padding-top: 0.5rem !important;
+  }
+
+  /* A table with 87 pages lays its paging buttons out in one row that runs
+     past the screen. They wrap, and the numbers shrink to fit more per line.
+     This has to cover DataTables 2.x (.dt-paging) as well as 1.x. */
+  .dataTables_wrapper .dataTables_paginate .pagination,
+  .dt-container .dt-paging .pagination,
+  .dt-paging .pagination,
+  ul.pagination {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 0.125rem !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+
+  .dt-paging .page-item,
+  ul.pagination .page-item {
+    margin: 0 !important;
+  }
+
+  .dt-paging .page-link,
+  ul.pagination .page-link {
+    min-width: 1.875rem !important;
+    padding: 0.3125rem 0.375rem !important;
+    font-size: 0.75rem !important;
+    border-radius: 6px !important;
+  }
+
+  /* The overlay and sheet are fixed to the viewport; while a page is briefly
+     wider than the screen they would otherwise stretch to that width and
+     become the overflow themselves. */
+  .mf-overlay,
+  .mf-sheet,
+  .mf-addbar {
+    max-width: 100vw !important;
+  }
+
+  .dataTables_wrapper .dataTables_info {
+    font-size: 0.75rem !important;
+    color: #8b8d97 !important;
+    padding-top: 0.5rem !important;
+  }
+
+  /* An avatar is a flex item, and flex-shrink defaults to 1: when the name
+     beside it needs the room, the image is squeezed narrower while its
+     height stays put, so a circular crop renders as an oval. Round images
+     are given a fixed basis and told not to shrink. */
+  .profile-hero img,
+  .avatar-wrap,
+  .avatar-wrap img,
+  .d-flex > img.rounded-circle,
+  .d-flex > .rounded-circle > img {
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* The overlay that sits on top of the avatar is positioned against the
+     wrapper, so the wrapper must keep the image's size too. */
+  .avatar-wrap {
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  /* A stretched <img> in any flex row has the same failure mode. */
+  .d-flex > img,
+  .media > img,
+  .user-panel img {
+    flex-shrink: 0 !important;
+  }
+
+  /* With the avatar no longer giving up width, the text beside it has to be
+     the part that yields: a flex item will not shrink below its content's
+     intrinsic width until min-width is cleared, so a long name ran past the
+     card instead of wrapping. */
+  .profile-hero > *:not(img):not(.avatar-wrap) {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  .profile-hero {
+    flex-wrap: wrap !important;
+  }
+
+  .profile-hero h1,
+  .profile-hero h2,
+  .profile-hero h3,
+  .profile-hero h4,
+  .profile-hero .h4 {
+    font-size: 1.375rem !important;
+    line-height: 1.2 !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+  }
+
+  /* ---- Filter sheet ----
+     The filter chrome is moved into a bottom sheet by
+     assets/js/mobile-filters.js, leaving a compact toolbar: a search field
+     and a button that opens the sheet. */
+
+  .mf-bar {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.75rem;
+  }
+
+  .mf-search {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .mf-search input {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    border: 1px solid #e0e4ec !important;
+    border-radius: 8px !important;
+    background: #fff !important;
+    box-sizing: border-box !important;
+  }
+
+  .mf-toggle {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #202224;
+    background: #fff;
+    border: 1px solid #e0e4ec;
+    border-radius: 8px;
+    line-height: 1.2;
+  }
+
+  .mf-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.125rem;
+    height: 1.125rem;
+    padding: 0 0.25rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: #fff;
+    background: #0d6efd;
+    border-radius: 999px;
+  }
+
+  .mf-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(16, 24, 40, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 1050;
+  }
+
+  .mf-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mf-sheet {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 24px rgba(16, 24, 40, 0.18);
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+    z-index: 1051;
+  }
+
+  .mf-sheet.is-open {
+    transform: translateY(0);
+  }
+
+  .mf-sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #eef0f4;
+  }
+
+  .mf-sheet-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #202224;
+  }
+
+  .mf-sheet-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    color: #64748b;
+    background: none;
+    border: none;
+    border-radius: 8px;
+  }
+
+  .mf-sheet-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.875rem 1rem 0.5rem;
+  }
+
+  /* The moved blocks arrive carrying card and column styling meant for the
+     desktop layout. Inside the sheet they are plain stacked fields. */
+  .mf-sheet-body .card-header,
+  .mf-sheet-body .dataTables_length,
+  .mf-sheet-body .dataTables_filter,
+  .mf-sheet-body .dt-length,
+  .mf-sheet-body .dt-search,
+  .mf-sheet-body .dt-layout-cell,
+  .mf-sheet-body [class*="col-"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 0 0.75rem !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .mf-sheet-body .row {
+    margin: 0 !important;
+  }
+
+  .mf-sheet-body label {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 0.25rem !important;
+    font-size: 0.6875rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: #8b8d97 !important;
+  }
+
+  .mf-sheet-body input,
+  .mf-sheet-body select {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 0.25rem !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    border: 1px solid #e0e4ec !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* A checkbox or radio is not a field to stretch: full width turned
+     "Include inactive staffs." into an empty 189px box with its label
+     stranded underneath. They keep their own size, on one line with the
+     text they belong to. */
+  /* width:auto collapsed the box to 2px, because Bootstrap positions the
+     real checkbox absolutely and draws it through the label. An explicit
+     size restores a tappable control. */
+  .mf-sheet-body input[type="checkbox"],
+  .mf-sheet-body input[type="radio"] {
+    display: inline-block !important;
+    position: static !important;
+    width: 1.125rem !important;
+    height: 1.125rem !important;
+    min-width: 1.125rem !important;
+    max-width: 1.125rem !important;
+    margin: 0 0.5rem 0 0 !important;
+    padding: 0 !important;
+    border-radius: 4px !important;
+    flex: 0 0 auto !important;
+    accent-color: #0d6efd;
+  }
+
+  .mf-sheet-body input[type="radio"] {
+    border-radius: 50% !important;
+  }
+
+  .mf-sheet-body .form-check,
+  .mf-sheet-body .custom-control {
+    display: flex !important;
+    align-items: center !important;
+    padding-left: 0 !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .mf-sheet-body .form-check-label,
+  .mf-sheet-body .custom-control-label {
+    margin: 0 !important;
+    font-size: 0.8125rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    color: #202224 !important;
+  }
+
+  /* DataTables wraps its select inside the label ("Show [10] entries"), so
+     forcing the label to block split the sentence across the control. Lay it
+     out as one line with the control sized to its content. */
+  .mf-sheet-body label.mf-inline-label,
+  .mf-sheet-body label:has(select),
+  .mf-sheet-body label:has(input:not([type="checkbox"]):not([type="radio"])) {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    flex-wrap: wrap !important;
+    font-size: 0.8125rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    color: #565d6d !important;
+  }
+
+  .mf-sheet-body label.mf-inline-label select,
+  .mf-sheet-body label:has(select) select {
+    width: auto !important;
+    min-width: 5rem !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+  }
+
+  /* The search input is moved out to the toolbar, leaving its "Search:"
+     label behind with nothing to label. */
+  .mf-sheet-body .dataTables_filter,
+  .mf-sheet-body .dt-search,
+  .mf-sheet-body label.mf-orphan-label {
+    display: none !important;
+  }
+
+  .mf-sheet-body .btn {
+    width: 100% !important;
+    margin-top: 0.25rem !important;
+  }
+
+  .mf-sheet-foot {
+    flex: 0 0 auto;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    border-top: 1px solid #eef0f4;
+  }
+
+  .mf-done {
+    width: 100%;
+    padding: 0.625rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* ---- Sticky add bar ---- */
+  .mf-addbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.625rem 1rem calc(0.625rem + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid #eef0f4;
+    z-index: 1040;
+  }
+
+  .mf-addbar .btn {
+    display: flex !important;
+    width: 100% !important;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.6875rem !important;
+    font-size: 0.9375rem !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+  }
+
+  /* Room so the bar never covers the last row or the pagination. */
+  body.mf-has-addbar .content-wrapper {
+    padding-bottom: 4.5rem !important;
+  }
+}

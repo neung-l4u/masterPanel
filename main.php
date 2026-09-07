@@ -46,6 +46,17 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
   <!-- Custom theme (loads last = highest priority) -->
   <link rel="stylesheet" href="assets/css/master-panel.css">
+  <style>
+      /* Sidebar-group label shown at the top-left of each page. */
+      .page-category {
+          display: inline-flex; align-items: center; gap: .35rem;
+          margin: 1rem 0 -0.5rem 1.5rem;
+          font-size: .72rem; font-weight: 600; letter-spacing: .04em;
+          text-transform: uppercase; color: #64748b;
+      }
+      .page-category i { font-size: .85rem; color: #94a3b8; }
+      @media (max-width: 576px) { .page-category { margin-left: 1rem; } }
+  </style>
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -61,6 +72,27 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
   <div class="content-wrapper">
       <?php include("modalRespond.php"); ?>
       <?php include("modalConfirm.php"); ?>
+      <?php
+      // Category label at the top-left of every page, so people can tell which
+      // sidebar group the page they are on belongs to. Keys are the
+      // $activeMenu["lv1"] values set in assets/php/page_navigate.php and the
+      // labels are the group names shown in sideBar.php.
+      $menuGroupLabels = [
+          'websiteMgmt'  => 'Website Management',
+          'formMgmt'     => 'Form Management',
+          'rewardsCoin'  => 'Rewards & Coins',
+          'report'       => 'Reports & Analytics',
+          'logs'         => 'Logs',
+          'userMgmt'     => 'User Management',
+          'sysSettings'  => 'System Settings',
+          'userTools'    => 'Tools',
+      ];
+      $currentGroup = $menuGroupLabels[$activeMenu['lv1'] ?? ''] ?? '';
+      if ($currentGroup !== '') { ?>
+      <div class="page-category">
+          <i class="bi bi-folder2-open"></i><span><?php echo htmlspecialchars($currentGroup); ?></span>
+      </div>
+      <?php } ?>
       <?php include "pages/".$showPage; ?>
       <!-- Main Footer (inside content-wrapper so it scrolls together) -->
       
@@ -76,6 +108,12 @@ for ($i=(date("Y")-3); $i<=(date("Y")+2); $i++){
 <script src="dist/js/adminlte.min.js"></script>
 <script src="plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<!-- Stacks wide tables into per-row cards on phones. Must load after
+     DataTables so it can hook draw.dt. -->
+<script src="assets/js/responsive-tables.js"></script>
+<!-- Collects filter controls into a bottom sheet and pins "Add new" to
+     a sticky bar on phones. Loads after the tables script. -->
+<script src="assets/js/mobile-filters.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>
 
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
