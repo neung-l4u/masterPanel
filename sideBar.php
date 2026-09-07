@@ -127,7 +127,7 @@ include ('assets/api/checkSession.php');
                                 <p>AI Management</p>
                             </a>
                         </li>
-                        <?php if($_SESSION['level'] == 1 || $_SESSION['id'] == 83){ ?>
+                        <?php if($_SESSION['level'] < 4 || $_SESSION['id'] == 83){ ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=invoiceThailand" class="nav-link <?php echo $activeMenu["lv2"] == "invoiceThailand" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-receipt"></i>

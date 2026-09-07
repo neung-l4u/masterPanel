@@ -7,6 +7,7 @@ const inputCountry = $("#country");
 const inputEditID = $("#editID");
 const inputAction = $("#frmAction");
 const inputLoginID = $("#loginID");
+const inputMondayUserID = $("#mondayUserID");
 const selectedTemplate = $("#selectedTemplate");
 
 $callback = 'callback';
@@ -494,6 +495,7 @@ function sendProject(id) {
         data: {
             "projectID": id,
             "loginID": inputLoginID.val(),
+            "mondayUserID": inputMondayUserID.val() || "",
             "poEmail": $("#poEmail").val(),
             "teamEmail": $("#teamEmail").val(),
             "act": "sendProject"

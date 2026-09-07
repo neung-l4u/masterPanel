@@ -15,6 +15,58 @@ let readAddonProduct = [];
 
 let couponObjectList = {};
 
+//Postal/zip code rules per country: pattern to validate, maxlength, and a hint for the error message
+const zipRules = {
+  AU: { pattern: /^\d{4}$/,                 maxlength: 4,  hint: "4 digits (e.g. 3000)" },
+  NZ: { pattern: /^\d{4}$/,                 maxlength: 4,  hint: "4 digits (e.g. 6011)" },
+  TH: { pattern: /^\d{5}$/,                 maxlength: 5,  hint: "5 digits (e.g. 10110)" },
+  US: { pattern: /^\d{5}(-\d{4})?$/,        maxlength: 10, hint: "5 digits or ZIP+4 (e.g. 90210 or 90210-1234)" },
+  CA: { pattern: /^[A-Za-z]\d[A-Za-z][ ]?\d[A-Za-z]\d$/, maxlength: 7, hint: "format A1A 1A1 (e.g. K1A 0B1)" },
+  GB: { pattern: /^[A-Za-z]{1,2}\d[A-Za-z\d]?[ ]?\d[A-Za-z]{2}$/, maxlength: 8, hint: "e.g. SW1A 1AA" }
+};
+
+//Apply the zip rule for a country to the zip input (maxlength + allowed characters)
+function applyZipRule(country){
+  const inputZip = $("#zip");
+  const rule = zipRules[country];
+  inputZip.removeClass("is-invalid");
+  $(".zip-validate-error").remove();
+  if (!rule) {
+    inputZip.attr("maxlength", 10);
+    return;
+  }
+  inputZip.attr("maxlength", rule.maxlength);
+  //Trim any value carried over from a previously selected country
+  if (inputZip.val().length > rule.maxlength) {
+    inputZip.val(inputZip.val().slice(0, rule.maxlength));
+  }
+}
+
+//Validate the zip against the selected country. Returns true when valid or when there is no rule.
+function isZipValid(){
+  const rule = zipRules[formData.formCountry];
+  const zip = $("#zip").val().trim();
+  if (!rule) { return true; }
+  return rule.pattern.test(zip);
+}
+
+//Show inline feedback on the zip field as soon as the user leaves it
+function checkZipField(){
+  const inputZip = $("#zip");
+  const rule = zipRules[formData.formCountry];
+  $(".zip-validate-error").remove();
+  if (!rule || inputZip.val().trim() === "") {
+    inputZip.removeClass("is-invalid");
+    return;
+  }
+  if (isZipValid()) {
+    inputZip.removeClass("is-invalid");
+  } else {
+    inputZip.addClass("is-invalid");
+    inputZip.after('<span class="zip-validate-error" style="color:red;font-size:12px;display:block;">Please enter a valid postal code: ' + rule.hint + '</span>');
+  }
+}
+
 let cart = {
   "subscription": [],
   "add_on": []
@@ -208,6 +260,31 @@ $(".next").on("click", function () {
       hasError = true;
     }
 
+    if (!$("#zip").val() || $("#zip").val().trim() === "") {
+      $("#zip").after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your postal code</span>');
+      if (!hasError) { $("#zip").focus(); }
+      hasError = true;
+    } else if (!isZipValid()) {
+      const rule = zipRules[formData.formCountry];
+      $("#zip").after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter a valid postal code: ' + rule.hint + '</span>');
+      if (!hasError) { $("#zip").focus(); }
+      hasError = true;
+    }
+
+    if (!$("#state").val()) {
+      $("#state").after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please select a state</span>');
+      if (!hasError) { $("#state").focus(); }
+      hasError = true;
+    }
+
+    //#city carries the option picked, or the free text typed under "Other".
+    if (!$("#city").val() || $("#city").val().trim() === "") {
+      const cityAnchor = $("#citySelect").val() === "__other__" ? $("#cityOther") : $("#citySelect");
+      cityAnchor.after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please select or enter your city</span>');
+      if (!hasError) { cityAnchor.focus(); }
+      hasError = true;
+    }
+
     if (hasError) {
       nextstep = false;
     }
@@ -350,6 +427,7 @@ hideButtons = function (step) {
     $(".next").hide();
     $(".submit").show();
   }
+  toggleStickySummary(step);
 };
 
 // enable Others input box when Others checkbox is checked
@@ -428,6 +506,7 @@ $('#formCountry').change(function() {
   const currency = $(".currency");
   const lookup = $(".lookup");
   const zipLabel = $(".zipLabel");
+  const cityLabel = $(".cityLabel");
   const inputCurrency = $('input[name="currency"]');
   const textGST = $(".textGST");
   const fakeNumber = $(".fakeNumber");
@@ -452,6 +531,7 @@ $('#formCountry').change(function() {
       labelBusinessNumber.html("ABN");
       classBusinessNumber.show();
       countryName.html("Australia");
+      cityLabel.html("City/Suburb");
       selectState.show();
       currency.html("AUD");
       formData.formCurrency = "AUD";
@@ -477,6 +557,7 @@ $('#formCountry').change(function() {
       inputBusinessNumber.attr('required', true);
       classBusinessNumber.show();
       countryName.html("New Zealand");
+      cityLabel.html("City/Suburb");
       selectState.show();
       currency.html("NZD");
       formData.formCurrency = "NZD";
@@ -502,6 +583,7 @@ $('#formCountry').change(function() {
       labelBusinessNumber.html("CRN");
       classBusinessNumber.show();
       countryName.html("United Kingdom");
+      cityLabel.html("City/Town");
       selectState.show();
       currency.html("");
       formData.formCurrency = "GBP";
@@ -526,6 +608,7 @@ $('#formCountry').change(function() {
       labelBusinessNumber.html("EIN");
       classBusinessNumber.show();
       countryName.html("Canada");
+      cityLabel.html("City");
       selectState.show();
       currency.html("CAD");
       formData.formCurrency = "CAD";
@@ -550,6 +633,7 @@ $('#formCountry').change(function() {
       labelBusinessNumber.html("EIN");
       classBusinessNumber.show();
       countryName.html("United States");
+      cityLabel.html("City");
       selectState.show();
       currency.html("USD");
       formData.formCurrency = "USD";
@@ -574,6 +658,7 @@ $('#formCountry').change(function() {
       labelBusinessNumber.html("TAX ID");
       classBusinessNumber.show();
       countryName.html("Thailand");
+      cityLabel.html("District");
       selectState.show();
       currency.html("THB");
       formData.formCurrency = "THB";
@@ -625,6 +710,7 @@ $('#formCountry').change(function() {
       labelBusinessNumber.html("ABN");
       inputBusinessNumber.attr('required', true);
       countryName.html("please select country");
+      cityLabel.html("City/Province");
       currency.html("AUD");
       formData.formCurrency = "AUD";
       inputCurrency.val("AUD");
@@ -642,6 +728,7 @@ $('#formCountry').change(function() {
       // domainHelpUS.hide();
   }
   optionState();
+  applyZipRule(formData.formCountry); //zip length/format depends on the country
   loadCouponOptions(); //the coupon lists depend on the country
 });
 
@@ -783,6 +870,8 @@ function optionState(){
     jQuery.each( allState.state, function( i, val ) {
       optionState.append("<option value='"+val.text+"'>"+val.code+" : "+val.text+"</option>");
     });
+    //The state list just changed, so the city list below it is stale.
+    optionCity();
   });
 
   reqState.fail(function(xhr, status, error) {
@@ -791,6 +880,119 @@ function optionState(){
   });
 
 }//optionState
+
+//Cities are loaded once and cached, then filtered by the selected state.
+let allCities = null;
+
+//Generate the city options for the currently selected state.
+//The list holds the main cities/districts only, so an "Other" option always
+//follows it and reveals a free-text box for anywhere not listed.
+//keepExisting = true  -> พยายามคงค่า city เดิมไว้ (ตอนโหลดรายการ State เสร็จ / prefill)
+//keepExisting = false -> ผู้ใช้เปลี่ยน State เอง ค่าเมืองเดิมใช้ไม่ได้แล้ว ต้องล้าง
+function optionCity(keepExisting){
+  if (keepExisting === undefined) { keepExisting = true; }
+  const shopCountry = formData.formCountry;
+  const selectedState = $("#state").val();
+  const optionCity = $(".optionCity");
+
+  function render(){
+    //ค่าที่มีอยู่ก่อน: อาจมาจาก prefill ตอนโหลดฟอร์ม หรือจากที่ผู้ใช้เลือกไว้แล้ว
+    //ต้องเก็บไว้ก่อน empty() เพราะการล้าง option ทำให้ค่าที่เลือกหายไป
+    const previousCity = keepExisting ? ($("#city").val() || "").trim() : "";
+
+    optionCity.empty();
+
+    const list = (allCities && allCities[shopCountry] && allCities[shopCountry][selectedState])
+      ? allCities[shopCountry][selectedState]
+      : [];
+
+    if (!selectedState) {
+      optionCity.append("<option value=''>Please select State</option>");
+    } else {
+      optionCity.append("<option value=''>Please select City</option>");
+      jQuery.each( list, function( i, val ) {
+        optionCity.append("<option value='"+val+"'>"+val+"</option>");
+      });
+      optionCity.append("<option value='__other__'>Other (type it in)</option>");
+    }
+
+    //พยายามคงค่าเดิมไว้ ไม่ล้างทิ้งทันที มิฉะนั้นข้อมูลที่ prefill มาจะหาย
+    const matched = previousCity && list.some(
+      (c) => c.toLowerCase() === previousCity.toLowerCase()
+    );
+
+    if (!selectedState) {
+      //ยังไม่ได้เลือก State ก็ยังไม่มีรายการให้จับคู่ ปล่อยค่าเดิมค้างไว้ก่อน
+      $("#cityOther").val("").hide();
+    } else if (matched) {
+      //ตรงกับรายการที่มี เลือกให้เลย
+      const exact = list.find((c) => c.toLowerCase() === previousCity.toLowerCase());
+      optionCity.val(exact);
+      $("#city").val(exact);
+      $("#cityOther").val("").hide();
+    } else if (previousCity) {
+      //ไม่มีในรายการ (เช่น เมืองเล็กที่ prefill มา) ให้ไปอยู่ช่อง Other แทนการทิ้งค่า
+      optionCity.val("__other__");
+      $("#cityOther").val(previousCity).show();
+      $("#city").val(previousCity);
+    } else {
+      //ไม่มีค่าเดิมจริง ๆ ค่อยเคลียร์
+      $("#city").val("");
+      $("#cityOther").val("").hide();
+    }
+
+    setShipAddress();
+  }
+
+  if (allCities) { render(); return; }
+
+  const reqCity = $.ajax({
+    url: settings.url_getCities,
+    method: 'POST',
+    async: true,
+    dataType: 'json',
+    crossDomain: true,
+    data: { "token": Math.random() }
+  });
+
+  reqCity.done(function(res) {
+    allCities = res;
+    render();
+  });
+
+  reqCity.fail(function(xhr, status, error) {
+    console.log("ajax request City fail!!");
+    console.log(status + ': ' + error);
+    //Fall back to a free-text box so a failed load never blocks the signup.
+    //ค่าเดิมที่ prefill มาต้องไม่หาย จึงย้ายไปไว้ในช่องกรอกเองแทน
+    const previousCity = keepExisting ? ($("#city").val() || "").trim() : "";
+    optionCity.empty().append("<option value='__other__'>Other (type it in)</option>").val("__other__");
+    $("#cityOther").val(previousCity).show();
+    $("#city").val(previousCity);
+  });
+
+}//optionCity
+
+//Show the free-text box when "Other" is picked, otherwise submit the option.
+function onCitySelectChange(){
+  const selected = $("#citySelect").val();
+  const inputOther = $("#cityOther");
+
+  if (selected === "__other__") {
+    inputOther.show().focus();
+    $("#city").val(inputOther.val().trim());
+  } else {
+    inputOther.hide().val("");
+    $("#city").val(selected);
+  }
+  setShipAddress();
+}
+
+//Keep the submitted value in step with the free-text box.
+function syncCityOther(){
+  $("#city").val($("#cityOther").val().trim());
+  setShipAddress();
+}
 
 //Generate cuisines checkbox from array
 function addCuisines(){
@@ -2148,6 +2350,46 @@ const setShowPrice = () => {
   gstText.html(showPrice.GST);
   amountText.html(showPrice.GrandTotal);
 
+  updateStickySummary();
+}
+
+//อัปเดตแถบสรุปยอดล่างจอ เรียกทุกครั้งที่ราคาถูกคำนวณใหม่
+function updateStickySummary(){
+  const bar = $("#stickySummary");
+  if (!bar.length) { return; }
+
+  //ชื่อแพ็กเกจหลักที่เลือก + จำนวน add-on ที่ติ๊กไว้
+  const mainLabel = $("input[name='product']:checked").length
+    ? $("input[name='product']:checked").closest(".form-check").find("label").text().split(" - ")[0].trim()
+    : "";
+  const addonCount = $("#addon2 input:checked").length;
+  const setupLabel = $("input[name='setup']:checked").length
+    ? $("input[name='setup']:checked").closest(".form-check").find("label").text().split(" - ")[0].trim()
+    : "";
+
+  const parts = [];
+  if (mainLabel)  { parts.push(mainLabel); }
+  if (addonCount) { parts.push(addonCount + (addonCount > 1 ? " add-ons" : " add-on")); }
+  if (setupLabel) { parts.push(setupLabel); }
+
+  $("#stickySummaryItems").text(parts.length ? parts.join("  •  ") : "No package selected");
+  $("#stickySummaryTotal").text(showPrice.GrandTotal);
+}
+
+//แสดงแถบสรุปเฉพาะ step ที่เลือกสินค้า (step 3 เป็นต้นไป) และซ่อนที่ step อื่น
+function toggleStickySummary(currentStep){
+  const bar = $("#stickySummary");
+  if (!bar.length) { return; }
+  //#products2 จะมีสินค้าก็ต่อเมื่อโหลดรายการแล้วเท่านั้น
+  const hasProducts = $("#products2 input[name='product']").length > 0;
+  if (currentStep >= 3 && hasProducts) {
+    bar.show();
+    $("body").addClass("has-sticky-summary");
+    updateStickySummary();
+  } else {
+    bar.hide();
+    $("body").removeClass("has-sticky-summary");
+  }
 }
 
 function trimSpace(param, place) {
@@ -2184,6 +2426,9 @@ $("#byAgent").change(function(){
     $("#byAgent").css("width", "100%");
     $("#otherAgent").fadeOut();
   }
+  //เก็บ monday_user_id ของคนที่เลือกไว้ในช่องซ่อน เพื่อส่งต่อให้ webhook Make.com
+  //"Other" กับ "--None--" มี data-monday-id ว่าง จึงได้ค่าว่างตามที่ต้องการ
+  $("#byAgentMondayId").val($(this).find("option:selected").data("monday-id") || "");
 });
 
 

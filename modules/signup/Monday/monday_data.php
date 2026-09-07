@@ -157,6 +157,25 @@ $Step04_Comments00N2v00000IyVpq = $_POST['additionComment'] ?? ''; //  Additiona
 
 $Step04_SocialNetworks00N2u000000mNZG = $_POST['byAgent'] ?? ''; //  Marketing Agent
 
+// monday_user_id ของ Sales Agent ที่เลือก ส่งต่อให้ webhook Make.com ไปสร้าง item ใน monday.com
+// เชื่อค่าจากฐานข้อมูลเป็นหลัก ไม่เชื่อค่าที่ POST มา เพราะ client แก้ได้
+// ถ้าเลือก "Other" / ไม่ได้เลือก / คนนั้นยังไม่มี monday_user_id จะได้ค่าว่าง
+$byAgentMondayId = '';
+$salesAgentLabel = trim((string) ($_POST['byAgent'] ?? ''));
+if ($salesAgentLabel !== '' && $salesAgentLabel !== 'Other') {
+    $agentDbPath = __DIR__ . '/../assets/db/db.php';
+    $agentInitPath = __DIR__ . '/../assets/db/initDB.php';
+    $agentFnPath = __DIR__ . '/../assets/function/salesAgents.php';
+    if (file_exists($agentDbPath) && file_exists($agentInitPath) && file_exists($agentFnPath)) {
+        include_once $agentDbPath;
+        include_once $agentInitPath;
+        include_once $agentFnPath;
+        if (isset($db)) {
+            $byAgentMondayId = getSalesAgentMondayId($db, $salesAgentLabel);
+        }
+    }
+}
+
 $Step04_SocialNetworks00N2v00000IyVq9 = $_POST['byPerson'] ?? ''; //  Referred  by person
 
 $Step04_SocialNetworks00N2v00000IyVqA = $_POST['byRestaurant'] ?? ''; //  Referred  by shop
@@ -243,6 +262,9 @@ if ($response) {
 // Extract form data
 
   $formData = $_POST;
+
+  // ใช้ค่าที่ resolve จากฐานข้อมูลเสมอ ทับค่าที่ client ส่งมา (ถ้ามี)
+  $formData['byAgentMondayId'] = $byAgentMondayId;
 
   // รวบรวม addon ทุกตัวให้เป็น field เดียว "addons" (คั่นด้วย , )
   // ครอบคลุม 2 รูปแบบ:

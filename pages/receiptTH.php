@@ -59,7 +59,7 @@ function fmt($n) { return number_format((float)$n, 2, '.', ','); }
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ใบกำกับภาษี/ใบเสร็จรับเงิน</title>
+    <title>ตัวอย่างใบแจ้งค่าบริการ</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@100..900&display=swap" rel="stylesheet">
     <style>
         body { font-family: "Noto Serif Thai", serif; margin: 0; background: #f5f5f5; }
@@ -113,7 +113,7 @@ function fmt($n) { return number_format((float)$n, 2, '.', ','); }
             <img src="https://report.localforyou.com/modules/signup/assets/img/newL4U-logo-100x100-2.png" alt="Company logo" height="70" />
         </div>
         <div class="invoice-title-section">
-            <h3 class="primary">ใบกำกับภาษี/ใบเสร็จรับเงิน</h3>
+            <h3 class="primary">ตัวอย่างใบแจ้งค่าบริการ</h3>
             <p class="primary">(ต้นฉบับ)</p>
         </div>
     </div>

@@ -3,11 +3,11 @@
     "label": "Australia",
     "state": [
       {
-        "code": "CT",
+        "code": "ACT",
         "text": "Australian Capital Territory"
       },
       {
-        "code": "NS",
+        "code": "NSW",
         "text": "New South Wales"
       },
       {
@@ -15,7 +15,7 @@
         "text": "Northern Territory"
       },
       {
-        "code": "QL",
+        "code": "QLD",
         "text": "Queensland"
       },
       {
@@ -23,11 +23,11 @@
         "text": "South Australia"
       },
       {
-        "code": "TS",
+        "code": "TAS",
         "text": "Tasmania"
       },
       {
-        "code": "VI",
+        "code": "VIC",
         "text": "Victoria"
       },
       {
@@ -167,7 +167,19 @@
       },
       {
         "code": "NL",
-        "text": "Newfoundland and Labrador "
+        "text": "Newfoundland and Labrador"
+      },
+      {
+        "code": "NT",
+        "text": "Northwest Territories"
+      },
+      {
+        "code": "NU",
+        "text": "Nunavut"
+      },
+      {
+        "code": "YT",
+        "text": "Yukon"
       }
     ]
   },
@@ -399,6 +411,7 @@
       { "code": "CTI", "text": "Chanthaburi" },
       { "code": "KKN", "text": "Khon Kaen" },
       { "code": "KPT", "text": "Kamphaeng Phet" },
+      { "code": "KBI", "text": "Krabi" },
       { "code": "KRI", "text": "Kanchanaburi" },
       { "code": "KSN", "text": "Kalasin" },
       { "code": "LEI", "text": "Loei" },
@@ -427,6 +440,7 @@
       { "code": "PLK", "text": "Phitsanulok" },
       { "code": "PNB", "text": "Phetchabun" },
       { "code": "PNA", "text": "Phang Nga" },
+      { "code": "PRI", "text": "Prachin Buri" },
       { "code": "PRE", "text": "Phrae" },
       { "code": "PTE", "text": "Pathum Thani" },
       { "code": "PTN", "text": "Pattani" },
@@ -439,14 +453,18 @@
       { "code": "SKM", "text": "Samut Songkhram" },
       { "code": "SKN", "text": "Samut Sakhon" },
       { "code": "SKW", "text": "Sa Kaeo" },
+      { "code": "SBR", "text": "Sing Buri" },
       { "code": "SNI", "text": "Surat Thani" },
       { "code": "SNK", "text": "Sakon Nakhon" },
       { "code": "SRI", "text": "Saraburi" },
       { "code": "SPB", "text": "Suphan Buri" },
       { "code": "SPK", "text": "Samut Prakan" },
+      { "code": "SRN", "text": "Surin" },
       { "code": "SSK", "text": "Si Sa Ket" },
       { "code": "STI", "text": "Sukhothai" },
       { "code": "STN", "text": "Satun" },
+      { "code": "TRT", "text": "Trat" },
+      { "code": "TRG", "text": "Trang" },
       { "code": "TAK", "text": "Tak" },
       { "code": "UDN", "text": "Udon Thani" },
       { "code": "UBN", "text": "Ubon Ratchathani" },

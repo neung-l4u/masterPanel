@@ -1,0 +1,1218 @@
+{
+  "AU": {
+    "Australian Capital Territory": [
+      "Canberra",
+      "Belconnen",
+      "Gungahlin",
+      "Tuggeranong",
+      "Woden Valley"
+    ],
+    "New South Wales": [
+      "Sydney",
+      "Newcastle",
+      "Wollongong",
+      "Central Coast",
+      "Maitland",
+      "Wagga Wagga",
+      "Albury",
+      "Port Macquarie",
+      "Tamworth",
+      "Orange",
+      "Dubbo",
+      "Bathurst",
+      "Coffs Harbour",
+      "Parramatta",
+      "Penrith",
+      "Liverpool"
+    ],
+    "Northern Territory": [
+      "Darwin",
+      "Palmerston",
+      "Alice Springs",
+      "Katherine",
+      "Nhulunbuy"
+    ],
+    "Queensland": [
+      "Brisbane",
+      "Gold Coast",
+      "Sunshine Coast",
+      "Townsville",
+      "Cairns",
+      "Toowoomba",
+      "Mackay",
+      "Rockhampton",
+      "Bundaberg",
+      "Hervey Bay",
+      "Gladstone",
+      "Ipswich",
+      "Logan City",
+      "Maryborough"
+    ],
+    "South Australia": [
+      "Adelaide",
+      "Mount Gambier",
+      "Whyalla",
+      "Murray Bridge",
+      "Port Augusta",
+      "Port Pirie",
+      "Port Lincoln",
+      "Victor Harbor"
+    ],
+    "Tasmania": [
+      "Hobart",
+      "Launceston",
+      "Devonport",
+      "Burnie",
+      "Ulverstone",
+      "Kingston"
+    ],
+    "Victoria": [
+      "Melbourne",
+      "Geelong",
+      "Ballarat",
+      "Bendigo",
+      "Shepparton",
+      "Melton",
+      "Mildura",
+      "Warrnambool",
+      "Traralgon",
+      "Wodonga",
+      "Frankston",
+      "Dandenong",
+      "Richmond",
+      "St Kilda",
+      "Footscray"
+    ],
+    "Western Australia": [
+      "Perth",
+      "Bunbury",
+      "Geraldton",
+      "Kalgoorlie",
+      "Albany",
+      "Broome",
+      "Port Hedland",
+      "Karratha",
+      "Busselton",
+      "Mandurah"
+    ]
+  },
+  "NZ": {
+    "Auckland": [
+      "Auckland",
+      "Manukau",
+      "North Shore",
+      "Waitakere",
+      "Papakura",
+      "Pukekohe"
+    ],
+    "Bay of Plenty": [
+      "Tauranga",
+      "Rotorua",
+      "Whakatane",
+      "Te Puke",
+      "Kawerau"
+    ],
+    "Canterbury": [
+      "Christchurch",
+      "Timaru",
+      "Ashburton",
+      "Rangiora",
+      "Kaiapoi"
+    ],
+    "Gisborne": [
+      "Gisborne"
+    ],
+    "Hawke's Bay": [
+      "Napier",
+      "Hastings",
+      "Havelock North",
+      "Waipukurau"
+    ],
+    "Manawatu-Wanganui": [
+      "Palmerston North",
+      "Whanganui",
+      "Levin",
+      "Feilding",
+      "Taumarunui"
+    ],
+    "Marlborough": [
+      "Blenheim",
+      "Picton"
+    ],
+    "Nelson": [
+      "Nelson",
+      "Richmond"
+    ],
+    "Northland": [
+      "Whangarei",
+      "Kerikeri",
+      "Dargaville",
+      "Kaitaia"
+    ],
+    "Otago": [
+      "Dunedin",
+      "Queenstown",
+      "Oamaru",
+      "Wanaka",
+      "Balclutha"
+    ],
+    "Southland": [
+      "Invercargill",
+      "Gore",
+      "Te Anau"
+    ],
+    "Taranaki": [
+      "New Plymouth",
+      "Hawera",
+      "Stratford"
+    ],
+    "Tasman": [
+      "Motueka",
+      "Takaka",
+      "Murchison"
+    ],
+    "Waikato": [
+      "Hamilton",
+      "Taupo",
+      "Cambridge",
+      "Te Awamutu",
+      "Matamata",
+      "Thames",
+      "Tokoroa"
+    ],
+    "Wellington": [
+      "Wellington",
+      "Lower Hutt",
+      "Upper Hutt",
+      "Porirua",
+      "Kapiti",
+      "Masterton"
+    ],
+    "West Coast": [
+      "Greymouth",
+      "Westport",
+      "Hokitika"
+    ]
+  },
+  "GB": {
+    "England": [
+      "London",
+      "Birmingham",
+      "Manchester",
+      "Liverpool",
+      "Leeds",
+      "Sheffield",
+      "Bristol",
+      "Newcastle upon Tyne",
+      "Nottingham",
+      "Leicester",
+      "Coventry",
+      "Bradford",
+      "Southampton",
+      "Portsmouth",
+      "Brighton",
+      "Plymouth",
+      "Reading",
+      "Derby",
+      "Stoke-on-Trent",
+      "Wolverhampton",
+      "Norwich",
+      "Oxford",
+      "Cambridge",
+      "York",
+      "Exeter",
+      "Milton Keynes",
+      "Luton",
+      "Bournemouth",
+      "Preston",
+      "Hull"
+    ],
+    "Scotland": [
+      "Glasgow",
+      "Edinburgh",
+      "Aberdeen",
+      "Dundee",
+      "Inverness",
+      "Stirling",
+      "Perth",
+      "Paisley",
+      "Falkirk",
+      "Ayr"
+    ],
+    "Wales": [
+      "Cardiff",
+      "Swansea",
+      "Newport",
+      "Wrexham",
+      "Bangor",
+      "St Asaph",
+      "Barry",
+      "Neath"
+    ],
+    "Northern Ireland": [
+      "Belfast",
+      "Londonderry",
+      "Lisburn",
+      "Newry",
+      "Bangor",
+      "Craigavon"
+    ]
+  },
+  "CA": {
+    "Alberta": [
+      "Calgary",
+      "Edmonton",
+      "Red Deer",
+      "Lethbridge",
+      "Medicine Hat",
+      "Fort McMurray",
+      "Banff"
+    ],
+    "British Columbia": [
+      "Vancouver",
+      "Victoria",
+      "Surrey",
+      "Burnaby",
+      "Richmond",
+      "Kelowna",
+      "Abbotsford",
+      "Nanaimo",
+      "Kamloops",
+      "Prince George",
+      "Whistler"
+    ],
+    "Manitoba": [
+      "Winnipeg",
+      "Brandon",
+      "Steinbach",
+      "Thompson"
+    ],
+    "New Brunswick": [
+      "Moncton",
+      "Saint John",
+      "Fredericton",
+      "Dieppe"
+    ],
+    "Newfoundland and Labrador": [
+      "St. John's",
+      "Corner Brook",
+      "Mount Pearl",
+      "Gander"
+    ],
+    "Northwest Territories": [
+      "Yellowknife",
+      "Hay River",
+      "Inuvik"
+    ],
+    "Nova Scotia": [
+      "Halifax",
+      "Sydney",
+      "Dartmouth",
+      "Truro"
+    ],
+    "Nunavut": [
+      "Iqaluit",
+      "Rankin Inlet",
+      "Arviat"
+    ],
+    "Ontario": [
+      "Toronto",
+      "Ottawa",
+      "Mississauga",
+      "Brampton",
+      "Hamilton",
+      "London",
+      "Markham",
+      "Vaughan",
+      "Kitchener",
+      "Windsor",
+      "Richmond Hill",
+      "Oakville",
+      "Burlington",
+      "Barrie",
+      "Oshawa",
+      "Kingston",
+      "Guelph",
+      "Waterloo",
+      "Niagara Falls"
+    ],
+    "Prince Edward Island": [
+      "Charlottetown",
+      "Summerside"
+    ],
+    "Quebec": [
+      "Montreal",
+      "Quebec City",
+      "Laval",
+      "Gatineau",
+      "Longueuil",
+      "Sherbrooke",
+      "Trois-Rivieres",
+      "Levis",
+      "Saguenay"
+    ],
+    "Saskatchewan": [
+      "Saskatoon",
+      "Regina",
+      "Prince Albert",
+      "Moose Jaw"
+    ],
+    "Yukon": [
+      "Whitehorse",
+      "Dawson City"
+    ]
+  },
+  "US": {
+    "Alabama": [
+      "Birmingham",
+      "Montgomery",
+      "Mobile",
+      "Huntsville",
+      "Tuscaloosa"
+    ],
+    "Alaska": [
+      "Anchorage",
+      "Fairbanks",
+      "Juneau"
+    ],
+    "Arizona": [
+      "Phoenix",
+      "Tucson",
+      "Mesa",
+      "Chandler",
+      "Scottsdale",
+      "Glendale",
+      "Tempe",
+      "Flagstaff"
+    ],
+    "Arkansas": [
+      "Little Rock",
+      "Fort Smith",
+      "Fayetteville",
+      "Springdale"
+    ],
+    "California": [
+      "Los Angeles",
+      "San Diego",
+      "San Jose",
+      "San Francisco",
+      "Fresno",
+      "Sacramento",
+      "Long Beach",
+      "Oakland",
+      "Bakersfield",
+      "Anaheim",
+      "Santa Ana",
+      "Riverside",
+      "Irvine",
+      "San Bernardino",
+      "Pasadena",
+      "Berkeley",
+      "Santa Monica",
+      "Palo Alto"
+    ],
+    "Colorado": [
+      "Denver",
+      "Colorado Springs",
+      "Aurora",
+      "Fort Collins",
+      "Lakewood",
+      "Boulder"
+    ],
+    "Connecticut": [
+      "Bridgeport",
+      "New Haven",
+      "Hartford",
+      "Stamford",
+      "Waterbury"
+    ],
+    "Delaware": [
+      "Wilmington",
+      "Dover",
+      "Newark"
+    ],
+    "District of Columbia": [
+      "Washington"
+    ],
+    "Florida": [
+      "Jacksonville",
+      "Miami",
+      "Tampa",
+      "Orlando",
+      "St. Petersburg",
+      "Hialeah",
+      "Fort Lauderdale",
+      "Tallahassee",
+      "Cape Coral",
+      "Sarasota",
+      "Naples",
+      "Key West"
+    ],
+    "Georgia": [
+      "Atlanta",
+      "Augusta",
+      "Columbus",
+      "Savannah",
+      "Athens",
+      "Macon"
+    ],
+    "Hawaii": [
+      "Honolulu",
+      "Hilo",
+      "Kailua",
+      "Kahului"
+    ],
+    "Idaho": [
+      "Boise",
+      "Meridian",
+      "Nampa",
+      "Idaho Falls"
+    ],
+    "Illinois": [
+      "Chicago",
+      "Aurora",
+      "Naperville",
+      "Joliet",
+      "Rockford",
+      "Springfield",
+      "Peoria",
+      "Evanston"
+    ],
+    "Indiana": [
+      "Indianapolis",
+      "Fort Wayne",
+      "Evansville",
+      "South Bend",
+      "Bloomington"
+    ],
+    "Iowa": [
+      "Des Moines",
+      "Cedar Rapids",
+      "Davenport",
+      "Iowa City"
+    ],
+    "Kansas": [
+      "Wichita",
+      "Overland Park",
+      "Kansas City",
+      "Topeka",
+      "Lawrence"
+    ],
+    "Kentucky": [
+      "Louisville",
+      "Lexington",
+      "Bowling Green",
+      "Covington"
+    ],
+    "Louisiana": [
+      "New Orleans",
+      "Baton Rouge",
+      "Shreveport",
+      "Lafayette"
+    ],
+    "Maine": [
+      "Portland",
+      "Lewiston",
+      "Bangor",
+      "Augusta"
+    ],
+    "Maryland": [
+      "Baltimore",
+      "Columbia",
+      "Germantown",
+      "Silver Spring",
+      "Annapolis",
+      "Rockville"
+    ],
+    "Massachusetts": [
+      "Boston",
+      "Worcester",
+      "Springfield",
+      "Cambridge",
+      "Lowell",
+      "Somerville",
+      "Quincy"
+    ],
+    "Michigan": [
+      "Detroit",
+      "Grand Rapids",
+      "Ann Arbor",
+      "Lansing",
+      "Flint",
+      "Dearborn",
+      "Troy"
+    ],
+    "Minnesota": [
+      "Minneapolis",
+      "Saint Paul",
+      "Rochester",
+      "Duluth",
+      "Bloomington"
+    ],
+    "Mississippi": [
+      "Jackson",
+      "Gulfport",
+      "Southaven",
+      "Biloxi"
+    ],
+    "Missouri": [
+      "Kansas City",
+      "Saint Louis",
+      "Springfield",
+      "Columbia",
+      "Independence"
+    ],
+    "Montana": [
+      "Billings",
+      "Missoula",
+      "Great Falls",
+      "Bozeman"
+    ],
+    "Nebraska": [
+      "Omaha",
+      "Lincoln",
+      "Bellevue",
+      "Grand Island"
+    ],
+    "Nevada": [
+      "Las Vegas",
+      "Henderson",
+      "Reno",
+      "North Las Vegas",
+      "Sparks"
+    ],
+    "New Hampshire": [
+      "Manchester",
+      "Nashua",
+      "Concord",
+      "Portsmouth"
+    ],
+    "New Jersey": [
+      "Newark",
+      "Jersey City",
+      "Paterson",
+      "Elizabeth",
+      "Trenton",
+      "Edison",
+      "Princeton"
+    ],
+    "New Mexico": [
+      "Albuquerque",
+      "Las Cruces",
+      "Santa Fe",
+      "Rio Rancho"
+    ],
+    "New York": [
+      "New York",
+      "Buffalo",
+      "Rochester",
+      "Yonkers",
+      "Syracuse",
+      "Albany",
+      "Brooklyn",
+      "Queens",
+      "Bronx",
+      "Staten Island",
+      "White Plains",
+      "Ithaca"
+    ],
+    "North Carolina": [
+      "Charlotte",
+      "Raleigh",
+      "Greensboro",
+      "Durham",
+      "Winston-Salem",
+      "Fayetteville",
+      "Asheville"
+    ],
+    "North Dakota": [
+      "Fargo",
+      "Bismarck",
+      "Grand Forks",
+      "Minot"
+    ],
+    "Ohio": [
+      "Columbus",
+      "Cleveland",
+      "Cincinnati",
+      "Toledo",
+      "Akron",
+      "Dayton",
+      "Youngstown"
+    ],
+    "Oklahoma": [
+      "Oklahoma City",
+      "Tulsa",
+      "Norman",
+      "Broken Arrow"
+    ],
+    "Oregon": [
+      "Portland",
+      "Salem",
+      "Eugene",
+      "Gresham",
+      "Beaverton",
+      "Bend"
+    ],
+    "Pennsylvania": [
+      "Philadelphia",
+      "Pittsburgh",
+      "Allentown",
+      "Erie",
+      "Reading",
+      "Scranton",
+      "Bethlehem"
+    ],
+    "Rhode Island": [
+      "Providence",
+      "Warwick",
+      "Cranston",
+      "Newport"
+    ],
+    "South Carolina": [
+      "Charleston",
+      "Columbia",
+      "North Charleston",
+      "Greenville",
+      "Myrtle Beach"
+    ],
+    "South Dakota": [
+      "Sioux Falls",
+      "Rapid City",
+      "Aberdeen"
+    ],
+    "Tennessee": [
+      "Nashville",
+      "Memphis",
+      "Knoxville",
+      "Chattanooga",
+      "Clarksville",
+      "Franklin"
+    ],
+    "Texas": [
+      "Houston",
+      "San Antonio",
+      "Dallas",
+      "Austin",
+      "Fort Worth",
+      "El Paso",
+      "Arlington",
+      "Corpus Christi",
+      "Plano",
+      "Laredo",
+      "Lubbock",
+      "Irving",
+      "Garland",
+      "Frisco",
+      "McKinney"
+    ],
+    "Utah": [
+      "Salt Lake City",
+      "West Valley City",
+      "Provo",
+      "Park City",
+      "Ogden",
+      "St. George"
+    ],
+    "Vermont": [
+      "Burlington",
+      "Rutland",
+      "Montpelier"
+    ],
+    "Virginia": [
+      "Virginia Beach",
+      "Norfolk",
+      "Richmond",
+      "Arlington",
+      "Alexandria",
+      "Chesapeake",
+      "Roanoke"
+    ],
+    "Washington": [
+      "Seattle",
+      "Spokane",
+      "Tacoma",
+      "Vancouver",
+      "Bellevue",
+      "Everett",
+      "Olympia",
+      "Redmond"
+    ],
+    "West Virginia": [
+      "Charleston",
+      "Huntington",
+      "Morgantown"
+    ],
+    "Wisconsin": [
+      "Milwaukee",
+      "Madison",
+      "Green Bay",
+      "Kenosha",
+      "Appleton"
+    ],
+    "Wyoming": [
+      "Cheyenne",
+      "Casper",
+      "Jackson",
+      "Laramie"
+    ]
+  },
+  "TH": {
+    "Amnat Charoen": [
+      "Mueang Amnat Charoen",
+      "Hua Taphan",
+      "Chanuman"
+    ],
+    "Ang Thong": [
+      "Mueang Ang Thong",
+      "Wiset Chai Chan",
+      "Pa Mok"
+    ],
+    "Phra Nakhon Si Ayutthaya": [
+      "Phra Nakhon Si Ayutthaya",
+      "Bang Pa-in",
+      "Uthai",
+      "Wang Noi",
+      "Nakhon Luang"
+    ],
+    "Bangkok": [
+      "Phra Nakhon",
+      "Dusit",
+      "Bang Rak",
+      "Pathum Wan",
+      "Sathon",
+      "Bang Kho Laem",
+      "Yan Nawa",
+      "Khlong Toei",
+      "Watthana",
+      "Huai Khwang",
+      "Din Daeng",
+      "Phaya Thai",
+      "Ratchathewi",
+      "Chatuchak",
+      "Lat Phrao",
+      "Bang Kapi",
+      "Bangkok Noi",
+      "Bangkok Yai",
+      "Thon Buri",
+      "Khlong San",
+      "Phasi Charoen",
+      "Bang Khae",
+      "Min Buri",
+      "Nong Khaem",
+      "Prawet",
+      "Suan Luang",
+      "Bang Na",
+      "Don Mueang",
+      "Lak Si",
+      "Sai Mai"
+    ],
+    "Bueng Kan": [
+      "Mueang Bueng Kan",
+      "Seka",
+      "Pho Chai"
+    ],
+    "Buri Ram": [
+      "Mueang Buri Ram",
+      "Nang Rong",
+      "Prakhon Chai",
+      "Lam Plai Mat"
+    ],
+    "Chonburi": [
+      "Mueang Chonburi",
+      "Bang Lamung",
+      "Si Racha",
+      "Sattahip",
+      "Phanat Nikhom"
+    ],
+    "Chachoengsao": [
+      "Mueang Chachoengsao",
+      "Bang Pakong",
+      "Phanom Sarakham"
+    ],
+    "Chiang Mai": [
+      "Mueang Chiang Mai",
+      "Hang Dong",
+      "San Sai",
+      "San Kamphaeng",
+      "Mae Rim",
+      "Doi Saket",
+      "Sarapee",
+      "Chom Thong",
+      "Fang",
+      "Mae Taeng"
+    ],
+    "Chai Nat": [
+      "Mueang Chai Nat",
+      "Hankha",
+      "Sankhaburi"
+    ],
+    "Chaiyaphum": [
+      "Mueang Chaiyaphum",
+      "Phu Khiao",
+      "Kaset Sombun"
+    ],
+    "Chumphon": [
+      "Mueang Chumphon",
+      "Lang Suan",
+      "Sawi"
+    ],
+    "Chiang Rai": [
+      "Mueang Chiang Rai",
+      "Mae Sai",
+      "Chiang Saen",
+      "Mae Chan",
+      "Chiang Khong"
+    ],
+    "Chanthaburi": [
+      "Mueang Chanthaburi",
+      "Tha Mai",
+      "Khlung",
+      "Pong Nam Ron"
+    ],
+    "Khon Kaen": [
+      "Mueang Khon Kaen",
+      "Chum Phae",
+      "Ban Phai",
+      "Nam Phong"
+    ],
+    "Kamphaeng Phet": [
+      "Mueang Kamphaeng Phet",
+      "Khanu Woralaksaburi",
+      "Sai Ngam"
+    ],
+    "Krabi": [
+      "Mueang Krabi",
+      "Ao Luek",
+      "Klong Thom",
+      "Ko Lanta"
+    ],
+    "Kanchanaburi": [
+      "Mueang Kanchanaburi",
+      "Sai Yok",
+      "Thong Pha Phum",
+      "Sangkhla Buri"
+    ],
+    "Kalasin": [
+      "Mueang Kalasin",
+      "Yang Talat",
+      "Kuchinarai"
+    ],
+    "Loei": [
+      "Mueang Loei",
+      "Chiang Khan",
+      "Dan Sai",
+      "Phu Ruea"
+    ],
+    "Lampang": [
+      "Mueang Lampang",
+      "Ko Kha",
+      "Thoen"
+    ],
+    "Lamphun": [
+      "Mueang Lamphun",
+      "Pa Sang",
+      "Ban Hong"
+    ],
+    "Lopburi": [
+      "Mueang Lopburi",
+      "Chai Badan",
+      "Ban Mi"
+    ],
+    "Mukdahan": [
+      "Mueang Mukdahan",
+      "Don Tan",
+      "Kham Cha-i"
+    ],
+    "Maha Sarakham": [
+      "Mueang Maha Sarakham",
+      "Kosum Phisai",
+      "Borabue"
+    ],
+    "Mae Hong Son": [
+      "Mueang Mae Hong Son",
+      "Pai",
+      "Mae Sariang"
+    ],
+    "Nan": [
+      "Mueang Nan",
+      "Pua",
+      "Wiang Sa"
+    ],
+    "Nong Bua Lamphu": [
+      "Mueang Nong Bua Lamphu",
+      "Na Klang",
+      "Suwannakhuha"
+    ],
+    "Nonthaburi": [
+      "Mueang Nonthaburi",
+      "Pak Kret",
+      "Bang Bua Thong",
+      "Bang Yai",
+      "Bang Kruai"
+    ],
+    "Nong Khai": [
+      "Mueang Nong Khai",
+      "Tha Bo",
+      "Si Chiang Mai"
+    ],
+    "Nakhon Ratchasima": [
+      "Mueang Nakhon Ratchasima",
+      "Pak Chong",
+      "Sikhio",
+      "Bua Yai",
+      "Phimai"
+    ],
+    "Nakhon Phanom": [
+      "Mueang Nakhon Phanom",
+      "That Phanom",
+      "Si Songkhram"
+    ],
+    "Nakhon Pathom": [
+      "Mueang Nakhon Pathom",
+      "Sam Phran",
+      "Nakhon Chai Si",
+      "Phutthamonthon"
+    ],
+    "Nakhon Sawan": [
+      "Mueang Nakhon Sawan",
+      "Takhli",
+      "Chum Saeng"
+    ],
+    "Nakhon Si Thammarat": [
+      "Mueang Nakhon Si Thammarat",
+      "Thung Song",
+      "Sichon",
+      "Pak Phanang"
+    ],
+    "Nakhon Nayok": [
+      "Mueang Nakhon Nayok",
+      "Ban Na",
+      "Pak Phli"
+    ],
+    "Narathiwat": [
+      "Mueang Narathiwat",
+      "Sungai Kolok",
+      "Tak Bai"
+    ],
+    "Phetchaburi": [
+      "Mueang Phetchaburi",
+      "Cha-am",
+      "Tha Yang"
+    ],
+    "Phichit": [
+      "Mueang Phichit",
+      "Taphan Hin",
+      "Bang Mun Nak"
+    ],
+    "Prachuap Khiri Khan": [
+      "Mueang Prachuap Khiri Khan",
+      "Hua Hin",
+      "Pran Buri",
+      "Bang Saphan"
+    ],
+    "Phuket": [
+      "Mueang Phuket",
+      "Kathu",
+      "Thalang"
+    ],
+    "Phatthalung": [
+      "Mueang Phatthalung",
+      "Khuan Khanun",
+      "Tamot"
+    ],
+    "Phitsanulok": [
+      "Mueang Phitsanulok",
+      "Wang Thong",
+      "Bang Rakam"
+    ],
+    "Phetchabun": [
+      "Mueang Phetchabun",
+      "Lom Sak",
+      "Wichian Buri",
+      "Khao Kho"
+    ],
+    "Phang Nga": [
+      "Mueang Phang Nga",
+      "Takua Pa",
+      "Thai Mueang",
+      "Ko Yao"
+    ],
+    "Prachin Buri": [
+      "Mueang Prachin Buri",
+      "Kabin Buri",
+      "Si Maha Phot"
+    ],
+    "Phrae": [
+      "Mueang Phrae",
+      "Long",
+      "Sung Men"
+    ],
+    "Pathum Thani": [
+      "Mueang Pathum Thani",
+      "Khlong Luang",
+      "Thanyaburi",
+      "Lam Luk Ka",
+      "Lat Lum Kaeo"
+    ],
+    "Pattani": [
+      "Mueang Pattani",
+      "Nong Chik",
+      "Sai Buri"
+    ],
+    "Phayao": [
+      "Mueang Phayao",
+      "Chiang Kham",
+      "Dok Khamtai"
+    ],
+    "Ratchaburi": [
+      "Mueang Ratchaburi",
+      "Damnoen Saduak",
+      "Ban Pong",
+      "Photharam"
+    ],
+    "Roi Et": [
+      "Mueang Roi Et",
+      "Selaphum",
+      "Suwannaphum"
+    ],
+    "Ranong": [
+      "Mueang Ranong",
+      "Kapoe",
+      "La-un"
+    ],
+    "Rayong": [
+      "Mueang Rayong",
+      "Klaeng",
+      "Ban Chang",
+      "Pluak Daeng"
+    ],
+    "Songkhla": [
+      "Mueang Songkhla",
+      "Hat Yai",
+      "Sadao",
+      "Na Mom"
+    ],
+    "Samut Songkhram": [
+      "Mueang Samut Songkhram",
+      "Amphawa",
+      "Bang Khonthi"
+    ],
+    "Samut Sakhon": [
+      "Mueang Samut Sakhon",
+      "Krathum Baen",
+      "Ban Phaeo"
+    ],
+    "Sa Kaeo": [
+      "Mueang Sa Kaeo",
+      "Aranyaprathet",
+      "Wang Nam Yen"
+    ],
+    "Sing Buri": [
+      "Mueang Sing Buri",
+      "In Buri",
+      "Bang Rachan"
+    ],
+    "Surat Thani": [
+      "Mueang Surat Thani",
+      "Ko Samui",
+      "Ko Pha-ngan",
+      "Phunphin",
+      "Chaiya"
+    ],
+    "Sakon Nakhon": [
+      "Mueang Sakon Nakhon",
+      "Sawang Daen Din",
+      "Phang Khon"
+    ],
+    "Saraburi": [
+      "Mueang Saraburi",
+      "Kaeng Khoi",
+      "Nong Khae"
+    ],
+    "Suphan Buri": [
+      "Mueang Suphan Buri",
+      "Song Phi Nong",
+      "U Thong",
+      "Dan Chang"
+    ],
+    "Samut Prakan": [
+      "Mueang Samut Prakan",
+      "Bang Phli",
+      "Phra Pradaeng",
+      "Bang Bo",
+      "Phra Samut Chedi"
+    ],
+    "Surin": [
+      "Mueang Surin",
+      "Prasat",
+      "Sangkha",
+      "Rattanaburi"
+    ],
+    "Si Sa Ket": [
+      "Mueang Si Sa Ket",
+      "Kanthararom",
+      "Uthumphon Phisai"
+    ],
+    "Sukhothai": [
+      "Mueang Sukhothai",
+      "Sawankhalok",
+      "Si Satchanalai"
+    ],
+    "Satun": [
+      "Mueang Satun",
+      "La-ngu",
+      "Thung Wa"
+    ],
+    "Trat": [
+      "Mueang Trat",
+      "Ko Chang",
+      "Khlong Yai",
+      "Laem Ngop"
+    ],
+    "Trang": [
+      "Mueang Trang",
+      "Kantang",
+      "Huai Yot",
+      "Sikao"
+    ],
+    "Tak": [
+      "Mueang Tak",
+      "Mae Sot",
+      "Ban Tak",
+      "Umphang"
+    ],
+    "Udon Thani": [
+      "Mueang Udon Thani",
+      "Kumphawapi",
+      "Ban Dung",
+      "Nong Han"
+    ],
+    "Ubon Ratchathani": [
+      "Mueang Ubon Ratchathani",
+      "Warin Chamrap",
+      "Det Udom",
+      "Phibun Mangsahan"
+    ],
+    "Uthai Thani": [
+      "Mueang Uthai Thani",
+      "Ban Rai",
+      "Nong Chang"
+    ],
+    "Uttaradit": [
+      "Mueang Uttaradit",
+      "Laplae",
+      "Nam Pat"
+    ],
+    "Yasothon": [
+      "Mueang Yasothon",
+      "Kut Chum",
+      "Loeng Nok Tha"
+    ],
+    "Yala": [
+      "Mueang Yala",
+      "Betong",
+      "Raman"
+    ]
+  }
+}

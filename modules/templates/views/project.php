@@ -124,6 +124,9 @@ if (in_array($loginPerson['sEmail'], $CSemail)){
                 </div>
                 <div class="form-group text-right">
                     <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
+                    <!-- monday_user_id ของคนที่ล็อกอิน ส่งไปให้ webhook Make.com ใช้ระบุผู้สร้าง
+                         ใน monday.com (ว่างได้ถ้าคนนั้นยังไม่ได้ผูกบัญชี monday) -->
+                    <input type="hidden" id="mondayUserID" value="<?php echo htmlspecialchars($loginPerson['monday_user_id'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" id="poEmail" value="<?php echo $loginPerson['sEmail']; ?>">
                     <input type="hidden" id="teamEmail" value="<?php echo $teamEmail; ?>">
                     <input type="hidden" id="editID" value="">

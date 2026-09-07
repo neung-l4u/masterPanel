@@ -70,7 +70,10 @@ if ($inv['status'] === 'sent') {
 }
 
 // Save file
-$safeName  = preg_replace('/[^a-zA-Z0-9_\-]/', '_', trim($inv['shopName']));
+// Allow alphanumeric (including Thai), underscore, and hyphen
+$safeName  = preg_replace('/[^\p{L}\p{M}\p{N}_\-]/u', '_', trim($inv['shopName']));
+$safeName  = preg_replace('/_+/', '_', $safeName); // Replace multiple underscores with single
+$safeName  = trim($safeName, '_'); // Remove leading/trailing underscores
 $folderName = $safeName . '-TH';
 $uploadBase = dirname(__DIR__, 2) . '/modules/signup/assets/uploads/slip/';
 $uploadDir  = $uploadBase . $folderName . '/';

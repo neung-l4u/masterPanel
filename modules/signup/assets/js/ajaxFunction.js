@@ -122,7 +122,36 @@ function getProductList(country) {
                 return orderA - orderB;
             });
 
-            // 4. วนลูปแสดงผล (เหมือนเดิม)
+            // 4. คำนวณส่วนต่างของ Bundle เทียบกับการซื้อแยก เพื่อโชว์ว่าประหยัดเท่าไหร่
+            // (ใช้รูปแบบเดียวกับ Add-on Flyer/Fridge ที่โชว์ "will save ..." อยู่แล้ว)
+            const normName = (x) => (x || "").replace(/\s+/g, " ").trim();
+            const bundleSaving = {};
+            (function buildBundleSaving(){
+                //ราคาแพ็กเกจเดี่ยว ใช้ตัวแรกที่เจอของแต่ละชื่อ
+                const soloPrice = {};
+                readMainProduct.forEach((x) => {
+                    if (x.type === "solo" && !(normName(x.name) in soloPrice)) {
+                        soloPrice[normName(x.name)] = x.amount;
+                    }
+                });
+                const proItem = readMainProduct.find(
+                    (x) => normName(x.name) === "Pro Online Ordering System"
+                );
+                if (!proItem) { return; }
+
+                readMainProduct.forEach((x) => {
+                    const n = normName(x.name);
+                    if (!/^Pro\s*\+/.test(n)) { return; }
+                    const partName = normName(n.replace(/^Pro\s*\+\s*/, ""));
+                    if (!(partName in soloPrice)) { return; }
+                    const separate = proItem.amount + soloPrice[partName];
+                    const saving = separate - x.amount;
+                    //โชว์เฉพาะตอนที่ซื้อรวมถูกกว่าจริง
+                    if (saving > 0) { bundleSaving[x.price_id] = saving; }
+                });
+            })();
+
+            // 5. วนลูปแสดงผล (เหมือนเดิม)
             let currentType = "";
 
             readMainProduct.forEach((item) => {
@@ -154,11 +183,15 @@ function getProductList(country) {
                     }
 
                     // สร้าง Header
-                    $(`<div class='text-warning mt-4'>${headerLabel}</div>`).appendTo("#products2");
+                    $(`<div class='text-warning addon-category'>${headerLabel}</div>`).appendTo("#products2");
 
                     currentType = itemType;
                 }
                 // -------------------------------------
+
+                let savingText = bundleSaving[product_id]
+                    ? `<b class="text-success">(save ${currencySign}${(bundleSaving[product_id] / 100).toFixed(2)} vs buying separately)</b>`
+                    : "";
 
                 let productHTML = `<div class="form-check">
                         <input 
@@ -171,6 +204,7 @@ function getProductList(country) {
                         >
                         <label class="form-check-label" for="product${ran}" >
                             ${name} <b class="text-primary"> - ${currencySign}${price} ${special}${ext}</b>
+                            ${savingText}
                         </label>
                     </div>`;
 
@@ -246,6 +280,59 @@ function getProductList(country) {
             let didItFlyer = false;
             let didItFridge = false;
             let newLine = false;
+
+            // จัดกลุ่ม Add-on ที่ไม่ใช่ Flyer/Fridge แทนที่จะกองรวมกันใต้หัวข้อ "Others"
+            // เดียว โดยอิงจาก item.type ที่มีอยู่แล้วในไฟล์ราคา (ไม่ต้องแก้ข้อมูล)
+            // type ที่สะกดต่างกันแต่หมายถึงของอย่างเดียวกัน (mail/email, mob/mobile,
+            // promotion/promotions, webmail) ถูกยุบมาไว้กลุ่มเดียวกัน
+            const addonCategoryConfig = {
+                "pos":           { order: 1, label: "POS & Hardware" },
+                "addonPOS":      { order: 1, label: "POS & Hardware" },
+                "printer":       { order: 1, label: "POS & Hardware" },
+                "cashdrawer":    { order: 1, label: "POS & Hardware" },
+                "wifiextension": { order: 1, label: "POS & Hardware" },
+
+                "website":       { order: 2, label: "Website & Domain" },
+                "domain":        { order: 2, label: "Website & Domain" },
+                "webmail":       { order: 2, label: "Website & Domain" },
+
+                "marketing":     { order: 3, label: "Marketing & Ads" },
+                "posting":       { order: 3, label: "Marketing & Ads" },
+                "promotion":     { order: 3, label: "Marketing & Ads" },
+                "promotions":    { order: 3, label: "Marketing & Ads" },
+                "yelp":          { order: 3, label: "Marketing & Ads" },
+                "mail":          { order: 3, label: "Marketing & Ads" },
+                "email":         { order: 3, label: "Marketing & Ads" },
+
+                "ai":            { order: 4, label: "AI & Apps" },
+                "mob":           { order: 4, label: "AI & Apps" },
+                "mobile":        { order: 4, label: "AI & Apps" },
+
+                "menu":          { order: 5, label: "Design & Print" }
+            };
+            // type "email" ถูกใช้ปนกันระหว่าง Website Hosting กับ Email Marketing แล้วแต่
+            // ประเทศ จึงต้องดูจากชื่อสินค้าเพิ่มเพื่อจัดให้เข้าหมวดที่ถูกต้อง
+            const addonCategoryOf = (type, name) => {
+                if (type === "email" && (name || "").search("Hosting") > -1) {
+                    return "Website & Domain";
+                }
+                return addonCategoryConfig[type] ? addonCategoryConfig[type].label : "Others";
+            };
+
+            // เรียงสินค้าให้ของกลุ่มเดียวกันอยู่ติดกัน มิฉะนั้นหัวข้อจะโผล่ซ้ำ
+            // Flyer/Fridge ต้องคงลำดับเดิมไว้ข้างบนสุด เพราะมี logic ส่วนลดของตัวเอง
+            readAddonProduct.sort((a, b) => {
+                const rank = (it) => {
+                    const n = it.name || "";
+                    if (n.search("A6|Fridge|Flyers 5") > -1) { return 0; }
+                    if (it.type === "email" && n.search("Hosting") > -1) { return 2; } //จัดเข้า Website
+                    const cfg = addonCategoryConfig[it.type];
+                    return cfg ? cfg.order : 98;
+                };
+                return rank(a) - rank(b);
+            });
+
+            let currentAddonCategory = "";
             let addonCheck2 = readAddonProduct.map((item) => {
                 let name = "";
                 let special = (item.gst)?" + GST ":"";
@@ -316,7 +403,7 @@ function getProductList(country) {
 
                 if((position>-1) && (!didItFlyer)){
                     if((formCountry==="US") || (formCountry==="CA")){
-                        addText = `<div class='text-warning'>
+                        addText = `<div class='text-warning addon-category'>
                                         Add-on Flyer
                                         <span class="mytooltip tooltip-effect-1">
                                             <span class="tooltip-item"><i class="fa-solid fa-star text-primary"></i></span>
@@ -328,7 +415,7 @@ function getProductList(country) {
                                             </span>
                                         </span>
                                    </div>`;
-                    }else{ addText = `<div class='text-warning'>
+                    }else{ addText = `<div class='text-warning addon-category'>
                                            Special Add-on Flyer buy now got 15% discount (Recommend)
                                            <span class="mytooltip tooltip-effect-1">
                                                 <span class="tooltip-item"><i class="fa-solid fa-star text-primary"></i></span>
@@ -343,7 +430,7 @@ function getProductList(country) {
                     didItFlyer = true;
                 }
                 if((position2>-1) && (!didItFridge)){
-                    addText = `<div class='text-warning mt-4'>
+                    addText = `<div class='text-warning addon-category'>
                                     Special Add-on Fridge Magnet buy now got 15% discount (Recommend)
                                     <span class="mytooltip tooltip-effect-1">
                                         <span class="tooltip-item"><i class="fa-solid fa-star text-primary"></i></span>
@@ -373,8 +460,11 @@ function getProductList(country) {
                         discountText = "";
                     }else { discountText = `<b class="text-primary">${ext}</b>`; }
                     leadDiscountText = "";
-                    if(!newLine) {
-                        addText = "<div class='text-warning mt-4'>Others</div>";
+                    // ขึ้นหัวข้อใหม่เมื่อเปลี่ยนหมวด แทนหัวข้อ "Others" อันเดียวแบบเดิม
+                    let thisCategory = addonCategoryOf(item.type, name);
+                    if (currentAddonCategory !== thisCategory) {
+                        addText = `<div class='text-warning addon-category'>${thisCategory}</div>`;
+                        currentAddonCategory = thisCategory;
                     }
                     newLine = true;
                     realPrice = price;
@@ -2078,6 +2168,7 @@ const saveToDB = (stripePayload, stripeRes) => {
     let payload = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
+        NewOrExistingCustomer: $("#formCustomerType").val() || "",
         FirstName: formData.owner.firstName.trim(),
         LastName: formData.owner.lastName.trim(),
         Mobile: $("#ownerMobile").val(),
@@ -2281,6 +2372,7 @@ const createLogs = (stripePayload) => {
     let tempData = {
         Country: formData.formCountry,
         CustomerType: formData.formType,
+        NewOrExistingCustomer: $("#formCustomerType").val() || "",
         FirstName: formData.owner.firstName.trim(),
         LastName: formData.owner.lastName.trim(),
         Mobile: $("#ownerMobile").val(),

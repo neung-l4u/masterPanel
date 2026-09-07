@@ -57,7 +57,7 @@ if ($file['size'] > 10 * 1024 * 1024) {
 
 // Build folder: shopName-country
 // Allow alphanumeric (including Thai), underscore, and hyphen
-$safeName   = preg_replace('/[^\p{L}\p{N}_\-]/u', '_', trim($shopName));
+$safeName   = preg_replace('/[^\p{L}\p{M}\p{N}_\-]/u', '_', trim($shopName));
 $safeName   = preg_replace('/_+/', '_', $safeName); // Replace multiple underscores with single
 $safeName   = trim($safeName, '_'); // Remove leading/trailing underscores
 $safeCountry = strtoupper(trim($country));

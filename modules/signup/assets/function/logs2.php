@@ -12,6 +12,7 @@ $result["msg"] = "";
 
 $Country = !empty($_POST["Country"])?$_POST["Country"]:"-";
 $CustomerType = !empty($_POST["CustomerType"])?$_POST["CustomerType"]:"-";
+$NewOrExistingCustomer = !empty($_POST["NewOrExistingCustomer"])?$_POST["NewOrExistingCustomer"]:"-";
 $FirstName = !empty($_POST["FirstName"])?$_POST["FirstName"]:"-";
 $LastName = !empty($_POST["LastName"])?$_POST["LastName"]:"-";
 $Mobile = !empty($_POST["Mobile"])?$_POST["Mobile"]:"-";
@@ -122,6 +123,7 @@ if (!empty($startDate)) {
 $message = "----- $fileName -> $timestamp -----
 Country: $Country|
 CustomerType: $CustomerType|
+NewOrExistingCustomer: $NewOrExistingCustomer|
 
 FirstName: $FirstName|
 LastName: $LastName|

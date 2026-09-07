@@ -2,6 +2,12 @@
 global $settings;
 date_default_timezone_set("Asia/Bangkok");
 include ("form_settings.php");
+//รายชื่อ Sales Agent ดึงจากตาราง staffs (teamID = 3) แทนการ hardcode ใน HTML
+global $db;
+include_once("assets/db/db.php");
+include_once("assets/db/initDB.php");
+include_once("assets/function/salesAgents.php");
+$salesAgents = getSalesAgents($db ?? null);
 global $test;
 $testMode = !empty($_GET['testMode']) ? $_GET['testMode'] : false;
 include("assets/function/testMode.php");
@@ -27,6 +33,96 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <style>
+        /* หัวข้อหมวด: ทำให้ดูเป็นตัวคั่นหมวดจริง ๆ ไม่ใช่รายการอีกอันหนึ่ง
+           ใช้ร่วมกันทั้ง Package select, Setup Fee และ Add-on */
+        #addon2 .addon-category,
+        #products2 .addon-category,
+        .section-heading{
+            width: 100%;
+            margin-top: 26px;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: .02em;
+        }
+        #addon2 .addon-category:first-child,
+        #products2 .addon-category:first-child,
+        .card-text > .section-heading:first-child{ margin-top: 0; }
+        /* รายการชิดกันขึ้น อ่านเป็นกลุ่มได้ง่ายกว่าเดิม */
+        #addon2 .form-check,
+        #products2 .form-check,
+        #setUpFeeList .form-check{
+            width: 100%;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            border-radius: 4px;
+        }
+        #addon2 .form-check:hover,
+        #products2 .form-check:hover,
+        #setUpFeeList .form-check:hover{ background: #fafafa; }
+        /* ตัวเลือกที่เลือกอยู่ให้เห็นชัดขึ้น เพราะรายการยาวและ radio วงเล็ก */
+        #products2 .form-check:has(input:checked),
+        #setUpFeeList .form-check:has(input:checked),
+        #addon2 .form-check:has(input:checked){
+            background: #e8f1fc;
+        }
+        /* หมายเหตุ: ไม่จัดราคาชิดขวา เพราะแถว Flyer/Fridge มีข้อความส่วนลดต่อท้ายราคา
+           การดัน b ตัวแรกไปขวาจะทำให้ข้อความส่วนลดหลุดไปคนละฝั่งกับราคา */
+
+        /* แถบสรุปยอดลอยล่างจอ */
+        .sticky-summary{
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1030;
+            background: #ffffff;
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+        }
+        .sticky-summary-inner{
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .sticky-summary-label{
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #9e9e9e;
+        }
+        .sticky-summary-value{
+            font-size: 13px;
+            color: #424242;
+        }
+        .sticky-summary-total{ text-align: right; white-space: nowrap; }
+        .sticky-summary-amount{
+            font-size: 20px;
+            font-weight: 600;
+            color: #1976d2;
+        }
+        /* กันไม่ให้แถบทับเนื้อหาท้ายหน้า */
+        body.has-sticky-summary{ padding-bottom: 76px; }
+        @media (max-width: 576px){
+            .sticky-summary-inner{ padding: 8px 12px; gap: 10px; }
+            .sticky-summary-items{ min-width: 0; }
+            .sticky-summary-value{
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 55vw;
+            }
+            .sticky-summary-amount{ font-size: 17px; }
+        }
+
         .backupButton{
             width: 100%;
             border: none;
@@ -197,7 +293,6 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                     </div>
                 </div>
             </div>
-            <button type="button" class="btnOpen" onclick="toggleLeftNav();" style="position: fixed; bottom: 50px; right: 30px;"><i class="fa-solid fa-note-sticky"></i></button>
             <div class="container d-flex justify-content-center" style="min-width:720px!important">
                 <div class="col-11 col-offset-2">
                     <?php include "progress_bar.php"; ?>
@@ -255,12 +350,12 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                 <div class="form-group row pt-2 firstStepForm" style="display: none;">
                                     <div class="col-2">
                                         <label for="formType">
-                                            industrial Type <b class="red">*</b>
+                                            Industrial Type <b class="red">*</b>
                                         </label>
                                     </div>
                                     <div class="col-6">
                                         <select id="formType" class="form-select" name="formType">
-                                            <option selected value="" disabled>--None--</option>
+                                            <option selected value="" disabled>Please select Industrial</option>
                                             <option value="Thai Restaurants &amp; Takeaways">Thai Restaurants &amp; Takeaways</option>
                                             <option value="Thai Massage">Thai Massage</option>
                                             <option value="Restaurants &amp; Takeaways">Restaurants &amp; Takeaways</option>
@@ -268,6 +363,25 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                     </div>
                                     <div class="col-2">
                                         <span id="warn_form_type" class="text-danger" style="display: none;">
+                                            Please select !!
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group row pt-2 firstStepForm" style="display: none;">
+                                    <div class="col-2">
+                                        <label for="formCustomerType">
+                                            Type Customer <b class="red">*</b>
+                                        </label>
+                                    </div>
+                                    <div class="col-6">
+                                        <select id="formCustomerType" class="form-select" name="formCustomerType">
+                                            <option selected value="" disabled>Please select Customer Type</option>
+                                            <option value="New Customer">New Customer</option>
+                                            <option value="Existing Customer">Existing Customer</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-2">
+                                        <span id="warn_form_customer_type" class="text-danger" style="display: none;">
                                             Please select !!
                                         </span>
                                     </div>
@@ -610,7 +724,10 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         <h5 class="card-title font-weight-bold pb-2">Physical Address</h5>
                                     </div>
 
-                                    <div class="form-group row pt-2">
+                                    <!-- ซ่อนช่อง Shop Number ไม่ให้ผู้ใช้เห็น แต่ยังคง input ไว้เพื่อให้
+                                         ค่ายังถูกส่งไปเหมือนเดิม (ajaxFunction ส่งเป็น ShopNumber2 และ
+                                         Monday/monday_data.php อ่านจาก $_POST['physicalShopNumber']) -->
+                                    <div class="form-group row pt-2 d-none">
                                         <label for="physicalShopNumber" class="col-2 control-label col-form-label">
                                             Shop Number
                                         </label>
@@ -624,6 +741,40 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                                     autocomplete="off"
                                                     value="<?php echo $test["shopnumber"]; ?>"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row pt-2 selectState">
+                                        <label for="state" class="col-2 control-label col-form-label">State</label>
+                                        <div class="col-8">
+                                            <select id="state" class="form-select optionState" name="state_codexxx"
+                                                    onchange="setShipAddress(); optionCity(false);" onblur="setShipAddress();">
+                                                <option value="">Please select Country</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row pt-2">
+                                        <label for="citySelect" class="col-2 control-label col-form-label cityLabel">City/Province</label>
+                                        <div class="col-8">
+                                            <select id="citySelect" class="form-select optionCity"
+                                                    onchange="onCitySelectChange();">
+                                                <option value="">Please select State</option>
+                                            </select>
+                                            <!-- Holds the value actually submitted: either the option picked
+                                                 above, or whatever was typed when "Other" is selected. -->
+                                            <input type="hidden" id="city" name="city"
+                                                   value="<?php echo $test["city"]; ?>"/>
+                                            <input
+                                                    type="text"
+                                                    id="cityOther"
+                                                    class="form-control mt-2"
+                                                    style="display: none;"
+                                                    onkeyup="syncCityOther();"
+                                                    onblur="this.value = sanitizeInput(this.value); syncCityOther();"
+                                                    autocomplete="off"
+                                                    placeholder="Type your city / district"
                                             />
                                         </div>
                                     </div>
@@ -646,32 +797,6 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                     </div>
 
                                     <div class="form-group row pt-2">
-                                        <label for="city" class="col-2 control-label col-form-label">City/Province</label>
-                                        <div class="col-8">
-                                            <input
-                                                    type="text"
-                                                    id="city"
-                                                    class="form-control"
-                                                    name="city"
-                                                    onkeyup="setShipAddress();"
-                                                    onblur="setShipAddress();"
-                                                    autocomplete="off"
-                                                    placeholder="Good city"
-                                                    value="<?php echo $test["city"]; ?>"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row pt-2 selectState">
-                                        <label for="state" class="col-2 control-label col-form-label">State</label>
-                                        <div class="col-8">
-                                            <select id="state" class="form-select optionState" name="state_codexxx"
-                                                    onchange="setShipAddress();" onblur="setShipAddress();">
-                                                <option value="">Please select Country</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row pt-2">
                                         <label for="zip" class="col-2 control-label col-form-label zipLabel">Zip Code</label>
                                         <div class="col-3">
                                             <input
@@ -680,7 +805,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     class="form-control"
                                                     name="zip"
                                                     onkeyup="setShipAddress();"
-                                                    onblur="setShipAddress();"
+                                                    onblur="setShipAddress(); checkZipField();"
                                                     placeholder="3000"
                                                     maxlength="10"
                                                     oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
@@ -747,7 +872,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="sectionCuisineSelector">
+                                    <!-- <div class="sectionCuisineSelector">
                                         <hr class="row mt-4">
                                         <div class="form-group row text-center pt-4">
                                             <h5 class="col card-title font-weight-bold">Cuisine Selector (Max 3)</h5>
@@ -770,7 +895,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                        disabled>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                 </div>
                             </div>
@@ -785,9 +910,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 <div class="card-body">
                                                     <h6 class="card-title fw-semibold">Package select</h6>
                                                     <div class="card-text mt-5">
-                                                        <div class="d-flex">
-                                                            <h6 class="fw-semibold text-warning">Contract Period</h6>
-                                                        </div>
+                                                        <div class="text-warning section-heading">Contract Period</div>
                                                         <div class="contractOptions d-flex">
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="radio" name="contractPeriod" id="radioContract0" value="0" checked onclick="getProductList();">
@@ -856,9 +979,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                 <div class="card-body">
                                                     <h6 class="card-title fw-semibold">Initial service</h6>
                                                     <div class="card-text mt-5">
-                                                        <div class="d-flex">
-                                                            <h6 class="fw-semibold text-warning">Setup Fee</h6>
-                                                        </div>
+                                                        <div class="text-warning section-heading">Setup Fee</div>
                                                         <div id="setUpFeeList" class="text-start">
                                                             set up fee will show here
                                                         </div>
@@ -1489,7 +1610,18 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         <div class="col">
                                             <div class="card">
                                                 <div class="card-body">
-                                                    <h6 class="card-title fw-semibold">Domain Name login info</h6>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <h6 class="card-title fw-semibold mb-0">Domain Name login info</h6>
+                                                        <span class="mytooltip tooltip-effect-1">
+                                                            <span class="tooltip-item"><i class="fa-solid fa-star text-primary"></i></span>
+                                                            <span class="tooltip-content clearfix">
+                                                                <img src="assets/img/buy-domain-name.png" alt="Size">
+                                                                <span class="tooltip-text">
+                                                                    Example Email
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    </div>
                                                     <div class="card-text pt-2">
                                                         <div class="row">
                                                             <div class="col p-2">
@@ -2700,18 +2832,17 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         <div class="col d-flex justify-content-between">
                                                             <select class="form-select" name="byAgent" id="byAgent" style="min-width: 50%">
                                                                 <option value="">--None--</option>
-                                                                <option value="Aon Pornnapa">Aon Pornnapa</option>
-                                                                <option value="Ball Anirut">Ball Anirut</option>
-                                                                <option value="Bell Akkharima">Bell Akkharima</option>
-                                                                <option value="Boom Piyakorn">Boom Piyakorn</option>
-                                                                <option value="Fern Paweena">Fern Paweena</option>
-                                                                <option value="Honey Tummaput">Honey Tummaput</option>
-                                                                <option value="Nan Chompunuch">Nan Chompunuch</option>
-                                                                <option value="Pluem Pluemkamol">Pluem Pluemkamol</option>
-                                                                <option value="Pruek Patipatsinlapakit">Pruek Patipatsinlapakit</option>
-                                                                <option value="Yok Napatsorn">Yok Napatsorn</option>
-                                                                <option value="Other">Other</option>
+                                                                <?php foreach ($salesAgents as $agent) { ?>
+                                                                    <option value="<?php echo htmlspecialchars($agent['label'], ENT_QUOTES, 'UTF-8'); ?>"
+                                                                            data-monday-id="<?php echo htmlspecialchars($agent['monday_user_id'], ENT_QUOTES, 'UTF-8'); ?>">
+                                                                        <?php echo htmlspecialchars($agent['label'], ENT_QUOTES, 'UTF-8'); ?>
+                                                                    </option>
+                                                                <?php } ?>
+                                                                <option value="Other" data-monday-id="">Other</option>
                                                             </select>
+                                                            <!-- monday_user_id ของ agent ที่เลือก ส่งต่อให้ webhook Make.com
+                                                                 ("Other" หรือไม่เลือก = ค่าว่าง) -->
+                                                            <input type="hidden" name="byAgentMondayId" id="byAgentMondayId" value="">
                                                             <input
                                                                     class="form-control mb-3"
                                                                     id="otherAgent"
@@ -2795,6 +2926,22 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
         </article>
     </div>
 </main>
+
+<!-- แถบสรุปยอดแบบลอยอยู่ล่างจอ ช่วยให้เห็นยอดรวมตลอดโดยไม่ต้องเลื่อนกลับขึ้นไป
+     แสดงเฉพาะตอนอยู่ในขั้นตอนที่เลือกแพ็กเกจ/แอดออนแล้วเท่านั้น -->
+<div id="stickySummary" class="sticky-summary" style="display: none;">
+    <div class="sticky-summary-inner">
+        <div class="sticky-summary-items">
+            <span class="sticky-summary-label">Selected</span>
+            <span id="stickySummaryItems" class="sticky-summary-value">No package selected</span>
+        </div>
+        <div class="sticky-summary-total">
+            <span class="sticky-summary-label">Total (incl. tax)</span>
+            <span class="sticky-summary-amount"><span class="currencySign">$</span><span id="stickySummaryTotal">0.00</span></span>
+        </div>
+    </div>
+</div>
+
 <?php include "form_footer.php"; ?>
 <?php
 if($invoiceMode){ ?>
