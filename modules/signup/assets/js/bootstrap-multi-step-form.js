@@ -1947,11 +1947,36 @@ function ownerBestTime(val) {
   formData.owner.bestTime = val;
 }
 
+// แปลงชื่อร้านเป็นท่อนแรกของ storeID (ต้องตรงกับ storeIdShopSlug() ใน
+// modules/signup/assets/function/generateStoreID.php)
+// - "&" -> "and"
+// - ตัดสัญลักษณ์และช่องว่างออก เหลือ a-z 0-9
+function storeSlugFromName(val) {
+  return String(val || '')
+    .replace(/\s*&\s*/g, 'and')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
+
 function setRestaurantName(val) {
   $('input[name="company"]').val(val);
   formData.business.shopName = val;
   formData.business.company = val;
+
+  // เติม storeSlug อัตโนมัติ แต่ไม่ทับถ้าผู้ใช้พิมพ์เอง (เช่นร้านชื่อไทย)
+  const slugInput = $('#storeSlug');
+  if (slugInput.length && !slugInput.data('touched')) {
+    slugInput.val(storeSlugFromName(val));
+  }
 }
+
+$(function () {
+  // ผู้ใช้แก้เองเมื่อไหร่ ให้หยุด auto-fill และบังคับรูปแบบ slug
+  $('#storeSlug').on('input', function () {
+    $(this).data('touched', true);
+    this.value = storeSlugFromName(this.value);
+  });
+});
 
 const setCreditFullName = () =>{
   let text = input_first_name.val()+" "+input_last_name.val();

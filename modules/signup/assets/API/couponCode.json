@@ -86,24 +86,24 @@
       "AMELIA": {
         "Massage": {
           "AU": {
-            "discount": 19900,
-            "code": "AMELIAAU199"
+            "discount": 11900,
+            "code": "AMELIAAU119"
           },
           "NZ": {
-            "discount": 19900,
-            "code": "AMELIANZ199"
+            "discount": 11900,
+            "code": "AMELIANZ119"
           },
           "UK": {
             "discount": 9900,
             "code": "AMELIAUK99"
           },
           "US": {
-            "discount": 19900,
-            "code": "AMELIAUS199"
+            "discount": 11900,
+            "code": "AMELIAUS119"
           },
           "CA": {
-            "discount": 19900,
-            "code": "AMELIACA199"
+            "discount": 11900,
+            "code": "AMELIACA119"
           }
         }
       },

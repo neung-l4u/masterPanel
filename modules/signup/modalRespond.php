@@ -323,6 +323,7 @@ function submitToCRM() {
         email: $("#email").val() || '',
         mobile: $("#mobile").val() || '',
         shopName: $("#shopName").val() || '',
+        storeSlug: $("#storeSlug").val() || '',
         country_code: $("#formCountry").val() || '',
         countryTextOnly: $("#formCountry").find('option:selected').text() || '',
         company: $("#company").val() || '',

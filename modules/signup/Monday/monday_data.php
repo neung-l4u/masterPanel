@@ -356,7 +356,35 @@ if ($response) {
   // Send as comma-separated string
   $formData['addonsName'] = implode(', ', $addonsNames);
 
-
+  // --- สร้าง storeID รูปแบบ {ชื่อร้าน}-{ประเทศ}-{ประเภท}-{สาขา} ---
+  // เช่น guaytiewruekhunpa-TH-TRT-0001
+  // เลขสาขาได้จากการ select storeID เดิมบนบอร์ด Projects ของประเทศนั้นบน monday.com
+  // ถ้าชื่อร้านเป็นภาษาไทยล้วน slug จะว่าง -> ให้กรอก storeSlug มาเอง
+  $storeIdFnPath = __DIR__ . '/../assets/function/generateStoreID.php';
+  if (file_exists($storeIdFnPath)) {
+      include_once $storeIdFnPath;
+      try {
+          $storeIdInfo = generateStoreID(
+              $_POST['shopName']     ?? '',
+              $_POST['country_code'] ?? '',
+              $_POST['formType']     ?? '',
+              $_POST['storeSlug']    ?? ''
+          );
+          $formData['storeID']       = $storeIdInfo['storeID'];
+          $formData['storeIDBranch'] = $storeIdInfo['branch'];
+          // reason จะมีค่าเมื่อสร้างไม่สำเร็จ (empty_slug / monday_unavailable / unknown_country)
+          $formData['storeIDReason'] = $storeIdInfo['reason'];
+          error_log('[monday_data] storeID=' . $storeIdInfo['storeID']
+              . ' branch=' . $storeIdInfo['branch']
+              . ' looked_up=' . ($storeIdInfo['looked_up'] ? 'yes' : 'no')
+              . ' reason=' . $storeIdInfo['reason']);
+      } catch (\Throwable $e) {
+          // storeID พังต้องไม่ทำให้ submit ทั้งฟอร์มล้ม
+          $formData['storeID']       = '';
+          $formData['storeIDReason'] = 'exception';
+          error_log('[monday_data] storeID error: ' . $e->getMessage());
+      }
+  }
 
   // Webhook URL
   // Note: For non-TH countries, send to izna04q2cdj68bqylepknapxa4l0wkaz when user clicks "Save to Monday"
@@ -438,6 +466,7 @@ if ($response) {
           $thPayload = [
               'invoice_id'    => (int)$row['id'],
               'invoiceID'     => $row['invoiceID'],
+              'storeID'       => $formData['storeID'] ?? '',
               'name'          => $row['name'],
               'address'       => $row['address'],
               'taxNumber'     => $row['taxNumber'],

@@ -600,6 +600,23 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     value="<?php echo $test["shop"]; ?>"
                                             />
                                             <input type="hidden" name="company">
+                                            <!-- ท่อนที่ 1 ของ storeID: ชื่อร้านตัวเล็กไม่มีสัญลักษณ์
+                                                 กรอกอัตโนมัติจากชื่อร้านภาษาอังกฤษ
+                                                 ถ้าชื่อร้านเป็นภาษาไทยต้องพิมพ์คำอ่านอังกฤษเอง -->
+                                            <label for="storeSlug" class="pt-2 small text-muted">
+                                                Store ID name
+                                            </label>
+                                            <input
+                                                    type="text"
+                                                    id="storeSlug"
+                                                    class="form-control form-control-sm"
+                                                    name="storeSlug"
+                                                    placeholder="authenticthaibistro"
+                                                    autocomplete="off"
+                                            />
+                                            <small class="text-muted" id="storeSlugHint">
+                                                ใช้เป็นท่อนแรกของ Store ID (ตัวเล็ก ไม่มีเว้นวรรค)
+                                            </small>
                                         </div>
                                         <div class="col-3">
                                             <label for="businessNumber" class="businessNumber">
