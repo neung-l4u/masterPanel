@@ -80,25 +80,11 @@ if ($account === null || !isset($accounts[$account]['sk'])) {
     fail('No Stripe account configured for ' . $row['countryCode']);
 }
 
-try {
-    $stripe = new \Stripe\StripeClient($accounts[$account]['sk']);
-
-    // Invoices come back newest-first, so page to the end to reach the first one.
-    $first = null;
-    $params = ['customer' => $customerId, 'limit' => 100];
-    while (true) {
-        $page = $stripe->invoices->all($params);
-        if (empty($page->data)) break;
-        $first = end($page->data);
-        if (!$page->has_more) break;
-        $params['starting_after'] = $first->id;
-    }
-
-    if ($first === null) fail('No invoice found for this customer.');
-
-    // Re-retrieve so line items are fully populated.
-    $inv = $stripe->invoices->retrieve($first->id, ['expand' => ['lines']]);
-
+/**
+ * Shape one invoice for the modal and send it. Shared by both paths: the
+ * signup invoice (First Paid) and a specific subscription invoice (Sub Paid).
+ */
+function emitInvoice($inv, $row, $customerId, $accountLabel) {
     $lines = [];
     foreach ($inv->lines->data as $l) {
         $lines[] = [
@@ -136,7 +122,7 @@ try {
     echo json_encode(['success' => true, 'data' => [
         'shop_name'      => $logs['ShopName'] ?? '',
         'country'        => $row['countryCode'],
-        'account'        => $accounts[$account]['label'] ?? $account,
+        'account'        => $accountLabel,
         'customer_id'    => $customerId,
         'invoice_id'     => $inv->id,
         'number'         => $inv->number,
@@ -157,6 +143,41 @@ try {
         'lines'          => $lines,
         'timeline'       => $timeline,
     ]]);
+
+    exit;
+}
+
+try {
+    $stripe = new \Stripe\StripeClient($accounts[$account]['sk']);
+
+    // The Sub Paid card list asks for one specific invoice; without that we
+    // fall back to the customer's first invoice (the signup charge).
+    $wantId = $_POST['invoice_id'] ?? $_GET['invoice_id'] ?? '';
+    if (!empty($wantId) && strpos($wantId, 'in_') === 0) {
+        $inv = $stripe->invoices->retrieve($wantId, ['expand' => ['lines']]);
+        if ($inv->customer !== $customerId) {
+            fail('Invoice does not belong to this signup.');
+        }
+        emitInvoice($inv, $row, $customerId, $accounts[$account]['label'] ?? $account);
+    }
+
+    // Invoices come back newest-first, so page to the end to reach the first one.
+    $first = null;
+    $params = ['customer' => $customerId, 'limit' => 100];
+    while (true) {
+        $page = $stripe->invoices->all($params);
+        if (empty($page->data)) break;
+        $first = end($page->data);
+        if (!$page->has_more) break;
+        $params['starting_after'] = $first->id;
+    }
+
+    if ($first === null) fail('No invoice found for this customer.');
+
+    // Re-retrieve so line items are fully populated.
+    $inv = $stripe->invoices->retrieve($first->id, ['expand' => ['lines']]);
+
+    emitInvoice($inv, $row, $customerId, $accounts[$account]['label'] ?? $account);
 
 } catch (\Throwable $e) {
     fail('Stripe error: ' . $e->getMessage());

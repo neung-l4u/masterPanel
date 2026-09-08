@@ -29,10 +29,19 @@
         </div>
 
 <script>
+// jQuery arrives from main.php below the page content, so wait for it instead
+// of running against an undefined $.
+(function bootPaidColumns() {
+    if (typeof window.jQuery === 'undefined') return setTimeout(bootPaidColumns, 50);
+    var $ = window.jQuery;
+
     // ---- First Paid column -------------------------------------------------
     // Statuses are fetched after each draw so a slow Stripe round-trip never
     // delays the table itself. Results are memoised per page load; the backend
     // additionally caches to disk.
+    // Resolved from the header text so this partial works on any page
+    // regardless of where these columns sit.
+
     const firstPaidCache = {};
 
     function renderFirstPaid($cell, info) {
@@ -117,7 +126,7 @@
         });
     }
 
-    function loadFirstPaid() {
+    window.loadFirstPaid = function() {
         const pending = [];
 
         $('.first-paid-cell').each(function() {
@@ -137,12 +146,29 @@
     // ---- Invoice detail modal ----------------------------------------------
     function money(cents, cur) {
         if (cents === null || cents === undefined) return '-';
-        return (cents / 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + (cur || '');
+        // Pin the locale so thousands/decimal separators do not shift with the
+        // viewer's device settings the way the timestamps did.
+        return (cents / 100).toLocaleString('en-US', {
+            minimumFractionDigits: 2, maximumFractionDigits: 2
+        }) + ' ' + (cur || '');
     }
 
     function ts(unix) {
         if (!unix) return '-';
-        return new Date(unix * 1000).toLocaleString();
+        // Format explicitly rather than via toLocaleString(): a Thai-locale
+        // device renders Buddhist years and D/M order, so the same invoice read
+        // differently on desktop and mobile. Match the table's own
+        // "YYYY-MM-DD HH:MM:SS" style, in the company's Bangkok time.
+        const parts = new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'Asia/Bangkok',
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            hour12: false
+        }).formatToParts(new Date(unix * 1000)).reduce(function(acc, p) {
+            acc[p.type] = p.value; return acc;
+        }, {});
+        return parts.year + '-' + parts.month + '-' + parts.day +
+               ' ' + parts.hour + ':' + parts.minute + ':' + parts.second;
     }
 
     function esc(v) {
@@ -306,8 +332,319 @@
             '<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>');
     }
 
-
     // This partial loads after the table's own script block, so the first draw
     // may have been skipped by the guard there. Fill in whatever is on screen.
-    $(function() { loadFirstPaid(); });
+
+    // ---- Sub Paid column ---------------------------------------------------
+    // Recurring subscription invoices. The badge shows paid/total; clicking it
+    // opens a card list, and a card opens the same detail view First Paid uses.
+    const subPaidCache = {};
+    const SUB_PAID_BATCH = 3;
+    let subListLogId = null;   // row whose card list is currently open
+
+    function renderSubPaid($cell, info) {
+        if (!info || !info.success) {
+            $cell.html('<span class="text-muted" title="' + esc((info && info.message) || 'No data') + '">-</span>');
+            return;
+        }
+        const d = info.data;
+        if (!d.total) {
+            $cell.html('<span class="text-muted" title="No subscription invoices yet">-</span>');
+            return;
+        }
+
+        // All paid reads as healthy; anything outstanding deserves attention.
+        const allPaid = d.paid === d.total;
+        const cls = allPaid ? 'badge-success' : 'badge-warning';
+        const icon = allPaid ? 'bi-arrow-repeat' : 'bi-exclamation-circle';
+
+        $cell.html(
+            '<span class="badge ' + cls + ' sub-paid-badge" style="cursor:pointer;" ' +
+            'data-log-id="' + $cell.data('log-id') + '" ' +
+            'title="Subscription invoices - click to view">' +
+            '<i class="bi ' + icon + '"></i> ' + d.paid + '/' + d.total + '</span>');
+    }
+
+    function applySubPaid() {
+        $('.sub-paid-cell').each(function() {
+            const $cell = $(this);
+            const id = $cell.data('log-id');
+            if (subPaidCache[id] !== undefined) {
+                $cell.data('loading', false);
+                renderSubPaid($cell, subPaidCache[id]);
+            }
+        });
+    }
+
+    // One request per row, so walk them a few at a time rather than firing
+    // dozens of Stripe round-trips at once.
+    function fetchSubPaidBatch(queue) {
+        if (!queue.length) return;
+        const batch = queue.splice(0, SUB_PAID_BATCH);
+        let pending = batch.length;
+
+        batch.forEach(function(id) {
+            $.ajax({
+                url: 'pages/tableRendering/getSubInvoices.php',
+                type: 'POST',
+                data: { id: id },
+                dataType: 'json'
+            }).done(function(res) {
+                subPaidCache[id] = res;
+            }).fail(function() {
+                subPaidCache[id] = { success: false, message: 'Could not reach Stripe' };
+            }).always(function() {
+                if (--pending === 0) { applySubPaid(); fetchSubPaidBatch(queue); }
+            });
+        });
+    }
+
+    window.loadSubPaid = function() {
+        const pending = [];
+        $('.sub-paid-cell').each(function() {
+            const $cell = $(this);
+            const id = $cell.data('log-id');
+            if (subPaidCache[id] !== undefined) {
+                renderSubPaid($cell, subPaidCache[id]);
+            } else if (!$cell.data('loading')) {
+                $cell.data('loading', true);
+                pending.push(id);
+            }
+        });
+        if (pending.length) fetchSubPaidBatch(pending);
+    }
+
+    // Card list of subscription invoices.
+    $(document).on('click', '.sub-paid-badge', function() {
+        const id = $(this).data('log-id');
+        const info = subPaidCache[id];
+        if (!info || !info.success) return;
+        renderSubList(info.data, id);
+        $('#invoiceModal').modal('show');
+    });
+
+    function renderSubList(d, logId) {
+        subListLogId = logId;
+        const statusColor = {
+            paid: '#0e9f6e', open: '#d97706', draft: '#6b7280',
+            void: '#374151', uncollectible: '#e02424'
+        };
+
+        let h = '<div class="d-flex align-items-center" style="gap:10px;">'
+              + '<h4 class="mb-0" style="font-weight:700;">Subscription invoices</h4>'
+              + '<span class="badge badge-light">' + d.paid + ' / ' + d.total + ' paid</span></div>';
+        h += '<div class="mt-1 mb-3" style="color:#6b7280;">' + esc(d.shop_name)
+           + ' &middot; ' + esc(d.account) + ' (' + esc(d.country) + ')</div>';
+        h += '<hr style="margin:16px 0;">';
+
+        d.items.forEach(function(it) {
+            const c = statusColor[it.status] || '#6b7280';
+            h += '<div class="sub-invoice-card" data-invoice-id="' + esc(it.invoice_id) + '" data-log-id="' + logId + '" '
+               + 'style="display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:8px;'
+               + 'border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;transition:background .15s;" '
+               + 'onmouseover="this.style.background=\'#f8fafc\'" onmouseout="this.style.background=\'transparent\'">'
+               + '<div style="width:8px;height:38px;border-radius:4px;background:' + c + ';flex-shrink:0;"></div>'
+               + '<div style="flex:1;min-width:0;">'
+               + '<div style="font-weight:600;font-size:14px;color:#1f2937;">' + esc(it.number || it.invoice_id) + '</div>'
+               + '<div style="font-size:12.5px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'
+               + esc(it.description || '-') + '</div>'
+               + '<div style="font-size:12px;color:#9ca3af;">' + esc(ts(it.created)) + '</div>'
+               + '</div>'
+               + '<div style="text-align:right;flex-shrink:0;">'
+               + '<div style="font-weight:600;font-size:14px;">' + esc(money(it.total, it.currency)) + '</div>'
+               + '<div style="font-size:12px;text-transform:capitalize;color:' + c + ';">' + esc(it.status) + '</div>'
+               + '</div>'
+               + '<i class="bi bi-chevron-right" style="color:#9ca3af;flex-shrink:0;"></i>'
+               + '</div>';
+        });
+
+        $('#invoiceModalBody').html(h);
+        $('#invoiceModalFooter').html(
+            '<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>');
+    }
+
+    // Card -> detail, with a way back to the list.
+    $(document).on('click', '.sub-invoice-card', function() {
+        const invoiceId = $(this).data('invoice-id');
+        const logId = $(this).data('log-id');
+
+        $('#invoiceModalBody').html(
+            '<div class="text-center text-muted py-5">' +
+            '<div class="spinner-border" role="status"></div>' +
+            '<div class="mt-2">Loading from Stripe...</div></div>');
+
+        $.ajax({
+            url: 'pages/tableRendering/getInvoiceDetail.php',
+            type: 'POST',
+            data: { id: logId, invoice_id: invoiceId },
+            dataType: 'json'
+        }).done(function(res) {
+            if (!res || !res.success) {
+                $('#invoiceModalBody').html('<div class="alert alert-warning mb-0">'
+                    + esc((res && res.message) || 'Could not load invoice.') + '</div>');
+                return;
+            }
+            renderInvoice(res.data);
+            $('#invoiceModalFooter').prepend(
+                '<button type="button" class="btn btn-sm btn-outline-secondary sub-back mr-auto">'
+                + '<i class="bi bi-arrow-left mr-1"></i>Back</button>');
+        }).fail(function() {
+            $('#invoiceModalBody').html('<div class="alert alert-danger mb-0">Could not reach the server.</div>');
+        });
+    });
+
+    $(document).on('click', '.sub-back', function() {
+        const info = subPaidCache[subListLogId];
+        if (info && info.success) renderSubList(info.data, subListLogId);
+    });
+
+    // ---- Payment Methods column --------------------------------------------
+    // Mirrors Stripe's own presentation: brand mark, dotted mask + last four,
+    // and a "Default" pill on the method invoices actually charge.
+    const payMethodCache = {};
+    const PAY_METHOD_BATCH = 3;
+
+    // Brand colours taken from each network's own mark so the chip reads at a
+    // glance the way it does in the Stripe dashboard.
+    const CARD_BRANDS = {
+        visa:       ['VISA', '#1434CB'],
+        mastercard: ['MC',   '#EB001B'],
+        amex:       ['AMEX', '#006FCF'],
+        discover:   ['DISC', '#FF6000'],
+        jcb:        ['JCB',  '#0B4EA2'],
+        unionpay:   ['UP',   '#E21836'],
+        diners:     ['DC',   '#0079BE']
+    };
+
+    function brandChip(m) {
+        const b = CARD_BRANDS[(m.brand || '').toLowerCase()];
+        if (b) {
+            return '<span style="display:inline-block;background:' + b[1] + ';color:#fff;'
+                 + 'font-size:9px;font-weight:700;padding:2px 4px;border-radius:3px;'
+                 + 'line-height:1;letter-spacing:.02em;">' + b[0] + '</span>';
+        }
+        // Bank debits have no card mark; use a neutral bank glyph instead.
+        return '<i class="bi bi-bank" style="color:#6b7280;font-size:12px;"></i>';
+    }
+
+    function methodLabel(m) {
+        const name = (m.brand || m.type || '').replace(/\b\w/g, c => c.toUpperCase());
+        return name + (m.last4 ? ' •••• ' + m.last4 : '');
+    }
+
+    function renderPayMethod($cell, info) {
+        if (!info || !info.success) {
+            $cell.html('<span class="text-muted" title="' + esc((info && info.message) || 'No data') + '">-</span>');
+            return;
+        }
+        const d = info.data;
+        if (!d.total) {
+            $cell.html('<span class="text-muted" title="No saved payment method">-</span>');
+            return;
+        }
+
+        const primary = d.methods[0];
+        // The list is ordered default-first, so the cell already shows the
+        // method that gets charged - the "Default" pill only added noise here.
+        // It stays on the hover text and in the multi-method modal.
+        const tip = methodLabel(primary)
+                  + (primary.is_default ? ' (Default)' : '')
+                  + (primary.exp ? '  exp ' + primary.exp : '');
+
+        let html = '<span class="pay-method-chip" style="cursor:' + (d.total > 1 ? 'pointer' : 'default') + ';'
+                 + 'display:inline-flex;align-items:center;gap:5px;" '
+                 + 'data-log-id="' + $cell.data('log-id') + '" '
+                 + 'title="' + esc(tip) + '">'
+                 + brandChip(primary)
+                 + '<span style="font-size:10px;color:#1f2937;">' + esc(methodLabel(primary)) + '</span>';
+
+        // More than one saved method: show the extra count, clickable for detail.
+        if (d.total > 1) {
+            html += '<span style="font-size:10px;color:#6b7280;">+' + (d.total - 1) + '</span>';
+        }
+        html += '</span>';
+        $cell.html(html);
+    }
+
+    function applyPayMethod() {
+        $('.pay-method-cell').each(function() {
+            const $cell = $(this);
+            const id = $cell.data('log-id');
+            if (payMethodCache[id] !== undefined) {
+                $cell.data('loading', false);
+                renderPayMethod($cell, payMethodCache[id]);
+            }
+        });
+    }
+
+    function fetchPayMethodBatch(queue) {
+        if (!queue.length) return;
+        const batch = queue.splice(0, PAY_METHOD_BATCH);
+        let pending = batch.length;
+
+        batch.forEach(function(id) {
+            $.ajax({
+                url: 'pages/tableRendering/getPaymentMethod.php',
+                type: 'POST',
+                data: { id: id },
+                dataType: 'json'
+            }).done(function(res) {
+                payMethodCache[id] = res;
+            }).fail(function() {
+                payMethodCache[id] = { success: false, message: 'Could not reach Stripe' };
+            }).always(function() {
+                if (--pending === 0) { applyPayMethod(); fetchPayMethodBatch(queue); }
+            });
+        });
+    }
+
+    window.loadPayMethod = function() {
+        const pending = [];
+        $('.pay-method-cell').each(function() {
+            const $cell = $(this);
+            const id = $cell.data('log-id');
+            if (payMethodCache[id] !== undefined) {
+                renderPayMethod($cell, payMethodCache[id]);
+            } else if (!$cell.data('loading')) {
+                $cell.data('loading', true);
+                pending.push(id);
+            }
+        });
+        if (pending.length) fetchPayMethodBatch(pending);
+    };
+
+    // Several saved methods: list them all the way Stripe does.
+    $(document).on('click', '.pay-method-chip', function() {
+        const id = $(this).data('log-id');
+        const info = payMethodCache[id];
+        if (!info || !info.success || info.data.total < 2) return;
+        const d = info.data;
+
+        let h = '<h4 class="mb-1" style="font-weight:700;">Payment methods</h4>';
+        h += '<div class="mb-3" style="color:#6b7280;">' + esc(d.account) + ' (' + esc(d.country) + ')</div>';
+        h += '<hr style="margin:16px 0;">';
+
+        d.methods.forEach(function(m) {
+            h += '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;'
+               + 'margin-bottom:8px;border:1px solid #e5e7eb;border-radius:8px;">'
+               + brandChip(m)
+               + '<div style="flex:1;min-width:0;">'
+               + '<div style="font-weight:600;font-size:14px;">' + esc(methodLabel(m)) + '</div>'
+               + (m.exp ? '<div style="font-size:12px;color:#6b7280;">Expires ' + esc(m.exp) + '</div>' : '')
+               + '</div>'
+               + (m.is_default
+                    ? '<span style="font-size:10.5px;color:#0369a1;background:#e0f2fe;padding:2px 8px;border-radius:10px;">Default</span>'
+                    : '')
+               + '</div>';
+        });
+
+        $('#invoiceModalBody').html(h);
+        $('#invoiceModalFooter').html(
+            '<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>');
+        $('#invoiceModal').modal('show');
+    });
+
+    $(function() { loadFirstPaid(); loadSubPaid(); loadPayMethod(); });
+
+})();
 </script>

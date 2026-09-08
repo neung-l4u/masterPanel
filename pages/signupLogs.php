@@ -21,6 +21,32 @@ $password = "Localeats#".date("Y");
     .thead-dark {
         background-color: #212529;
     }
+
+    /* This table carries more columns than the rest of the panel, so it runs a
+       smaller type scale than the shared table styles. Scoped to this page so
+       other tables keep the standard 14px/14.4px. !important is needed because
+       the base rules in master-panel.css use it too. */
+    #signupTable thead th {
+        font-size: 12px !important;
+        padding: 0.6rem 0.7rem !important;
+        letter-spacing: 0.03em !important;
+        /* Keep every header on one line so the row stays a single height -
+           "Payment Methods" was wrapping and making the header twice as tall. */
+        white-space: nowrap !important;
+    }
+    #signupTable tbody td {
+        font-size: 10px !important;
+        padding: 0.6rem 0.7rem !important;
+    }
+    /* Badges and chips inherit the cell size, which would leave them unreadable
+       at 10px, so hold them slightly above the body text. */
+    #signupTable tbody td .badge {
+        font-size: 10px !important;
+    }
+    #signupTable tbody td img.rounded-circle {
+        width: 22px !important;
+        height: 22px !important;
+    }
 </style>
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -103,16 +129,14 @@ $password = "Localeats#".date("Y");
                                        style="width:100%">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width:15%">Timestamp</th>
-                                        <th style="width:9%">Country</th>
-                                        <th style="width:9%">Shop Type</th>
-                                        <th style="width:30%">Shop name</th>
-                                        <th style="width:5%">Signup</th>
-                                        <!-- <th style="width:5%">Stripe</th> -->
-                                        <th style="width:5%">Contract</th>
-                                        <!-- <th style="width:5%">Status</th> -->
-                                        <th style="width:16%">First Paid</th>
+                                        <th style="width:11%">Country</th>
+                                        <th style="width:10%">Shop Type</th>
+                                        <th style="width:24%">Shop name</th>
                                         <th style="width:11%">Sale</th>
+                                        <th style="width:11%">First Paid</th>
+                                        <th style="width:11%">Sub Paid</th>
+                                        <th style="width:11%">Payment Methods</th>
+                                        <th style="width:11%">Timestamp</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -166,10 +190,16 @@ $password = "Localeats#".date("Y");
 </div>
 <!-- /.content -->
 
-<script src="plugins/jquery/jquery.min.js"></script>
-<script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
-<script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
+// main.php loads jQuery and DataTables further down the page, so wait for them
+// rather than loading a second copy here - two copies initialise this table
+// twice and break sorting and search.
+(function bootPage() {
+    if (typeof window.jQuery === 'undefined' ||
+        typeof window.jQuery.fn.DataTable === 'undefined') {
+        return setTimeout(bootPage, 50);
+    }
+    jQuery(function ($) {
     let shopName = $(".shopName");
     let logType = $(".logType");
     let signupTable = $('#signupTable').DataTable( {
@@ -187,21 +217,23 @@ $password = "Localeats#".date("Y");
             dataSrc: 'data'
         },
         "pageLength": 10,
-        order: [[0, 'desc']],
+        order: [[7, 'desc']],   // Timestamp is the last column
         lengthMenu: [
             [10, 25, 50, -1],
             [10, 25, 50, 'All']
         ],columnDefs: [
-            { targets: [0,3], className: 'dt-left' },
-            { targets: [4], className: 'dt-center', "orderable": "false" },
-            { targets: [5], className: 'dt-right', "orderable": "false" },
-            { targets: [6], className: 'dt-center', "orderable": false },
-            { targets: [7], className: 'dt-left' }
+            { targets: [2, 3, 7], className: 'dt-left' },
+            // First Paid / Sub Paid / Payment Methods fetch per row over AJAX,
+            // so only the rows on screen ever hold a value - ordering by them
+            // would be misleading. Use the Search box to find a status instead.
+            { targets: [4, 5, 6], className: 'dt-center', "orderable": false }
         ],
         drawCallback: function() {
             // The partial defining loadFirstPaid loads later in the page, so the
             // first draw can fire before it exists.
             if (typeof loadFirstPaid === 'function') loadFirstPaid();
+            if (typeof loadSubPaid === 'function') loadSubPaid();
+            if (typeof loadPayMethod === 'function') loadPayMethod();
         }
     } );
 
@@ -234,7 +266,7 @@ $password = "Localeats#".date("Y");
         signupTable.ajax.reload();
     });
 
-    function viewJson(data, result) {
+    window.viewJson = function(data, result) {
         let signupData = data;
         let stripeResult = result;
         console.log("data", data.shopName);
@@ -262,11 +294,14 @@ $password = "Localeats#".date("Y");
         }, 1000);
     }
 
-    function copyText() {
+    window.copyText = function() {
         const copyText = document.querySelector("pre#jsonText");
         navigator.clipboard.writeText(copyText.textContent)
         showCopy();
     }
+
+    });
+})();
 </script>
 
 <?php include __DIR__ . '/partials/firstPaidColumn.php'; ?>

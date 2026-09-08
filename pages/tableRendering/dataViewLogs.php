@@ -47,6 +47,10 @@ foreach ($result as $row) {
     $firstPaidCell = '<span class="first-paid-cell text-muted" data-log-id="'.(int)$row["id"].'">'
         . '<i class="bi bi-hourglass-split"></i></span>';
 
+    // Recurring subscription invoices, loaded on demand like First Paid.
+    $subPaidCell = '<span class="sub-paid-cell text-muted" data-log-id="'.(int)$row["id"].'">'
+        . '<i class="bi bi-hourglass-split"></i></span>';
+
     $data["data"][] = array(
         $date,
         $country,
@@ -56,6 +60,7 @@ foreach ($result as $row) {
         $stripeLogsBtn,
         $contractLogsBtn,
         $firstPaidCell,
+        $subPaidCell,
         $row["status"]
     );//array
 }//foreach

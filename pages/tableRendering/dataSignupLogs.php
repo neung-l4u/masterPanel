@@ -76,7 +76,14 @@ foreach ($result as $row) {
     if (isset($json["EmailInvoice"])) unset($json["EmailInvoice"]);
     
     $shopType = showType($json["CustomerType"]);
-    
+
+    // Hide internal test signups - staff name them with "test", and they would
+    // otherwise sit among real customers here. Filtered server-side so the row
+    // count and paging reflect what is actually shown.
+    if (stripos($json["ShopName"] ?? '', 'test') !== false) {
+        continue;
+    }
+
     // Apply shop type filter
     if (!empty($shopTypeFilter) && $shopType !== $shopTypeFilter) {
         continue;
@@ -146,17 +153,23 @@ foreach ($result as $row) {
     $firstPaidCell = '<span class="first-paid-cell text-muted" data-log-id="'.(int)$row["id"].'">'
         . '<i class="bi bi-hourglass-split"></i></span>';
 
+    // Recurring subscription invoices, loaded on demand like First Paid.
+    $subPaidCell = '<span class="sub-paid-cell text-muted" data-log-id="'.(int)$row["id"].'">'
+        . '<i class="bi bi-hourglass-split"></i></span>';
+
+    // Saved cards / bank accounts, same lazy pattern.
+    $payMethodCell = '<span class="pay-method-cell text-muted" data-log-id="'.(int)$row["id"].'">'
+        . '<i class="bi bi-hourglass-split"></i></span>';
+
     $data["data"][] = array(
-        $date,
         $country,
         $shopType,
         $shopName,
-        $signupLogsBtn,
-        // $stripeLogsBtn,
-        $contractLogsBtn,
-        // $row["status"]
+        $saleHtml,
         $firstPaidCell,
-        $saleHtml
+        $subPaidCell,
+        $payMethodCell,
+        $date
     );//array
 }//foreach
 

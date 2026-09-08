@@ -68,7 +68,8 @@ $password = "Localeats#".date("Y");
                                         <th style="width:5%">Signup</th>
                                         <th style="width:5%">Stripe</th>
                                         <th style="width:5%">Contract</th>
-                                        <th style="width:14%">First Paid</th>
+                                        <th style="width:12%">First Paid</th>
+                                        <th style="width:12%">Sub Paid</th>
                                         <th style="width:5%">Status</th>
                                     </tr>
                                     </thead>
@@ -123,10 +124,16 @@ $password = "Localeats#".date("Y");
 </div>
 <!-- /.content -->
 
-<script src="plugins/jquery/jquery.min.js"></script>
-<script src="plugins/datatables-bs5/js/datatables-bs5.min.js"></script>
-<script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
+// main.php loads jQuery and DataTables further down the page, so wait for them
+// rather than loading a second copy here - two copies initialise this table
+// twice and break sorting and search.
+(function bootPage() {
+    if (typeof window.jQuery === 'undefined' ||
+        typeof window.jQuery.fn.DataTable === 'undefined') {
+        return setTimeout(bootPage, 50);
+    }
+    jQuery(function ($) {
     let shopName = $(".shopName");
     let logType = $(".logType");
     let signupTable = $('#signupTable').DataTable( {
@@ -144,16 +151,17 @@ $password = "Localeats#".date("Y");
             { targets: [0], className: 'dt-left' },
             { targets: [4, 5], className: 'dt-center', "orderable": "false" },
             { targets: [6], className: 'dt-right' , "orderable": "false"},
-            { targets: [7], className: 'dt-center', "orderable": false }
+            { targets: [7, 8], className: 'dt-center', "orderable": false }
         ],
         drawCallback: function() {
             // The partial defining loadFirstPaid loads later in the page, so the
             // first draw can fire before it exists.
             if (typeof loadFirstPaid === 'function') loadFirstPaid();
+            if (typeof loadSubPaid === 'function') loadSubPaid();
         }
     } );
 
-    function viewJson(data, result) {
+    window.viewJson = function(data, result) {
         let signupData = data;
         let stripeResult = result;
         console.log("data", data.shopName);
@@ -181,11 +189,14 @@ $password = "Localeats#".date("Y");
         }, 1000);
     }
 
-    function copyText() {
+    window.copyText = function() {
         const copyText = document.querySelector("pre#jsonText");
         navigator.clipboard.writeText(copyText.textContent)
         showCopy();
     }
+
+    });
+})();
 </script>
 
 <?php include __DIR__ . '/partials/firstPaidColumn.php'; ?>
