@@ -252,29 +252,9 @@ window.openSendModal = function(invoiceId) {
 
             var itemsHtml = '';
             items.forEach(function(item, idx) {
-                var label = item.product || item.setupfee || item.addon || '-';
-                var qyt = item.qyt || 1;
-                var amount = parseFloat(item.amount||0);
-                
-                itemsHtml += '<tr data-item-idx="'+idx+'">'
-                    + '<td>'
-                    + '<div class="item-display">'+label+'</div>'
-                    + '<input type="text" class="form-control form-control-sm item-edit" data-field="product" style="display:none;" value="'+label+'">'
-                    + '</td>'
-                    + '<td class="text-center">'
-                    + '<div class="item-display">'+qyt+'</div>'
-                    + '<input type="number" class="form-control form-control-sm item-edit" data-field="qyt" style="display:none;" value="'+qyt+'" min="1">'
-                    + '</td>'
-                    + '<td class="text-right">'
-                    + '<div class="item-display">฿' + amount.toLocaleString('th-TH',{minimumFractionDigits:2}) + '</div>'
-                    + '<input type="number" class="form-control form-control-sm item-edit" data-field="amount" style="display:none;" value="'+amount+'" step="0.01" min="0">'
-                    + '</td>'
-                    + '<td class="text-center" style="width:120px;">'
-                    + '<button class="btn btn-xs btn-warning btn-edit-item" style="padding:2px 6px;font-size:11px;" title="แก้ไข"><i class="bi bi-pencil"></i></button>'
-                    + '<button class="btn btn-xs btn-success btn-save-item" style="display:none;padding:2px 6px;font-size:11px;" title="บันทึก"><i class="bi bi-check"></i></button>'
-                    + '<button class="btn btn-xs btn-secondary btn-cancel-item" style="display:none;padding:2px 6px;font-size:11px;" title="ยกเลิก"><i class="bi bi-x"></i></button>'
-                    + '</tr>';
+                itemsHtml += buildItemRow(item);
             });
+            if (!itemsHtml) { itemsHtml = buildItemRow({}); }
 
             var slipViewBtn = r.slip
                 ? '<a href="modules/signup/assets/uploads/' + r.slip + '" target="_blank" class="btn btn-sm btn-outline-success mr-1"><i class="bi bi-image"></i> ดูสลิป</a>'
@@ -347,24 +327,42 @@ window.openSendModal = function(invoiceId) {
                 +'</div>'
                 +'</div>'
 
-                // Items table
+                // Items table (แก้ไขได้ในตัว)
+                +'<div class="d-flex justify-content-between align-items-center mb-1 flex-wrap" style="gap:8px;">'
+                +'<div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:.5px;text-transform:uppercase;">รายการสินค้า</div>'
+                +'<div class="d-flex align-items-center" style="gap:6px;">'
+                +'<label class="mb-0" style="font-size:11.5px;color:#64748b;">วันที่บนใบ</label>'
+                +'<input type="date" id="invDate" class="form-control form-control-sm" style="width:150px;font-size:12px;" value="' + itemEsc(thaiDateToISO((p.quotation && p.quotation[0] && p.quotation[0].date) || '')) + '">'
+                +'<button type="button" class="btn btn-xs btn-outline-primary" id="btnAddItem" style="padding:2px 8px;font-size:11px;"><i class="bi bi-plus-lg"></i> เพิ่มรายการ</button>'
+                +'</div>'
+                +'</div>'
                 +'<table class="table table-sm" style="font-size:13px;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;">'
-                +'<thead style="background:#1e3a8a;color:#fff;"><tr><th>รายการ</th><th class="text-center" style="width:70px;">จำนวน</th><th class="text-right" style="width:100px;">ราคา</th><th class="text-center" style="width:120px;">การกระทำ</th></tr></thead>'
-                +'<tbody>' + itemsHtml + '</tbody>'
+                +'<thead style="background:#1e3a8a;color:#fff;"><tr><th style="width:110px;">ชนิด</th><th>รายการ</th><th class="text-center" style="width:70px;">จำนวน</th><th class="text-right" style="width:110px;">ราคา (ก่อน VAT)</th><th class="text-center" style="width:44px;"></th></tr></thead>'
+                +'<tbody id="itemsTbody">' + itemsHtml + '</tbody>'
                 +'</table>'
 
-                // Summary
+                // Summary (คำนวณสดตามรายการด้านบน)
                 +'<div style="background:#f8fafc;border-radius:8px;padding:12px 16px;font-size:13px;">'
                 +'<table style="width:100%;">'
-                +'<tr><td style="color:#64748b;">ราคาก่อน VAT</td><td class="text-right">฿' + parseFloat(summary.subtotal||0).toLocaleString('th-TH',{minimumFractionDigits:2}) + '</td></tr>'
-                +'<tr><td style="color:#64748b;">VAT 7%</td><td class="text-right">฿' + parseFloat(summary.vat||0).toLocaleString('th-TH',{minimumFractionDigits:2}) + '</td></tr>'
-                +'<tr><td style="color:#64748b;">รวม (inc. VAT)</td><td class="text-right">฿' + parseFloat(summary.grandtotal_inc_vat||0).toLocaleString('th-TH',{minimumFractionDigits:2}) + '</td></tr>'
-                + whtRow
+                +'<tr><td style="color:#64748b;">ราคาก่อน VAT</td><td class="text-right" id="sumSubtotal">฿0.00</td></tr>'
+                +'<tr><td style="color:#64748b;">VAT 7%</td><td class="text-right" id="sumVat">฿0.00</td></tr>'
+                +'<tr><td style="color:#64748b;">รวม (inc. VAT)</td><td class="text-right" id="sumGross">฿0.00</td></tr>'
+                +'<tr id="sumWhtRow"><td style="color:#64748b;">หัก ณ ที่จ่าย 3%</td><td class="text-right text-danger" id="sumWht">- ฿0.00</td></tr>'
                 +'<tr><td colspan="2"><hr style="margin:6px 0;"></td></tr>'
-                +'<tr><td style="font-weight:700;font-size:14px;">ยอดสุทธิที่ต้องชำระ</td><td class="text-right" style="font-weight:800;font-size:16px;color:#2563eb;">฿' + parseFloat(summary.net_payment||0).toLocaleString('th-TH',{minimumFractionDigits:2}) + '</td></tr>'
+                +'<tr><td style="font-weight:700;font-size:14px;">ยอดสุทธิที่ต้องชำระ</td><td class="text-right" style="font-weight:800;font-size:16px;color:#2563eb;" id="sumNet">฿0.00</td></tr>'
                 +'</table>'
+                +'<div class="d-flex justify-content-between align-items-center mt-2 pt-2" style="border-top:1px dashed #cbd5e1;">'
+                +'<label class="mb-0" style="font-size:11.5px;color:#64748b;cursor:pointer;">'
+                +'<input type="checkbox" id="chkSyncAmount" checked> อัปเดตยอดเงินในระบบตามรายการนี้'
+                +'</label>'
+                +'<button type="button" class="btn btn-sm btn-success" id="btnSaveItems"><i class="bi bi-save mr-1"></i>บันทึกรายการ</button>'
+                +'</div>'
                 +'</div>'
             );
+
+            // เก็บประเภทลูกค้าไว้ให้ตัวคำนวณใช้ แล้วคำนวณยอดครั้งแรก
+            $('#itemsTbody').data('custType', r.type || '');
+            recalcItems();
         },
         error: function() {
             $('#sendModalBody').html('<p class="text-danger">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>');
@@ -757,141 +755,165 @@ $(document).on('click', '#btnSaveStatus', function() {
 });
 
 // ===== Items Editor =====
-$(document).on('click', '.btn-edit-item', function() {
-    const $btn = $(this);
-    const $row = $btn.closest('tr');
-    $row.find('.item-display').hide();
-    $row.find('.item-edit').show();
-    $row.find('.btn-edit-item').hide();
-    $row.find('.btn-save-item, .btn-cancel-item').show();
+// แก้ไขรายการสินค้าได้ในตัว modal แล้วบันทึกผ่าน api/invoice/updateProductJson.php
+// ซึ่งจะรักษา quotation (ข้อมูลลูกค้า + วันที่บนใบ) ไว้ ไม่สร้างทับ
+
+function itemNum(v) {
+    const n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.\-]/g, ''));
+    return isNaN(n) ? 0 : n;
+}
+function itemEsc(s) { return $('<div>').text(s == null ? '' : s).html(); }
+
+// ฐานข้อมูลเก็บวันที่เป็น dd/mm/yyyy แต่ <input type="date"> ใช้ yyyy-mm-dd
+// จึงต้องแปลงกลับไปมาตอนแสดงและตอนบันทึก
+function thaiDateToISO(s) {
+    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(s || '').trim());
+    return m ? (m[3] + '-' + m[2] + '-' + m[1]) : '';
+}
+function isoToThaiDate(s) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '').trim());
+    return m ? (m[3] + '/' + m[2] + '/' + m[1]) : '';
+}
+
+// อ่านชนิด/ชื่อออกจาก item หนึ่งรายการ (product / setupfee / addon)
+function readItemKind(item) {
+    const kinds = ['product', 'setupfee', 'addon'];
+    for (const k of kinds) {
+        if (item[k] !== undefined && item[k] !== null && String(item[k]).trim() !== '') {
+            return { kind: k, name: String(item[k]).trim() };
+        }
+    }
+    return { kind: 'product', name: '' };
+}
+
+function buildItemRow(item) {
+    item = item || {};
+    const r = readItemKind(item);
+    const qyt = item.qyt || '1';
+    const amount = itemNum(item.amount);
+    const full = (item.fullamount === undefined || item.fullamount === null) ? '' : item.fullamount;
+    const opt = function (k, label) {
+        return '<option value="' + k + '"' + (k === r.kind ? ' selected' : '') + '>' + label + '</option>';
+    };
+    return '<tr class="item-row" data-fullamount="' + itemEsc(full) + '">'
+        + '<td><select class="form-control form-control-sm it-kind" style="font-size:12px;padding:2px 4px;height:auto;">'
+        +   opt('product', 'Product') + opt('setupfee', 'Setup Fee') + opt('addon', 'Add-on')
+        + '</select></td>'
+        + '<td><input type="text" class="form-control form-control-sm it-name" style="font-size:12px;" value="' + itemEsc(r.name) + '" placeholder="ชื่อรายการ"></td>'
+        + '<td><input type="text" class="form-control form-control-sm it-qyt text-center" style="font-size:12px;" value="' + itemEsc(qyt) + '"></td>'
+        + '<td><input type="text" class="form-control form-control-sm it-amount text-right" style="font-size:12px;" value="' + amount.toFixed(2) + '"></td>'
+        + '<td class="text-center"><button type="button" class="btn btn-xs btn-outline-danger it-del" style="padding:2px 6px;font-size:11px;" title="ลบรายการ"><i class="bi bi-x-lg"></i></button></td>'
+        + '</tr>';
+}
+
+// คำนวณยอดสดตามรายการที่กรอก (สูตรเดียวกับที่ใบเดิมในฐานข้อมูลใช้)
+function recalcItems() {
+    const $body = $('#itemsTbody');
+    if (!$body.length) return;
+
+    let sub = 0;
+    $body.find('tr.item-row').each(function () {
+        const q = itemNum($(this).find('.it-qyt').val()) || 1;
+        sub += itemNum($(this).find('.it-amount').val()) * q;
+    });
+    sub = Math.round(sub * 100) / 100;
+
+    const vat   = Math.round(sub * 0.07 * 100) / 100;
+    const gross = Math.round((sub + vat) * 100) / 100;
+    // หัก ณ ที่จ่าย 3% ของฐานก่อน VAT เฉพาะนิติบุคคล
+    const isJur = $body.data('custType') === 'นิติบุคคล';
+    const wht   = isJur ? Math.round(sub * 0.03 * 100) / 100 : 0;
+    const net   = Math.round((gross - wht) * 100) / 100;
+
+    const f = n => '฿' + n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    $('#sumSubtotal').text(f(sub));
+    $('#sumVat').text(f(vat));
+    $('#sumGross').text(f(gross));
+    $('#sumWht').text('- ' + f(wht));
+    $('#sumNet').text(f(net));
+    $('#sumWhtRow').toggle(isJur);
+}
+
+$(document).on('input change', '.it-amount, .it-qyt', recalcItems);
+
+$(document).on('click', '#btnAddItem', function () {
+    $('#itemsTbody').append(buildItemRow({}));
+    recalcItems();
 });
 
-$(document).on('click', '.btn-cancel-item', function() {
-    const $btn = $(this);
-    const $row = $btn.closest('tr');
-    $row.find('.item-edit').hide();
-    $row.find('.item-display').show();
-    $row.find('.btn-save-item, .btn-cancel-item').hide();
-    $row.find('.btn-edit-item').show();
-});
-
-$(document).on('click', '.btn-save-item', function() {
-    const $btn = $(this);
-    const $row = $btn.closest('tr');
-    const product = $row.find('input[data-field="product"]').val();
-    const qyt = $row.find('input[data-field="qyt"]').val();
-    const amount = parseFloat($row.find('input[data-field="amount"]').val() || 0);
-    
-    if (!product || !qyt || amount <= 0) {
-        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+$(document).on('click', '.it-del', function () {
+    if ($('#itemsTbody tr.item-row').length <= 1) {
+        showNotify('error', 'ต้องมีอย่างน้อย 1 รายการ');
         return;
     }
-    
-    // Update display
-    $row.find('.item-display').eq(0).text(product);
-    $row.find('.item-display').eq(1).text(qyt);
-    $row.find('.item-display').eq(2).text('฿' + amount.toLocaleString('th-TH', {minimumFractionDigits: 2}));
-    
-    // Hide edit, show display
-    $row.find('.item-edit').hide();
-    $row.find('.item-display').show();
-    $row.find('.btn-save-item, .btn-cancel-item').hide();
-    $row.find('.btn-edit-item').show();
-    
-    // Update invoice
-    updateInvoiceItems();
+    $(this).closest('tr').remove();
+    recalcItems();
 });
 
-function updateInvoiceItems() {
-    const invoiceId = pendingInvoiceId;
-    if (!invoiceId) return;
-    
-    // Collect all items from table
+$(document).on('click', '#btnSaveItems', function () {
+    if (!pendingInvoiceId) return;
+
     const items = [];
-    $('#sendModalBody table tbody tr[data-item-idx]').each(function() {
+    let missingName = false;
+    $('#itemsTbody tr.item-row').each(function () {
         const $row = $(this);
-        
-        // Get values from input if visible, otherwise from display
-        let product = $row.find('input[data-field="product"]').is(':visible') 
-            ? $row.find('input[data-field="product"]').val()
-            : $row.find('.item-display').eq(0).text();
-        
-        let qyt = $row.find('input[data-field="qyt"]').is(':visible')
-            ? $row.find('input[data-field="qyt"]').val()
-            : $row.find('.item-display').eq(1).text();
-        
-        let amountText = $row.find('input[data-field="amount"]').is(':visible')
-            ? $row.find('input[data-field="amount"]').val()
-            : $row.find('.item-display').eq(2).text();
-        
-        // Clean amount text (remove ฿ and commas)
-        let amount = parseFloat(amountText.toString().replace(/[^0-9.]/g, '') || 0);
-        
-        console.log('Item:', {product, qyt, amount});
-        
+        const name = ($row.find('.it-name').val() || '').trim();
+        if (!name) { missingName = true; return false; }
+        const full = $row.data('fullamount');
         items.push({
-            product: product || '-',
-            qyt: parseInt(qyt || 1),
-            amount: amount
+            kind:   $row.find('.it-kind').val(),
+            name:   name,
+            qyt:    ($row.find('.it-qyt').val() || '1').trim(),
+            amount: itemNum($row.find('.it-amount').val()),
+            fullamount: (full === '' || full === undefined || full === null) ? null : itemNum(full)
         });
     });
-    
-    console.log('All items:', items);
-    
-    if (items.length === 0) {
-        alert('ต้องมีอย่างน้อย 1 รายการ');
-        return;
-    }
-    
-    // Validate items
-    let totalAmount = 0;
-    for (let item of items) {
-        if (!item.product || item.amount <= 0) {
-            alert('กรุณาตรวจสอบข้อมูล - ทุกรายการต้องมีชื่อและราคา > 0');
-            return;
-        }
-        totalAmount += item.amount;
-    }
-    
-    console.log('Total amount:', totalAmount);
-    
-    // Call API
+
+    if (missingName) { showNotify('error', 'กรุณาใส่ชื่อให้ครบทุกรายการ'); return; }
+    if (!items.length) { showNotify('error', 'ต้องมีอย่างน้อย 1 รายการ'); return; }
+
+    // datepicker คืนค่าเป็น yyyy-mm-dd แปลงกลับเป็น dd/mm/yyyy ก่อนส่ง
+    // (เว้นว่างได้ = ใช้ค่าเดิมในฐานข้อมูล)
+    const invDate = isoToThaiDate($('#invDate').val());
+
+    const $btn = $(this).prop('disabled', true)
+        .html('<span class="spinner-border spinner-border-sm mr-1"></span>กำลังบันทึก');
+
     $.ajax({
-        url: 'api/invoice/updateInvoiceItems.php',
+        url: 'api/invoice/updateProductJson.php',
         type: 'POST',
         dataType: 'json',
         data: {
-            invoice_id: invoiceId,
-            items: JSON.stringify(items)
+            invoice_id: pendingInvoiceId,
+            payload: JSON.stringify(Object.assign(
+                {
+                    items: items,
+                    withholding_mode: 'auto',
+                    sync_amount: $('#chkSyncAmount').is(':checked') ? 1 : 0
+                },
+                // ส่ง date เฉพาะตอนกรอก เพื่อไม่ให้ไปทับค่าเดิมด้วยค่าว่าง
+                invDate !== '' ? { date: invDate } : {}
+            ))
         },
-        success: function(res) {
+        success: function (res) {
             if (res.success) {
-                console.log('Invoice updated:', res.data);
-                alert('บันทึกข้อมูลสำเร็จ\nยอดรวม: ฿' + res.data.total_amount.toLocaleString('th-TH', {minimumFractionDigits: 2}));
-                // Reload invoice data
-                $.ajax({
-                    url: 'pages/tableRendering/getInvoiceTH.php',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: { id: invoiceId },
-                    success: function(d) {
-                        if (d.success) {
-                            currentInvoiceData = d.data;
-                            // Reload modal content
-                            openSendModal(invoiceId);
-                        }
-                    }
-                });
+                showNotify('success', 'บันทึกรายการเรียบร้อย');
+                openSendModal(pendingInvoiceId);
+                invoiceThTable.ajax.reload(null, false);
             } else {
-                alert('เกิดข้อผิดพลาด: ' + res.message);
+                showNotify('error', 'บันทึกไม่สำเร็จ: ' + res.message);
             }
         },
-        error: function(xhr) {
-            console.error('Error:', xhr);
-            alert('เกิดข้อผิดพลาดในการบันทึก\nกรุณาตรวจสอบ Console');
+        error: function (xhr) {
+            let m = 'เกิดข้อผิดพลาดในการบันทึก';
+            try { m = JSON.parse(xhr.responseText).message || m; } catch (e) {}
+            showNotify('error', m);
+        },
+        complete: function () {
+            $btn.prop('disabled', false).html('<i class="bi bi-save mr-1"></i>บันทึกรายการ');
         }
     });
-}
+});
 
 }); // end window load
 </script>

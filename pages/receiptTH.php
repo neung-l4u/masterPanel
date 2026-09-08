@@ -33,7 +33,11 @@ $tableItems  = $productJson['table']     ?? [];
 $quotation   = $productJson['quotation'][0] ?? [];
 $detail      = $quotation['detail'][0]   ?? [];
 
-$invoiceDate = $quotation['date'] ?? date('d/m/Y', strtotime($row['createdAt']));
+// วันที่บนเอกสารยึดจาก product.date เสมอ (วันที่ของรอบบิล)
+// ถ้าไม่มีค่อย fallback ไปใช้วันที่สร้าง invoice
+$invoiceDate = !empty($quotation['date'])
+    ? $quotation['date']
+    : date('d/m/Y', strtotime($row['createdAt']));
 $type        = $row['type'] ?? '';
 $isJuristic  = ($type === 'นิติบุคคล');
 
@@ -43,7 +47,9 @@ $receiptRows = $db->query(
 )->fetchAll();
 $receipt     = $receiptRows[0] ?? null;
 $receiptID   = $receipt['receiptID'] ?? $row['invoiceID'] ?? '-';
-$receiptDate = $receipt ? date('d/m/Y', strtotime($receipt['createdAt'])) : $invoiceDate;
+// ไม่ใช้ thReceipt.createdAt เพราะเป็นเวลาที่สคริปต์รันสร้าง receipt
+// ไม่ใช่วันที่ของรอบบิล ทำให้วันที่บนใบไม่ตรงกับ product.date
+$receiptDate = $invoiceDate;
 
 $grandTotal    = (float)($summary['grandtotal_inc_vat'] ?? 0);
 $subtotal      = (float)($summary['subtotal'] ?? 0);
@@ -59,7 +65,7 @@ function fmt($n) { return number_format((float)$n, 2, '.', ','); }
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตัวอย่างใบแจ้งค่าบริการ</title>
+    <title>ใบแจ้งค่าบริการ</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@100..900&display=swap" rel="stylesheet">
     <style>
         body { font-family: "Noto Serif Thai", serif; margin: 0; background: #f5f5f5; }
@@ -113,7 +119,7 @@ function fmt($n) { return number_format((float)$n, 2, '.', ','); }
             <img src="https://report.localforyou.com/modules/signup/assets/img/newL4U-logo-100x100-2.png" alt="Company logo" height="70" />
         </div>
         <div class="invoice-title-section">
-            <h3 class="primary">ตัวอย่างใบแจ้งค่าบริการ</h3>
+            <h3 class="primary">ใบแจ้งค่าบริการ</h3>
             <p class="primary">(ต้นฉบับ)</p>
         </div>
     </div>

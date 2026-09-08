@@ -1030,15 +1030,35 @@ table.dataTable tbody tr td:last-child {
   /* The theme sets table.dataTable tbody td{padding:1rem} outside any media
      query, and that selector outweighs .table tbody td, so the phone padding
      has to be written at the same weight or higher. */
+  /* A bundled stylesheet (adminlte's dist bundle) ships its own @media
+     (max-width:768px) .table tbody td rule that turns every cell into a
+     block with display:block, text-align:right and padding-left:50% — an
+     older "stacked card" pattern that expects a data-label::before this
+     project's tables don't set. Loaded after ours, it silently overrides
+     the layout built above, which is why cells rendered centred with no
+     labels and numbers doubling as headings. It has to be cancelled
+     explicitly rather than assumed away. */
   .table tbody td,
   table.dataTable tbody td,
   table.dataTable.table tbody td {
-    font-size: 0.8125rem !important;
+    display: table-cell !important;
+    text-align: left !important;
     padding: 0.6875rem 0.5rem !important;
+    border-width: 0 !important;
+    position: static !important;
+    font-size: 0.8125rem !important;
     vertical-align: middle !important;
     white-space: normal !important;
     word-break: normal !important;
     overflow-wrap: break-word !important;
+  }
+
+  .table tbody tr {
+    display: table-row !important;
+  }
+
+  .table tbody {
+    display: table-row-group !important;
   }
 
   .table tbody td .mobile-clamp {
@@ -1533,6 +1553,224 @@ table.dataTable tbody tr td:last-child {
     line-height: 1.2 !important;
     overflow-wrap: break-word !important;
     word-break: normal !important;
+  }
+
+  /* ---- Invoice send-modal footer ----
+     Six buttons across three groups — status (select + save), dismiss/preview
+     (ยกเลิก, ดูตัวอย่าง Receipt), and the one send action that actually
+     matters (ส่ง Receipt / ส่ง Report, only one shown at a time) — all
+     rendered the same size and packed together read as one undifferentiated
+     row. Spacing and width now carry the hierarchy the buttons don't state
+     on their own: the groups get visual air between them, and the send
+     action is full-width to read as the primary one. */
+
+  /* The status row — "สถานะ:" label, the select, "บันทึกสถานะ" — fits on one
+     line on desktop but the label (39px) + an unconstrained select (310px
+     once it was let grow to fill the row) + the button's full text (114px)
+     add up to more than a 344px dialog can hold, which is what forced the
+     button onto its own line. The select gives up the flex:1 growth it gets
+     elsewhere and takes only the room the row has left after the label and
+     button, and the button's label shortens so a single line has enough
+     width for all three. */
+  .modal-footer .d-flex.align-items-center > label {
+    flex: 0 0 auto !important;
+  }
+
+  .modal-footer .d-flex.align-items-center > select {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+  }
+
+  .modal-footer .d-flex.align-items-center > #btnSaveStatusOnly {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  /* "บันทึกสถานะ" -> "บันทึก": same action, short enough to share the line. */
+  .modal-footer .d-flex.align-items-center > #btnSaveStatusOnly {
+    font-size: 0 !important;
+  }
+
+  .modal-footer .d-flex.align-items-center > #btnSaveStatusOnly::after {
+    content: "บันทึก";
+    font-size: 0.8125rem;
+  }
+
+  .modal-footer .d-flex.align-items-center > #btnSaveStatusOnly i {
+    font-size: 0.875rem !important;
+  }
+
+  .modal-footer > .d-flex {
+    padding-bottom: 0.625rem !important;
+    margin-bottom: 0.625rem !important;
+    border-bottom: 1px solid #eef0f4 !important;
+  }
+
+  .modal-footer > .d-flex:last-child {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    border-bottom: none !important;
+  }
+
+  /* ยกเลิก / ดูตัวอย่าง stay a secondary pair, roughly a third and two thirds
+     of the row so ดูตัวอย่าง — the one someone reaches for more often — reads
+     as the default choice of the two. */
+  .modal-footer .d-flex.justify-content-end .btn-secondary[data-dismiss="modal"] {
+    flex: 0 0 auto !important;
+  }
+
+  .modal-footer .d-flex.justify-content-end #btnPreviewReceipt {
+    flex: 1 1 auto !important;
+  }
+
+  /* The send button is the reason the modal exists; on its own line, full
+     width, it doesn't compete with ยกเลิก/ดูตัวอย่าง for attention. */
+  .modal-footer .d-flex.justify-content-end #btnSendReceipt,
+  .modal-footer .d-flex.justify-content-end #btnSendReceiptFix {
+    flex: 1 1 100% !important;
+    order: 3;
+    padding: 0.75rem !important;
+    font-size: 0.9375rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* ---- Invoice receipt header ----
+     The same modal opens with a blue header strip laid out as
+     justify-content:space-between: "Receipt" + the invoice id (itself an
+     .ief-wrap with edit/save/cancel buttons inline) on the left, "ยอดสุทธิ" +
+     the amount + a slip button on the right. Side by side that fits a
+     desktop dialog; on a 344px one the id's own edit buttons run into the
+     amount block next to them. The two halves stack instead, and the id's
+     edit controls get room of their own rather than fighting the number
+     for the same line. */
+  #sendModalBody .d-flex.justify-content-between.align-items-center {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+
+  #sendModalBody .d-flex.justify-content-between.align-items-center > .text-right {
+    align-self: stretch !important;
+    text-align: left !important;
+  }
+
+  /* The amount's own row keeps space-between so the slip button doesn't
+     end up on a third line under an otherwise short row. */
+  #sendModalBody .d-flex.justify-content-between.align-items-center .ief-wrap {
+    flex-wrap: wrap !important;
+  }
+
+  #sendModalBody .ief-wrap .ief-btn-edit,
+  #sendModalBody .ief-wrap .ief-btn-ok,
+  #sendModalBody .ief-wrap .ief-btn-cancel {
+    padding: 0.25rem !important;
+  }
+
+  /* ---- Invoice item rows as cards ----
+     The "ตรวจสอบข้อมูลก่อนส่ง" modal builds its item table (item name / qty /
+     price / edit-save-cancel buttons) as plain HTML in JS, not through
+     responsive-tables.js, and each row carries inline edit controls the
+     script isn't meant to touch. On a 344px dialog the 4-column table left
+     almost nothing for the item name and forced a sideways scroll to reach
+     the edit buttons, which is what made it hard to read. tr[data-item-idx]
+     is the marker the page's own JS uses for these rows, so it's used here
+     as the scope rather than a generic .table selector that would also hit
+     unrelated tables. Cards keep the exact same DOM the edit/save/cancel
+     handlers expect (.item-display, .item-edit, .btn-edit-item, ...) — only
+     the layout changes. */
+  table.table-sm:has(tr[data-item-idx]) thead {
+    display: none !important;
+  }
+
+  table.table-sm:has(tr[data-item-idx]),
+  table.table-sm:has(tr[data-item-idx]) tbody {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* .table tbody tr{display:table-row!important} elsewhere in this file
+     needs to be outweighed, not just matched: tbody in the selector adds the
+     specificity !important alone would tie on. */
+  table.table-sm tbody tr[data-item-idx] {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-areas:
+      "name   name"
+      "qty    price"
+      "actions actions" !important;
+    gap: 0.375rem 0.75rem !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 0.75rem !important;
+    margin-bottom: 0.625rem !important;
+    width: 100% !important;
+  }
+
+  table.table-sm tbody tr[data-item-idx] > td {
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 0 !important;
+    border: none !important;
+    text-align: left !important;
+  }
+
+  /* Column order in the markup is name/qty/price/actions; the grid areas
+     above re-lay them out without touching that HTML. */
+  table.table-sm tbody tr[data-item-idx] > td:nth-of-type(1) { grid-area: name; }
+  table.table-sm tbody tr[data-item-idx] > td:nth-of-type(2) { grid-area: qty; }
+  table.table-sm tbody tr[data-item-idx] > td:nth-of-type(3) { grid-area: price; justify-self: end; }
+  table.table-sm tbody tr[data-item-idx] > td:nth-of-type(4) { grid-area: actions; }
+
+  tr[data-item-idx] > td:nth-of-type(1) .item-display {
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    color: #1e293b !important;
+  }
+
+  /* Qty and price read as "label value" instead of bare numbers, since the
+     column headers that used to explain them are gone. */
+  tr[data-item-idx] > td:nth-of-type(2) .item-display::before {
+    content: "จำนวน ";
+    font-weight: 400;
+    color: #64748b;
+  }
+
+  tr[data-item-idx] > td:nth-of-type(3) .item-display::before {
+    content: "ราคา ";
+    font-weight: 400;
+    color: #64748b;
+  }
+
+  tr[data-item-idx] > td:nth-of-type(2),
+  tr[data-item-idx] > td:nth-of-type(3) {
+    font-size: 0.8125rem !important;
+  }
+
+  /* The actions cell holds three buttons meant for a narrow table column;
+     laid out full-width they get room to be tapped comfortably. */
+  tr[data-item-idx] > td:nth-of-type(4) {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.375rem !important;
+    padding-top: 0.375rem !important;
+    margin-top: 0.375rem !important;
+    border-top: 1px dashed #e2e8f0 !important;
+  }
+
+  tr[data-item-idx] .btn-xs {
+    padding: 0.375rem 0.625rem !important;
+    font-size: 0.8125rem !important;
+  }
+
+  /* Edit mode swaps .item-display for .item-edit inputs; those need the
+     grid's full width rather than the table's old fixed column width. */
+  tr[data-item-idx] .item-edit {
+    width: 100% !important;
   }
 
   /* ---- Filter sheet ----
