@@ -67,7 +67,14 @@ foreach ($result as $row) {
     $link = !empty($siteUrl) ? $url : '-';
     $server = $row['svName'] ?? '-';
     $wpAdminUrl = ensureAbsoluteUrl($row["wWordpressURL"]);
-    $btn["URL"] = '<a href="'.escUrl($wpAdminUrl).'" target="_blank" title="WP-Admin"><i class="bi bi-box-arrow-up-right text-primary"></i></a>';
+
+    // One-click cPanel login, only when WHM can actually issue a session for this row
+    $canCpanel = !empty($row["wCPanelUser"]) && !empty($row["svWHMURL"]) && !empty($row["svWHMUser"]) && !empty($row["svWHMApiToken"]);
+
+    // wp-admin logs straight in through the same WHM session; otherwise it is a plain link
+    $btn["URL"] = $canCpanel && !empty($row["wDomain"])
+        ? '<a href="'.escUrl($wpAdminUrl).'" onclick="return openWpAdmin('.intval($row["wID"]).', this)" title="Log in to WP-Admin"><i class="bi bi-box-arrow-up-right text-primary"></i></a>'
+        : '<a href="'.escUrl($wpAdminUrl).'" target="_blank" title="WP-Admin"><i class="bi bi-box-arrow-up-right text-primary"></i></a>';
     $btn["detail"] = '<a href="#" onclick="viewDetail('.$row["wID"].')" title="Detail"><i class="bi bi-file-earmark-text"></i></a>';
     $btn["edit"] = '<a href="#" onclick="setEdit('.$row["wID"].')" title="Edit"><i class="bi bi-pencil-square text-dark"></i></a>';
     $btn["delete"] = '<a href="#" onclick="setDel('.$row["wID"].')" title="Delete"><i class="bi bi-x-square text-danger"></i></a>';
@@ -76,8 +83,6 @@ foreach ($result as $row) {
         ? '<a href="pages/tpSubmittedDetails.php?act=readProject&projectID='.$projectID.'" target="_blank" title="Template submission detail"><i class="bi bi-clipboard-data text-primary"></i></a>'
         : '<span class="text-muted" title="No template submission linked to this website"><i class="bi bi-clipboard-data"></i></span>';
 
-    // One-click cPanel login, only when WHM can actually issue a session for this row
-    $canCpanel = !empty($row["wCPanelUser"]) && !empty($row["svWHMURL"]) && !empty($row["svWHMUser"]) && !empty($row["svWHMApiToken"]);
     $btn["cpanel"] = $canCpanel
         ? '<a href="#" onclick="openCpanel('.intval($row["wID"]).', this)" title="Open cPanel as '.esc($row["wCPanelUser"]).'"><i class="bi bi-hdd-stack text-primary"></i></a>'
         : '<span class="text-muted" title="cPanel auto-login unavailable for this website"><i class="bi bi-hdd-stack"></i></span>';
@@ -88,7 +93,7 @@ foreach ($result as $row) {
         $link,
         $server,
         $statusWebsite,
-        $btn["URL"]." ".$btn["template"]." ".$btn["cpanel"]." ".$btn["edit"]." ".$btn["delete"]
+        '<div class="rowActions">'.$btn["URL"].$btn["template"].$btn["cpanel"].$btn["edit"].$btn["delete"].'</div>'
     );
     $i++;
 }

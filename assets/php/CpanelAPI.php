@@ -215,6 +215,26 @@ class CpanelAPI {
     }
 
     /**
+     * List the entries directly inside a directory.
+     * @param string $dir Absolute directory
+     * @return array ['success' => bool, 'message' => string, 'files' => string[]] file names only
+     */
+    public function listFiles($dir) {
+        $res = $this->uapi('Fileman', 'list_files', ['dir' => $dir, 'include_mime' => 0]);
+
+        $files = [];
+        if ($res['success'] && is_array($res['data'])) {
+            foreach ($res['data'] as $entry) {
+                if (isset($entry['file']) && isset($entry['type']) && $entry['type'] === 'file') {
+                    $files[] = $entry['file'];
+                }
+            }
+        }
+
+        return ['success' => $res['success'], 'message' => $res['message'], 'files' => $files];
+    }
+
+    /**
      * Delete a file. Only API2 exposes this operation.
      * @param string $path Absolute path
      * @return array ['success' => bool, 'message' => string]
@@ -227,6 +247,110 @@ class CpanelAPI {
         ]);
 
         return ['success' => $res['success'], 'message' => $res['message']];
+    }
+
+    /**
+     * Create a mailbox, or reset the password of one that already exists.
+     *
+     * cPanel refuses a second mailbox on the same address, so an address
+     * that is already there has its password set instead. The result says
+     * which of the two happened.
+     *
+     * @param string $email   Full address, e.g. info@example.com
+     * @param string $password
+     * @param int    $quotaMb Mailbox size in MB, 0 for unlimited
+     * @return array ['success' => bool, 'message' => string, 'created' => bool]
+     */
+    public function addEmailAccount($email, $password, $quotaMb = 1024) {
+        $result = ['success' => false, 'message' => '', 'created' => false];
+
+        $parts = explode('@', $email, 2);
+
+        if (count($parts) !== 2 || $parts[0] === '' || $parts[1] === '') {
+            $result['message'] = 'Not a full email address: ' . $email;
+            return $result;
+        }
+
+        list($user, $domain) = $parts;
+
+        $add = $this->uapi('Email', 'add_pop', [], [
+            'email'    => $user,
+            'password' => $password,
+            'quota'    => (int) $quotaMb,
+            'domain'   => $domain,
+            // Without this cPanel sends the mailbox owner a welcome message
+            'skip_update_db' => 0,
+        ]);
+
+        if ($add['success']) {
+            $result['success'] = true;
+            $result['created'] = true;
+            $result['message'] = 'Mailbox created.';
+            return $result;
+        }
+
+        // "already exists" is not a failure here: the address is wanted, and
+        // it is there. Its password is brought in line instead.
+        if (stripos($add['message'], 'already exists') === false) {
+            $result['message'] = $add['message'] !== '' ? $add['message'] : 'The mailbox could not be created.';
+            return $result;
+        }
+
+        $passwd = $this->uapi('Email', 'passwd_pop', [], [
+            'email'    => $user,
+            'password' => $password,
+            'domain'   => $domain,
+        ]);
+
+        if (!$passwd['success']) {
+            $result['message'] = 'The mailbox exists, but its password could not be set: ' . $passwd['message'];
+            return $result;
+        }
+
+        $result['success'] = true;
+        $result['message'] = 'Mailbox already existed; its password was reset.';
+
+        return $result;
+    }
+
+    /**
+     * The mailboxes on this account.
+     * @return array ['success' => bool, 'message' => string, 'accounts' => array]
+     */
+    public function listEmailAccounts() {
+        $res = $this->uapi('Email', 'list_pops');
+
+        return [
+            'success'  => $res['success'],
+            'message'  => $res['message'],
+            'accounts' => is_array($res['data']) ? $res['data'] : [],
+        ];
+    }
+
+    /**
+     * The mail client settings for one mailbox: server names, ports and
+     * whether each of them is encrypted.
+     *
+     * @param string $email Full address
+     * @return array ['success' => bool, 'message' => string, 'settings' => array]
+     */
+    public function emailClientSettings($email) {
+        $parts = explode('@', $email, 2);
+
+        if (count($parts) !== 2) {
+            return ['success' => false, 'message' => 'Not a full email address: ' . $email, 'settings' => []];
+        }
+
+        $res = $this->uapi('Email', 'get_client_settings', [
+            'account' => $parts[0],
+            'domain'  => $parts[1],
+        ]);
+
+        return [
+            'success'  => $res['success'],
+            'message'  => $res['message'],
+            'settings' => is_array($res['data']) ? $res['data'] : [],
+        ];
     }
 
     /**
