@@ -8,6 +8,7 @@ include_once "../../assets/php/SoftaculousAPI.php";
 include_once "../../assets/php/CpanelAPI.php";
 include_once "../../assets/php/DomainUpdater.php";
 include_once "../../assets/php/WordPressSetup.php";
+include_once "../../assets/php/AmeliaSetup.php";
 include_once "../../assets/php/L4UConfig.php";
 $myID = $_SESSION['id'];
 
@@ -399,6 +400,67 @@ if ($params ["action"] == "setStatus"){
                 "steps"    => $apply["steps"],
             ];
             logProvision($db, $row["wID"], $row["svID"], $apply["success"] ? "success" : "failed", $logResult, null, "wordpress_setup");
+        }
+    }
+
+}elseif ($params ["action"] == "ameliaSetup"){
+
+    // Amelia's own settings: shop details, currency and payments, and the
+    // mail server its notifications go out through. The plugin is installed
+    // first if the site does not have it yet.
+    $params["success"] = false;
+    $params["message"] = "";
+    $params["steps"]   = [];
+
+    $row = $db->query('SELECT w.wID, w.wProject, w.wDomain, w.wCPanelUser, w.wLocation, w.wOwner,
+                              w.wShopEmail, w.wSMTPEmailUser, w.wSMTPEmailPass, w.wSystemAmelia,
+                              w.svID, c.code AS countryCode
+                       FROM websiteList w
+                       LEFT JOIN countries c ON w.countryID = c.id
+                       WHERE w.wID = ? AND w.delete_at IS NULL;', $params["id"])->fetchArray();
+
+    if (empty($row)){
+        $params["message"] = "Website not found.";
+    }elseif (empty($row["wCPanelUser"])){
+        $params["message"] = "This website has no cPanel username stored.";
+    }elseif (empty($row["svID"])){
+        $params["message"] = "This website has no L4U Server assigned.";
+    }elseif (empty($row["wDomain"])){
+        $params["message"] = "This website has no domain stored.";
+    }else{
+        $whm = WHMAPI::fromServer($db, $row["svID"]);
+
+        if ($whm === null){
+            $params["message"] = "The assigned server has no WHM credentials stored in L4UServers.";
+        }else{
+            $domain = WHMAPI::normaliseDomain($row["wDomain"]);
+            $setup  = new AmeliaSetup($whm, $row["wCPanelUser"]);
+
+            $apply = $setup->apply($domain, [
+                "companyName"    => !empty($row["wProject"]) ? $row["wProject"] : $domain,
+                "companyAddress" => !empty($row["wLocation"]) ? $row["wLocation"] : "",
+                // The record keeps no separate phone number, so Amelia is
+                // left to the shop for that one field
+                "companyPhone"   => "",
+                "adminEmail"     => !empty($row["wShopEmail"]) ? $row["wShopEmail"] : "",
+                "currency"       => AmeliaSetup::currencyFor($row["countryCode"]),
+                // The site's own mailbox, so notifications come from the shop
+                "smtpUser"       => !empty($row["wSMTPEmailUser"]) ? $row["wSMTPEmailUser"] : "",
+                "smtpPass"       => !empty($row["wSMTPEmailPass"]) ? $row["wSMTPEmailPass"] : "",
+                "config"         => L4UConfig::all($db),
+            ]);
+
+            $params["success"] = $apply["success"];
+            $params["message"] = $apply["message"];
+            $params["steps"]   = $apply["steps"];
+
+            $logResult = [
+                "username" => $row["wCPanelUser"],
+                "domain"   => $domain,
+                "message"  => $apply["message"],
+                "steps"    => $apply["steps"],
+            ];
+            logProvision($db, $row["wID"], $row["svID"], $apply["success"] ? "success" : "failed", $logResult, null, "amelia_setup");
         }
     }
 
@@ -883,7 +945,7 @@ function scrubSecrets($data){
     foreach ($data as $key => $value){
         if (is_array($value)){
             $data[$key] = scrubSecrets($value);
-        }elseif (preg_match('/pass|token|secret/i', (string)$key)){
+        }elseif (preg_match('/pass|token|secret|apikey|api_key|licence|license|key/i', (string)$key)){
             $data[$key] = '***';
         }
     }

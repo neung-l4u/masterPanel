@@ -1210,6 +1210,12 @@ div.dataTables_wrapper div.dataTables_length select {
                                              style="display:none;">
                                              <i class="bi bi-magic"></i> Auto Setup WordPress
                                         </button>
+                                        <button class="btn btn-outline-primary" type="button" id="btnAmeliaSetup"
+                                             onclick="ameliaSetup()"
+                                             title="Install Amelia and apply the shop details, currency, payments and notification settings"
+                                             style="display:none;">
+                                             <i class="bi bi-calendar-check"></i> Setup Amelia
+                                        </button>
                                         <button onclick="formSave();" type="button" class="btn btn-primary"
                                              name="cmdSubmit" id="cmdSubmit">Save changes</button>
                                    </div>
@@ -1485,6 +1491,7 @@ const inputContactEmailPass = $("#inputContactEmailPass");
 const inputContactEmailRemark = $("#inputContactEmailRemark");
 const inputGloriaFood = $("#inputGloriaFood");
 const inputAmelia = $("#inputAmelia");
+inputAmelia.on("change", function() { toggleAmeliaSetup(); });
 const inputVoucher = $("#inputVoucher");
 const inputCloudwaitress = $("#inputCloudwaitress");
 const inputOtherCheck = $("#inputOtherCheck");
@@ -1609,6 +1616,13 @@ let iconLink =
 
 const cmdSubmit = $("#cmdSubmit");
 
+// The Amelia setup needs a provisioned site and the Amelia box ticked, so
+// it is kept out of the way on every other record
+function toggleAmeliaSetup(provisioned) {
+     const show = provisioned !== undefined ? provisioned : $("#btnWpSetup").is(":visible");
+     $("#btnAmeliaSetup").toggle(show && inputAmelia.prop("checked"));
+}
+
 // Neither the domain update nor the WordPress setup makes sense until the
 // site has been provisioned, so both follow the same condition
 function toggleDomainUpdate(show) {
@@ -1616,6 +1630,8 @@ function toggleDomainUpdate(show) {
      $("#inputDomainHint").toggle(show);
      $("#btnWpSetup").toggle(show);
      $("#btnStaffEmails").toggle(show);
+     // Amelia only makes sense on a site that is marked as using it
+     toggleAmeliaSetup(show);
      $(".emailSettingsBtn").toggle(show);
      if (!show) {
           $("#wpSetupSteps").hide();
@@ -1750,6 +1766,7 @@ const setEdit = (id) => {
           inputContactEmailRemark.val(res.wContactEmailRemark);
           inputGloriaFood.prop("checked", res.wSystemGloriaFood == 1);
           inputAmelia.prop("checked", res.wSystemAmelia == 1);
+          toggleAmeliaSetup();
           inputVoucher.prop("checked", res.wSystemVoucher == 1);
           inputCloudwaitress.prop("checked", res.wSystemCloudwaitress == 1);
           const hasOther = res.wSystemOther && res.wSystemOther.trim() !== '';
@@ -2166,6 +2183,73 @@ const wpSetup = () => {
           $btn.prop("disabled", false).html(originalHtml);
      });
 } //wpSetup
+
+// Install Amelia if it is missing, then apply the shop details, currency,
+// payments and notification settings. Live payment keys are deliberately
+// left out: the shared test keys go on so a booking can be tried end to
+// end, and the shop's own keys are put in per site by the team.
+const ameliaSetup = () => {
+     const wID = editID.val();
+
+     if (!wID) {
+          alert("Save the website first, then run the setup.");
+          return;
+     }
+
+     const smtpUser = inputSMTPUser.val().trim();
+
+     const answer = confirm(
+          "This changes the live site, not just this record.\n\n" +
+          "Amelia will be installed if it is missing, and the shop details,\n" +
+          "currency, payment methods and notification settings will be set.\n\n" +
+          "Stripe is set up with the shared TEST keys, in test mode. The\n" +
+          "shop's own live keys still have to be entered per site.\n\n" +
+          (smtpUser === "" ?
+               "No SMTP mailbox is filled in, so Amelia keeps sending through WordPress.\n\n" :
+               "Notifications will be sent through " + smtpUser + "\n\n") +
+          "Continue?"
+     );
+
+     if (!answer) return;
+
+     const $btn = $("#btnAmeliaSetup");
+     const originalHtml = $btn.html();
+     $btn.prop("disabled", true).html('<i class="bi bi-hourglass-split"></i> Setting up');
+
+     const $steps = $("#wpSetupStepsList");
+     $steps.empty().append(
+          '<li class="save-step is-running"><span class="save-step-icon"></span><span class="save-step-label">Applying the Amelia settings</span></li>'
+          );
+     $("#wpSetupSteps").show();
+
+     $.ajax({
+          url: "assets/php/actionWebsiteList.php",
+          method: "POST",
+          cache: false,
+          dataType: "json",
+          data: {
+               act: "ameliaSetup",
+               id: wID
+          }
+     }).done(function(res) {
+          console.log(res);
+          renderWpSetupSteps(res);
+
+          if (!res.success) {
+               alert("The Amelia setup did not finish cleanly.\n\n" + (res.message ||
+                    "Unknown error."));
+          }
+     }).fail(function(xhr, status, error) {
+          console.log("ajax ameliaSetup fail!!");
+          console.log(status + ": " + error);
+          $steps.empty().append(
+               '<li class="save-step is-failed"><span class="save-step-icon"></span><span class="save-step-label">' +
+               escapeHtml(status + ": " + error) + '</span></li>');
+          alert("The Amelia setup failed.\n\n" + status + ": " + error);
+     }).always(function() {
+          $btn.prop("disabled", false).html(originalHtml);
+     });
+} //ameliaSetup
 
 // Create the seven staff mailboxes on this site's domain. They all share
 // one password, so nothing is asked for here. An address that already
