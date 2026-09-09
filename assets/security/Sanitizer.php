@@ -40,6 +40,29 @@ class Sanitizer
     }
 
     /**
+     * Ensure URL is absolute so the browser does not treat it as a relative path.
+     * DB values are often stored without a scheme (e.g. "www.example.com/wp-admin"),
+     * which the browser would otherwise resolve against the current page path.
+     */
+    public static function ensureAbsoluteUrl($url): string
+    {
+        $url = trim($url ?? '');
+        if (empty($url)) return $url;
+        if (preg_match('~^(https?://|mailto:|tel:|//)~i', $url)) return $url;
+        return 'https://' . $url;
+    }
+
+    /**
+     * Remove a trailing /wp-admin (or /wp-admin/) to get the public site URL
+     */
+    public static function stripWpAdmin($url): string
+    {
+        $url = trim($url ?? '');
+        if (empty($url)) return $url;
+        return preg_replace('~/wp-admin/?$~i', '', $url);
+    }
+
+    /**
      * Sanitize cookie value before output
      */
     public static function escCookie($name): string
@@ -66,6 +89,12 @@ if (!function_exists('escAttr')) {
 }
 if (!function_exists('escUrl')) {
     function escUrl($v)    { return Sanitizer::escUrl($v); }
+}
+if (!function_exists('ensureAbsoluteUrl')) {
+    function ensureAbsoluteUrl($v) { return Sanitizer::ensureAbsoluteUrl($v); }
+}
+if (!function_exists('stripWpAdmin')) {
+    function stripWpAdmin($v) { return Sanitizer::stripWpAdmin($v); }
 }
 if (!function_exists('escCookie')) {
     function escCookie($n) { return Sanitizer::escCookie($n); }

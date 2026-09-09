@@ -53,7 +53,7 @@ include ('assets/api/checkSession.php');
                         <p>Website Management <i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <?php if(in_array($teamID, [1,2,8,10,11])){ ?>
+                        <?php if(in_array($teamID, [1,2,5,8,10,11])){ ?>
                         <li class="nav-item pl-2">
                             <a href="https://report.localforyou.com/modules/websiteList/views/websiteList.php#" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-list-check"></i>

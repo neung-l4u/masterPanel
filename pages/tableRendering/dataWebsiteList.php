@@ -80,18 +80,3 @@ function dashAndShort($param): string
         return '<abbr title="'.esc($param).'">'.esc($location).'</abbr>';
     }
 }
-
-function stripWpAdmin($url): string
-{
-    $url = trim($url ?? '');
-    if (empty($url)) return $url;
-    return preg_replace('~/wp-admin/?$~i', '', $url);
-}
-
-function ensureAbsoluteUrl($url): string
-{
-    $url = trim($url ?? '');
-    if (empty($url)) return $url;
-    if (preg_match('~^(https?://|mailto:|tel:|//)~i', $url)) return $url;
-    return 'https://' . $url;
-}
