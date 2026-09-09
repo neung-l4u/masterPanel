@@ -28,6 +28,13 @@ class WordPressSetup {
     /** Seconds a login link stays valid once it has been written. */
     const LOGIN_TTL = 60;
 
+    /** Settings > General, the date and time as every site shows them. */
+    const DATE_FORMAT = 'F j, Y';
+    const TIME_FORMAT = 'g:i A';
+
+    /** Sunday, matching how the shops read a week. */
+    const START_OF_WEEK = 0;
+
     /** Settings > General, admin email for every site we build. */
     const ADMIN_EMAIL = 'administrator@localforyou.com';
 
@@ -354,6 +361,9 @@ SNIPPET;
             'token'       => $token,
             'locale'      => $locale['locale'],
             'timezone'    => $locale['timezone'],
+            'date_format'   => self::DATE_FORMAT,
+            'time_format'   => self::TIME_FORMAT,
+            'start_of_week' => self::START_OF_WEEK,
             'admin_email' => self::ADMIN_EMAIL,
             'site_title'  => isset($opts['siteTitle']) ? $opts['siteTitle'] : '',
             // Blank unless the client actually has a tagline for the business
@@ -919,6 +929,14 @@ l4u_step(\$steps, 'Site language', true, \$locale);
 update_option('timezone_string', \$timezone);
 update_option('gmt_offset', '');
 l4u_step(\$steps, 'Timezone', true, \$timezone);
+
+// Date and time as every site we build shows them, and a week that
+// starts on Sunday
+update_option('date_format', \$_POST['date_format']);
+update_option('time_format', \$_POST['time_format']);
+update_option('start_of_week', (int) \$_POST['start_of_week']);
+l4u_step(\$steps, 'Date and time format', true,
+    \$_POST['date_format'] . ', ' . \$_POST['time_format'] . ', week starts Sunday.');
 
 // update_option writes straight through; the admin screen would instead send
 // a confirmation email and hold the address in new_admin_email until clicked

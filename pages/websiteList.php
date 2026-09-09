@@ -2129,10 +2129,10 @@ const wpSetup = () => {
 
      const answer = confirm(
           "This changes the live site, not just this record.\n\n" +
-          "Language, timezone, admin email, tagline, ping services and search\n" +
-          "engine visibility will be set, the Admin and Shop Owner accounts\n" +
-          "will be created or brought back in line, and the standard plugins\n" +
-          "will be installed and activated.\n\n" +
+          "Language, timezone, date and time format, admin email, tagline,\n" +
+          "ping services and search engine visibility will be set, the Admin\n" +
+          "and Shop Owner accounts will be created or brought back in line,\n" +
+          "and the standard plugins will be installed and activated.\n\n" +
           "Installing the plugins can take a few minutes.\n\n" +
           (shopEmail === "" ?
                "No shop email is filled in, so the Shop Owner account will be skipped.\n\n" :
