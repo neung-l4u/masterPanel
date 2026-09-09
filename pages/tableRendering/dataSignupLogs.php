@@ -150,11 +150,8 @@ foreach ($result as $row) {
 
     // Placeholder cell - filled in over AJAX by getFirstPaidStatus.php once the
     // table has rendered, so a slow Stripe lookup never blocks the page.
-    $firstPaidCell = '<span class="first-paid-cell text-muted" data-log-id="'.(int)$row["id"].'">'
-        . '<i class="bi bi-hourglass-split"></i></span>';
-
-    // Recurring subscription invoices, loaded on demand like First Paid.
-    $subPaidCell = '<span class="sub-paid-cell text-muted" data-log-id="'.(int)$row["id"].'">'
+    // Full invoice history - the signup charge plus every recurring invoice.
+    $historyCell = '<span class="pay-history-cell text-muted" data-log-id="'.(int)$row["id"].'">'
         . '<i class="bi bi-hourglass-split"></i></span>';
 
     // Saved cards / bank accounts, same lazy pattern.
@@ -166,8 +163,7 @@ foreach ($result as $row) {
         $shopType,
         $shopName,
         $saleHtml,
-        $firstPaidCell,
-        $subPaidCell,
+        $historyCell,
         $payMethodCell,
         $date
     );//array

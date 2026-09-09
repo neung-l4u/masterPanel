@@ -11,10 +11,25 @@
 global $db, $date;
 
 $password = "Localeats#".date("Y");
+
+// Identify whoever is looking at this page, for the watermark below. Falls back
+// to the staff id so a missing name never leaves the mark blank.
+$wmName = $_SESSION['nickName'] ?? ($_SESSION['name'] ?? '');
+$wmId   = $_SESSION['id'] ?? '';
+$wmText = trim(($wmName !== '' ? $wmName : 'staff') . ' #' . $wmId . '  ' . date('Y-m-d H:i'));
 ?>
 <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 
 <style>
+<?php
+    // One SVG tile carrying the viewer's name, repeated by CSS wherever the
+    // watermark is applied. Lower alpha keeps it readable past the data.
+    $wmSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="120">'
+           . '<text x="0" y="70" transform="rotate(-22 0 70)" '
+           . 'fill="rgba(15,23,42,0.05)" font-family="Montserrat,Arial,sans-serif" '
+           . 'font-size="17">' . htmlspecialchars($wmText, ENT_QUOTES) . '</text></svg>';
+    echo ':root{--wm-image:url(\'data:image/svg+xml;utf8,' . rawurlencode($wmSvg) . '\');}';
+?>
     .clickable {
         cursor: pointer;
     }
@@ -46,6 +61,42 @@ $password = "Localeats#".date("Y");
     #signupTable tbody td img.rounded-circle {
         width: 22px !important;
         height: 22px !important;
+    }
+
+    /* Identifying watermark. Tiled across the content itself (not the margins)
+       so cropping it out also crops the data away. Faint enough to read past,
+       and raising a screenshot's contrast brings it back. */
+    .wm-wrap {
+        position: relative;
+    }
+    .wm-wrap::after,
+    .modal-content::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;   /* never intercept clicks */
+        z-index: 5;
+        background-image: var(--wm-image);
+        background-repeat: repeat;
+    }
+    /* Bootstrap moves the modal to <body>, outside .wm-wrap, so it needs the
+       mark applied directly - this is where the most detailed data appears
+       (customer email, Stripe ids, amounts). */
+    .modal-content {
+        position: relative;
+        overflow: hidden;   /* keep the tile inside the rounded corners */
+    }
+    .data-notice {
+        font-size: 11px;
+        color: #b91c1c;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 6px;
+        padding: 6px 10px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 </style>
 <!-- Content Header (Page header) -->
@@ -124,7 +175,11 @@ $password = "Localeats#".date("Y");
                     </div>
                     <div class="card-body">
                         <div class="card">
-                            <div class="card-body table-responsive p-4" style="height: 630px;">
+                            <div class="card-body table-responsive p-4 wm-wrap" style="height: 630px;">
+                                <div class="data-notice">
+                                    <i class="bi bi-shield-lock"></i>
+                                    <span>ข้อมูลลูกค้า &mdash; ห้ามเผยแพร่ออกนอกบริษัท</span>
+                                </div>
                                 <table id="signupTable" class="table table-borderless table-striped table-hover"
                                        style="width:100%">
                                     <thead class="thead-dark">
@@ -133,10 +188,9 @@ $password = "Localeats#".date("Y");
                                         <th style="width:10%">Shop Type</th>
                                         <th style="width:24%">Shop name</th>
                                         <th style="width:11%">Sale</th>
-                                        <th style="width:11%">First Paid</th>
-                                        <th style="width:11%">Sub Paid</th>
-                                        <th style="width:11%">Payment Methods</th>
-                                        <th style="width:11%">Timestamp</th>
+                                        <th style="width:13%">History Payment</th>
+                                        <th style="width:15%">Payment Methods</th>
+                                        <th style="width:13%">Timestamp</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -217,22 +271,21 @@ $password = "Localeats#".date("Y");
             dataSrc: 'data'
         },
         "pageLength": 10,
-        order: [[7, 'desc']],   // Timestamp is the last column
+        order: [[6, 'desc']],   // Timestamp is the last column
         lengthMenu: [
             [10, 25, 50, -1],
             [10, 25, 50, 'All']
         ],columnDefs: [
-            { targets: [2, 3, 7], className: 'dt-left' },
-            // First Paid / Sub Paid / Payment Methods fetch per row over AJAX,
-            // so only the rows on screen ever hold a value - ordering by them
-            // would be misleading. Use the Search box to find a status instead.
-            { targets: [4, 5, 6], className: 'dt-center', "orderable": false }
+            { targets: [2, 3, 6], className: 'dt-left' },
+            // History Payment / Payment Methods fetch per row over AJAX, so only
+            // the rows on screen ever hold a value - ordering by them would be
+            // misleading. Use the Search box to find a shop instead.
+            { targets: [4, 5], className: 'dt-center', "orderable": false }
         ],
         drawCallback: function() {
             // The partial defining loadFirstPaid loads later in the page, so the
             // first draw can fire before it exists.
-            if (typeof loadFirstPaid === 'function') loadFirstPaid();
-            if (typeof loadSubPaid === 'function') loadSubPaid();
+            if (typeof loadPayHistory === 'function') loadPayHistory();
             if (typeof loadPayMethod === 'function') loadPayMethod();
         }
     } );

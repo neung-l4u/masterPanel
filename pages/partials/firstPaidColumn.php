@@ -498,6 +498,176 @@
         if (info && info.success) renderSubList(info.data, subListLogId);
     });
 
+
+    // ---- History Payment column --------------------------------------------
+    // One column covering every invoice Stripe holds: the signup charge and all
+    // recurring ones. The badge shows paid/total; clicking opens the card list,
+    // and a card opens the same detail view.
+    const payHistoryCache = {};
+    const PAY_HISTORY_BATCH = 3;
+    let historyLogId = null;   // row whose card list is currently open
+
+    function renderPayHistory($cell, info) {
+        if (!info || !info.success) {
+            $cell.html('<span class="text-muted" title="' + esc((info && info.message) || 'No data') + '">-</span>');
+            return;
+        }
+        const d = info.data;
+        if (!d.total) {
+            $cell.html('<span class="text-muted" title="No invoices yet">-</span>');
+            return;
+        }
+
+        // All paid reads as healthy; anything outstanding deserves attention.
+        const allPaid = d.paid === d.total;
+        const cls = allPaid ? 'badge-success' : 'badge-warning';
+        const icon = allPaid ? 'bi-receipt' : 'bi-exclamation-circle';
+
+        $cell.html(
+            '<span class="badge ' + cls + ' pay-history-badge" style="cursor:pointer;" ' +
+            'data-log-id="' + $cell.data('log-id') + '" ' +
+            'title="Invoice history - click to view">' +
+            '<i class="bi ' + icon + '"></i> ' + d.paid + '/' + d.total + '</span>');
+    }
+
+    function applyPayHistory() {
+        $('.pay-history-cell').each(function() {
+            const $cell = $(this);
+            const id = $cell.data('log-id');
+            if (payHistoryCache[id] !== undefined) {
+                $cell.data('loading', false);
+                renderPayHistory($cell, payHistoryCache[id]);
+            }
+        });
+    }
+
+    // One request per row, so walk them a few at a time rather than firing
+    // dozens of Stripe round-trips at once.
+    function fetchPayHistoryBatch(queue) {
+        if (!queue.length) return;
+        const batch = queue.splice(0, PAY_HISTORY_BATCH);
+        let pending = batch.length;
+
+        batch.forEach(function(id) {
+            $.ajax({
+                url: 'pages/tableRendering/getPaymentHistory.php',
+                type: 'POST',
+                data: { id: id },
+                dataType: 'json'
+            }).done(function(res) {
+                payHistoryCache[id] = res;
+            }).fail(function() {
+                payHistoryCache[id] = { success: false, message: 'Could not reach Stripe' };
+            }).always(function() {
+                if (--pending === 0) { applyPayHistory(); fetchPayHistoryBatch(queue); }
+            });
+        });
+    }
+
+    window.loadPayHistory = function() {
+        const pending = [];
+        $('.pay-history-cell').each(function() {
+            const $cell = $(this);
+            const id = $cell.data('log-id');
+            if (payHistoryCache[id] !== undefined) {
+                renderPayHistory($cell, payHistoryCache[id]);
+            } else if (!$cell.data('loading')) {
+                $cell.data('loading', true);
+                pending.push(id);
+            }
+        });
+        if (pending.length) fetchPayHistoryBatch(pending);
+    };
+
+    $(document).on('click', '.pay-history-badge', function() {
+        const id = $(this).data('log-id');
+        const info = payHistoryCache[id];
+        if (!info || !info.success) return;
+        renderHistoryList(info.data, id);
+        $('#invoiceModal').modal('show');
+    });
+
+    function renderHistoryList(d, logId) {
+        historyLogId = logId;
+        const statusColor = {
+            paid: '#0e9f6e', open: '#d97706', draft: '#6b7280',
+            void: '#374151', uncollectible: '#e02424'
+        };
+
+        let h = '<div class="d-flex align-items-center" style="gap:10px;">'
+              + '<h4 class="mb-0" style="font-weight:700;">Payment history</h4>'
+              + '<span class="badge badge-light">' + d.paid + ' / ' + d.total + ' paid</span></div>';
+        h += '<div class="mt-1 mb-3" style="color:#6b7280;">' + esc(d.shop_name)
+           + ' &middot; ' + esc(d.account) + ' (' + esc(d.country) + ')</div>';
+        h += '<hr style="margin:16px 0;">';
+
+        d.items.forEach(function(it) {
+            const c = statusColor[it.status] || '#6b7280';
+            h += '<div class="history-invoice-card" data-invoice-id="' + esc(it.invoice_id) + '" data-log-id="' + logId + '" '
+               + 'style="display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:8px;'
+               + 'border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;transition:background .15s;" '
+               + 'onmouseover="this.style.background=\'#f8fafc\'" onmouseout="this.style.background=\'transparent\'">'
+               + '<div style="width:8px;height:38px;border-radius:4px;background:' + c + ';flex-shrink:0;"></div>'
+               + '<div style="flex:1;min-width:0;">'
+               + '<div style="font-weight:600;font-size:14px;color:#1f2937;">' + esc(it.number || it.invoice_id)
+               // Mark the signup charge so it reads apart from the recurring ones.
+               + (it.is_first
+                    ? ' <span style="font-size:9.5px;color:#5b21b6;background:#ede9fe;'
+                      + 'padding:1px 6px;border-radius:9px;font-weight:600;">First</span>'
+                    : '')
+               + '</div>'
+               + '<div style="font-size:12.5px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'
+               + esc(it.description || '-') + '</div>'
+               + '<div style="font-size:12px;color:#9ca3af;">' + esc(ts(it.created)) + '</div>'
+               + '</div>'
+               + '<div style="text-align:right;flex-shrink:0;">'
+               + '<div style="font-weight:600;font-size:14px;">' + esc(money(it.total, it.currency)) + '</div>'
+               + '<div style="font-size:12px;text-transform:capitalize;color:' + c + ';">' + esc(it.status) + '</div>'
+               + '</div>'
+               + '<i class="bi bi-chevron-right" style="color:#9ca3af;flex-shrink:0;"></i>'
+               + '</div>';
+        });
+
+        $('#invoiceModalBody').html(h);
+        $('#invoiceModalFooter').html(
+            '<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>');
+    }
+
+    // Card -> detail, with a way back to the list.
+    $(document).on('click', '.history-invoice-card', function() {
+        const invoiceId = $(this).data('invoice-id');
+        const logId = $(this).data('log-id');
+
+        $('#invoiceModalBody').html(
+            '<div class="text-center text-muted py-5">' +
+            '<div class="spinner-border" role="status"></div>' +
+            '<div class="mt-2">Loading from Stripe...</div></div>');
+
+        $.ajax({
+            url: 'pages/tableRendering/getInvoiceDetail.php',
+            type: 'POST',
+            data: { id: logId, invoice_id: invoiceId },
+            dataType: 'json'
+        }).done(function(res) {
+            if (!res || !res.success) {
+                $('#invoiceModalBody').html('<div class="alert alert-warning mb-0">'
+                    + esc((res && res.message) || 'Could not load invoice.') + '</div>');
+                return;
+            }
+            renderInvoice(res.data);
+            $('#invoiceModalFooter').prepend(
+                '<button type="button" class="btn btn-sm btn-outline-secondary history-back mr-auto">'
+                + '<i class="bi bi-arrow-left mr-1"></i>Back</button>');
+        }).fail(function() {
+            $('#invoiceModalBody').html('<div class="alert alert-danger mb-0">Could not reach the server.</div>');
+        });
+    });
+
+    $(document).on('click', '.history-back', function() {
+        const info = payHistoryCache[historyLogId];
+        if (info && info.success) renderHistoryList(info.data, historyLogId);
+    });
+
     // ---- Payment Methods column --------------------------------------------
     // Mirrors Stripe's own presentation: brand mark, dotted mask + last four,
     // and a "Default" pill on the method invoices actually charge.
@@ -644,7 +814,7 @@
         $('#invoiceModal').modal('show');
     });
 
-    $(function() { loadFirstPaid(); loadSubPaid(); loadPayMethod(); });
+    $(function() { loadPayHistory(); loadPayMethod(); });
 
 })();
 </script>
