@@ -362,6 +362,19 @@ function checkAcceptAgreement() {
 
 // ON CLICK Submit BUTTON
 cmdSubmit.on("click", async function () {
+  /*
+  ===== Skip email check (ปิดใช้งานชั่วคราว) =====
+  ตอนเปิดใช้ฟีเจอร์นี้ ให้ใช้บรรทัดนี้แทนบรรทัดด้านล่าง เพื่อให้ด่านนี้
+  เช็ค checkbox โดยตรง ไม่พึ่ง #emailExist อย่างเดียว กันกรณีค่าเก่าค้าง
+  จากตอนที่ blur ช่องอีเมลไปก่อนแล้วค่อยติ๊ก
+
+  if (!$("#CheckedBoxSkipEmailCheck").is(":checked") && $("#emailExist").val() === "used") {
+  */
+
+  //ปิดด่านตรวจอีเมลซ้ำตอน submit ควบคู่กับ checkEmailUsed() ที่ปิดไว้แล้ว
+  //ถ้าจะเปิดใช้ใหม่ ให้ uncomment บล็อก if ด้านล่างนี้กลับมา
+  //และลบ return false ที่ต้นฟังก์ชัน checkEmailUsed() ออก
+  /*
   if ($("#emailExist").val() === "used") {
     alert("This email is already in use. The form cannot be submitted with this email.");
 
@@ -376,9 +389,10 @@ cmdSubmit.on("click", async function () {
     }, 50);
 
     return false; // กัน submit ต่อ
-  } else {
-    let paymentResponse = await requestToPay();
   }
+  */
+
+  let paymentResponse = await requestToPay();
 });
 
 
@@ -1963,12 +1977,23 @@ function setRestaurantName(val) {
   formData.business.shopName = val;
   formData.business.company = val;
 
-  // เติม storeSlug อัตโนมัติ แต่ไม่ทับถ้าผู้ใช้พิมพ์เอง (เช่นร้านชื่อไทย)
+  // เติม storeSlug อัตโนมัติจากชื่อร้าน
+  // ช่องนี้ถูกซ่อนเป็น hidden ใน index.php แล้ว ผู้ใช้กรอกเองไม่ได้
+  // จึงเติมทับได้เสมอ ไม่ต้องเช็ค data('touched') เหมือนเดิม
+  // หมายเหตุ: ถ้าชื่อร้านเป็นภาษาไทยล้วน slug จะว่าง ซึ่งฝั่ง server
+  // (generateStoreID.php) จะคืน reason = 'empty_slug' และไม่สร้าง storeID ให้
   const slugInput = $('#storeSlug');
-  if (slugInput.length && !slugInput.data('touched')) {
+  if (slugInput.length) {
     slugInput.val(storeSlugFromName(val));
   }
 }
+
+/*
+===== ปิดใช้งาน: ผู้ใช้แก้ storeSlug เอง =====
+ช่อง #storeSlug ถูกซ่อนเป็น hidden แล้ว จึงไม่มี input event ให้ดักอีกต่อไป
+ถ้าจะเปิดให้กรอกเองอีกครั้ง ให้ uncomment บล็อกนี้ พร้อมกับคืนเงื่อนไข
+!slugInput.data('touched') ใน setRestaurantName() ด้านบน
+และเปลี่ยน input ใน index.php กลับเป็น type="text"
 
 $(function () {
   // ผู้ใช้แก้เองเมื่อไหร่ ให้หยุด auto-fill และบังคับรูปแบบ slug
@@ -1977,6 +2002,7 @@ $(function () {
     this.value = storeSlugFromName(this.value);
   });
 });
+*/
 
 const setCreditFullName = () =>{
   let text = input_first_name.val()+" "+input_last_name.val();
@@ -2465,6 +2491,15 @@ $("#posSystem").change(function(){
   }
 })
 
+/*
+===== Skip email check (ปิดใช้งานชั่วคราว) =====
+ปิดไว้พร้อมกับ checkbox ใน modules/signup/modalSecretSetup.php
+ถ้าจะเปิดใช้ใหม่ ต้อง uncomment ทั้ง 3 จุดในไฟล์นี้ (บล็อกนี้, ในฟังก์ชัน
+checkEmailUsed() ด้านล่าง, และด่านตอน submit ที่ cmdSubmit.on("click", ...))
+พร้อมกับ uncomment checkbox ใน modalSecretSetup.php ด้วย
+
+ฟีเจอร์นี้ใช้ได้กับทุกประเทศ ไม่มีเงื่อนไขผูกกับ country
+
 $("#CheckedBoxSkipEmailCheck").on("change", function() {
   if ($(this).is(":checked")) {
     $("#emailUsed").hide();
@@ -2472,9 +2507,30 @@ $("#CheckedBoxSkipEmailCheck").on("change", function() {
     $("#emailExist").val("");
   }
 });
+*/
 
 function checkEmailUsed(email) {
-  if ($("#CheckedBoxSkipEmailCheck").is(":checked")) { return false; }
+  /*
+  ===== Skip email check (ปิดใช้งานชั่วคราว) =====
+  เวอร์ชันนี้แก้บั๊กค่าเก่าค้างแล้ว คือล้าง #emailExist กับป้ายสถานะทิ้งด้วย
+  ไม่ใช่แค่ return เฉย ๆ เพราะถ้าติ๊กแล้วพิมพ์อีเมลใหม่ ค่า "used" เดิม
+  จะยังค้างอยู่และไปบล็อกตอน submit (เจอบ่อยกับ TH ที่มีช่องอีเมล 2 ช่อง
+  คือ #email กับ #quotationEmail ในบล็อก .quotationDetail)
+
+  if ($("#CheckedBoxSkipEmailCheck").is(":checked")) {
+    $("#emailExist").val("");
+    $("#emailUsed").hide();
+    $("#emailunUsed").hide();
+    return false;
+  }
+  */
+
+  //ปิดการตรวจอีเมลซ้ำทั้งหมด ไม่ยิง query ไป database และไม่แสดงป้ายสถานะ
+  //(#emailUsed / #emailunUsed ใน index.php) ถ้าจะเปิดใช้ใหม่ ให้ลบ return
+  //บรรทัดนี้ออก แล้วโค้ดด้านล่างจะกลับมาทำงานเหมือนเดิม
+  //หมายเหตุ: ต้องปลดด่านตอน submit ที่ cmdSubmit.on("click", ...) ควบคู่กันด้วย
+  return false;
+
   if (email.length<5){ return false; }
   const checkEmail = email;
   const emailunUsed = $("#emailunUsed");

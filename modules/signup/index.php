@@ -493,12 +493,19 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             <small id="emailHelp" class="form-text text-muted">
                                                 e.g. mail@localforyou.com
                                             </small><br>
-                                            <small id="emailunUsed" class="form-text badge rounded-pill bg-success px-3" style="display: none; text-transform: capitalize !important;">
+                                            <!--
+                                            ===== ป้ายสถานะการตรวจอีเมลซ้ำ (ปิดใช้งาน) =====
+                                            ปิดพร้อมกับการตรวจอีเมลใน assets/js/bootstrap-multi-step-form.js
+                                            (return false ที่ต้นฟังก์ชัน checkEmailUsed())
+                                            ถ้าจะเปิดใช้ใหม่ ให้ uncomment บล็อกนี้ควบคู่กับโค้ด JS ทั้ง 2 จุด
+
+                                           <small id="emailunUsed" class="form-text badge rounded-pill bg-success px-3" style="display: none; text-transform: capitalize !important;">
                                                 THIS EMAIL IS AVAILABLE.
                                             </small>
                                             <small id="emailUsed" class="form-text  badge rounded-pill bg-danger px-3" style="display: none;">
                                                 THIS EMAIL IS ALREADY IN USE. THE FORM CANNOT BE SUBMITTED WITH THIS EMAIL.
                                             </small>
+                                            -->
                                             <input type="hidden" name="emailExist" id="emailExist" value="">
                                         </div>
                                         <!-- <div class="col-1 d-flex flex-row pb-4">
@@ -603,20 +610,34 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                             <!-- ท่อนที่ 1 ของ storeID: ชื่อร้านตัวเล็กไม่มีสัญลักษณ์
                                                  กรอกอัตโนมัติจากชื่อร้านภาษาอังกฤษ
                                                  ถ้าชื่อร้านเป็นภาษาไทยต้องพิมพ์คำอ่านอังกฤษเอง -->
+                                            <!-- ซ่อนช่อง Store ID name ไม่ให้ผู้ใช้กรอกเอง
+                                                 ระบบ generate ให้อัตโนมัติจากชื่อร้านผ่าน
+                                                 setRestaurantName() -> storeSlugFromName()
+                                                 และฝั่ง server ก็มี storeIdShopSlug() ใน
+                                                 assets/function/generateStoreID.php รองรับอีกชั้น
+
+                                                 คง input ไว้ (เปลี่ยนเป็น hidden) ไม่ลบทิ้ง เพราะ
+                                                 modalRespond.php:326 และ Monday/monday_data.php:371
+                                                 ยังอ่านค่า storeSlug นี้ไปใช้อยู่
+
+                                                 ถ้าจะเปิดให้กรอกเองอีกครั้ง ให้เอา label/small
+                                                 ที่ comment ไว้กลับมา แล้วเปลี่ยน type เป็น text -->
+                                            <!--
                                             <label for="storeSlug" class="pt-2 small text-muted">
                                                 Store ID name
                                             </label>
+                                            -->
                                             <input
-                                                    type="text"
+                                                    type="hidden"
                                                     id="storeSlug"
-                                                    class="form-control form-control-sm"
                                                     name="storeSlug"
-                                                    placeholder="authenticthaibistro"
                                                     autocomplete="off"
                                             />
+                                            <!--
                                             <small class="text-muted" id="storeSlugHint">
                                                 ใช้เป็นท่อนแรกของ Store ID (ตัวเล็ก ไม่มีเว้นวรรค)
                                             </small>
+                                            -->
                                         </div>
                                         <div class="col-3">
                                             <label for="businessNumber" class="businessNumber">
