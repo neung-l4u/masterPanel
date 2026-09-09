@@ -105,18 +105,13 @@ class WordPressSetup {
         return [
             'http://rpc.pingomatic.com',
             'http://rpc.twingly.com',
-            'http://api.feedster.com/ping',
-            'http://api.moreover.com/RPC2',
-            'http://api.moreover.com/ping',
-            'http://www.blogdigger.com/RPC2',
             'http://ping.blo.gs/',
-            'http://blogsearch.google.com/ping/RPC2',
             'http://ping.feedburner.com',
-            'http://topicexchange.com/RPC2',
-            'http://www.weblogalot.com/ping',
             'http://rpc.weblogs.com/RPC2',
-            'http://ping.blogs.yandex.ru/RPC2',
-            'http://xping.pubsub.com/ping/',
+            'http://www.pingmyblog.com',
+            'http://ping.bitacoras.com',
+            'http://feedshark.brainbliss.com',
+            'http://rpc.reader.livedoor.com/rpc2',
         ];
     }
 
