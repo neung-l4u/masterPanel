@@ -417,6 +417,38 @@ $password = "Localeats#".date("Y");
                                 </div>
 
                                 <div class="form-group">
+                                    <label class="d-block mb-2">Google Tag Manager / Google Analytics (Example)</label>
+                                    <div class="border rounded p-3 bg-light">
+                                        <div class="form-row align-items-end mb-3">
+                                            <div class="col-md-7">
+                                                <label for="inputGtmContainerId" class="mb-1"><strong>GTM Container ID</strong></label>
+                                                <input type="text" class="form-control" id="inputGtmContainerId" placeholder="GTM-NMCF5CZF" autocomplete="off">
+                                            </div>
+                                            <div class="col-md-5">
+                                                <small class="text-muted d-block">ใส่ Container ID ของเว็บที่กำลังติดตั้ง แล้วโค้ดด้านล่างจะเปลี่ยนตามอัตโนมัติ</small>
+                                            </div>
+                                        </div>
+
+                                        <p class="mb-1"><strong>Google Analytics (GA4)</strong></p>
+                                        <p class="mb-1 text-muted">Measurement ID : G-G8J517F780</p>
+                                        <p class="mb-3 text-muted">Google Tag ID : GT-T9H36C6Z</p>
+
+                                        <hr class="my-3">
+
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <strong>1. Paste this code as high in the &lt;head&gt; of the page as possible:</strong>
+                                            <button type="button" class="btn btn-sm btn-outline-primary ml-2" data-copy-target="gtmHeadCode">Copy</button>
+                                        </div>
+                                        <pre id="gtmHeadCode" class="bg-white border rounded p-2 mb-3" style="font-size:12px; white-space:pre-wrap; word-break:break-all;"></pre>
+
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <strong>2. Paste this code immediately after the opening &lt;body&gt; tag:</strong>
+                                            <button type="button" class="btn btn-sm btn-outline-primary ml-2" data-copy-target="gtmBodyCode">Copy</button>
+                                        </div>
+                                        <pre id="gtmBodyCode" class="bg-white border rounded p-2 mb-0" style="font-size:12px; white-space:pre-wrap; word-break:break-all;"></pre>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox" id="inputGloriaFood">
                                         <label class="form-check-label" for="inputGloriaFood">Gloria Food</label>
@@ -719,6 +751,69 @@ $password = "Localeats#".date("Y");
         inputOther.val(currentText).show().focus();
         $("#inputOtherCount").text(currentText.length);
     }
+
+    // GTM snippet generator + copy buttons
+    const GTM_EXAMPLE_ID = "GTM-NMCF5CZF";
+    const inputGtmContainerId = $("#inputGtmContainerId");
+
+    function buildGtmHeadCode(id) {
+        return "<!-- Google Tag Manager -->\n" +
+            "<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n" +
+            "new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n" +
+            "j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n" +
+            "'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n" +
+            "})(window,document,'script','dataLayer','" + id + "');<\/script>\n" +
+            "<!-- End Google Tag Manager -->";
+    }
+
+    function buildGtmBodyCode(id) {
+        return "<!-- Google Tag Manager (noscript) -->\n" +
+            "<noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id=" + id + "\"\n" +
+            "height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"><\/iframe><\/noscript>\n" +
+            "<!-- End Google Tag Manager (noscript) -->";
+    }
+
+    function renderGtmSnippets() {
+        const id = inputGtmContainerId.val().trim() || GTM_EXAMPLE_ID;
+        // .text() keeps the snippet inert: it is shown as characters, never parsed as markup
+        $("#gtmHeadCode").text(buildGtmHeadCode(id));
+        $("#gtmBodyCode").text(buildGtmBodyCode(id));
+    }
+
+    inputGtmContainerId.on('input', renderGtmSnippets);
+    renderGtmSnippets();
+
+    $(document).on('click', '[data-copy-target]', function() {
+        const btn = $(this);
+        const text = $("#" + btn.data('copy-target')).text();
+        const done = function(ok) {
+            btn.text(ok ? 'Copied!' : 'Copy failed')
+               .toggleClass('btn-outline-primary', !ok)
+               .toggleClass('btn-success', ok)
+               .toggleClass('btn-outline-danger', !ok && true);
+            setTimeout(function() {
+                btn.text('Copy')
+                   .removeClass('btn-success btn-outline-danger')
+                   .addClass('btn-outline-primary');
+            }, 1500);
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(function() { done(true); }, function() { done(false); });
+        } else {
+            // http://localhost:8080 is not a secure context in some browsers, so keep a fallback
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            let ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            document.body.removeChild(ta);
+            done(ok);
+        }
+    });
 
     inputOther.on('input', function() {
         const len = $(this).val().length;
