@@ -335,10 +335,11 @@ $wmText = trim(($wmName !== '' ? $wmName : 'staff') . ' #' . $wmId . '  ' . date
         $('#stripeResult').html(JSON.stringify(stripeResult, undefined, 2));
     }
 
-    const resetForm = () => {
-        console.log('resetForm');
+    // main.php's hide.bs.modal handler calls this from global scope, so it has
+    // to stay reachable there even though this script runs inside a closure.
+    window.resetForm = function () {
         shopName.text('');
-    }// const
+    };
 
     function showCopy() {
         $("#alert").fadeIn(500);
