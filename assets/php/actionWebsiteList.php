@@ -119,17 +119,17 @@ if ($params ["action"] == "setStatus"){
 
 }elseif ($params ["action"] == "save"){
     $params["inputProject"] = !empty($_POST['inputProject']) ? $_POST['inputProject'] : "";
-    $params["inputCountry"] = !empty($_POST['inputCountry']) ? $_POST['inputCountry'] :'';
+    $params["inputCountry"] = !empty($_POST['inputCountry']) ? (int)$_POST['inputCountry'] : null;
     $params["inputLocation"] = !empty($_POST['inputLocation']) ? $_POST['inputLocation'] : "";
     $params["inputOwner"] = !empty($_POST['inputOwner']) ? $_POST['inputOwner'] : "";
     $params["inputOwnerEmail"] = !empty($_POST['inputOwnerEmail']) ? $_POST['inputOwnerEmail'] : "";
     $params["inputDomain"] = !empty($_POST['inputDomain']) ? $_POST['inputDomain'] : "";
-    $params["inputDomainProvider"] = !empty($_POST['inputDomainProvider']) ? $_POST['inputDomainProvider'] : "";
-    $params["inputPublishedDate"] = !empty($_POST['inputPublishedDate']) ? $_POST['inputPublishedDate'] : "";
-    $params["inputLiveStatus"] = !empty($_POST['inputLiveStatus']) ? $_POST['inputLiveStatus'] : "";
-    $params["inputShopType"] = !empty($_POST['inputShopType']) ? $_POST['inputShopType'] : "";
-    $params["inputTemplate"] = !empty($_POST['inputTemplate']) ? $_POST['inputTemplate'] : "";
-    $params["inputServer"] = !empty($_POST['inputServer']) ? $_POST['inputServer'] : "";
+    $params["inputDomainProvider"] = !empty($_POST['inputDomainProvider']) ? (int)$_POST['inputDomainProvider'] : null;
+    $params["inputPublishedDate"] = !empty($_POST['inputPublishedDate']) ? $_POST['inputPublishedDate'] : null;
+    $params["inputLiveStatus"] = !empty($_POST['inputLiveStatus']) ? $_POST['inputLiveStatus'] : 'Draft';
+    $params["inputShopType"] = !empty($_POST['inputShopType']) ? (int)$_POST['inputShopType'] : 0;
+    $params["inputTemplate"] = !empty($_POST['inputTemplate']) ? (int)$_POST['inputTemplate'] : 0;
+    $params["inputServer"] = !empty($_POST['inputServer']) ? (int)$_POST['inputServer'] : null;
     $params["inputCPanelUser"] = !empty($_POST['inputCPanelUser']) ? $_POST['inputCPanelUser'] : "";
     $params["inputCPanelPass"] = !empty($_POST['inputCPanelPass']) ? $_POST['inputCPanelPass'] : "";
     $params["inputWordpressUser"] = !empty($_POST['inputWordpressUser']) ? $_POST['inputWordpressUser'] : "";
@@ -141,10 +141,10 @@ if ($params ["action"] == "setStatus"){
     $params["inputContactEmailUser"] = !empty($_POST['inputContactEmailUser']) ? $_POST['inputContactEmailUser'] : "";
     $params["inputContactEmailPass"] = !empty($_POST['inputContactEmailPass']) ? $_POST['inputContactEmailPass'] : "";
     $params["inputContactEmailRemark"] = !empty($_POST['inputContactEmailRemark']) ? $_POST['inputContactEmailRemark'] : "";
-    $params["inputGloriaFood"] = !empty($_POST['inputGloriaFood']) ? $_POST['inputGloriaFood'] : 0; 
-    $params["inputAmelia"] = !empty($_POST['inputAmelia']) ? $_POST['inputAmelia'] : 0;
-    $params["inputVoucher"] = !empty($_POST['inputVoucher']) ? $_POST['inputVoucher'] : 0;
-    $params["inputCloudwaitress"] = !empty($_POST['inputCloudwaitress']) ? $_POST['inputCloudwaitress'] : 0;
+    $params["inputGloriaFood"] = !empty($_POST['inputGloriaFood']) ? 1 : 0;
+    $params["inputAmelia"] = !empty($_POST['inputAmelia']) ? 1 : 0;
+    $params["inputVoucher"] = !empty($_POST['inputVoucher']) ? 1 : 0;
+    $params["inputCloudwaitress"] = !empty($_POST['inputCloudwaitress']) ? 1 : 0;
     $params["inputOther"] = isset($_POST['inputOther']) ? substr($_POST['inputOther'], 0, 300) : '';
 
     $params["by"] = $_SESSION['id'];

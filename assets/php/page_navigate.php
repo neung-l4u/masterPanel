@@ -389,6 +389,14 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Monitor";
         break;
+    case "managerWebhook":
+        $showPage = "managerWebhook.php";
+        $activeMenu["lv1"] = "monitor";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Manage Text Website Down";
+        break;
     case "invoiceThailand":
         $showPage = "invoiceThailand.php";
         $activeMenu["lv1"] = "formMgmt";

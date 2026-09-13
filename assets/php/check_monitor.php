@@ -2,8 +2,35 @@
 date_default_timezone_set("Asia/Bangkok");
 error_reporting(E_ERROR | E_PARSE);
 
+// Warn this many days before an SSL certificate expires. Let's Encrypt auto-renews
+// at ~30 days, so anything larger just reports healthy certificates every day.
+define('SSL_WARN_DAYS', 3);
+
+// Google Chat webhook for the "Website Down" space, used for every monitor.
+// Set MONITOR_CHAT_WEBHOOK in the environment, or drop the URL in chat_webhook.txt (gitignored).
+$__hookFile = __DIR__ . '/chat_webhook.txt';
+define('CHAT_WEBHOOK', getenv('MONITOR_CHAT_WEBHOOK')
+    ?: (is_readable($__hookFile) ? trim(file_get_contents($__hookFile)) : ''));
+
 // Only run the main loop when executed directly as cron (not included by actionMonitor.php)
 if (!defined('MONITOR_FUNCTIONS_ONLY')) {
+    // Cron only. Without this anyone who knows the URL can trigger a full run of
+    // every monitor over the web, and hammer the server (or the Chat space) with it.
+    if (PHP_SAPI !== 'cli') {
+        http_response_code(403);
+        exit('This script runs from cron only.');
+    }
+
+    // A full pass over every monitor takes longer than the 5-minute cron interval,
+    // so refuse to start if the previous run is still going. Without this the runs
+    // stack up and the same site gets checked (and alerted on) by several at once.
+    // ponytail: single global lock; if checks ever need to run in parallel, shard by id instead.
+    $lockFile = sys_get_temp_dir() . '/monitor_cron.lock';
+    $lock     = fopen($lockFile, 'c');
+    if (!$lock || !flock($lock, LOCK_EX | LOCK_NB)) {
+        exit(0);   // previous run still in progress — skip this tick
+    }
+
     require_once __DIR__ . '/../../assets/db/db.php';
     require_once __DIR__ . '/../../assets/db/initDB.php';
     $monitors = $db->query(
@@ -39,14 +66,38 @@ function checkTarget(array $monitor): array {
         CURLOPT_USERAGENT      => 'MasterPanel-Monitor/1.0',
     ]);
     $startMs    = microtime(true);
-    curl_exec($ch);
+    $body       = (string) curl_exec($ch);
     $responseMs = (int) round((microtime(true) - $startMs) * 1000);
     $httpCode   = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError  = curl_error($ch);
     curl_close($ch);
 
-    $status    = ($httpCode >= 200 && $httpCode < 400) ? 'up' : 'down';
-    $errorMsg  = ($status === 'down') ? ("HTTP {$httpCode}" . ($curlError ? " / {$curlError}" : '')) : null;
+    // WordPress fatal errors are served with HTTP 200, so the status code alone is not enough.
+    // ponytail: substring match on the stock WP error page; add more needles if other failure pages show up.
+    $isWpFatal = $httpCode >= 200 && $httpCode < 400
+        && stripos($body, 'There has been a critical error') !== false;
+
+    $status = ($httpCode >= 200 && $httpCode < 400 && !$isWpFatal) ? 'up' : 'down';
+    if ($status === 'down') {
+        $errorMsg = $isWpFatal
+            ? "WordPress critical error (HTTP {$httpCode})"
+            : ("HTTP {$httpCode}" . ($curlError ? " / {$curlError}" : ''));
+    } else {
+        $errorMsg = null;
+    }
+
+    // Work out WHY it is down, so the alert can say so in plain language.
+    $reason = 'up';
+    if ($status === 'down') {
+        if ($isWpFatal) {
+            $reason = 'wp_fatal';
+        } elseif (!$parsedHost || !@dns_get_record($parsedHost, DNS_A)) {
+            // Nothing resolves — ask the registry whether the domain exists at all.
+            $reason = domainReason($parsedHost);
+        } else {
+            $reason = 'down';   // DNS fine, server answered badly
+        }
+    }
 
     // SSL check (https only)
     $sslExpiry    = null;
@@ -69,7 +120,43 @@ function checkTarget(array $monitor): array {
         }
     }
 
-    return compact('status', 'httpCode', 'responseMs', 'errorMsg', 'sslExpiry', 'sslDaysLeft');
+    return compact('status', 'httpCode', 'responseMs', 'errorMsg', 'sslExpiry', 'sslDaysLeft', 'reason');
+}
+
+/**
+ * Classify an unresolvable host via WHOIS on the registrable domain:
+ * 'unregistered' (never bought / dropped), 'expired' (past expiry or on hold),
+ * or 'down' when WHOIS is unavailable or inconclusive.
+ * ponytail: text matching on WHOIS output; registrars word things differently,
+ * so anything unrecognised falls back to the generic 'down' wording.
+ */
+function domainReason(?string $host): string {
+    if (!$host) return 'down';
+    $host = preg_replace('/^www\./i', '', $host);
+
+    // Keep the last 3 labels for second-level TLDs (co.uk, com.au), else 2.
+    $parts = explode('.', $host);
+    $n     = count($parts);
+    if ($n > 2 && strlen($parts[$n - 2]) <= 3 && strlen($parts[$n - 1]) <= 3) {
+        $domain = implode('.', array_slice($parts, -3));
+    } else {
+        $domain = implode('.', array_slice($parts, -2));
+    }
+
+    $out = @shell_exec('whois ' . escapeshellarg($domain) . ' 2>/dev/null');
+    if (!$out) return 'down';   // whois binary missing or query failed
+
+    if (preg_match('/(no match|not found|no data found|no entries found|domain not registered|status:\s*free|status:\s*available)/i', $out)) {
+        return 'unregistered';
+    }
+    if (preg_match('/(redemptionperiod|pendingdelete|serverhold|clienthold)/i', $out)) {
+        return 'expired';
+    }
+    if (preg_match('/(?:expir\w*[^:\n]*|paid-till|renewal date)\s*:\s*([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}[-\/][A-Za-z]{3}[-\/][0-9]{4})/i', $out, $m)) {
+        $ts = strtotime($m[1]);
+        if ($ts && $ts < time()) return 'expired';
+    }
+    return 'down';
 }
 
 function saveResult(object $db, array $monitor, array $result): void {
@@ -102,40 +189,94 @@ function saveResult(object $db, array $monitor, array $result): void {
     );
 }
 
+/**
+ * Render an alert from the monitor_templates row, falling back to the built-in
+ * wording when the table is missing (production may not be migrated yet) or the
+ * template is switched off. Returns null when the alert should not be sent.
+ */
+function renderTemplate(object $db, string $key, array $monitor, array $result): ?array {
+    $vars = [
+        '{name}'        => $monitor['name'],
+        '{url}'         => $monitor['url'],
+        '{domain}'      => preg_replace('#^www\.#i', '', (string) parse_url($monitor['url'], PHP_URL_HOST)),
+        '{httpCode}'    => $result['httpCode']    ?? '',
+        '{errorMsg}'    => $result['errorMsg']    ?? '',
+        '{responseMs}'  => $result['responseMs']  ?? '',
+        '{sslExpiry}'   => $result['sslExpiry']   ?? '',
+        '{sslDaysLeft}' => $result['sslDaysLeft'] ?? '',
+        '{time}'        => date('Y-m-d H:i:s'),
+    ];
+
+    $defaults = [
+        'down'      => ['[DOWN] {name} is unreachable',  "Monitor: {name}\nURL: {url}\nStatus: DOWN\nHTTP: {httpCode}\nError: {errorMsg}\nTime: {time}", 1],
+        'recovered' => ['[RECOVERED] {name} is back online', "Monitor: {name}\nURL: {url}\nStatus: RECOVERED\nResponse: {responseMs}ms\nTime: {time}", 0],
+        'ssl'       => ['[SSL WARNING] {name} - {sslDaysLeft} days left', "Monitor: {name}\nURL: {url}\nSSL Expiry: {sslExpiry}\nDays Left: {sslDaysLeft}\nTime: {time}", 0],
+        'wp_fatal'     => ['Wordpress There has been a critical error on this website', "Domain : {url}\nTime : {time} (อิงตามเวลาไทย)", 1],
+        'unregistered' => ['Domain Live ใน Website list แต่ Down (ไม่ได้ถูกซื้อ)', "Domain : {url}\nTime : {time} (อิงตามเวลาไทย)", 1],
+        'expired'      => ['Domain Live ใน Website list แต่ Down (แต่โดเมนหมดอายุ)', "Domain : {url}\nTime : {time} (อิงตามเวลาไทย)", 1],
+    ];
+
+    $tpl = null;
+    // db::query() calls exit() on error, so check the table exists before reading it.
+    if ($db->query("SHOW TABLES LIKE 'monitor_templates'")->fetchArray()) {
+        $tpl = $db->query("SELECT title, body, mention_all, is_active FROM monitor_templates WHERE tpl_key = ?", $key)->fetchArray();
+    }
+
+    if ($tpl) {
+        if ((int)$tpl['is_active'] !== 1) return null;
+        $title = $tpl['title'];
+        $body  = $tpl['body'];
+        $mention = (int)$tpl['mention_all'] === 1;
+    } else {
+        if (!isset($defaults[$key])) $key = 'down';
+        [$title, $body, $mention] = $defaults[$key];
+        $mention = (bool)$mention;
+    }
+
+    return [
+        'subject' => strtr($title, $vars),
+        'body'    => strtr($body, $vars),
+        'mention' => $mention,
+    ];
+}
+
 function handleNotifications(object $db, array $monitor, array $result): void {
     $prevStatus = $monitor['last_status'];
     $newStatus  = $result['status'];
 
     // Status changed → send alert or recovery
     if ($prevStatus !== $newStatus && $prevStatus !== 'unknown') {
-        $subject = $newStatus === 'down'
-            ? "[DOWN] {$monitor['name']} is unreachable"
-            : "[RECOVERED] {$monitor['name']} is back online";
-        $body = $newStatus === 'down'
-            ? "Monitor: {$monitor['name']}\nURL: {$monitor['url']}\nStatus: DOWN\nHTTP: {$result['httpCode']}\nError: {$result['errorMsg']}\nTime: " . date('Y-m-d H:i:s')
-            : "Monitor: {$monitor['name']}\nURL: {$monitor['url']}\nStatus: RECOVERED\nResponse: {$result['responseMs']}ms\nTime: " . date('Y-m-d H:i:s');
-
-        sendNotifications($monitor, $subject, $body);
+        // Pick the template that matches WHY it went down, so the alert explains itself.
+        $key = $newStatus === 'down' ? ($result['reason'] ?? 'down') : 'recovered';
+        $msg = renderTemplate($db, $key, $monitor, $result);
+        if ($msg) sendNotifications($monitor, $msg['subject'], $msg['body'], $msg['mention']);
     }
 
-    // SSL expiring ≤ 30 days — send once per day (cnt==1 means only the row just saved exists today)
-    if ($result['sslDaysLeft'] !== null && $result['sslDaysLeft'] <= 30) {
+    // SSL alerts, sent at most once per day per monitor.
+    // Let's Encrypt renews itself at ~30 days, so warning that early is pure noise —
+    // only warn once renewal has clearly not happened (SSL_WARN_DAYS), and again
+    // once the certificate is actually expired.
+    if ($result['sslDaysLeft'] !== null && $result['sslDaysLeft'] <= SSL_WARN_DAYS) {
+        $key = $result['sslDaysLeft'] < 0 ? 'ssl_expired' : 'ssl';
+
+        // cnt == 1 means the row just saved is today's first one in this band.
         $countRow = $db->query(
             "SELECT COUNT(*) AS cnt FROM monitor_logs
-             WHERE monitor_id = ? AND ssl_days_left <= 30
+             WHERE monitor_id = ? AND ssl_days_left <= ?
+               AND (? = 0 OR ssl_days_left < 0)
                AND DATE(checked_at) = CURDATE()
-               AND check_type = 'auto'"
-        , $monitor['id'])->fetchArray();
+               AND check_type = 'auto'",
+            $monitor['id'], SSL_WARN_DAYS, $key === 'ssl_expired' ? 1 : 0
+        )->fetchArray();
 
         if (($countRow['cnt'] ?? 0) == 1) {
-            $subject = "[SSL WARNING] {$monitor['name']} — {$result['sslDaysLeft']} days left";
-            $body    = "Monitor: {$monitor['name']}\nURL: {$monitor['url']}\nSSL Expiry: {$result['sslExpiry']}\nDays Left: {$result['sslDaysLeft']}";
-            sendNotifications($monitor, $subject, $body);
+            $msg = renderTemplate($db, $key, $monitor, $result);
+            if ($msg) sendNotifications($monitor, $msg['subject'], $msg['body'], $msg['mention']);
         }
     }
 }
 
-function sendNotifications(array $monitor, string $subject, string $body): void {
+function sendNotifications(array $monitor, string $subject, string $body, bool $mentionAll = true): void {
     // Email
     if (!empty($monitor['notify_email'])) {
         $emails = array_map('trim', explode(',', $monitor['notify_email']));
@@ -161,10 +302,14 @@ function sendNotifications(array $monitor, string $subject, string $body): void 
         curl_close($ch);
     }
 
-    // Webhook
-    if (!empty($monitor['notify_webhook'])) {
-        $payload = json_encode(['subject' => $subject, 'body' => $body, 'timestamp' => date('c')]);
-        $ch = curl_init($monitor['notify_webhook']);
+    // Webhook — per-monitor override, else the shared Google Chat space.
+    $hook = !empty($monitor['notify_webhook']) ? $monitor['notify_webhook'] : CHAT_WEBHOOK;
+    if (!empty($hook)) {
+        // Google Chat webhook wants {"text": ...}; <users/all> pings everyone in the space.
+        $payload = str_contains($hook, 'chat.googleapis.com')
+            ? json_encode(['text' => ($mentionAll ? "<users/all> " : "") . "*{$subject}*\n```\n{$body}\n```"], JSON_UNESCAPED_UNICODE)
+            : json_encode(['subject' => $subject, 'body' => $body, 'timestamp' => date('c')]);
+        $ch = curl_init($hook);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST           => true,

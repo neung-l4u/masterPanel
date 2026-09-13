@@ -190,6 +190,52 @@ if ($act === 'save') {
         );
         $inserted++;
     }
+
+    // Pause monitors whose website is no longer ours, and resume the ones back Live.
+    $db->query(
+        "UPDATE monitors m
+            LEFT JOIN websiteList w ON w.wID = m.source_wID
+            SET m.is_active = 0, m.update_at = NOW()
+          WHERE m.source_wID IS NOT NULL
+            AND m.delete_at IS NULL
+            AND m.is_active = 1
+            AND (w.wID IS NULL OR w.delete_at IS NOT NULL OR w.wLiveStatus = 'Unpublished')"
+    );
+    $params['paused'] = $db->affectedRows();
+
+    $db->query(
+        "UPDATE monitors m
+            JOIN websiteList w ON w.wID = m.source_wID
+            SET m.is_active = 1, m.last_status = 'unknown', m.update_at = NOW()
+          WHERE m.source_wID IS NOT NULL
+            AND m.delete_at IS NULL
+            AND m.is_active = 0
+            AND w.delete_at IS NULL
+            AND w.wLiveStatus = 'Live'"
+    );
+    $params['resumed'] = $db->affectedRows();
+
+
+    // A website can be renamed or moved to a new domain after it was imported.
+    // Refresh name/url when the hostname really differs (ignoring www. and trailing /),
+    // so alerts never point at a domain the client no longer uses.
+    $db->query(
+        "UPDATE monitors m
+            JOIN websiteList w ON w.wID = m.source_wID
+            SET m.name = w.wProject,
+                m.url  = CONCAT('https://', TRIM(TRAILING '/' FROM
+                           REPLACE(REPLACE(w.wDomain, 'https://', ''), 'http://', ''))),
+                m.last_status = 'unknown',
+                m.update_at = NOW()
+          WHERE m.source_wID IS NOT NULL
+            AND m.delete_at IS NULL
+            AND w.delete_at IS NULL
+            AND w.wDomain <> ''
+            AND REPLACE(REPLACE(REPLACE(TRIM(TRAILING '/' FROM m.url), 'https://', ''), 'http://', ''), 'www.', '')
+             <> REPLACE(REPLACE(REPLACE(TRIM(TRAILING '/' FROM w.wDomain), 'https://', ''), 'http://', ''), 'www.', '')"
+    );
+    $params['retargeted'] = $db->affectedRows();
+
     $params['inserted'] = $inserted;
     $params['status']   = 'ok';
 }

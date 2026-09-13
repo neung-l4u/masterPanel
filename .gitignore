@@ -155,3 +155,5 @@ out
 /modules/printer/assets/php/config.php
 /vendor/
 /api/aiAraya/stripe_webhook.php
+# Google Chat webhook URL (credential, do not commit)
+assets/php/chat_webhook.txt
