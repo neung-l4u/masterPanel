@@ -99,11 +99,15 @@ function checkTarget(array $monitor): array {
     }
 
     // Work out WHY it is down, so the alert can say so in plain language.
-    $reason = 'up';
+    $reason    = 'up';
+    $resolvedIP = null;
     if ($status === 'down') {
+        $a = $parsedHost ? @dns_get_record($parsedHost, DNS_A) : [];
+        $resolvedIP = $a[0]['ip'] ?? null;
+
         if ($isWpFatal) {
             $reason = 'wp_fatal';
-        } elseif (!$parsedHost || !@dns_get_record($parsedHost, DNS_A)) {
+        } elseif (!$resolvedIP) {
             // Nothing resolves — ask the registry whether the domain exists at all.
             $reason = domainReason($parsedHost);
         } else {
@@ -132,7 +136,7 @@ function checkTarget(array $monitor): array {
         }
     }
 
-    return compact('status', 'httpCode', 'responseMs', 'errorMsg', 'sslExpiry', 'sslDaysLeft', 'reason');
+    return compact('status', 'httpCode', 'responseMs', 'errorMsg', 'sslExpiry', 'sslDaysLeft', 'reason', 'resolvedIP');
 }
 
 /**
@@ -216,6 +220,7 @@ function renderTemplate(object $db, string $key, array $monitor, array $result):
         '{responseMs}'  => $result['responseMs']  ?? '',
         '{sslExpiry}'   => $result['sslExpiry']   ?? '',
         '{sslDaysLeft}' => $result['sslDaysLeft'] ?? '',
+        '{resolvedIP}'  => $result['resolvedIP'] ?? '',
         '{time}'        => date('Y-m-d H:i:s'),
     ];
 
@@ -223,10 +228,11 @@ function renderTemplate(object $db, string $key, array $monitor, array $result):
         'down'      => ['[DOWN] {name} is unreachable',  "Monitor: {name}\nURL: {url}\nStatus: DOWN\nHTTP: {httpCode}\nError: {errorMsg}\nTime: {time}", 1],
         'recovered' => ['[RECOVERED] {name} is back online', "Monitor: {name}\nURL: {url}\nStatus: RECOVERED\nResponse: {responseMs}ms\nTime: {time}", 0],
         'ssl'       => ['[SSL WARNING] {name} - {sslDaysLeft} days left', "Monitor: {name}\nURL: {url}\nSSL Expiry: {sslExpiry}\nDays Left: {sslDaysLeft}\nTime: {time}", 0],
-        'wp_fatal'     => ['Wordpress There has been a critical error on this website', "Domain : {url}\nTime : {time} (อิงตามเวลาไทย)", 1],
-        'unregistered' => ['Domain Live ใน Website list แต่ Down (ไม่ได้ถูกซื้อ)', "Domain : {url}\nTime : {time} (อิงตามเวลาไทย)", 1],
-        'expired'      => ['Domain Live ใน Website list แต่ Down (แต่โดเมนหมดอายุ)', "Domain : {url}\nTime : {time} (อิงตามเวลาไทย)", 1],
-        'ssl_expired'  => ['SSL หมดอายุแล้ว - เว็บเข้าไม่ได้', "Domain : {domain}\nSSL หมดอายุเมื่อ : {sslExpiry}\nTime : {time} (อิงตามเวลาไทย)", 1],
+        'wp_fatal'     => ['Wordpress There has been a critical error on this website', "Domain : {url}\nTime : {time}", 1],
+        'unregistered' => ['Domain Live ใน Website list แต่ Down (ไม่ได้ถูกซื้อ)', "Domain : {url}\nTime : {time}", 1],
+        'expired'      => ['Domain Live ใน Website list แต่ Down (แต่โดเมนหมดอายุ)', "Domain : {url}\nTime : {time}", 1],
+        'ssl_expired'  => ['SSL หมดอายุแล้ว - เว็บเข้าไม่ได้', "Domain : {domain}\nSSL หมดอายุเมื่อ : {sslExpiry}\nTime : {time}", 1],
+        'moved_away'   => ['Domain ไม่ได้ชี้มาที่ Server เราแล้ว (อาจยกเลิกบริการ)', "Domain : {domain}\nIP ปลายทาง : {resolvedIP}\nTime : {time}", 0],
     ];
 
     $tpl = null;
@@ -253,6 +259,26 @@ function renderTemplate(object $db, string $key, array $monitor, array $result):
     ];
 }
 
+/**
+ * True when a down site no longer resolves to any server we run, i.e. the client
+ * has moved their hosting elsewhere without telling us. Checked by IP rather than
+ * by nameserver: plenty of our real clients put Cloudflare/GoDaddy in front of
+ * their DNS while still hosting with us, and those must not be treated as gone.
+ * Returns false whenever we cannot tell (behind a proxy, no server IPs on file).
+ */
+function hasLeftOurServers(object $db, ?string $ip): bool {
+    if (!$ip) return false;
+
+    static $ourIPs = null;
+    if ($ourIPs === null) {
+        $rows = $db->query("SELECT svIP FROM L4UServers WHERE svStatus = 1 AND svIP IS NOT NULL AND svIP <> ''")->fetchAll();
+        $ourIPs = array_map(fn($r) => trim($r['svIP']), $rows);
+    }
+    if (!$ourIPs) return false;   // nothing to compare against — never guess
+
+    return !in_array($ip, $ourIPs, true);
+}
+
 function handleNotifications(object $db, array $monitor, array $result): void {
     $prevStatus = $monitor['last_status'];
     $newStatus  = $result['status'];
@@ -261,6 +287,12 @@ function handleNotifications(object $db, array $monitor, array $result): void {
     if ($prevStatus !== $newStatus && $prevStatus !== 'unknown') {
         // Pick the template that matches WHY it went down, so the alert explains itself.
         $key = $newStatus === 'down' ? ($result['reason'] ?? 'down') : 'recovered';
+
+        // A down site pointing at someone else's server is a departed client,
+        // not an outage — say so instead of paging the team about a broken website.
+        if ($key === 'down' && hasLeftOurServers($db, $result['resolvedIP'] ?? null)) {
+            $key = 'moved_away';
+        }
         $msg = renderTemplate($db, $key, $monitor, $result);
         if ($msg) sendNotifications($monitor, $msg['subject'], $msg['body'], $msg['mention']);
     }

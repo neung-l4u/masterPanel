@@ -40,7 +40,7 @@ $hasTable = (bool) $db->query("SHOW TABLES LIKE 'monitor_templates'")->fetchArra
   <div class="wh-card" style="background:#f8f9ff">
     <div class="wh-key mb-2">ตัวแปรที่ใช้ได้ (คลิกเพื่อคัดลอก)</div>
     <div class="wh-vars">
-      <code>{name}</code><code>{domain}</code><code>{url}</code><code>{httpCode}</code><code>{errorMsg}</code><code>{responseMs}</code><code>{sslExpiry}</code><code>{sslDaysLeft}</code><code>{time}</code>
+      <code>{name}</code><code>{domain}</code><code>{url}</code><code>{resolvedIP}</code><code>{httpCode}</code><code>{errorMsg}</code><code>{responseMs}</code><code>{sslExpiry}</code><code>{sslDaysLeft}</code><code>{time}</code>
     </div>
   </div>
 
@@ -51,7 +51,7 @@ $hasTable = (bool) $db->query("SHOW TABLES LIKE 'monitor_templates'")->fetchArra
 
 <script>
 const VARS = {
-  '{name}':'ตัวอย่างเว็บไซต์ (TEST)', '{url}':'https://example.com', '{domain}':'example.com',
+  '{name}':'ตัวอย่างเว็บไซต์ (TEST)', '{url}':'https://example.com', '{domain}':'example.com', '{resolvedIP}':'162.159.140.177',
   '{httpCode}':'500', '{errorMsg}':'WordPress critical error (HTTP 200)',
   '{responseMs}':'812', '{sslExpiry}':'2026-10-01', '{sslDaysLeft}':'15',
   '{time}':'<?php echo date('Y-m-d H:i:s'); ?>'
@@ -61,6 +61,7 @@ const KEY_LABEL = {
   down:         ['เว็บล่ม — โดเมนปกติ',      'DNS ปกติ แต่เซิร์ฟเวอร์ตอบไม่ได้ / 404 / 500'],
   expired:      ['โดเมนหมดอายุ',            'WHOIS บอกว่าหมดอายุ หรือถูกระงับ (hold)'],
   unregistered: ['โดเมนไม่ได้ถูกซื้อ',        'WHOIS ไม่พบโดเมนนี้ในระบบทะเบียน'],
+  moved_away:   ['ย้ายออกจาก Server เรา',   'เว็บ down และ IP ไม่ได้ชี้มาที่ server เรา — อาจยกเลิกบริการแล้ว'],
   recovered:    ['เว็บกลับมาปกติ',           'ส่งเมื่อเว็บกลับมาใช้งานได้'],
   ssl:          ['SSL กำลังจะหมดอายุ',       'ส่งเมื่อ SSL เหลือ ≤ 1 วัน (วันละครั้ง)'],
   ssl_expired:  ['SSL หมดอายุแล้ว',          'ส่งเมื่อ SSL หมดอายุจริง — เว็บขึ้นหน้าเตือนสีแดง']
