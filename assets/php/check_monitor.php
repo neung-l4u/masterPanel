@@ -3,8 +3,8 @@ date_default_timezone_set("Asia/Bangkok");
 error_reporting(E_ERROR | E_PARSE);
 
 // Warn this many days before an SSL certificate expires. Let's Encrypt auto-renews
-// at ~30 days, so anything larger just reports healthy certificates every day.
-define('SSL_WARN_DAYS', 3);
+// at ~30 days, so a larger window just reports healthy certificates every day.
+define('SSL_WARN_DAYS', 1);
 
 // Google Chat webhook for the "Website Down" space, used for every monitor.
 // Set MONITOR_CHAT_WEBHOOK in the environment, or drop the URL in chat_webhook.txt (gitignored).
@@ -214,6 +214,7 @@ function renderTemplate(object $db, string $key, array $monitor, array $result):
         'wp_fatal'     => ['Wordpress There has been a critical error on this website', "Domain : {url}\nTime : {time} (อิงตามเวลาไทย)", 1],
         'unregistered' => ['Domain Live ใน Website list แต่ Down (ไม่ได้ถูกซื้อ)', "Domain : {url}\nTime : {time} (อิงตามเวลาไทย)", 1],
         'expired'      => ['Domain Live ใน Website list แต่ Down (แต่โดเมนหมดอายุ)', "Domain : {url}\nTime : {time} (อิงตามเวลาไทย)", 1],
+        'ssl_expired'  => ['SSL หมดอายุแล้ว - เว็บเข้าไม่ได้', "Domain : {domain}\nSSL หมดอายุเมื่อ : {sslExpiry}\nTime : {time} (อิงตามเวลาไทย)", 1],
     ];
 
     $tpl = null;
