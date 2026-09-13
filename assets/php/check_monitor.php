@@ -6,6 +6,9 @@ error_reporting(E_ERROR | E_PARSE);
 // at ~30 days, so a larger window just reports healthy certificates every day.
 define('SSL_WARN_DAYS', 1);
 
+// Wait this long before re-testing a site that just failed, to ride out a brief blip.
+define('RECHECK_DELAY_SEC', 20);
+
 // Google Chat webhook for the "Website Down" space, used for every monitor.
 // Set MONITOR_CHAT_WEBHOOK in the environment, or drop the URL in chat_webhook.txt (gitignored).
 $__hookFile = __DIR__ . '/chat_webhook.txt';
@@ -43,6 +46,15 @@ if (!defined('MONITOR_FUNCTIONS_ONLY')) {
 
     foreach ($monitors as $monitor) {
         $result = checkTarget($monitor);
+
+        // Confirm before believing a failure: slow or briefly flaky sites time out once
+        // and come straight back. A genuinely down site fails the retry too.
+        // Only worth doing on a state change, so healthy sites cost nothing extra.
+        if ($result['status'] === 'down' && $monitor['last_status'] !== 'down') {
+            sleep(RECHECK_DELAY_SEC);
+            $result = checkTarget($monitor);
+        }
+
         saveResult($db, $monitor, $result);
         handleNotifications($db, $monitor, $result);
     }
@@ -60,8 +72,8 @@ function checkTarget(array $monitor): array {
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_TIMEOUT        => 15,
-        CURLOPT_CONNECTTIMEOUT => 10,
+        CURLOPT_TIMEOUT        => 30,   // measured: slowest healthy site ~16s, so 15s was cutting off real sites
+        CURLOPT_CONNECTTIMEOUT => 10,   // measured: slowest real connect ~1s, 10s is already generous
         CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_USERAGENT      => 'MasterPanel-Monitor/1.0',
     ]);
