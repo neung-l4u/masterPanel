@@ -4,6 +4,7 @@ session_start();
 include '../../assets/db/db.php';
 include '../../assets/db/initDB.php';
 include '../../assets/security/Sanitizer.php';
+require_once __DIR__ . '/monitorScope.php';
 
 if (empty($_SESSION['id'])) {
     echo json_encode(['status' => 'unauthorized']);
@@ -174,7 +175,7 @@ if ($act === 'save') {
 } elseif ($act === 'syncWebsiteList') {
     $websites = $db->query(
         "SELECT wID, wProject, wDomain FROM websiteList
-         WHERE delete_at IS NULL AND wLiveStatus = 'Live'
+         WHERE delete_at IS NULL AND wLiveStatus IN (" . monitorStatusSql() . ")
            AND wID NOT IN (SELECT source_wID FROM monitors WHERE source_wID IS NOT NULL)"
     )->fetchAll();
 
@@ -199,7 +200,7 @@ if ($act === 'save') {
           WHERE m.source_wID IS NOT NULL
             AND m.delete_at IS NULL
             AND m.is_active = 1
-            AND (w.wID IS NULL OR w.delete_at IS NOT NULL OR w.wLiveStatus = 'Unpublished')"
+            AND (w.wID IS NULL OR w.delete_at IS NOT NULL OR w.wLiveStatus NOT IN (" . monitorStatusSql() . "))"
     );
     $params['paused'] = $db->affectedRows();
 
@@ -211,7 +212,7 @@ if ($act === 'save') {
             AND m.delete_at IS NULL
             AND m.is_active = 0
             AND w.delete_at IS NULL
-            AND w.wLiveStatus = 'Live'"
+            AND w.wLiveStatus IN (" . monitorStatusSql() . ")"
     );
     $params['resumed'] = $db->affectedRows();
 

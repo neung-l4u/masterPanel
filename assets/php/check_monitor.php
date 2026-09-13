@@ -269,6 +269,16 @@ function renderTemplate(object $db, string $key, array $monitor, array $result):
 function hasLeftOurServers(object $db, ?string $ip): bool {
     if (!$ip) return false;
 
+    // Cloudflare (and similar proxies) hide the real origin, so the address we see
+    // says nothing about who hosts the site. Never call these departed.
+    foreach (['104.16.','104.17.','104.18.','104.19.','104.20.','104.21.','104.22.',
+              '104.23.','104.24.','104.25.','104.26.','104.27.','104.28.','104.29.',
+              '104.30.','104.31.','172.64.','172.65.','172.66.','172.67.','172.68.',
+              '172.69.','172.70.','172.71.','162.159.','198.41.','188.114.','190.93.',
+              '197.234.','203.0.'] as $cf) {
+        if (str_starts_with($ip, $cf)) return false;
+    }
+
     static $ourIPs = null;
     if ($ourIPs === null) {
         $rows = $db->query("SELECT svIP FROM L4UServers WHERE svStatus = 1 AND svIP IS NOT NULL AND svIP <> ''")->fetchAll();

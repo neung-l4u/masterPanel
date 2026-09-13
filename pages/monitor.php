@@ -8,11 +8,12 @@
 </script>
 <?php
 global $db;
+require_once __DIR__ . '/../assets/php/monitorScope.php';
 
 // Auto-import from websiteList on page load
 $toImport = $db->query(
     "SELECT wID, wProject, wDomain FROM websiteList
-     WHERE delete_at IS NULL AND wLiveStatus = 'Live'
+     WHERE delete_at IS NULL AND wLiveStatus IN (" . monitorStatusSql() . ")
        AND wID NOT IN (SELECT source_wID FROM monitors WHERE source_wID IS NOT NULL)"
 )->fetchAll();
 
@@ -36,7 +37,7 @@ $db->query(
       WHERE m.source_wID IS NOT NULL
         AND m.delete_at IS NULL
         AND m.is_active = 1
-        AND (w.wID IS NULL OR w.delete_at IS NOT NULL OR w.wLiveStatus = 'Unpublished')"
+        AND (w.wID IS NULL OR w.delete_at IS NOT NULL OR w.wLiveStatus NOT IN (" . monitorStatusSql() . "))"
 );
 
 // ...and resume it automatically once the website goes Live again.
@@ -48,7 +49,7 @@ $db->query(
         AND m.delete_at IS NULL
         AND m.is_active = 0
         AND w.delete_at IS NULL
-        AND w.wLiveStatus = 'Live'"
+        AND w.wLiveStatus IN (" . monitorStatusSql() . ")"
 );
 
 // A website can be renamed or moved to a new domain after it was imported.
