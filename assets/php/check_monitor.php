@@ -53,6 +53,14 @@ if (!defined('MONITOR_FUNCTIONS_ONLY')) {
         if ($result['status'] === 'down' && $monitor['last_status'] !== 'down') {
             sleep(RECHECK_DELAY_SEC);
             $result = checkTarget($monitor);
+
+            // A resolver hiccup looks identical to a dead domain, and can persist for
+            // both tries. Give DNS one more chance, further apart, before alerting.
+            if ($result['status'] === 'down' && $result['httpCode'] === 0
+                && stripos((string)$result['errorMsg'], 'resolve host') !== false) {
+                sleep(RECHECK_DELAY_SEC);
+                $result = checkTarget($monitor);
+            }
         }
 
         saveResult($db, $monitor, $result);

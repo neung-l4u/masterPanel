@@ -94,7 +94,8 @@ if ($act === 'save') {
     $qb = new QueryBuilder();
     $qb->eq('category', $category)->eq('last_status', $status);
     $baseSql = "SELECT id, name, url, category, check_interval, last_status, last_checked_at, last_response_ms, ssl_days_left FROM monitors WHERE delete_at IS NULL AND is_active = 1";
-    $rows = $qb->execute($db, $baseSql, 'ORDER BY id DESC')->fetchAll();
+    // Problems first: a list sorted by id buries the handful of down sites among hundreds.
+    $rows = $qb->execute($db, $baseSql, "ORDER BY FIELD(last_status,'down','unknown','up'), name ASC")->fetchAll();
     $params['data']   = $rows;
     $params['status'] = 'ok';
 

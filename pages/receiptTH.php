@@ -182,7 +182,11 @@ function fmt($n) { return number_format((float)$n, 2, '.', ','); }
                 <?php
                 $label     = trim($item['product'] ?? $item['setupfee'] ?? $item['addon'] ?? '-');
                 $qyt       = (float)($item['qyt'] ?? 1);
-                $unitPrice = isset($item['fullamount']) ? (float)$item['fullamount'] : (float)($item['amount'] ?? 0);
+                // ใบเสร็จโชว์ราคาเต็มรวม VAT เสมอ ใบเก่าบางใบไม่มี fullamount
+                // จึงถอดกลับจาก amount (ราคาก่อน VAT) แทนการโชว์ยอดก่อน VAT
+                $unitPrice = isset($item['fullamount'])
+                    ? (float)$item['fullamount']
+                    : round((float)($item['amount'] ?? 0) * 1.07, 2);
                 $lineTotal = $unitPrice * $qyt;
                 ?>
                 <tr>
