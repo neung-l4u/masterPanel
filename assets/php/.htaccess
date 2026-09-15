@@ -1,0 +1,13 @@
+# Credentials and data files in this folder must never be readable over the web.
+# PHP scripts here are still executed normally; only these files are blocked.
+<FilesMatch "\.(json|txt|example|log)$">
+    Require all denied
+</FilesMatch>
+
+# Apache 2.2 fallback
+<IfModule !mod_authz_core.c>
+    <FilesMatch "\.(json|txt|example|log)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+</IfModule>

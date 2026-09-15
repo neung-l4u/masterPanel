@@ -392,6 +392,7 @@ $db->query(
                 <span class="pill p-down" data-status="down" onclick="setStatusFilter(this)">● Down <span id="downCount">0</span></span>
             </div>
             <div style="display:flex;gap:8px">
+                <button class="btn-sync" id="btnCheckAll" onclick="checkAllNow()" hidden><i class="bi bi-lightning-charge me-1"></i>Re-check Down</button>
                 <button class="btn-sync" onclick="syncWebsiteList()"><i class="bi bi-arrow-repeat me-1"></i>Sync</button>
                 <button class="btn-add" onclick="openFormModal()"><i class="bi bi-plus-lg me-1"></i>Add Monitor</button>
             </div>
@@ -678,12 +679,19 @@ function loadDetailExtras(id) {
 }
 
 // ── Filters ────────────────────────────────────────────
+//Re-checking every site is only offered while looking at the Down list, where it
+//is the useful action: confirm whether the failures are still real.
+function syncCheckAllVisibility() {
+    document.getElementById('btnCheckAll').hidden = (statusFilter !== 'down');
+}
+
 function setCatFilter(el) {
     catFilter = el.dataset.cat;
     statusFilter = '';
     $('.pill:not(.p-down)').removeClass('active');
     $('.p-down').removeClass('active');
     $(el).addClass('active');
+    syncCheckAllVisibility();
     loadList();
 }
 
@@ -695,6 +703,7 @@ function setStatusFilter(el) {
         statusFilter = el.dataset.status;
         $(el).addClass('active');
     }
+    syncCheckAllVisibility();
     loadList();
 }
 
@@ -785,6 +794,68 @@ function viewDowntime(id) {
         $('#downtimeTableBody').html(rows || '<tr><td colspan="3" class="text-center text-muted py-3">No downtime incidents</td></tr>');
         downtimeModal.show();
     }, 'json');
+}
+
+// Check every monitor now. The sweep takes about 20 minutes, so it runs in the
+// background and the button reports progress until it finishes. Alerts for any
+// site whose status changed go to Google Chat exactly as they do on a scheduled run.
+let checkAllTimer = null;
+let checkAllSince = null;
+
+function checkAllNow() {
+    if (checkAllTimer) { return; }   // already watching a run
+    const count = $('#downCount').text() || '0';
+    if (!confirm('ตรวจเว็บที่ Down อยู่ใหม่ทั้งหมด (' + count + ' เว็บ)?\n\nถ้าเว็บไหนกลับมาปกติ จะส่งแจ้งเตือนเข้า Google Chat')) { return; }
+
+    const $btn = $('#btnCheckAll');
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังเริ่ม…');
+
+    $.post('assets/php/actionMonitor.php', { act: 'checkAllNow', scope: 'down' }, function(res) {
+        if (res.status === 'already_running') {
+            alert('มีการตรวจรอบอื่นกำลังทำงานอยู่ กรุณารอให้เสร็จก่อน');
+            resetCheckAllButton();
+            return;
+        }
+        if (res.status !== 'started') {
+            alert('เริ่มการตรวจไม่สำเร็จ: ' + (res.status || 'unknown'));
+            resetCheckAllButton();
+            return;
+        }
+        //Count only what this run checks, so progress is not inflated by earlier checks.
+        checkAllSince = res.startedAt;
+        checkAllTimer = setInterval(pollCheckAll, 5000);
+        pollCheckAll();
+    }, 'json').fail(function() {
+        alert('เริ่มการตรวจไม่สำเร็จ');
+        resetCheckAllButton();
+    });
+}
+
+function pollCheckAll() {
+    $.post('assets/php/actionMonitor.php', { act: 'checkAllProgress', since: checkAllSince, scope: 'down' }, function(res) {
+        if (res.status !== 'ok') { return; }
+        const $btn = $('#btnCheckAll');
+
+        if (res.running) {
+            //A site that recovers leaves the down list, so checked can exceed total.
+            const done = Math.min(res.checked, res.total);
+            $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>ตรวจแล้ว ' + done + '/' + res.total);
+            refresh();
+            return;
+        }
+        //Finished: stop polling and put the button back.
+        clearInterval(checkAllTimer);
+        checkAllTimer = null;
+        refresh();
+        resetCheckAllButton();
+        alert('ตรวจเสร็จแล้ว ' + res.checked + ' เว็บ');
+    }, 'json');
+}
+
+function resetCheckAllButton() {
+    if (checkAllTimer) { clearInterval(checkAllTimer); checkAllTimer = null; }
+    $('#btnCheckAll').prop('disabled', false)
+        .html('<i class="bi bi-lightning-charge me-1"></i>Re-check Down');
 }
 
 function syncWebsiteList() {

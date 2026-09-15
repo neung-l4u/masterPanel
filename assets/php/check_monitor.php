@@ -28,21 +28,40 @@ if (!defined('MONITOR_FUNCTIONS_ONLY')) {
     // so refuse to start if the previous run is still going. Without this the runs
     // stack up and the same site gets checked (and alerted on) by several at once.
     // ponytail: single global lock; if checks ever need to run in parallel, shard by id instead.
-    $lockFile = sys_get_temp_dir() . '/monitor_cron.lock';
-    $lock     = fopen($lockFile, 'c');
-    if (!$lock || !flock($lock, LOCK_EX | LOCK_NB)) {
-        exit(0);   // previous run still in progress — skip this tick
+    //Per-user lock file: cron runs as root and the web-triggered sweep as the web
+    //user, and a root-owned lock the web user cannot even open must not be mistaken
+    //for "already running" — that silently killed every manual sweep.
+    $lockFile = sys_get_temp_dir() . '/monitor_cron_' . (function_exists('posix_geteuid') ? posix_geteuid() : 'x') . '.lock';
+    $lock     = @fopen($lockFile, 'c');
+    if ($lock && !flock($lock, LOCK_EX | LOCK_NB)) {
+        exit(0);   // a run by this same user is still in progress
     }
+    //If the lock could not be opened at all, carry on rather than skip the run.
 
     require_once __DIR__ . '/../../assets/db/db.php';
     require_once __DIR__ . '/../../assets/db/initDB.php';
-    $monitors = $db->query(
-        "SELECT * FROM monitors
-         WHERE is_active = 1
-           AND delete_at IS NULL
-           AND (last_checked_at IS NULL
-                OR last_checked_at <= NOW() - INTERVAL check_interval MINUTE)"
-    )->fetchAll();
+    // "--all"  : every monitor, whenever it was last seen (Check All Now button)
+    // "--down" : only the ones currently marked down (re-check from the Down list)
+    // no flag  : the scheduled run, which takes only the monitors that are due.
+    $argvList = $argv ?? [];
+    $checkAll  = in_array('--all', $argvList, true);
+    $checkDown = in_array('--down', $argvList, true);
+
+    $monitors = $checkDown
+        ? $db->query(
+            "SELECT * FROM monitors WHERE is_active = 1 AND delete_at IS NULL AND last_status = 'down'"
+          )->fetchAll()
+        : ($checkAll
+        ? $db->query(
+            "SELECT * FROM monitors WHERE is_active = 1 AND delete_at IS NULL"
+          )->fetchAll()
+        : $db->query(
+            "SELECT * FROM monitors
+             WHERE is_active = 1
+               AND delete_at IS NULL
+               AND (last_checked_at IS NULL
+                    OR last_checked_at <= NOW() - INTERVAL check_interval MINUTE)"
+          )->fetchAll());
 
     foreach ($monitors as $monitor) {
         $result = checkTarget($monitor);
@@ -132,13 +151,21 @@ function checkTarget(array $monitor): array {
         $a = $parsedHost ? @dns_get_record($parsedHost, DNS_A) : [];
         $resolvedIP = $a[0]['ip'] ?? null;
 
+        $err = strtolower((string) $curlError);
+
         if ($isWpFatal) {
             $reason = 'wp_fatal';
         } elseif (!$resolvedIP) {
             // Nothing resolves — ask the registry whether the domain exists at all.
             $reason = domainReason($parsedHost);
+        } elseif (str_contains($err, 'timed out')) {
+            $reason = 'timeout';        // answered too slowly, or not at all
+        } elseif (str_contains($err, 'could not connect') || str_contains($err, 'connection refused')) {
+            $reason = 'conn_refused';   // DNS fine, but nothing listening
+        } elseif (str_contains($err, 'ssl') || str_contains($err, 'certificate')) {
+            $reason = 'ssl_error';
         } else {
-            $reason = 'down';   // DNS fine, server answered badly
+            $reason = 'down';           // DNS fine, server answered badly (403/500/404)
         }
     }
 
@@ -199,7 +226,10 @@ function domainReason(?string $host): string {
         $ts = strtotime($m[1]);
         if ($ts && $ts < time()) return 'expired';
     }
-    return 'down';
+
+    // Registered, not expired, not on hold — yet it would not resolve. That is a
+    // name-server or resolver problem, which is usually temporary.
+    return 'dns_fail';
 }
 
 function saveResult(object $db, array $monitor, array $result): void {
@@ -256,7 +286,7 @@ function renderTemplate(object $db, string $key, array $monitor, array $result):
     ];
 
     $defaults = [
-        'down'      => ['[DOWN] {name} is unreachable',  "Monitor: {name}\nURL: {url}\nStatus: DOWN\nHTTP: {httpCode}\nError: {errorMsg}\nTime: {time}", 1],
+        'down'      => ['เว็บเปิดไม่ได้ (เซิร์ฟเวอร์ตอบ error)', "Domain : {domain}\nอาการ : {errorMsg}\nTime : {time}", 1],
         'recovered' => ['[RECOVERED] {name} is back online', "Monitor: {name}\nURL: {url}\nStatus: RECOVERED\nResponse: {responseMs}ms\nTime: {time}", 0],
         'ssl'       => ['[SSL WARNING] {name} - {sslDaysLeft} days left', "Monitor: {name}\nURL: {url}\nSSL Expiry: {sslExpiry}\nDays Left: {sslDaysLeft}\nTime: {time}", 0],
         'wp_fatal'     => ['Wordpress พัง - เว็บเปิดไม่ได้', "Domain : {domain}\nอาการ : {errorMsg}\nTime : {time}", 1],
@@ -265,6 +295,10 @@ function renderTemplate(object $db, string $key, array $monitor, array $result):
         'ssl_expired'  => ['SSL หมดอายุแล้ว - เว็บเข้าไม่ได้', "Domain : {domain}\nSSL หมดอายุเมื่อ : {sslExpiry}\nTime : {time}", 1],
         'moved_away'   => ['Domain ไม่ได้ชี้มาที่ Server เราแล้ว (อาจยกเลิกบริการ)', "Domain : {domain}\nIP ปลายทาง : {resolvedIP}\nTime : {time}", 0],
         'disk_warn'    => ['พื้นที่ใกล้เต็ม - เสี่ยงเว็บล่ม', "Domain : {domain}\ncPanel : {cpanelUser}\nใช้ไป : {diskUsed} / {diskLimit} ({diskPercent}%)\nTime : {time}", 0],
+        'dns_fail'     => ['DNS หาไม่เจอชั่วคราว (โดเมนยังไม่หมดอายุ)', "Domain : {domain}\nอาการ : {errorMsg}\nหมายเหตุ : โดเมนยังจดทะเบียนอยู่ปกติ มักเกิดจาก DNS/nameserver กระตุกชั่วคราว\nTime : {time}", 0],
+        'timeout'      => ['เว็บตอบช้าเกินกำหนด (Timeout)', "Domain : {domain}\nอาการ : {errorMsg}\nรอนานสุด : 30 วินาที\nTime : {time}", 1],
+        'conn_refused' => ['เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', "Domain : {domain}\nIP : {resolvedIP}\nอาการ : {errorMsg}\nTime : {time}", 1],
+        'ssl_error'    => ['SSL/ใบรับรองมีปัญหา', "Domain : {domain}\nอาการ : {errorMsg}\nTime : {time}", 1],
     ];
 
     $tpl = null;

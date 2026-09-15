@@ -11,6 +11,30 @@ if (empty($_SESSION['id'])) {
     exit;
 }
 
+/**
+ * Is a full sweep in progress? The cron job runs as root and its lock file is
+ * root-owned, so the web user often cannot open it at all — that is not the same
+ * as the lock being held, and must not be reported as "busy". Fall back to looking
+ * for the process itself, and treat "cannot tell" as not running.
+ */
+function monitorSweepRunning(): bool {
+    //The cron lock is root-owned, so the web user usually cannot even open it and
+    //a failed open must not be mistaken for "busy". The process list is the reliable
+    //signal; the marker file covers the first seconds before the child appears in it.
+    $out = @shell_exec('ps -eo args 2>/dev/null');
+    if ($out !== null && str_contains((string) $out, 'check_monitor.php')) {
+        return true;
+    }
+
+    $marker = sys_get_temp_dir() . '/monitor_manual_sweep.marker';
+    if (is_readable($marker)) {
+        //Only trust a recent marker, so a crashed run cannot block the button forever.
+        if (time() - (int) @filemtime($marker) < 60) { return true; }
+        @unlink($marker);
+    }
+    return false;
+}
+
 $act    = !empty($_POST['act']) ? $_POST['act'] : '';
 $id     = !empty($_POST['id'])  ? (int)$_POST['id'] : 0;
 $params = [];
@@ -84,6 +108,56 @@ if ($act === 'save') {
         $params = array_merge($params, $result);
         $params['status'] = 'ok';
     }
+
+// ── CHECK EVERY MONITOR NOW ────────────────────────────────────────────────
+// A full sweep takes ~20 minutes, far longer than a browser will wait, so the
+// work is handed to the same cron script running in the background. It writes
+// its own lock file, so a second click while one is running does nothing.
+} elseif ($act === 'checkAllNow') {
+    if (monitorSweepRunning()) {
+        $params['status'] = 'already_running';
+    } else {
+        $script = escapeshellarg(__DIR__ . '/check_monitor.php');
+        $php    = PHP_BINARY && str_contains(PHP_BINARY, 'php') ? PHP_BINARY : 'php';
+        // Detach so the browser gets an answer immediately.
+        //Re-check only the failing sites when asked from the Down list.
+        $scope = ($_POST['scope'] ?? '') === 'down' ? '--down' : '--all';
+        //Recorded before launching so progress counts only this run's checks.
+        $params['startedAt'] = date('Y-m-d H:i:s');
+        $params['scope']     = $scope === '--down' ? 'down' : 'all';
+        //Claim the run immediately: the child takes a second to show up in `ps`,
+        //and without this a quick second click starts a duplicate sweep.
+        @touch(sys_get_temp_dir() . '/monitor_manual_sweep.marker');
+        @exec(escapeshellarg($php) . ' ' . $script . ' ' . $scope . ' > /dev/null 2>&1 &');
+        $params['status'] = 'started';
+    }
+
+// ── PROGRESS OF A RUNNING SWEEP ────────────────────────────────────────────
+} elseif ($act === 'checkAllProgress') {
+    $running = monitorSweepRunning();
+
+    //Count only the monitors in this sweep's scope, so the scheduled cron running
+    //alongside it cannot push the number past the total.
+    $since = $_POST['since'] ?? date('Y-m-d H:i:s');
+    $row = (($_POST['scope'] ?? '') === 'down')
+        ? $db->query(
+            "SELECT COUNT(*) AS checked FROM monitors
+              WHERE is_active = 1 AND delete_at IS NULL
+                AND last_status = 'down' AND last_checked_at >= ?", $since
+          )->fetchArray()
+        : $db->query(
+            "SELECT COUNT(*) AS checked FROM monitors
+              WHERE is_active = 1 AND delete_at IS NULL
+                AND last_checked_at >= ?", $since
+          )->fetchArray();
+    $total = (($_POST['scope'] ?? '') === 'down')
+        ? $db->query("SELECT COUNT(*) AS n FROM monitors WHERE is_active=1 AND delete_at IS NULL AND last_status='down'")->fetchArray()
+        : $db->query("SELECT COUNT(*) AS n FROM monitors WHERE is_active=1 AND delete_at IS NULL")->fetchArray();
+
+    $params['running'] = $running ? 1 : 0;
+    $params['checked'] = (int) ($row['checked'] ?? 0);
+    $params['total']   = (int) ($total['n'] ?? 0);
+    $params['status']  = 'ok';
 
 // ── GET LIST (split-panel UI) ──────────────────────────────────────────────
 } elseif ($act === 'getList') {
