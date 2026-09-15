@@ -160,3 +160,7 @@ assets/php/chat_webhook.txt
 
 # WHM API tokens (credentials, do not commit)
 assets/php/whm_tokens.json
+
+# Make credit dashboard: API token + fetched snapshots (do not commit)
+/modules/viewcreditmake/config.php
+/modules/viewcreditmake/cache/
