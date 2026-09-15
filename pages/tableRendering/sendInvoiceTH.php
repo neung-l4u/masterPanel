@@ -56,7 +56,10 @@ $tableItems = array_map(function($item) {
     return [
         'product' => trim($label),
         'qyt'     => $item['qyt']        ?? 1,
-        'amount'  => $item['amount']     ?? 0,
+        // ส่งราคาเต็มรวม VAT ให้อีเมล/PDF โชว์ ใบเก่าไม่มี fullamount จึงถอดจาก amount
+        'amount'  => isset($item['fullamount'])
+            ? $item['fullamount']
+            : number_format(round((float)($item['amount'] ?? 0) * 1.07, 2), 2, '.', ''),
     ];
 }, $rawItems);
 

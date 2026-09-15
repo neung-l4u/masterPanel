@@ -337,7 +337,7 @@ window.openSendModal = function(invoiceId) {
                 +'</div>'
                 +'</div>'
                 +'<table class="table table-sm" style="font-size:13px;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;">'
-                +'<thead style="background:#1e3a8a;color:#fff;"><tr><th style="width:110px;">ชนิด</th><th>รายการ</th><th class="text-center" style="width:70px;">จำนวน</th><th class="text-right" style="width:110px;">ราคา (ก่อน VAT)</th><th class="text-center" style="width:44px;"></th></tr></thead>'
+                +'<thead style="background:#1e3a8a;color:#fff;"><tr><th style="width:110px;">ชนิด</th><th>รายการ</th><th class="text-center" style="width:70px;">จำนวน</th><th class="text-right" style="width:110px;">ราคา (รวม VAT)</th><th class="text-center" style="width:44px;"></th></tr></thead>'
                 +'<tbody id="itemsTbody">' + itemsHtml + '</tbody>'
                 +'</table>'
 
@@ -790,12 +790,16 @@ function buildItemRow(item) {
     item = item || {};
     const r = readItemKind(item);
     const qyt = item.qyt || '1';
-    const amount = itemNum(item.amount);
-    const full = (item.fullamount === undefined || item.fullamount === null) ? '' : item.fullamount;
+    // ช่องราคากรอกเป็นราคาเต็มรวม VAT (fullamount) ตามที่ฝ่ายบัญชีกำหนด
+    // ใบเก่าที่ยังไม่มี fullamount ให้ถอดกลับจาก amount (ราคาก่อน VAT)
+    const hasFull = item.fullamount !== undefined && item.fullamount !== null && item.fullamount !== '';
+    const amount = hasFull
+        ? itemNum(item.fullamount)
+        : Math.round(itemNum(item.amount) * 1.07 * 100) / 100;
     const opt = function (k, label) {
         return '<option value="' + k + '"' + (k === r.kind ? ' selected' : '') + '>' + label + '</option>';
     };
-    return '<tr class="item-row" data-fullamount="' + itemEsc(full) + '">'
+    return '<tr class="item-row">'
         + '<td><select class="form-control form-control-sm it-kind" style="font-size:12px;padding:2px 4px;height:auto;">'
         +   opt('product', 'Product') + opt('setupfee', 'Setup Fee') + opt('addon', 'Add-on')
         + '</select></td>'
@@ -811,15 +815,15 @@ function recalcItems() {
     const $body = $('#itemsTbody');
     if (!$body.length) return;
 
-    let sub = 0;
+    // ช่องราคาเป็นราคาเต็มรวม VAT จึงรวมเป็น gross ก่อน แล้วถอด VAT ออกมาเป็นฐาน
+    let full = 0;
     $body.find('tr.item-row').each(function () {
         const q = itemNum($(this).find('.it-qyt').val()) || 1;
-        sub += itemNum($(this).find('.it-amount').val()) * q;
+        full += itemNum($(this).find('.it-amount').val()) * q;
     });
-    sub = Math.round(sub * 100) / 100;
-
-    const vat   = Math.round(sub * 0.07 * 100) / 100;
-    const gross = Math.round((sub + vat) * 100) / 100;
+    const gross = Math.round(full * 100) / 100;
+    const sub   = Math.round(gross / 1.07 * 100) / 100;
+    const vat   = Math.round((gross - sub) * 100) / 100;
     // หัก ณ ที่จ่าย 3% ของฐานก่อน VAT เฉพาะนิติบุคคล
     const isJur = $body.data('custType') === 'นิติบุคคล';
     const wht   = isJur ? Math.round(sub * 0.03 * 100) / 100 : 0;
@@ -859,13 +863,14 @@ $(document).on('click', '#btnSaveItems', function () {
         const $row = $(this);
         const name = ($row.find('.it-name').val() || '').trim();
         if (!name) { missingName = true; return false; }
-        const full = $row.data('fullamount');
+        // ช่องกรอกคือราคาเต็มรวม VAT เก็บเป็น fullamount ส่วน amount คือฐานก่อน VAT
+        const full = itemNum($row.find('.it-amount').val());
         items.push({
             kind:   $row.find('.it-kind').val(),
             name:   name,
             qyt:    ($row.find('.it-qyt').val() || '1').trim(),
-            amount: itemNum($row.find('.it-amount').val()),
-            fullamount: (full === '' || full === undefined || full === null) ? null : itemNum(full)
+            amount: Math.round(full / 1.07 * 100) / 100,
+            fullamount: full
         });
     });
 
