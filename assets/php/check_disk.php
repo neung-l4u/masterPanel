@@ -3,8 +3,9 @@
  * Daily disk-space sweep.
  *
  * Asks each WHM server for its accounts' disk usage and posts one Google Chat
- * message per account that has crossed DISK_WARN_PERCENT, so a filling disk is
- * dealt with before it takes the site down. Run from cron once a day:
+ * message per account that has crossed DISK_WARN_PERCENT. Set high on purpose:
+ * warning from 85% produced dozens of alerts for accounts that were not in any
+ * danger, and the noise buried the few that were. Run from cron once a day:
  *
  *   30 8 * * * /usr/local/bin/php /path/to/assets/php/check_disk.php >/dev/null 2>&1
  *
@@ -19,7 +20,7 @@ if (PHP_SAPI !== 'cli') {
     exit('This script runs from cron only.');
 }
 
-define('DISK_WARN_PERCENT', 85);
+define('DISK_WARN_PERCENT', 99);
 
 require_once __DIR__ . '/whmDiskCheck.php';
 require_once __DIR__ . '/../../assets/db/db.php';
@@ -37,6 +38,20 @@ if (!$servers) {
 foreach (array_keys($servers) as $svID) {
     $usage = whmAccountUsage((string) $svID);
     if (!$usage) continue;
+
+    //Cache what WHM reported so the monitor page can sort and filter on it
+    //without calling the API itself.
+    if ($db->query("SHOW TABLES LIKE 'disk_usage'")->fetchArray()) {
+        foreach ($usage as $acct => $d) {
+            $db->query(
+                "INSERT INTO disk_usage (cpanel_user, svID, used, quota, percent, checked_at)
+                      VALUES (?, ?, ?, ?, ?, NOW())
+                 ON DUPLICATE KEY UPDATE svID=VALUES(svID), used=VALUES(used),
+                      quota=VALUES(quota), percent=VALUES(percent), checked_at=NOW()",
+                $acct, (int) $svID, $d['used'], $d['limit'], $d['percent']
+            );
+        }
+    }
 
     // Match cPanel accounts back to the websites we watch.
     $sites = $db->query(

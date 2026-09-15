@@ -28,13 +28,18 @@ if (!defined('MONITOR_FUNCTIONS_ONLY')) {
     // so refuse to start if the previous run is still going. Without this the runs
     // stack up and the same site gets checked (and alerted on) by several at once.
     // ponytail: single global lock; if checks ever need to run in parallel, shard by id instead.
-    //Per-user lock file: cron runs as root and the web-triggered sweep as the web
-    //user, and a root-owned lock the web user cannot even open must not be mistaken
-    //for "already running" — that silently killed every manual sweep.
-    $lockFile = sys_get_temp_dir() . '/monitor_cron_' . (function_exists('posix_geteuid') ? posix_geteuid() : 'x') . '.lock';
-    $lock     = @fopen($lockFile, 'c');
+    //Separate locks for the scheduled run and for a button-triggered sweep, so the
+    //two never block each other — a manual re-check must not have to wait out cron.
+    //Each still refuses to overlap a run of its own kind, which is what actually
+    //causes duplicate alerts. Also keyed by uid: cron may run as root and the web
+    //sweep as the web user, and a lock file one of them cannot open must not read
+    //as "already running".
+    $manualRun = (bool) array_intersect(['--all', '--down'], $argv ?? []);
+    $lockFile  = sys_get_temp_dir() . '/monitor_' . ($manualRun ? 'manual' : 'cron')
+               . '_' . (function_exists('posix_geteuid') ? posix_geteuid() : 'x') . '.lock';
+    $lock      = @fopen($lockFile, 'c');
     if ($lock && !flock($lock, LOCK_EX | LOCK_NB)) {
-        exit(0);   // a run by this same user is still in progress
+        exit(0);   // a run of this same kind is still in progress
     }
     //If the lock could not be opened at all, carry on rather than skip the run.
 

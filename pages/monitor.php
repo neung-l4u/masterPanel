@@ -174,6 +174,17 @@ $db->query(
     box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 1px 4px rgba(15,23,42,.04);
 }
 .btn-sync:hover { background: #f8fafc; }
+
+/* Disk pressure, shown only in the Usage Quota view */
+.pill.p-quota.active { background:#0f172a; color:#fff; border-color:#0f172a; }
+.mon-row.q-over  { background:#fef2f2; box-shadow: inset 3px 0 0 #dc2626; }
+.mon-row.q-near  { background:#fffbeb; box-shadow: inset 3px 0 0 #d97706; }
+.mon-row.q-over:hover { background:#fee2e2; }
+.mon-row.q-near:hover { background:#fef3c7; }
+.q-badge { margin-left:auto; font-size:.68rem; font-weight:600; padding:1px 6px; border-radius:999px; white-space:nowrap; }
+.q-badge.over { background:#dc2626; color:#fff; }
+.q-badge.near { background:#d97706; color:#fff; }
+.q-badge.ok   { background:#e2e8f0; color:#475569; }
 .btn-add {
     font-size: .75rem; padding: 6px 14px; border-radius: 8px; border: none;
     background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
@@ -390,9 +401,11 @@ $db->query(
                 <span class="pill" data-cat="api_endpoint" onclick="setCatFilter(this)">API</span>
                 <span class="pill" data-cat="third_party" onclick="setCatFilter(this)">3rd Party</span>
                 <span class="pill p-down" data-status="down" onclick="setStatusFilter(this)">● Down <span id="downCount">0</span></span>
+                <span class="pill p-quota" onclick="setQuotaFilter(this)">◱ Usage Quota</span>
             </div>
             <div style="display:flex;gap:8px">
                 <button class="btn-sync" id="btnCheckAll" onclick="checkAllNow()" hidden><i class="bi bi-lightning-charge me-1"></i>Re-check Down</button>
+                <span id="checkAllNote" style="display:none;align-self:center;font-size:.72rem;color:#64748b;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
                 <button class="btn-sync" onclick="syncWebsiteList()"><i class="bi bi-arrow-repeat me-1"></i>Sync</button>
                 <button class="btn-add" onclick="openFormModal()"><i class="bi bi-plus-lg me-1"></i>Add Monitor</button>
             </div>
@@ -551,6 +564,7 @@ let allMonitors = [];
 let selectedId  = null;
 let catFilter   = '';
 let statusFilter = '';
+let quotaView    = false;   // Usage Quota view: sort by disk pressure, colour the rows
 
 // ── Stats ──────────────────────────────────────────────
 function loadStats() {
@@ -565,7 +579,7 @@ function loadStats() {
 
 // ── Load monitor list ──────────────────────────────────
 function loadList() {
-    $.post('assets/php/actionMonitor.php', { act: 'getList', category: catFilter, status: statusFilter }, function(res) {
+    $.post('assets/php/actionMonitor.php', { act: 'getList', category: catFilter, status: statusFilter, sort: quotaView ? 'quota' : '' }, function(res) {
         allMonitors = res.data || [];
         renderList();
         if (selectedId) {
@@ -584,11 +598,29 @@ function renderList() {
     }
     const html = items.map(m => {
         const dotCls = m.last_status === 'up' ? 's-up' : m.last_status === 'down' ? 's-down' : 's-unknown';
+        //Accounts with no monitor row cannot be clicked through to a detail panel.
+        const noMonitor = quotaView && !m.id;
         const active = m.id == selectedId ? 'active' : '';
-        return `<div class="mon-row ${active}" onclick="selectMonitor(${m.id})" data-id="${m.id}">
+        //Disk pressure is only surfaced in the Usage Quota view, so the normal
+        //list stays about up/down and does not turn into a wall of colour.
+        const pct = m.disk_percent === null ? null : parseFloat(m.disk_percent);
+        let rowCls = '', badge = `<span class="mon-tag">${h(m.category)}</span>`;
+        if (quotaView) {
+            const band = pct === null ? null : (pct >= 100 ? 'over' : pct >= 85 ? 'near' : 'ok');
+            if (band === 'over' || band === 'near') rowCls = ' q-' + band;
+            //This view lists hosting accounts, including sites we do not monitor
+            //(Draft/Unpublished). Show the websiteList status instead of the
+            //category, so the team can tell a live client from one to clean up.
+            const tag = m.wLiveStatus || '-';
+            badge = pct === null
+                ? '<span class="q-badge ok">ไม่มีข้อมูล</span>'
+                : `<span class="mon-tag">${h(tag)}</span>`
+                  + `<span class="q-badge ${band}" title="${h(m.cpanel_user || '')}: ${h(m.disk_used || '')} / ${h(m.disk_quota || '')}">${pct.toFixed(0)}%</span>`;
+        }
+        return `<div class="mon-row ${active}${rowCls}" ${noMonitor ? 'style="cursor:default"' : `onclick="selectMonitor(${m.id})"`} data-id="${m.id || ''}">
             <span class="s-dot ${dotCls}"></span>
             <span class="mon-name">${h(m.name)}</span>
-            <span class="mon-tag">${h(m.category)}</span>
+            ${badge}
         </div>`;
     }).join('');
     $('#monListItems').html(html);
@@ -688,6 +720,7 @@ function syncCheckAllVisibility() {
 function setCatFilter(el) {
     catFilter = el.dataset.cat;
     statusFilter = '';
+    quotaView = false;
     $('.pill:not(.p-down)').removeClass('active');
     $('.p-down').removeClass('active');
     $(el).addClass('active');
@@ -695,7 +728,24 @@ function setCatFilter(el) {
     loadList();
 }
 
+//Usage Quota: order the list by how full each account's disk is, worst first.
+//It is a different question from up/down, so it clears the other filters.
+function setQuotaFilter(el) {
+    quotaView = !$(el).hasClass('active');
+    $('.pill').removeClass('active');
+    if (quotaView) {
+        catFilter = ''; statusFilter = '';
+        $(el).addClass('active');
+    } else {
+        $('.pill[data-cat=""]').addClass('active');
+    }
+    syncCheckAllVisibility();
+    loadList();
+}
+
 function setStatusFilter(el) {
+    quotaView = false;
+    $('.p-quota').removeClass('active');
     if ($(el).hasClass('active')) {
         statusFilter = '';
         $(el).removeClass('active');
@@ -805,7 +855,10 @@ let checkAllSince = null;
 function checkAllNow() {
     if (checkAllTimer) { return; }   // already watching a run
     const count = $('#downCount').text() || '0';
-    if (!confirm('ตรวจเว็บที่ Down อยู่ใหม่ทั้งหมด (' + count + ' เว็บ)?\n\nถ้าเว็บไหนกลับมาปกติ จะส่งแจ้งเตือนเข้า Google Chat')) { return; }
+    if (!confirm('ตรวจเว็บที่ Down อยู่ใหม่ทั้งหมด (' + count + ' เว็บ)?\n\n'
+        + 'ใช้เวลาประมาณ ' + Math.max(1, Math.round(count * 25 / 60)) + ' นาที\n'
+        + 'จะส่งเข้า Google Chat เฉพาะเว็บที่กลับมาปกติเท่านั้น\n'
+        + 'เว็บที่ยัง Down เหมือนเดิมจะไม่มีข้อความ')) { return; }
 
     const $btn = $('#btnCheckAll');
     $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังเริ่ม…');
@@ -840,6 +893,9 @@ function pollCheckAll() {
             //A site that recovers leaves the down list, so checked can exceed total.
             const done = Math.min(res.checked, res.total);
             $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>ตรวจแล้ว ' + done + '/' + res.total);
+            //Name the site in progress; "9/9" alone looks stuck while the last
+            //site is still working through its DNS retries.
+            $('#checkAllNote').text(res.current ? 'กำลังตรวจ: ' + res.current : '').show();
             refresh();
             return;
         }
@@ -848,12 +904,23 @@ function pollCheckAll() {
         checkAllTimer = null;
         refresh();
         resetCheckAllButton();
-        alert('ตรวจเสร็จแล้ว ' + res.checked + ' เว็บ');
+        $('#checkAllNote').hide();
+
+        //Spell out why Chat may have stayed silent: alerts fire on a change of
+        //status, so sites that were already down and still are do not notify.
+        let msg = 'ตรวจเสร็จแล้ว ' + res.checked + ' เว็บ\n\n';
+        msg += '• กลับมาปกติ : ' + res.recovered + ' เว็บ\n';
+        msg += '• ยัง Down อยู่ : ' + res.stillDown + ' เว็บ\n\n';
+        msg += (res.recovered > 0)
+            ? 'ส่งแจ้งเตือน "กลับมาปกติ" เข้า Google Chat แล้ว ' + res.recovered + ' ข้อความ'
+            : 'ไม่มีข้อความเข้า Google Chat เพราะไม่มีเว็บไหนเปลี่ยนสถานะ\n(ระบบแจ้งเฉพาะตอนสถานะเปลี่ยน ไม่ใช่ทุกครั้งที่เจอ Down)';
+        alert(msg);
     }, 'json');
 }
 
 function resetCheckAllButton() {
     if (checkAllTimer) { clearInterval(checkAllTimer); checkAllTimer = null; }
+    $('#checkAllNote').hide();
     $('#btnCheckAll').prop('disabled', false)
         .html('<i class="bi bi-lightning-charge me-1"></i>Re-check Down');
 }

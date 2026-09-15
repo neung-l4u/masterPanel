@@ -17,13 +17,25 @@ if (empty($_SESSION['id'])) {
  * as the lock being held, and must not be reported as "busy". Fall back to looking
  * for the process itself, and treat "cannot tell" as not running.
  */
+/**
+ * Is another *button-triggered* sweep already running?
+ *
+ * Only these block each other. The scheduled cron run is deliberately ignored: it
+ * works through whatever is due while this sweep re-checks a chosen set, and making
+ * the user wait for it meant the button was unusable most of the time. The narrow
+ * risk that remains — cron reaching the same site at the same moment and alerting
+ * twice — is handled by check_monitor.php's own per-user lock.
+ */
 function monitorSweepRunning(): bool {
-    //The cron lock is root-owned, so the web user usually cannot even open it and
-    //a failed open must not be mistaken for "busy". The process list is the reliable
-    //signal; the marker file covers the first seconds before the child appears in it.
     $out = @shell_exec('ps -eo args 2>/dev/null');
-    if ($out !== null && str_contains((string) $out, 'check_monitor.php')) {
-        return true;
+    if ($out !== null) {
+        foreach (explode("\n", (string) $out) as $line) {
+            //Only a manual sweep carries --all or --down; cron passes no flag.
+            if (str_contains($line, 'check_monitor.php')
+                && (str_contains($line, '--all') || str_contains($line, '--down'))) {
+                return true;
+            }
+        }
     }
 
     $marker = sys_get_temp_dir() . '/monitor_manual_sweep.marker';
@@ -154,10 +166,50 @@ if ($act === 'save') {
         ? $db->query("SELECT COUNT(*) AS n FROM monitors WHERE is_active=1 AND delete_at IS NULL AND last_status='down'")->fetchArray()
         : $db->query("SELECT COUNT(*) AS n FROM monitors WHERE is_active=1 AND delete_at IS NULL")->fetchArray();
 
-    $params['running'] = $running ? 1 : 0;
-    $params['checked'] = (int) ($row['checked'] ?? 0);
-    $params['total']   = (int) ($total['n'] ?? 0);
-    $params['status']  = 'ok';
+    //What the run has actually found so far, so the user is not left guessing why
+    //nothing reached Google Chat: alerts fire on a status *change*, and a site that
+    //was already down and is still down is not a change.
+    //Outcome for the monitors this sweep touched, counted once each by their
+    //current state. For a "down" sweep that means: how many came back up, and how
+    //many are still failing.
+    //Restrict to the monitors this sweep was asked to look at, so the scheduled
+    //cron working through other sites at the same time cannot inflate the numbers.
+    //A "down" sweep started from a monitor that had failed at least once today.
+    $outcome = (($_POST['scope'] ?? '') === 'down')
+        ? $db->query(
+            "SELECT
+                SUM(m.last_status = 'up')   AS recovered,
+                SUM(m.last_status = 'down') AS still_down
+             FROM monitors m
+             WHERE m.is_active = 1 AND m.delete_at IS NULL
+               AND m.last_checked_at >= ?
+               AND EXISTS (SELECT 1 FROM monitor_logs l
+                            WHERE l.monitor_id = m.id
+                              AND l.status = 'down'
+                              AND l.checked_at >= DATE_SUB(?, INTERVAL 1 DAY))", $since, $since
+          )->fetchArray()
+        : $db->query(
+            "SELECT
+                SUM(last_status = 'up')   AS recovered,
+                SUM(last_status = 'down') AS still_down
+             FROM monitors
+             WHERE is_active = 1 AND delete_at IS NULL AND last_checked_at >= ?", $since
+          )->fetchArray();
+
+    //Name the site being worked on, so the wait is legible.
+    $current = $db->query(
+        "SELECT name FROM monitors
+          WHERE is_active = 1 AND delete_at IS NULL AND last_checked_at >= ?
+          ORDER BY last_checked_at DESC LIMIT 1", $since
+    )->fetchArray();
+
+    $params['running']   = $running ? 1 : 0;
+    $params['checked']   = (int) ($row['checked'] ?? 0);
+    $params['total']     = (int) ($total['n'] ?? 0);
+    $params['recovered'] = (int) ($outcome['recovered'] ?? 0);
+    $params['stillDown'] = (int) ($outcome['still_down'] ?? 0);
+    $params['current']   = $current['name'] ?? '';
+    $params['status']    = 'ok';
 
 // ── GET LIST (split-panel UI) ──────────────────────────────────────────────
 } elseif ($act === 'getList') {
@@ -166,10 +218,50 @@ if ($act === 'save') {
 
     include_once __DIR__ . '/../security/QueryBuilder.php';
     $qb = new QueryBuilder();
-    $qb->eq('category', $category)->eq('last_status', $status);
-    $baseSql = "SELECT id, name, url, category, check_interval, last_status, last_checked_at, last_response_ms, ssl_days_left FROM monitors WHERE delete_at IS NULL AND is_active = 1";
+    //Columns are qualified because of the joins below.
+    $qb->eq('m.category', $category)->eq('m.last_status', $status);
+
+    //Disk usage comes from the cache table that check_disk.php fills. Left-joined so
+    //the list still works before that job has run, or for a site with no cPanel account.
+    $hasDisk = (bool) $db->query("SHOW TABLES LIKE 'disk_usage'")->fetchArray();
+    $diskCols = $hasDisk
+        ? ", du.percent AS disk_percent, du.used AS disk_used, du.quota AS disk_quota"
+        : ", NULL AS disk_percent, NULL AS disk_used, NULL AS disk_quota";
+    $diskJoin = $hasDisk
+        ? " LEFT JOIN websiteList w ON w.wID = m.source_wID AND w.delete_at IS NULL"
+        . " LEFT JOIN disk_usage du ON du.cpanel_user = w.wCPanelUser"
+        : "";
+
+    $baseSql = "SELECT m.id, m.name, m.url, m.category, m.check_interval, m.last_status,"
+             . " m.last_checked_at, m.last_response_ms, m.ssl_days_left{$diskCols}"
+             . " FROM monitors m{$diskJoin}"
+             . " WHERE m.delete_at IS NULL AND m.is_active = 1";
+
     // Problems first: a list sorted by id buries the handful of down sites among hundreds.
-    $rows = $qb->execute($db, $baseSql, "ORDER BY FIELD(last_status,'down','unknown','up'), name ASC")->fetchAll();
+    $rows = $qb->execute($db, $baseSql,
+        "ORDER BY FIELD(m.last_status,'down','unknown','up'), m.name ASC")->fetchAll();
+
+    //Usage Quota answers a different question — "what is filling up the servers?" —
+    //so it lists every hosting account, not only the ones we monitor. Accounts behind
+    //Draft/Unpublished sites still consume real disk, and those are exactly the ones
+    //the team needs to see to decide whether to clear them out or raise the quota.
+    if (($_POST['sort'] ?? '') === 'quota' && $hasDisk) {
+        $rows = $db->query(
+            "SELECT m.id, w.wProject AS name, w.wDomain AS url,
+                    COALESCE(m.category, '-') AS category,
+                    m.check_interval, m.last_status, m.last_checked_at,
+                    m.last_response_ms, m.ssl_days_left,
+                    du.percent AS disk_percent, du.used AS disk_used, du.quota AS disk_quota,
+                    du.cpanel_user, w.wLiveStatus
+               FROM disk_usage du
+               JOIN websiteList w
+                 ON w.wCPanelUser = du.cpanel_user AND w.delete_at IS NULL
+               LEFT JOIN monitors m
+                 ON m.source_wID = w.wID AND m.delete_at IS NULL AND m.is_active = 1
+              WHERE du.percent IS NOT NULL
+              ORDER BY du.percent DESC, w.wProject ASC"
+        )->fetchAll();
+    }
     $params['data']   = $rows;
     $params['status'] = 'ok';
 
