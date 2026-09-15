@@ -92,15 +92,34 @@ function checkTarget(array $monitor): array {
     $curlError  = curl_error($ch);
     curl_close($ch);
 
-    // WordPress fatal errors are served with HTTP 200, so the status code alone is not enough.
-    // ponytail: substring match on the stock WP error page; add more needles if other failure pages show up.
-    $isWpFatal = $httpCode >= 200 && $httpCode < 400
-        && stripos($body, 'There has been a critical error') !== false;
+    // A broken WordPress still answers with HTTP 200, so the status code alone is not
+    // enough — a full disk in particular usually shows as a database-connection page.
+    // Only checked on a 2xx/3xx body; a real page never contains these strings.
+    // ponytail: substring matching; add a needle here if another failure page turns up.
+    // Report the symptom the page actually shows, never a guessed cause: an
+    // "Error establishing a database connection" can be a full disk, a stopped
+    // MySQL, a bad wp-config, a PHP/plugin mismatch or a corrupted database.
+    $failureSignatures = [
+        'There has been a critical error'          => 'WordPress critical error (ดู error log ของเว็บเพื่อหาสาเหตุ)',
+        'Error establishing a database connection' => 'เชื่อมต่อฐานข้อมูลไม่ได้ (พื้นที่เต็ม / MySQL ล่ม / wp-config / plugin — ต้องตรวจเพิ่ม)',
+        'No space left on device'                  => 'พื้นที่เต็ม (No space left on device)',
+        'Disk quota exceeded'                      => 'พื้นที่เต็ม (Disk quota exceeded)',
+        'Allowed memory size of'                   => 'PHP memory หมด (Allowed memory size exhausted)',
+        'Maximum execution time of'                => 'PHP ทำงานเกินเวลา (Maximum execution time)',
+    ];
+
+    $wpFailure = null;
+    if ($httpCode >= 200 && $httpCode < 400) {
+        foreach ($failureSignatures as $needle => $label) {
+            if (stripos($body, $needle) !== false) { $wpFailure = $label; break; }
+        }
+    }
+    $isWpFatal = $wpFailure !== null;
 
     $status = ($httpCode >= 200 && $httpCode < 400 && !$isWpFatal) ? 'up' : 'down';
     if ($status === 'down') {
         $errorMsg = $isWpFatal
-            ? "WordPress critical error (HTTP {$httpCode})"
+            ? "{$wpFailure} (HTTP {$httpCode})"
             : ("HTTP {$httpCode}" . ($curlError ? " / {$curlError}" : ''));
     } else {
         $errorMsg = null;
@@ -229,6 +248,10 @@ function renderTemplate(object $db, string $key, array $monitor, array $result):
         '{sslExpiry}'   => $result['sslExpiry']   ?? '',
         '{sslDaysLeft}' => $result['sslDaysLeft'] ?? '',
         '{resolvedIP}'  => $result['resolvedIP'] ?? '',
+        '{diskUsed}'    => $result['diskUsed']    ?? '',
+        '{diskLimit}'   => $result['diskLimit']   ?? '',
+        '{diskPercent}' => $result['diskPercent'] ?? '',
+        '{cpanelUser}'  => $result['cpanelUser']  ?? '',
         '{time}'        => date('Y-m-d H:i:s'),
     ];
 
@@ -236,11 +259,12 @@ function renderTemplate(object $db, string $key, array $monitor, array $result):
         'down'      => ['[DOWN] {name} is unreachable',  "Monitor: {name}\nURL: {url}\nStatus: DOWN\nHTTP: {httpCode}\nError: {errorMsg}\nTime: {time}", 1],
         'recovered' => ['[RECOVERED] {name} is back online', "Monitor: {name}\nURL: {url}\nStatus: RECOVERED\nResponse: {responseMs}ms\nTime: {time}", 0],
         'ssl'       => ['[SSL WARNING] {name} - {sslDaysLeft} days left', "Monitor: {name}\nURL: {url}\nSSL Expiry: {sslExpiry}\nDays Left: {sslDaysLeft}\nTime: {time}", 0],
-        'wp_fatal'     => ['Wordpress There has been a critical error on this website', "Domain : {url}\nTime : {time}", 1],
+        'wp_fatal'     => ['Wordpress พัง - เว็บเปิดไม่ได้', "Domain : {domain}\nอาการ : {errorMsg}\nTime : {time}", 1],
         'unregistered' => ['Domain Live ใน Website list แต่ Down (ไม่ได้ถูกซื้อ)', "Domain : {url}\nTime : {time}", 1],
         'expired'      => ['Domain Live ใน Website list แต่ Down (แต่โดเมนหมดอายุ)', "Domain : {url}\nTime : {time}", 1],
         'ssl_expired'  => ['SSL หมดอายุแล้ว - เว็บเข้าไม่ได้', "Domain : {domain}\nSSL หมดอายุเมื่อ : {sslExpiry}\nTime : {time}", 1],
         'moved_away'   => ['Domain ไม่ได้ชี้มาที่ Server เราแล้ว (อาจยกเลิกบริการ)', "Domain : {domain}\nIP ปลายทาง : {resolvedIP}\nTime : {time}", 0],
+        'disk_warn'    => ['พื้นที่ใกล้เต็ม - เสี่ยงเว็บล่ม', "Domain : {domain}\ncPanel : {cpanelUser}\nใช้ไป : {diskUsed} / {diskLimit} ({diskPercent}%)\nTime : {time}", 0],
     ];
 
     $tpl = null;

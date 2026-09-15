@@ -16,19 +16,27 @@ let readAddonProduct = [];
 let couponObjectList = {};
 
 //Postal/zip code rules per country: pattern to validate, maxlength, and a hint for the error message
+//The form's country code for the United Kingdom is "UK", but the reference data
+//(postcode rules, states.json, cities.json) is keyed by the ISO code "GB".
+//Every lookup into that data has to go through here or it silently misses.
+function dataCountryCode(country){
+  return country === "UK" ? "GB" : country;
+}
+
+//Only the maximum length per country; the format itself is not validated.
 const zipRules = {
-  AU: { pattern: /^\d{4}$/,                 maxlength: 4,  hint: "4 digits (e.g. 3000)" },
-  NZ: { pattern: /^\d{4}$/,                 maxlength: 4,  hint: "4 digits (e.g. 6011)" },
-  TH: { pattern: /^\d{5}$/,                 maxlength: 5,  hint: "5 digits (e.g. 10110)" },
-  US: { pattern: /^\d{5}(-\d{4})?$/,        maxlength: 10, hint: "5 digits or ZIP+4 (e.g. 90210 or 90210-1234)" },
-  CA: { pattern: /^[A-Za-z]\d[A-Za-z][ ]?\d[A-Za-z]\d$/, maxlength: 7, hint: "format A1A 1A1 (e.g. K1A 0B1)" },
-  GB: { pattern: /^[A-Za-z]{1,2}\d[A-Za-z\d]?[ ]?\d[A-Za-z]{2}$/, maxlength: 8, hint: "e.g. SW1A 1AA" }
+  AU: { maxlength: 4 },
+  NZ: { maxlength: 4 },
+  TH: { maxlength: 5 },
+  US: { maxlength: 10 },
+  CA: { maxlength: 7 },
+  GB: { maxlength: 8 }
 };
 
 //Apply the zip rule for a country to the zip input (maxlength + allowed characters)
 function applyZipRule(country){
   const inputZip = $("#zip");
-  const rule = zipRules[country];
+  const rule = zipRules[dataCountryCode(country)];
   inputZip.removeClass("is-invalid");
   $(".zip-validate-error").remove();
   if (!rule) {
@@ -42,29 +50,12 @@ function applyZipRule(country){
   }
 }
 
-//Validate the zip against the selected country. Returns true when valid or when there is no rule.
-function isZipValid(){
-  const rule = zipRules[formData.formCountry];
-  const zip = $("#zip").val().trim();
-  if (!rule) { return true; }
-  return rule.pattern.test(zip);
-}
-
-//Show inline feedback on the zip field as soon as the user leaves it
+//Postal code format is no longer enforced: the real-world formats vary too much
+//to block a signup on. The field is still required, and maxlength still comes from
+//zipRules above. Kept as a no-op so the onblur handler in index.php keeps working.
 function checkZipField(){
-  const inputZip = $("#zip");
-  const rule = zipRules[formData.formCountry];
   $(".zip-validate-error").remove();
-  if (!rule || inputZip.val().trim() === "") {
-    inputZip.removeClass("is-invalid");
-    return;
-  }
-  if (isZipValid()) {
-    inputZip.removeClass("is-invalid");
-  } else {
-    inputZip.addClass("is-invalid");
-    inputZip.after('<span class="zip-validate-error" style="color:red;font-size:12px;display:block;">Please enter a valid postal code: ' + rule.hint + '</span>');
-  }
+  $("#zip").removeClass("is-invalid");
 }
 
 let cart = {
@@ -262,11 +253,6 @@ $(".next").on("click", function () {
 
     if (!$("#zip").val() || $("#zip").val().trim() === "") {
       $("#zip").after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your postal code</span>');
-      if (!hasError) { $("#zip").focus(); }
-      hasError = true;
-    } else if (!isZipValid()) {
-      const rule = zipRules[formData.formCountry];
-      $("#zip").after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter a valid postal code: ' + rule.hint + '</span>');
       if (!hasError) { $("#zip").focus(); }
       hasError = true;
     }
@@ -865,7 +851,7 @@ $('#formType').change(function() {
 
 //Generate all state options from selected country
 function optionState(){
-  let shopCountry = formData.formCountry;
+  let shopCountry = dataCountryCode(formData.formCountry);
   let optionState = $('.optionState');
   let allState = {};
 
@@ -881,6 +867,12 @@ function optionState(){
   reqState.done(function(res) {
     allState = res[shopCountry];
     optionState.empty().show();
+    if (!allState || !allState.state) {
+      //No data for this country: don't throw, just leave a usable prompt.
+      optionState.append("<option value=''>Please select Country</option>");
+      return;
+    }
+    optionState.append("<option value=''>Please select State</option>");
     jQuery.each( allState.state, function( i, val ) {
       optionState.append("<option value='"+val.text+"'>"+val.code+" : "+val.text+"</option>");
     });
@@ -905,7 +897,7 @@ let allCities = null;
 //keepExisting = false -> ผู้ใช้เปลี่ยน State เอง ค่าเมืองเดิมใช้ไม่ได้แล้ว ต้องล้าง
 function optionCity(keepExisting){
   if (keepExisting === undefined) { keepExisting = true; }
-  const shopCountry = formData.formCountry;
+  const shopCountry = dataCountryCode(formData.formCountry);
   const selectedState = $("#state").val();
   const optionCity = $(".optionCity");
 
