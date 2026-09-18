@@ -9,6 +9,10 @@ define('SSL_WARN_DAYS', 1);
 // Wait this long before re-testing a site that just failed, to ride out a brief blip.
 define('RECHECK_DELAY_SEC', 20);
 
+// How long a name must stay unresolvable before it is reported. The resolver on the
+// host misfires for a few minutes at a time; a domain that is really gone stays gone.
+define('DNS_FAIL_GRACE_MIN', 60);
+
 // Google Chat webhook for the "Website Down" space, used for every monitor.
 // Set MONITOR_CHAT_WEBHOOK in the environment, or drop the URL in chat_webhook.txt (gitignored).
 $__hookFile = __DIR__ . '/chat_webhook.txt';
@@ -87,8 +91,15 @@ if (!defined('MONITOR_FUNCTIONS_ONLY')) {
             }
         }
 
-        saveResult($db, $monitor, $result);
-        handleNotifications($db, $monitor, $result);
+        //Only the run that actually flipped the stored status announces it, so a
+        //concurrent run cannot send the same alert a second time.
+        $changed = saveResult($db, $monitor, $result);
+        if ($changed) {
+            handleNotifications($db, $monitor, $result);
+        } else {
+            //Status unchanged, but SSL warnings are time-based and still apply.
+            handleSslNotifications($db, $monitor, $result);
+        }
     }
 }
 
@@ -237,7 +248,8 @@ function domainReason(?string $host): string {
     return 'dns_fail';
 }
 
-function saveResult(object $db, array $monitor, array $result): void {
+/** Returns true only for the run that actually changed the stored status. */
+function saveResult(object $db, array $monitor, array $result): bool {
     $db->query(
         "INSERT INTO monitor_logs (monitor_id, checked_at, status, http_code, response_ms, ssl_expiry, ssl_days_left, error_msg, check_type)
          VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, 'auto')",
@@ -250,6 +262,10 @@ function saveResult(object $db, array $monitor, array $result): void {
         $result['errorMsg']
     );
 
+    //Claim the status change: only update when the stored status still differs.
+    //Two runs can be in flight at once (a scheduled sweep and a manual re-check,
+    //or a long DNS retry overlapping the next tick) and both would otherwise see
+    //the stale "up" they loaded at start and both announce the same outage.
     $db->query(
         "UPDATE monitors SET
             last_checked_at  = NOW(),
@@ -258,13 +274,27 @@ function saveResult(object $db, array $monitor, array $result): void {
             ssl_expiry_date  = ?,
             ssl_days_left    = ?,
             update_at        = NOW()
-         WHERE id = ?",
+         WHERE id = ? AND (last_status <> ? OR last_status IS NULL)",
         $result['status'],
         $result['responseMs'],
         $result['sslExpiry'],
         $result['sslDaysLeft'],
-        $monitor['id']
+        $monitor['id'],
+        $result['status']
     );
+    $changedStatus = $db->affectedRows() > 0;
+
+    //Nothing changed status-wise, but the check still happened — record that.
+    if (!$changedStatus) {
+        $db->query(
+            "UPDATE monitors SET last_checked_at = NOW(), last_response_ms = ?,
+                ssl_expiry_date = ?, ssl_days_left = ?, update_at = NOW()
+             WHERE id = ?",
+            $result['responseMs'], $result['sslExpiry'], $result['sslDaysLeft'], $monitor['id']
+        );
+    }
+
+    return $changedStatus;
 }
 
 /**
@@ -374,10 +404,71 @@ function handleNotifications(object $db, array $monitor, array $result): void {
         if ($key === 'down' && hasLeftOurServers($db, $result['resolvedIP'] ?? null)) {
             $key = 'moved_away';
         }
-        $msg = renderTemplate($db, $key, $monitor, $result);
-        if ($msg) sendNotifications($monitor, $msg['subject'], $msg['body'], $msg['mention']);
+
+        // The server's DNS resolver fails for a minute or two at a time and the site
+        // comes straight back. Those blips were the bulk of the alerts and the team
+        // started ignoring the channel. Stay quiet unless the name has failed to
+        // resolve for a sustained period — a genuinely dead domain always will.
+        $worthAnnouncing = $key !== 'dns_fail' || dnsFailurePersisted($db, $monitor['id']);
+
+        // Don't announce a recovery from an outage that was never announced — a
+        // lone "back to normal" with no preceding alert just confuses the channel.
+        if ($key === 'recovered' && !dnsOutageWasAnnounced($db, $monitor['id'])) {
+            $worthAnnouncing = false;
+        }
+
+        if ($worthAnnouncing) {
+            $msg = renderTemplate($db, $key, $monitor, $result);
+            if ($msg) sendNotifications($monitor, $msg['subject'], $msg['body'], $msg['mention']);
+        }
     }
 
+    handleSslNotifications($db, $monitor, $result);
+}
+
+/**
+ * Has this monitor failed DNS for long enough to be worth reporting?
+ *
+ * True when it has not resolved successfully for DNS_FAIL_GRACE_MIN and has failed
+ * at least twice in that window — which separates a dead domain from the resolver
+ * hiccups that clear on their own within a couple of checks.
+ */
+/**
+ * Was the outage this site is recovering from actually reported?
+ *
+ * Only DNS blips are ever suppressed, so a recovery is worth sending unless the
+ * failure right before it was a short DNS wobble that stayed quiet.
+ */
+function dnsOutageWasAnnounced(object $db, int $monitorId): bool {
+    $last = $db->query(
+        "SELECT status, error_msg FROM monitor_logs
+          WHERE monitor_id = ? AND status = 'down'
+          ORDER BY checked_at DESC LIMIT 1",
+        $monitorId
+    )->fetchArray();
+
+    if (!$last) return true;   // nothing to compare against — say it
+    $wasDnsBlip = stripos((string) $last['error_msg'], 'resolve host') !== false;
+    if (!$wasDnsBlip) return true;   // a real outage was announced
+
+    //It was a DNS failure: it was only announced if it had persisted.
+    return dnsFailurePersisted($db, $monitorId);
+}
+
+function dnsFailurePersisted(object $db, int $monitorId): bool {
+    $row = $db->query(
+        "SELECT
+            SUM(status = 'up') AS ups,
+            SUM(status = 'down' AND error_msg LIKE '%resolve host%') AS dns_fails
+         FROM monitor_logs
+         WHERE monitor_id = ? AND checked_at >= NOW() - INTERVAL ? MINUTE",
+        $monitorId, DNS_FAIL_GRACE_MIN
+    )->fetchArray();
+
+    return (int) ($row['ups'] ?? 0) === 0 && (int) ($row['dns_fails'] ?? 0) >= 2;
+}
+
+function handleSslNotifications(object $db, array $monitor, array $result): void {
     // SSL alerts, sent at most once per day per monitor.
     // Let's Encrypt renews itself at ~30 days, so warning that early is pure noise —
     // only warn once renewal has clearly not happened (SSL_WARN_DAYS), and again
