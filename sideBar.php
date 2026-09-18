@@ -275,6 +275,12 @@ include ('assets/api/checkSession.php');
                             </a>
                         </li>
                         <li class="nav-item pl-2">
+                            <a href="main.php?p=paymentPassword" class="nav-link <?php echo $activeMenu["lv2"] == "paymentPassword" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-key"></i>
+                                <p>Payment Password</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
                             <a href="main.php?p=formASAPLogs" class="nav-link <?php echo $activeMenu["lv2"] == "formASAPLogs" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-calendar-check"></i>
                                 <p>Upgrade to New System</p>

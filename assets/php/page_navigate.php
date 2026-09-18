@@ -213,6 +213,16 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataSignupLogs.php";
         $title = "Master panel : SignUp Logs (Staff)";
         break;
+    case "paymentPassword":
+        $showPage = "paymentPassword.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "paymentPassword";
+        // หน้านี้ init DataTable เอง (ต้องเรียงใหม่->เก่า และมีปุ่มในตาราง)
+        // ถ้าปล่อยให้ main.php init ให้ ค่า order/pageLength ที่ตั้งไว้จะไม่ถูกใช้
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Payment Password";
+        break;
     case "formASAPLogs":
         $showPage = "formASAPLogs.php";
         $activeMenu["lv1"] = "logs";
