@@ -26,7 +26,7 @@ include '../../assets/db/initPaymentsAPI.php';
 if ($paymentsApiSecret === '') {
     echo json_encode([
         'status'  => 'error',
-        'message' => 'ยังไม่ได้ตั้งค่า MASTERPANEL_RESET_SECRET บนเซิร์ฟเวอร์ ติดต่อทีม IT',
+        'message' => 'ยังไม่ได้ตั้งค่า secret ของ payments บนเซิร์ฟเวอร์ (assets/db/payments_secret.txt) ติดต่อทีม IT',
     ]);
     exit;
 }

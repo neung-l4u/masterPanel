@@ -164,3 +164,6 @@ assets/php/whm_tokens.json
 # Make credit dashboard: API token + fetched snapshots (do not commit)
 /modules/viewcreditmake/config.php
 /modules/viewcreditmake/cache/
+
+# Payments API secret (credential, do not commit)
+assets/db/payments_secret.txt

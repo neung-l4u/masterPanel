@@ -791,11 +791,14 @@ function buildItemRow(item) {
     const r = readItemKind(item);
     const qyt = item.qyt || '1';
     // ช่องราคากรอกเป็นราคาเต็มรวม VAT (fullamount) ตามที่ฝ่ายบัญชีกำหนด
-    // ใบเก่าที่ยังไม่มี fullamount ให้ถอดกลับจาก amount (ราคาก่อน VAT)
-    const hasFull = item.fullamount !== undefined && item.fullamount !== null && item.fullamount !== '';
-    const amount = hasFull
-        ? itemNum(item.fullamount)
-        : Math.round(itemNum(item.amount) * 1.07 * 100) / 100;
+    //
+    // ยึด amount (ฐานก่อน VAT) เป็นหลักเสมอ เพราะเป็นค่าที่ backend ใช้คำนวณ
+    // summary จริง ส่วน fullamount ใช้ได้ต่อเมื่อสอดคล้องกัน (= amount x 1.07)
+    // ถ้าไม่ตรงแปลว่าใบนั้นข้อมูลเพี้ยน ให้คำนวณใหม่จาก amount แทนการเชื่อค่าเดิม
+    // มิฉะนั้นค่าที่เพี้ยนจะถูกโหลดเข้าช่องกรอกแล้วหาร 1.07 ซ้ำทุกครั้งที่กดบันทึก
+    const base = Math.round(itemNum(item.amount) * 1.07 * 100) / 100;
+    const full = itemNum(item.fullamount);
+    const amount = (full > 0 && Math.abs(full - base) <= 0.02) ? full : base;
     const opt = function (k, label) {
         return '<option value="' + k + '"' + (k === r.kind ? ' selected' : '') + '>' + label + '</option>';
     };

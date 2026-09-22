@@ -42,14 +42,14 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h4 class="m-0">
-                    <i class="bi bi-key mr-2"></i> Payment Password
+                    <i class="bi bi-key mr-2"></i> Payment Password (Stripe)
                 </h4>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="main.php?p=home">Home</a></li>
                     <li class="breadcrumb-item">Logs</li>
-                    <li class="breadcrumb-item active">Payment Password</li>
+                    <li class="breadcrumb-item active">Payment Password (Stripe)</li>
                 </ol>
             </div>
         </div>
