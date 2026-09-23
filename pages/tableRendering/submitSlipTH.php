@@ -64,11 +64,6 @@ if (empty($invRows[0])) {
 
 $inv = $invRows[0];
 
-if ($inv['status'] === 'sent') {
-    echo json_encode(['success' => false, 'message' => 'Invoice นี้ส่ง Receipt แล้ว']);
-    exit;
-}
-
 // Save file
 // Allow alphanumeric (including Thai), underscore, and hyphen
 $safeName  = preg_replace('/[^\p{L}\p{M}\p{N}_\-]/u', '_', trim($inv['shopName']));

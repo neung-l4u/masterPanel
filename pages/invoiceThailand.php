@@ -62,6 +62,7 @@
                                             <th>Email</th>
                                             <th>Client</th>
                                             <th>Amount</th>
+                                            <th>Slip</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -206,7 +207,7 @@ let invoiceThTable = $('#invoiceThTable').DataTable({
     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
     columnDefs: [
         { targets: [0,1,2,3], className: 'dt-left' },
-        { targets: [4,5,6,7], className: 'dt-center', orderable: false }
+        { targets: [4,5,6,7,8], className: 'dt-center', orderable: false }
     ]
 });
 
@@ -257,7 +258,7 @@ window.openSendModal = function(invoiceId) {
             if (!itemsHtml) { itemsHtml = buildItemRow({}); }
 
             var slipViewBtn = r.slip
-                ? '<a href="modules/signup/assets/uploads/' + r.slip + '" target="_blank" class="btn btn-sm btn-outline-success mr-1"><i class="bi bi-image"></i> ดูสลิป</a>'
+                ? '<a href="modules/signup/assets/uploads/' + r.slip + '" target="_blank" class="btn btn-sm btn-outline-light mr-1"><i class="bi bi-image"></i> ดูสลิป</a>'
                 : '<span class="badge badge-secondary mr-1">ไม่มีสลิป</span>';
             var slipUploadBtn = isRejected
                 ? '<label class="btn btn-sm btn-outline-warning mb-0" style="cursor:pointer;"><i class="bi bi-upload"></i> แก้ไขสลิป<input type="file" id="slipReplaceInput" data-invoice="'+r.id+'" data-shop="'+r.name+'" accept="image/*,application/pdf" style="display:none;"></label>'
@@ -561,7 +562,7 @@ $(document).on('click', '.ief-btn-ok', function() {
 
     $(document).on('click', '#btnPreviewReceipt', function() {
         if (!pendingInvoiceId) return;
-        window.open('pages/receiptTH.php?invoice_id=' + pendingInvoiceId, '_blank');
+        window.open('pages/previewReceiptTH.php?invoice_id=' + pendingInvoiceId, '_blank');
         return;
         if (!currentInvoiceData) return;
         var r = currentInvoiceData;

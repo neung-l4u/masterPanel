@@ -73,14 +73,17 @@ foreach ($rows as $row) {
         $clientBadge = '<span class="badge badge-primary"><i class="bi bi-star mr-1"></i>First</span>';
     }
 
-    // Slip badge — based on actual slip in thReceipt
+    // Slip column — ดูสลิปถ้ามี, ถ้าไม่มีและเกิน 1 วันจากวันที่ส่ง invoice ให้เตือนตาม clientType
     $slipPath = $row['slip'] ?? '';
     if (!empty($slipPath)) {
-        $slipHtml = '<span class="badge badge-success"><i class="bi bi-check-circle"></i> มีสลิป</span>';
+        $slipUrl  = 'modules/signup/assets/uploads/' . $slipPath;
+        $slipHtml = '<button type="button" class="btn btn-sm btn-outline-success" onclick="viewSlip(\'' . htmlspecialchars($slipUrl, ENT_QUOTES) . '\')" title="ดูสลิป"><i class="bi bi-image"></i></button>';
     } else {
-        $invoiceStatus = $row['invoiceStatus'] ?? 'pending';
-        if ($invoiceStatus === 'sent') {
-            $slipHtml = '<span class="badge badge-success"><i class="bi bi-check-circle"></i> ส่งแล้ว</span>';
+        $daysSinceSent = (time() - strtotime($row['createdAt'])) / 86400;
+        if ($daysSinceSent >= 1) {
+            $slipHtml = ($clientType === 'subscription')
+                ? '<span class="badge badge-danger">ให้ PO ตาม slip</span>'
+                : '<span class="badge badge-danger">ให้ sale ตาม slip</span>';
         } else {
             $slipHtml = '<span class="badge badge-warning"><i class="bi bi-clock"></i> รอหลักฐาน</span>';
         }
@@ -108,6 +111,7 @@ foreach ($rows as $row) {
         $email,
         $clientBadge,
         $amount,
+        $slipHtml,
         $statusBadge,
         $sendBtn,
     ];
