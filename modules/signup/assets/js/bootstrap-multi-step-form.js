@@ -1244,7 +1244,8 @@ function addMainCart(name, price, amount, special, product_id){
   // Check for AI/Araya products and show acceptance checkbox
   const arayaKeywords = ["AI"];
   const arayaMatched = arayaKeywords.some(k => name.includes(k));
-  
+  $(".termsAI").toggleClass("d-none", !arayaMatched);
+
   // Remove existing Araya checkbox if present
   $(".boxArayaAcceptProduct").remove();
   

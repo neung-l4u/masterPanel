@@ -26,10 +26,36 @@
   li ol > li:before {
     content: counters(item, ".") " ";
   }
+  /* อ่านง่ายขึ้น: จำกัดความกว้างบรรทัด, ตัวใหญ่ขึ้น, เว้นระยะหัวข้อ */
+  .terms-doc {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #333;
+  }
+  .terms-doc .terms > li {
+    width: 100%;
+    margin-top: 0;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+  .terms-doc .terms > li:last-child { border-bottom: 0; }
+  .terms-doc .terms > li:before { color: #198754; font-weight: 700; font-size: 1.1rem; }
+  .terms-doc .terms > li > .text-success { margin-bottom: .4rem; letter-spacing: .02em; }
+  .terms-doc li ol { margin-top: .5rem; }
+  .terms-doc li ol > li { margin-top: .9rem; }
+  .terms-doc li ol > li:before { color: #198754; font-weight: 600; }
+  .terms-doc .terms b { display: block; color: #212529; margin-bottom: .2rem; }
+  .terms-doc .terms p { margin-bottom: .6rem; }
+  .terms-doc .terms p:last-child { margin-bottom: 0; }
+  .terms-doc .terms ul { margin: .4rem 0 0; }
+  .terms-doc .terms ul li { margin-bottom: .4rem; }
 </style>
 <div class="container container-fluid">
   <div class="card">
-    <div class="card-body">
+    <div class="card-body terms-doc">
       <h1 class="h3 title text-success">Website Terms Of Use.</h1>
       <p>
         &nbsp; &nbsp; &nbsp; &nbsp; Welcome to Local for You! These are the terms and conditions that govern
@@ -214,6 +240,154 @@
               non-payment or any other reason, Local for You shall not be liable
               for any lost business or revenue
             </div>
+          </li>
+
+          <!-- แสดงเฉพาะเมื่อเลือกโปรดักที่มีคำว่า AI (toggle ใน bootstrap-multi-step-form.js) -->
+          <li class="termsAI d-none">
+            <div class="text-success fs-5 fw-bold">AI RECEPTIONIST SERVICE</div>
+            <div>
+              These terms apply to the AI Receptionist service and supersede the general Cancellation Policy above.
+            </div>
+            <ol>
+              <li>
+                <div>
+                  <b>Monthly Minute Allowance</b>
+                  <p>
+                    Your subscription includes a fixed monthly allowance of AI receptionist minutes, as stated in your sign-up form.
+                    The allowance resets on your billing date each month. Unused minutes do not carry over. Additional minutes may be
+                    purchased at any time at the prevailing rates published by Local for You. Purchased minutes expire at the end of
+                    the billing cycle in which they are purchased and do not carry over.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Usage Alerts</b>
+                  <p>
+                    You will be notified by email at twenty (20) minutes remaining, again at five (5) minutes remaining, and each time
+                    your balance falls below zero. Your current balance and your prevailing top-up rate are shown at all times in your
+                    dashboard.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Overage and Negative Balance</b>
+                  <p>
+                    To avoid interrupting your business, the service continues to operate after your monthly allowance is exhausted.
+                    Minutes used beyond your allowance create a negative balance.
+                  </p>
+                  <p>
+                    A negative balance is deducted from the following month's allowance at no additional charge, provided your
+                    subscription remains active and payments are current. For example, a negative balance of fifty (50) minutes
+                    reduces a 250-minute allowance to 200 minutes on your next billing date.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Cancellation</b>
+                  <p>
+                    Cancellation of the AI Receptionist service requires thirty (30) days' written notice prior to your next billing
+                    date. No further monthly allowance is issued once notice is received.
+                  </p>
+                  <p>
+                    If your balance is positive when notice is received, the service continues on your remaining minutes and stops
+                    automatically when the balance reaches zero. No negative balance is permitted after notice is received.
+                  </p>
+                  <p>
+                    If your balance is already negative when notice is received, the service stops on that date.
+                  </p>
+                  <p>
+                    You will be notified by email before the service stops.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Feedback Credit</b>
+                  <p>
+                    A one-time credit of thirty (30) minutes may be issued on completion of our feedback form. The credit is added to
+                    your remaining balance and is available once per account. It does not extend the date on which your cancellation
+                    takes effect.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Final Invoice</b>
+                  <p>
+                    Any negative balance at the date of cancellation is charged on your final invoice at the prevailing top-up rate,
+                    rounded up to the nearest 100-minute block.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Call Recording and Call Data</b>
+                  <p>
+                    The AI Receptionist service records inbound calls and generates transcripts, call summaries and action items
+                    ("Call Data") as a standard part of the service.
+                  </p>
+                  <p>
+                    Call Data is made available to you through your dashboard and by email so that you can review and monitor calls
+                    received by your business. Local for You personnel may access Call Data solely for technical support, quality
+                    monitoring and service improvement.
+                  </p>
+                  <p>
+                    You must not publish, sell, distribute or otherwise disclose Call Data outside your business, except where
+                    required by law, and must restrict dashboard access to staff who require it.
+                  </p>
+                  <p>
+                    You are responsible for ensuring that calls to your business may lawfully be recorded in the jurisdiction in
+                    which you operate, including any notice or consent required of you as the business receiving the call. Local for
+                    You can configure your AI Receptionist to announce that the call is being recorded, on written request. Local for
+                    You accepts no liability for any claim arising from your failure to provide a required notice or obtain a
+                    required consent.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Data Protection and Privacy</b>
+              <p>
+                In delivering our services, Local for You processes personal data on your behalf. This may include customer names,
+                telephone numbers, email addresses, appointment and order details, call recordings and transcripts.
+              </p>
+              <p>
+                For the purposes of applicable data protection law, you are the data controller and Local for You is the data
+                processor. You are responsible for the lawful basis on which personal data is collected from your customers and for
+                providing your customers with a privacy notice.
+              </p>
+              <p>
+                Local for You engages third-party service providers, including cloud hosting, voice platform, telephony, booking
+                system and artificial intelligence providers, to deliver the services. By using our services you authorise Local for
+                You to share personal data with such providers to the extent necessary to deliver the services. Local for You remains
+                responsible for the performance of these providers.
+              </p>
+              <p>
+                Local for You will process personal data only for the purposes of delivering the services, will apply appropriate
+                technical and organisational security measures, and will notify you without undue delay on becoming aware of a
+                personal data breach affecting your data.
+              </p>
+              <p>
+                This clause is intended to meet the requirements of the Australian Privacy Act 1988 (Cth) and the Australian Privacy
+                Principles, the UK General Data Protection Regulation and Data Protection Act 2018, applicable United States federal
+                and state privacy laws, and the Thailand Personal Data Protection Act B.E. 2562 (2019), as applicable to the
+                jurisdiction in which you operate.
+              </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Changes to These Terms</b>
+                  <p>
+                    We may update these terms from time to time. We will notify you by email when we do. Continued use of the service
+                    after the date of that notice constitutes acceptance of the updated terms.
+                  </p>
+                </div>
+              </li>
+            </ol>
           </li>
         </ol>
       </div>
