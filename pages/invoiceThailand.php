@@ -87,6 +87,7 @@
             </div>
             <div class="modal-body text-center p-2">
                 <img id="slipImg" src="" alt="slip" style="max-width:100%; border-radius:8px;">
+                <iframe id="slipPdf" src="" style="display:none; width:100%; height:70vh; border:0; border-radius:8px;"></iframe>
             </div>
             <div class="modal-footer">
                 <a id="slipDownloadBtn" href="" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i> เปิดในแท็บใหม่</a>
@@ -220,7 +221,9 @@ $('#btnResetFilter').on('click', function() {
 let pendingInvoiceId = null;
 
 window.viewSlip = function(url) {
-    $('#slipImg').attr('src', url);
+    const isPdf = /\.pdf$/i.test(url);
+    $('#slipImg').toggle(!isPdf).attr('src', isPdf ? '' : url);
+    $('#slipPdf').toggle(isPdf).attr('src', isPdf ? url : '');
     $('#slipDownloadBtn').attr('href', url);
     $('#slipModal').modal('show');
     return false;

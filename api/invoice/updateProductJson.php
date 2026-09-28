@@ -80,6 +80,8 @@ try {
     $allowedKinds = ['product', 'setupfee', 'addon'];
     $table    = [];
     $subtotal = 0.0;
+    $fullTotal = 0.0;
+    $allHaveFull = true;
 
     foreach ($itemsIn as $idx => $it) {
         $kind = $it['kind'] ?? 'product';
@@ -104,17 +106,30 @@ try {
             'amount' => money2($amount),
         ];
         // fullamount = ราคาเต็มก่อนส่วนลด ใส่เฉพาะเมื่อมีค่าจริง
+        $q = (float)($qyt === '' ? 1 : $qyt);
         if (isset($it['fullamount']) && $it['fullamount'] !== '' && $it['fullamount'] !== null) {
             $entry['fullamount'] = money2($it['fullamount']);
+            $fullTotal += money($it['fullamount']) * $q;
+        } else {
+            $allHaveFull = false;
         }
 
         $table[]   = $entry;
-        $subtotal += $amount * (float)($qyt === '' ? 1 : $qyt);
+        $subtotal += $amount * $q;
     }
 
-    $subtotal = money($subtotal);
-    $vat      = money($subtotal * 0.07);
-    $gross    = money($subtotal + $vat);
+    if ($allHaveFull) {
+        // ราคาที่กรอกรวม VAT แล้ว: รวมยอดก่อนแล้วค่อยถอด VAT ครั้งเดียว
+        // ให้ตรงกับที่ modal แสดงและกับใบที่ signup สร้าง ถ้าถอดทีละรายการ
+        // เศษสตางค์จะสะสมจนยอดคลาด 0.01 ทุกครั้งที่กดบันทึก
+        $gross    = money($fullTotal);
+        $subtotal = money($gross / 1.07);
+        $vat      = money($gross - $subtotal);
+    } else {
+        $subtotal = money($subtotal);
+        $vat      = money($subtotal * 0.07);
+        $gross    = money($subtotal + $vat);
+    }
 
     // ---- ภาษีหัก ณ ที่จ่าย ----
     // ค่าเริ่มต้นอิงประเภทลูกค้า: นิติบุคคล 3% ของฐานก่อน VAT, บุคคลธรรมดา 0%

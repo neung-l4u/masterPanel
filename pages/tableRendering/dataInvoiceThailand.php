@@ -12,21 +12,23 @@ $dateEnd    = $_POST['dateEnd']    ?? '';
 $searchVal  = $_POST['search_val'] ?? '';
 
 $params = [];
-$query = "SELECT r.`id` AS receiptId, r.`invoice_id` AS id, r.`receiptID`, r.`amount_paid`, r.`status` AS receiptStatus, r.`slip`, r.`createdAt`, r.`sentAt`,
-                 i.`invoiceID`, i.`product`, i.`amount` AS invoiceAmount, i.`status` AS invoiceStatus, i.`wantGM`,
+$query = "SELECT r.`id` AS receiptId, i.`id` AS id, r.`receiptID`, r.`amount_paid`, r.`status` AS receiptStatus, r.`slip`, r.`sentAt`,
+                 i.`invoiceID`, i.`product`, i.`amount` AS invoiceAmount, i.`status` AS invoiceStatus, i.`wantGM`, i.`createdAt`,
                  c.`name`, c.`email` AS customerEmail, c.`phone` AS customerPhone,
                  c.`type`, c.`clientType`, c.`bankName`, c.`bankNumber` AS bankThaiNumber
-          FROM `thReceipt` r
-          JOIN `thInvoice` i ON i.`id` = r.`invoice_id`
+          FROM `thInvoice` i
+          LEFT JOIN `thReceipt` r ON r.`id` = (
+              SELECT MAX(r2.`id`) FROM `thReceipt` r2 WHERE r2.`invoice_id` = i.`id`
+          )
           JOIN `thCustomer` c ON c.`id` = i.`customer_id`
-          WHERE 1=1";
+          WHERE i.`status` != 'cancelled'";
 
 if (!empty($dateStart) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateStart)) {
-    $query .= ' AND DATE(r.createdAt) >= ?';
+    $query .= ' AND DATE(i.createdAt) >= ?';
     $params[] = $dateStart;
 }
 if (!empty($dateEnd) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateEnd)) {
-    $query .= ' AND DATE(r.createdAt) <= ?';
+    $query .= ' AND DATE(i.createdAt) <= ?';
     $params[] = $dateEnd;
 }
 if (!empty($searchVal)) {
@@ -39,7 +41,7 @@ if (!empty($searchVal)) {
 }
 
 $query .= ' AND (c.`clientType` != "subscription" OR (c.`clientType` = "subscription" AND i.`wantGM` = "1"))';
-$query .= ' ORDER BY r.id DESC';
+$query .= ' ORDER BY i.id DESC';
 
 $rows = empty($params) ? $db->query($query)->fetchAll() : $db->query($query, ...$params)->fetchAll();
 $data  = ['data' => []];
@@ -50,7 +52,7 @@ foreach ($rows as $row) {
     $name     = htmlspecialchars($row['name'] ?? '-');
     $email    = htmlspecialchars($row['customerEmail'] ?? '-');
     $phone    = htmlspecialchars($row['customerPhone'] ?? '-');
-    $amount = number_format((float)($row['amount_paid'] ?? 0), 2) . ' ฿';
+    $amount = number_format((float)($row['amount_paid'] ?? $row['invoiceAmount'] ?? 0), 2) . ' ฿';
     $date   = $row['createdAt'];
 
     // Type badge
@@ -73,11 +75,13 @@ foreach ($rows as $row) {
         $clientBadge = '<span class="badge badge-primary"><i class="bi bi-star mr-1"></i>First</span>';
     }
 
-    // Slip column — ดูสลิปถ้ามี, ถ้าไม่มีและเกิน 1 วันจากวันที่ส่ง invoice ให้เตือนตาม clientType
+    // Slip column — ดูสลิปถ้ามี, ถ้าไม่มีและเกิน 1 วันนับจากวันสร้าง invoice ให้เตือนตาม clientType
     $slipPath = $row['slip'] ?? '';
     if (!empty($slipPath)) {
         $slipUrl  = 'modules/signup/assets/uploads/' . $slipPath;
         $slipHtml = '<button type="button" class="btn btn-sm btn-outline-success" onclick="viewSlip(\'' . htmlspecialchars($slipUrl, ENT_QUOTES) . '\')" title="ดูสลิป"><i class="bi bi-image"></i></button>';
+    } elseif (($row['receiptStatus'] ?? '') === 'confirmed') {
+        $slipHtml = '<span class="text-muted">-</span>';
     } else {
         $daysSinceSent = (time() - strtotime($row['createdAt'])) / 86400;
         if ($daysSinceSent >= 1) {
@@ -102,7 +106,7 @@ foreach ($rows as $row) {
     }
 
     // Send button
-    $sendBtn = '<button class="btn btn-sm btn-primary" onclick="openSendModal(' . $id . ')"><i class="bi bi-send"></i> Send</button>';
+    $sendBtn = '<button class="btn btn-sm btn-primary" onclick="openSendModal(' . $id . ')"><i class="bi bi-eye"></i> View Data</button>';
 
     $data['data'][] = [
         $date,
