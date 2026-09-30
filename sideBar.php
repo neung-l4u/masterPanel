@@ -244,6 +244,16 @@ include ('assets/api/checkSession.php');
                         </li>
                     </ul>
                 </li>
+
+                <!-- Payment Admin -->
+                <?php if($userLevel <= 1){ ?>
+                <li class="nav-item">
+                    <a href="paymentAdmin.php" target="_blank" class="nav-link">
+                        <i class="nav-icon mr-2 bi bi-credit-card"></i>
+                        <p>Payment Admin &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
+                    </a>
+                </li>
+                <?php } ?>
                 
 
                 <!-- Logs -->
