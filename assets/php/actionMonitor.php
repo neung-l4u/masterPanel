@@ -252,7 +252,7 @@ if ($act === 'save') {
                     m.check_interval, m.last_status, m.last_checked_at,
                     m.last_response_ms, m.ssl_days_left,
                     du.percent AS disk_percent, du.used AS disk_used, du.quota AS disk_quota,
-                    du.cpanel_user, w.wLiveStatus
+                    du.cpanel_user, w.wLiveStatus, w.wWordpressURL
                FROM disk_usage du
                JOIN websiteList w
                  ON w.wCPanelUser = du.cpanel_user AND w.delete_at IS NULL

@@ -584,8 +584,8 @@ function loadList() {
         allMonitors = res.data || [];
         renderList();
         if (selectedId) {
-            const still = allMonitors.find(m => m.id == selectedId);
-            if (still) renderDetail(still); else clearDetail();
+            const still = allMonitors.find(m => rowKey(m) == selectedId);
+            if (still) showDetail(still); else clearDetail();
         }
     }, 'json');
 }
@@ -599,9 +599,7 @@ function renderList() {
     }
     const html = items.map(m => {
         const dotCls = m.last_status === 'up' ? 's-up' : m.last_status === 'down' ? 's-down' : 's-unknown';
-        //Accounts with no monitor row cannot be clicked through to a detail panel.
-        const noMonitor = quotaView && !m.id;
-        const active = m.id == selectedId ? 'active' : '';
+        const active = rowKey(m) == selectedId ? 'active' : '';
         //Disk pressure is only surfaced in the Usage Quota view, so the normal
         //list stays about up/down and does not turn into a wall of colour.
         const pct = m.disk_percent === null ? null : parseFloat(m.disk_percent);
@@ -618,7 +616,7 @@ function renderList() {
                 : `<span class="mon-tag">${h(tag)}</span>`
                   + `<span class="q-badge ${band}" title="${h(m.cpanel_user || '')}: ${h(m.disk_used || '')} / ${h(m.disk_quota || '')}">${pct.toFixed(0)}%</span>`;
         }
-        return `<div class="mon-row ${active}${rowCls}" ${noMonitor ? 'style="cursor:default"' : `onclick="selectMonitor(${m.id})"`} data-id="${m.id || ''}">
+        return `<div class="mon-row ${active}${rowCls}" data-key="${h(rowKey(m))}" onclick="selectRow(this.dataset.key)" data-id="${m.id || ''}">
             <span class="s-dot ${dotCls}"></span>
             <span class="mon-name">${h(m.name)}</span>
             ${badge}
@@ -629,11 +627,42 @@ function renderList() {
 
 function filterList() { renderList(); }
 
-function selectMonitor(id) {
-    selectedId = id;
-    const m = allMonitors.find(x => x.id == id);
-    if (m) renderDetail(m);
+//Usage Quota also lists accounts with no monitor row (Draft/Unpublished), so a row
+//is keyed by monitor id when it has one, otherwise by its cPanel account and URL.
+function rowKey(m) { return m.id ? String(m.id) : 'u:' + (m.cpanel_user || '') + '|' + (m.url || ''); }
+
+function showDetail(m) { m.id ? renderDetail(m) : renderAccountDetail(m); }
+
+function selectRow(key) {
+    selectedId = key;
+    const m = allMonitors.find(x => rowKey(x) == key);
+    if (m) showDetail(m);
     renderList();
+}
+
+//Detail for a hosting account we do not monitor: only the disk numbers exist.
+function renderAccountDetail(m) {
+    const pct = m.disk_percent === null ? null : parseFloat(m.disk_percent);
+    const withScheme = u => /^https?:\/\//i.test(u) ? u : 'https://' + u;
+    const url = withScheme(m.url || '');
+    //Draft sites are built on *.previewN.localforyou.com; wDomain is not live yet.
+    const preview = m.wWordpressURL ? withScheme(m.wWordpressURL) : '';
+    $('#detailPanel').html(`
+        <div class="detail-top">
+            <div>
+                <div class="detail-name">${h(m.name)}</div>
+                <a href="${h(url)}" target="_blank" class="detail-url">${h(m.url)}</a>
+                ${preview ? `<br><a href="${h(preview)}" target="_blank" class="detail-url">Preview: ${h(m.wWordpressURL)}</a>` : ''}
+            </div>
+            <span class="status-badge-unknown">${h(m.wLiveStatus || '-')}</span>
+        </div>
+        <div class="metrics-row">
+            <div class="metric"><div class="metric-val">${pct === null ? '—' : pct.toFixed(1) + '%'}</div><div class="metric-lbl">Disk Used</div></div>
+            <div class="metric"><div class="metric-val">${h(m.disk_used || '—')} / ${h(m.disk_quota || '—')}</div><div class="metric-lbl">Used / Quota</div></div>
+            <div class="metric"><div class="metric-val">${h(m.cpanel_user || '—')}</div><div class="metric-lbl">cPanel User</div></div>
+        </div>
+        <div style="font-size:.75rem;color:#94a3b8;margin-top:10px">เว็บนี้ไม่ได้อยู่ใน Monitor (สถานะ ${h(m.wLiveStatus || '-')}) จึงไม่มีประวัติ uptime/การตรวจ</div>
+    `);
 }
 
 function clearDetail() {
