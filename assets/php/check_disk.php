@@ -41,17 +41,7 @@ foreach (array_keys($servers) as $svID) {
 
     //Cache what WHM reported so the monitor page can sort and filter on it
     //without calling the API itself.
-    if ($db->query("SHOW TABLES LIKE 'disk_usage'")->fetchArray()) {
-        foreach ($usage as $acct => $d) {
-            $db->query(
-                "INSERT INTO disk_usage (cpanel_user, svID, used, quota, percent, checked_at)
-                      VALUES (?, ?, ?, ?, ?, NOW())
-                 ON DUPLICATE KEY UPDATE svID=VALUES(svID), used=VALUES(used),
-                      quota=VALUES(quota), percent=VALUES(percent), checked_at=NOW()",
-                $acct, (int) $svID, $d['used'], $d['limit'], $d['percent']
-            );
-        }
-    }
+    cacheDiskUsage($db, (string) $svID, $usage);
 
     // Match cPanel accounts back to the websites we watch.
     $sites = $db->query(

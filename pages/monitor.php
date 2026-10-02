@@ -405,6 +405,7 @@ $db->query(
             </div>
             <div style="display:flex;gap:8px">
                 <button class="btn-sync" id="btnCheckAll" onclick="checkAllNow()" hidden><i class="bi bi-lightning-charge me-1"></i>Re-check Down</button>
+                <button class="btn-sync" id="btnRefreshQuota" onclick="refreshQuota()" hidden><i class="bi bi-arrow-clockwise me-1"></i>Check Now</button>
                 <span id="checkAllNote" style="display:none;align-self:center;font-size:.72rem;color:#64748b;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
                 <button class="btn-sync" onclick="syncWebsiteList()"><i class="bi bi-arrow-repeat me-1"></i>Sync</button>
                 <button class="btn-add" onclick="openFormModal()"><i class="bi bi-plus-lg me-1"></i>Add Monitor</button>
@@ -715,6 +716,34 @@ function loadDetailExtras(id) {
 //is the useful action: confirm whether the failures are still real.
 function syncCheckAllVisibility() {
     document.getElementById('btnCheckAll').hidden = (statusFilter !== 'down');
+    document.getElementById('btnRefreshQuota').hidden = !quotaView;
+}
+
+//Pull fresh disk usage from WHM instead of waiting for the daily 08:30 run.
+//One request per server, so the button can say which server it is on and how far along.
+function refreshQuota() {
+    const $btn = $('#btnRefreshQuota');
+    const html = $btn.html();
+    const done = () => { $btn.prop('disabled', false).html(html); $('#checkAllNote').hide(); };
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังเริ่ม…');
+
+    $.post('assets/php/actionMonitor.php', { act: 'quotaServers' }, async function(res) {
+        if (res.status !== 'ok') { alert('ยังไม่ได้ตั้งค่า whm_tokens.json'); done(); return; }
+        const servers = res.data, failed = [];
+        for (let i = 0; i < servers.length; i++) {
+            const sv = servers[i];
+            $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>'
+                + Math.round(i / servers.length * 100) + '% (' + i + '/' + servers.length + ')');
+            $('#checkAllNote').text('กำลังดึง: ' + sv.name).show();
+            try {
+                const r = await $.post('assets/php/actionMonitor.php', { act: 'refreshQuota', svID: sv.svID }, null, 'json');
+                if (r.status !== 'ok') failed.push(sv.name);
+                else loadList();   // show this server's numbers now, not after the last one
+            } catch (e) { failed.push(sv.name); }
+        }
+        done();
+        if (failed.length) alert('ดึงจาก ' + failed.join(', ') + ' ไม่สำเร็จ');
+    }, 'json').fail(function() { alert('ดึงข้อมูลไม่สำเร็จ'); done(); });
 }
 
 function setCatFilter(el) {

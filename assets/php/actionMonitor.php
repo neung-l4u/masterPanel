@@ -338,6 +338,33 @@ if ($act === 'save') {
     $params['incidents']  = $incidents;
     $params['status']     = 'ok';
 
+// ── REFRESH DISK USAGE NOW ─────────────────────────────────────────────────
+// Same cache refresh as the daily check_disk.php run, but without the Google Chat
+// alerts — someone looking at the page does not need the team pinged again.
+// The page asks for the server list first, then refreshes one server per request,
+// so it can show which server it is on and how far along it is.
+} elseif ($act === 'quotaServers') {
+    require_once __DIR__ . '/whmDiskCheck.php';
+    $ids = array_map('strval', array_keys(whmServers()));
+    $names = [];
+    if ($ids) {
+        $rows = $db->query(
+            "SELECT svID, svName FROM L4UServers WHERE svID IN (" . implode(',', array_fill(0, count($ids), '?')) . ")",
+            ...$ids
+        )->fetchAll();
+        foreach ($rows as $r) { $names[(string) $r['svID']] = $r['svName']; }
+    }
+    $params['data'] = array_map(fn($id) => ['svID' => $id, 'name' => $names[$id] ?? "Server {$id}"], $ids);
+    $params['status'] = $ids ? 'ok' : 'no_tokens';
+
+} elseif ($act === 'refreshQuota') {
+    require_once __DIR__ . '/whmDiskCheck.php';
+    $svID  = (string) ($_POST['svID'] ?? '');
+    $usage = whmAccountUsage($svID);   // [] for an unknown svID too
+    if ($usage) { cacheDiskUsage($db, $svID, $usage); }
+    $params['accounts'] = count($usage);
+    $params['status']   = $usage ? 'ok' : 'failed';
+
 // ── SYNC FROM WEBSITE LIST ─────────────────────────────────────────────────
 } elseif ($act === 'syncWebsiteList') {
     $websites = $db->query(

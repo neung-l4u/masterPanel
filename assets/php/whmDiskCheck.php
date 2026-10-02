@@ -69,6 +69,20 @@ function whmAccountUsage(string $svID): array {
     return $out;
 }
 
+/** Upsert one server's usage into disk_usage. No-op until the table exists. */
+function cacheDiskUsage($db, string $svID, array $usage): void {
+    if (!$db->query("SHOW TABLES LIKE 'disk_usage'")->fetchArray()) return;
+    foreach ($usage as $acct => $d) {
+        $db->query(
+            "INSERT INTO disk_usage (cpanel_user, svID, used, quota, percent, checked_at)
+                  VALUES (?, ?, ?, ?, ?, NOW())
+             ON DUPLICATE KEY UPDATE svID=VALUES(svID), used=VALUES(used),
+                  quota=VALUES(quota), percent=VALUES(percent), checked_at=NOW()",
+            $acct, (int) $svID, $d['used'], $d['limit'], $d['percent']
+        );
+    }
+}
+
 /**
  * Percentage used, or null when the account has no quota ("unlimited") or the
  * values cannot be read. WHM reports sizes like "512M", "20G", "0".
