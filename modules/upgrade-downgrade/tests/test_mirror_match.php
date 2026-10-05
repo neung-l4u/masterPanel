@@ -19,6 +19,7 @@ echo "== udmNormalizeEmail ==\n";
 test("lowercases", udmNormalizeEmail('Owner@Shop.COM') === 'owner@shop.com');
 test("trims", udmNormalizeEmail('  a@b.com  ') === 'a@b.com');
 test("trims non-breaking space", udmNormalizeEmail("a@b.com\xC2\xA0") === 'a@b.com');
+test("trims a leading non-breaking space", udmNormalizeEmail("\xC2\xA0a@b.com") === 'a@b.com');
 test("null becomes empty string", udmNormalizeEmail(null) === '');
 test("empty stays empty", udmNormalizeEmail('') === '');
 
@@ -29,6 +30,14 @@ test("collapses inner whitespace",
 test("trims", udmNormalizeShopName('  Demo Eats - USA  ') === 'demo eats - usa');
 test("null becomes empty string", udmNormalizeShopName(null) === '');
 test("keeps non-ASCII intact", udmNormalizeShopName('ร้านอาหารไทย') === 'ร้านอาหารไทย');
+
+// A byte-set trim() would eat the trailing 0xA0 of ภ (U+0E20 = E0 B8 A0),
+// leaving invalid UTF-8 that normalizes to '' and silently kills the fallback.
+test("keeps a name ending in a 0xA0-byte character", udmNormalizeShopName('ลาภ') === 'ลาภ');
+test("keeps that character mid-name", udmNormalizeShopName('ร้านภ') === 'ร้านภ');
+test("keeps a leading U+0080-00BF character", udmNormalizeShopName('© Shop') === '© shop');
+test("strips a surrounding nbsp", udmNormalizeShopName("\xC2\xA0Cher Thai\xC2\xA0") === 'cher thai');
+test("collapses an inner nbsp", udmNormalizeShopName("Cher\xC2\xA0Thai") === 'cher thai');
 
 echo "== udmResolveShopId: relation wins ==\n";
 $shopsByName = [

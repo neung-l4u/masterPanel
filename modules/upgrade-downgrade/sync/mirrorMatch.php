@@ -15,8 +15,12 @@
 function udmNormalizeEmail(?string $email): string
 {
     if ($email === null) return '';
-    // Includes the non-breaking space, which copy-paste from Monday carries in.
-    return strtolower(trim($email, " \t\n\r\0\x0B\xC2\xA0"));
+    // Strips the non-breaking space that copy-paste from Monday carries in.
+    // A /u regex, not trim(): trim() takes a BYTE set, so listing "\xC2\xA0"
+    // there strips a lone trailing 0xA0 byte and truncates any multibyte
+    // character whose encoding ends in 0xA0, leaving invalid UTF-8.
+    $email = preg_replace('/^[\s\x{00A0}]+|[\s\x{00A0}]+$/u', '', $email);
+    return strtolower($email);
 }
 
 /**
@@ -27,8 +31,12 @@ function udmNormalizeEmail(?string $email): string
 function udmNormalizeShopName(?string $name): string
 {
     if ($name === null) return '';
-    $name = trim($name, " \t\n\r\0\x0B\xC2\xA0");
-    $name = preg_replace('/\s+/u', ' ', $name);
+    // See udmNormalizeEmail: a byte-set trim() would corrupt a name ending in
+    // a multibyte character whose encoding ends in 0xA0 -- Thai U+0E20 is
+    // E0 B8 A0, so 'ลาภ' would be truncated to invalid UTF-8 and then
+    // normalize to an empty string, silently breaking the name fallback.
+    $name = preg_replace('/^[\s\x{00A0}]+|[\s\x{00A0}]+$/u', '', $name);
+    $name = preg_replace('/[\s\x{00A0}]+/u', ' ', $name);
     return mb_strtolower($name, 'UTF-8');
 }
 
