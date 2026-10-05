@@ -321,6 +321,7 @@ echo "== udmNormalizeEmail ==\n";
 test("lowercases", udmNormalizeEmail('Owner@Shop.COM') === 'owner@shop.com');
 test("trims", udmNormalizeEmail('  a@b.com  ') === 'a@b.com');
 test("trims non-breaking space", udmNormalizeEmail("a@b.com\xC2\xA0") === 'a@b.com');
+test("trims a leading non-breaking space", udmNormalizeEmail("\xC2\xA0a@b.com") === 'a@b.com');
 test("null becomes empty string", udmNormalizeEmail(null) === '');
 test("empty stays empty", udmNormalizeEmail('') === '');
 
@@ -331,6 +332,14 @@ test("collapses inner whitespace",
 test("trims", udmNormalizeShopName('  Demo Eats - USA  ') === 'demo eats - usa');
 test("null becomes empty string", udmNormalizeShopName(null) === '');
 test("keeps non-ASCII intact", udmNormalizeShopName('ร้านอาหารไทย') === 'ร้านอาหารไทย');
+
+// A byte-set trim() would eat the trailing 0xA0 of ภ (U+0E20 = E0 B8 A0),
+// leaving invalid UTF-8 that normalizes to '' and silently kills the fallback.
+test("keeps a name ending in a 0xA0-byte character", udmNormalizeShopName('ลาภ') === 'ลาภ');
+test("keeps that character mid-name", udmNormalizeShopName('ร้านภ') === 'ร้านภ');
+test("keeps a leading U+0080-00BF character", udmNormalizeShopName('© Shop') === '© shop');
+test("strips a surrounding nbsp", udmNormalizeShopName("\xC2\xA0Cher Thai\xC2\xA0") === 'cher thai');
+test("collapses an inner nbsp", udmNormalizeShopName("Cher\xC2\xA0Thai") === 'cher thai');
 
 echo "== udmResolveShopId: relation wins ==\n";
 $shopsByName = [
@@ -397,8 +406,12 @@ Create `modules/upgrade-downgrade/sync/mirrorMatch.php`:
 function udmNormalizeEmail(?string $email): string
 {
     if ($email === null) return '';
-    // Includes the non-breaking space, which copy-paste from Monday carries in.
-    return strtolower(trim($email, " \t\n\r\0\x0B\xC2\xA0"));
+    // Strips the non-breaking space that copy-paste from Monday carries in.
+    // A /u regex, not trim(): trim() takes a BYTE set, so listing "\xC2\xA0"
+    // there strips a lone trailing 0xA0 byte and truncates any multibyte
+    // character whose encoding ends in 0xA0, leaving invalid UTF-8.
+    $email = preg_replace('/^[\s\x{00A0}]+|[\s\x{00A0}]+$/u', '', $email);
+    return strtolower($email);
 }
 
 /**
@@ -409,8 +422,12 @@ function udmNormalizeEmail(?string $email): string
 function udmNormalizeShopName(?string $name): string
 {
     if ($name === null) return '';
-    $name = trim($name, " \t\n\r\0\x0B\xC2\xA0");
-    $name = preg_replace('/\s+/u', ' ', $name);
+    // See udmNormalizeEmail: a byte-set trim() would corrupt a name ending in
+    // a multibyte character whose encoding ends in 0xA0 -- Thai U+0E20 is
+    // E0 B8 A0, so 'ลาภ' would be truncated to invalid UTF-8 and then
+    // normalize to an empty string, silently breaking the name fallback.
+    $name = preg_replace('/^[\s\x{00A0}]+|[\s\x{00A0}]+$/u', '', $name);
+    $name = preg_replace('/[\s\x{00A0}]+/u', ' ', $name);
     return mb_strtolower($name, 'UTF-8');
 }
 
@@ -446,7 +463,8 @@ function udmResolveShopId(array $subscription, array $shopsByName): array
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `php modules/upgrade-downgrade/tests/test_mirror_match.php`
-Expected: all `PASS:`, final line `Passed: 22  Failed: 0`, exit 0.
+Expected: all `PASS:`, every assertion passing, exit 0. (Count the assertions in
+the test above rather than trusting a number here.)
 
 - [ ] **Step 5: Commit**
 
