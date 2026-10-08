@@ -82,6 +82,7 @@ function udmMondayRequest(string $token, string $gql, int $timeout = 90): array
  * Returns the last response, so the caller still sees the error after the final
  * attempt.
  */
+if (!function_exists('udmMondayRequestRetrying')) {
 function udmMondayRequestRetrying(string $token, string $gql, int $attempts = 3): array
 {
     $res = ['error' => 'no attempt made'];
@@ -95,4 +96,5 @@ function udmMondayRequestRetrying(string $token, string $gql, int $attempts = 3)
     }
 
     return $res;
+}
 }

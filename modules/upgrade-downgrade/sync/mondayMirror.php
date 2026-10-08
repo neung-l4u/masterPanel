@@ -226,6 +226,14 @@ function udmFetchAllPages(string $token, callable $queryFor, callable $extract):
         if (!$cursor) break;
     }
 
+    // Exhausting the page cap with a cursor still pending means the board is
+    // larger than UDM_MAX_PAGES * UDM_PAGE_LIMIT. Returning the partial set
+    // here would hand a truncated board to the stale-row deletion, which is
+    // the exact failure this function exists to prevent.
+    if ($cursor) {
+        return ['rows' => [], 'error' => 'page cap reached with more pages pending; raise UDM_MAX_PAGES'];
+    }
+
     return ['rows' => $rows, 'error' => null];
 }
 
@@ -267,7 +275,25 @@ function udmSyncCountry($db, string $token, string $country, string $syncedAt): 
 
     foreach (array_chunk($contactIds, UDM_CONTACT_CHUNK) as $chunk) {
         $res = udmMondayRequestRetrying($token, udmContactBatchQuery($chunk));
-        foreach (($res['data']['items'] ?? []) as $item) {
+
+        // A chunk that failed its retries must abort the country before any
+        // write. Proceeding would upsert every shop in the chunk with an empty
+        // email, and because the upsert sets email = VALUES(email)
+        // unconditionally, that ERASES the previously-mirrored address. The
+        // email is the customer-mode lookup key, so those shops would silently
+        // become unfindable -- and the country would still report success and
+        // run its stale-row deletion.
+        //
+        // Note the test is isset($res['data']), not the absence of an error
+        // key: Monday also answers with error_message/error_code on rate
+        // limits, which an error-key check would read as success.
+        if (!isset($res['data']['items'])) {
+            $msg = $res['error'] ?? ($res['errors'][0]['message'] ?? 'unknown Monday error');
+            return ['country' => $country, 'error' => 'contact batch failed: ' . $msg,
+                    'shops' => 0, 'deleted' => 0];
+        }
+
+        foreach ($res['data']['items'] as $item) {
             $contacts[(string) $item['id']] = udmExtractContactFields($item);
         }
     }

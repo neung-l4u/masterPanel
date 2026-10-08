@@ -14,6 +14,7 @@
  * re-running over unchanged data hits that case constantly. So existence is
  * checked first rather than inferred from affected_rows.
  */
+if (!function_exists('udmUpsertShop')) {
 function udmUpsertShop($db, array $shop, string $syncedAt): string
 {
     $existing = $db->query(
@@ -49,6 +50,7 @@ function udmUpsertShop($db, array $shop, string $syncedAt): string
 
     return $action;
 }
+}
 
 /**
  * Insert or update one mirrored subscription. Returns 'inserted' or 'updated'.
@@ -56,6 +58,7 @@ function udmUpsertShop($db, array $shop, string $syncedAt): string
  * price is bound as a string so a null stays null instead of being coerced to
  * 0.00, which would misreport a free or unpriced line as costing nothing.
  */
+if (!function_exists('udmUpsertSubscription')) {
 function udmUpsertSubscription($db, array $sub, string $syncedAt): string
 {
     $existing = $db->query(
@@ -94,11 +97,13 @@ function udmUpsertSubscription($db, array $sub, string $syncedAt): string
 
     return $action;
 }
+}
 
 /**
  * Map of normalized shop name => shop_id for one country, for the fallback
  * match in udmResolveShopId.
  */
+if (!function_exists('udmLoadShopNameMap')) {
 function udmLoadShopNameMap($db, string $country): array
 {
     $rows = $db->query(
@@ -113,6 +118,7 @@ function udmLoadShopNameMap($db, string $country): array
     }
     return $map;
 }
+}
 
 /**
  * Drop shops in this country that the current run did not refresh, so closed
@@ -121,6 +127,7 @@ function udmLoadShopNameMap($db, string $country): array
  * Scoped by country because a country whose Monday fetch failed is skipped
  * entirely; deleting globally would wipe the rows of every skipped country.
  */
+if (!function_exists('udmDeleteStaleShops')) {
 function udmDeleteStaleShops($db, string $country, string $syncedAt): int
 {
     $db->query(
@@ -128,6 +135,7 @@ function udmDeleteStaleShops($db, string $country, string $syncedAt): int
         $country, $syncedAt
     );
     return (int) $db->affectedRows();
+}
 }
 
 /**
@@ -137,6 +145,7 @@ function udmDeleteStaleShops($db, string $country, string $syncedAt): int
  * Not scoped by country: the subscriptions board is one global board, synced
  * in one pass, so anything older than this run's timestamp is genuinely gone.
  */
+if (!function_exists('udmDeleteStaleSubscriptions')) {
 function udmDeleteStaleSubscriptions($db, string $syncedAt): int
 {
     $db->query(
@@ -144,4 +153,5 @@ function udmDeleteStaleSubscriptions($db, string $syncedAt): int
         $syncedAt
     );
     return (int) $db->affectedRows();
+}
 }
