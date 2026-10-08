@@ -460,6 +460,51 @@ function udmResolveShopId(array $subscription, array $shopsByName): array
 }
 ```
 
+- [ ] **Step 3b: Deny web access to the log directory**
+
+Being gitignored is not the same as being unreachable. Without this, anyone can
+fetch `assets/logs/lookup.log` over HTTP and read the client IPs and the email
+hash list, which turns the control that exists to *detect* enumeration into an
+oracle for confirming a guessed address against a logged `outcome=found`.
+
+Create `modules/upgrade-downgrade/assets/logs/.htaccess`:
+
+```apache
+# The lookup and sync logs are an audit trail, not web content.
+#
+# Being gitignored is not the same as being unreachable: without this, anyone
+# could fetch lookup.log over HTTP and read the client IPs and the email hash
+# list -- turning the control that exists to DETECT enumeration into an oracle
+# for confirming a guessed address against a logged outcome=found.
+#
+# Apache 2.4 and 2.2 spellings, so the deny survives either.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
+
+# Directory listing is off regardless of the server-wide default.
+Options -Indexes
+```
+
+The logs directory is gitignored, so this file needs a force-add or the deny
+never reaches the server:
+
+```bash
+git add -f modules/upgrade-downgrade/assets/logs/.htaccess
+```
+
+Verify, with the server running:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" "http://localhost/<project>/modules/upgrade-downgrade/assets/logs/lookup.log"
+```
+
+Expected: `403`.
+
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `php modules/upgrade-downgrade/tests/test_mirror_match.php`
@@ -2566,6 +2611,8 @@ set_exception_handler(function ($e) {
     exit(1);
 });
 
+// Adjust the host path to wherever the server actually serves this checkout.
+// A worktree is served under its own directory name, not the main project's.
 const ENDPOINT = 'http://localhost/masterPanel/modules/upgrade-downgrade/assets/API/lookupByEmail.php';
 
 /** @return array{status:int, json:?array, body:string} */
@@ -2612,10 +2659,23 @@ test("returns the shop name", ($r['json']['shop']['shopName'] ?? '') === 'Endpoi
 test("returns one subscription", count($r['json']['subscriptions'] ?? []) === 1);
 test("subscription name is the product group",
      ($r['json']['subscriptions'][0]['name'] ?? '') === 'Local Starter Solo');
-test("no price reaches the client",
-     !isset($r['json']['subscriptions'][0]['price'])
-     && !isset($r['json']['subscriptions'][0]['currency']));
-test("does not echo the email back", !isset($r['json']['shop']['email']));
+
+$shopKeys = array_keys($r['json']['shop'] ?? []);
+test("the hit actually returned a shop object, so the key checks below mean something",
+     $shopKeys !== []);
+// Asserted POSITIVELY, against the exact key set. A negative !isset() check
+// passes vacuously whenever the payload is null -- which is what happens on a
+// 404 or any failed decode -- so the two assertions guarding this endpoint's
+// headline promises were the two that proved nothing. Pinning the key list also
+// catches a field added later, which a !isset() check never would.
+sort($shopKeys);
+test("the shop returns exactly the fields the form fills, and no email",
+     $shopKeys === ['boardId', 'ownerName', 'phone', 'shopId', 'shopName', 'shopType']);
+
+$subKeys = array_keys($r['json']['subscriptions'][0] ?? []);
+sort($subKeys);
+test("a subscription returns exactly id, name and rawName, with no price",
+     $subKeys === ['id', 'name', 'rawName']);
 
 echo "== no match ==\n";
 $r = call(['country' => 'ZZ', 'email' => 'nobody@nowhere.com']);
@@ -2654,6 +2714,37 @@ $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 test("POST is rejected with 405", $status === 405);
 
+echo "== response headers ==\n";
+// Nothing in the suite covered these, so adding CORS or dropping no-store would
+// have gone unnoticed -- both are stated security properties of this endpoint.
+$ch = curl_init(ENDPOINT . '?' . http_build_query(['country' => 'ZZ', 'email' => 'endpoint@testshop.com']));
+curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true,
+                        CURLOPT_NOBODY => true, CURLOPT_TIMEOUT => 15]);
+$rawHeaders = (string) curl_exec($ch);
+curl_close($ch);
+test("sends Cache-Control: no-store, so a proxy cannot retain a shop's details",
+     stripos($rawHeaders, 'Cache-Control: no-store') !== false);
+test("sends no Access-Control-Allow-Origin, keeping it same-origin only",
+     stripos($rawHeaders, 'Access-Control-Allow-Origin') === false);
+test("sends JSON content type", stripos($rawHeaders, 'application/json') !== false);
+
+echo "== array input cannot leak a path or break the JSON ==\n";
+// A (string) cast on an array emits a warning carrying this file's absolute
+// path, and that warning also makes the body invalid JSON.
+$r = call(['country' => ['ZZ'], 'email' => 'endpoint@testshop.com']);
+test("still valid JSON", is_array($r['json']));
+test("no absolute path in the body", stripos($r['body'], ':\\') === false
+     && stripos($r['body'], 'Warning') === false);
+test("reports found false", ($r['json']['found'] ?? null) === false);
+
+echo "== a newline in country cannot forge a log line ==\n";
+$logFile = __DIR__ . '/../assets/logs/lookup.log';
+$linesBefore = is_file($logFile) ? count(file($logFile)) : 0;
+call(['country' => "Z\n[2026-01-01 00:00:00] 9.9.9.9 country=XX email=forged outcome=found",
+      'email'   => 'endpoint@testshop.com']);
+$linesAfter = is_file($logFile) ? count(file($logFile)) : 0;
+test("one request appends exactly one log line", ($linesAfter - $linesBefore) === 1);
+
 $db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST\_%'");
 $db->query("DELETE FROM l4u_ud_shops WHERE country = 'ZZ'");
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
@@ -2681,82 +2772,120 @@ Create `modules/upgrade-downgrade/assets/API/lookupByEmail.php`:
  * SECURITY: this endpoint is unauthenticated -- it sits behind a public
  * customer-facing form -- and it returns an owner name and phone number to
  * anyone who supplies a matching email. That is an email enumeration surface.
- * It is narrowed deliberately: only the fields the form fills are returned,
- * the email is never echoed back, a miss is indistinguishable from malformed
- * input in shape, and every query is logged with its outcome.
+ * It is narrowed deliberately: only the fields the form fills are returned, the
+ * email is never echoed back, and every query is logged with its outcome.
+ *
+ * Note a miss and malformed input are NOT the same shape: a miss is
+ * {"found":false} while rejected input carries a "reason". That distinction is
+ * deliberate and costs nothing -- every "reason" is a statement about input the
+ * caller already controls, so it reveals nothing about the database. The
+ * unavoidable disclosure is the found/not-found bit itself.
+ *
+ * Rate limiting is deliberately not implemented here; see the design doc. With
+ * none, an attempt costs about 11ms unthrottled.
  */
 
 date_default_timezone_set("Asia/Bangkok");
+
+// Set FIRST, before any output or include. A PHP warning rendered into the body
+// would leak this file's absolute path to an anonymous caller and would also
+// make the response invalid JSON, which the form's parse then fails on.
+error_reporting(E_ERROR | E_PARSE);
+ini_set('display_errors', '0');
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 // No Access-Control-Allow-Origin: this is called same-origin from the form,
 // unlike the existing read-only board caches which are shared more widely.
 
-if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
-    http_response_code(405);
-    echo json_encode(['found' => false, 'reason' => 'method not allowed']);
-    exit;
-}
-
-$country = isset($_GET['country']) ? trim((string) $_GET['country']) : '';
-$email   = isset($_GET['email'])   ? trim((string) $_GET['email'])   : '';
-
-/** Log every call so enumeration attempts are visible after the fact. */
+/**
+ * Log every call so enumeration attempts are visible after the fact.
+ *
+ * The email is hashed: a log of plaintext customer addresses is itself a
+ * liability. The hash is for correlating repeated probes, not for
+ * confidentiality -- a short unsalted digest of a known candidate address is
+ * trivially confirmable, which is why the log must not be publicly readable
+ * (see the .htaccess in assets/logs).
+ */
 function udmLogLookup(string $country, string $email, string $outcome): void
 {
     $logDir = __DIR__ . '/../logs';
     if (!is_dir($logDir)) {
         @mkdir($logDir, 0700, true);
     }
+
+    // Strip everything but letters. Callers reach this function before the
+    // country is validated, and an unsanitised newline would let an attacker
+    // append a complete forged line -- defeating the one control that exists to
+    // detect them.
+    $countrySafe = preg_replace('/[^A-Za-z]/', '', $country);
+    if ($countrySafe === '' || $countrySafe === null) {
+        $countrySafe = '-';
+    }
+
     $line = sprintf(
         "[%s] %s country=%s email=%s outcome=%s\n",
         date('Y-m-d H:i:s'),
-        $_SERVER['REMOTE_ADDR'] ?? '-',
-        $country !== '' ? $country : '-',
+        preg_replace('/[^0-9a-fA-F:.]/', '', (string) ($_SERVER['REMOTE_ADDR'] ?? '-')) ?: '-',
+        substr($countrySafe, 0, 8),
         $email !== '' ? substr(hash('sha256', strtolower($email)), 0, 12) : '-',
-        $outcome
+        preg_replace('/[^a-z-]/', '', $outcome)
     );
     @file_put_contents($logDir . '/lookup.log', $line, FILE_APPEND | LOCK_EX);
 }
 
-if ($country === '' || $email === '') {
-    udmLogLookup($country, $email, 'missing-parameter');
-    echo json_encode(['found' => false, 'reason' => 'country and email are both required']);
+/** Refuse and stop, with a body that never carries internals. */
+function udmLookupRefuse(int $status, string $reason, string $country, string $email, string $outcome): void
+{
+    if ($status !== 200) {
+        http_response_code($status);
+    }
+    udmLogLookup($country, $email, $outcome);
+    echo json_encode(['found' => false, 'reason' => $reason]);
     exit;
 }
 
-if (strlen($country) !== 2) {
-    udmLogLookup($country, $email, 'bad-country');
-    echo json_encode(['found' => false, 'reason' => 'country must be a 2-letter code']);
-    exit;
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
+    // Logged like any other call: a scripted POST probe should leave a trace.
+    udmLookupRefuse(405, 'method not allowed', '', '', 'method-not-allowed');
+}
+
+// is_string first: ?country[]=x makes $_GET['country'] an array, and casting
+// that emits a warning carrying this file's path.
+$country = (isset($_GET['country']) && is_string($_GET['country'])) ? trim($_GET['country']) : '';
+$email   = (isset($_GET['email'])   && is_string($_GET['email']))   ? trim($_GET['email'])   : '';
+
+if ($country === '' || $email === '') {
+    udmLookupRefuse(200, 'country and email are both required', $country, $email, 'missing-parameter');
+}
+
+if (strlen($country) !== 2 || !ctype_alpha($country)) {
+    udmLookupRefuse(200, 'country must be a 2-letter code', $country, $email, 'bad-country');
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    udmLogLookup($country, $email, 'bad-email');
-    echo json_encode(['found' => false, 'reason' => 'not a valid email address']);
-    exit;
+    udmLookupRefuse(200, 'not a valid email address', $country, $email, 'bad-email');
 }
 
-require_once __DIR__ . '/../db/db.php';
-require_once __DIR__ . '/../db/initDB.php';
-require_once __DIR__ . '/../../sync/mirrorMatch.php';
-require_once __DIR__ . '/../../models/shopLookup.php';
-
-if (!isset($db)) {
-    http_response_code(503);
-    udmLogLookup($country, $email, 'db-unavailable');
-    echo json_encode(['found' => false, 'reason' => 'lookup temporarily unavailable']);
-    exit;
-}
-
+// Inside the try: initDB.php constructs the db object, and in PHP 8 mysqli
+// throws natively on a connection failure. Left outside, that threw before any
+// handler ran and the response became a 200 carrying a stack trace with the
+// database host, user and name in it.
 try {
+    require_once __DIR__ . '/../db/db.php';
+    require_once __DIR__ . '/../db/initDB.php';
+    require_once __DIR__ . '/../../sync/mirrorMatch.php';
+    require_once __DIR__ . '/../../models/shopLookup.php';
+
+    if (!isset($db)) {
+        udmLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'db-unavailable');
+    }
+
     $result = udmLookupShopByEmail($db, $country, $email);
 } catch (Throwable $e) {
-    http_response_code(503);
-    udmLogLookup($country, $email, 'error');
-    echo json_encode(['found' => false, 'reason' => 'lookup temporarily unavailable']);
-    exit;
+    // $e is deliberately not reported to the caller: its message carries file
+    // paths and connection details.
+    udmLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'error');
 }
 
 udmLogLookup($country, $email, $result['found'] ? 'found' : 'not-found');
