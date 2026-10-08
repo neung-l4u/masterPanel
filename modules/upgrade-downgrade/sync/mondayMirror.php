@@ -293,6 +293,18 @@ function udmSyncCountry($db, string $token, string $country, string $syncedAt): 
                     'shops' => 0, 'deleted' => 0];
         }
 
+        // A success-shaped response whose items array is empty reaches the same
+        // outcome as an outright failure: every shop in the chunk takes the
+        // blank-email fallback and its mirrored address is erased. Monday
+        // answers this way when all the requested ids are inaccessible, so it
+        // cannot be distinguished from a scope or permission problem -- and
+        // erring toward "do not erase" is the safe direction.
+        if ($res['data']['items'] === [] && $chunk !== []) {
+            return ['country' => $country,
+                    'error' => 'contact batch returned no items for ' . count($chunk) . ' requested ids',
+                    'shops' => 0, 'deleted' => 0];
+        }
+
         foreach ($res['data']['items'] as $item) {
             $contacts[(string) $item['id']] = udmExtractContactFields($item);
         }

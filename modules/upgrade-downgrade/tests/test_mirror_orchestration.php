@@ -147,7 +147,25 @@ resetStubs([
 $s = udmSyncCountry(null, 'tok', 'TH', '2026-01-01 00:00:00');
 test("reports an error instead of partial success", $s['error'] !== null);
 test("the error names the contact batch", strpos($s['error'], 'contact batch') !== false);
-test("no shop was written with a blank email", $GLOBALS['stub_writes'] === []);
+// Inspects the email actually passed to the upsert, rather than merely
+// observing that nothing was written: the name has to be true for the reason it
+// claims, and this also catches a write that slips through with a blank address.
+test("no shop was written with a blank email",
+     array_filter($GLOBALS['stub_writes'],
+         function ($w) { return $w[0] === 'upsert_shop' && $w[2] === ''; }) === []);
+test("nothing was written at all", $GLOBALS['stub_writes'] === []);
+
+echo "== udmSyncCountry: an EMPTY contacts result must not erase emails ==\n";
+// Success-shaped body, empty items array. Without a guard this writes every
+// shop with a blank email and runs the stale deletion, reporting no error.
+resetStubs([projectPage([1, 2], null), ['data' => ['items' => []]]]);
+$s = udmSyncCountry(null, 'tok', 'TH', '2026-01-01 00:00:00');
+test("reports an error", $s['error'] !== null);
+test("the error names the empty contact batch",
+     strpos($s['error'], 'no items') !== false);
+test("no shop was written with a blank email",
+     array_filter($GLOBALS['stub_writes'],
+         function ($w) { return $w[0] === 'upsert_shop' && $w[2] === ''; }) === []);
 test("stale deletion did NOT run",
      !in_array(['delete_shops', 'TH'], $GLOBALS['stub_writes'], true));
 

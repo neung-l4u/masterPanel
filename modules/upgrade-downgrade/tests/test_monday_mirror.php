@@ -59,8 +59,9 @@ test("shop_name is the item name", $rows[0]['shop_name'] === 'Cher Thai Cuisine'
 test("shop_type comes from color1", $rows[0]['shop_type'] === 'Thai Restaurants & Takeaways');
 test("country is the requested country", $rows[0]['country'] === 'TH');
 test("board_id is the requested board", $rows[0]['board_id'] === '1943203205');
+// Also proves the other board_relation_* columns are ignored: the fixture's
+// second relation column carries '999', so a wrong column id would show here.
 test("contact_id comes from connect_boards0", $rows[0]['contact_id'] === '555000111');
-test("ignores other relation columns", $rows[0]['contact_id'] !== '999');
 test("an unlinked item has an empty contact_id", $rows[1]['contact_id'] === '');
 test("an empty color1 gives an empty shop_type", $rows[1]['shop_type'] === '');
 
