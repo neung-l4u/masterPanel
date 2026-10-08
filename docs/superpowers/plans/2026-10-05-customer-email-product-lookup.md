@@ -567,7 +567,9 @@ test("stores email", $row['email'] === 'owner@testshop.com');
 $shopMixed = $shopA;
 $shopMixed['shop_id'] = 'TEST_SHOP_MIXEDMAIL';
 $shopMixed['email']   = "  Owner.MixedCase@TestShop.COM\xC2\xA0";
-udmUpsertShop($db, $shopMixed, $now);
+// Written at $later, not $now, so it counts as "seen in this run" and the
+// stale-shop deletion further down still deletes exactly TEST_SHOP_B.
+udmUpsertShop($db, $shopMixed, $later);
 $rowMixed = $db->query("SELECT email FROM l4u_ud_shops WHERE shop_id = ?", 'TEST_SHOP_MIXEDMAIL')->fetchArray();
 test("normalizes a mixed-case padded email before storing",
      $rowMixed['email'] === 'owner.mixedcase@testshop.com');
