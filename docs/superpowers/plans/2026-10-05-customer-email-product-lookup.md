@@ -1292,7 +1292,13 @@ Create `modules/upgrade-downgrade/sync/mondayMirror.php`:
  */
 
 const UDM_PAGE_LIMIT     = 100;  // keeps nested column queries under Monday's complexity cap
-const UDM_MAX_PAGES      = 20;   // 100 * 20 = 2000, covers the largest board (AU ~1300)
+const UDM_MAX_PAGES      = 50;   // 100 * 50 = 5000. The binding board is
+                                 // Active Subscriptions, measured at 2865
+                                 // items; the per-country project boards are
+                                 // far smaller (AU, the largest, is ~1300).
+                                 // The guard below turns an overflow into an
+                                 // error rather than a silent truncation, so
+                                 // raising this is about headroom, not safety.
 const UDM_CONTACT_CHUNK  = 100;
 
 // ── Pure extractors ──────────────────────────────────────────────────────────
@@ -2056,7 +2062,8 @@ if ($s['error'] !== null) {
     }
 }
 
-$elapsed = round((microtime(true) - $started) / 1000, 1);
+// microtime(true) is already in seconds -- do not divide by 1000.
+$elapsed = round(microtime(true) - $started, 1);
 $stamp   = date('Y-m-d H:i:s');
 $status  = $hadError ? 'with errors' : 'ok';
 
