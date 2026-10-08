@@ -460,51 +460,6 @@ function udmResolveShopId(array $subscription, array $shopsByName): array
 }
 ```
 
-- [ ] **Step 3b: Deny web access to the log directory**
-
-Being gitignored is not the same as being unreachable. Without this, anyone can
-fetch `assets/logs/lookup.log` over HTTP and read the client IPs and the email
-hash list, which turns the control that exists to *detect* enumeration into an
-oracle for confirming a guessed address against a logged `outcome=found`.
-
-Create `modules/upgrade-downgrade/assets/logs/.htaccess`:
-
-```apache
-# The lookup and sync logs are an audit trail, not web content.
-#
-# Being gitignored is not the same as being unreachable: without this, anyone
-# could fetch lookup.log over HTTP and read the client IPs and the email hash
-# list -- turning the control that exists to DETECT enumeration into an oracle
-# for confirming a guessed address against a logged outcome=found.
-#
-# Apache 2.4 and 2.2 spellings, so the deny survives either.
-<IfModule mod_authz_core.c>
-    Require all denied
-</IfModule>
-<IfModule !mod_authz_core.c>
-    Order allow,deny
-    Deny from all
-</IfModule>
-
-# Directory listing is off regardless of the server-wide default.
-Options -Indexes
-```
-
-The logs directory is gitignored, so this file needs a force-add or the deny
-never reaches the server:
-
-```bash
-git add -f modules/upgrade-downgrade/assets/logs/.htaccess
-```
-
-Verify, with the server running:
-
-```bash
-curl -s -o /dev/null -w "%{http_code}\n" "http://localhost/<project>/modules/upgrade-downgrade/assets/logs/lookup.log"
-```
-
-Expected: `403`.
-
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `php modules/upgrade-downgrade/tests/test_mirror_match.php`
@@ -2714,6 +2669,20 @@ $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 test("POST is rejected with 405", $status === 405);
 
+echo "== the log directory is not web-readable ==\n";
+// The deny is Apache-only. nginx ignores .htaccess entirely and would serve the
+// client IPs and the email-hash list with no error, so this must be asserted
+// rather than assumed -- it is the control that detects enumeration.
+foreach (['logs/', 'logs/lookup.log'] as $path) {
+    $probe = preg_replace('#assets/API/lookupByEmail\.php$#', 'assets/' . $path, ENDPOINT);
+    $ch = curl_init($probe);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 15]);
+    curl_exec($ch);
+    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    test("{$path} is not served over HTTP (got {$code})", $code === 403 || $code === 404);
+}
+
 echo "== response headers ==\n";
 // Nothing in the suite covered these, so adding CORS or dropping no-store would
 // have gone unnoticed -- both are stated security properties of this endpoint.
@@ -2733,8 +2702,13 @@ echo "== array input cannot leak a path or break the JSON ==\n";
 // path, and that warning also makes the body invalid JSON.
 $r = call(['country' => ['ZZ'], 'email' => 'endpoint@testshop.com']);
 test("still valid JSON", is_array($r['json']));
-test("no absolute path in the body", stripos($r['body'], ':\\') === false
-     && stripos($r['body'], 'Warning') === false);
+// Asserted as "the body is nothing but the expected keys" rather than by hunting
+// for ':\' and 'Warning'. Those two only match a Windows path and that one
+// severity: a POSIX "Fatal error" or "Notice" leak -- the shape production would
+// actually produce -- slipped straight through.
+test("the body carries nothing but the expected keys",
+     is_array($r['json'])
+     && array_diff(array_keys($r['json']), ['found', 'reason']) === []);
 test("reports found false", ($r['json']['found'] ?? null) === false);
 
 echo "== a newline in country cannot forge a log line ==\n";
@@ -2888,14 +2862,69 @@ try {
     udmLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'error');
 }
 
+$encoded = json_encode($result, JSON_UNESCAPED_UNICODE);
+
+// json_encode returns false on malformed UTF-8, and echoing false prints nothing
+// -- a 200 with a zero-length body, which the form's parse fails on with nothing
+// to diagnose. Mirrored names come from Monday, so a bad byte is not impossible.
+if ($encoded === false) {
+    udmLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'encode-failed');
+}
+
 udmLogLookup($country, $email, $result['found'] ? 'found' : 'not-found');
-echo json_encode($result, JSON_UNESCAPED_UNICODE);
+echo $encoded;
 ```
+
+- [ ] **Step 3b: Deny web access to the log directory**
+
+Being gitignored is not the same as being unreachable. Without this, anyone can
+fetch `assets/logs/lookup.log` over HTTP and read the client IPs and the email
+hash list, which turns the control that exists to *detect* enumeration into an
+oracle for confirming a guessed address against a logged `outcome=found`.
+
+Create `modules/upgrade-downgrade/assets/logs/.htaccess`:
+
+```apache
+# The lookup and sync logs are an audit trail, not web content.
+#
+# Being gitignored is not the same as being unreachable: without this, anyone
+# could fetch lookup.log over HTTP and read the client IPs and the email hash
+# list -- turning the control that exists to DETECT enumeration into an oracle
+# for confirming a guessed address against a logged outcome=found.
+#
+# Apache 2.4 and 2.2 spellings, so the deny survives either.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
+
+# Directory listing is off regardless of the server-wide default.
+Options -Indexes
+```
+
+The logs directory is gitignored, so this file needs a force-add or the deny
+never reaches the server:
+
+```bash
+git add -f modules/upgrade-downgrade/assets/logs/.htaccess
+```
+
+Verify, with the server running:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" "http://localhost/<project>/modules/upgrade-downgrade/assets/logs/lookup.log"
+```
+
+Expected: `403`.
 
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `php modules/upgrade-downgrade/tests/test_lookup_endpoint.php`
-Expected: all `PASS:`, final line `Passed: 18  Failed: 0`, exit 0.
+Expected: all `PASS:`, every assertion passing, exit 0. (Count the assertions
+in the test above rather than trusting a number here.)
 
 Apache must be running and the project reachable at
 `http://localhost/masterPanel/`. If the reachability check fails, fix the URL
@@ -2911,6 +2940,10 @@ and outcomes including `found`, `not-found`, `bad-email`.
 - [ ] **Step 6: Commit**
 
 ```bash
+# -f on the .htaccess: assets/logs/ is gitignored, so without it the deny is
+# written, passes the local curl check, and is then never committed -- which is
+# the exposure it exists to close, in a form that is harder to notice.
+git add -f modules/upgrade-downgrade/assets/logs/.htaccess
 git add modules/upgrade-downgrade/assets/API/lookupByEmail.php \
         modules/upgrade-downgrade/tests/test_lookup_endpoint.php
 git commit -m "feat(upgrade-downgrade): add customer email lookup endpoint

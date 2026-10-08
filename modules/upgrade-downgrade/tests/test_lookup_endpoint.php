@@ -119,6 +119,20 @@ $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 test("POST is rejected with 405", $status === 405);
 
+echo "== the log directory is not web-readable ==\n";
+// The deny is Apache-only. nginx ignores .htaccess entirely and would serve the
+// client IPs and the email-hash list with no error, so this must be asserted
+// rather than assumed -- it is the control that detects enumeration.
+foreach (['logs/', 'logs/lookup.log'] as $path) {
+    $probe = preg_replace('#assets/API/lookupByEmail\.php$#', 'assets/' . $path, ENDPOINT);
+    $ch = curl_init($probe);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 15]);
+    curl_exec($ch);
+    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    test("{$path} is not served over HTTP (got {$code})", $code === 403 || $code === 404);
+}
+
 echo "== response headers ==\n";
 // Nothing in the suite covered these, so adding CORS or dropping no-store would
 // have gone unnoticed -- both are stated security properties of this endpoint.
@@ -138,8 +152,13 @@ echo "== array input cannot leak a path or break the JSON ==\n";
 // path, and that warning also makes the body invalid JSON.
 $r = call(['country' => ['ZZ'], 'email' => 'endpoint@testshop.com']);
 test("still valid JSON", is_array($r['json']));
-test("no absolute path in the body", stripos($r['body'], ':\\') === false
-     && stripos($r['body'], 'Warning') === false);
+// Asserted as "the body is nothing but the expected keys" rather than by hunting
+// for ':\' and 'Warning'. Those two only match a Windows path and that one
+// severity: a POSIX "Fatal error" or "Notice" leak -- the shape production would
+// actually produce -- slipped straight through.
+test("the body carries nothing but the expected keys",
+     is_array($r['json'])
+     && array_diff(array_keys($r['json']), ['found', 'reason']) === []);
 test("reports found false", ($r['json']['found'] ?? null) === false);
 
 echo "== a newline in country cannot forge a log line ==\n";

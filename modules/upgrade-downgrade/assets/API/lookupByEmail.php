@@ -124,5 +124,14 @@ try {
     udmLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'error');
 }
 
+$encoded = json_encode($result, JSON_UNESCAPED_UNICODE);
+
+// json_encode returns false on malformed UTF-8, and echoing false prints nothing
+// -- a 200 with a zero-length body, which the form's parse fails on with nothing
+// to diagnose. Mirrored names come from Monday, so a bad byte is not impossible.
+if ($encoded === false) {
+    udmLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'encode-failed');
+}
+
 udmLogLookup($country, $email, $result['found'] ? 'found' : 'not-found');
-echo json_encode($result, JSON_UNESCAPED_UNICODE);
+echo $encoded;
