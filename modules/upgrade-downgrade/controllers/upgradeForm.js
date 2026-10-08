@@ -281,6 +281,174 @@ function updateSectionVisibility() {
     if (!$('#country').val()) $input.prop('disabled', true);
 })();
 
+// ===== Customer Email Lookup =====
+// Customer mode has no Monday project id to search on, so the email is the
+// only key the customer reliably knows. This fills the shop fields and the
+// real product list from the mirrored Monday data.
+//
+// Every failure path leaves the form exactly as the customer left it: the
+// lookup is an accelerator, never a gate. A wrong or unrecognised email is not
+// an error condition -- CS briefs the customer directly.
+(function () {
+    const $email   = $('#emailAddress');
+    const $status  = $('#emailLookupStatus');
+    const $list    = $('#customerProductList');
+    const $selWrap = $('#customerProductSelectWrap');
+    const $select  = $('#originalProductSelect');
+    const $hidden  = $('#originalProduct');
+
+    let lookupTimer = null;
+    let lastQueried = '';
+    let inFlight    = null;
+
+    if (IS_STAFF) return;
+
+    function setStatus(html) {
+        $status.html(html || '');
+    }
+
+    // With no lookup result, the hidden field that actually submits must track
+    // the manual select -- otherwise a customer who picks a plan by hand
+    // submits an empty originalProduct.
+    function useManualSelect() {
+        $list.addClass('d-none').empty();
+        $selWrap.removeClass('d-none');
+        $hidden.val($select.val() || '');
+    }
+
+    function useLookupProducts(subscriptions) {
+        if (!subscriptions.length) {
+            useManualSelect();
+            return;
+        }
+
+        $selWrap.addClass('d-none');
+        $hidden.val(subscriptions.map(s => s.name).join(', '));
+
+        // Names only -- no prices in the customer-facing list. The endpoint does
+        // not return them, so there is nothing to render even if this changed.
+        const html = subscriptions.map(s => `
+            <div class="subscription-item">
+                <i class="bi bi-check-circle-fill"></i>
+                <div>
+                    <div class="sub-name">${escapeHtml(s.name)}</div>
+                </div>
+            </div>`).join('');
+
+        $list.html(html).removeClass('d-none');
+    }
+
+    // The shop name, owner name and product names come from Monday and are
+    // rendered as HTML, so they are escaped here rather than trusted.
+    function escapeHtml(value) {
+        return $('<div>').text(value == null ? '' : String(value)).html();
+    }
+
+    function fillShop(shop) {
+        $('#shopName').val(shop.shopName || '');
+        $('#ownerName').val(shop.ownerName || '');
+        $('#phoneNumber').val(shop.phone || '');
+        // These are hidden inputs in customer mode and have always submitted
+        // empty; populating them means the webhook payload finally carries a
+        // real project id for a customer submission.
+        $('#mondayProjectId').val(shop.shopId || '');
+        $('#boardId').val(shop.boardId || '');
+    }
+
+    function clearShopFields() {
+        $('#shopName, #ownerName, #phoneNumber').val('');
+        $('#mondayProjectId, #boardId').val('');
+    }
+
+    function revertToManual() {
+        lastQueried = '';
+        clearShopFields();
+        useManualSelect();
+        setStatus('');
+    }
+
+    function onFound(data) {
+        fillShop(data.shop);
+        useLookupProducts(data.subscriptions || []);
+
+        const name = escapeHtml(data.shop.shopName);
+        let msg = `<span class="els-found"><i class="bi bi-check-circle"></i> Found <strong>${name}</strong>.`;
+        if (data.stale) {
+            msg = `<span class="els-stale"><i class="bi bi-exclamation-circle"></i> Found <strong>${name}</strong>. These details may be out of date; our team will confirm them.`;
+        }
+        if (data.multiple) {
+            msg += ' More than one shop uses this email, so our team will confirm which one.';
+        }
+        msg += ' You can edit anything below.</span>'
+             + '<a href="#" class="els-revert" id="emailLookupRevert">Not my shop?</a>';
+        setStatus(msg);
+    }
+
+    function onNotFound() {
+        // Deliberately not alarming: an unrecognised email is expected, and CS
+        // reconciles it. Nothing the customer already typed is touched.
+        useManualSelect();
+        setStatus('<span class="els-neutral">We couldn\'t prefill your details from this email. Please fill in the form and our team will confirm everything.</span>');
+    }
+
+    function runLookup() {
+        const country = ($('#country').val() || '').trim();
+        const email   = ($email.val() || '').trim();
+
+        if (!country || !email || email.indexOf('@') === -1) return;
+
+        const key = country + '|' + email.toLowerCase();
+        if (key === lastQueried) return;
+        lastQueried = key;
+
+        if (inFlight) inFlight.abort();
+
+        setStatus('<span class="els-neutral"><span class="spinner-border spinner-border-sm"></span> Looking up your shop...</span>');
+
+        inFlight = $.getJSON('../assets/API/lookupByEmail.php', { country, email })
+            .done(function (data) {
+                if (data && data.found) onFound(data);
+                else onNotFound();
+            })
+            .fail(function (jqXHR, textStatus) {
+                if (textStatus === 'abort') return;
+                // A failed lookup must be indistinguishable from no lookup.
+                useManualSelect();
+                setStatus('');
+            })
+            .always(function () { inFlight = null; });
+    }
+
+    $email.on('blur', runLookup);
+
+    $email.on('input', function () {
+        clearTimeout(lookupTimer);
+        lookupTimer = setTimeout(runLookup, 400);
+    });
+
+    // A country change invalidates the result, mirroring how staff mode clears
+    // its fields when the country changes.
+    $('#country').on('change', function () {
+        revertToManual();
+        runLookup();
+    });
+
+    // The select -> hidden mirroring itself lives in Task 9's DOM-ready block,
+    // because the form depends on it with or without a lookup. This only has to
+    // stop a stale manual choice overwriting a successful lookup result.
+    $select.on('change', function () {
+        if ($selWrap.hasClass('d-none')) {
+            // A lookup is showing; its product list owns the hidden field.
+            $(this).val('');
+        }
+    });
+
+    $status.on('click', '#emailLookupRevert', function (e) {
+        e.preventDefault();
+        revertToManual();
+    });
+})();
+
 // ===== DOM Ready =====
 $(function () {
 
