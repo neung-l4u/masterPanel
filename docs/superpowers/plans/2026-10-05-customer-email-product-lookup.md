@@ -2005,21 +2005,67 @@ if (!$isCli) {
     header('Content-Type: text/plain; charset=utf-8');
 }
 
-require_once __DIR__ . '/../assets/db/db.php';
-require_once __DIR__ . '/../assets/db/initDB.php';
-require_once __DIR__ . '/mirrorMatch.php';
-require_once __DIR__ . '/mirrorRepo.php';
-require_once __DIR__ . '/mondayClient.php';
-require_once __DIR__ . '/mondayMirror.php';
+// Wrap the requires: the database connection throws on failure, and an uncaught
+// mysqli_sql_exception means a stack trace in the HTTP response and no log entry
+// on either path. See udmSyncFatal below, defined before anything that can fail.
+try {
+    require_once __DIR__ . '/../assets/db/db.php';
+    require_once __DIR__ . '/../assets/db/initDB.php';
+    require_once __DIR__ . '/mirrorMatch.php';
+    require_once __DIR__ . '/mirrorRepo.php';
+    require_once __DIR__ . '/mondayClient.php';
+    require_once __DIR__ . '/mondayMirror.php';
+} catch (Throwable $e) {
+    udmSyncFatal('cannot initialise: ' . $e->getMessage(), $isCli);
+}
 
 $started = microtime(true);
 
+/**
+ * Append one line to the rolling log.
+ *
+ * Defined before anything that can fail, because a failure that leaves no trace
+ * in the log is the thing this script most needs to avoid: cron discards stdout,
+ * so the log is usually the only evidence an overnight run ever happened.
+ */
+function udmSyncLog(string $text): void
+{
+    $logDir = __DIR__ . '/../assets/logs';
+    if (!is_dir($logDir)) {
+        @mkdir($logDir, 0700, true);
+    }
+    // Suppressed and never checked: losing the log must not fail the sync.
+    @file_put_contents($logDir . '/mirror-sync.log', $text, FILE_APPEND | LOCK_EX);
+}
+
+/** Report a fatal, to the log as well as the caller, and stop. */
+function udmSyncFatal(string $message, bool $isCli): void
+{
+    $line = '[' . date('Y-m-d H:i:s') . " +07] ud mirror sync FATAL: {$message}\n";
+    udmSyncLog($line);
+    fwrite($isCli ? STDERR : STDOUT, $line);
+    exit(1);
+}
+
 // Country filter: CLI arguments, or ?countries=TH,AU over HTTP.
+// Values are cast and stripped to A-Z: they reach no query, but an unsanitised
+// value would still forge a line in the log.
 $only = null;
 if ($isCli && $argc > 1) {
-    $only = array_map('strtoupper', array_slice($argv, 1));
-} elseif (!$isCli && !empty($_GET['countries'])) {
-    $only = array_map('strtoupper', array_filter(explode(',', $_GET['countries'])));
+    $only = array_slice($argv, 1);
+} elseif (!$isCli && !empty($_GET['countries']) && is_string($_GET['countries'])) {
+    $only = explode(',', $_GET['countries']);
+}
+if ($only !== null) {
+    $only = array_values(array_filter(array_map(
+        function ($c) { return preg_replace('/[^A-Z]/', '', strtoupper(trim((string) $c))); },
+        $only
+    )));
+    // An empty filter would otherwise sync no countries at all and still report
+    // success, which reads as a healthy run that did nothing.
+    if ($only === []) {
+        udmSyncFatal('country filter given but no valid country codes in it', $isCli);
+    }
 }
 
 $lines    = [];
@@ -2028,8 +2074,7 @@ $hadError = false;
 try {
     $summary = udmRunSync($db, $only);
 } catch (Throwable $e) {
-    fwrite($isCli ? STDERR : STDOUT, "FATAL: " . $e->getMessage() . "\n");
-    exit(1);
+    udmSyncFatal($e->getMessage(), $isCli);
 }
 
 foreach ($summary['countries'] as $c) {
@@ -2071,12 +2116,8 @@ $output = "[{$stamp} +07] ud mirror sync {$status} ({$elapsed}s)\n"
         . implode("\n", $lines) . "\n";
 echo $output;
 
-// Keep a rolling log so an overnight failure is still visible in the morning.
-$logDir = __DIR__ . '/../assets/logs';
-if (!is_dir($logDir)) {
-    @mkdir($logDir, 0700, true);
-}
-@file_put_contents($logDir . '/mirror-sync.log', $output, FILE_APPEND | LOCK_EX);
+// Keep a log so an overnight failure is still visible in the morning.
+udmSyncLog($output);
 
 exit($hadError ? 1 : 0);
 ```
