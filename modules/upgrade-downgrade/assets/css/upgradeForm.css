@@ -1103,3 +1103,10 @@ body {
         grid-template-columns: 1fr;
     }
 }
+/* Email lookup status, customer mode */
+.email-lookup-status { margin-top: .5rem; font-size: .875rem; }
+.email-lookup-status:empty { display: none; }
+.email-lookup-status .els-found { color: #198754; }
+.email-lookup-status .els-neutral { color: #6c757d; }
+.email-lookup-status .els-stale { color: #fd7e14; }
+.email-lookup-status .els-revert { margin-left: .5rem; }

@@ -21,7 +21,7 @@ $testMode = $_GET['testMode'] ?? 'false';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/upgradeForm.css?v=2.0.0" rel="stylesheet">
+    <link href="../assets/css/upgradeForm.css?v=2.1.0" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -158,6 +158,10 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <label for="emailAddress" class="form-label">Email Address <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control" id="emailAddress" name="emailAddress" placeholder="e.g. owner@restaurant.com" required>
                                 <div class="invalid-feedback">Please enter an email address.</div>
+<?php if ($mode === 'customer'): ?>
+                                <div class="form-text">We'll use this to find your shop and current products.</div>
+                                <div id="emailLookupStatus" class="email-lookup-status" aria-live="polite"></div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="row">
@@ -200,25 +204,33 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     </div>
                                     <input type="hidden" id="originalProduct" name="originalProduct">
                                     <?php else: ?>
-                                    <label for="originalProduct" class="form-label">Current Product</label>
-                                    <select class="form-select" id="originalProduct" name="originalProduct">
-                                        <option value="">-- Select Current Product --</option>
-                                        <optgroup label="Pro Plans">
-                                            <option value="pro_starter">Pro - Local Starter</option>
-                                            <option value="pro_growth">Pro - Local Growth</option>
-                                            <option value="pro_ultimate">Pro - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Solo Plans">
-                                            <option value="solo_starter">Solo - Local Starter</option>
-                                            <option value="solo_growth">Solo - Local Growth</option>
-                                            <option value="solo_ultimate">Solo - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Bundle Plans">
-                                            <option value="bundle_starter">Bundle - Local Starter</option>
-                                            <option value="bundle_growth">Bundle - Local Growth</option>
-                                            <option value="bundle_ultimate">Bundle - Local Ultimate</option>
-                                        </optgroup>
-                                    </select>
+                                    <label class="form-label">Current Product</label>
+
+                                    <!-- Filled from the email lookup. Hidden until the lookup succeeds. -->
+                                    <div id="customerProductList" class="subscription-list d-none"></div>
+                                    <input type="hidden" id="originalProduct" name="originalProduct" value="">
+
+                                    <!-- Manual fallback: shown whenever the lookup has not produced products. -->
+                                    <div id="customerProductSelectWrap">
+                                        <select class="form-select" id="originalProductSelect" name="originalProductManual">
+                                            <option value="">-- Select Current Product --</option>
+                                            <optgroup label="Pro Plans">
+                                                <option value="pro_starter">Pro - Local Starter</option>
+                                                <option value="pro_growth">Pro - Local Growth</option>
+                                                <option value="pro_ultimate">Pro - Local Ultimate</option>
+                                            </optgroup>
+                                            <optgroup label="Solo Plans">
+                                                <option value="solo_starter">Solo - Local Starter</option>
+                                                <option value="solo_growth">Solo - Local Growth</option>
+                                                <option value="solo_ultimate">Solo - Local Ultimate</option>
+                                            </optgroup>
+                                            <optgroup label="Bundle Plans">
+                                                <option value="bundle_starter">Bundle - Local Starter</option>
+                                                <option value="bundle_growth">Bundle - Local Growth</option>
+                                                <option value="bundle_ultimate">Bundle - Local Ultimate</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
                                     <?php endif; ?>
                                 </div>
                                 <div class="col-md-6 mb-3">
