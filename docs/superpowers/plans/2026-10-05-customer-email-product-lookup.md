@@ -2357,12 +2357,37 @@ $r = udmLookupShopByEmail($db, 'ZZ', 'stale@testshop.com');
 test("still returns the data", $r['found'] === true);
 test("flags it stale", $r['stale'] === true);
 
+// The 48-hour threshold is what the whole stale flag turns on, so test both
+// sides of it rather than only a value far past it.
+$justUnder = date('Y-m-d H:i:s', time() - (UDM_STALE_AFTER_HOURS - 1) * 3600);
+udmUpsertShop($db, [
+    'shop_id' => 'TEST_SHOP_FRESH47', 'country' => 'ZZ', 'email' => 'fresh47@testshop.com',
+    'shop_name' => 'Nearly Stale Shop', 'shop_type' => '', 'owner_name' => 'Recent',
+    'phone' => '', 'board_id' => '1943203205',
+], $justUnder);
+$r = udmLookupShopByEmail($db, 'ZZ', 'fresh47@testshop.com');
+test("an hour inside the threshold is NOT stale", $r['stale'] === false);
+
+$justOver = date('Y-m-d H:i:s', time() - (UDM_STALE_AFTER_HOURS + 1) * 3600);
+udmUpsertShop($db, [
+    'shop_id' => 'TEST_SHOP_STALE49', 'country' => 'ZZ', 'email' => 'stale49@testshop.com',
+    'shop_name' => 'Just Stale Shop', 'shop_type' => '', 'owner_name' => 'Older',
+    'phone' => '', 'board_id' => '1943203205',
+], $justOver);
+$r = udmLookupShopByEmail($db, 'ZZ', 'stale49@testshop.com');
+test("an hour past the threshold IS stale", $r['stale'] === true);
+
 echo "== injection attempt is bound, not interpreted ==\n";
+// Counted rather than hardcoded: the point is that the injection changed
+// nothing, which a fixed number stops proving the moment a fixture is added.
+$zzBefore = (int) $db->query("SELECT COUNT(*) AS c FROM l4u_ud_shops WHERE country = 'ZZ'")
+                     ->fetchArray()['c'];
 $r = udmLookupShopByEmail($db, 'ZZ', "' OR 1=1 --");
 test("an injection string finds nothing", $r['found'] === false);
 test("the shops table is intact",
      (int) $db->query("SELECT COUNT(*) AS c FROM l4u_ud_shops WHERE country = 'ZZ'")
-              ->fetchArray()['c'] === 3);
+              ->fetchArray()['c'] === $zzBefore);
+test("there were fixtures to delete, so the check is not vacuous", $zzBefore > 0);
 
 cleanup($db);
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
@@ -2410,11 +2435,13 @@ function udmLookupShopByEmail($db, string $country, string $email): array
 
     // Ordered by shop_name so a duplicated email returns the same shop every
     // time rather than whichever row the engine happens to hand back first.
+    // shop_id breaks the remaining tie: two shops sharing an email AND a name
+    // would otherwise still come back in index order, which is not a promise.
     $shops = $db->query(
         "SELECT shop_id, shop_name, shop_type, owner_name, phone, board_id, synced_at
          FROM l4u_ud_shops
          WHERE country = ? AND email = ?
-         ORDER BY shop_name ASC",
+         ORDER BY shop_name ASC, shop_id ASC",
         $country, $email
     )->fetchAll();
 

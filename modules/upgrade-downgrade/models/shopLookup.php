@@ -29,11 +29,13 @@ function udmLookupShopByEmail($db, string $country, string $email): array
 
     // Ordered by shop_name so a duplicated email returns the same shop every
     // time rather than whichever row the engine happens to hand back first.
+    // shop_id breaks the remaining tie: two shops sharing an email AND a name
+    // would otherwise still come back in index order, which is not a promise.
     $shops = $db->query(
         "SELECT shop_id, shop_name, shop_type, owner_name, phone, board_id, synced_at
          FROM l4u_ud_shops
          WHERE country = ? AND email = ?
-         ORDER BY shop_name ASC",
+         ORDER BY shop_name ASC, shop_id ASC",
         $country, $email
     )->fetchAll();
 
