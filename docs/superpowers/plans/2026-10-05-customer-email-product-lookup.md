@@ -1140,8 +1140,9 @@ test("shop_name is the item name", $rows[0]['shop_name'] === 'Cher Thai Cuisine'
 test("shop_type comes from color1", $rows[0]['shop_type'] === 'Thai Restaurants & Takeaways');
 test("country is the requested country", $rows[0]['country'] === 'TH');
 test("board_id is the requested board", $rows[0]['board_id'] === '1943203205');
+// Also proves the other board_relation_* columns are ignored: the fixture's
+// second relation column carries '999', so a wrong column id would show here.
 test("contact_id comes from connect_boards0", $rows[0]['contact_id'] === '555000111');
-test("ignores other relation columns", $rows[0]['contact_id'] !== '999');
 test("an unlinked item has an empty contact_id", $rows[1]['contact_id'] === '');
 test("an empty color1 gives an empty shop_type", $rows[1]['shop_type'] === '');
 
@@ -1576,6 +1577,18 @@ function udmSyncCountry($db, string $token, string $country, string $syncedAt): 
                     'shops' => 0, 'deleted' => 0];
         }
 
+        // A success-shaped response whose items array is empty reaches the same
+        // outcome as an outright failure: every shop in the chunk takes the
+        // blank-email fallback and its mirrored address is erased. Monday
+        // answers this way when all the requested ids are inaccessible, so it
+        // cannot be distinguished from a scope or permission problem -- and
+        // erring toward "do not erase" is the safe direction.
+        if ($res['data']['items'] === [] && $chunk !== []) {
+            return ['country' => $country,
+                    'error' => 'contact batch returned no items for ' . count($chunk) . ' requested ids',
+                    'shops' => 0, 'deleted' => 0];
+        }
+
         foreach ($res['data']['items'] as $item) {
             $contacts[(string) $item['id']] = udmExtractContactFields($item);
         }
@@ -1858,7 +1871,25 @@ resetStubs([
 $s = udmSyncCountry(null, 'tok', 'TH', '2026-01-01 00:00:00');
 test("reports an error instead of partial success", $s['error'] !== null);
 test("the error names the contact batch", strpos($s['error'], 'contact batch') !== false);
-test("no shop was written with a blank email", $GLOBALS['stub_writes'] === []);
+// Inspects the email actually passed to the upsert, rather than merely
+// observing that nothing was written: the name has to be true for the reason it
+// claims, and this also catches a write that slips through with a blank address.
+test("no shop was written with a blank email",
+     array_filter($GLOBALS['stub_writes'],
+         function ($w) { return $w[0] === 'upsert_shop' && $w[2] === ''; }) === []);
+test("nothing was written at all", $GLOBALS['stub_writes'] === []);
+
+echo "== udmSyncCountry: an EMPTY contacts result must not erase emails ==\n";
+// Success-shaped body, empty items array. Without a guard this writes every
+// shop with a blank email and runs the stale deletion, reporting no error.
+resetStubs([projectPage([1, 2], null), ['data' => ['items' => []]]]);
+$s = udmSyncCountry(null, 'tok', 'TH', '2026-01-01 00:00:00');
+test("reports an error", $s['error'] !== null);
+test("the error names the empty contact batch",
+     strpos($s['error'], 'no items') !== false);
+test("no shop was written with a blank email",
+     array_filter($GLOBALS['stub_writes'],
+         function ($w) { return $w[0] === 'upsert_shop' && $w[2] === ''; }) === []);
 test("stale deletion did NOT run",
      !in_array(['delete_shops', 'TH'], $GLOBALS['stub_writes'], true));
 
