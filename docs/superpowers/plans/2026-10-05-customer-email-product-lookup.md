@@ -519,22 +519,32 @@ function test($name, $condition) {
     else            { echo "  FAIL: {$name}\n"; $failed++; }
 }
 
-set_exception_handler(function ($e) {
+set_exception_handler(function ($e) use (&$db) {
     echo "  FAIL: uncaught exception: " . $e->getMessage() . "\n";
+    // Clean up even on the failure path, so a crashed run does not leave
+    // fixture rows behind for the next one.
+    if (isset($db) && function_exists('cleanup')) cleanup($db);
     echo "\nPassed: 0  Failed: 1\n";
     exit(1);
 });
 
 // Fixture rows use a reserved country code 'ZZ' and TEST_ ids so they can
 // never collide with mirrored production data.
+// ZY is included because the country-isolation test below creates a row there;
+// without it, a run that dies early leaves TEST_SHOP_C behind and the next
+// run's cleanup does not clear it.
 function cleanup($db) {
-    $db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST_%'");
-    $db->query("DELETE FROM l4u_ud_shops WHERE country = 'ZZ'");
+    $db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST\_%'");
+    $db->query("DELETE FROM l4u_ud_shops WHERE country IN ('ZZ','ZY')");
 }
 cleanup($db);
 
-$now   = '2026-10-05 06:00:00';
-$later = '2026-10-05 18:00:00';
+// Deliberately far in the past. udmDeleteStaleSubscriptions is global by
+// design (the subscriptions board is one board, synced in one pass), so a
+// fixture timestamp anywhere near today would make this test delete real
+// mirrored rows synced earlier the same day.
+$now   = '2000-01-01 06:00:00';
+$later = '2000-01-01 18:00:00';
 
 $shopA = [
     'shop_id' => 'TEST_SHOP_A', 'country' => 'ZZ',
@@ -550,6 +560,17 @@ test("second write reports updated", udmUpsertShop($db, $shopA, $now) === 'updat
 $row = $db->query("SELECT * FROM l4u_ud_shops WHERE shop_id = ?", 'TEST_SHOP_A')->fetchArray();
 test("stores shop_name", $row['shop_name'] === 'Test Shop A');
 test("stores email", $row['email'] === 'owner@testshop.com');
+
+// The fixture email above is already lowercase and unpadded, so it cannot tell
+// a normalized write from a raw one. Task 7's lookup queries by the normalized
+// form, so an unnormalized write here would make that lookup silently miss.
+$shopMixed = $shopA;
+$shopMixed['shop_id'] = 'TEST_SHOP_MIXEDMAIL';
+$shopMixed['email']   = "  Owner.MixedCase@TestShop.COM\xC2\xA0";
+udmUpsertShop($db, $shopMixed, $now);
+$rowMixed = $db->query("SELECT email FROM l4u_ud_shops WHERE shop_id = ?", 'TEST_SHOP_MIXEDMAIL')->fetchArray();
+test("normalizes a mixed-case padded email before storing",
+     $rowMixed['email'] === 'owner.mixedcase@testshop.com');
 test("stores synced_at", $row['synced_at'] === $now);
 
 $shopA['shop_name'] = 'Test Shop A Renamed';
@@ -606,8 +627,20 @@ test("stale shop is gone",
 $subStale = $subA;
 $subStale['sub_id'] = 'TEST_SUB_STALE';
 udmUpsertSubscription($db, $subStale, $now);   // older timestamp
+// Count real rows first: the delete is global, so this also proves it cannot
+// reach anything outside the fixture window.
+$realBefore = (int) $db->query(
+    "SELECT COUNT(*) AS c FROM l4u_ud_subscriptions WHERE sub_id NOT LIKE 'TEST\_%'"
+)->fetchArray()['c'];
+
 $deletedSubs = udmDeleteStaleSubscriptions($db, $later);
-test("deletes subscriptions not seen in this run", $deletedSubs >= 1);
+test("deletes exactly the one stale fixture subscription", $deletedSubs === 1);
+test("the stale fixture subscription is gone",
+     (int) $db->query("SELECT COUNT(*) AS c FROM l4u_ud_subscriptions WHERE sub_id = ?", 'TEST_SUB_STALE')
+              ->fetchArray()['c'] === 0);
+test("no real subscription row was touched",
+     (int) $db->query("SELECT COUNT(*) AS c FROM l4u_ud_subscriptions WHERE sub_id NOT LIKE 'TEST\_%'")
+              ->fetchArray()['c'] === $realBefore);
 test("keeps subscriptions seen in this run",
      (int) $db->query("SELECT COUNT(*) AS c FROM l4u_ud_subscriptions WHERE sub_id = ?", 'TEST_SUB_A')
               ->fetchArray()['c'] === 1);
@@ -1880,7 +1913,7 @@ set_exception_handler(function ($e) {
 });
 
 function cleanup($db) {
-    $db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST_%'");
+    $db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST\_%'");
     $db->query("DELETE FROM l4u_ud_shops WHERE country IN ('ZZ','ZY')");
 }
 cleanup($db);
@@ -2179,7 +2212,7 @@ function call(array $params): array
 }
 
 // Fixture
-$db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST_%'");
+$db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST\_%'");
 $db->query("DELETE FROM l4u_ud_shops WHERE country = 'ZZ'");
 $now = date('Y-m-d H:i:s');
 udmUpsertShop($db, [
@@ -2249,7 +2282,7 @@ $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 test("POST is rejected with 405", $status === 405);
 
-$db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST_%'");
+$db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST\_%'");
 $db->query("DELETE FROM l4u_ud_shops WHERE country = 'ZZ'");
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);
