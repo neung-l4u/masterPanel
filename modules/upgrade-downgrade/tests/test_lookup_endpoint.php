@@ -64,10 +64,23 @@ test("returns the shop name", ($r['json']['shop']['shopName'] ?? '') === 'Endpoi
 test("returns one subscription", count($r['json']['subscriptions'] ?? []) === 1);
 test("subscription name is the product group",
      ($r['json']['subscriptions'][0]['name'] ?? '') === 'Local Starter Solo');
-test("no price reaches the client",
-     !isset($r['json']['subscriptions'][0]['price'])
-     && !isset($r['json']['subscriptions'][0]['currency']));
-test("does not echo the email back", !isset($r['json']['shop']['email']));
+
+$shopKeys = array_keys($r['json']['shop'] ?? []);
+test("the hit actually returned a shop object, so the key checks below mean something",
+     $shopKeys !== []);
+// Asserted POSITIVELY, against the exact key set. A negative !isset() check
+// passes vacuously whenever the payload is null -- which is what happens on a
+// 404 or any failed decode -- so the two assertions guarding this endpoint's
+// headline promises were the two that proved nothing. Pinning the key list also
+// catches a field added later, which a !isset() check never would.
+sort($shopKeys);
+test("the shop returns exactly the fields the form fills, and no email",
+     $shopKeys === ['boardId', 'ownerName', 'phone', 'shopId', 'shopName', 'shopType']);
+
+$subKeys = array_keys($r['json']['subscriptions'][0] ?? []);
+sort($subKeys);
+test("a subscription returns exactly id, name and rawName, with no price",
+     $subKeys === ['id', 'name', 'rawName']);
 
 echo "== no match ==\n";
 $r = call(['country' => 'ZZ', 'email' => 'nobody@nowhere.com']);
@@ -105,6 +118,37 @@ $body = curl_exec($ch);
 $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 test("POST is rejected with 405", $status === 405);
+
+echo "== response headers ==\n";
+// Nothing in the suite covered these, so adding CORS or dropping no-store would
+// have gone unnoticed -- both are stated security properties of this endpoint.
+$ch = curl_init(ENDPOINT . '?' . http_build_query(['country' => 'ZZ', 'email' => 'endpoint@testshop.com']));
+curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true,
+                        CURLOPT_NOBODY => true, CURLOPT_TIMEOUT => 15]);
+$rawHeaders = (string) curl_exec($ch);
+curl_close($ch);
+test("sends Cache-Control: no-store, so a proxy cannot retain a shop's details",
+     stripos($rawHeaders, 'Cache-Control: no-store') !== false);
+test("sends no Access-Control-Allow-Origin, keeping it same-origin only",
+     stripos($rawHeaders, 'Access-Control-Allow-Origin') === false);
+test("sends JSON content type", stripos($rawHeaders, 'application/json') !== false);
+
+echo "== array input cannot leak a path or break the JSON ==\n";
+// A (string) cast on an array emits a warning carrying this file's absolute
+// path, and that warning also makes the body invalid JSON.
+$r = call(['country' => ['ZZ'], 'email' => 'endpoint@testshop.com']);
+test("still valid JSON", is_array($r['json']));
+test("no absolute path in the body", stripos($r['body'], ':\\') === false
+     && stripos($r['body'], 'Warning') === false);
+test("reports found false", ($r['json']['found'] ?? null) === false);
+
+echo "== a newline in country cannot forge a log line ==\n";
+$logFile = __DIR__ . '/../assets/logs/lookup.log';
+$linesBefore = is_file($logFile) ? count(file($logFile)) : 0;
+call(['country' => "Z\n[2026-01-01 00:00:00] 9.9.9.9 country=XX email=forged outcome=found",
+      'email'   => 'endpoint@testshop.com']);
+$linesAfter = is_file($logFile) ? count(file($logFile)) : 0;
+test("one request appends exactly one log line", ($linesAfter - $linesBefore) === 1);
 
 $db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST\_%'");
 $db->query("DELETE FROM l4u_ud_shops WHERE country = 'ZZ'");

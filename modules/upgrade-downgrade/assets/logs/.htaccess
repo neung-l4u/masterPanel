@@ -1,0 +1,18 @@
+# The lookup and sync logs are an audit trail, not web content.
+#
+# Being gitignored is not the same as being unreachable: without this, anyone
+# could fetch lookup.log over HTTP and read the client IPs and the email hash
+# list -- turning the control that exists to DETECT enumeration into an oracle
+# for confirming a guessed address against a logged outcome=found.
+#
+# Apache 2.4 and 2.2 spellings, so the deny survives either.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
+
+# Directory listing is off regardless of the server-wide default.
+Options -Indexes
