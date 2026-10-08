@@ -3072,6 +3072,55 @@ Task 10 renders the customer product list with those exact class names.
 Then bump the cache-buster in `views/upgradeForm.php:24` so browsers pick the
 new CSS up — change `upgradeForm.css?v=2.0.0` to `upgradeForm.css?v=2.1.0`.
 
+- [ ] **Step 2c: Mirror the manual select into the hidden field**
+
+Customer mode now submits `originalProduct` as a hidden input, and a hidden input
+never fires `change`. Three existing behaviours read that field, so without a
+bridge this step regresses the form on its own:
+
+- `updateSectionVisibility()` is bound to `#originalProduct` (DOM-ready block),
+  so it stops running when a customer picks a plan.
+- `getPlanType($('#originalProduct').val())` decides `isSoloToBundle`, which
+  gates a whole section; an empty value makes it permanently false.
+- `validateForm()` uses the same test to require `systemEmail` and
+  `openingDayTime` for a Solo-to-Bundle upgrade, so those stop being enforced.
+- `sendData()` posts `originalProduct`, which would go out empty.
+
+In `modules/upgrade-downgrade/controllers/upgradeForm.js`, find the DOM-ready
+product handler:
+
+```javascript
+    // --- Product selection change ---
+    $('#originalProduct, #newProduct').on('change', updateSectionVisibility);
+```
+
+and add below it:
+
+```javascript
+    // In customer mode #originalProduct is a hidden input, and a hidden input
+    // never fires change. The visible control is #originalProductSelect, whose
+    // value has to be mirrored into it: #originalProduct is what the webhook
+    // payload reads, and what getPlanType() consults to decide whether this is a
+    // Solo-to-Bundle upgrade (which gates an extra required-fields section).
+    // Without this, a customer's selection reaches neither.
+    $('#originalProductSelect').on('change', function () {
+        $('#originalProduct').val($(this).val() || '');
+        updateSectionVisibility();
+    });
+```
+
+Staff mode has no `#originalProductSelect`, so this binds to nothing there.
+
+Verify the gate is restored rather than assuming it:
+
+```bash
+node --check modules/upgrade-downgrade/controllers/upgradeForm.js
+```
+
+Then in the browser, in customer mode, choose "Upgrade Package", pick
+Solo - Local Growth as the current product and Bundle - Local Growth as the new
+one. The Solo-to-Bundle section must appear. Before this bridge it does not.
+
 - [ ] **Step 3: Verify the view parses and renders**
 
 Run: `php -l modules/upgrade-downgrade/views/upgradeForm.php`
@@ -3088,7 +3137,9 @@ visually unchanged — it still shows the Monday project search and the
 - [ ] **Step 4: Commit**
 
 ```bash
-git add modules/upgrade-downgrade/views/upgradeForm.php
+git add modules/upgrade-downgrade/views/upgradeForm.php \
+        modules/upgrade-downgrade/assets/css/upgradeForm.css \
+        modules/upgrade-downgrade/controllers/upgradeForm.js
 git commit -m "feat(upgrade-downgrade): prepare customer-mode product field for lookup
 
 Customer mode now submits originalProduct as a hidden input, the same shape
@@ -3279,10 +3330,14 @@ Insert this immediately after the closing `})();` of the
         runLookup();
     });
 
-    // Keep the submitted field in step with a manual choice.
+    // The select -> hidden mirroring itself lives in Task 9's DOM-ready block,
+    // because the form depends on it with or without a lookup. This only has to
+    // stop a stale manual choice overwriting a successful lookup result.
     $select.on('change', function () {
-        if ($selWrap.hasClass('d-none')) return;
-        $hidden.val($(this).val() || '');
+        if ($selWrap.hasClass('d-none')) {
+            // A lookup is showing; its product list owns the hidden field.
+            $(this).val('');
+        }
     });
 
     $status.on('click', '#emailLookupRevert', function (e) {

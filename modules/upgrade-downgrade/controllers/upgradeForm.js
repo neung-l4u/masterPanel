@@ -290,6 +290,17 @@ $(function () {
     // --- Product selection change ---
     $('#originalProduct, #newProduct').on('change', updateSectionVisibility);
 
+    // In customer mode #originalProduct is a hidden input, and a hidden input
+    // never fires change. The visible control is #originalProductSelect, whose
+    // value has to be mirrored into it: #originalProduct is what the webhook
+    // payload reads, and what getPlanType() consults to decide whether this is a
+    // Solo-to-Bundle upgrade (which gates an extra required-fields section).
+    // Without this, a customer's selection reaches neither.
+    $('#originalProductSelect').on('change', function () {
+        $('#originalProduct').val($(this).val() || '');
+        updateSectionVisibility();
+    });
+
     // --- Menu/Logo status: show link field when Google Drive selected ---
     $('#menuLogoStatus').on('change', function () {
         if ($(this).val() === 'google_drive') {
