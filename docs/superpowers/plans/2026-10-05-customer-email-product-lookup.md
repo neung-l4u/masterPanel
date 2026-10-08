@@ -530,6 +530,11 @@ set_exception_handler(function ($e) use (&$db) {
 
 // Fixture rows use a reserved country code 'ZZ' and TEST_ ids so they can
 // never collide with mirrored production data.
+//
+// Keep every fixture id at 20 characters or fewer: shop_id, sub_id and the
+// subscriptions table's shop_id are all varchar(20), and MySQL truncates a
+// longer value silently. A test that then compares against the untruncated
+// id fails while the code under test is perfectly correct.
 // ZY is included because the country-isolation test below creates a row there;
 // without it, a run that dies early leaves TEST_SHOP_C behind and the next
 // run's cleanup does not clear it.
@@ -2257,7 +2262,7 @@ udmUpsertShop($db, [
 
 // Same email in a different country, to prove country scoping.
 udmUpsertShop($db, [
-    'shop_id' => 'TEST_SHOP_OTHERCOUNTRY', 'country' => 'ZY', 'email' => 'owner@testshop.com',
+    'shop_id' => 'TEST_SHOP_OTHERCTY', 'country' => 'ZY', 'email' => 'owner@testshop.com',
     'shop_name' => 'Wrong Country Shop', 'shop_type' => '', 'owner_name' => 'Other',
     'phone' => '', 'board_id' => '1943203246',
 ], $fresh);
@@ -2317,7 +2322,7 @@ test("lowercase country code matches",
 echo "== country scoping ==\n";
 $r = udmLookupShopByEmail($db, 'ZY', 'owner@testshop.com');
 test("the same email in another country finds that country's shop",
-     $r['found'] === true && $r['shop']['shopId'] === 'TEST_SHOP_OTHERCOUNTRY');
+     $r['found'] === true && $r['shop']['shopId'] === 'TEST_SHOP_OTHERCTY');
 test("a country with no such email finds nothing",
      udmLookupShopByEmail($db, 'TH', 'owner@testshop.com')['found'] === false);
 
