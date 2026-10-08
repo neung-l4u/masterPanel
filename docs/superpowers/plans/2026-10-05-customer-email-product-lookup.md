@@ -2239,7 +2239,31 @@ $names = array_column($r['subscriptions'], 'name');
 test("subscription name is the product group", in_array('Yelp Ad Spend', $names, true));
 test("subscriptions carry the raw name too",
      isset($r['subscriptions'][0]['rawName']) && $r['subscriptions'][0]['rawName'] !== '');
-test("subscriptions carry a currency", $r['subscriptions'][0]['currency'] === 'USD');
+
+// The customer-facing list shows product names only. price and currency stay in
+// the mirror for internal reporting but must not reach the form.
+test("does not return a price", !isset($r['subscriptions'][0]['price']));
+test("does not return a currency", !isset($r['subscriptions'][0]['currency']));
+
+echo "== the same product held several times collapses to one row ==\n";
+// A real shop was found holding ten separate "Social Media Marketing Bundle"
+// rows. Listing each would look like a broken form, so the lookup groups by
+// product name.
+foreach (['TEST_SUB_DUP_A', 'TEST_SUB_DUP_B', 'TEST_SUB_DUP_C'] as $dupId) {
+    udmUpsertSubscription($db, [
+        'sub_id' => $dupId, 'shop_id' => 'TEST_SHOP_A',
+        'raw_name' => 'USD - 297 SMMB Social Media Marketing Bundle',
+        'product_group' => 'Social Media Marketing Bundle',
+        'price' => '297.00', 'currency' => 'USD',
+        'account_name' => 'Test Shop A', 'matched_by' => 'relation',
+    ], $fresh);
+}
+$r = udmLookupShopByEmail($db, 'ZZ', 'owner@testshop.com');
+$names = array_column($r['subscriptions'], 'name');
+test("three duplicates appear once", count(array_keys($names, 'Social Media Marketing Bundle')) === 1);
+test("the other products are still listed", count($r['subscriptions']) === 4);
+test("every returned name is distinct", count($names) === count(array_unique($names)));
+$db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST\_SUB\_DUP%'");
 
 echo "== normalization ==\n";
 test("uppercase email matches",
@@ -2354,10 +2378,19 @@ function udmLookupShopByEmail($db, string $country, string $email): array
 
     $shop = $shops[0];
 
+    // One row per distinct product name, not per Monday subscription row. A shop
+    // can carry the same product many times over -- one sampled shop holds ten
+    // separate "Social Media Marketing Bundle" rows -- and listing each would
+    // look like a broken form. MIN(sub_id) just gives the group a stable id.
+    //
+    // price and currency are deliberately NOT selected: the customer-facing form
+    // shows product names only. The columns stay populated in the mirror for
+    // internal reporting.
     $subs = $db->query(
-        "SELECT sub_id, raw_name, product_group, price, currency
+        "SELECT MIN(sub_id) AS sub_id, product_group, MIN(raw_name) AS raw_name
          FROM l4u_ud_subscriptions
          WHERE shop_id = ?
+         GROUP BY product_group
          ORDER BY product_group ASC",
         (string) $shop['shop_id']
     )->fetchAll();
@@ -2365,12 +2398,10 @@ function udmLookupShopByEmail($db, string $country, string $email): array
     $subscriptions = [];
     foreach ($subs as $s) {
         $subscriptions[] = [
-            'id'       => (string) $s['sub_id'],
+            'id'      => (string) $s['sub_id'],
             // product_group is the customer-facing name; rawName carries the SKU.
-            'name'     => (string) $s['product_group'],
-            'rawName'  => (string) $s['raw_name'],
-            'price'    => $s['price'] === null ? null : (string) $s['price'],
-            'currency' => (string) $s['currency'],
+            'name'    => (string) $s['product_group'],
+            'rawName' => (string) $s['raw_name'],
         ];
     }
 
@@ -2508,6 +2539,9 @@ test("returns the shop name", ($r['json']['shop']['shopName'] ?? '') === 'Endpoi
 test("returns one subscription", count($r['json']['subscriptions'] ?? []) === 1);
 test("subscription name is the product group",
      ($r['json']['subscriptions'][0]['name'] ?? '') === 'Local Starter Solo');
+test("no price reaches the client",
+     !isset($r['json']['subscriptions'][0]['price'])
+     && !isset($r['json']['subscriptions'][0]['currency']));
 test("does not echo the email back", !isset($r['json']['shop']['email']));
 
 echo "== no match ==\n";
@@ -2796,7 +2830,7 @@ Append to `modules/upgrade-downgrade/assets/css/upgradeForm.css`:
 ```
 
 No new styles are needed for the product list itself: `.subscription-list`,
-`.subscription-item`, `.sub-name` and `.sub-price` already exist in this file
+`.subscription-item` and `.sub-name` already exist in this file
 at lines 55–96, because staff mode uses the same markup. Reusing them is why
 Task 10 renders the customer product list with those exact class names.
 
@@ -2902,12 +2936,13 @@ Insert this immediately after the closing `})();` of the
         $selWrap.addClass('d-none');
         $hidden.val(subscriptions.map(s => s.name).join(', '));
 
+        // Names only -- no prices in the customer-facing list. The endpoint does
+        // not return them, so there is nothing to render even if this changed.
         const html = subscriptions.map(s => `
             <div class="subscription-item">
                 <i class="bi bi-check-circle-fill"></i>
                 <div>
                     <div class="sub-name">${escapeHtml(s.name)}</div>
-                    ${s.price ? `<div class="sub-price">${escapeHtml(s.currency)} ${escapeHtml(s.price)}/mo</div>` : ''}
                 </div>
             </div>`).join('');
 
