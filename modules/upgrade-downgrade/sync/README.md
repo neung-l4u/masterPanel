@@ -19,6 +19,37 @@ Files in this directory: `syncMondayMirror.php` (entry point), `mondayClient.php
 `mirrorMatch.php` (subscription-to-shop matching), `mirrorRepo.php` (database
 writes).
 
+## First-time setup
+
+Three steps. Two of these files are gitignored, so a fresh checkout does not
+have them and nothing works until all three are done.
+
+**1. Create the database connection.** `assets/db/initDB.php` holds the password
+and is gitignored, so only `initDB_example.php` and `initDB_server.php` ship.
+Copy one and set the credentials for the target database:
+
+    cp modules/upgrade-downgrade/assets/db/initDB_example.php \
+       modules/upgrade-downgrade/assets/db/initDB.php
+
+Without it the sync exits 1 with `FATAL: cannot initialise: Failed opening
+required '.../initDB.php'`, written to the log, and the lookup endpoint returns
+503 with a generic body.
+
+**2. Apply the migration.** It creates the two mirror tables and is idempotent
+(`CREATE TABLE IF NOT EXISTS`):
+
+    mysql -u root -p db_localforyou < modules/upgrade-downgrade/assets/db/migration_ud_mirror.sql
+
+**3. Create the module config,** also gitignored:
+
+    cp modules/upgrade-downgrade/assets/config.example.php \
+       modules/upgrade-downgrade/assets/config.php
+
+Then set `monday_token` (see Configuration below). Leave `sync_token` empty
+unless the sync has to be triggerable over HTTP.
+
+Run the sync once by hand and read the summary before scheduling anything.
+
 ## Running it
 
     php modules/upgrade-downgrade/sync/syncMondayMirror.php            # all countries

@@ -170,6 +170,29 @@ test("an unlinked row has an empty linked_shop_id", $subs[1]['linked_shop_id'] =
 test("product_group falls back to the item name when the mirror is empty",
      $subs[1]['product_group'] === 'Unlinked active thing');
 
+echo "== the fallback name is stripped of price and SKU ==\n";
+// The customer-facing list is specified to show names only. The mirror column is
+// empty on a sizeable minority of real rows, and the item name it falls back to
+// carries the currency, price and SKU -- so dropping the price COLUMN was not
+// enough on its own. These are real shapes taken from the live mirror.
+foreach ([
+    ['USD - $199 SS01M12 Social Media Marketing Solo - 12 Months', 'Social Media Marketing Solo - 12 Months'],
+    ['USA PB - $97 Pro Online Ordering System',                    'Pro Online Ordering System'],
+    ['PO01M00 Pro Online Ordering System',                         'Pro Online Ordering System'],
+    ['AUD - $150 ADAU03A02 Social Media Ad Spend Credit + 15% Handling Fee 172.5',
+                                                                   'Social Media Ad Spend Credit + 15% Handling Fee'],
+    ['POS + Online Ordering System $0',                            'POS + Online Ordering System'],
+    ['AUD - $199 PO01M00 Pro Online Ordering System, AUD - $49 PAO03M00 Promotions Add-on',
+                                                                   'Pro Online Ordering System, Promotions Add-on'],
+] as [$raw, $want]) {
+    $got = udmCleanProductName($raw);
+    test("cleans " . json_encode($raw), $got === $want);
+    test("  -> no price survives", strpos($got, '$') === false);
+}
+// An unrecognised shape must show something imperfect rather than a blank line.
+test("a plain name is left alone", udmCleanProductName('Booking System') === 'Booking System');
+test("a name that would clean away is kept", udmCleanProductName('USD - $49') === 'USD - $49');
+
 // The existing getSubscriptions.php uses a case-insensitive "contains active"
 // test, so these must all count as active.
 foreach (['Active', 'active', 'ACTIVE', 'Active - paid', 'Pending Active'] as $status) {

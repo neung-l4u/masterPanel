@@ -88,6 +88,47 @@ function udmExtractContactFields(array $contactItem): array
 }
 
 /**
+ * Strip the currency, price and SKU a Monday item name carries, leaving the
+ * product name a customer should see.
+ *
+ * Only used for the fallback when the mirror column is empty. Monday item names
+ * follow "CUR - $N SKU Product Name", sometimes several joined by commas, e.g.
+ * "USD - $199 SS01M12 Social Media Marketing Solo - 12 Months". Dropping the
+ * price column from the response achieved nothing for these rows, because the
+ * price was inside the name.
+ *
+ * Returns the original if cleaning would leave nothing: an unrecognised shape
+ * should show something imperfect rather than a blank line.
+ */
+function udmCleanProductName(string $name): string
+{
+    $out = [];
+
+    foreach (preg_split('/\s*,\s*/', $name) as $part) {
+        $p = trim($part);
+        if ($p === '') continue;
+
+        // Leading currency and price: "USD - $199 ", "USA PB - $97 ".
+        $p = preg_replace('/^[A-Za-z][A-Za-z ]{0,12}-\s*\$?[\d,]+(?:\.\d+)?\s+/', '', $p, 1);
+        // Leading SKU: uppercase letters then a digit, e.g. "LSB01M12 ".
+        $p = preg_replace('/^[A-Z]{2,12}\d[A-Z0-9]*\s+/', '', $p, 1);
+        // Trailing bare price some names carry: "... Handling Fee 172.5", "... $0".
+        $p = preg_replace('/\s+\$?\d+(?:[.,]\d+)?$/', '', $p, 1);
+
+        // Keep only what still reads as a name. A price-only part such as
+        // "USD - $49" cleans down to debris like "USD -", which is worse to show
+        // than the original, so require a word that is not left dangling on a
+        // separator.
+        $p = trim($p, " \t-");
+        if ($p !== '' && preg_match('/[A-Za-z]{3}/', $p) && !preg_match('/^[A-Z]{2,4}$/', $p)) {
+            $out[] = $p;
+        }
+    }
+
+    return $out === [] ? trim($name) : implode(', ', $out);
+}
+
+/**
  * Active subscription rows. The active test is a case-insensitive "contains
  * active", identical to the existing getSubscriptions.php, so this mirror and
  * the staff-mode live call agree on what counts.
@@ -116,9 +157,14 @@ function udmExtractSubscriptionRows(array $response): array
             $rows[] = [
                 'sub_id'         => (string) ($item['id'] ?? ''),
                 'raw_name'       => (string) ($item['name'] ?? ''),
-                // The mirror column is the customer-facing name ("Pro Online
-                // Ordering System"); the item name carries the SKU and price.
-                'product_group'  => $group !== '' ? $group : (string) ($item['name'] ?? ''),
+                // The mirror column is already the customer-facing name ("Pro
+                // Online Ordering System"). It is empty on a sizeable minority
+                // of rows, and the item name it falls back to carries the
+                // currency, price and SKU -- so the fallback has to be cleaned,
+                // or prices reach a list that is specified to show names only.
+                'product_group'  => $group !== ''
+                    ? $group
+                    : udmCleanProductName((string) ($item['name'] ?? '')),
                 'price'          => $price === '' ? null : $price,
                 'currency'       => strtoupper($currency),
                 'account_name'   => $account,

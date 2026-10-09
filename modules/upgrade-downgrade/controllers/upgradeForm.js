@@ -396,9 +396,15 @@ function updateSectionVisibility() {
     // The Monday project id is the dangerous one to leave behind: a stale id
     // from a previous email would attach this request to the wrong shop in
     // Monday while the form shows the customer's new address.
+    //
+    // The flag is lowered too: the shop name, owner and phone are left on screen
+    // for the customer to correct, which makes them theirs to keep. Leaving the
+    // flag raised would let a later country change wipe fields they had since
+    // edited by hand.
     function clearShopIdentity() {
         if (!filledByLookup) return;
         $('#mondayProjectId, #boardId').val('');
+        filledByLookup = false;
     }
 
     function revertToManual() {
