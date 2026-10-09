@@ -141,7 +141,33 @@ udmUpsertShop($db, [
 $r = udmLookupShopByEmail($db, 'ZZ', 'owner@testshop.com');
 test("flags multiple", $r['multiple'] === true);
 test("returns the first shop by name", $r['shop']['shopId'] === 'TEST_SHOP_DUP');
+
+// Every match comes back with its own products, so the form can ask which
+// branch is theirs. Returning only the first showed "Found <shop>" with an
+// empty product list whenever the first by name had none and a sibling did --
+// which is 15 of the 69 real duplicate-email groups.
+test("returns every matching shop", count($r['shops']) === 2);
+$byId = [];
+foreach ($r['shops'] as $s) { $byId[$s['shopId']] = $s; }
+test("the sibling with no products is listed",
+     isset($byId['TEST_SHOP_DUP']) && $byId['TEST_SHOP_DUP']['subscriptions'] === []);
+test("the sibling WITH products carries them",
+     isset($byId['TEST_SHOP_A']) && count($byId['TEST_SHOP_A']['subscriptions']) === 3);
+test("each listed shop still omits the email",
+     !isset($byId['TEST_SHOP_A']['email']) && !isset($byId['TEST_SHOP_DUP']['email']));
+test("no listed product carries a price",
+     array_filter($byId['TEST_SHOP_A']['subscriptions'],
+         function ($p) { return isset($p['price']) || isset($p['currency']); }) === []);
+
 $db->query("DELETE FROM l4u_ud_shops WHERE shop_id = ?", 'TEST_SHOP_DUP');
+
+// A single match must keep the one-shop shape, so a caller that does not know
+// about `shops` is unaffected.
+$one = udmLookupShopByEmail($db, 'ZZ', 'nosub@testshop.com');
+test("a single match still lists exactly one shop", count($one['shops']) === 1);
+test("a single match is not flagged multiple", $one['multiple'] === false);
+test("the top-level shop matches the only listed one",
+     $one['shop']['shopId'] === $one['shops'][0]['shopId']);
 
 echo "== staleness ==\n";
 udmUpsertShop($db, [

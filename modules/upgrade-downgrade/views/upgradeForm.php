@@ -21,7 +21,7 @@ $testMode = $_GET['testMode'] ?? 'false';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/upgradeForm.css?v=2.1.0" rel="stylesheet">
+    <link href="../assets/css/upgradeForm.css?v=2.2.0" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -136,6 +136,26 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <div id="projectSearchDropdown" class="project-search-dropdown d-none"></div>
                             <?php endif; ?>
 
+                            <div class="mb-3">
+                                <label for="emailAddress" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="emailAddress" name="emailAddress" placeholder="e.g. owner@restaurant.com" required>
+                                <div class="invalid-feedback">Please enter an email address.</div>
+<?php if ($mode === 'customer'): ?>
+                                <div class="form-text">We'll use this to find your shop and current products.</div>
+                                <div id="emailLookupStatus" class="email-lookup-status" aria-live="polite"></div>
+                                <?php endif; ?>
+                            </div>
+
+<?php if ($mode === 'customer'): ?>
+                            <!-- One owner often runs several branches under one email. When the
+                                 lookup matches more than one, the customer picks theirs rather
+                                 than the form guessing and risking the wrong Monday project. -->
+                            <div id="branchPicker" class="branch-picker mb-3 d-none">
+                                <label class="form-label">Which shop is yours? <span class="text-danger">*</span></label>
+                                <div id="branchPickerList" class="branch-picker-list" role="radiogroup" aria-label="Choose your shop"></div>
+                            </div>
+<?php endif; ?>
+
                             <div class="row">
                                 <div class="col-md-12 mb-3">
                                     <label for="shopName" class="form-label">Shop Name</label>
@@ -152,16 +172,6 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
                                     <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="<?php echo $mode === 'staff' ? 'Auto-filled from ID' : 'e.g. +1 555 123 4567'; ?>">
                                 </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="emailAddress" class="form-label">Email Address <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="emailAddress" name="emailAddress" placeholder="e.g. owner@restaurant.com" required>
-                                <div class="invalid-feedback">Please enter an email address.</div>
-<?php if ($mode === 'customer'): ?>
-                                <div class="form-text">We'll use this to find your shop and current products.</div>
-                                <div id="emailLookupStatus" class="email-lookup-status" aria-live="polite"></div>
-                                <?php endif; ?>
                             </div>
 
                             <div class="row">

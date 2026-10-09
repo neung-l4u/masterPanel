@@ -307,12 +307,14 @@ function updateSectionVisibility() {
 // lookup is an accelerator, never a gate. A wrong or unrecognised email is not
 // an error condition -- CS briefs the customer directly.
 (function () {
-    const $email   = $('#emailAddress');
-    const $status  = $('#emailLookupStatus');
-    const $list    = $('#customerProductList');
-    const $selWrap = $('#customerProductSelectWrap');
-    const $select  = $('#originalProductSelect');
-    const $hidden  = $('#originalProduct');
+    const $email        = $('#emailAddress');
+    const $status       = $('#emailLookupStatus');
+    const $list         = $('#customerProductList');
+    const $selWrap      = $('#customerProductSelectWrap');
+    const $select       = $('#originalProductSelect');
+    const $hidden       = $('#originalProduct');
+    const $branchPicker = $('#branchPicker');
+    const $branchList   = $('#branchPickerList');
 
     let lookupTimer    = null;
     let lastQueried    = '';
@@ -320,6 +322,8 @@ function updateSectionVisibility() {
     // True only while the shop fields hold values this lookup wrote, so a
     // later clear can leave anything the customer typed by hand alone.
     let filledByLookup = false;
+    // The shops a multi-branch match returned, awaiting the customer's choice.
+    let matchedShops   = [];
 
     if (IS_STAFF) return;
 
@@ -410,25 +414,77 @@ function updateSectionVisibility() {
     function revertToManual() {
         lastQueried = '';
         clearShopFields();
+        hideBranchPicker();
         useManualSelect();
         setStatus('');
     }
 
-    function onFound(data) {
-        fillShop(data.shop);
-        useLookupProducts(data.subscriptions || []);
+    function hideBranchPicker() {
+        $branchPicker.addClass('d-none');
+        $branchList.empty();
+        matchedShops = [];
+    }
 
-        const name = escapeHtml(data.shop.shopName);
-        let msg = `<span class="els-found"><i class="bi bi-check-circle"></i> Found <strong>${name}</strong>.`;
-        if (data.stale) {
-            msg = `<span class="els-stale"><i class="bi bi-exclamation-circle"></i> Found <strong>${name}</strong>. These details may be out of date; our team will confirm them.`;
+    // One owner often runs several branches under one email: 69 emails match
+    // more than one shop, and in 15 of those the first by name has no products
+    // while a sibling does. Picking one silently showed "Found <shop>" with an
+    // empty product list and, worse, submitted that shop's Monday project id.
+    function showBranchPicker(shops) {
+        matchedShops = shops;
+
+        const html = shops.map(function (s, i) {
+            const n     = s.subscriptions ? s.subscriptions.length : 0;
+            const count = n === 1 ? '1 current product' : n + ' current products';
+            return `
+                <label class="branch-option">
+                    <input type="radio" name="branchChoice" value="${i}">
+                    <span class="branch-option-body">
+                        <span class="branch-option-name">${escapeHtml(s.shopName)}</span>
+                        <span class="branch-option-meta">${count}</span>
+                    </span>
+                </label>`;
+        }).join('');
+
+        $branchList.html(html);
+        $branchPicker.removeClass('d-none');
+    }
+
+    function applyShop(shop, stale) {
+        fillShop(shop);
+        useLookupProducts(shop.subscriptions || []);
+
+        const name = escapeHtml(shop.shopName);
+        let msg = stale
+            ? `<span class="els-stale"><i class="bi bi-exclamation-circle"></i> Using <strong>${name}</strong>. These details may be out of date; our team will confirm them.`
+            : `<span class="els-found"><i class="bi bi-check-circle"></i> Using <strong>${name}</strong>.`;
+
+        // A found shop with no products must say so. Silently showing the
+        // hardcoded select is the "did the lookup work?" ambiguity this feature
+        // exists to remove.
+        if (!shop.subscriptions || shop.subscriptions.length === 0) {
+            msg += ' We found no active products on it, so please choose below.';
         }
-        if (data.multiple) {
-            msg += ' More than one shop uses this email, so our team will confirm which one.';
-        }
+
         msg += ' You can edit anything below.</span>'
              + '<a href="#" class="els-revert" id="emailLookupRevert">Not my shop?</a>';
         setStatus(msg);
+    }
+
+    function onFound(data) {
+        const shops = (data.shops && data.shops.length) ? data.shops : [data.shop];
+
+        if (shops.length > 1) {
+            // Fill nothing yet: which branch is theirs decides the project id.
+            showBranchPicker(shops);
+            useManualSelect();
+            setStatus('<span class="els-neutral"><i class="bi bi-diagram-3"></i> This email is used by '
+                + shops.length + ' shops. Please choose which one is yours.</span>'
+                + '<a href="#" class="els-revert" id="emailLookupRevert">None of these?</a>');
+            return;
+        }
+
+        hideBranchPicker();
+        applyShop(shops[0], data.stale);
     }
 
     function onNotFound() {
@@ -504,6 +560,14 @@ function updateSectionVisibility() {
             // A lookup is showing; its product list owns the hidden field.
             $(this).val('');
         }
+    });
+
+    // Choosing a branch is what fills the form, so the project id can only ever
+    // be the shop the customer confirmed.
+    $branchList.on('change', 'input[name="branchChoice"]', function () {
+        const shop = matchedShops[parseInt($(this).val(), 10)];
+        if (!shop) return;
+        applyShop(shop, false);
     });
 
     $status.on('click', '#emailLookupRevert', function (e) {
