@@ -3194,9 +3194,12 @@ Insert this immediately after the closing `})();` of the
     const $select  = $('#originalProductSelect');
     const $hidden  = $('#originalProduct');
 
-    let lookupTimer = null;
-    let lastQueried = '';
-    let inFlight    = null;
+    let lookupTimer    = null;
+    let lastQueried    = '';
+    let inFlight       = null;
+    // True only while the shop fields hold values this lookup wrote, so a
+    // later clear can leave anything the customer typed by hand alone.
+    let filledByLookup = false;
 
     if (IS_STAFF) return;
 
@@ -3207,10 +3210,16 @@ Insert this immediately after the closing `})();` of the
     // With no lookup result, the hidden field that actually submits must track
     // the manual select -- otherwise a customer who picks a plan by hand
     // submits an empty originalProduct.
+    //
+    // updateSectionVisibility() runs after every change to the hidden field:
+    // the field drives the Solo-to-Bundle gate and the comparison card, so
+    // without this a section or card from a previous selection stays on screen
+    // while validateForm has already stopped requiring its fields.
     function useManualSelect() {
         $list.addClass('d-none').empty();
         $selWrap.removeClass('d-none');
         $hidden.val($select.val() || '');
+        updateSectionVisibility();
     }
 
     function useLookupProducts(subscriptions) {
@@ -3221,6 +3230,7 @@ Insert this immediately after the closing `})();` of the
 
         $selWrap.addClass('d-none');
         $hidden.val(subscriptions.map(s => s.name).join(', '));
+        updateSectionVisibility();
 
         // Names only -- no prices in the customer-facing list. The endpoint does
         // not return them, so there is nothing to render even if this changed.
@@ -3250,10 +3260,24 @@ Insert this immediately after the closing `})();` of the
         // real project id for a customer submission.
         $('#mondayProjectId').val(shop.shopId || '');
         $('#boardId').val(shop.boardId || '');
+        filledByLookup = true;
     }
 
+    // Clears only what a lookup actually wrote. Clearing unconditionally would
+    // discard a shop name, owner and phone the customer typed by hand -- the
+    // lookup is an accelerator, so it may not destroy their own input.
     function clearShopFields() {
+        if (!filledByLookup) return;
         $('#shopName, #ownerName, #phoneNumber').val('');
+        $('#mondayProjectId, #boardId').val('');
+        filledByLookup = false;
+    }
+
+    // The Monday project id is the dangerous one to leave behind: a stale id
+    // from a previous email would attach this request to the wrong shop in
+    // Monday while the form shows the customer's new address.
+    function clearShopIdentity() {
+        if (!filledByLookup) return;
         $('#mondayProjectId, #boardId').val('');
     }
 
@@ -3283,7 +3307,11 @@ Insert this immediately after the closing `})();` of the
 
     function onNotFound() {
         // Deliberately not alarming: an unrecognised email is expected, and CS
-        // reconciles it. Nothing the customer already typed is touched.
+        // reconciles it. Nothing the customer typed by hand is touched.
+        //
+        // The project id must go, though: this email matched no shop, so a stale
+        // id from a previous match would attach the request to the wrong shop.
+        clearShopIdentity();
         useManualSelect();
         setStatus('<span class="els-neutral">We couldn\'t prefill your details from this email. Please fill in the form and our team will confirm everything.</span>');
     }
@@ -3292,7 +3320,14 @@ Insert this immediately after the closing `})();` of the
         const country = ($('#country').val() || '').trim();
         const email   = ($email.val() || '').trim();
 
-        if (!country || !email || email.indexOf('@') === -1) return;
+        if (!country || !email || email.indexOf('@') === -1) {
+            // Mid-edit, so no lookup can be in flight for what is on screen now.
+            // Abort it and drop the project id: leaving either would let an older
+            // response land, or submit a previous shop's id under a new address.
+            if (inFlight) inFlight.abort();
+            clearShopIdentity();
+            return;
+        }
 
         const key = country + '|' + email.toLowerCase();
         if (key === lastQueried) return;
@@ -3309,7 +3344,12 @@ Insert this immediately after the closing `})();` of the
             })
             .fail(function (jqXHR, textStatus) {
                 if (textStatus === 'abort') return;
-                // A failed lookup must be indistinguishable from no lookup.
+                // Forget the key so the same address can be retried: a 503 or a
+                // timeout should not kill the lookup until the email changes.
+                lastQueried = '';
+                // A failed lookup must be indistinguishable from no lookup, but
+                // a previous match's project id cannot be left to submit.
+                clearShopIdentity();
                 useManualSelect();
                 setStatus('');
             })
@@ -3343,9 +3383,85 @@ Insert this immediately after the closing `})();` of the
     $status.on('click', '#emailLookupRevert', function (e) {
         e.preventDefault();
         revertToManual();
+        // This link lives inside the status area, which the revert empties, so
+        // activating it destroys the focused element and focus falls to <body>.
+        // Send it to the email field, which is what the customer edits next.
+        $email.trigger('focus');
     });
 })();
 ```
+
+- [ ] **Step 2b: Teach getPlanType and getTier to read real product names**
+
+`#originalProduct` holds one of two shapes: a select slug like `solo_starter`, or
+the real Monday product names the lookup writes (`"Local Starter Solo, Pro Online
+Ordering System"`). The existing helpers only understood slugs, so after a
+successful lookup:
+
+- `getPlanType()` returned `null`, so `isSoloToBundle` was always false and the
+  Solo-to-Bundle section never appeared.
+- `validateForm()` uses the same test, so `systemEmail` and `openingDayTime`
+  stopped being required - a Solo customer upgrading to Bundle submitted without
+  the system-build details, silently.
+- `getTier()` used a case-sensitive `includes('starter')`, which never matched
+  the title-cased `"Local Starter Solo"`, so the comparison card never rendered.
+
+A successful lookup was therefore *worse* than no lookup. The mirror holds 147
+rows named `"Local Starter Solo"` and 88 `"Local Starter Bundle"`, so this is the
+common case, not an edge one.
+
+Note staff mode's `loadSubscriptions()` has always written joined names into the
+same field, so this fixes a pre-existing staff-mode bug too.
+
+Replace both helpers near the top of
+`modules/upgrade-downgrade/controllers/upgradeForm.js`:
+
+```javascript
+// ===== Helper: Get package tier from product value =====
+// Accepts both shapes this field can hold: a select slug like 'solo_starter',
+// and the real Monday product names the email lookup and the staff subscription
+// list write into it, e.g. 'Local Starter Solo, Pro Online Ordering System'.
+// Matching is case-insensitive because the real names are title-cased ("Local
+// Starter Solo"), which a case-sensitive includes('starter') missed entirely.
+function getTier(val) {
+    if (!val) return null;
+    const v = String(val).toLowerCase();
+    if (v.includes('starter')) return 'starter';
+    if (v.includes('growth')) return 'growth';
+    if (v.includes('ultimate')) return 'ultimate';
+    return null;
+}
+
+// Same two shapes. The prefixes are checked first so a slug keeps its exact
+// meaning; the word match is the fallback for real product names.
+//
+// Bundle is tested before Solo: a name like 'Local Starter Bundle + Pro Online
+// Ordering System' mentions neither ambiguously, but where both words appear the
+// bundle is the broader package and is what the Solo-to-Bundle gate cares about.
+function getPlanType(val) {
+    if (!val) return null;
+    if (val.startsWith('pro_')) return 'pro';
+    if (val.startsWith('solo_')) return 'solo';
+    if (val.startsWith('bundle_')) return 'bundle';
+
+    const v = String(val).toLowerCase();
+    if (v.includes('bundle')) return 'bundle';
+    if (v.includes('solo')) return 'solo';
+    if (v.includes('pro ') || v.includes('pro-')) return 'pro';
+    return null;
+}
+```
+
+Verify the slugs still mean exactly what they did, and that the gate now fires:
+
+```bash
+node --check modules/upgrade-downgrade/controllers/upgradeForm.js
+```
+
+Check that `getPlanType('solo_starter')` and `getPlanType('Local Starter Solo')`
+are both `'solo'`, and that `getPlanType('Local Starter Bundle')` is `'bundle'` -
+bundle is tested before solo, because a name mentioning both is the broader
+package.
 
 - [ ] **Step 3: Verify the file parses**
 
