@@ -1,0 +1,165 @@
+# Monday mirror sync
+
+Mirrors Monday into `l4u_ud_shops` and `l4u_ud_subscriptions` (database
+`db_localforyou`) so the customer-mode upgrade form can find a shop by email in
+milliseconds instead of the seconds a live Monday query takes.
+
+## What reads this
+
+`assets/API/lookupByEmail.php` (query in `models/shopLookup.php`), called by
+`controllers/upgradeForm.js` when a customer enters their email in
+`views/upgradeForm.php?mode=customer`.
+
+Nothing else. Staff mode still queries Monday live through
+`assets/API/selectProjectCountry/live.php` and `assets/API/getSubscriptions.php`,
+which this sync does not touch.
+
+Files in this directory: `syncMondayMirror.php` (entry point), `mondayClient.php`
+(Monday API calls), `mondayMirror.php` (extraction and per-country sync),
+`mirrorMatch.php` (subscription-to-shop matching), `mirrorRepo.php` (database
+writes).
+
+## Running it
+
+    php modules/upgrade-downgrade/sync/syncMondayMirror.php            # all countries
+    php modules/upgrade-downgrade/sync/syncMondayMirror.php TH AU      # some countries
+
+A full run takes about 3 minutes (183s on the first run).
+
+- Exit 0: every country and the subscriptions pass synced.
+- Exit 1: at least one country or the subscriptions pass errored (the failing
+  part keeps its previous rows), or the script hit a fatal (cannot reach the
+  database, bad country filter).
+
+It is CLI-only unless `sync_token` is set in `assets/config.php`. Over HTTP it
+returns 403 while `sync_token` is empty, or when `?token=` does not match.
+
+Output goes to stdout and to a rolling log, `assets/logs/mirror-sync.log`.
+
+## Schedule
+
+> **NOT YET REGISTERED.** No scheduled task exists for this. It must be set up
+> when this branch is deployed. Until then the mirror only holds whatever the
+> last manual run wrote, and after 48 hours lookups are marked stale.
+
+Twice daily. A customer who signed up one to three days ago is not using the
+upgrade form yet, so twelve-hour-old data is accurate enough for the people who
+reach this form.
+
+Windows Task Scheduler (two tasks; adjust the PHP and project paths to the
+deployment):
+
+    schtasks /create /tn "L4U UD Mirror Sync AM" /sc daily /st 06:00 /tr "C:\xampp\php\php.exe C:\xampp\htdocs\masterPanel\modules\upgrade-downgrade\sync\syncMondayMirror.php"
+    schtasks /create /tn "L4U UD Mirror Sync PM" /sc daily /st 18:00 /tr "C:\xampp\php\php.exe C:\xampp\htdocs\masterPanel\modules\upgrade-downgrade\sync\syncMondayMirror.php"
+
+Check with `schtasks /query /tn "L4U UD Mirror Sync AM"`, test with
+`schtasks /run /tn "L4U UD Mirror Sync AM"`, then confirm a fresh entry appears
+in `assets/logs/mirror-sync.log`. If it does not, the task's PHP path or working
+directory is wrong: fix the task, not the script.
+
+cron:
+
+    0 6,18 * * * cd /path/to/masterPanel && php modules/upgrade-downgrade/sync/syncMondayMirror.php >> /dev/null 2>&1
+
+The script keeps its own log, so discarding stdout loses nothing.
+
+## Reading the summary
+
+    [2026-10-05 06:00:04 +07] ud mirror sync ok (182.3s)
+      TH: 30 shops (0 new, 30 updated, 0 removed), 14 with an email
+      ...
+      subscriptions: 915 active (908 by relation, 0 by name, 7 unmatched), 0 removed
+
+This line is the monitoring signal. Read it after any run you care about, and
+skim the log periodically.
+
+Reference run (first real sync): CA 3 shops, AU 1323, NZ 104, UK 251, US 771,
+TH 30. 2482 shops total, 1691 with an email, 915 active subscriptions, 183s.
+
+- **`with an email`** well below the shop count means Monday contacts lack
+  email addresses. Those shops can never be found by the form. TH is 14 of 30
+  today; the other 16 also have no owner name or phone, because they have no
+  linked contact at all. That is a Monday data gap, not a sync fault.
+- **`by name`** or **`unmatched`** climbing means the `connect_boards`
+  ("Projects") relation is being left unset on the Active Subscriptions board.
+  The name fallback covers some of it, but unmatched subscriptions belong to no
+  shop and never appear in the form.
+  - Currently 7 are unmatched, all test records ("Test US Restaurant",
+    "Test Product"). So the `NOTE: some subscriptions did not resolve via the
+    Monday relation column` line fires on **every** run and has stopped being a
+    signal. Judge by whether the numbers grow beyond the known 7, not by the
+    NOTE line, until those test records are removed or linked.
+- **`ERROR`** on a country means that country kept its previous rows, by design.
+  Safe to leave until the next run; investigate if it repeats.
+
+## Page cap
+
+`UDM_MAX_PAGES` in `mondayMirror.php` is 50 pages of 100 = 5000 items. The
+**Active Subscriptions board is the binding constraint**, not the per-country
+project boards: it already holds 2865 items (915 of them active). The first
+attempt failed at the old cap of 20 (2000 items).
+
+The guard turns an overflow into a visible error (`page cap reached with more
+pages pending; raise UDM_MAX_PAGES`) rather than silently truncating, so the
+subscriptions pass keeps its old rows. If you ever see that message, raise the
+constant. Do not assume the board shrank.
+
+## If the sync stops
+
+The form degrades, it does not break. Lookups keep answering from the last good
+data, and past 48 hours the endpoint marks the response `stale` and the form
+tells the customer the details may be out of date. A customer whose shop is not
+found simply fills the form in by hand, which is how the form worked before this
+existed.
+
+## Configuration
+
+`assets/config.php` (gitignored; copy from `assets/config.example.php`):
+
+- `monday_token` - needs read access to the six project boards, Contacts &
+  Accounts (1862866069), and Active Subscriptions (1881439330).
+- `sync_token` - only needed to trigger the sync over HTTP. Leave empty (the
+  default) to allow CLI invocation only.
+
+## Logs
+
+`assets/logs/` holds `mirror-sync.log` and `lookup.log` (every lookup, with a
+hashed email and its outcome). The directory is gitignored.
+
+- `assets/logs/.htaccess` denies web access to them. **It is Apache-only.** An
+  nginx deployment ignores it and would serve the logs publicly, so it needs an
+  equivalent `location` deny added separately.
+- Because the directory is gitignored, the `.htaccess` had to be force-added
+  (`git add -f modules/upgrade-downgrade/assets/logs/.htaccess`). Anyone
+  recreating it must do the same, or the deny silently never deploys.
+
+## Known gap: no rate limiting
+
+`lookupByEmail.php` has no rate limiting. An attempt costs about 11ms
+unthrottled, so the endpoint can be used to probe whether an address belongs to
+a customer. This is a known, deliberate gap. The compensating control is
+`lookup.log`, which records every call so probing is detectable. Add a limiter
+if the log shows it happening.
+
+## Known Monday coupling
+
+Column ids are hardcoded in `mondayClient.php` and `mondayMirror.php` because
+Monday's API addresses columns by opaque id, not by title. If someone deletes
+and recreates a column in Monday, its id changes and this sync silently stops
+reading that field. The summary line is the early warning: a field going blank
+shows up as `with an email` collapsing or `unmatched` spiking.
+
+The ids in use:
+
+| Board | Column id | Meaning |
+| --- | --- | --- |
+| Project (per country) | `color1` | Customer / Industrial Type |
+| Project | `connect_boards0` | relation to Contacts & Accounts |
+| Contacts | `text0`, `text7` | first name, last name |
+| Contacts | `contact_phone`, `dup__of_mobile` | mobile, alt phone |
+| Contacts | `contact_email` | email - the lookup key |
+| Active Subscriptions | `status` | Subscription Status |
+| Active Subscriptions | `numbers`, `status0` | Amount, Currency |
+| Active Subscriptions | `text9` | Account Name (fallback match only) |
+| Active Subscriptions | `connect_boards` | relation to Projects - the join |
+| Active Subscriptions | `lookup_mkwgjt31` | Product Group - customer-facing name |
