@@ -732,7 +732,6 @@ function sendData(formData) {
         originalProduct: formData.originalProduct || '',
         newProduct: formData.newProduct || '',
         contractPeriod: formData.contractPeriod || '',
-        billingDate: formData.billingDate || '',
         staffName: formData.salesAgent || '',
         reason: formData.upgradeReason || '',
         note: formData.upgradeNote || '',
@@ -818,14 +817,16 @@ function validateForm() {
         }
     });
 
-    // Country select
-    const countryEl = document.getElementById('country');
-    if (countryEl && !countryEl.value) {
-        countryEl.classList.add('is-invalid');
-        isValid = false;
-    } else if (countryEl) {
-        countryEl.classList.remove('is-invalid');
-    }
+    // Country and Business Type selects
+    ['country', 'businessType'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.value) {
+            el.classList.add('is-invalid');
+            isValid = false;
+        } else if (el) {
+            el.classList.remove('is-invalid');
+        }
+    });
 
     // Upgrade type radio must be selected
     if (!upgradeType) {
@@ -837,9 +838,11 @@ function validateForm() {
 
     // If upgrade package, validate upgrade info fields
     if (isUpgradePackage) {
+        // contractPeriod is now a required dropdown in both modes. Billing Date
+        // was removed per CS; salesAgent (Upgrade Person) stays staff-only.
         const upgradeFields = IS_STAFF
-            ? ['contractPeriod', 'upgradeReason', 'salesAgent', 'billingDate']
-            : ['upgradeReason'];
+            ? ['contractPeriod', 'upgradeReason', 'salesAgent']
+            : ['contractPeriod', 'upgradeReason'];
         upgradeFields.forEach(id => {
             const el = document.getElementById(id);
             if (el && !el.value.trim()) {
@@ -928,6 +931,7 @@ function applyTestAutofill() {
         $('#phoneNumber').val('555-010-0000');
         $('#bestTimeContact').val('Weekdays 9am-5pm PST');
         $('#emailAddress').val('test@example.com');
+        $('#businessType').val('Restaurant');
 
         $('#typeUpgradePackage').prop('checked', true).trigger('change');
 
@@ -937,18 +941,16 @@ function applyTestAutofill() {
             $('#originalProductList').html(`
                 <div class="subscription-item">
                     <i class="bi bi-check-circle-fill"></i>
-                    <div><div class="sub-name">Pro - Local Starter (Test)</div></div>
+                    <div><div class="sub-name">Local Starter Bundle (Test)</div></div>
                 </div>`);
         }, 1500);
 
-        $('#newProduct').val('pro_growth').trigger('change');
+        $('#newProduct').val('bundle_growth').trigger('change');
         $('#promotion').val('1trial');
-        $('#contractPeriod').val('12 months');
+        $('#contractPeriod').val('12 Months');
         $('#upgradeReason').val('Test mode - automated autofill');
         $('#salesAgent').val('Test Agent');
 
-        const today = new Date().toISOString().split('T')[0];
-        $('#billingDate').val(today);
         $('#upgradeNote').val('Please upgrade ASAP.');
 
         // Add-on products
