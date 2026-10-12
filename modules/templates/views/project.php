@@ -103,18 +103,16 @@ if (in_array($loginPerson['sEmail'], $CSemail)){
                     </select>
                 </div>
 
+                <div class="form-group" id="shopTypeNoteBox" style="display:none;">
+                    <label for="shopTypeNote">What does this business do? <span style="color:red;"> *</span></label>
+                    <textarea class="form-control" id="shopTypeNote" rows="3" placeholder="e.g. Nail salon with 6 stations, also sells skincare products"></textarea>
+                    <small class="text-muted">Shop type "Other" is always a Fully custom website.</small>
+                </div>
+
                 <div class="form-group">
                     <label for="selectedTemplate">Template</label>
-                    <?php
-                    $templates = [
-                        1 => "Template no. 1"
-                    ];
-                    ?>
-                    <select class="form-control" id="selectedTemplate">
-                        <?php foreach ($templates as $value => $label){ ?>
-                            <option value="<?= htmlspecialchars($value) ?>"><?= htmlspecialchars($label) ?></option>
-                        <?php }//foreach ?>
-                    </select>
+                    <!-- options are filled by updateTemplates() in project.js -->
+                    <select class="form-control" id="selectedTemplate"></select>
                 </div>
                 <div class="form-group">
                     <label for="country">Country</label>

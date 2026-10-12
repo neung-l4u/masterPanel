@@ -167,3 +167,6 @@ assets/php/whm_tokens.json
 
 # Payments API secret (credential, do not commit)
 assets/db/payments_secret.txt
+
+# Secrets for server-side scripts (service-account keys, webhook URLs). Never commit.
+/config/

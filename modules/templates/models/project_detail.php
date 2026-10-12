@@ -4,6 +4,7 @@ global $db;
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 include "../assets/php/share_function.php";
+include "../assets/php/brief.php";
 
 $params = array();
 $data = array();
@@ -18,7 +19,9 @@ $data['projectName'] = !empty($_POST['projectName']) ? trim($_POST['projectName'
 $data['email'] = !empty($_POST['email']) ? trim($_POST['email']) : null;
 $data['phone'] = !empty($_POST['phone']) ? trim($_POST['phone']) : null;
 $data['address'] = !empty($_POST['address']) ? trim($_POST['address']) : null;
-$data['logo'] = !empty($_POST['logo']) ? $_POST['logo'] : getRandomPic($data['shopType'],'logo');
+// Sample logos exist only for Restaurant/Massage; getRandomPic() fatals on any other shop type.
+$data['logo'] = !empty($_POST['logo']) ? $_POST['logo']
+    : (in_array(strtolower((string)$data['shopType']), ['restaurant', 'massage'], true) ? getRandomPic($data['shopType'],'logo') : null);
 $data['colorTheme1'] = !empty($_POST['colorTheme1']) ? $_POST['colorTheme1'] : null;
 $data['colorTheme2'] = !empty($_POST['colorTheme2']) ? $_POST['colorTheme2'] : null;
 $data['colorTheme3'] = !empty($_POST['colorTheme3']) ? $_POST['colorTheme3'] : null;
@@ -88,6 +91,12 @@ if (!empty($_POST['customDeliChk']) && $_POST['customDeliChk'] === 'true') {
     $data['deliveryCustom'] = "1";
 }
 
+$isCustom = !empty($_POST['isCustom']);
+if ($data['mode'] == "save" && $isCustom && !briefTableExists($db)) {
+    echo json_encode(['result' => 'fail', 'msg' => 'Fully custom is not available yet: run docs/migrations/2026-10-06-templates-fully-custom.sql']);
+    exit;
+}
+
 if ($data['mode'] ==  "save") {
     $select = $db->query('UPDATE `tb_project` SET 
         `projectCode`=?, `saveFlag`=?, `email`=?, `phone`=?, `address`=?, `openingCustom`=?, `openingHours`=?, 
@@ -138,6 +147,7 @@ if ($data['mode'] ==  "save") {
         $myID,
         $data['projectID']
     );
+    if ($isCustom) saveBrief($db, $data['projectID'], $myID);
     $params[ 'result'] = "complete";
     $params['data'] = $data;
 
@@ -156,3 +166,49 @@ if ($data['mode'] ==  "save") {
 }
 
 echo json_encode($params); 
+
+// businessNote is owned by the project modal (models/project.php), so it is not touched here.
+function saveBrief($db, $projectID, $myID): void
+{
+    $txt = fn($k, $max = 65535) => (isset($_POST[$k]) && trim($_POST[$k]) !== '') ? mb_substr(trim($_POST[$k]), 0, $max) : null;
+    $pick = fn($k, array $allowed) => isset($allowed[$_POST[$k] ?? '']) ? $_POST[$k] : null;
+    $flag = fn($k) => (!empty($_POST[$k]) && ($_POST[$k] == 1 || $_POST[$k] === 'true')) ? 1 : 0;
+
+    $links = json_decode($_POST['refLinks'] ?? '[]', true);
+    $links = is_array($links) ? array_values(array_filter(array_map(fn($l) => [
+        'url' => mb_substr(trim((string)($l['url'] ?? '')), 0, 255),
+        'note' => mb_substr(trim((string)($l['note'] ?? '')), 0, 255),
+        'forColor' => empty($l['forColor']) ? 0 : 1,
+    ], $links), fn($l) => $l['url'] !== '')) : [];
+    $deadline = $txt('deadline', 10);
+    if ($deadline !== null && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $deadline)) $deadline = null;
+
+    $db->query('INSERT INTO `tb_projectBrief` (`projectID`, `colorMode`, `systemName`, `systemURL`, `goal`, `pages`, `oldSiteURL`,
+            `keepURLs`, `refLinks`, `mood`, `contentSource`, `hasVectorLogo`, `hasHiResPhotos`, `features`, `tracking`, `assetLinks`, `deadline`, `notes`, `updateBy`)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        ON DUPLICATE KEY UPDATE `colorMode`=VALUES(`colorMode`), `systemName`=VALUES(`systemName`), `systemURL`=VALUES(`systemURL`),
+            `goal`=VALUES(`goal`), `pages`=VALUES(`pages`), `oldSiteURL`=VALUES(`oldSiteURL`), `keepURLs`=VALUES(`keepURLs`),
+            `refLinks`=VALUES(`refLinks`), `mood`=VALUES(`mood`), `contentSource`=VALUES(`contentSource`),
+            `hasVectorLogo`=VALUES(`hasVectorLogo`), `hasHiResPhotos`=VALUES(`hasHiResPhotos`), `features`=VALUES(`features`),
+            `tracking`=VALUES(`tracking`), `assetLinks`=VALUES(`assetLinks`), `deadline`=VALUES(`deadline`), `notes`=VALUES(`notes`), `updateBy`=VALUES(`updateBy`)',
+        $projectID,
+        $pick('colorMode', BRIEF_COLOR_MODES) ?? 'pick',
+        $txt('systemName', 255),
+        $txt('systemURL', 255),
+        $pick('goal', BRIEF_GOALS),
+        $txt('pages'),
+        $txt('oldSiteURL', 255),
+        $flag('keepURLs'),
+        json_encode($links, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        $txt('mood', 255),
+        $pick('contentSource', BRIEF_CONTENT),
+        $flag('hasVectorLogo'),
+        $flag('hasHiResPhotos'),
+        $txt('features'),
+        $txt('tracking'),
+        $txt('assetLinks'),
+        $deadline,
+        $txt('notes'),
+        $myID
+    );
+}

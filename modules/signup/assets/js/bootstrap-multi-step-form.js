@@ -2058,12 +2058,29 @@ if(!settings.Payment_Module.Invoice) { formInvoice.hide(); }
 
 //open url in new tab
 function readAgreement() {
-  let inputAccept = $("#acceptTerms");
-  inputAccept.prop("disabled", false);
   modalTermsAction("open");
-  inputAccept.prop("checked", true);
-  checkAcceptAgreement();
 }
+// เลื่อนอ่านถึงท้าย -> ปลดล็อก checkbox, ติ๊ก checkbox -> ปุ่ม I Agree เป็นสีเขียว -> กดแล้วติ๊ก #acceptTerms
+const $termsBody = $("#modalTerms .modal-body");
+const $btnTermsAgree = $("#btnTermsAgree");
+const $termsModalAgree = $("#termsModalAgree");
+function checkTermsScrolledToEnd() {
+  const el = $termsBody[0];
+  if (el.scrollTop + el.clientHeight < el.scrollHeight - 10) return;
+  $termsModalAgree.prop("disabled", false);
+  $("#termsScrollHint").text("Please tick the box to agree.");
+}
+$termsBody.on("scroll", checkTermsScrolledToEnd);
+$("#modalTerms").on("shown.bs.modal", checkTermsScrolledToEnd);
+$termsModalAgree.on("change", function () {
+  $btnTermsAgree.prop("disabled", !this.checked).toggleClass("btn-success", this.checked).toggleClass("btn-secondary", !this.checked);
+  $("#termsScrollHint").toggleClass("d-none", this.checked);
+});
+$btnTermsAgree.on("click", function () {
+  $("#acceptTerms").prop({ disabled: false, checked: true });
+  checkAcceptAgreement();
+  modalTerms.hide();
+});
 const modalTermsAction = (action) => {
   if (action==="open"){ modalTerms.show();}
 }

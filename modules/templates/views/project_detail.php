@@ -2,6 +2,7 @@
 require_once "../assets/db/db.php";
 require_once "../assets/db/initDB.php";
 require_once "../assets/php/share_function.php";
+require_once "../assets/php/brief.php";
 global $db;
 $id = $_GET['id'] ?? null;
 if (!$id) {
@@ -14,10 +15,11 @@ $icon = '<svg xmlns="http://www.w3.org/2000/svg" style="width: 0.8em;" viewBox="
 
 $row = $db->query('
     SELECT p.*,
-    IF(p.shopTypeID=1, "Restaurant", "Massage") AS typeName,
+    t.name AS typeName,
     c.name AS countryName,
     s.sNickName
     FROM tb_project p
+    JOIN tb_shopType t ON p.shopTypeID = t.id
     JOIN staffs s ON p.projectOwner = s.sID
     JOIN Countries c ON p.countryID = c.id
     WHERE p.projectID = ?
@@ -40,6 +42,14 @@ $row['colorTheme3'] = $row['colorTheme3'] ?: '#FFFFFF';
 
 $row['orderURL'] = htmlspecialchars($row['orderURL'] ?? '', ENT_QUOTES, 'UTF-8'); 
 $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8');  
+
+$e = fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+$isCustom = isCustomTemplate($row['selectedTemplate']);
+$isOther = (int)$row['shopTypeID'] === SHOP_TYPE_OTHER;
+$briefReady = !$isCustom || briefTableExists($db);
+$brief = $isCustom ? loadBrief($db, $id) : [];
+$colorMode = $brief['colorMode'] ?? 'pick';
+$refLinks = briefRefLinks($brief) ?: [['url' => '', 'note' => '', 'forColor' => 0]];
 ?>
 
 <!-- Google tag (gtag.js) -->
@@ -91,8 +101,18 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
                 </li>
                 <li>
                     <span class="fw-bold">Template:</span>
-                    <span class="shopType"><?php echo ($row['shopTypeID']==1 ? "Restaurant" : "Massage"); ?></span> Template No. <?php echo $row['selectedTemplate']; ?>
+                    <?php if ($isCustom): ?>
+                        <span class="badge bg-warning text-dark">Fully custom</span>
+                    <?php else: ?>
+                        <span class="shopType"><?php echo $e($row['typeName']); ?></span> Template No. <?php echo $row['selectedTemplate']; ?>
+                    <?php endif; ?>
                 </li>
+                <?php if ($isOther): ?>
+                <li>
+                    <span class="fw-bold">Business:</span>
+                    <?php echo nl2br($e($brief['businessNote'] ?? '')); ?> <small class="text-muted">(edit in Project list)</small>
+                </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
@@ -107,7 +127,12 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
     </select>
 </div>
 
+<?php if (!$briefReady): ?>
+<div class="alert alert-danger">Fully custom brief is not available yet: run <code>docs/migrations/2026-10-06-templates-fully-custom.sql</code> on this database.</div>
+<?php endif; ?>
+
 <!-- Template Type -->
+<?php if (!$isCustom): ?>
 <div class="border rounded mb-4 px-5 py-3">
     <div class="row">
         <div class="col">
@@ -121,6 +146,7 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
         </div>
     </div>
 </div>
+<?php endif; ?>
 <!-- Business Information -->
 <div class="border rounded mb-4 px-5 py-3">
     <div class="row">
@@ -308,6 +334,18 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
             ?>
 
             <div class="mt-3 border rounded py-3 pl-3">
+                <?php if ($isCustom): ?>
+                    <div class="pr-3">
+                        <?php foreach (BRIEF_COLOR_MODES as $mode => $label): ?>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="colorMode" id="colorMode_<?= $mode ?>" value="<?= $mode ?>" <?= $colorMode === $mode ? 'checked' : '' ?>>
+                                <label class="form-check-label" for="colorMode_<?= $mode ?>"><?= $label ?></label>
+                            </div>
+                        <?php endforeach; ?>
+                        <small class="text-muted d-block colorModeHint" data-mode="reference">Tick "use for colors" on at least one link in Design brief below.</small>
+                    </div>
+                <?php endif; ?>
+                <div id="colorPickers">
                 <?php foreach ($themes as $i => $color): ?>
                     <div class="row">
                         <div class="col-8">
@@ -331,6 +369,7 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
                         </div>
                     </div>
                 <?php endforeach; ?>
+                </div><!--colorPickers-->
             </div>
         </div>
     </div>
@@ -447,7 +486,20 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
             <h5 class="text-secondary">Require Systems.</h5>
         </div>
     </div>
-                                    
+
+        <?php if ($isCustom): ?>
+            <div class="row">
+                <div class="col-6">
+                    <label for="systemName" class="form-label">Booking / ordering system<span style="color:red; margin-left: 5px"> *</span></label>
+                    <input type="text" class="form-control" id="systemName" maxlength="255" placeholder="e.g. Setmore, GloriaFood, or None" value="<?= $e($brief['systemName'] ?? '') ?>">
+                </div>
+                <div class="col-6">
+                    <label for="systemURL" class="form-label">System URL</label>
+                    <input type="text" class="form-control" id="systemURL" maxlength="255" placeholder="https://..." value="<?= $e($brief['systemURL'] ?? '') ?>">
+                    <small class="text-muted">One system only, the link customers will actually use.</small>
+                </div>
+            </div>
+        <?php else: ?>
         <!-- Restaurant System -->
             <div id="resSystem" class="form-check">
                 <div>
@@ -505,6 +557,7 @@ $row['tableURL'] = htmlspecialchars($row['tableURL'] ?? '', ENT_QUOTES, 'UTF-8')
                     </div>
                 </div>
             </div>
+        <?php endif; ?>
 </div>
 
 <div class="border rounded mb-4 px-5 py-3">
@@ -556,6 +609,142 @@ $socials = [
 </div>
 
 
+<?php if ($isCustom): ?>
+<!-- Design brief (Fully custom only) -->
+<div class="border rounded mb-4 px-5 py-3" id="designBrief">
+    <div class="row">
+        <div class="col">
+            <h5 class="text-secondary">Design brief.</h5>
+            <small class="text-muted">Fields marked <span style="color:red;">*</span> must be filled before the project can be sent.</small>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6 mb-3">
+            <label for="briefGoal" class="form-label">Main goal of the website<span style="color:red; margin-left: 5px"> *</span></label>
+            <select id="briefGoal" class="form-select">
+                <option value="">-- Select --</option>
+                <?php foreach (BRIEF_GOALS as $k => $label): ?>
+                    <option value="<?= $k ?>" <?= ($brief['goal'] ?? '') === $k ? 'selected' : '' ?>><?= $label ?></option>
+                <?php endforeach; ?>
+            </select>
+            <small class="text-muted">The main button on every page.</small>
+        </div>
+        <div class="col-6 mb-3">
+            <label for="briefDeadline" class="form-label">Deadline</label>
+            <input type="date" class="form-control" id="briefDeadline" value="<?= $e($brief['deadline'] ?? '') ?>">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6 mb-3">
+            <label for="briefPages" class="form-label">Pages<span style="color:red; margin-left: 5px"> *</span> <small class="text-muted" id="briefPageCount"></small></label>
+            <textarea class="form-control" id="briefPages" rows="6" placeholder="One page per line&#10;Home&#10;About&#10;Services & prices&#10;Contact"><?= $e($brief['pages'] ?? '') ?></textarea>
+        </div>
+        <div class="col-6 mb-3">
+            <label for="briefOldSite" class="form-label">Current website</label>
+            <input type="text" class="form-control" id="briefOldSite" maxlength="255" placeholder="https://... (leave empty if none)" value="<?= $e($brief['oldSiteURL'] ?? '') ?>">
+            <div class="form-check mt-2">
+                <input class="form-check-input" type="checkbox" id="briefKeepURLs" <?= !empty($brief['keepURLs']) ? 'checked' : '' ?>>
+                <label class="form-check-label" for="briefKeepURLs">Keep the old page URLs (used by ads / Google)</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Reference websites<span style="color:red; margin-left: 5px"> *</span> <small class="text-muted">at least 1</small></label>
+        <div id="refLinks">
+            <?php foreach ($refLinks as $link): ?>
+                <div class="row g-2 mb-2 refLink">
+                    <div class="col-5"><input type="text" class="form-control refUrl" maxlength="255" placeholder="https://..." value="<?= $e($link['url'] ?? '') ?>"></div>
+                    <div class="col-5"><input type="text" class="form-control refNote" maxlength="255" placeholder="What do you like about it?" value="<?= $e($link['note'] ?? '') ?>"></div>
+                    <div class="col-2 d-flex align-items-center gap-2">
+                        <div class="form-check refForColorBox">
+                            <input class="form-check-input refForColor" type="checkbox" <?= !empty($link['forColor']) ? 'checked' : '' ?>>
+                            <label class="form-check-label"><small>use for colors</small></label>
+                        </div>
+                        <a href="#" class="text-muted refRemove" title="Remove link"><i class="bi bi-x-lg"></i></a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <a href="#" id="refAdd" class="text-muted small text-decoration-none">+ Add link</a>
+    </div>
+
+    <div class="row">
+        <div class="col-6 mb-3">
+            <label for="briefMood" class="form-label">Mood / style<span style="color:red; margin-left: 5px"> *</span></label>
+            <input type="text" class="form-control" id="briefMood" maxlength="255" placeholder="e.g. dark and calm, traditional Thai, modern minimal" value="<?= $e($brief['mood'] ?? '') ?>">
+        </div>
+        <div class="col-6 mb-3">
+            <label for="briefContent" class="form-label">Where does the content come from?<span style="color:red; margin-left: 5px"> *</span></label>
+            <select id="briefContent" class="form-select">
+                <option value="">-- Select --</option>
+                <?php foreach (BRIEF_CONTENT as $k => $label): ?>
+                    <option value="<?= $k ?>" <?= ($brief['contentSource'] ?? '') === $k ? 'selected' : '' ?>><?= $label ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label d-block">Files we already have</label>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="briefVectorLogo" <?= !empty($brief['hasVectorLogo']) ? 'checked' : '' ?>>
+            <label class="form-check-label" for="briefVectorLogo">Vector logo (SVG / AI / EPS)</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="briefHiResPhotos" <?= !empty($brief['hasHiResPhotos']) ? 'checked' : '' ?>>
+            <label class="form-check-label" for="briefHiResPhotos">Photos at least 2000 px wide</label>
+        </div>
+    </div>
+
+    <!-- Photos: uploaded one by one through models/upload.php (prefix "Brief"), listed straight from the folder -->
+    <?php $briefFolder = '../upload/' . $row['projectID'] . '-' . $folderName . '/'; ?>
+    <div class="mb-3">
+        <label class="form-label">Photos <small class="text-muted">(JPG, PNG, WEBP, HEIC — select many at once)</small></label>
+        <div class="briefPhoto briefPhotoTpl position-relative d-none">
+            <a href="#" target="_blank"><img src="" alt="" style="width:110px;height:110px;object-fit:cover;" class="rounded border"></a>
+            <a href="#" class="briefPhotoDel position-absolute top-0 end-0 badge bg-dark text-decoration-none" title="Remove photo">&times;</a>
+        </div>
+        <div id="briefPhotos" class="d-flex flex-wrap gap-2 mb-2">
+            <?php foreach (briefPhotos($briefFolder) as $photo): ?>
+                <div class="briefPhoto position-relative" data-file="<?= $e($photo) ?>">
+                    <a href="<?= $e($briefFolder . $photo) ?>" target="_blank"><img src="<?= $e($briefFolder . $photo) ?>" alt="" style="width:110px;height:110px;object-fit:cover;" class="rounded border"></a>
+                    <a href="#" class="briefPhotoDel position-absolute top-0 end-0 badge bg-dark text-decoration-none" title="Remove photo">&times;</a>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <input type="file" id="briefPhotoInput" accept=".jpg,.jpeg,.png,.webp,.heic,.svg" multiple>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="briefPhotoUpload">Upload</button>
+            <small class="text-muted" id="briefPhotoStatus"></small>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="briefAssetLinks" class="form-label">Links to photos / files <small class="text-muted">Google Drive, Dropbox, etc. — one per line</small></label>
+        <textarea class="form-control" id="briefAssetLinks" rows="3" placeholder="https://drive.google.com/drive/folders/...&#10;Make sure the link is shared as &quot;Anyone with the link&quot;"><?= $e($brief['assetLinks'] ?? '') ?></textarea>
+    </div>
+
+    <div class="row">
+        <div class="col-6 mb-3">
+            <label for="briefFeatures" class="form-label">Special features</label>
+            <textarea class="form-control" id="briefFeatures" rows="3" placeholder="e.g. blog, gallery, price list, 2 languages, contact form"><?= $e($brief['features'] ?? '') ?></textarea>
+        </div>
+        <div class="col-6 mb-3">
+            <label for="briefTracking" class="form-label">Existing tracking</label>
+            <textarea class="form-control" id="briefTracking" rows="3" placeholder="e.g. GTM-XXXX, GA4, Search Console verification code"><?= $e($brief['tracking'] ?? '') ?></textarea>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="briefNotes" class="form-label">Notes / things NOT to do</label>
+        <textarea class="form-control" id="briefNotes" rows="3"><?= $e($brief['notes'] ?? '') ?></textarea>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="row mb-5">
     <div class="col">
         <input id="cmdSubmit" class="btn btn-primary" type="button" value="Save">
@@ -567,11 +756,20 @@ $socials = [
         $url .= "&id=".$id;
         ?>
         <small id="infoText" class="text-warning"><?php echo $row['saveFlag']; ?></small>
+        <?php if ($isCustom): // no template designer: the brief above is the last step ?>
+            <?php $missing = briefMissing($brief, $isOther); ?>
+            <div class="small <?= $missing ? 'text-danger' : 'text-success' ?>" id="briefStatus">
+                <?= $missing ? 'Still needed before sending: ' . $e(implode(', ', $missing)) : 'Brief complete. Send it from the Project list.' ?>
+            </div>
+            <button id="nextBtn" class="btn btn-secondary" onclick="nextForm('main.php?m=project')" disabled>Back to Projects</button>
+        <?php else: ?>
         <button id="nextBtn" class="btn btn-secondary" onclick="nextForm('<?php echo $url; ?>')" disabled>Next</button>
+        <?php endif; ?>
     </div>
 </div>
 
 <input type="hidden" id="projectID" value="<?php echo $id; ?>">
+<input type="hidden" id="isCustom" value="<?php echo $isCustom ? 1 : 0; ?>">
 <input type="hidden" id="loginID" value="<?php echo $_SESSION['id']; ?>">
 
 <script src="../assets/js/jquery-3.7.1.min.js"></script>
@@ -636,9 +834,104 @@ $socials = [
     const domainBox = $("#domainBox");
     const hostingBox = $("#hostingBox");
 
+    const isCustom = $("#isCustom").val() === "1";
+
     $(()=>{ //ready
         showSystem();
+        if (isCustom) initBrief();
     }); //ready
+
+    // Fully custom: color mode radio, reference link rows, page counter.
+    const initBrief = () => {
+        const applyColorMode = () => {
+            const mode = $("input[name=colorMode]:checked").val() || "pick";
+            $("#colorPickers").toggle(mode === "pick");
+            $(".colorModeHint").toggle(mode === "reference");
+            $(".refForColorBox").toggle(mode === "reference");
+        };
+        $("input[name=colorMode]").on("change", applyColorMode);
+        applyColorMode();
+
+        $("#refAdd").on("click", (ev) => {
+            ev.preventDefault();
+            const row = $(".refLink").first().clone();
+            row.find("input[type=text]").val("");
+            row.find(".refForColor").prop("checked", false);
+            $("#refLinks").append(row);
+            applyColorMode();
+        });
+        $("#refLinks").on("click", ".refRemove", function (ev) {
+            ev.preventDefault();
+            const rows = $(".refLink");
+            if (rows.length > 1) $(this).closest(".refLink").remove();
+            else rows.find("input[type=text]").val(""); // keep one row to type into
+        });
+
+        // Upload one file at a time: models/upload.php takes a single "file" per request.
+        $("#briefPhotoUpload").on("click", async () => {
+            const files = [...$("#briefPhotoInput")[0].files];
+            if (!files.length) { alert("Please select photos."); return; }
+            const status = $("#briefPhotoStatus");
+            const failed = [];
+            for (const [i, file] of files.entries()) {
+                status.text(`Uploading ${i + 1}/${files.length}...`);
+                const fd = new FormData();
+                fd.append("file", file);
+                fd.append("projectId", projectID);
+                fd.append("prefixId", "Brief");
+                const res = (await $.ajax({ url: "../models/upload.php", type: "post", data: fd, contentType: false, processData: false })
+                    .catch(() => "") || "").toString().trim();
+                if (!/[\/\\]/.test(res)) { failed.push(file.name); continue; }
+                const name = res.split("/").pop();
+                const tile = $(".briefPhotoTpl").first().clone().removeClass("briefPhotoTpl d-none").attr("data-file", name);
+                tile.find("a").first().attr("href", res).find("img").attr("src", res);
+                $("#briefPhotos").append(tile);
+            }
+            $("#briefPhotoInput").val("");
+            status.text(failed.length ? `Not uploaded: ${failed.join(", ")}` : "Done.");
+        });
+        $("#briefPhotos").on("click", ".briefPhotoDel", function (ev) {
+            ev.preventDefault();
+            const tile = $(this).closest(".briefPhoto");
+            if (!confirm("Remove this photo?")) return;
+            $.post("../models/upload.php", { act: "deleteBrief", projectId: projectID, file: tile.data("file") }, (res) => {
+                if ($.trim(res) === "1") tile.remove(); else alert("Could not remove the photo.");
+            });
+        });
+
+        const countPages = () => {
+            const n = $("#briefPages").val().split("\n").filter(l => l.trim() !== "").length;
+            $("#briefPageCount").text(n ? `(${n} page${n > 1 ? "s" : ""})` : "");
+        };
+        $("#briefPages").on("input", countPages);
+        countPages();
+    };
+
+    const briefPayload = () => ({
+        colorMode: $("input[name=colorMode]:checked").val() || "pick",
+        systemName: $("#systemName").val(),
+        systemURL: $("#systemURL").val(),
+        goal: $("#briefGoal").val(),
+        pages: $("#briefPages").val(),
+        oldSiteURL: $("#briefOldSite").val(),
+        keepURLs: $("#briefKeepURLs").prop("checked") ? 1 : 0,
+        refLinks: JSON.stringify($(".refLink").map(function () {
+            return {
+                url: $(this).find(".refUrl").val().trim(),
+                note: $(this).find(".refNote").val().trim(),
+                forColor: $(this).find(".refForColor").prop("checked") ? 1 : 0
+            };
+        }).get().filter(l => l.url !== "")),
+        mood: $("#briefMood").val(),
+        contentSource: $("#briefContent").val(),
+        hasVectorLogo: $("#briefVectorLogo").prop("checked") ? 1 : 0,
+        hasHiResPhotos: $("#briefHiResPhotos").prop("checked") ? 1 : 0,
+        features: $("#briefFeatures").val(),
+        tracking: $("#briefTracking").val(),
+        assetLinks: $("#briefAssetLinks").val(),
+        deadline: $("#briefDeadline").val(),
+        notes: $("#briefNotes").val()
+    });
 
     $("#cmdSubmit").click(function () {
         // ✅ Debug: ตรวจสอบค่า checkbox
@@ -706,8 +999,10 @@ $socials = [
             projectID: projectID,
             shopType: hiddenShopType.val(),
             TemplateSelect: TemplateSelect.val(),
+            isCustom: isCustom ? 1 : 0,
             token: Math.random()
         };
+        if (isCustom) Object.assign(payload, briefPayload());
 
         console.log("Payload", payload);
         console.log("Payload amelia:", payload.amelia);
@@ -725,6 +1020,8 @@ $socials = [
 
         callAjax.done(function(res) {
             console.log('return',res);
+            if (res.result === "fail") { alert(res.msg); return false; }
+            if (isCustom) location.reload(); // refresh the "still needed" list from the server
             return true;
         });
 

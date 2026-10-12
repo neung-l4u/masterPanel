@@ -5,13 +5,16 @@ global $db;
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 require_once ("../assets/php/share_function.php");
+require_once ("../assets/php/brief.php");
 
 //รับค่าที่ส่งมาเก็บใน Array $param
 $param['act'] = (!empty($_POST['act'])) ? trim($_POST['act']) : ''; //ใช้เลือกเคสด้านล่างที่ต้องทำ
 $param['name'] = (!empty($_POST['name'])) ? trim($_POST['name']) : ''; //ชื่อโปรเจคที่ส่งมา
 $param['branch'] = (!empty($_POST['branch'])) ? trim($_POST['branch']) : ''; //สาขาของโปรเจค
 $param['shopTypeID'] = (!empty($_POST['shopTypeID'])) ? trim($_POST['shopTypeID']) : '';
-$param['selectedTemplate'] = (!empty($_POST['selectedTemplate'])) ? trim($_POST['selectedTemplate']) : null;
+// "0" = Fully custom, so !empty() would wrongly turn it into NULL.
+$param['selectedTemplate'] = (isset($_POST['selectedTemplate']) && trim($_POST['selectedTemplate']) !== '') ? (int)$_POST['selectedTemplate'] : null;
+$param['shopTypeNote'] = (!empty($_POST['shopTypeNote'])) ? trim($_POST['shopTypeNote']) : null; //รายละเอียดธุรกิจเมื่อเลือก Shop type = Other
 $param['status'] = (!empty($_POST['status'])) ? trim($_POST['status']) : '1'; //1=Draft , 2=Send
 $param['country'] = (!empty($_POST['country'])) ? trim($_POST['country']) : ''; //ตามตาราง Countries
 $param['editID'] = (!empty($_POST['editID'])) ? trim($_POST['editID']) : ''; //จะส่งมาเฉพาะเคส setEdit , Update
@@ -29,6 +32,9 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
     $return['msg'] = 'Your session is expire please login again.';
     $return['data'] = '';
     $return['act'] = $param['act'];
+}else if ( in_array($param['act'], ['add', 'update'], true) && isCustomTemplate($param['selectedTemplate']) && !briefTableExists($db) ) {
+    $return['result'] = 'fail';
+    $return['msg'] = 'Fully custom is not available yet: run docs/migrations/2026-10-06-templates-fully-custom.sql';
 }else if ( $param['act'] == 'read' ) { //อ่าน project ทั้งหมดของ user นี้
     $projects = $db->query('SELECT pj.saveFlag, pj.projectID, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, s.sNickName AS "owner", c.name AS "countryName", c.code AS "countryCode", pj.projectTimestamp, 
                                    pd.home AS "homePage", pd.about AS "aboutPage", pd.services AS "servicesPage", pd.contact AS "contactPage"
@@ -61,6 +67,7 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
     }
 }else if ( $param['act'] == 'setEdit' ){ //อ่าน project ตามที่ส่ง projectID แค่ 1 แถว มาว่ามีรายละเอียดอะไร
     $project = $db->query('SELECT * FROM `tb_project` WHERE `projectID` = ?',$param['editID'])->fetchArray();
+    $project['businessNote'] = loadBrief($db, $param['editID'])['businessNote'] ?? '';
     $row = array();
     $row[] = $project;
     $return['result'] = 'success';
@@ -68,6 +75,7 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
 }else if ( $param['act'] == 'update' ) { //อัพเดท project
     $project = $db->query('UPDATE tb_project SET `projectName` = ?, `projectBranch` = ?, `shopTypeID` = ?, `selectedTemplate` = ?, `countryID` = ?  WHERE `projectID` = ?'
         , $param['name'], $param['branch'], $param['shopTypeID'], $param['selectedTemplate'], $param['country'], $param['editID']);
+    saveBusinessNote($db, $param, $param['editID']);
 
     $return['result'] = 'success';
     $return['msg'] = 'project updated';
@@ -77,6 +85,7 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
         , $param['name'], $param['branch'], $param['shopTypeID'], $param['selectedTemplate'], 1, $param['ownerID'], $param['country']);
 
     $projectID = $db->lastInsertId(); 
+    saveBusinessNote($db, $param, $projectID);
     $row = $db->query('SELECT `projectName` FROM `tb_project` WHERE `projectID` = ?', $projectID)->fetchArray();
     $projectName = sanitizeFolderName($row['projectName']);
 
@@ -90,3 +99,12 @@ if(empty($param['ownerID'])){ //ถ้าไม่มี session login จะห
 }
 
 echo json_encode($return);  //ข้อความตอบกลับให้ ajax หลังทำงานตามเคสด้านบนเสร็จ
+
+// Custom projects keep the "Other" description in their brief row; template projects never touch tb_projectBrief.
+function saveBusinessNote($db, array $param, $projectID): void
+{
+    if (!isCustomTemplate($param['selectedTemplate'])) return;
+    $db->query('INSERT INTO `tb_projectBrief` (`projectID`, `businessNote`, `updateBy`) VALUES (?,?,?)
+                ON DUPLICATE KEY UPDATE `businessNote` = VALUES(`businessNote`), `updateBy` = VALUES(`updateBy`)'
+        , $projectID, $param['shopTypeNote'], $param['ownerID']);
+}

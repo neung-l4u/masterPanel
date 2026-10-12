@@ -53,6 +53,9 @@ if ($act === 'getList') {
 
         $vars = [
             '{name}' => 'ตัวอย่างเว็บไซต์ (TEST)', '{url}' => 'https://example.com',
+            '{domain}' => 'example.com', '{resolvedIP}' => '162.159.140.177',
+            '{country}' => 'Australia', '{server}' => 'adayinbkk.com.au - USA (Arizona)',
+            '{cpanelUser}' => 'example', '{diskUsed}' => '9.5 GB', '{diskLimit}' => '10 GB', '{diskPercent}' => '95',
             '{httpCode}' => '500', '{errorMsg}' => 'WordPress critical error (HTTP 200)',
             '{responseMs}' => '812', '{sslExpiry}' => date('Y-m-d', strtotime('+15 days')),
             '{sslDaysLeft}' => '15', '{time}' => date('Y-m-d H:i:s'),

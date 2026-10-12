@@ -9,6 +9,9 @@ const inputAction = $("#frmAction");
 const inputLoginID = $("#loginID");
 const inputMondayUserID = $("#mondayUserID");
 const selectedTemplate = $("#selectedTemplate");
+const inputShopTypeNote = $("#shopTypeNote");
+const SHOP_TYPE_OTHER = "6"; // tb_shopType.id
+const TEMPLATE_CUSTOM = "0"; // tb_project.selectedTemplate for Fully custom
 
 $callback = 'callback';
 
@@ -18,6 +21,7 @@ $(function() {
     //loadData();
     loadCountry();
     loadShopType();
+    updateTemplates();
 
     $('#projectData').DataTable( {
         pagingType: 'full_numbers',
@@ -250,11 +254,13 @@ const setEdit = (id) => {
             let row = res.data;
 
             row.forEach( item => {
-                let {projectID : id, projectName : name, projectBranch : branch, shopTypeID, selectedTemplate, countryID : country} = item;
-                
+                let {projectID : id, projectName : name, projectBranch : branch, shopTypeID, selectedTemplate, countryID : country, businessNote} = item;
+
                 inputProjectName.val(name);
                 inputBranch.val(branch || '');
                 inputShopTypeID.val(shopTypeID);
+                updateTemplates(); // options depend on shop type
+                inputShopTypeNote.val(businessNote || '');
                 $("#selectedTemplate").val(selectedTemplate);
                 inputCountry.val(country);
                 inputEditID.val(id);
@@ -345,6 +351,16 @@ const saveForm = () => {
         return;
     }
 
+    // Validate Other description
+    $('#shopTypeNote').css('border-color', '').css('box-shadow', '');
+    if (shopTypeVal === SHOP_TYPE_OTHER && inputShopTypeNote.val().trim().length < 1) {
+        $('label[for="shopTypeNote"]').css('color', 'red');
+        inputShopTypeNote.css('border-color', 'red');
+        inputShopTypeNote.css('box-shadow', '0 0 0 .2rem rgb(255 0 0 / 25%)');
+        inputShopTypeNote.focus();
+        return;
+    }
+
     // Validate country
     const countryVal = inputCountry.val();
     if (!countryVal || countryVal === "0") {
@@ -361,6 +377,7 @@ const saveForm = () => {
         branch: branch.trim(),
         shopTypeID: inputShopTypeID.val(),
         selectedTemplate: selectedTemplate.val(),
+        shopTypeNote: shopTypeVal === SHOP_TYPE_OTHER ? inputShopTypeNote.val().trim() : '',
         country: inputCountry.val(),
         editID: inputEditID.val(),
         ownerID: inputLoginID.val(),
@@ -383,7 +400,7 @@ const saveForm = () => {
             //loadData();
             modalClose();
         }else if(res.result === "fail"){
-            alert('fail');
+            alert(res.msg || 'fail');
         }
     });
 
@@ -400,6 +417,8 @@ const frmReset = () => {
   $("#frmProject").trigger("reset");
     inputEditID.val('');
     inputShopTypeID.val(1);
+    inputShopTypeNote.val('');
+    updateTemplates();
     inputCountry.val(1);
     inputProjectName.val('');
     inputProjectName.css('border-color', '');
@@ -428,6 +447,7 @@ function updateTemplates() {
     const inputShopTypeID = $("#shopType").val();
 
     selectedTemplate.empty();
+    $("#shopTypeNoteBox").toggle(inputShopTypeID === SHOP_TYPE_OTHER);
 
     if (inputShopTypeID === "2") {
         $("<option>", { value: "1", text: "Template no. 1" }).appendTo(selectedTemplate);
@@ -442,6 +462,8 @@ function updateTemplates() {
             $("<option>", { value: value, text: label }).appendTo(selectedTemplate);
         });
     }
+    // Every shop type can order a fully custom site; "Other" has no template, so it is the only choice.
+    $("<option>", { value: TEMPLATE_CUSTOM, text: "Fully custom (design brief)" }).appendTo(selectedTemplate);
 }
 
 function sending(id) {

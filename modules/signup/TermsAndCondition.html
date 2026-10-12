@@ -26,221 +26,207 @@
   li ol > li:before {
     content: counters(item, ".") " ";
   }
-  /* อ่านง่ายขึ้น: จำกัดความกว้างบรรทัด, ตัวใหญ่ขึ้น, เว้นระยะหัวข้อ */
+  /* ใช้ใน modal: ไม่มีกรอบซ้อน, เลขข้อชิดซ้ายเท่ากันทุกข้อ, เนื้อหาเยื้องตรงกัน */
   .terms-doc {
-    max-width: 880px;
+    max-width: 860px;
     margin: 0 auto;
-    padding: 1.5rem 2rem;
+    padding: .5rem 1rem 1rem;
     font-size: 15px;
     line-height: 1.7;
     color: #333;
   }
+  .terms-doc .terms-title { font-size: 1.35rem; font-weight: 700; color: #198754; margin-bottom: .75rem; }
+  .terms-doc ol.terms { margin: 0; }
+  .terms-doc ol > li { display: block; position: relative; }
+  .terms-doc ol > li:before { display: block; position: absolute; left: 0; top: 0; padding: 0; }
   .terms-doc .terms > li {
-    width: 100%;
-    margin-top: 0;
-    padding: 1.25rem 0;
+    margin: 0;
+    padding: 1.1rem 0 1.1rem 2.25rem;
     border-bottom: 1px solid #e9ecef;
   }
+  .terms-doc .terms > li:before { top: 1.1rem; color: #198754; font-weight: 700; font-size: 1.1rem; line-height: 1.6; }
   .terms-doc .terms > li:last-child { border-bottom: 0; }
-  .terms-doc .terms > li:before { color: #198754; font-weight: 700; font-size: 1.1rem; }
-  .terms-doc .terms > li > .text-success { margin-bottom: .4rem; letter-spacing: .02em; }
-  .terms-doc li ol { margin-top: .5rem; }
-  .terms-doc li ol > li { margin-top: .9rem; }
+  .terms-doc .terms > li > .text-success { font-size: 1.1rem !important; line-height: 1.6; margin-bottom: .35rem; letter-spacing: .02em; }
+  .terms-doc li ol { margin: .5rem 0 0; }
+  .terms-doc li ol > li { margin-top: .9rem; padding-left: 2.75rem; }
   .terms-doc li ol > li:before { color: #198754; font-weight: 600; }
-  .terms-doc .terms b { display: block; color: #212529; margin-bottom: .2rem; }
+  .terms-doc .terms div > b:first-child { display: block; color: #212529; margin-bottom: .2rem; }
   .terms-doc .terms p { margin-bottom: .6rem; }
   .terms-doc .terms p:last-child { margin-bottom: 0; }
-  .terms-doc .terms ul { margin: .4rem 0 0; }
-  .terms-doc .terms ul li { margin-bottom: .4rem; }
+  .terms-doc .terms-agree {
+    background: #f0f9f4;
+    border: 1px solid #b7e1c8;
+    border-radius: .5rem;
+    padding: 1rem 1rem 1rem 2.75rem;
+    margin-top: 1rem;
+  }
+  .terms-doc .terms-agree .form-check-input { margin-top: .3rem; }
 </style>
-<div class="container container-fluid">
-  <div class="card">
-    <div class="card-body terms-doc">
-      <h1 class="h3 title text-success">Website Terms Of Use.</h1>
+<div class="terms-doc">
+      <h1 class="terms-title">TERMS &amp; CONDITIONS OF PURCHASE AND SUBSCRIPTION</h1>
+      <p>Welcome to Local for You!</p>
       <p>
-        &nbsp; &nbsp; &nbsp; &nbsp; Welcome to Local for You! These are the terms and conditions that govern
-        your use of our services or products purchased from Local for You,
-        <br>operated by Mana Exito trading as Local for You (ABN 60 606 095 943).
-        <br><br>
-        &nbsp; &nbsp; &nbsp; &nbsp; Local for You is registered as a business entity in Australia and the
-        USA, where it operates as Local For You LLC. <br>By accessing and using our
-        services or products, whether online or face to face, you acknowledge
-        and agree to the following terms and conditions.
-        <br><br>
-        &nbsp; &nbsp; &nbsp; &nbsp; It is important that
-        you carefully read these terms, along with our privacy policy, as they
-        outline your rights and obligations.
+        These terms and conditions govern your purchase and use of Local for You services and products, including
+        subscriptions purchased through this sign-up form.
       </p>
-      <div class="text-danger text-center">
-        If you do not agree with these terms and conditions, please discontinue
-        your use of our services or products.
-      </div>
-      <div class="mt-5">
+      <p>
+        Local for You is operated by Mana Exito trading as Local for You (ABN 60 606 095 943). Local for You is registered as
+        a business entity in Australia and the United States, where it operates as Local For You LLC.
+      </p>
+      <p>
+        Please read these terms carefully, together with our Privacy Policy, your selected package details, and any
+        applicable service agreement. They explain your rights and obligations.
+      </p>
+      <p class="mb-4">
+        By submitting your order or purchasing or using our services or products, whether online or in person, you
+        acknowledge and agree to these terms. If you do not agree, please do not submit your order or proceed with using our
+        services or products.
+      </p>
+      <div>
         <ol class="terms">
           <li>
             <div class="text-success fs-5 fw-bold">ACCEPTANCE OF TERMS</div>
-            <div>
-              By using our services or products, you signify your agreement to
-              these terms and conditions, as well as any related documents. You
-              acknowledge that you have read and understood them, and you
-              consent to be bound by their provisions.
-            </div>
+            <p>You acknowledge that you have read, understood, and agreed to these terms and any applicable service agreement.</p>
+            <p>If you submit an order on behalf of a business, you confirm that you are authorised to enter into the agreement on its behalf.</p>
           </li>
           <li>
             <div class="text-success fs-5 fw-bold">AGE REQUIREMENT</div>
-            <div>
-              Any person utilizing the services or products of Local for You
-              must be at least 18 years of age.
-            </div>
+            <p>You must be at least 18 years old to purchase or subscribe to our services or products.</p>
           </li>
           <li>
-            <div class="text-success fs-5 fw-bold">VARIATION</div>
-            <div>
-              We reserve the right to update these terms and conditions
-              periodically, with the new provisions taking effect from the date
-              of their update.
-            </div>
+            <div class="text-success fs-5 fw-bold">CHANGES TO THESE TERMS</div>
+            <p>
+              We reserve the right to update these terms and conditions at any time. Any changes take effect immediately upon
+              publication of the updated terms.
+            </p>
           </li>
           <li>
-            <div class="text-success fs-5 fw-bold">DISCLAIMER (GENERAL)</div>
-            <div>
-              While every effort is made to ensure the accuracy of the
-              information provided in our services or products, Local for You
-              does not guarantee its completeness or reliability.
-            </div>
-            <ol>
-              <li>
-                The information available through our services or products is
-                intended for informational purposes only.
-              </li>
-              <li>
-                You acknowledge and accept full responsibility for any results
-                obtained from the use of the information provided in our
-                services or products.
-              </li>
-              <li>
-                You agree that any information or advice provided by Local for
-                You, whether in the form of articles, podcasts, service
-                descriptions, or any other format, does not constitute health,
-                medical, psychological, formal counseling, financial advice, or
-                advice from any other regulated industry. No warranty is
-                provided with respect to the accuracy or applicability of such
-                information or advice.
-              </li>
-              <li>
-                This disclaimer is applicable to the maximum extent permitted by
-                law and will continue to apply even after the termination or
-                expiration of this agreement or your use of our services or
-                products.
-              </li>
-            </ol>
+            <div class="text-success fs-5 fw-bold">GENERAL DISCLAIMER</div>
+            <p>
+              We make reasonable efforts to ensure that information provided through our services and products is accurate.
+              However, we do not guarantee that all information is complete, current, or error-free.
+            </p>
+            <p>
+              General information and guidance provided by Local for You are for informational purposes only and do not
+              replace professional advice appropriate to your circumstances.
+            </p>
+            <p>
+              Unless expressly agreed in your service agreement, Local for You does not guarantee specific business outcomes,
+              including search rankings, enquiries, bookings, sales, revenue, or advertising conversions.
+            </p>
+            <p>
+              This disclaimer applies to the maximum extent permitted by law and continues to apply after your use of our
+              services or products ends.
+            </p>
+            <p>
+              Nothing in these terms excludes, restricts, or modifies any rights, guarantees, or remedies that cannot lawfully
+              be excluded, restricted, or modified, including under the Consumer Law where applicable.
+            </p>
           </li>
           <li>
             <div class="text-success fs-5 fw-bold">TESTIMONIALS</div>
-            <div>
-              Testimonials, endorsements, or opinions expressed by our clients,
-              customers, course participants, or audience, whether on our
-              website, through our services, or in any other format, are solely
-              the opinions of individuals and have not been factually or
-              scientifically evaluated or proven by us or others.
-            </div>
-            <ol>
-              <li>
-                Testimonials presented may be received via email, audio, or
-                video submission.
-              </li>
-              <li>
-                These testimonials reflect the real-life experiences of
-                individuals who have used our services or products and do not
-                claim to represent typical results.
-              </li>
-              <li>
-                Local for You assumes no responsibility for the opinions or
-                comments posted on our website or any other platform.
-              </li>
-            </ol>
+            <p>
+              Testimonials and endorsements reflect the experiences and opinions of individual customers. They may be
+              submitted in writing, by email, or through audio or video recordings.
+            </p>
+            <p>
+              Results vary between customers. Testimonials do not represent a guarantee that you will achieve the same or
+              similar results.
+            </p>
           </li>
           <li>
-            <div class="text-success fs-5 fw-bold">CANCELLATION POLICY</div>
-            <div>
-              <ul>
-                <li>
-                  If you wish to cancel a purchase or service, you must notify
-                  Local for You with a minimum of 3 business days’ notice before
-                  the subscription renewal date. Cancellations within the 3-day
-                  window will be subject to the discretion of management.
-                </li>
-                <li>
-                  Please note that unless you are on a contracted term of
-                  service, in which case the cancellation policy within that
-                  agreement will apply and be considered a separate agreement
-                  term, the 3-day notice period mentioned above will be
-                  applicable.
-                </li>
-                <li>
-                  Please be aware that contracted terms of service may have
-                  different cancellation provisions, which will supersede the
-                  general cancellation policy stated here.
-                </li>
-                <li>
-                  Please also note that upon cancellation, you remain
-                  responsible for managing your domain name, and we cannot
-                  cancel it on your behalf. Additionally, auto renews are
-                  non-refundable.
-                </li>
-              </ul>
-            </div>
+            <div class="text-success fs-5 fw-bold">UNSUBSCRIBING &amp; SUBSCRIPTION RENEWAL</div>
+            <p>You’re welcome to return to Local for You whenever you’re ready.</p>
+            <p>
+              Your subscription renews automatically according to the billing cycle stated in your order or service agreement
+              unless you unsubscribe in accordance with the applicable terms.
+            </p>
+            <p>
+              To unsubscribe, you must notify our team in writing at least <b>30 business days before your subscription renewal
+              date.</b>
+            </p>
+            <p>
+              Requests received less than 30 business days before the renewal date will be subject to management’s discretion
+              and may not prevent the upcoming renewal or its associated charge.
+            </p>
+            <p>
+              Unsubscribing does not end your services immediately. We will confirm your service end date and any final
+              charges in writing. Any outstanding charges remain payable.
+            </p>
+            <p>
+              If you have a fixed-term service agreement, the notice requirements, minimum contract term, and any early
+              termination provisions in that agreement apply instead of this general unsubscribe policy.
+            </p>
+            <p>
+              Payments processed through automatic subscription renewal are <b>non-refundable</b>, except where required by
+              applicable law.
+            </p>
+            <p>
+              Domain registration and renewal are separate from your service subscription. You remain responsible for
+              managing your domain name. Unsubscribing from Local for You services does not cancel your domain registration
+              or its automatic renewal, and we cannot cancel your domain on your behalf.
+            </p>
+            <p>
+              You may subscribe again in the future, subject to the services, pricing, and terms available at that time.
+            </p>
           </li>
-
           <li>
             <div class="text-success fs-5 fw-bold">REFUND POLICY</div>
-            <div>
-              <ul>
-                <li>
-                  Refund requests must be submitted within seven (7) business days of payment.
-                </li>
-                <li>
-                  Requests beyond this period are not eligible for a refund. Please adhere to the policy to avoid any withholding of funds
-                </li>
-              </ul>
-            </div>
+            <p>
+              Refund requests must be submitted within <b>seven (7) business days of payment or order placement, whichever
+              occurs first.</b>
+            </p>
+            <p>
+              Requests submitted after this period are not eligible for a refund, except where required by applicable law.
+            </p>
+            <p>
+              Submitting a refund request does not override the non-refundable payment provisions in these terms, including
+              those relating to automatic renewals and Ad Spend.
+            </p>
           </li>
-
           <li>
             <div class="text-success fs-5 fw-bold">AD SPEND POLICY</div>
-            <div>
-              <ul>
-                <li>
-                  Any advertising budget ("Ad Spend") is separate from service or package fees and is not included in any subscription or package pricing.
-                </li>
-                <li>
-                  Ad Spend is a one-time budget allocated solely for running paid advertisements.
-                </li>
-                <li>
-                  This budget will be gradually used and depleted as advertisements are delivered. Once fully spent, ads will stop unless additional budget is provided.
-                </li>
-                <li>
-                  Ad Spend is non-refundable once campaigns have commenced.
-                </li>
-                <li>
-                  Local for You does not guarantee specific results (including leads, sales, or conversions) from any Ad Spend.
-                </li>
-              </ul>
-            </div>
+            <p>
+              Advertising budget (“Ad Spend”) is separate from service fees and is <b>not included in any subscription or
+              package pricing.</b>
+            </p>
+            <p>
+              Each Ad Spend payment is a budget allocated solely to paid advertising. The budget is gradually used as
+              advertisements are delivered. Once fully spent, advertisements will stop unless additional budget is provided.
+            </p>
+            <p>
+              Once a campaign has commenced, <b>the entire Ad Spend allocated to that campaign is non-refundable, including any
+              unused balance</b>, except where required by applicable law.
+            </p>
+            <p>
+              Local for You does not guarantee specific results from advertising, including leads, sales, bookings, or
+              conversions.
+            </p>
+          </li>
+          <li>
+            <div class="text-success fs-5 fw-bold">PAYMENT &amp; NON-PAYMENT</div>
+            <p>
+              Payments for services or products must be made by the agreed-upon due date, which is typically the <b>10th or 25th
+              of each month.</b>
+            </p>
+            <p>
+              In the event of non-payment, Local for You reserves the right to suspend or terminate the relevant services or
+              products. Any outstanding charges remain payable.
+            </p>
+            <p>
+              To the maximum extent permitted by law, Local for You will not be liable for loss of business or revenue
+              resulting from the suspension or termination of services due to non-payment or any other reason permitted under
+              these terms or your service agreement.
+            </p>
+          </li>
+          <li>
+            <div class="text-success fs-5 fw-bold">CONTACT</div>
+            <p>
+              For questions about your order, subscription, billing, refunds, or requests to unsubscribe, please contact our
+              Customer Support team using the contact details published on our website.
+            </p>
           </li>
 
-          <li>
-            <div class="text-success fs-5 fw-bold">NON-PAYMENT</div>
-            <div>
-              Payments for services or products must be made by the agreed-upon
-              due date, which is typically the 10th or 25th of each month. In
-              the event of non-payment, Local for You reserves the right to
-              suspend or cancel the relevant service or product. Please note
-              that in the event of suspension or cancellation of services due to
-              non-payment or any other reason, Local for You shall not be liable
-              for any lost business or revenue
-            </div>
-          </li>
 
           <!-- แสดงเฉพาะเมื่อเลือกโปรดักที่มีคำว่า AI (toggle ใน bootstrap-multi-step-form.js) -->
           <li class="termsAI d-none">
@@ -349,33 +335,33 @@
               </li>
               <li>
                 <div>
-                  <b>Data Protection and Privacy</b>
-              <p>
-                In delivering our services, Local for You processes personal data on your behalf. This may include customer names,
-                telephone numbers, email addresses, appointment and order details, call recordings and transcripts.
-              </p>
-              <p>
-                For the purposes of applicable data protection law, you are the data controller and Local for You is the data
-                processor. You are responsible for the lawful basis on which personal data is collected from your customers and for
-                providing your customers with a privacy notice.
-              </p>
-              <p>
-                Local for You engages third-party service providers, including cloud hosting, voice platform, telephony, booking
-                system and artificial intelligence providers, to deliver the services. By using our services you authorise Local for
-                You to share personal data with such providers to the extent necessary to deliver the services. Local for You remains
-                responsible for the performance of these providers.
-              </p>
-              <p>
-                Local for You will process personal data only for the purposes of delivering the services, will apply appropriate
-                technical and organisational security measures, and will notify you without undue delay on becoming aware of a
-                personal data breach affecting your data.
-              </p>
-              <p>
-                This clause is intended to meet the requirements of the Australian Privacy Act 1988 (Cth) and the Australian Privacy
-                Principles, the UK General Data Protection Regulation and Data Protection Act 2018, applicable United States federal
-                and state privacy laws, and the Thailand Personal Data Protection Act B.E. 2562 (2019), as applicable to the
-                jurisdiction in which you operate.
-              </p>
+                  <b>DATA PROTECTION AND PRIVACY</b>
+                  <p>
+                    In delivering our services, Local for You processes personal data on your behalf. This may include customer names,
+                    telephone numbers, email addresses, appointment and order details, call recordings and transcripts.
+                  </p>
+                  <p>
+                    For the purposes of applicable data protection law, you are the data controller and Local for You is the data
+                    processor. You are responsible for the lawful basis on which personal data is collected from your customers and for
+                    providing your customers with a privacy notice.
+                  </p>
+                  <p>
+                    Local for You engages third-party service providers, including cloud hosting, voice platform, telephony, booking
+                    system and artificial intelligence providers, to deliver the services. By using our services you authorise Local for
+                    You to share personal data with such providers to the extent necessary to deliver the services. Local for You remains
+                    responsible for the performance of these providers.
+                  </p>
+                  <p>
+                    Local for You will process personal data only for the purposes of delivering the services, will apply appropriate
+                    technical and organisational security measures, and will notify you without undue delay on becoming aware of a
+                    personal data breach affecting your data.
+                  </p>
+                  <p>
+                    This clause is intended to meet the requirements of the Australian Privacy Act 1988 (Cth) and the Australian Privacy
+                    Principles, the UK General Data Protection Regulation and Data Protection Act 2018, applicable United States federal
+                    and state privacy laws, and the Thailand Personal Data Protection Act B.E. 2562 (2019), as applicable to the
+                    jurisdiction in which you operate.
+                  </p>
                 </div>
               </li>
               <li>
@@ -391,6 +377,12 @@
           </li>
         </ol>
       </div>
-    </div>
-  </div>
+      <div class="form-check terms-agree">
+        <input class="form-check-input" type="checkbox" id="termsModalAgree" disabled>
+        <label class="form-check-label fw-bold" for="termsModalAgree">
+          I have read and agree to the Terms &amp; Conditions of Purchase and Subscription, including the applicable fees,
+          automatic renewal, 30-business-day unsubscribe notice requirement, and refund policy. I acknowledge the Privacy
+          Policy.
+        </label>
+      </div>
 </div>

@@ -303,7 +303,18 @@ function saveResult(object $db, array $monitor, array $result): bool {
  * template is switched off. Returns null when the alert should not be sent.
  */
 function renderTemplate(object $db, string $key, array $monitor, array $result): ?array {
+    // Country and hosting server come from the linked websiteList row; manual monitors have none.
+    $site = !empty($monitor['source_wID']) ? $db->query(
+        "SELECT c.name AS country, CONCAT_WS(' - ', REGEXP_REPLACE(sv.svName, '^[0-9]+: *', ''), sv.svServerLocation) AS server
+           FROM websiteList w
+           LEFT JOIN Countries c ON c.id = w.countryID
+           LEFT JOIN L4UServers sv ON sv.svID = w.svID
+          WHERE w.wID = ?", $monitor['source_wID']
+    )->fetchArray() : [];
+
     $vars = [
+        '{country}'     => ($site['country'] ?? '') ?: '-',
+        '{server}'      => ($site['server'] ?? '') ?: '-',
         '{name}'        => $monitor['name'],
         '{url}'         => $monitor['url'],
         '{domain}'      => preg_replace('#^www\.#i', '', (string) parse_url($monitor['url'], PHP_URL_HOST)),
@@ -321,19 +332,19 @@ function renderTemplate(object $db, string $key, array $monitor, array $result):
     ];
 
     $defaults = [
-        'down'      => ['เว็บเปิดไม่ได้ (เซิร์ฟเวอร์ตอบ error)', "Domain : {domain}\nอาการ : {errorMsg}\nTime : {time}", 1],
-        'recovered' => ['[RECOVERED] {name} is back online', "Monitor: {name}\nURL: {url}\nStatus: RECOVERED\nResponse: {responseMs}ms\nTime: {time}", 0],
-        'ssl'       => ['[SSL WARNING] {name} - {sslDaysLeft} days left', "Monitor: {name}\nURL: {url}\nSSL Expiry: {sslExpiry}\nDays Left: {sslDaysLeft}\nTime: {time}", 0],
-        'wp_fatal'     => ['Wordpress พัง - เว็บเปิดไม่ได้', "Domain : {domain}\nอาการ : {errorMsg}\nTime : {time}", 1],
-        'unregistered' => ['Domain Live ใน Website list แต่ Down (ไม่ได้ถูกซื้อ)', "Domain : {url}\nTime : {time}", 1],
-        'expired'      => ['Domain Live ใน Website list แต่ Down (แต่โดเมนหมดอายุ)', "Domain : {url}\nTime : {time}", 1],
-        'ssl_expired'  => ['SSL หมดอายุแล้ว - เว็บเข้าไม่ได้', "Domain : {domain}\nSSL หมดอายุเมื่อ : {sslExpiry}\nTime : {time}", 1],
-        'moved_away'   => ['Domain ไม่ได้ชี้มาที่ Server เราแล้ว (อาจยกเลิกบริการ)', "Domain : {domain}\nIP ปลายทาง : {resolvedIP}\nTime : {time}", 0],
-        'disk_warn'    => ['พื้นที่ใกล้เต็ม - เสี่ยงเว็บล่ม', "Domain : {domain}\ncPanel : {cpanelUser}\nใช้ไป : {diskUsed} / {diskLimit} ({diskPercent}%)\nTime : {time}", 0],
-        'dns_fail'     => ['DNS หาไม่เจอชั่วคราว (โดเมนยังไม่หมดอายุ)', "Domain : {domain}\nอาการ : {errorMsg}\nหมายเหตุ : โดเมนยังจดทะเบียนอยู่ปกติ มักเกิดจาก DNS/nameserver กระตุกชั่วคราว\nTime : {time}", 0],
-        'timeout'      => ['เว็บตอบช้าเกินกำหนด (Timeout)', "Domain : {domain}\nอาการ : {errorMsg}\nรอนานสุด : 30 วินาที\nTime : {time}", 1],
-        'conn_refused' => ['เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', "Domain : {domain}\nIP : {resolvedIP}\nอาการ : {errorMsg}\nTime : {time}", 1],
-        'ssl_error'    => ['SSL/ใบรับรองมีปัญหา', "Domain : {domain}\nอาการ : {errorMsg}\nTime : {time}", 1],
+        'down'      => ['เว็บเปิดไม่ได้ (เซิร์ฟเวอร์ตอบ error)', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nอาการ : {errorMsg}\nTime : {time}", 1],
+        'recovered' => ['[RECOVERED] {name} is back online', "Monitor: {name}\nURL: {url}\nCountry: {country}\nServer: {server}\nStatus: RECOVERED\nResponse: {responseMs}ms\nTime: {time}", 0],
+        'ssl'       => ['[SSL WARNING] {name} - {sslDaysLeft} days left', "Monitor: {name}\nURL: {url}\nCountry: {country}\nServer: {server}\nSSL Expiry: {sslExpiry}\nDays Left: {sslDaysLeft}\nTime: {time}", 0],
+        'wp_fatal'     => ['Wordpress พัง - เว็บเปิดไม่ได้', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nอาการ : {errorMsg}\nTime : {time}", 1],
+        'unregistered' => ['Domain Live ใน Website list แต่ Down (ไม่ได้ถูกซื้อ)', "Domain : {url}\nประเทศ : {country}\nServer : {server}\nTime : {time}", 1],
+        'expired'      => ['Domain Live ใน Website list แต่ Down (แต่โดเมนหมดอายุ)', "Domain : {url}\nประเทศ : {country}\nServer : {server}\nTime : {time}", 1],
+        'ssl_expired'  => ['SSL หมดอายุแล้ว - เว็บเข้าไม่ได้', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nSSL หมดอายุเมื่อ : {sslExpiry}\nTime : {time}", 1],
+        'moved_away'   => ['Domain ไม่ได้ชี้มาที่ Server เราแล้ว (อาจยกเลิกบริการ)', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nIP ปลายทาง : {resolvedIP}\nTime : {time}", 0],
+        'disk_warn'    => ['พื้นที่ใกล้เต็ม - เสี่ยงเว็บล่ม', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\ncPanel : {cpanelUser}\nใช้ไป : {diskUsed} / {diskLimit} ({diskPercent}%)\nTime : {time}", 0],
+        'dns_fail'     => ['DNS หาไม่เจอชั่วคราว (โดเมนยังไม่หมดอายุ)', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nอาการ : {errorMsg}\nหมายเหตุ : โดเมนยังจดทะเบียนอยู่ปกติ มักเกิดจาก DNS/nameserver กระตุกชั่วคราว\nTime : {time}", 0],
+        'timeout'      => ['เว็บตอบช้าเกินกำหนด (Timeout)', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nอาการ : {errorMsg}\nรอนานสุด : 30 วินาที\nTime : {time}", 1],
+        'conn_refused' => ['เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nIP : {resolvedIP}\nอาการ : {errorMsg}\nTime : {time}", 1],
+        'ssl_error'    => ['SSL/ใบรับรองมีปัญหา', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nอาการ : {errorMsg}\nTime : {time}", 1],
     ];
 
     $tpl = null;

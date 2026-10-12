@@ -12,6 +12,7 @@ global $db, $topData, $topDate;
 require_once "../assets/db/db.php";
 require_once "../assets/db/initDB.php";
 include_once "../assets/php/shareFunction.php";
+include_once "../modules/templates/assets/php/brief.php";
 header('Content-Type: text/html; charset=UTF-8');
 
 //
@@ -127,6 +128,8 @@ $json = $project['shopType'] == "Restaurant"
          'contact' => json_decode($pageDetails['contact'], true),
          'services' => json_decode($pageDetails['services'], true),
     );
+$isCustom = isCustomTemplate($project['selectedTemplate']);
+$templateLabel = $isCustom ? $project['shopType'].' | Fully custom' : $project['shopType'].' | Template No. 0'.$project['selectedTemplate'];
 $prettyJson = json_encode($json, JSON_PRETTY_PRINT | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 
 $folderName = "../upload/". $id . "-" . sanitizeFolderName($project["projectName"])."/";
@@ -137,7 +140,7 @@ $topData .= '<thead><tr><th colspan="2" style="background-color: #1827B8; color:
 $topData .= '<tbody>';
 $topData .= '<tr><td style="width: 150px; font-weight: bold; background-color: #f8f9fa;">Project Owner</td><td>'.$project['PO'].'</td></tr>';
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Project Name</td><td>'.$project['projectName'].'</td></tr>';
-$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Project Type</td><td>'.$project['shopType'].' | Template No. 0'.$project['selectedTemplate'].'</td></tr>';
+$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Project Type</td><td>'.$templateLabel.'</td></tr>';
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Country</td><td>'.$project['country'].'</td></tr>';
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Due Date</td><td>'.$dueDate.'</td></tr>';
 $topData .= '</tbody>';
@@ -170,13 +173,17 @@ $topData .= '<table width="650px" border="1" cellpadding="10" cellspacing="0" st
 $topData .= '<thead><tr><th colspan="2" style="background-color: #1827B8; color: white; padding: 10px; text-align: left;">Theme</th></tr></thead>';
 $topData .= '<tbody>';
 $topData .= '<tr><td style="width: 150px; font-weight: bold; background-color: #f8f9fa;">Logo</td><td>'.$project['logo'].'</td></tr>';
-$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Template</td><td>'.$project['shopType'].' Template No. 0'.$project['selectedTemplate'].'</td></tr>';
+$topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Template</td><td>'.$templateLabel.'</td></tr>';
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Primary Color</td><td>'.$project['colorTheme1'].'</td></tr>';
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Secondary Color</td><td>'.$project['colorTheme2'].'</td></tr>';
 $topData .= '<tr><td style="font-weight: bold; background-color: #f8f9fa;">Accent Color</td><td>'.$project['colorTheme3'].'</td></tr>';
 $topData .= '</tbody>';
 $topData .= '</table><br>';
 
+
+if ($isCustom) {
+    $topData .= briefTable(loadBrief($db, $id), $folderName);
+}
 
 $topData .= '<table width="650px" border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px;">';
 $topData .= '<thead><tr><th colspan="2" style="background-color: #1827B8; color: white; padding: 10px; text-align: left;">Social Media</th></tr></thead>';
@@ -245,9 +252,60 @@ if ($project['hostingHave'] == 0){
     $topData .= '</table><br>';
 }
 
+function briefTable(array $b, string $folder): string
+{
+    $e = fn($v) => nl2br(htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'));
+    $yes = fn($k) => !empty($b[$k]) ? 'Yes' : 'No';
+    $links = '';
+    foreach (briefRefLinks($b) as $l) {
+        $url = htmlspecialchars($l['url'], ENT_QUOTES, 'UTF-8');
+        $links .= '<div><a href="'.$url.'" target="_blank" rel="noopener">'.$url.'</a>'.($l['note'] !== '' ? ' — '.$e($l['note']) : '').(!empty($l['forColor']) ? ' <b>(colors)</b>' : '').'</div>';
+    }
+    $pages = array_filter(array_map('trim', explode("\n", (string)($b['pages'] ?? ''))));
+    $rows = [
+        'Business' => $e($b['businessNote'] ?? ''),
+        'Main goal' => BRIEF_GOALS[$b['goal'] ?? ''] ?? '-',
+        'Pages ('.count($pages).')' => $e(implode("\n", $pages)),
+        'Current website' => $e($b['oldSiteURL'] ?? '-').(!empty($b['keepURLs']) ? ' <b>(keep old URLs)</b>' : ''),
+        'References' => $links ?: '-',
+        'Colors' => BRIEF_COLOR_MODES[$b['colorMode'] ?? ''] ?? '-',
+        'Mood / style' => $e($b['mood'] ?? ''),
+        'Content' => BRIEF_CONTENT[$b['contentSource'] ?? ''] ?? '-',
+        'System' => $e(trim(($b['systemName'] ?? '').' '.($b['systemURL'] ?? ''))),
+        'Vector logo' => $yes('hasVectorLogo'),
+        'Photos ≥ 2000px' => $yes('hasHiResPhotos'),
+        'Features' => $e($b['features'] ?? ''),
+        'Tracking' => $e($b['tracking'] ?? ''),
+        'Photo links' => linkify($b['assetLinks'] ?? ''),
+        'Photos ('.count($photos = briefPhotos('../modules/templates/upload/'.basename($folder))).')' => implode(' ', array_map(
+            fn($f) => '<a href="'.htmlspecialchars('../modules/templates/upload/'.basename($folder).'/'.$f, ENT_QUOTES, 'UTF-8').'" target="_blank">'.htmlspecialchars($f, ENT_QUOTES, 'UTF-8').'</a>',
+            $photos)),
+        'Deadline' => $e($b['deadline'] ?? ''),
+        'Notes' => $e($b['notes'] ?? ''),
+    ];
+    $html = '<table width="650px" border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px;">';
+    $html .= '<thead><tr><th colspan="2" style="background-color: #1827B8; color: white; padding: 10px; text-align: left;">Design Brief (Fully custom)</th></tr></thead><tbody>';
+    foreach ($rows as $label => $value) {
+        $html .= '<tr><td style="width: 150px; font-weight: bold; background-color: #f8f9fa;">'.$label.'</td><td>'.($value !== '' ? $value : '-').'</td></tr>';
+    }
+    return $html.'</tbody></table><br>';
+}
+
+function linkify(string $text): string
+{
+    $out = [];
+    foreach (array_filter(array_map('trim', explode("\n", $text))) as $line) {
+        $safe = htmlspecialchars($line, ENT_QUOTES, 'UTF-8');
+        $out[] = preg_match('~^https?://~i', $line) ? '<a href="'.$safe.'" target="_blank" rel="noopener">'.$safe.'</a>' : $safe;
+    }
+    return implode('<br>', $out);
+}
+
 if ($act == "sendProject") {
     $linkDetails = '<a href="https://report.localforyou.com/pages/tpSubmittedDetails.php?act=readProject&projectID='.$id.'">Click to View Template Submission Details</a>';
     $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr>'.$linkDetails.'</body></html>';
+} else if ($isCustom) { // no template pages to show
+    $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div></body></html>';
 } else {
     $message = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>L4U</title></head><body><div>'.$topData.'</div><hr><pre>'. $prettyJson .'</pre></body></html>';
 }

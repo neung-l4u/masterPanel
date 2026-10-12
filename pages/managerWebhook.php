@@ -40,7 +40,7 @@ $hasTable = (bool) $db->query("SHOW TABLES LIKE 'monitor_templates'")->fetchArra
   <div class="wh-card" style="background:#f8f9ff">
     <div class="wh-key mb-2">ตัวแปรที่ใช้ได้ (คลิกเพื่อคัดลอก)</div>
     <div class="wh-vars">
-      <code>{name}</code><code>{domain}</code><code>{url}</code><code>{resolvedIP}</code><code>{httpCode}</code><code>{errorMsg}</code><code>{responseMs}</code><code>{sslExpiry}</code><code>{sslDaysLeft}</code><code>{time}</code>
+      <code>{name}</code><code>{domain}</code><code>{url}</code><code>{country}</code><code>{server}</code><code>{resolvedIP}</code><code>{httpCode}</code><code>{errorMsg}</code><code>{responseMs}</code><code>{sslExpiry}</code><code>{sslDaysLeft}</code><code>{time}</code>
     </div>
   </div>
 
@@ -51,7 +51,7 @@ $hasTable = (bool) $db->query("SHOW TABLES LIKE 'monitor_templates'")->fetchArra
 
 <script>
 const VARS = {
-  '{name}':'ตัวอย่างเว็บไซต์ (TEST)', '{url}':'https://example.com', '{domain}':'example.com', '{resolvedIP}':'162.159.140.177',
+  '{name}':'ตัวอย่างเว็บไซต์ (TEST)', '{url}':'https://example.com', '{domain}':'example.com', '{resolvedIP}':'162.159.140.177', '{country}':'Australia', '{server}':'adayinbkk.com.au - USA (Arizona)',
   '{httpCode}':'500', '{errorMsg}':'WordPress critical error (HTTP 200)',
   '{responseMs}':'812', '{sslExpiry}':'2026-10-01', '{sslDaysLeft}':'15',
   '{time}':'<?php echo date('Y-m-d H:i:s'); ?>'

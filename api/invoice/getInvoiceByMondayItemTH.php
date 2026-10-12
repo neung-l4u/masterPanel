@@ -126,10 +126,16 @@ $response = [
         return [
             'product' => $item['product'] ?? $item['setupfee'] ?? $item['addon'] ?? '-',
             'qyt' => $item['qyt'] ?? '1',
-            // ส่งราคาเต็มรวม VAT ให้ปลายทางโชว์ ใบเก่าไม่มี fullamount จึงถอดจาก amount
-            'amount' => isset($item['fullamount'])
-                ? $item['fullamount']
-                : number_format(round((float)($item['amount'] ?? 0) * 1.07, 2), 2, '.', ''),
+            // ส่งราคาเต็มรวม VAT ให้ปลายทางโชว์ ยึด amount (ฐานก่อน VAT) เป็นหลักเสมอ
+            // ใช้ fullamount ได้ต่อเมื่อสอดคล้องกับ amount x 1.07 เท่านั้น เพราะบางใบ
+            // เก่ามี fullamount เพี้ยนค้างอยู่ (ถูกเขียนผิดไว้ก่อนแก้บั๊ก) ถ้าเชื่อตรงๆ
+            // จะยังโชว์ราคาผิดในอีเมลแม้ amount จะถูกต้องแล้ว
+            'amount' => (function($item) {
+                $base = round((float)($item['amount'] ?? 0) * 1.07, 2);
+                $full = isset($item['fullamount']) ? (float)$item['fullamount'] : 0;
+                $val  = ($full > 0 && abs($full - $base) <= 0.02) ? $full : $base;
+                return number_format($val, 2, '.', '');
+            })($item),
         ];
     }, $items),
     'quotation' => array_map(function($q) {
