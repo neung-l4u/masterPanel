@@ -104,14 +104,44 @@ $testMode = $_GET['testMode'] ?? 'false';
                     <form id="downgradeForm" name="downgradeForm" method="post" enctype="multipart/form-data">
 
                         <!-- ========== SECTION: Business Information ========== -->
+                        <!-- One ordered list per CS item 1. Country is in both
+                             modes now, not staff only: the email lookup keys on
+                             country + email, so a customer with no country
+                             cannot be looked up at all. -->
                         <div class="form-section">
                             <h5 class="section-title"><i class="bi bi-building"></i> Business Information</h5>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="shopName" class="form-label">Shop Name <span class="text-danger">*</span></label>
+                                    <label for="country" class="form-label">Country <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="country" name="country" required>
+                                        <option value="">-- Select Country --</option>
+                                        <option value="US">United States</option>
+                                        <option value="CA">Canada</option>
+                                        <option value="AU">Australia</option>
+                                        <option value="NZ">New Zealand</option>
+                                        <option value="UK">United Kingdom</option>
+                                        <option value="TH">Thailand</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your country.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="businessType" class="form-label">Business Type <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="businessType" name="businessType" required>
+                                        <option value="">-- Select Business Type --</option>
+                                        <option value="Restaurant">Restaurant</option>
+                                        <option value="Massage">Massage</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your business type.</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="shopName" class="form-label">Business Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="shopName" name="shopName" placeholder="e.g. The Green Kitchen" required>
-                                    <div class="invalid-feedback">Please enter the shop name.</div>
+                                    <div class="invalid-feedback">Please enter the business name.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="tradingName" class="form-label">Trading Name</label>
@@ -120,39 +150,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                             </div>
 
                             <div class="mb-3">
-                                <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="address" name="address" placeholder="e.g. 123 Main St, Los Angeles, CA 90001" required>
-                                <div class="invalid-feedback">Please enter the business address.</div>
-                            </div>
-
-                            <?php if ($mode === 'staff'): ?>
-                            <div class="mb-3">
-                                <label for="country" class="form-label">Country</label>
-                                <select class="form-select" id="country" name="country">
-                                    <option value="">-- Select Country --</option>
-                                    <option value="US">United States</option>
-                                    <option value="CA">Canada</option>
-                                    <option value="AU">Australia</option>
-                                    <option value="NZ">New Zealand</option>
-                                    <option value="UK">United Kingdom</option>
-                                    <option value="TH">Thailand</option>
-                                </select>
-                            </div>
-                            <div class="mb-3 position-relative">
-                                <label for="mondayProjectId" class="form-label">Monday Project / Shop ID <small class="text-muted">(Staff Reference)</small></label>
-                                <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="Type shop name or ID to search..." autocomplete="off">
-                                <input type="hidden" id="boardId" name="boardId" value="">
-                                <div id="projectSearchDropdown" class="project-search-dropdown"></div>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-
-                        <!-- ========== SECTION: Contact Information ========== -->
-                        <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-person-lines-fill"></i> Contact Information</h5>
-
-                            <div class="mb-3">
-                                <label for="contactPerson" class="form-label">Contact Person Name <span class="text-danger">*</span></label>
+                                <label for="contactPerson" class="form-label">Contact Person <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="contactPerson" name="contactPerson" placeholder="e.g. Jane Smith" required>
                                 <div class="invalid-feedback">Please enter the contact person name.</div>
                             </div>
@@ -162,13 +160,53 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     <label for="emailAddress" class="form-label">Email Address <span class="text-danger">*</span></label>
                                     <input type="email" class="form-control" id="emailAddress" name="emailAddress" placeholder="e.g. jane@example.com" required>
                                     <div class="invalid-feedback">Please enter a valid email address.</div>
+                                    <!-- The lookup writes its result here. -->
+                                    <div id="emailLookupStatus" class="email-lookup-status" aria-live="polite"></div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="mobileNumber" class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                                    <label for="mobileNumber" class="form-label">Phone Number <span class="text-danger">*</span></label>
                                     <input type="tel" class="form-control" id="mobileNumber" name="mobileNumber" placeholder="e.g. +1 (555) 123-4567" required>
-                                    <div class="invalid-feedback">Please enter the mobile number.</div>
+                                    <div class="invalid-feedback">Please enter the phone number.</div>
                                 </div>
                             </div>
+
+                            <!-- One email can belong to several branches, so the
+                                 customer picks which shop is theirs before
+                                 anything is filled. -->
+                            <div id="branchPicker" class="branch-picker mb-3 d-none">
+                                <label class="form-label">Which of these is your shop?</label>
+                                <div id="branchPickerList" class="branch-picker-list" role="radiogroup" aria-label="Choose your shop"></div>
+                            </div>
+
+                            <!-- CS did not ask for address to go, and it is
+                                 currently required, so it stays, after the
+                                 ordered list. -->
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="address" name="address" placeholder="e.g. 123 Main St, Los Angeles, CA 90001" required>
+                                <div class="invalid-feedback">Please enter the business address.</div>
+                            </div>
+
+                            <?php if ($mode === 'staff'): ?>
+                            <!-- Staff keeps the project search and gains the
+                                 lookup. A staff member taking a cancellation
+                                 call may have the shop ID to hand rather than
+                                 the email, so removing this would make their
+                                 job harder, not easier. -->
+                            <div class="mb-3 position-relative">
+                                <label for="mondayProjectId" class="form-label">Monday Project / Shop ID <small class="text-muted">(Staff Reference)</small></label>
+                                <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="Type shop name or ID to search..." autocomplete="off">
+                                <input type="hidden" id="boardId" name="boardId" value="">
+                                <div id="projectSearchDropdown" class="project-search-dropdown"></div>
+                            </div>
+                            <?php else: ?>
+                            <!-- Customer mode has no search, but the lookup
+                                 fills these, and the webhook payload reads
+                                 them. Without these inputs a customer
+                                 submission carries no project id at all. -->
+                            <input type="hidden" id="mondayProjectId" name="mondayProjectId" value="">
+                            <input type="hidden" id="boardId" name="boardId" value="">
+                            <?php endif; ?>
                         </div>
 
                         <!-- ========== SECTION: Type of Request ========== -->

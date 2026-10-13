@@ -99,7 +99,13 @@ function initStarRating(widgetId, inputId, labelId) {
 (function () {
     const $input = $('#mondayProjectId');
     const $dropdown = $('#projectSearchDropdown');
-    if (!$input.length) return;
+    // Guarded on the dropdown, not on #mondayProjectId. Customer mode now has
+    // #mondayProjectId too -- as a hidden input the email lookup fills -- so
+    // guarding on that alone would run this whole staff search on the customer
+    // page, and its #country handler would download the country's entire shop
+    // directory into the customer's browser on every country change. The
+    // dropdown is rendered in staff mode only.
+    if (!$dropdown.length || !$input.length) return;
 
     let searchTimer = null;
     let allProjects = [];
@@ -154,6 +160,10 @@ function initStarRating(widgetId, inputId, labelId) {
     $('#country').on('change', function () {
         const country = $(this).val();
         $input.val('');
+        // The board id goes with it. Leaving it behind would submit a board id
+        // with no project id under a different country -- a request attached to
+        // the wrong shop in Monday.
+        $('#boardId').val('');
         $dropdown.removeClass('show').empty();
         allProjects = [];
         if (country) fetchProjects(country);
@@ -328,7 +338,7 @@ function validateForm() {
     const isDowngradePkg = (requestType === 'Downgrade to other product');
 
     // Always required text fields
-    ['shopName', 'address', 'contactPerson', 'emailAddress', 'mobileNumber'].forEach(id => {
+    ['country', 'businessType', 'shopName', 'address', 'contactPerson', 'emailAddress', 'mobileNumber'].forEach(id => {
         const el = document.getElementById(id);
         if (el && !el.value.trim()) {
             el.classList.add('is-invalid');
