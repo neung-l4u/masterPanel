@@ -299,286 +299,40 @@ function updateSectionVisibility() {
 })();
 
 // ===== Customer Email Lookup =====
-// Customer mode has no Monday project id to search on, so the email is the
-// only key the customer reliably knows. This fills the shop fields and the
-// real product list from the mirrored Monday data.
-//
-// Every failure path leaves the form exactly as the customer left it: the
-// lookup is an accelerator, never a gate. A wrong or unrecognised email is not
-// an error condition -- CS briefs the customer directly.
-(function () {
-    const $email        = $('#emailAddress');
-    const $status       = $('#emailLookupStatus');
-    const $list         = $('#customerProductList');
-    const $selWrap      = $('#customerProductSelectWrap');
-    const $select       = $('#originalProductSelect');
-    const $hidden       = $('#originalProduct');
-    const $branchPicker = $('#branchPicker');
-    const $branchList   = $('#branchPickerList');
+// The lookup itself lives in assets/js/emailLookup.js, shared with the
+// downgrade form. What stays here is this form's wiring: which fields the
+// lookup may fill and clear, and that every state change has to re-run
+// updateSectionVisibility(), because the hidden #originalProduct field drives
+// the Solo-to-Bundle gate and the comparison card.
+udmInitEmailLookup({
+    email:        '#emailAddress',
+    country:      '#country',
+    status:       '#emailLookupStatus',
+    branchPicker: '#branchPicker',
+    branchList:   '#branchPickerList',
 
-    let lookupTimer    = null;
-    let lastQueried    = '';
-    let inFlight       = null;
-    // True only while the shop fields hold values this lookup wrote, so a
-    // later clear can leave anything the customer typed by hand alone.
-    let filledByLookup = false;
-    // The shops a multi-branch match returned, awaiting the customer's choice.
-    let matchedShops   = [];
+    shopFields: {
+        shopName:  '#shopName',
+        ownerName: '#ownerName',
+        phone:     '#phoneNumber',
+    },
 
-    if (IS_STAFF) return;
+    identityFields: {
+        shopId:  '#mondayProjectId',
+        boardId: '#boardId',
+    },
 
-    function setStatus(html) {
-        $status.html(html || '');
-    }
+    productList:       '#customerProductList',
+    productSelectWrap: '#customerProductSelectWrap',
+    productSelect:     '#originalProductSelect',
+    productHidden:     '#originalProduct',
 
-    // With no lookup result, the hidden field that actually submits must track
-    // the manual select -- otherwise a customer who picks a plan by hand
-    // submits an empty originalProduct.
-    //
-    // updateSectionVisibility() runs after every change to the hidden field:
-    // the field drives the Solo-to-Bundle gate and the comparison card, so
-    // without this a section or card from a previous selection stays on screen
-    // while validateForm has already stopped requiring its fields.
-    function useManualSelect() {
-        $list.addClass('d-none').empty();
-        $selWrap.removeClass('d-none');
-        $hidden.val($select.val() || '');
-        updateSectionVisibility();
-    }
+    onChange: updateSectionVisibility,
 
-    function useLookupProducts(subscriptions) {
-        if (!subscriptions.length) {
-            useManualSelect();
-            return;
-        }
-
-        $selWrap.addClass('d-none');
-        $hidden.val(subscriptions.map(s => s.name).join(', '));
-        updateSectionVisibility();
-
-        // Names only -- no prices in the customer-facing list. The endpoint does
-        // not return them, so there is nothing to render even if this changed.
-        const html = subscriptions.map(s => `
-            <div class="subscription-item">
-                <i class="bi bi-check-circle-fill"></i>
-                <div>
-                    <div class="sub-name">${escapeHtml(s.name)}</div>
-                </div>
-            </div>`).join('');
-
-        $list.html(html).removeClass('d-none');
-    }
-
-    // The shop name, owner name and product names come from Monday and are
-    // rendered as HTML, so they are escaped here rather than trusted.
-    function escapeHtml(value) {
-        return $('<div>').text(value == null ? '' : String(value)).html();
-    }
-
-    function fillShop(shop) {
-        $('#shopName').val(shop.shopName || '');
-        $('#ownerName').val(shop.ownerName || '');
-        $('#phoneNumber').val(shop.phone || '');
-        // These are hidden inputs in customer mode and have always submitted
-        // empty; populating them means the webhook payload finally carries a
-        // real project id for a customer submission.
-        $('#mondayProjectId').val(shop.shopId || '');
-        $('#boardId').val(shop.boardId || '');
-        filledByLookup = true;
-    }
-
-    // Clears only what a lookup actually wrote. Clearing unconditionally would
-    // discard a shop name, owner and phone the customer typed by hand -- the
-    // lookup is an accelerator, so it may not destroy their own input.
-    function clearShopFields() {
-        if (!filledByLookup) return;
-        $('#shopName, #ownerName, #phoneNumber').val('');
-        $('#mondayProjectId, #boardId').val('');
-        filledByLookup = false;
-    }
-
-    // The Monday project id is the dangerous one to leave behind: a stale id
-    // from a previous email would attach this request to the wrong shop in
-    // Monday while the form shows the customer's new address.
-    //
-    // The flag is lowered too: the shop name, owner and phone are left on screen
-    // for the customer to correct, which makes them theirs to keep. Leaving the
-    // flag raised would let a later country change wipe fields they had since
-    // edited by hand.
-    function clearShopIdentity() {
-        if (!filledByLookup) return;
-        $('#mondayProjectId, #boardId').val('');
-        filledByLookup = false;
-    }
-
-    function revertToManual() {
-        lastQueried = '';
-        clearShopFields();
-        hideBranchPicker();
-        useManualSelect();
-        setStatus('');
-    }
-
-    function hideBranchPicker() {
-        $branchPicker.addClass('d-none');
-        $branchList.empty();
-        matchedShops = [];
-    }
-
-    // One owner often runs several branches under one email: 69 emails match
-    // more than one shop, and in 15 of those the first by name has no products
-    // while a sibling does. Picking one silently showed "Found <shop>" with an
-    // empty product list and, worse, submitted that shop's Monday project id.
-    function showBranchPicker(shops) {
-        matchedShops = shops;
-
-        const html = shops.map(function (s, i) {
-            const n     = s.subscriptions ? s.subscriptions.length : 0;
-            const count = n === 1 ? '1 current product' : n + ' current products';
-            return `
-                <label class="branch-option">
-                    <input type="radio" name="branchChoice" value="${i}">
-                    <span class="branch-option-body">
-                        <span class="branch-option-name">${escapeHtml(s.shopName)}</span>
-                        <span class="branch-option-meta">${count}</span>
-                    </span>
-                </label>`;
-        }).join('');
-
-        $branchList.html(html);
-        $branchPicker.removeClass('d-none');
-    }
-
-    function applyShop(shop, stale) {
-        fillShop(shop);
-        useLookupProducts(shop.subscriptions || []);
-
-        const name = escapeHtml(shop.shopName);
-        let msg = stale
-            ? `<span class="els-stale"><i class="bi bi-exclamation-circle"></i> Using <strong>${name}</strong>. These details may be out of date; our team will confirm them.`
-            : `<span class="els-found"><i class="bi bi-check-circle"></i> Using <strong>${name}</strong>.`;
-
-        // A found shop with no products must say so. Silently showing the
-        // hardcoded select is the "did the lookup work?" ambiguity this feature
-        // exists to remove.
-        if (!shop.subscriptions || shop.subscriptions.length === 0) {
-            msg += ' We found no active products on it, so please choose below.';
-        }
-
-        msg += ' You can edit anything below.</span>'
-             + '<a href="#" class="els-revert" id="emailLookupRevert">Not my shop?</a>';
-        setStatus(msg);
-    }
-
-    function onFound(data) {
-        const shops = (data.shops && data.shops.length) ? data.shops : [data.shop];
-
-        if (shops.length > 1) {
-            // Fill nothing yet: which branch is theirs decides the project id.
-            showBranchPicker(shops);
-            useManualSelect();
-            setStatus('<span class="els-neutral"><i class="bi bi-diagram-3"></i> This email is used by '
-                + shops.length + ' shops. Please choose which one is yours.</span>'
-                + '<a href="#" class="els-revert" id="emailLookupRevert">None of these?</a>');
-            return;
-        }
-
-        hideBranchPicker();
-        applyShop(shops[0], data.stale);
-    }
-
-    function onNotFound() {
-        // Deliberately not alarming: an unrecognised email is expected, and CS
-        // reconciles it. Nothing the customer typed by hand is touched.
-        //
-        // The project id must go, though: this email matched no shop, so a stale
-        // id from a previous match would attach the request to the wrong shop.
-        clearShopIdentity();
-        useManualSelect();
-        setStatus('<span class="els-neutral">We couldn\'t prefill your details from this email. Please fill in the form and our team will confirm everything.</span>');
-    }
-
-    function runLookup() {
-        const country = ($('#country').val() || '').trim();
-        const email   = ($email.val() || '').trim();
-
-        if (!country || !email || email.indexOf('@') === -1) {
-            // Mid-edit, so no lookup can be in flight for what is on screen now.
-            // Abort it and drop the project id: leaving either would let an older
-            // response land, or submit a previous shop's id under a new address.
-            if (inFlight) inFlight.abort();
-            clearShopIdentity();
-            return;
-        }
-
-        const key = country + '|' + email.toLowerCase();
-        if (key === lastQueried) return;
-        lastQueried = key;
-
-        if (inFlight) inFlight.abort();
-
-        setStatus('<span class="els-neutral"><span class="spinner-border spinner-border-sm"></span> Looking up your shop...</span>');
-
-        inFlight = $.getJSON('../assets/API/lookupByEmail.php', { country, email })
-            .done(function (data) {
-                if (data && data.found) onFound(data);
-                else onNotFound();
-            })
-            .fail(function (jqXHR, textStatus) {
-                if (textStatus === 'abort') return;
-                // Forget the key so the same address can be retried: a 503 or a
-                // timeout should not kill the lookup until the email changes.
-                lastQueried = '';
-                // A failed lookup must be indistinguishable from no lookup, but
-                // a previous match's project id cannot be left to submit.
-                clearShopIdentity();
-                useManualSelect();
-                setStatus('');
-            })
-            .always(function () { inFlight = null; });
-    }
-
-    $email.on('blur', runLookup);
-
-    $email.on('input', function () {
-        clearTimeout(lookupTimer);
-        lookupTimer = setTimeout(runLookup, 400);
-    });
-
-    // A country change invalidates the result, mirroring how staff mode clears
-    // its fields when the country changes.
-    $('#country').on('change', function () {
-        revertToManual();
-        runLookup();
-    });
-
-    // The select -> hidden mirroring itself lives in Task 9's DOM-ready block,
-    // because the form depends on it with or without a lookup. This only has to
-    // stop a stale manual choice overwriting a successful lookup result.
-    $select.on('change', function () {
-        if ($selWrap.hasClass('d-none')) {
-            // A lookup is showing; its product list owns the hidden field.
-            $(this).val('');
-        }
-    });
-
-    // Choosing a branch is what fills the form, so the project id can only ever
-    // be the shop the customer confirmed.
-    $branchList.on('change', 'input[name="branchChoice"]', function () {
-        const shop = matchedShops[parseInt($(this).val(), 10)];
-        if (!shop) return;
-        applyShop(shop, false);
-    });
-
-    $status.on('click', '#emailLookupRevert', function (e) {
-        e.preventDefault();
-        revertToManual();
-        // This link lives inside the status area, which the revert empties, so
-        // activating it destroys the focused element and focus falls to <body>.
-        // Send it to the email field, which is what the customer edits next.
-        $email.trigger('focus');
-    });
-})();
+    // Staff mode searches Monday by project id instead, and must not have its
+    // fields overwritten by an email lookup.
+    disabled: IS_STAFF,
+});
 
 // ===== DOM Ready =====
 $(function () {
