@@ -69,17 +69,23 @@ function udmInitEmailLookup(options) {
     // it drives the Solo-to-Bundle gate and the comparison card, so without
     // this a section or card from a previous selection stays on screen while
     // validateForm has already stopped requiring its fields.
-    function useManualSelect() {
+    // `shop` is the shop that is attached despite having no products to list --
+    // a real match whose id is already filled in and whose name the status line
+    // is naming. Passing it on matters: a consumer that reports "no shop" there
+    // would lose the shop name for exactly the customer whose shop was found
+    // but has nothing active on it. It is null only when no shop is attached.
+    function useManualSelect(shop) {
         $list.addClass('d-none').empty();
         $selWrap.removeClass('d-none');
         $hidden.val($select.val() || '');
-        onProducts([], null);
+        onProducts([], shop || null);
         onChange();
     }
 
     function useLookupProducts(subscriptions, shop) {
         if (!subscriptions.length) {
-            useManualSelect();
+            // Still a found shop: its id is filled and the status names it.
+            useManualSelect(shop);
             return;
         }
 
@@ -324,4 +330,19 @@ function udmInitEmailLookup(options) {
         // Send it to the email field, which is what the customer edits next.
         $email.trigger('focus');
     });
+
+    // Handed to the caller so another control that attaches a shop -- the
+    // staff project search, which sets the project id directly -- can take
+    // ownership back. Without it the lookup still believes it owns the shop
+    // fields: the form would show one shop's name and status while submitting
+    // another shop's project id, and a later failed lookup would clear the id
+    // the staff member deliberately chose.
+    return {
+        release: function () {
+            lastQueried = '';
+            filledByLookup = false;
+            hideBranchPicker();
+            setStatus('');
+        }
+    };
 }

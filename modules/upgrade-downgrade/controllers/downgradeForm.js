@@ -2,6 +2,12 @@
    Downgrade Form v1.0.0 - JavaScript Controller
    ============================================================ */
 
+// ===== Form Mode =====
+// 'customer' hides the staff-only fields (Monday project search, internal
+// details, submitted-by), so those must not be validated as required.
+const FORM_MODE = document.body.dataset.mode || 'customer';
+const IS_STAFF = (FORM_MODE === 'staff');
+
 // ===== Package Comparison Data (Downgrade — reverse of upgrade) =====
 const downgradeData = {
     'ultimate_to_growth': {
@@ -177,6 +183,12 @@ function initStarRating(widgetId, inputId, labelId) {
     });
 
     $dropdown.on('click', '.project-search-item', function () {
+        // Staff picked a shop explicitly, so the email lookup no longer owns
+        // the shop fields. Without releasing it the form would keep showing
+        // the looked-up shop's name and status line while submitting THIS
+        // shop's project id, and a later failed lookup would clear the id
+        // just chosen here.
+        if (typeof udmLookup !== 'undefined' && udmLookup) udmLookup.release();
         $input.val($(this).data('id'));
         $('#boardId').val($(this).data('boardid'));
         $dropdown.removeClass('show').empty();
@@ -188,6 +200,69 @@ function initStarRating(widgetId, inputId, labelId) {
         }
     });
 })();
+
+// ===== Customer Email Lookup =====
+// The lookup lives in assets/js/emailLookup.js, shared with the upgrade form.
+//
+// Both modes get it. CS asked for both sides to work the same way, which means
+// "staff should not have to type what the email can fill" -- not "remove the
+// project search". Staff keeps both, and with both active they can disagree:
+// staff searches shop X, then an email fills shop Y. Last action wins, and the
+// status line says which shop is currently attached, so what will be submitted
+// is never ambiguous.
+
+// The products from the last successful lookup. The product checkbox list is
+// rendered from this, and it is the empty array whenever no lookup has
+// succeeded -- which is what makes the "enter your email first" prompt
+// distinguishable from "this shop has no products".
+let udmLookupProducts = [];
+
+// The shop from the last successful lookup, or null. The post-submit Araya
+// redirect reads its name.
+let udmLookupShop = null;
+
+// `var`, not `const`: the staff project-search handler above is registered
+// before this line runs and calls udmLookup.release(). A const would sit in the
+// temporal dead zone until here, where even `typeof` throws rather than
+// reporting undefined, so the guard there could not do its job. A click can
+// only happen after this script has run, but a hoisted var makes that
+// ordering irrelevant instead of merely unreachable.
+var udmLookup = udmInitEmailLookup({
+    email:        '#emailAddress',
+    country:      '#country',
+    status:       '#emailLookupStatus',
+    branchPicker: '#branchPicker',
+    branchList:   '#branchPickerList',
+
+    // The downgrade form's field names differ from the upgrade form's: contact
+    // person rather than owner name, mobile number rather than phone number.
+    shopFields: {
+        shopName:  '#shopName',
+        ownerName: '#contactPerson',
+        phone:     '#mobileNumber',
+    },
+
+    identityFields: {
+        shopId:  '#mondayProjectId',
+        boardId: '#boardId',
+    },
+
+    // No productList/productSelect options: this form has no manual product
+    // select to fall back to. It renders checkboxes from onProducts instead.
+    onProducts: function (subscriptions, shop) {
+        udmLookupProducts = subscriptions || [];
+        udmLookupShop     = shop || null;
+        udmRenderProductList();
+    },
+
+    onChange: updateSectionVisibility,
+});
+
+// Replaced in full by Task 6. The lookup calls this after every state change,
+// so it has to exist before the product list is built.
+function udmRenderProductList() {
+    // Task 6 renders the checkboxes here.
+}
 
 $(function () {
 
