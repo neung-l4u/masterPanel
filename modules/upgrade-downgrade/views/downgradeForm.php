@@ -7,6 +7,19 @@ global $db;
 $stripeID = $_GET['stripeID'] ?? '';
 $mode = $_GET['mode'] ?? 'customer';
 $testMode = $_GET['testMode'] ?? 'false';
+
+// Where a customer who cancelled an AI Receptionist product is sent to give
+// feedback on it. Empty until CS supplies the URL, at which point the redirect
+// starts working with no code change. config.php is gitignored, so an absent
+// file or key must simply mean "no redirect".
+$arayaFeedbackUrl = '';
+$udmConfigPath = __DIR__ . '/../assets/config.php';
+if (is_file($udmConfigPath)) {
+    $udmConfig = require $udmConfigPath;
+    if (is_array($udmConfig)) {
+        $arayaFeedbackUrl = (string) ($udmConfig['araya_feedback_url'] ?? '');
+    }
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -28,7 +41,7 @@ $testMode = $_GET['testMode'] ?? 'false';
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <title>Downgrade / Unsubscription Form - Local For You</title>
 </head>
-<body data-mode="<?php echo htmlspecialchars($mode); ?>">
+<body data-mode="<?php echo htmlspecialchars($mode); ?>" data-araya-feedback-url="<?php echo htmlspecialchars($arayaFeedbackUrl); ?>">
 
 <div class="container">
     <main>

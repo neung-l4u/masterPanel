@@ -634,11 +634,39 @@ function sendData(formData) {
         data: JSON.stringify(jsonData),
         success: () => {
             console.log("Downgrade webhook sent.");
-            window.location.replace("thankyou.php");
+            window.location.replace(udmPostSubmitUrl(cancelledProducts, formData));
         },
         error: () => {
             console.error("Downgrade webhook failed.");
         }
+    });
+}
+
+// Where to send the customer after a successful submission.
+//
+// A customer who cancelled an AI Receptionist product goes to the feedback
+// form for it, with their shop name and email carried over so they do not
+// retype what they just typed. Everyone else goes to the normal thank-you
+// page.
+//
+// The URL comes from config.php and is empty until CS supplies it, so this
+// returns the thank-you page until then and starts redirecting with no code
+// change afterwards.
+function udmPostSubmitUrl(cancelledProducts, formData) {
+    const feedbackUrl = document.body.dataset.arayaFeedbackUrl || '';
+    if (!feedbackUrl) return 'thankyou.php';
+
+    const names = Array.isArray(cancelledProducts) ? cancelledProducts : [cancelledProducts];
+    const hasAraya = names.some(function (name) {
+        return (udmProductTags[name] || []).indexOf('araya') !== -1;
+    });
+
+    if (!hasAraya) return 'thankyou.php';
+
+    const sep = feedbackUrl.indexOf('?') === -1 ? '?' : '&';
+    return feedbackUrl + sep + $.param({
+        shopName: formData.shopName || '',
+        email:    formData.emailAddress || '',
     });
 }
 
