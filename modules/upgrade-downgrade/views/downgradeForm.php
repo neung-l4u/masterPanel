@@ -427,6 +427,13 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <textarea class="form-control" id="improvementSuggestion" name="improvementSuggestion" rows="3" placeholder="Your feedback helps us improve our services..."></textarea>
                             </div>
 
+                            <?php if ($mode === 'customer'): ?>
+                            <!-- Customer mode only: a staff member taking the
+                                 call must not answer this on the customer's
+                                 behalf. The required attribute stays on the
+                                 markup and the whole block is gated instead --
+                                 an attribute on an element that does not exist
+                                 cannot block a submission. -->
                             <div class="mb-4">
                                 <label class="form-label">Would you like us to contact you to discuss alternative options? <span class="text-danger">*</span></label>
                                 <div class="radio-card-group-vertical">
@@ -441,6 +448,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 </div>
                                 <div class="invalid-feedback d-block" id="contactPreferenceError" style="display:none!important;"></div>
                             </div>
+                            <?php endif; ?>
 
                             <div class="sub-section">
                                 <h6 class="sub-section-title"><i class="bi bi-headset"></i> Feedback on Customer Support / Account Manager</h6>
@@ -478,6 +486,42 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <textarea class="form-control" id="additionalComments" name="additionalComments" rows="3" placeholder="Any additional information..."></textarea>
                             </div>
                         </div>
+
+                        <?php if ($mode === 'customer'): ?>
+                        <!-- ========== SECTION: Policy ========== -->
+                        <!-- Item 6. Customer mode only: a staff member cannot
+                             acknowledge a policy on the customer's behalf. -->
+                        <div class="form-section" id="policySection">
+                            <h5 class="section-title"><i class="bi bi-file-earmark-text"></i> Cancellation Policy</h5>
+
+                            <div class="policy-body">
+                                <p>All cancellations are subject to a <strong>30-day notice period</strong>. Your service remains active and billable until that period ends.</p>
+                                <p>You are responsible for removing any marketing material, printed or online, that still advertises a service you have cancelled. We cannot remove material that is not under our control.</p>
+                                <p>If you cancel all of your services, or your website hosting specifically, <strong>your website will be discontinued</strong> and will no longer be reachable.</p>
+                            </div>
+
+                            <div class="checkbox-grid mt-3">
+                                <div class="check-card">
+                                    <input type="checkbox" id="policyAcknowledge" name="policyAcknowledge" value="Yes, I understand." required>
+                                    <label for="policyAcknowledge"><i class="bi bi-check2-square"></i> Yes, I understand.</label>
+                                </div>
+                            </div>
+                            <div class="invalid-feedback d-block" id="policyAcknowledgeError" style="display:none!important;"></div>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if ($mode === 'staff'): ?>
+                        <!-- Who processed this request. Staff only, and the one
+                             field the staff variant adds. -->
+                        <div class="form-section">
+                            <h5 class="section-title"><i class="bi bi-person-badge"></i> Submitted By <span class="text-danger">*</span></h5>
+                            <div class="mb-3">
+                                <label for="submittedBy" class="form-label">Your name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="submittedBy" name="submittedBy" placeholder="e.g. Jane from Customer Success" required>
+                                <div class="invalid-feedback">Please enter your name.</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
 
                         <!-- ===== Submit ===== -->
                         <div class="submit-area">

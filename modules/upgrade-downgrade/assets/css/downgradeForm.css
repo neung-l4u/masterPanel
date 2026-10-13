@@ -1153,3 +1153,16 @@ body {
     color: #8a5a00;
     font-size: 0.9rem;
 }
+
+/* ===== Cancellation policy (CS item 6) ===== */
+.policy-body {
+    padding: 16px 18px;
+    border-left: 3px solid #dc3545;
+    border-radius: 0 10px 10px 0;
+    background: #fff8f8;
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: #3d4451;
+}
+
+.policy-body p:last-child { margin-bottom: 0; }
