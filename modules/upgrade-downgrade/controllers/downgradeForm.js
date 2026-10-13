@@ -380,6 +380,43 @@ function udmCheckedTags() {
     return tags;
 }
 
+// Item 2c's options are chosen by business type, per CS. "Other" gets the
+// union: we do not know which applies, and offering too much is recoverable
+// where offering nothing is not.
+const UDM_KEEP_OPTIONS = {
+    Restaurant: ['Pro Plan', 'Website Hosting'],
+    Massage:    ['Booking System', 'Website Hosting'],
+    Other:      ['Pro Plan', 'Booking System', 'Website Hosting'],
+};
+
+// Rendered from scratch on every call, like the product list: the business type
+// can change after a plan bundle is already checked, and a stale option from
+// the previous type must not survive it.
+function udmRenderKeepList() {
+    const $list   = $('#keepProductsList');
+    const type    = $('#businessType').val() || 'Other';
+    const options = UDM_KEEP_OPTIONS[type] || UDM_KEEP_OPTIONS.Other;
+
+    // What was ticked before, so a re-render for an unrelated reason does not
+    // silently discard the customer's answer.
+    const wasChecked = {};
+    $list.find('input[name="keepProducts[]"]:checked').each(function () {
+        wasChecked[$(this).val()] = true;
+    });
+
+    const html = options.map(function (name, i) {
+        const id      = 'keepProduct' + i;
+        const checked = wasChecked[name] ? ' checked' : '';
+        return `
+            <div class="check-card">
+                <input type="checkbox" id="${id}" name="keepProducts[]" value="${udmEscapeAttr(name)}"${checked}>
+                <label for="${id}"><i class="bi bi-bookmark-check"></i> ${udmEscapeHtml(name)}</label>
+            </div>`;
+    }).join('');
+
+    $list.html(html);
+}
+
 // ===== Conditional State =====
 // Every conditional section is recomputed from the currently checked boxes,
 // wholesale, on every change. Never incremental add/remove: ticking and then
@@ -426,8 +463,20 @@ function recomputeConditionalState() {
         udmResetStars('overallRatingWidget', 'overallRatingLabel');
     }
 
-    // Task 8 adds the plan-bundle keep-list here.
-    void hasPlanBundle;
+    // --- Item 2c: what to keep, when a plan bundle is being cancelled ---
+    //
+    // Gated on plan_bundle specifically, not on the word "bundle": "Social
+    // Media Marketing Bundle" is an add-on, and asking someone cancelling it
+    // what plan they want to keep makes no sense.
+    $('#keepProductsGroup').toggleClass('d-none', !hasPlanBundle);
+
+    if (hasPlanBundle) {
+        udmRenderKeepList();
+    } else {
+        // Clear it: an answer about keeping a plan must not be submitted by
+        // someone who has since unchecked the plan.
+        $('#keepProductsList').empty();
+    }
 }
 
 // Clearing #overallRating leaves the stars lit, because the widget's state
@@ -453,6 +502,10 @@ $(function () {
     // Delegated: the checkboxes are rendered after a lookup, so they do not
     // exist when this binds.
     $('#productCheckboxList').on('change', 'input[name="cancelledProducts[]"]', recomputeConditionalState);
+
+    // The keep-list options are chosen by business type, so changing it has to
+    // re-render them.
+    $('#businessType').on('change', recomputeConditionalState);
 
     // --- Custom date toggle ---
     $('input[name="effectiveDate"]').on('change', function () {
@@ -718,9 +771,6 @@ function applyTestAutofill() {
     // Reasons
     $('#reasonBudget').prop('checked', true);
     $('#reasonResults').prop('checked', true);
-
-    // Features to Keep
-    $('#keepNone').prop('checked', true);
 
     // Additional Details
     $('#improvementSuggestion').val('Test mode - improvement suggestion');

@@ -400,20 +400,19 @@ $testMode = $_GET['testMode'] ?? 'false';
                             </div>
                         </div>
 
-                        <!-- ========== SECTION: Features to Keep ========== -->
-                        <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-bookmark-heart"></i> Useful Features to Keep Activated</h5>
-                            <p class="text-muted mb-3" style="font-size:.84rem;">Select any features you would like to remain active after the change.</p>
-                            <div class="checkbox-grid">
-                                <div class="check-card">
-                                    <input type="checkbox" id="keepAraya" name="featuresKeep[]" value="Araya (Massage) $199/month">
-                                    <label for="keepAraya"><i class="bi bi-robot"></i> Araya (Massage) <small>$199/mo</small></label>
-                                </div>
-                                <div class="check-card">
-                                    <input type="checkbox" id="keepNone" name="featuresKeep[]" value="None">
-                                    <label for="keepNone"><i class="bi bi-x-circle"></i> None</label>
-                                </div>
-                            </div>
+                        <!-- ========== SECTION: Products to Keep ========== -->
+                        <!-- Item 2c. Only asked when a plan bundle is being
+                             cancelled: someone cancelling a social media add-on
+                             has no plan to keep anything from, and asking them
+                             would be a confusing question put to a customer who
+                             is already cancelling.
+                             Without prices for now -- CS sanctioned shipping
+                             without them, and resolving them needs three
+                             answers CS has not given. -->
+                        <div class="form-section d-none" id="keepProductsGroup">
+                            <h5 class="section-title"><i class="bi bi-bookmark-heart"></i> Would you like to keep any of these?</h5>
+                            <p class="text-muted small mb-3">You are cancelling a plan. These can stay active on their own if you would like to keep them.</p>
+                            <div class="checkbox-grid" id="keepProductsList"></div>
                         </div>
 
                         <!-- ========== SECTION: Additional Details (For Improvement) ========== -->
