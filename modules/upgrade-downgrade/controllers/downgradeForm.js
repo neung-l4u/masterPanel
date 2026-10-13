@@ -46,17 +46,22 @@ const downgradeData = {
 };
 
 // ===== Section Visibility =====
+// The product list appears only for "Unsubscribe specific product". Unchecking
+// everything on the way out matters: a stale checked box would otherwise keep
+// an Araya section on screen after the customer switched to cancelling
+// everything.
 function updateSectionVisibility() {
-    const requestType    = $('input[name="requestType"]:checked').val();
-    const isDowngradePkg = (requestType === 'Downgrade to other product');
+    const requestType  = $('input[name="requestType"]:checked').val();
+    const isSpecific   = (requestType === 'Unsubscribe specific product');
 
-    // Second-level target choice appears only for "Downgrade to other product"
-    if (isDowngradePkg) {
-        $('#downgradeTargetGroup').slideDown(200);
+    if (isSpecific) {
+        $('#productSelectGroup').slideDown(200);
     } else {
-        $('#downgradeTargetGroup').slideUp(200);
-        $('input[name="downgradeTarget"]').prop('checked', false);
+        $('#productSelectGroup').slideUp(200);
+        $('#productCheckboxList input[name="cancelledProducts[]"]').prop('checked', false);
     }
+
+    recomputeConditionalState();
 }
 
 // ===== Star Rating Widget =====
@@ -258,16 +263,153 @@ var udmLookup = udmInitEmailLookup({
     onChange: updateSectionVisibility,
 });
 
-// Replaced in full by Task 6. The lookup calls this after every state change,
-// so it has to exist before the product list is built.
+// Tags per product name, from assets/API/classifyProducts.php. The map that
+// produces them lives in config.php, which the browser cannot read, so this is
+// asked for rather than computed here -- two copies of the rules would drift.
+let udmProductTags = {};
+
+// Id of the latest tag request, so a slow response for a previous shop cannot
+// overwrite the tags of the current one.
+let udmTagRequestSeq = 0;
+
+// The lookup calls this after every state change: a successful match, a branch
+// choice, a revert, a failure. It renders from udmLookupProducts wholesale
+// rather than patching what is on screen, so there is no path on which a
+// previous shop's products survive. It is called with an empty list on every
+// failure/invalidation path, so it must be safe to wipe ticked boxes.
 function udmRenderProductList() {
-    // Task 6 renders the checkboxes here.
+    const $list  = $('#productCheckboxList');
+    const $enter = $('#productListPrompt');
+    const $empty = $('#productListEmpty');
+
+    if (!udmLookupProducts.length) {
+        $list.empty();
+        udmProductTags = {};
+        udmTagRequestSeq++;   // drop any in-flight classification
+
+        // An empty list has two meanings. udmLookupShop tells them apart: it is
+        // non-null when a shop was found that has no active products.
+        if (udmLookupShop) {
+            $enter.hide();
+            $empty.show();
+        } else {
+            $empty.hide();
+            $enter.show();
+        }
+        recomputeConditionalState();
+        return;
+    }
+
+    $enter.hide();
+    $empty.hide();
+
+    const html = udmLookupProducts.map(function (product, i) {
+        const id   = 'cancelProduct' + i;
+        const name = udmEscapeHtml(product.name);
+        const nameAttr = udmEscapeAttr(product.name);
+        return `
+            <div class="product-checkbox-item">
+                <input type="checkbox" id="${id}" name="cancelledProducts[]" value="${nameAttr}">
+                <label for="${id}">${name}</label>
+            </div>`;
+    }).join('');
+
+    $list.html(html);
+
+    // Fresh boxes are all unticked, so no tags apply until classification lands.
+    udmProductTags = {};
+    udmFetchProductTags(udmLookupProducts.map(p => p.name));
+    recomputeConditionalState();
+}
+
+// Product names come from Monday and are rendered as HTML, so they are escaped
+// rather than trusted. Same guard as the shared lookup's.
+function udmEscapeHtml(value) {
+    return $('<div>').text(value == null ? '' : String(value)).html();
+}
+
+// For a value that lands inside a double-quoted HTML attribute. jQuery's
+// text()->html() round trip escapes & < > but NOT the double quote, so a
+// product name containing one would close value="..." and anything after it
+// would be parsed as further attributes. No name in the mirror contains a
+// quote today, but the names come from a free-text Monday column, so a
+// product called 6" Display is one edit away.
+function udmEscapeAttr(value) {
+    return udmEscapeHtml(value).replace(/"/g, '&quot;');
+}
+
+// Classification drives which conditional sections exist, so a failure here
+// must fail safe: no tags means no conditional section fires, which is the same
+// state as a shop whose products are all add-ons. The customer can still
+// submit.
+function udmFetchProductTags(names) {
+    const seq = ++udmTagRequestSeq;
+
+    if (!names.length) {
+        udmProductTags = {};
+        recomputeConditionalState();
+        return;
+    }
+
+    $.getJSON('../assets/API/classifyProducts.php', { names: names })
+        .done(function (data) {
+            if (seq !== udmTagRequestSeq) { return; }
+            udmProductTags = (data && data.tags) ? data.tags : {};
+        })
+        .fail(function () {
+            if (seq !== udmTagRequestSeq) { return; }
+            udmProductTags = {};
+        })
+        .always(function () {
+            if (seq !== udmTagRequestSeq) { return; }
+            recomputeConditionalState();
+        });
+}
+
+// The tags across every currently checked product, as a set.
+function udmCheckedTags() {
+    const tags = {};
+
+    $('#productCheckboxList input[name="cancelledProducts[]"]:checked').each(function () {
+        const name = $(this).val();
+        (udmProductTags[name] || []).forEach(function (tag) {
+            tags[tag] = true;
+        });
+    });
+
+    return tags;
+}
+
+// ===== Conditional State =====
+// Every conditional section is recomputed from the currently checked boxes,
+// wholesale, on every change. Never incremental add/remove: ticking and then
+// unticking a product must not leave a section behind, which is exactly the
+// failure the upgrade form hit when updateSectionVisibility was not called on
+// every change to the field that drives it.
+//
+// Tasks 7 and 8 extend this. It is the only place that reads udmCheckedTags().
+function recomputeConditionalState() {
+    const tags = udmCheckedTags();
+    const hasAraya      = tags.araya      === true;
+    const hasPlanBundle = tags.plan_bundle === true;
+
+    // Task 7 adds the Araya reasons, warning, conditions block and the
+    // feedback-field hiding here.
+    // Task 8 adds the plan-bundle keep-list here.
+
+    // Referenced so the linter and the next reader both see that these are the
+    // two signals this function exists to compute.
+    void hasAraya;
+    void hasPlanBundle;
 }
 
 $(function () {
 
     // --- Request type toggle ---
     $('input[name="requestType"]').on('change', updateSectionVisibility);
+    // Delegated: the checkboxes are rendered after a lookup, so they do not
+    // exist when this binds.
+    $('#productCheckboxList').on('change', 'input[name="cancelledProducts[]"]', recomputeConditionalState);
 
     // --- Custom date toggle ---
     $('input[name="effectiveDate"]').on('change', function () {

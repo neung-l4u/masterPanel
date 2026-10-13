@@ -215,8 +215,8 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <div class="mb-3">
                                 <div class="radio-card-group-vertical">
                                     <div class="radio-card-v">
-                                        <input type="radio" name="requestType" id="reqOtherProduct" value="Downgrade to other product" required>
-                                        <label for="reqOtherProduct"><i class="bi bi-box-arrow-down"></i> Downgrade to other product</label>
+                                        <input type="radio" name="requestType" id="reqOtherProduct" value="Unsubscribe specific product" required>
+                                        <label for="reqOtherProduct"><i class="bi bi-box-arrow-down"></i> Unsubscribe specific product</label>
                                     </div>
                                     <div class="radio-card-v radio-card-v-danger">
                                         <input type="radio" name="requestType" id="reqUnsubscribe" value="Unsubscribe all services">
@@ -225,24 +225,34 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 </div>
                                 <div class="invalid-feedback d-block" id="requestTypeError" style="display:none!important;"></div>
                             </div>
-                            <!-- Second level: which product to downgrade to -->
-                            <div class="mb-3" id="downgradeTargetGroup" style="display:none;">
-                                <label class="form-label">Which product would you like to downgrade to? <span class="text-danger">*</span></label>
-                                <div class="radio-card-group-vertical">
-                                    <div class="radio-card-v">
-                                        <input type="radio" name="downgradeTarget" id="tgtWebsiteOnly" value="Downgrade to website service only">
-                                        <label for="tgtWebsiteOnly"><i class="bi bi-globe"></i> Website service only</label>
-                                    </div>
-                                    <div class="radio-card-v">
-                                        <input type="radio" name="downgradeTarget" id="tgtOrderingOnly" value="Downgrade to online ordering system/booking system only">
-                                        <label for="tgtOrderingOnly"><i class="bi bi-bag-check"></i> Online ordering system / booking system only</label>
-                                    </div>
-                                    <div class="radio-card-v">
-                                        <input type="radio" name="downgradeTarget" id="tgtMarketingOnly" value="Downgrade to marketing only (Solo)">
-                                        <label for="tgtMarketingOnly"><i class="bi bi-megaphone"></i> Marketing only (Solo)</label>
-                                    </div>
+
+                            <!-- The shop's real products, from the email lookup.
+                                 This replaces a fixed three-option radio group
+                                 ("website only" / "ordering only" / "marketing
+                                 only") that bore no relation to what the
+                                 customer actually bought. -->
+                            <div class="mb-3" id="productSelectGroup" style="display:none;">
+                                <label class="form-label">Which products would you like to unsubscribe from? <span class="text-danger">*</span></label>
+
+                                <!-- Shown until a lookup succeeds. An empty box
+                                     here would read as "you have no products",
+                                     which is a different and alarming claim. -->
+                                <div id="productListPrompt" class="product-list-prompt">
+                                    <i class="bi bi-envelope-at"></i>
+                                    Enter your email address above and we will show the products on your account.
                                 </div>
-                                <div class="invalid-feedback d-block" id="downgradeTargetError" style="display:none!important;"></div>
+
+                                <!-- Shown when a shop WAS found but has no active
+                                     products. Telling this customer to enter their
+                                     email would be a dead end. -->
+                                <div id="productListEmpty" class="product-list-empty" style="display:none;">
+                                    <i class="bi bi-info-circle"></i>
+                                    We found your shop, but there are no active products on it. Please choose
+                                    &ldquo;Unsubscribe all services&rdquo; above, or contact our team and we will help.
+                                </div>
+
+                                <div id="productCheckboxList" class="product-checkbox-list"></div>
+                                <div class="invalid-feedback d-block" id="productListError" style="display:none!important;"></div>
                             </div>
                         </div>
 

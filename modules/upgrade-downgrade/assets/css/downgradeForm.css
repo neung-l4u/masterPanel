@@ -1086,3 +1086,58 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== Product checkbox list (CS item 2a) ===== */
+.product-list-prompt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    border: 1px dashed #c9ced6;
+    border-radius: 10px;
+    background: #f8f9fb;
+    color: #5a6372;
+    font-size: 0.9rem;
+}
+
+.product-checkbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.product-checkbox-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid #e3e6ec;
+    border-radius: 10px;
+    background: #fff;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.product-checkbox-item:hover {
+    border-color: #0d6efd;
+    background: #f7faff;
+}
+
+.product-checkbox-item input[type="checkbox"] {
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.product-checkbox-item label {
+    margin: 0;
+    cursor: pointer;
+    font-size: 0.93rem;
+}
+
+.product-list-empty {
+    padding: 14px 16px;
+    border: 1px solid #ffe2b8;
+    border-radius: 10px;
+    background: #fff8ec;
+    color: #8a5a00;
+    font-size: 0.9rem;
+}
