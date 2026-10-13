@@ -610,6 +610,18 @@ body {
     line-height: 1.65;
 }
 
+/* The Araya conditions block lists its five bullets rather than using a
+   paragraph, and .notice-card only styled p -- so the bullets inherited the
+   default size and sat visibly larger than every sibling card in the same
+   modal. */
+.notice-card ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.82rem;
+    color: #555;
+    line-height: 1.65;
+}
+
 .notice-cancel .notice-icon { background: #fff3cd; color: #856404; }
 .notice-contract .notice-icon { background: #d1ecf1; color: #0c5460; }
 .notice-stripe .notice-icon { background: #fff0f0; color: #b02a37; }

@@ -390,17 +390,60 @@ function udmCheckedTags() {
 // Tasks 7 and 8 extend this. It is the only place that reads udmCheckedTags().
 function recomputeConditionalState() {
     const tags = udmCheckedTags();
-    const hasAraya      = tags.araya      === true;
+    const hasAraya      = tags.araya       === true;
     const hasPlanBundle = tags.plan_bundle === true;
 
-    // Task 7 adds the Araya reasons, warning, conditions block and the
-    // feedback-field hiding here.
-    // Task 8 adds the plan-bundle keep-list here.
+    // --- Item 2b: five Araya-specific reasons ---
+    // Unchecking them on the way out keeps the payload honest: a reason
+    // specific to the AI Receptionist must not be submitted by someone who has
+    // since switched to cancelling something else.
+    $('#arayaReasons').toggleClass('d-none', !hasAraya);
+    if (!hasAraya) {
+        $('#arayaReasons input[name="reasons[]"]').prop('checked', false);
+    }
 
-    // Referenced so the linter and the next reader both see that these are the
-    // two signals this function exists to compute.
-    void hasAraya;
+    // --- Item 3a: the stop-now warning, only when both conditions hold ---
+    const stoppingNow = $('#effImmediate').is(':checked');
+    $('#arayaImmediateWarning').toggleClass('d-none', !(hasAraya && stoppingNow));
+
+    // --- Item 4: the Araya conditions block in the info modal ---
+    $('#arayaConditions').toggleClass('d-none', !hasAraya);
+
+    // --- Item 5: hide the two feedback questions the Araya form also asks ---
+    //
+    // Hiding alone is not enough where a field is required: a hidden required
+    // field fails validation with nothing visible for the customer to fix,
+    // which makes the form permanently unsubmittable. Neither of these two
+    // carries required today, but the attribute is dropped explicitly so that
+    // adding required to the markup later cannot reintroduce that trap silently.
+    // (#overallRatingGroup is absent in staff mode; jQuery no-ops on it.)
+    $('#improvementSuggestionGroup').toggleClass('d-none', hasAraya);
+    $('#overallRatingGroup').toggleClass('d-none', hasAraya);
+
+    if (hasAraya) {
+        $('#improvementSuggestion').removeAttr('required').val('');
+        $('#overallRating').removeAttr('required').val('');
+        udmResetStars('overallRatingWidget', 'overallRatingLabel');
+    }
+
+    // Task 8 adds the plan-bundle keep-list here.
     void hasPlanBundle;
+}
+
+// Clearing #overallRating leaves the stars lit, because the widget's state
+// lives in CSS classes rather than in the input. Hiding the group makes that
+// invisible, but unchecking the Araya product brings the group back still
+// showing a rating the field no longer holds.
+function udmResetStars(widgetId, labelId) {
+    const widget = document.getElementById(widgetId);
+    if (!widget) return;
+
+    widget.querySelectorAll('.star').forEach(function (s) {
+        s.classList.remove('active', 'selected');
+    });
+
+    const labelEl = labelId ? document.getElementById(labelId) : null;
+    if (labelEl) labelEl.textContent = '';
 }
 
 $(function () {
@@ -418,6 +461,9 @@ $(function () {
         } else {
             $('#customDateGroup').slideUp(200).find('input').val('');
         }
+        // Item 3a's warning depends on this choice as well as on the checked
+        // products, so it has to be recomputed here too.
+        recomputeConditionalState();
     });
 
     // --- Other reason toggle ---

@@ -289,8 +289,8 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <div class="mb-3">
                                 <div class="radio-card-group-vertical">
                                     <div class="radio-card-v">
-                                        <input type="radio" name="effectiveDate" id="effImmediate" value="Immediately" required>
-                                        <label for="effImmediate"><i class="bi bi-lightning-charge"></i> Immediately</label>
+                                        <input type="radio" name="effectiveDate" id="effImmediate" value="Stop the service now" required>
+                                        <label for="effImmediate"><i class="bi bi-lightning-charge"></i> Stop the service now &nbsp;<small class="text-muted">(billing continues until the end of your notice period)</small></label>
                                     </div>
                                     <div class="radio-card-v">
                                         <input type="radio" name="effectiveDate" id="effEndBilling" value="End of current billing cycle">
@@ -312,6 +312,12 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <div class="mt-3" id="customDateGroup" style="display:none;">
                                     <label for="customDate" class="form-label">Select Date <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control" id="customDate" name="customDate" style="max-width: 260px;">
+                                </div>
+                                <!-- Item 3a: only when stopping now AND an AI
+                                     Receptionist product is being cancelled. -->
+                                <div class="alert alert-warning mt-3 d-none" id="arayaImmediateWarning">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    Your AI Receptionist will stop answering calls right away and any remaining minutes will be forfeited. Billing continues until the end of your 30-day notice period.
                                 </div>
                             </div>
                         </div>
@@ -362,6 +368,32 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     <label for="reasonOther"><i class="bi bi-three-dots"></i> Other</label>
                                 </div>
                             </div>
+                            <!-- Item 2b: appended only when an AI Receptionist
+                                 product is checked. These five are specific to
+                                 it and would be noise otherwise. Same name as
+                                 the other reasons, so the payload is unchanged. -->
+                            <div class="checkbox-grid mb-3 d-none" id="arayaReasons">
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonArayaExpensive" name="reasons[]" value="Too expensive for the value we get">
+                                    <label for="reasonArayaExpensive"><i class="bi bi-cash-stack"></i> Too expensive for the value we get</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonArayaCalls" name="reasons[]" value="Not enough calls to justify the cost">
+                                    <label for="reasonArayaCalls"><i class="bi bi-telephone-x"></i> Not enough calls to justify the cost</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonArayaPerform" name="reasons[]" value="The service didn't perform as we expected">
+                                    <label for="reasonArayaPerform"><i class="bi bi-graph-down-arrow"></i> The service didn't perform as we expected</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonArayaBooking" name="reasons[]" value="Problems with the booking system">
+                                    <label for="reasonArayaBooking"><i class="bi bi-calendar-x"></i> Problems with the booking system</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonArayaStaff" name="reasons[]" value="We have staff answering calls now">
+                                    <label for="reasonArayaStaff"><i class="bi bi-people-fill"></i> We have staff answering calls now</label>
+                                </div>
+                            </div>
                             <div id="otherReasonGroup" style="display:none;">
                                 <label for="otherReason" class="form-label">Please specify</label>
                                 <input type="text" class="form-control" id="otherReason" name="otherReason" placeholder="Please describe your reason...">
@@ -388,7 +420,10 @@ $testMode = $_GET['testMode'] ?? 'false';
                         <div class="form-section">
                             <h5 class="section-title"><i class="bi bi-clipboard2-pulse"></i> Additional Details (For Improvement)</h5>
 
-                            <div class="mb-4">
+                            <!-- Item 5: hidden when an AI Receptionist product
+                                 is being cancelled, because the Araya feedback
+                                 form asks this too. -->
+                            <div class="mb-4" id="improvementSuggestionGroup">
                                 <label for="improvementSuggestion" class="form-label">What could we improve to keep you with us?</label>
                                 <textarea class="form-control" id="improvementSuggestion" name="improvementSuggestion" rows="3" placeholder="Your feedback helps us improve our services..."></textarea>
                             </div>
@@ -418,7 +453,11 @@ $testMode = $_GET['testMode'] ?? 'false';
 
                             </div>
 
-                            <div class="mb-3">
+                            <!-- Item 5, and removed outright in staff mode:
+                                 a staff member must not rate the customer's
+                                 experience on their behalf. -->
+                            <?php if ($mode === 'customer'): ?>
+                            <div class="mb-3" id="overallRatingGroup">
                                 <label class="form-label">Rate your overall experience with Local For You: (1–5 stars)</label>
                                 <div class="star-rating-widget" id="overallRatingWidget">
                                     <span class="star" data-value="1"><i class="bi bi-star-fill"></i></span>
@@ -430,6 +469,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 </div>
                                 <input type="hidden" name="overallRating" id="overallRating" value="">
                             </div>
+                            <?php endif; ?>
                         </div>
 
                         <!-- ========== SECTION: Additional Comments ========== -->
@@ -543,6 +583,21 @@ $testMode = $_GET['testMode'] ?? 'false';
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <!-- Item 4: shown only when an AI Receptionist product is
+                     being cancelled. -->
+                <div class="notice-card notice-cancel d-none" id="arayaConditions">
+                    <div class="notice-icon"><i class="bi bi-robot"></i></div>
+                    <div>
+                        <strong>AI Receptionist &mdash; Cancellation Conditions</strong>
+                        <ul class="mb-0">
+                            <li>Cancellation takes effect at the end of your 30-day notice period.</li>
+                            <li>Your included minute allowance stays available until that date.</li>
+                            <li>Any remaining balance is not refunded or carried over.</li>
+                            <li>Overage minutes used before that date appear on your final invoice.</li>
+                            <li>Your other services are unaffected by cancelling the AI Receptionist.</li>
+                        </ul>
+                    </div>
+                </div>
                 <div class="notice-card notice-cancel">
                     <div class="notice-icon"><i class="bi bi-calendar-x"></i></div>
                     <div>
