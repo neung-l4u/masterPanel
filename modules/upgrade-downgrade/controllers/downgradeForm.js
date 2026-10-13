@@ -587,17 +587,33 @@ function sendData(formData) {
 
     const country = (formData.country || '').toUpperCase();
 
+    const cancelledProducts = formData.cancelledProducts || [];
+    const keepProducts      = formData.keepProducts || [];
+
     const jsonData = Object.assign({}, formData, {
         date: formattedDate,
         // ---- Normalized fields (shared upgrade/downgrade webhook schema) ----
         formType: 'downgrade',
-        // "Downgrade to other product" carries a second-level target; report the
-        // specific target as changeType so downstream keeps the old granularity.
-        changeType: formData.downgradeTarget || formData.requestType || '',
+        // changeType carries the request type. It used to carry the
+        // second-level downgrade target when there was one, but that radio
+        // group is gone: the products being cancelled are real product names
+        // now, and they travel in cancelledProducts.
+        //
+        // The old second-level target key is dropped from the payload rather than sent as a
+        // permanently empty string, because an always-empty field invites a
+        // consumer to keep reading it. CONFIRM WITH THE MAKE.COM SCENARIO
+        // OWNER before this reaches production.
+        changeType: formData.requestType || '',
         requestType: formData.requestType || '',
-        downgradeTarget: formData.downgradeTarget || '',
+        cancelledProducts: cancelledProducts,
+        // A flat string too: a Make.com scenario reading a single cell is far
+        // more likely than one iterating an array.
+        cancelledProductsText: Array.isArray(cancelledProducts) ? cancelledProducts.join(', ') : cancelledProducts,
+        keepProducts: keepProducts,
+        keepProductsText: Array.isArray(keepProducts) ? keepProducts.join(', ') : keepProducts,
         email: formData.emailAddress || '',
         shopName: formData.shopName || '',
+        businessType: formData.businessType || '',
         mondayProjectId: formData.mondayProjectId || '',
         country: formData.country || '',
         countryBoardId: COUNTRY_BOARD_IDS[country] || '',
@@ -605,7 +621,8 @@ function sendData(formData) {
         newProduct: formData.newProduct || '',
         contractPeriod: formData.contractPeriod || '',
         billingDate: formData.billingDate || '',
-        staffName: formData.accountManager || '',
+        staffName: formData.accountManager || formData.submittedBy || '',
+        submittedBy: formData.submittedBy || '',
         reason: reasonText || '',
         note: formData.staffDowngradeNote || '',
     });
@@ -650,11 +667,17 @@ function saveToDB(payload, result, cmdSubmit) {
 // ===== Validation =====
 function validateForm() {
     let isValid = true;
-    const requestType    = $('input[name="requestType"]:checked').val();
-    const isDowngradePkg = (requestType === 'Downgrade to other product');
+    const requestType = $('input[name="requestType"]:checked').val();
+    const isSpecific  = (requestType === 'Unsubscribe specific product');
 
-    // Always required text fields
-    ['country', 'businessType', 'shopName', 'address', 'contactPerson', 'emailAddress', 'mobileNumber'].forEach(id => {
+    // Always required text fields. Country and business type are new, and
+    // country especially: without it no lookup can run at all.
+    const requiredFields = ['country', 'businessType', 'shopName', 'address', 'contactPerson', 'emailAddress', 'mobileNumber'];
+
+    // Staff names themselves at the end of the form.
+    if (IS_STAFF) requiredFields.push('submittedBy');
+
+    requiredFields.forEach(id => {
         const el = document.getElementById(id);
         if (el && !el.value.trim()) {
             el.classList.add('is-invalid');
@@ -674,13 +697,22 @@ function validateForm() {
         if (errEl) errEl.style.display = 'none';
     }
 
-    // Downgrade target (second level) required when downgrading to another product
-    const tgtErrEl = document.getElementById('downgradeTargetError');
-    if (isDowngradePkg && !$('input[name="downgradeTarget"]:checked').val()) {
-        if (tgtErrEl) { tgtErrEl.style.display = ''; tgtErrEl.textContent = 'Please select a product to downgrade to.'; }
+    // At least one product, when unsubscribing from specific products.
+    //
+    // The message distinguishes "you have not ticked anything" from "we have
+    // nothing to show you": the second is not the customer's fault and ticking
+    // harder will not fix it.
+    const prodErrEl = document.getElementById('productListError');
+    if (isSpecific && $('#productCheckboxList input[name="cancelledProducts[]"]:checked').length === 0) {
+        if (prodErrEl) {
+            prodErrEl.style.display = '';
+            prodErrEl.textContent = $('#productCheckboxList input[name="cancelledProducts[]"]').length
+                ? 'Please select at least one product to unsubscribe from.'
+                : 'We could not find any products for this email address. Please choose "Unsubscribe all services", or contact our team and we will help.';
+        }
         isValid = false;
-    } else if (tgtErrEl) {
-        tgtErrEl.style.display = 'none';
+    } else if (prodErrEl) {
+        prodErrEl.style.display = 'none';
     }
 
     // Effective date
@@ -699,14 +731,33 @@ function validateForm() {
         isValid = false;
     }
 
-    // Contact preference
-    if (!$('input[name="contactPreference"]:checked').val()) {
-        const errEl = document.getElementById('contactPreferenceError');
-        if (errEl) { errEl.style.display = ''; errEl.textContent = 'Please select a contact preference.'; }
-        isValid = false;
-    } else {
-        const errEl = document.getElementById('contactPreferenceError');
-        if (errEl) errEl.style.display = 'none';
+    // Contact preference. Customer mode only: staff must not answer on the
+    // customer's behalf, and the field is not rendered for them at all. This is
+    // the one genuinely required field the staff variant removes, so validating
+    // it unconditionally would make the staff form unsubmittable -- the exact
+    // hidden-required-field trap, arrived at from the other direction.
+    if (!IS_STAFF) {
+        if (!$('input[name="contactPreference"]:checked').val()) {
+            const errEl = document.getElementById('contactPreferenceError');
+            if (errEl) { errEl.style.display = ''; errEl.textContent = 'Please select a contact preference.'; }
+            isValid = false;
+        } else {
+            const errEl = document.getElementById('contactPreferenceError');
+            if (errEl) errEl.style.display = 'none';
+        }
+
+        // The policy acknowledgement gates submission, customer mode only.
+        const $ack = $('#policyAcknowledge');
+        if ($ack.length && !$ack.is(':checked')) {
+            $ack.addClass('is-invalid');
+            const errEl = document.getElementById('policyAcknowledgeError');
+            if (errEl) { errEl.style.display = ''; errEl.textContent = 'Please confirm you understand the policy.'; }
+            isValid = false;
+        } else {
+            $ack.removeClass('is-invalid');
+            const errEl = document.getElementById('policyAcknowledgeError');
+            if (errEl) errEl.style.display = 'none';
+        }
     }
 
     if (!isValid) {
@@ -743,6 +794,8 @@ document.addEventListener('DOMContentLoaded', function () {
 // ===== Test Mode Autofill =====
 function applyTestAutofill() {
     // Business Info
+    $('#country').val('TH');
+    $('#businessType').val('Massage').trigger('change');
     $('#shopName').val('Test Shop');
     $('#tradingName').val('Test Shop LLC');
     $('#address').val('123 Test St, Los Angeles, CA 90001');
@@ -751,18 +804,17 @@ function applyTestAutofill() {
     $('#mobileNumber').val('+1 (555) 010-0000');
 
     // Staff fields
-    $('#country').val('TH');
     $('#mondayProjectId').val('99999');
     $('#boardId').val('1943203205'); // TH project board
 
-    // Request Type
-    $('#reqOtherProduct').prop('checked', true).trigger('change');
-    $('#tgtOrderingOnly').prop('checked', true).trigger('change');
+    // Request Type. The old second-level target radio is gone, and the product
+    // checkboxes come from a lookup, so there is nothing to tick here: a test
+    // submission uses "all services", which needs no product selection.
+    $('#reqUnsubscribe').prop('checked', true).trigger('change');
 
     // Staff downgrade fields
     $('#contractPeriod').val('12 months');
     $('#accountManager').val('Test Manager');
-    $('#billingDate').val(new Date().toISOString().split('T')[0]);
     $('#staffDowngradeNote').val('Test mode - automated autofill');
 
     // Effective Date
@@ -783,6 +835,10 @@ function applyTestAutofill() {
 
     // Additional Comments
     $('#additionalComments').val('Test mode - automated autofill');
+
+    // New in these revisions
+    $('#submittedBy').val('Test Staff');
+    $('#policyAcknowledge').prop('checked', true);
 }
 
 function setStarUI(widgetId, val, labelId) {
