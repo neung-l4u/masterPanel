@@ -1,0 +1,3 @@
+# The catalogue is written by the running app, so each environment keeps its own.
+# Deploying it would overwrite templates added on the other side.
+templates.json

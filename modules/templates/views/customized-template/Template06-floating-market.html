@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoSpa — Thai Massage by the Water · Brisbane &amp; Melbourne</title>
+<meta name="description" content="Relaxed Thai massage inspired by Thailand's floating markets. Morning, noon or night — there's a ritual for right now. Brisbane & Melbourne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lagoon:#1f6f72;
+  --lagoon-d:#134649;
+  --coral:#ef8257;
+  --coral-d:#c95f37;
+  --sand:#fbf3e6;
+  --sand-2:#f3e3c8;
+  --ink:#16302f;
+  --serif:'Libre Baskerville',Georgia,serif;
+  --sans:'Prompt',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --pad:clamp(1.1rem,4vw,4rem);
+  /* time-of-day (set by JS) */
+  --sky1:#8fd3e0;--sky2:#e6f6f3;--sun:#ffe08a;--water:#2a8c8e;--water2:#1f6f72;--hill:#2f6b57;--hill2:#4a8a6e;--htext:#16302f;--sunY:30%;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-weight:300;background:var(--sand);color:var(--ink);line-height:1.7;font-size:clamp(.95rem,.9rem + .2vw,1.05rem);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--coral);color:var(--sand)}
+:focus-visible{outline:2px solid var(--coral);outline-offset:3px}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.15;letter-spacing:-.01em}
+.serif em{font-style:italic;color:var(--coral-d)}
+.pill{display:inline-flex;align-items:center;gap:.5rem;font-size:.74rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .9rem;border-radius:999px;background:rgba(31,111,114,.1);color:var(--lagoon)}
+.btn{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--sans);font-weight:500;font-size:.9rem;text-decoration:none;padding:.95rem 1.8rem;min-height:48px;border-radius:14px;background:var(--coral);color:#fff;border:0;cursor:pointer;transition:transform .3s var(--ease),background .3s}
+.btn:hover{background:var(--coral-d);transform:translateY(-2px)}
+.btn--teal{background:var(--lagoon)}
+.btn--teal:hover{background:var(--lagoon-d)}
+.btn--glass{background:rgba(255,255,255,.22);backdrop-filter:blur(8px);color:var(--htext);box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}
+.btn--glass:hover{background:rgba(255,255,255,.35)}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+
+/* NAV */
+.nav{position:fixed;inset:0 0 auto;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem var(--pad);color:var(--htext);transition:background .4s,color .4s,box-shadow .4s}
+.nav.on{background:rgba(251,243,230,.94);backdrop-filter:blur(10px);color:var(--ink);box-shadow:0 6px 24px -18px rgba(22,48,47,.5)}
+.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+.logo svg{width:40px;height:24px}
+.logo b{font-family:var(--serif);font-weight:700;font-size:1.35rem}
+.nav ul{list-style:none;display:flex;gap:1.8rem;align-items:center}
+.nav ul a:not(.btn){text-decoration:none;font-size:.92rem;font-weight:400;position:relative}
+.nav ul a:not(.btn)::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:6px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='6'%3E%3Cpath d='M0 3q4-4 8 0t8 0' fill='none' stroke='%23ef8257' stroke-width='1.5'/%3E%3C/svg%3E") repeat-x;transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+.nav ul a:not(.btn):hover::after{transform:none}
+.nav .btn{padding:.7rem 1.3rem}
+.burger{display:none;width:48px;height:48px;border-radius:14px;border:0;background:var(--coral);color:#fff;cursor:pointer;font-size:1.3rem}
+@media (max-width:900px){
+  .burger{display:block}
+  .nav ul{position:fixed;inset:76px 1rem auto;flex-direction:column;align-items:stretch;gap:0;background:var(--sand);color:var(--ink);border-radius:20px;padding:.6rem;box-shadow:0 30px 60px -30px rgba(22,48,47,.6);transform:scale(.96);opacity:0;pointer-events:none;transition:.3s var(--ease)}
+  .nav ul.open{transform:none;opacity:1;pointer-events:auto}
+  .nav ul a:not(.btn){display:block;padding:1rem 1.1rem;font-size:1.05rem}
+  .nav ul .btn{justify-content:center;margin:.4rem}
+}
+
+/* HERO — time of day scene */
+.hero{position:relative;min-height:100svh;overflow:hidden;color:var(--htext);background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 62%);transition:background 1.2s,color 1.2s;display:flex;align-items:center}
+.scene{position:absolute;inset:0;width:100%;height:100%}
+.scene .sun{fill:var(--sun);transition:fill 1.2s,cy 1.4s var(--ease)}
+.scene .glow{fill:var(--sun);opacity:.25;transition:fill 1.2s}
+.scene .h1{fill:var(--hill2);transition:fill 1.2s}
+.scene .h2{fill:var(--hill);transition:fill 1.2s}
+.scene .w1{fill:var(--water);transition:fill 1.2s}
+.scene .w2{fill:var(--water2);transition:fill 1.2s}
+.scene .ref{fill:var(--sun);opacity:.35;transition:fill 1.2s}
+.scene .stars{opacity:0;transition:opacity 1.2s}
+.hero[data-t="night"] .scene .stars{opacity:1}
+.scene .wave{animation:sway 7s ease-in-out infinite}
+.scene .wave2{animation:sway 9s ease-in-out infinite reverse}
+@keyframes sway{50%{transform:translateX(-30px)}}
+.hero__in{position:relative;z-index:2;width:100%;max-width:1320px;margin:0 auto;padding:120px var(--pad) 22vh}
+.greet{font-size:.84rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:.6rem}
+.greet i{width:10px;height:10px;border-radius:50%;background:var(--sun);box-shadow:0 0 0 4px rgba(255,255,255,.35)}
+.hero h1{font-size:clamp(2.8rem,7vw,6.4rem);max-width:14ch;margin:1.2rem 0 1.4rem}
+.hero h1 em{color:inherit;opacity:.85}
+.hero p{max-width:44ch;font-size:1.08rem;margin-bottom:2rem;opacity:.9}
+.now{display:inline-flex;align-items:center;gap:1rem;padding:.9rem 1rem .9rem 1.2rem;border-radius:18px;background:rgba(255,255,255,.22);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);margin-bottom:2rem;max-width:100%;flex-wrap:wrap}
+.now small{display:block;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+.now b{font-family:var(--serif);font-weight:400;font-size:1.15rem}
+.now a{font-size:.82rem;font-weight:500;text-decoration:none;background:var(--coral);color:#fff;padding:.55rem 1rem;border-radius:10px}
+.hero__ctas{display:flex;gap:.8rem;flex-wrap:wrap}
+.tod{position:absolute;right:var(--pad);bottom:2rem;z-index:3;display:flex;gap:.3rem;padding:.3rem;border-radius:14px;background:rgba(255,255,255,.25);backdrop-filter:blur(10px)}
+.tod button{border:0;background:transparent;color:var(--htext);font:inherit;font-size:.78rem;font-weight:500;padding:.55rem .8rem;border-radius:10px;cursor:pointer;min-height:40px;transition:.3s}
+.tod button[aria-pressed="true"]{background:rgba(255,255,255,.85);color:var(--ink)}
+@media (max-width:640px){.tod{left:var(--pad);right:var(--pad);justify-content:space-between}.hero__in{padding-bottom:28vh}}
+
+/* BOAT DIVIDER */
+.river{position:relative;height:120px;background:var(--sand);overflow:hidden}
+.river svg.wv{position:absolute;left:0;bottom:0;width:200%;height:60px;animation:flowx 16s linear infinite}
+@keyframes flowx{to{transform:translateX(-50%)}}
+.river .boat{position:absolute;bottom:34px;left:0;width:150px;transition:transform .2s linear}
+.river .boat svg{width:100%;animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(5px) rotate(-1.5deg)}}
+
+/* ABOUT */
+.about{padding:clamp(4rem,10vh,7rem) var(--pad);max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,6rem);align-items:center}
+.about h2{font-size:clamp(2.1rem,4.4vw,3.6rem);margin:1rem 0 1.2rem}
+.about p{opacity:.85;margin-bottom:1rem;max-width:50ch}
+.about__img{position:relative}
+.about__img .main{aspect-ratio:4/5;border-radius:28px 28px 220px 28px;overflow:hidden;background:var(--sand-2)}
+.about__img .main img{width:100%;height:100%;object-fit:cover}
+.about__img .float{position:absolute;left:-1.6rem;bottom:2rem;background:var(--lagoon);color:var(--sand);border-radius:18px;padding:1.2rem 1.4rem;max-width:230px;box-shadow:0 24px 40px -24px rgba(19,70,73,.8)}
+.about__img .float b{font-family:var(--serif);font-size:2rem;display:block;line-height:1}
+.about__img .float span{font-size:.82rem;opacity:.85}
+.ticks{list-style:none;display:grid;gap:.6rem;margin-top:1.4rem}
+.ticks li{display:flex;gap:.7rem;align-items:flex-start}
+.ticks li::before{content:"";flex:0 0 22px;height:22px;border-radius:50%;background:var(--coral) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12l4 4 8-8' fill='none' stroke='white' stroke-width='2.5'/%3E%3C/svg%3E") center/14px no-repeat;margin-top:.2rem}
+@media (max-width:880px){.about{grid-template-columns:1fr}.about__img .float{left:1rem}}
+
+/* SERVICES — boats on the water */
+.boats{background:linear-gradient(180deg,var(--sand) 0,var(--lagoon) 0);background:var(--lagoon);color:var(--sand);padding:clamp(4.5rem,11vh,7rem) 0 clamp(4rem,10vh,6rem);position:relative}
+.boats::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 22px,rgba(255,255,255,.035) 22px 24px);pointer-events:none}
+.boats__head{padding:0 var(--pad);max-width:1320px;margin:0 auto 2.4rem;display:flex;justify-content:space-between;align-items:flex-end;gap:1.5rem;flex-wrap:wrap}
+.boats .pill{background:rgba(251,243,230,.14);color:var(--sand)}
+.boats h2{font-size:clamp(2.1rem,4.4vw,3.6rem);margin-top:1rem}
+.boats h2 em{color:var(--coral)}
+.boats__ctl{display:flex;gap:.5rem}
+.boats__ctl button{width:50px;height:50px;border-radius:14px;border:1px solid rgba(251,243,230,.4);background:transparent;color:var(--sand);font-size:1.1rem;cursor:pointer;transition:.3s}
+.boats__ctl button:hover{background:var(--sand);color:var(--lagoon)}
+.track{display:flex;gap:1.2rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:1rem var(--pad) 2.4rem;scrollbar-width:none;cursor:grab}
+.track::-webkit-scrollbar{display:none}
+.track.drag{cursor:grabbing;scroll-snap-type:none}
+.svc{flex:0 0 clamp(260px,28vw,340px);scroll-snap-align:start;background:var(--sand);color:var(--ink);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;animation:float 6s ease-in-out infinite;user-select:none}
+.svc:nth-child(2n){animation-delay:-2s}.svc:nth-child(3n){animation-delay:-4s}
+@keyframes float{50%{transform:translateY(-8px)}}
+.svc__img{aspect-ratio:16/11;background:var(--sand-2);overflow:hidden}
+.svc__img img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.svc__b{padding:1.3rem 1.4rem 1.5rem;display:flex;flex-direction:column;flex:1}
+.svc__b .th{font-size:.8rem;color:var(--coral-d)}
+.svc h3{font-family:var(--serif);font-weight:400;font-size:1.4rem;line-height:1.2;margin:.2rem 0 .4rem}
+.svc p{font-size:.9rem;opacity:.8;margin-bottom:1rem}
+.svc__opts{margin-top:auto;display:flex;gap:.4rem;flex-wrap:wrap}
+.svc__opts span{font-size:.8rem;background:var(--sand-2);border-radius:10px;padding:.35rem .7rem}
+.svc__opts span b{font-weight:600;color:var(--lagoon)}
+@media (prefers-reduced-motion:reduce){.svc{animation:none}}
+
+/* ADD-ONS */
+.addons{padding:clamp(4rem,10vh,6rem) var(--pad);max-width:1240px;margin:0 auto;display:grid;grid-template-columns:.8fr 1.2fr;gap:3rem;align-items:start}
+.addons h2{font-size:clamp(1.9rem,3.6vw,3rem);margin:1rem 0}
+.addons ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.addons li{background:#fff;border-radius:18px;padding:1.1rem 1.2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;box-shadow:0 14px 30px -24px rgba(22,48,47,.5)}
+.addons li span{font-size:.95rem}
+.addons li span small{display:block;font-size:.78rem;opacity:.65}
+.addons li b{font-family:var(--serif);color:var(--coral-d);white-space:nowrap}
+@media (max-width:860px){.addons{grid-template-columns:1fr}.addons ul{grid-template-columns:1fr}}
+
+/* GALLERY masonry */
+.gal{padding:0 var(--pad) clamp(4rem,10vh,6rem)}
+.gal__head{text-align:center;margin-bottom:2.4rem}
+.gal__head h2{font-size:clamp(2.1rem,4.4vw,3.6rem);margin-top:1rem}
+.mas{max-width:1240px;margin:0 auto;columns:3 280px;column-gap:1rem}
+.mas figure{break-inside:avoid;margin-bottom:1rem;border-radius:20px;overflow:hidden;background:var(--sand-2);position:relative}
+.mas figure img{width:100%;transition:transform 1s var(--ease)}
+.mas figure:hover img{transform:scale(1.05)}
+.mas figure:nth-child(1) img,.mas figure:nth-child(5) img{aspect-ratio:3/4;object-fit:cover}
+.mas figure:nth-child(2) img,.mas figure:nth-child(4) img{aspect-ratio:1;object-fit:cover}
+.mas figure:nth-child(3) img,.mas figure:nth-child(6) img{aspect-ratio:4/3;object-fit:cover}
+.mas figcaption{position:absolute;left:.8rem;bottom:.8rem;background:rgba(251,243,230,.9);border-radius:10px;padding:.3rem .7rem;font-size:.78rem}
+
+/* QUOTE on water */
+.say{background:var(--lagoon-d);color:var(--sand);padding:clamp(5rem,12vh,8rem) var(--pad);text-align:center;position:relative;overflow:hidden}
+.say svg.lily{position:absolute;width:180px;opacity:.15;color:var(--sand)}
+.say svg.l1{left:4%;top:12%}.say svg.l2{right:6%;bottom:8%;width:130px}
+.say blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(1.5rem,3.4vw,2.6rem);line-height:1.35;max-width:26ch;margin:0 auto;position:relative}
+.say cite{display:block;margin-top:1.4rem;font-style:normal;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--coral)}
+.say .stars{color:var(--coral);letter-spacing:.3em;margin-bottom:1rem}
+
+/* LOCATIONS */
+.locs{padding:clamp(5rem,12vh,8rem) var(--pad);max-width:1240px;margin:0 auto}
+.locs__head{margin-bottom:2.6rem}
+.locs__head h2{font-size:clamp(2.1rem,4.4vw,3.6rem);margin-top:1rem}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+.loc{background:#fff;border-radius:28px;overflow:hidden;box-shadow:0 30px 60px -44px rgba(22,48,47,.7);display:flex;flex-direction:column}
+.loc iframe{width:100%;height:230px;border:0;filter:hue-rotate(-12deg) saturate(.85)}
+.loc__b{padding:1.6rem 1.8rem 1.9rem;display:flex;flex-direction:column;flex:1}
+.loc__top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+.loc h3{font-family:var(--serif);font-weight:400;font-size:1.9rem}
+.loc__city{font-size:.74rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--lagoon)}
+.chip{font-size:.74rem;font-weight:500;padding:.35rem .8rem;border-radius:999px;background:#e3f3ea;color:#2a7a4c;white-space:nowrap}
+.chip.closed{background:#fbe4dc;color:var(--coral-d)}
+.loc__b > p{margin:.5rem 0 1rem;font-size:.95rem}
+.loc__b > p a{font-weight:500;text-decoration:none;color:var(--lagoon)}
+.hrs{display:grid;grid-template-columns:repeat(7,1fr);gap:.3rem;margin-bottom:1.4rem}
+.hrs div{text-align:center;background:var(--sand);border-radius:12px;padding:.55rem .1rem;font-size:.7rem;line-height:1.35}
+.hrs div b{display:block;font-weight:600;font-size:.72rem}
+.hrs div.today{background:var(--coral);color:#fff}
+.loc .btn{margin-top:auto;align-self:flex-start}
+@media (max-width:900px){.lgrid{grid-template-columns:1fr}}
+@media (max-width:460px){.hrs{grid-template-columns:repeat(4,1fr)}}
+
+/* CONTACT */
+.contact{background:var(--sand-2);padding:clamp(5rem,12vh,8rem) var(--pad)}
+.contact__wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:3rem}
+.contact h2{font-size:clamp(2.1rem,4.4vw,3.6rem);margin:1rem 0}
+.contact__wrap > div > p{opacity:.85;max-width:40ch}
+.cform{background:var(--sand);border-radius:28px;padding:clamp(1.4rem,3vw,2.4rem);display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.cform .full{grid-column:1/-1}
+.cform label{display:block;font-size:.8rem;font-weight:500;margin-bottom:.35rem}
+.cform input,.cform textarea,.cform select{width:100%;font:inherit;font-weight:400;background:#fff;border:1.5px solid transparent;border-radius:14px;padding:.85rem 1rem;min-height:50px;color:var(--ink);transition:border-color .3s}
+.cform textarea{min-height:120px;resize:vertical}
+.cform input:focus,.cform textarea:focus,.cform select:focus{outline:none;border-color:var(--lagoon)}
+.ok{display:none;color:var(--lagoon);font-weight:500}
+.ok.show{display:block}
+@media (max-width:860px){.contact__wrap{grid-template-columns:1fr}.cform{grid-template-columns:1fr}}
+
+/* FOOTER */
+.footer{background:var(--lagoon-d);color:var(--sand);position:relative}
+.footer svg.top{display:block;width:100%;height:50px;background:var(--sand-2);color:var(--lagoon-d)}
+.footer__grid{max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2.4rem;padding:3rem var(--pad) 2.4rem}
+.footer__brand p{opacity:.8;margin-top:.8rem;max-width:26ch}
+.footer h4{font-weight:500;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--coral);margin-bottom:.9rem}
+.footer ul{list-style:none}
+.footer li{margin-bottom:.45rem;opacity:.85}
+.footer a{text-decoration:none}
+.footer a:hover{color:var(--coral)}
+.socials{display:flex;gap:.6rem;margin-top:1.2rem}
+.socials a{width:44px;height:44px;border-radius:14px;background:rgba(251,243,230,.12);display:flex;align-items:center;justify-content:center}
+.socials a:hover{background:var(--coral)}
+.socials svg{width:17px;height:17px;fill:var(--sand)}
+.legal{max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding:1.3rem var(--pad) 1.8rem;font-size:.8rem;opacity:.75;border-top:1px solid rgba(251,243,230,.15)}
+.obar{display:none;position:fixed;left:.8rem;right:.8rem;bottom:calc(.8rem + env(safe-area-inset-bottom));z-index:90}
+.obar a{display:flex;justify-content:center;width:100%;box-shadow:0 14px 30px -12px rgba(201,95,55,.8)}
+@media (max-width:840px){.obar{display:block}.legal{padding-bottom:6rem}}
+</style>
+</head>
+<body id="top">
+
+<header class="nav" id="nav">
+  <a class="logo" href="#top" aria-label="DemoSpa home">
+    <svg viewBox="0 0 40 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 14h30l6-6M6 14c2 5 6 7 14 7s12-2 14-7"/><path d="M16 14V4l8 10" /><path d="M2 22q5-3 10 0t10 0 10 0" stroke-width="1.2"/></svg>
+    <b>DemoSpa</b>
+  </a>
+  <ul id="navlinks">
+    <li><a href="#about">Our story</a></li>
+    <li><a href="#services">Massages</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#locations">Locations</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book now</a></li>
+  </ul>
+  <button class="burger" aria-expanded="false" aria-controls="navlinks" aria-label="Menu">≡</button>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="hero" data-t="day">
+  <svg class="scene" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <g class="stars" fill="#fff"><circle cx="180" cy="90" r="1.5"/><circle cx="420" cy="160" r="1"/><circle cx="640" cy="70" r="1.8"/><circle cx="880" cy="140" r="1.2"/><circle cx="1100" cy="60" r="1.6"/><circle cx="1300" cy="180" r="1"/><circle cx="1220" cy="110" r="1.3"/><circle cx="300" cy="230" r="1.1"/><circle cx="760" cy="220" r="1"/><circle cx="980" cy="260" r="1.4"/></g>
+    <circle class="glow" id="glow" cx="1060" cy="300" r="150"/>
+    <circle class="sun" id="sun" cx="1060" cy="300" r="70"/>
+    <path class="h1" d="M0 600 C160 520 300 540 420 580 S700 520 860 560 1160 500 1440 560 V700 H0Z"/>
+    <path class="h2" d="M0 640 C200 600 320 620 520 640 S860 600 1040 630 1300 610 1440 630 V700 H0Z"/>
+    <!-- stilt houses -->
+    <g class="h2" style="stroke:var(--hill);stroke-width:4;transition:fill 1.2s,stroke 1.2s">
+      <path d="M180 640v-44h70v44zM172 600l43-30 43 30zM188 640v20M242 640v20M300 640v-34h56v34zM294 610l34-24 34 24zM306 640v20M350 640v20"/>
+      <path d="M1180 630v-40h64v40zM1172 594l40-28 40 28zM1188 630v22M1236 630v22"/>
+      <path d="M1320 630c0-60 10-120 30-150M1350 480c-30 0-50 14-60 30M1350 480c30-4 52 6 64 20M1350 480c-14-20-34-28-52-28M1350 480c16-18 36-22 52-18" stroke="var(--hill)" stroke-width="6" fill="none"/>
+      <path d="M90 640c0-70 8-130 26-170M116 470c-30 0-48 14-58 30M116 470c28-4 50 6 62 20M116 470c-12-20-30-28-50-28M116 470c16-18 34-22 50-18" stroke="var(--hill)" stroke-width="6" fill="none"/>
+    </g>
+    <rect class="w1" x="0" y="660" width="1440" height="240"/>
+    <ellipse class="ref" id="ref" cx="1060" cy="700" rx="90" ry="8"/>
+    <ellipse class="ref" cx="1060" cy="730" rx="60" ry="5"/>
+    <ellipse class="ref" cx="1060" cy="756" rx="36" ry="4"/>
+    <g class="wave"><path class="w2" d="M-40 760 Q60 740 160 760 T360 760 T560 760 T760 760 T960 760 T1160 760 T1360 760 T1560 760 V900 H-40Z" opacity=".55"/></g>
+    <g class="wave2"><path class="w2" d="M-40 820 Q80 800 200 820 T440 820 T680 820 T920 820 T1160 820 T1400 820 T1640 820 V900 H-40Z"/></g>
+  </svg>
+  <div class="hero__in">
+    <span class="greet rv"><i></i><span id="greet">Sawasdee — good afternoon</span></span>
+    <h1 class="serif rv d1">Drift into calm, <em>wherever the day finds you.</em></h1>
+    <p class="rv d2">Inspired by the slow rhythm of Thailand's floating markets. Unhurried Thai massage, warm hands and a cool towel waiting for you after.</p>
+    <div class="now rv d2"><div><small>Ritual for right now</small><b id="nowR">Lunch-break neck &amp; shoulder · 30 min</b></div><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book it</a></div>
+    <div class="hero__ctas rv d3">
+      <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book a massage</a>
+      <a class="btn btn--glass" href="#services">See massages</a>
+    </div>
+  </div>
+  <div class="tod" role="group" aria-label="Preview time of day">
+    <button type="button" data-t="dawn" aria-pressed="false">Dawn</button>
+    <button type="button" data-t="day" aria-pressed="true">Day</button>
+    <button type="button" data-t="dusk" aria-pressed="false">Dusk</button>
+    <button type="button" data-t="night" aria-pressed="false">Night</button>
+  </div>
+</section>
+
+<!-- RIVER / BOAT -->
+<div class="river" id="river" aria-hidden="true">
+  <svg class="wv" viewBox="0 0 2880 60" preserveAspectRatio="none"><path fill="#1f6f72" d="M0 30 Q90 10 180 30 T360 30 T540 30 T720 30 T900 30 T1080 30 T1260 30 T1440 30 T1620 30 T1800 30 T1980 30 T2160 30 T2340 30 T2520 30 T2700 30 T2880 30 V60 H0Z"/></svg>
+  <div class="boat" id="boat"><svg viewBox="0 0 150 70"><path d="M8 44h126l14-14-6 0-8 6H20z" fill="#c95f37"/><path d="M8 44c6 10 20 16 60 16s58-6 66-16z" fill="#8a3e22"/><path d="M60 44V22h34v22" fill="#f3e3c8"/><path d="M56 22h42l-4-8H60z" fill="#ef8257"/><circle cx="40" cy="34" r="7" fill="#16302f"/><path d="M34 44c0-8 2-12 6-12s6 4 6 12" fill="#16302f"/><path d="M28 30l24-6" stroke="#16302f" stroke-width="2"/><path d="M22 26c6-10 30-10 36 0z" fill="#e0b45a"/><path d="M136 34l12 14" stroke="#16302f" stroke-width="2"/></svg></div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about__img rv">
+    <div class="main"><img src="https://i.postimg.cc/QMr54YSt/Copy-of-269712218-2059184294235502-6657828226324914816-n.jpg" alt="Traditional Thai massage stretch" loading="lazy"></div>
+    <div class="float"><b>15 yrs</b><span>bringing a little Bangkok calm to the neighbourhood</span></div>
+  </div>
+  <div class="rv d1">
+    <span class="pill">Our story</span>
+    <h2 class="serif">From Damnoen Saduak <em>to your street.</em></h2>
+    <p>Our family ran a tiny massage stall beside the canals of Damnoen Saduak — boats drifting past, the smell of coconut and grilled bananas in the air. We brought that easy, friendly feeling here.</p>
+    <p>No pretension, no rush. Just skilled Thai therapists, fair prices and a room where you can finally switch off.</p>
+    <ul class="ticks"><li>Qualified Thai therapists, many with 10+ years' experience</li><li>Health fund rebates available for remedial massage</li><li>Walk-ins welcome — or book online in seconds</li></ul>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="boats" id="services">
+  <div class="boats__head rv">
+    <div><span class="pill">Massages</span><h2 class="serif">Pick a boat, <em>float away</em></h2></div>
+    <div class="boats__ctl"><button type="button" data-s="-1" aria-label="Scroll left">←</button><button type="button" data-s="1" aria-label="Scroll right">→</button></div>
+  </div>
+  <div class="track" id="track">
+    <article class="svc"><div class="svc__img"><img src="https://i.postimg.cc/Qd71qZQS/271602579-2066015386885726-5248643883991483846-n.jpg" alt="Traditional Thai massage" loading="lazy"></div><div class="svc__b"><span class="th">นวดแผนโบราณ</span><h3>Traditional Thai</h3><p>Clothed, no oil. Acupressure and stretches the way it's done in Bangkok.</p><div class="svc__opts"><span>60m <b>$75</b></span><span>90m <b>$105</b></span><span>120m <b>$135</b></span></div></div></article>
+    <article class="svc"><div class="svc__img"><img src="https://i.postimg.cc/zDdCzjDK/alan-caishan-c-U53ZFBr3lk-unsplash.jpg" alt="Thai oil massage" loading="lazy"></div><div class="svc__b"><span class="th">น้ำมันมะพร้าว</span><h3>Coconut Oil Massage</h3><p>Warm virgin coconut oil and long, soothing strokes.</p><div class="svc__opts"><span>60m <b>$85</b></span><span>90m <b>$115</b></span></div></div></article>
+    <article class="svc"><div class="svc__img"><img src="https://i.postimg.cc/hPf9fdfG/272106455-2066857463468185-3689533452356941384-n.jpg" alt="Foot massage" loading="lazy"></div><div class="svc__b"><span class="th">นวดเท้า</span><h3>Market Day Feet</h3><p>For feet that have walked all day. Reflexology and a cooling mint balm.</p><div class="svc__opts"><span>45m <b>$60</b></span><span>60m <b>$70</b></span></div></div></article>
+    <article class="svc"><div class="svc__img"><img src="https://i.postimg.cc/L543yQ9p/Stock-Images-(7).jpg" alt="Neck and shoulder massage" loading="lazy"></div><div class="svc__b"><span class="th">คอ บ่า ไหล่</span><h3>Neck &amp; Shoulder</h3><p>The perfect lunch-break fix for desk-weary shoulders.</p><div class="svc__opts"><span>30m <b>$45</b></span><span>45m <b>$60</b></span></div></div></article>
+    <article class="svc"><div class="svc__img"><img src="https://i.postimg.cc/K81JSWnJ/Copy-of-271512661-2058409864312945-7965416524350208888-n.jpg" alt="Sports massage session" loading="lazy"></div><div class="svc__b"><span class="th">นวดลึก</span><h3>Sports &amp; Deep Tissue</h3><p>Firm pressure for knots, tight hips, runners and gym-goers.</p><div class="svc__opts"><span>60m <b>$90</b></span><span>90m <b>$120</b></span></div></div></article>
+    <article class="svc"><div class="svc__img"><img src="https://i.postimg.cc/76kVzYjY/Copy-of-49247077057-37cac67f79-o.jpg" alt="Couples massage side by side" loading="lazy"></div><div class="svc__b"><span class="th">คู่</span><h3>Two in a Boat</h3><p>Couples massage side by side, with lemongrass tea for two.</p><div class="svc__opts"><span>60m <b>$160</b></span><span>90m <b>$220</b></span></div></div></article>
+  </div>
+</section>
+
+<!-- ADD-ONS -->
+<section class="addons">
+  <div class="rv"><span class="pill">Little extras</span><h2 class="serif">Add a <em>sweet</em> something</h2><p>Top up any massage — just ask at the counter or add when you book.</p></div>
+  <ul class="rv d1">
+    <li><span>Hot stones<small>Warm basalt on the back</small></span><b>+ $15</b></li>
+    <li><span>Herbal compress<small>Steamed Thai herbs</small></span><b>+ $20</b></li>
+    <li><span>Coconut scalp oil<small>Nourishing head massage</small></span><b>+ $10</b></li>
+    <li><span>Extra 15 minutes<small>Because you deserve it</small></span><b>+ $20</b></li>
+  </ul>
+</section>
+
+<!-- GALLERY -->
+<section class="gal" id="gallery">
+  <div class="gal__head rv"><span class="pill">Gallery</span><h2 class="serif">Our little <em>slice of Thailand</em></h2></div>
+  <div class="mas rv d1">
+    <figure><img src="https://i.postimg.cc/xdryr1j9/Copy-of-woman-getting-massage-from-another-person.jpg" alt="Herbal compress massage" loading="lazy"><figcaption>Room 2</figcaption></figure>
+    <figure><img src="https://i.postimg.cc/rFPNJ9vT/Copy-of-wellness-589770-1920.jpg" alt="Candles and spa decor" loading="lazy"><figcaption>Evening candles</figcaption></figure>
+    <figure><img src="https://i.postimg.cc/QMr54YSt/Copy-of-269712218-2059184294235502-6657828226324914816-n.jpg" alt="Traditional Thai massage stretch" loading="lazy"></figure>
+    <figure><img src="https://i.postimg.cc/zDdCzjDK/alan-caishan-c-U53ZFBr3lk-unsplash.jpg" alt="Thai oil massage" loading="lazy"><figcaption>Coconut oil</figcaption></figure>
+    <figure><img src="https://i.postimg.cc/Qd71qZQS/271602579-2066015386885726-5248643883991483846-n.jpg" alt="Traditional Thai massage" loading="lazy"></figure>
+    <figure><img src="https://i.postimg.cc/nzp4zSQ6/Copy-of-271134519-2053893694764562-3923658756880702584-n.jpg" alt="Hot stone massage" loading="lazy"><figcaption>Hot stones</figcaption></figure>
+  </div>
+</section>
+
+<section class="say">
+  <svg class="lily l1" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M32 4c-6 8-6 18 0 26 6-8 6-18 0-26zM32 30C24 26 16 18 14 8c8 2 14 10 18 22zM32 30c8-4 16-12 18-22-8 2-14 10-18 22zM10 36h44"/></svg>
+  <svg class="lily l2" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M32 4c-6 8-6 18 0 26 6-8 6-18 0-26zM32 30C24 26 16 18 14 8c8 2 14 10 18 22zM32 30c8-4 16-12 18-22-8 2-14 10-18 22zM10 36h44"/></svg>
+  <div class="stars" aria-label="5 stars">★★★★★</div>
+  <blockquote class="rv">“Friendly, honest and genuinely skilled. Feels like the massage shops in Bangkok — but closer to home.”</blockquote>
+  <cite>— Liam, regular since 2019</cite>
+</section>
+
+<!-- LOCATIONS -->
+<section class="locs" id="locations">
+  <div class="locs__head rv"><span class="pill">Locations</span><h2 class="serif">Come <em>float with us</em></h2></div>
+  <div class="lgrid">
+    <article class="loc rv" data-hours="10-20,10-20,10-20,10-21,10-21,9-21,9-18">
+      <iframe src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed" title="Map — DemoSpa Albion QLD" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="loc__b">
+        <div class="loc__top"><div><span class="loc__city">Brisbane · QLD</span><h3>Demo2</h3></div><span class="chip">…</span></div>
+        <p>346 Sandgate Road, Albion QLD 4010 · <a href="tel:0732624972">07 3262 4972</a></p>
+        <div class="hrs"></div>
+        <a class="btn btn--teal" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Brisbane</a>
+      </div>
+    </article>
+    <article class="loc rv d1" data-hours="9-21,9-21,9-21,9-21,9-22,9-22,10-19">
+      <iframe src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed" title="Map — DemoSpa Somerton VIC" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="loc__b">
+        <div class="loc__top"><div><span class="loc__city">Melbourne · VIC</span><h3>Melbourne</h3></div><span class="chip">…</span></div>
+        <p>19 North Park Dr, Somerton VIC 3062 · <a href="tel:0407505997">0407 505 997</a></p>
+        <div class="hrs"></div>
+        <a class="btn btn--teal" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Melbourne</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact__wrap">
+    <div class="rv"><span class="pill">Contact</span><h2 class="serif">Drop us <em>a line</em></h2><p>Group bookings, gift cards, or just checking if we have a spot this afternoon — we usually reply within a few hours.</p></div>
+    <form class="cform rv d1" id="cform" novalidate>
+      <div><label for="n">Name</label><input id="n" type="text" autocomplete="name" required></div>
+      <div><label for="e">Email</label><input id="e" type="email" autocomplete="email" required></div>
+      <div><label for="p">Phone</label><input id="p" type="tel" autocomplete="tel" placeholder="Optional"></div>
+      <div><label for="l">Location</label><select id="l"><option>Brisbane</option><option>Melbourne</option></select></div>
+      <div class="full"><label for="m">Message</label><textarea id="m" required></textarea></div>
+      <div class="full"><button class="btn" type="submit">Send message</button></div>
+      <p class="ok full" id="ok" role="status">Thanks! We'll get back to you shortly.</p>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <svg class="top" viewBox="0 0 1440 50" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 25 Q90 5 180 25 T360 25 T540 25 T720 25 T900 25 T1080 25 T1260 25 T1440 25 V50 H0Z"/></svg>
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <a class="logo" href="#top"><svg viewBox="0 0 40 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 14h30l6-6M6 14c2 5 6 7 14 7s12-2 14-7"/><path d="M16 14V4l8 10"/><path d="M2 22q5-3 10 0t10 0 10 0" stroke-width="1.2"/></svg><b>DemoSpa</b></a>
+      <p>Thai massage with the easy rhythm of the floating market.</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V21h3.4z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.1 15.6 2 15.2 2 12s0-3.6.1-4.8C2.3 4 3.8 2.4 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 4.7a5.1 5.1 0 100 10.2 5.1 5.1 0 000-10.2zm0 8.4a3.3 3.3 0 110-6.6 3.3 3.3 0 010 6.6zm5.3-9.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></a>
+      </div>
+    </div>
+    <div><h4>Explore</h4><ul><li><a href="#about">Our story</a></li><li><a href="#services">Massages</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div><h4>Brisbane</h4><ul><li><a href="tel:0732624972">07 3262 4972</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+    <div><h4>Melbourne</h4><ul><li><a href="tel:0407505997">0407 505 997</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+  </div>
+  <div class="legal">
+    <p>© <span id="yr"></span> DemoSpa. All rights reserved.</p>
+    <p>Powered by <a href="https://www.localforyou.com" target="_blank" rel="noopener">Local For You</a> · <a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Terms</a></p>
+  </div>
+</footer>
+<div class="obar"><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book a massage</a></div>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var nav = document.getElementById('nav');
+  function onS(){ nav.classList.toggle('on', scrollY > 40); boat(); }
+  var burger = document.querySelector('.burger'), links = document.getElementById('navlinks');
+  burger.addEventListener('click', function(){ var o = links.classList.toggle('open'); burger.setAttribute('aria-expanded', o); });
+  links.addEventListener('click', function(e){ if(e.target.closest('a')){ links.classList.remove('open'); burger.setAttribute('aria-expanded','false'); } });
+
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* time of day */
+  var T = {
+    dawn:{sky1:'#f7b994',sky2:'#fde9d4',sun:'#ffa86b',water:'#6aa9a5',water2:'#4b8c8a',hill:'#6f7f6a',hill2:'#93a08a',htext:'#3a2b24',sy:520,g:'Arun sawasdee — good morning',r:'Lemongrass wake-up foot ritual · 45 min'},
+    day:{sky1:'#86cfdd',sky2:'#e7f6f2',sun:'#ffe08a',water:'#2a8c8e',water2:'#1f6f72',hill:'#2f6b57',hill2:'#4a8a6e',htext:'#16302f',sy:260,g:'Sawasdee — good afternoon',r:'Lunch-break neck & shoulder · 30 min'},
+    dusk:{sky1:'#5e3f73',sky2:'#f2895f',sun:'#ff7448',water:'#3b5a77',water2:'#2b425c',hill:'#2c2440',hill2:'#4a3656',htext:'#fff6ea',sy:560,g:'Sawasdee yam yen — good evening',r:'After-work Traditional Thai · 90 min'},
+    night:{sky1:'#0b1a33',sky2:'#24395f',sun:'#f3ead2',water:'#163450',water2:'#0f253b',hill:'#0c1828',hill2:'#18283f',htext:'#f3ead2',sy:220,g:'Ratri sawat — good night',r:'Late jasmine oil massage for sleep · 60 min'}
+  };
+  var hero = document.getElementById('hero'), rs = document.documentElement.style;
+  function setT(k){
+    var t = T[k]; hero.dataset.t = k;
+    ['sky1','sky2','sun','water','water2','hill','hill2','htext'].forEach(function(p){ rs.setProperty('--'+p, t[p]); });
+    document.getElementById('sun').setAttribute('cy', t.sy); document.getElementById('glow').setAttribute('cy', t.sy);
+    document.getElementById('sun').setAttribute('r', k==='night' ? 46 : 70);
+    document.getElementById('greet').textContent = t.g; document.getElementById('nowR').textContent = t.r;
+    document.querySelectorAll('.tod button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.t===k); });
+  }
+  var hNow = new Date().getHours();
+  setT(hNow >= 5 && hNow < 10 ? 'dawn' : hNow < 16 && hNow >= 10 ? 'day' : hNow >= 16 && hNow < 19 ? 'dusk' : 'night');
+  document.querySelectorAll('.tod button').forEach(function(b){ b.addEventListener('click', function(){ setT(b.dataset.t); }); });
+
+  /* boat sails with scroll */
+  var river = document.getElementById('river'), boatEl = document.getElementById('boat');
+  function boat(){
+    var r = river.getBoundingClientRect(); if(r.bottom < 0 || r.top > innerHeight) return;
+    var k = 1 - (r.top + r.height) / (innerHeight + r.height); k = Math.max(0, Math.min(1, k));
+    boatEl.style.transform = 'translateX(' + (k * (river.clientWidth - 150)) + 'px)';
+  }
+  addEventListener('scroll', onS, {passive:true}); addEventListener('resize', boat); onS();
+
+  /* services track: buttons + drag */
+  var track = document.getElementById('track');
+  document.querySelectorAll('[data-s]').forEach(function(b){ b.addEventListener('click', function(){ track.scrollBy({left: +b.dataset.s * 360, behavior:'smooth'}); }); });
+  var down = false, sx = 0, sl = 0;
+  track.addEventListener('pointerdown', function(e){ if(e.pointerType !== 'mouse') return; down = true; sx = e.clientX; sl = track.scrollLeft; track.classList.add('drag'); });
+  addEventListener('pointermove', function(e){ if(down) track.scrollLeft = sl - (e.clientX - sx); });
+  addEventListener('pointerup', function(){ down = false; track.classList.remove('drag'); });
+
+  /* locations: status chip + week strip */
+  var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], now = new Date(), di = (now.getDay()+6)%7, hr = now.getHours()+now.getMinutes()/60;
+  function fmt(h){ h = +h; return (h>12 ? h-12 : h) + (h>=12 ? 'p' : 'a'); }
+  document.querySelectorAll('.loc[data-hours]').forEach(function(l){
+    var H = l.dataset.hours.split(',').map(function(x){ return x.split('-'); });
+    l.querySelector('.hrs').innerHTML = H.map(function(h,i){ return '<div'+(i===di?' class="today"':'')+'><b>'+days[i]+'</b>'+fmt(h[0])+'–'+fmt(h[1])+'</div>'; }).join('');
+    var t = H[di], open = hr >= +t[0] && hr < +t[1], chip = l.querySelector('.chip');
+    chip.textContent = open ? 'Open now' : 'Closed now'; chip.classList.toggle('closed', !open);
+  });
+
+  var f = document.getElementById('cform');
+  f.addEventListener('submit', function(e){ e.preventDefault(); if(!f.checkValidity()){ f.reportValidity(); return; } document.getElementById('ok').classList.add('show'); f.reset(); });
+  document.getElementById('yr').textContent = now.getFullYear();
+})();
+</script>
+</body>
+</html>

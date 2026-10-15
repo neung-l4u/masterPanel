@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoSpa — Traditional Thai Massage · Brisbane &amp; Melbourne</title>
+<meta name="description" content="Traditional Thai massage in a temple-quiet room. Thai, oil, herbal compress and foot reflexology — Brisbane & Melbourne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Mulish:wght@300;400;600;700&family=Noto+Serif+Thai:wght@300;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════ TOKENS ═══════════ */
+:root{
+  --teal:#0e2b2b;
+  --teal-2:#143a39;
+  --teal-3:#1d4d4b;
+  --gold:#c9a24a;
+  --gold-soft:#e3c98b;
+  --ivory:#f6efe1;
+  --ivory-2:#ece2cd;
+  --ink:#1b1712;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Mulish',system-ui,sans-serif;
+  --thai:'Noto Serif Thai',serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --pad:clamp(1.1rem,4vw,4rem);
+  --kanok:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='%23c9a24a' stroke-width='1.2'%3E%3Cpath d='M24 2c-3 6-9 8-9 14a9 9 0 0 0 18 0c0-6-6-8-9-14z'/%3E%3Cpath d='M24 9c-1.5 3-4 4-4 7a4 4 0 0 0 8 0c0-3-2.5-4-4-7z'/%3E%3Ccircle cx='3' cy='16' r='1.6'/%3E%3Ccircle cx='45' cy='16' r='1.6'/%3E%3Cpath d='M0 23h48'/%3E%3C/g%3E%3C/svg%3E");
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--ivory);color:var(--ink);font-size:clamp(.95rem,.9rem + .2vw,1.06rem);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--gold);color:var(--teal)}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.eyebrow{font-family:var(--sans);font-weight:700;font-size:.7rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold)}
+.h-serif{font-family:var(--serif);font-weight:400;line-height:1.05;letter-spacing:-.01em}
+.h-serif em{font-style:italic;color:var(--gold)}
+.kanok{height:24px;background:var(--kanok) repeat-x center;opacity:.85}
+.btn{display:inline-flex;align-items:center;gap:.7em;font-family:var(--sans);font-weight:700;font-size:.75rem;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;padding:1.05rem 2.2rem;min-height:48px;border:1px solid var(--gold);background:var(--gold);color:var(--teal);cursor:pointer;position:relative;overflow:hidden;transition:color .4s var(--ease)}
+.btn::after{content:"";position:absolute;inset:0;background:var(--teal);transform:scaleX(0);transform-origin:right;transition:transform .5s var(--ease);z-index:-1}
+.btn{z-index:1}
+.btn:hover{color:var(--gold)}
+.btn:hover::after{transform:scaleX(1);transform-origin:left}
+.btn--line{background:transparent;color:var(--gold)}
+.btn--line::after{background:var(--gold)}
+.btn--line:hover{color:var(--teal)}
+.rv{opacity:0;transform:translateY(30px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+/* ═══════════ NAV ═══════════ */
+.nav{position:fixed;inset:0 0 auto;z-index:100;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:1rem var(--pad);color:var(--ivory);transition:background .4s,padding .4s}
+.nav.on{background:rgba(14,43,43,.95);backdrop-filter:blur(8px);padding:.6rem var(--pad);box-shadow:0 1px 0 rgba(201,162,74,.4)}
+.nav ul{display:flex;gap:2rem;list-style:none}
+.nav ul.r{justify-content:flex-end;align-items:center}
+.nav ul a:not(.btn){text-decoration:none;font-size:.72rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;opacity:.85;transition:opacity .3s,color .3s}
+.nav ul a:not(.btn):hover{opacity:1;color:var(--gold)}
+.nav .btn{padding:.7rem 1.4rem;font-size:.65rem}
+.logo{text-decoration:none;text-align:center;line-height:1}
+.logo b{display:block;font-family:var(--serif);font-weight:500;font-size:1.9rem;letter-spacing:.06em}
+.logo span{font-family:var(--thai);font-size:.7rem;color:var(--gold);letter-spacing:.3em}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:.6rem;justify-self:end}
+.burger span{display:block;width:26px;height:1.5px;background:var(--gold);margin:6px 0;transition:.35s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+.mmenu{position:fixed;inset:0;z-index:95;background:var(--teal);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.8rem;transform:translateY(-100%);transition:transform .6s var(--ease)}
+.mmenu.open{transform:none}
+.mmenu a{font-family:var(--serif);font-size:2.4rem;color:var(--ivory);text-decoration:none}
+.mmenu a:hover{color:var(--gold)}
+.mmenu a.btn{font-family:var(--sans);font-size:.75rem;color:var(--teal);margin-top:1rem}
+.mmenu a.btn:hover{color:var(--gold)}
+@media (max-width:900px){
+  .nav{grid-template-columns:auto 1fr}
+  .nav ul{display:none}
+  .logo{text-align:left}
+  .burger{display:block}
+}
+
+/* ═══════════ HERO ═══════════ */
+.hero{position:relative;min-height:100svh;background:radial-gradient(120% 90% at 70% 40%,var(--teal-3) 0%,var(--teal) 62%);color:var(--ivory);overflow:hidden;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:clamp(2rem,5vw,5rem);padding:calc(90px + 3vh) var(--pad) 5rem}
+.hero__thai{position:absolute;left:-2vw;bottom:-6vw;font-family:var(--thai);font-weight:300;font-size:clamp(9rem,30vw,28rem);line-height:1;color:transparent;-webkit-text-stroke:1px rgba(201,162,74,.18);pointer-events:none;user-select:none}
+.hero__copy{position:relative;z-index:2}
+.hero h1{font-size:clamp(3.2rem,7.6vw,7rem);margin:1.4rem 0 1.6rem}
+.hero h1 em{display:block}
+.hero p{max-width:40ch;opacity:.86;margin-bottom:2.4rem;font-weight:300;font-size:1.08rem}
+.hero__ctas{display:flex;gap:1rem;flex-wrap:wrap}
+.hero__meta{display:flex;gap:2.6rem;margin-top:3.2rem;padding-top:1.6rem;border-top:1px solid rgba(201,162,74,.3);max-width:460px}
+.hero__meta div{font-family:var(--serif);font-size:2rem;color:var(--gold);line-height:1}
+.hero__meta small{display:block;font-family:var(--sans);font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ivory);opacity:.7;margin-top:.5rem}
+.shrine{position:relative;z-index:2;justify-self:center;width:min(100%,460px);aspect-ratio:4/5.4}
+.shrine__img{position:absolute;inset:0;clip-path:polygon(50% 0,58% 7%,64% 6%,71% 14%,78% 13%,87% 22%,100% 30%,100% 100%,0 100%,0 30%,13% 22%,22% 13%,29% 14%,36% 6%,42% 7%);background:var(--teal-2)}
+.shrine__img img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);filter:saturate(.85) contrast(1.05)}
+.shrine__img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(14,43,43,.7))}
+.shrine svg.frame{position:absolute;inset:-14px;width:calc(100% + 28px);height:calc(100% + 28px);overflow:visible;pointer-events:none}
+.shrine svg.frame polygon{fill:none;stroke:var(--gold);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.shrine__finial{position:absolute;left:50%;top:-46px;transform:translateX(-50%);width:26px;color:var(--gold)}
+.shrine__tag{position:absolute;bottom:1.4rem;left:1.4rem;right:1.4rem;z-index:3;font-family:var(--serif);font-style:italic;font-size:1.25rem;color:var(--ivory);text-align:center}
+#smoke{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,560px);height:90%;z-index:3;pointer-events:none}
+.hero__scroll{position:absolute;left:50%;bottom:1.4rem;transform:translateX(-50%);z-index:3;font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:.6rem}
+.hero__scroll i{display:block;width:1px;height:40px;background:linear-gradient(var(--gold),transparent);animation:drip 2.2s var(--ease) infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;text-align:left;padding-top:120px}
+  .shrine{width:min(84%,360px);margin-top:2rem}
+  .hero__meta{gap:1.6rem}
+}
+
+/* ═══════════ RITUAL ═══════════ */
+.band{background:var(--teal);padding:.4rem 0}
+.ritual{padding:clamp(5rem,12vh,9rem) var(--pad);max-width:1280px;margin:0 auto}
+.ritual__head{text-align:center;max-width:720px;margin:0 auto 4rem}
+.ritual__head h2{font-size:clamp(2.4rem,5.4vw,4.4rem);margin:1rem 0 1.2rem}
+.ritual__head h2 em{color:var(--teal-3)}
+.ritual__head p{opacity:.8}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1.5rem,3vw,3rem);counter-reset:s}
+.step{position:relative;padding:2.4rem 2rem 2.2rem;border:1px solid rgba(201,162,74,.55);background:linear-gradient(180deg,#fbf6ec,var(--ivory));transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
+.step:hover{transform:translateY(-8px);box-shadow:0 24px 50px -30px rgba(14,43,43,.5)}
+.step::before{counter-increment:s;content:counter(s,upper-roman);position:absolute;top:-1.1rem;left:2rem;background:var(--ivory);padding:0 .7rem;font-family:var(--serif);font-size:1.5rem;color:var(--gold)}
+.step svg{width:46px;height:46px;stroke:var(--teal-3);fill:none;stroke-width:1.2;margin-bottom:1.2rem}
+.step h3{font-family:var(--serif);font-weight:500;font-size:1.7rem;margin-bottom:.6rem}
+.step p{font-size:.95rem;opacity:.78}
+.step .th{font-family:var(--thai);font-size:.8rem;color:var(--gold);display:block;margin-bottom:.2rem}
+@media (max-width:860px){.steps{grid-template-columns:1fr}}
+
+/* ═══════════ MENU ═══════════ */
+.menu{background:var(--teal);color:var(--ivory);padding:clamp(5rem,12vh,9rem) var(--pad);position:relative;overflow:hidden}
+.menu::before{content:"";position:absolute;inset:1.4rem;border:1px solid rgba(201,162,74,.35);pointer-events:none}
+.menu__wrap{max-width:1100px;margin:0 auto;position:relative}
+.menu__top{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;margin-bottom:3.4rem}
+.menu h2{font-size:clamp(2.4rem,5.4vw,4.4rem);margin-top:1rem}
+.dur{display:inline-flex;border:1px solid var(--gold);padding:4px;gap:4px}
+.dur button{background:transparent;border:0;color:var(--gold);font-family:var(--sans);font-weight:700;font-size:.72rem;letter-spacing:.2em;padding:.75rem 1.2rem;min-height:44px;cursor:pointer;transition:.35s}
+.dur button[aria-pressed="true"]{background:var(--gold);color:var(--teal)}
+.dur__label{display:block;font-size:.62rem;letter-spacing:.32em;text-transform:uppercase;opacity:.6;margin-bottom:.6rem;text-align:right}
+.mlist{display:grid;grid-template-columns:1fr 1fr;gap:0 4rem}
+.mitem{padding:1.5rem 0;border-bottom:1px solid rgba(201,162,74,.22)}
+.mitem__row{display:flex;align-items:baseline;gap:.8rem}
+.mitem h3{font-family:var(--serif);font-weight:500;font-size:1.55rem;white-space:nowrap}
+.mitem .dots{flex:1;border-bottom:1px dotted rgba(201,162,74,.6);transform:translateY(-.35rem)}
+.mitem .price{font-family:var(--serif);font-size:1.6rem;color:var(--gold);min-width:3.4ch;text-align:right}
+.mitem p{font-size:.9rem;opacity:.7;margin-top:.35rem;max-width:44ch}
+.mitem .tag{display:inline-block;font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;border:1px solid var(--gold);color:var(--gold);padding:.15rem .5rem;margin-left:.4rem;vertical-align:middle}
+.menu__note{margin-top:2.6rem;text-align:center;font-family:var(--serif);font-style:italic;font-size:1.15rem;opacity:.8}
+@media (max-width:820px){.mlist{grid-template-columns:1fr}.mitem h3{white-space:normal;font-size:1.35rem}.dur__label{text-align:left}}
+
+/* ═══════════ GALLERY ═══════════ */
+.gal{padding:clamp(5rem,12vh,9rem) var(--pad)}
+.gal__head{text-align:center;margin-bottom:3.4rem}
+.gal__head h2{font-size:clamp(2.4rem,5.4vw,4.4rem);margin-top:1rem}
+.gal__head h2 em{color:var(--teal-3)}
+.ggrid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:220px;gap:1.1rem}
+.gitem{position:relative;overflow:hidden;cursor:zoom-in;background:var(--ivory-2);outline:1px solid rgba(201,162,74,.5);outline-offset:6px;transition:outline-offset .4s var(--ease)}
+.gitem:hover{outline-offset:2px}
+.gitem img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease),filter .6s}
+.gitem:hover img{transform:scale(1.07);filter:saturate(1.1)}
+.gitem:nth-child(1){grid-row:span 2}
+.gitem:nth-child(4){grid-column:span 2}
+.gitem:nth-child(5){grid-row:span 2}
+.gitem:nth-child(6){grid-column:span 2}
+@media (max-width:860px){.ggrid{grid-template-columns:1fr 1fr;grid-auto-rows:170px}.gitem:nth-child(4),.gitem:nth-child(6){grid-column:span 2}}
+.lb{position:fixed;inset:0;z-index:300;background:rgba(14,43,43,.96);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
+.lb.open{opacity:1;pointer-events:auto}
+.lb img{max-width:88vw;max-height:84vh;object-fit:contain;border:1px solid var(--gold);padding:8px}
+.lb button{position:absolute;background:none;border:1px solid var(--gold);color:var(--gold);width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:1.2rem;transition:.3s}
+.lb button:hover{background:var(--gold);color:var(--teal)}
+.lb .x{top:1.2rem;right:1.2rem}.lb .p{left:1.2rem;top:50%;transform:translateY(-50%)}.lb .n{right:1.2rem;top:50%;transform:translateY(-50%)}
+
+/* ═══════════ QUOTE ═══════════ */
+.quote{background:var(--ivory-2);padding:clamp(4rem,10vh,7rem) var(--pad);text-align:center}
+.quote blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(1.6rem,3.6vw,2.8rem);line-height:1.3;max-width:26ch;margin:0 auto}
+.quote cite{display:block;margin-top:1.6rem;font-style:normal;font-size:.68rem;letter-spacing:.36em;text-transform:uppercase;color:var(--teal-3)}
+.quote .stars{color:var(--gold);letter-spacing:.4em;margin-bottom:1.2rem}
+
+/* ═══════════ LOCATIONS ═══════════ */
+.locs{padding:clamp(5rem,12vh,9rem) var(--pad)}
+.locs__head{text-align:center;margin-bottom:3.4rem}
+.locs__head h2{font-size:clamp(2.4rem,5.4vw,4.4rem);margin-top:1rem}
+.locs__head h2 em{color:var(--teal-3)}
+.lgrid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:2rem}
+.loc{background:#fffaf0;border:1px solid rgba(201,162,74,.55);display:flex;flex-direction:column;position:relative}
+.loc__map{width:100%;aspect-ratio:16/9;border:0;filter:sepia(.25) saturate(.8);border-bottom:1px solid rgba(201,162,74,.55)}
+.loc__body{padding:2rem 2.2rem 2.4rem;display:flex;flex-direction:column;flex:1}
+.loc__city{font-size:.65rem;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.loc h3{font-family:var(--serif);font-weight:500;font-size:2.4rem;line-height:1.1;margin:.3rem 0 .9rem}
+.loc__meta{font-size:.95rem;margin-bottom:.2rem}
+.loc__meta a{text-decoration:none;border-bottom:1px solid var(--gold);font-weight:600}
+.loc__badge{position:absolute;top:1rem;right:1rem;background:var(--teal);color:var(--gold);font-size:.6rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;padding:.5rem .9rem}
+.htabs{margin:1.4rem 0 1.8rem;border-top:1px solid rgba(201,162,74,.4);padding-top:1.2rem}
+.htabs__btns{display:flex;gap:.5rem;margin-bottom:.9rem}
+.htabs__btns button{font-family:var(--sans);font-weight:700;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;padding:.55rem 1rem;min-height:40px;border:1px solid var(--gold);background:transparent;color:var(--teal);cursor:pointer}
+.htabs__btns button[aria-selected="true"]{background:var(--teal);color:var(--gold);border-color:var(--teal)}
+.htabs__panel[hidden]{display:none}
+.htabs table{width:100%;border-collapse:collapse;font-size:.92rem}
+.htabs td{padding:.38rem 0;border-bottom:1px dotted rgba(27,23,18,.2)}
+.htabs td:last-child{text-align:right;font-weight:600}
+.htabs tr.today td{color:var(--teal-3);font-weight:700}
+.htabs tr.today td:first-child::after{content:" · today";font-size:.7rem;color:var(--gold);letter-spacing:.1em}
+.loc .btn{margin-top:auto;align-self:flex-start}
+
+/* ═══════════ CTA ═══════════ */
+.cta{position:relative;overflow:hidden;color:var(--ivory);text-align:center;padding:clamp(6rem,16vh,11rem) var(--pad);background:var(--teal)}
+.cta__bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.32;filter:grayscale(.3)}
+.cta::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,transparent 0,rgba(14,43,43,.85) 75%)}
+.cta__in{position:relative;z-index:2}
+.cta h2{font-size:clamp(2.8rem,8vw,6.4rem);margin:1rem 0 1.4rem}
+.cta p{max-width:44ch;margin:0 auto 2.4rem;opacity:.85}
+.cta .lotus{width:64px;margin:0 auto;color:var(--gold)}
+
+/* ═══════════ CONTACT ═══════════ */
+.contact{padding:clamp(5rem,12vh,9rem) var(--pad)}
+.contact__wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(2.5rem,6vw,6rem)}
+.contact h2{font-size:clamp(2.4rem,5.4vw,4.2rem);margin:1rem 0 1.2rem}
+.contact h2 em{color:var(--teal-3)}
+.contact__intro p{max-width:38ch;opacity:.8;margin-bottom:1.6rem}
+.contact__intro ul{list-style:none;font-size:.95rem}
+.contact__intro li{padding:.6rem 0;border-bottom:1px dotted rgba(27,23,18,.25);display:flex;justify-content:space-between}
+.contact__intro li span{color:var(--gold);font-weight:700;font-size:.7rem;letter-spacing:.25em;text-transform:uppercase}
+.cform{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem 1.6rem}
+.f{display:flex;flex-direction:column;gap:.4rem}
+.f--full{grid-column:1/-1}
+.f label{font-size:.64rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--teal-3)}
+.f input,.f textarea,.f select{font-family:var(--sans);font-size:1rem;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--gold);padding:.8rem 0;min-height:48px;transition:border-color .3s}
+.f textarea{min-height:120px;resize:vertical}
+.f input:focus,.f textarea:focus,.f select:focus{outline:none;border-bottom:2px solid var(--teal)}
+.cform .btn{grid-column:1/-1;justify-self:start}
+.ok{grid-column:1/-1;display:none;font-family:var(--serif);font-style:italic;font-size:1.2rem;color:var(--teal-3)}
+.ok.show{display:block}
+@media (max-width:900px){.contact__wrap{grid-template-columns:1fr}.cform{grid-template-columns:1fr}}
+
+/* ═══════════ FOOTER ═══════════ */
+.footer{background:var(--teal);color:var(--ivory)}
+.footer__grid{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2.5rem;padding:4rem var(--pad) 2.6rem}
+.footer .logo{text-align:left}
+.footer__brand p{font-family:var(--serif);font-style:italic;font-size:1.2rem;max-width:24ch;opacity:.85;margin-top:1rem}
+.footer h4{font-size:.62rem;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.footer ul{list-style:none}
+.footer li{margin-bottom:.55rem}
+.footer a{text-decoration:none;opacity:.85}
+.footer a:hover{opacity:1;color:var(--gold)}
+.socials{display:flex;gap:.7rem;margin-top:1.4rem}
+.socials a{width:44px;height:44px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:1;transition:.3s}
+.socials a:hover{background:var(--gold)}
+.socials a:hover svg{fill:var(--teal)}
+.socials svg{width:17px;height:17px;fill:var(--gold)}
+.legal{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding:1.4rem var(--pad) 2rem;font-size:.75rem;opacity:.75;border-top:1px solid rgba(201,162,74,.25)}
+.obar{position:fixed;left:0;right:0;bottom:0;z-index:90;display:none;background:var(--gold);padding:.4rem .8rem calc(.4rem + env(safe-area-inset-bottom))}
+.obar a{display:block;text-align:center;color:var(--teal);text-decoration:none;font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-size:.8rem;padding:.8rem}
+@media (max-width:840px){.obar{display:block}.legal{padding-bottom:5.5rem}}
+</style>
+</head>
+<body id="top">
+
+<header class="nav" id="nav">
+  <ul>
+    <li><a href="#ritual">Ritual</a></li>
+    <li><a href="#menu">Treatments</a></li>
+    <li><a href="#gallery">Sanctuary</a></li>
+  </ul>
+  <a class="logo" href="#top" aria-label="DemoSpa home"><b>DemoSpa</b><span>นวดแผนไทย</span></a>
+  <ul class="r">
+    <li><a href="#locations">Locations</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Now</a></li>
+  </ul>
+  <button class="burger" aria-expanded="false" aria-controls="mmenu" aria-label="Menu"><span></span><span></span><span></span></button>
+</header>
+<nav class="mmenu" id="mmenu" aria-label="Mobile">
+  <a href="#ritual">Ritual</a><a href="#menu">Treatments</a><a href="#gallery">Sanctuary</a><a href="#locations">Locations</a><a href="#contact">Contact</a>
+  <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Now</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__thai" aria-hidden="true">สบาย</div>
+  <div class="hero__copy">
+    <span class="eyebrow rv">Traditional Thai Massage · Since 1998</span>
+    <h1 class="h-serif rv d1">The ancient art<em>of letting go.</em></h1>
+    <p class="rv d2">Pressure, stretch and breath — practised the way it was taught in the temple schools of Bangkok. Leave the noise at the door; we'll take care of the rest.</p>
+    <div class="hero__ctas rv d3">
+      <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Reserve a Treatment</a>
+      <a class="btn btn--line" href="#menu">View Treatments</a>
+    </div>
+    <div class="hero__meta rv d3">
+      <div>25+<small>Years of practice</small></div>
+      <div>12<small>Certified therapists</small></div>
+      <div>4.9<small>Guest rating</small></div>
+    </div>
+  </div>
+  <div class="shrine rv d2">
+    <svg class="shrine__finial" viewBox="0 0 26 46" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M13 0v14M13 14c-6 6-6 14 0 18 6-4 6-12 0-18zM5 40h16M8 45h10M13 32v8"/></svg>
+    <div class="shrine__img"><img src="https://i.postimg.cc/Qd71qZQS/271602579-2066015386885726-5248643883991483846-n.jpg" alt="Traditional Thai massage" fetchpriority="high"></div>
+    <svg class="frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,0 58,7 64,6 71,14 78,13 87,22 100,30 100,100 0,100 0,30 13,22 22,13 29,14 36,6 42,7"/></svg>
+    <p class="shrine__tag">“Sabai sabai” — be at ease</p>
+  </div>
+  <canvas id="smoke" aria-hidden="true"></canvas>
+  <a class="hero__scroll" href="#ritual">Enter<i></i></a>
+</section>
+
+<div class="band"><div class="kanok"></div></div>
+
+<!-- RITUAL -->
+<section class="ritual" id="ritual">
+  <div class="ritual__head rv">
+    <span class="eyebrow">The Ritual</span>
+    <h2 class="h-serif">Every visit begins <em>with a bow.</em></h2>
+    <p>Thai massage is a moving meditation for two. Our ritual follows the same three movements that have opened every session for centuries.</p>
+  </div>
+  <div class="steps">
+    <article class="step rv">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6c-4 6-4 12 0 18 4-6 4-12 0-18zM24 24v18M14 42h20M17 30c-4-2-7-6-7-10M31 30c4-2 7-6 7-10"/></svg>
+      <span class="th">ไหว้</span>
+      <h3>The Wai</h3>
+      <p>A quiet greeting, warm jasmine tea and a moment to share where your body is holding on.</p>
+    </article>
+    <article class="step rv d1">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 30c0 7 7 12 16 12s16-5 16-12zM6 30h36M16 22c0-3 3-3 3-6M24 22c0-3 3-3 3-6M32 22c0-3 3-3 3-6"/></svg>
+      <span class="th">ล้างเท้า</span>
+      <h3>The Cleanse</h3>
+      <p>A warm herbal foot bath with tamarind and kaffir lime to ground you before the work begins.</p>
+    </article>
+    <article class="step rv d2">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M12 38c4-10 8-16 12-16s8 6 12 16M24 22a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM6 42h36"/></svg>
+      <span class="th">นวด</span>
+      <h3>The Release</h3>
+      <p>Palm, thumb and gentle stretches along the body's energy lines — tailored to the pressure you love.</p>
+    </article>
+  </div>
+</section>
+
+<!-- MENU -->
+<section class="menu" id="menu">
+  <div class="menu__wrap">
+    <div class="menu__top rv">
+      <div>
+        <span class="eyebrow">Treatment Menu</span>
+        <h2 class="h-serif">Choose your <em>hour of stillness</em></h2>
+      </div>
+      <div>
+        <span class="dur__label">Session length</span>
+        <div class="dur" role="group" aria-label="Session length">
+          <button type="button" data-d="0" aria-pressed="false">60 min</button>
+          <button type="button" data-d="1" aria-pressed="true">90 min</button>
+          <button type="button" data-d="2" aria-pressed="false">120 min</button>
+        </div>
+      </div>
+    </div>
+    <div class="mlist">
+      <article class="mitem rv"><div class="mitem__row"><h3>Traditional Thai</h3><span class="dots"></span><span class="price" data-p="80,110,140">$110</span></div><p>Clothed, on the mat. Acupressure and assisted yoga stretches — the classic Wat Pho style.</p></article>
+      <article class="mitem rv d1"><div class="mitem__row"><h3>Thai Aromatic Oil<span class="tag">Signature</span></h3><span class="dots"></span><span class="price" data-p="90,125,155">$125</span></div><p>Long flowing strokes with warm coconut and lemongrass oil.</p></article>
+      <article class="mitem rv"><div class="mitem__row"><h3>Herbal Compress</h3><span class="dots"></span><span class="price" data-p="100,135,165">$135</span></div><p>Steamed luk pra kob pressed along tired muscles. Deeply warming.</p></article>
+      <article class="mitem rv d1"><div class="mitem__row"><h3>Foot Reflexology</h3><span class="dots"></span><span class="price" data-p="65,90,115">$90</span></div><p>Wooden-stick pressure points on the soles, calves and lower legs.</p></article>
+      <article class="mitem rv"><div class="mitem__row"><h3>Deep Tissue Thai</h3><span class="dots"></span><span class="price" data-p="90,120,150">$120</span></div><p>Firm, focused work on knots in the back, shoulders and hips.</p></article>
+      <article class="mitem rv d1"><div class="mitem__row"><h3>Couples Sanctuary</h3><span class="dots"></span><span class="price" data-p="170,230,290">$230</span></div><p>Two therapists, one candlelit room, side by side.</p></article>
+    </div>
+    <p class="menu__note rv">Every treatment includes the herbal foot cleanse and jasmine tea.</p>
+  </div>
+</section>
+
+<div class="band"><div class="kanok"></div></div>
+
+<!-- GALLERY -->
+<section class="gal" id="gallery">
+  <div class="gal__head rv">
+    <span class="eyebrow">The Sanctuary</span>
+    <h2 class="h-serif">A room built for <em>quiet</em></h2>
+  </div>
+  <div class="ggrid rv d1">
+    <figure class="gitem" tabindex="0" role="button" aria-label="Enlarge photo 1"><img src="https://i.postimg.cc/QMr54YSt/Copy-of-269712218-2059184294235502-6657828226324914816-n.jpg" alt="Traditional Thai massage stretch" loading="lazy"></figure>
+    <figure class="gitem" tabindex="0" role="button" aria-label="Enlarge photo 2"><img src="https://i.postimg.cc/rFPNJ9vT/Copy-of-wellness-589770-1920.jpg" alt="Candles and spa decor" loading="lazy"></figure>
+    <figure class="gitem" tabindex="0" role="button" aria-label="Enlarge photo 3"><img src="https://i.postimg.cc/hPf9fdfG/272106455-2066857463468185-3689533452356941384-n.jpg" alt="Foot massage" loading="lazy"></figure>
+    <figure class="gitem" tabindex="0" role="button" aria-label="Enlarge photo 4"><img src="https://i.postimg.cc/L543yQ9p/Stock-Images-(7).jpg" alt="Neck and shoulder massage" loading="lazy"></figure>
+    <figure class="gitem" tabindex="0" role="button" aria-label="Enlarge photo 5"><img src="https://i.postimg.cc/zDdCzjDK/alan-caishan-c-U53ZFBr3lk-unsplash.jpg" alt="Thai oil massage" loading="lazy"></figure>
+    <figure class="gitem" tabindex="0" role="button" aria-label="Enlarge photo 6"><img src="https://i.postimg.cc/xdryr1j9/Copy-of-woman-getting-massage-from-another-person.jpg" alt="Herbal compress massage" loading="lazy"></figure>
+  </div>
+</section>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="x" aria-label="Close">✕</button><button class="p" aria-label="Previous">←</button>
+  <img src="" alt=""><button class="n" aria-label="Next">→</button>
+</div>
+
+<!-- QUOTE -->
+<section class="quote">
+  <div class="stars" aria-label="5 stars">★★★★★</div>
+  <blockquote class="rv">“The closest thing to the massage I had in Chiang Mai. I walked out two inches taller.”</blockquote>
+  <cite>— Guest review · Google</cite>
+</section>
+
+<!-- LOCATIONS -->
+<section class="locs" id="locations">
+  <div class="locs__head rv">
+    <span class="eyebrow">Visit Us</span>
+    <h2 class="h-serif">Two sanctuaries, <em>one tradition</em></h2>
+  </div>
+  <div class="lgrid">
+    <article class="loc rv">
+      <span class="loc__badge">Walk-ins welcome</span>
+      <iframe class="loc__map" src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed" title="Map — DemoSpa Albion QLD" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="loc__body">
+        <p class="loc__city">Brisbane · QLD</p>
+        <h3>Demo2</h3>
+        <p class="loc__meta">346 Sandgate Road, Albion QLD 4010</p>
+        <p class="loc__meta"><a href="tel:0732624972">07 3262 4972</a></p>
+        <div class="htabs" data-htabs>
+          <div class="htabs__btns" role="tablist" aria-label="Brisbane hours">
+            <button role="tab" id="t-b1" aria-selected="true" aria-controls="p-b1">Massage</button>
+            <button role="tab" id="t-b2" aria-selected="false" aria-controls="p-b2">Late Night</button>
+          </div>
+          <div class="htabs__panel" id="p-b1" role="tabpanel" aria-labelledby="t-b1"><table>
+            <tr data-day="1"><td>Mon</td><td>10am–8pm</td></tr><tr data-day="2"><td>Tue</td><td>10am–8pm</td></tr><tr data-day="3"><td>Wed</td><td>10am–8pm</td></tr><tr data-day="4"><td>Thu</td><td>10am–9pm</td></tr><tr data-day="5"><td>Fri</td><td>10am–9pm</td></tr><tr data-day="6"><td>Sat</td><td>9am–9pm</td></tr><tr data-day="0"><td>Sun</td><td>9am–6pm</td></tr>
+          </table></div>
+          <div class="htabs__panel" id="p-b2" role="tabpanel" aria-labelledby="t-b2" hidden><table>
+            <tr data-day="1"><td>Mon</td><td>Closed</td></tr><tr data-day="2"><td>Tue</td><td>Closed</td></tr><tr data-day="3"><td>Wed</td><td>Closed</td></tr><tr data-day="4"><td>Thu</td><td>9pm–11pm</td></tr><tr data-day="5"><td>Fri</td><td>9pm–11pm</td></tr><tr data-day="6"><td>Sat</td><td>9pm–11pm</td></tr><tr data-day="0"><td>Sun</td><td>Closed</td></tr>
+          </table></div>
+        </div>
+        <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book — Brisbane</a>
+      </div>
+    </article>
+    <article class="loc rv d1">
+      <span class="loc__badge">Open 7 days</span>
+      <iframe class="loc__map" src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed" title="Map — DemoSpa Somerton VIC" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="loc__body">
+        <p class="loc__city">Melbourne · VIC</p>
+        <h3>Melbourne</h3>
+        <p class="loc__meta">19 North Park Dr, Somerton VIC 3062</p>
+        <p class="loc__meta"><a href="tel:0407505997">0407 505 997</a></p>
+        <div class="htabs" data-htabs>
+          <div class="htabs__btns" role="tablist" aria-label="Melbourne hours">
+            <button role="tab" id="t-m1" aria-selected="true" aria-controls="p-m1">Every day</button>
+          </div>
+          <div class="htabs__panel" id="p-m1" role="tabpanel" aria-labelledby="t-m1"><table>
+            <tr data-day="1"><td>Mon</td><td>9am–9pm</td></tr><tr data-day="2"><td>Tue</td><td>9am–9pm</td></tr><tr data-day="3"><td>Wed</td><td>9am–9pm</td></tr><tr data-day="4"><td>Thu</td><td>9am–9pm</td></tr><tr data-day="5"><td>Fri</td><td>9am–10pm</td></tr><tr data-day="6"><td>Sat</td><td>9am–10pm</td></tr><tr data-day="0"><td>Sun</td><td>10am–7pm</td></tr>
+          </table></div>
+        </div>
+        <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book — Melbourne</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="cta__bg" style="background-image:url('https://i.postimg.cc/nzp4zSQ6/Copy-of-271134519-2053893694764562-3923658756880702584-n.jpg')"></div>
+  <div class="cta__in">
+    <svg class="lotus rv" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M32 4c-6 8-6 18 0 26 6-8 6-18 0-26zM32 30C24 26 16 18 14 8c8 2 14 10 18 22zM32 30c8-4 16-12 18-22-8 2-14 10-18 22zM32 30C20 32 10 28 2 20c10-2 22 2 30 10zM32 30c12 2 22-2 30-10-10-2-22 2-30 10zM10 36h44"/></svg>
+    <h2 class="h-serif rv d1">Your body <em>remembers.</em></h2>
+    <p class="rv d2">One unhurried hour can undo a month of tight shoulders. Book online in under a minute.</p>
+    <a class="btn rv d3" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Reserve Your Hour</a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact__wrap">
+    <div class="contact__intro rv">
+      <span class="eyebrow">Enquiries</span>
+      <h2 class="h-serif">Speak <em>with us</em></h2>
+      <p>Gift vouchers, group bookings, pregnancy treatments or a question about pressure — we're happy to help.</p>
+      <ul>
+        <li>Gift vouchers <span>Available</span></li>
+        <li>Health fund rebates <span>Ask in store</span></li>
+        <li>Private room hire <span>On request</span></li>
+      </ul>
+    </div>
+    <form class="cform rv d1" id="cform" novalidate>
+      <div class="f"><label for="n">Name</label><input id="n" type="text" autocomplete="name" required placeholder="Your name"></div>
+      <div class="f"><label for="e">Email</label><input id="e" type="email" autocomplete="email" required placeholder="you@example.com"></div>
+      <div class="f"><label for="ph">Phone</label><input id="ph" type="tel" autocomplete="tel" placeholder="Optional"></div>
+      <div class="f"><label for="s">Treatment</label><select id="s"><option>Traditional Thai</option><option>Thai Aromatic Oil</option><option>Herbal Compress</option><option>Foot Reflexology</option><option>Gift voucher</option></select></div>
+      <div class="f f--full"><label for="m">Message</label><textarea id="m" required placeholder="How can we help?"></textarea></div>
+      <button class="btn" type="submit">Send Enquiry</button>
+      <p class="ok" id="ok" role="status">Khob khun ka — we'll be in touch within a day.</p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="kanok"></div>
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <a class="logo" href="#top"><b>DemoSpa</b><span>นวดแผนไทย</span></a>
+      <p>Traditional Thai massage, practised with patience.</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V21h3.4z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.1 15.6 2 15.2 2 12s0-3.6.1-4.8C2.3 4 3.8 2.4 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 4.7a5.1 5.1 0 100 10.2 5.1 5.1 0 000-10.2zm0 8.4a3.3 3.3 0 110-6.6 3.3 3.3 0 010 6.6zm5.3-9.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></a>
+      </div>
+    </div>
+    <div><h4>Explore</h4><ul><li><a href="#ritual">The Ritual</a></li><li><a href="#menu">Treatments</a></li><li><a href="#gallery">Sanctuary</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div><h4>Brisbane</h4><ul><li><a href="tel:0732624972">07 3262 4972</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+    <div><h4>Melbourne</h4><ul><li><a href="tel:0407505997">0407 505 997</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+  </div>
+  <div class="legal">
+    <p>© <span id="yr"></span> DemoSpa. All rights reserved.</p>
+    <p>Powered by <a href="https://www.localforyou.com" target="_blank" rel="noopener">Local For You</a> · <a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Terms</a></p>
+  </div>
+</footer>
+<div class="obar"><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book a Massage</a></div>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var nav = document.getElementById('nav');
+  function onS(){ nav.classList.toggle('on', scrollY > 40); }
+  addEventListener('scroll', onS, {passive:true}); onS();
+  var burger = document.querySelector('.burger'), mm = document.getElementById('mmenu');
+  burger.addEventListener('click', function(){ var o = mm.classList.toggle('open'); burger.setAttribute('aria-expanded', o); document.body.style.overflow = o ? 'hidden' : ''; });
+  mm.addEventListener('click', function(e){ if(e.target.closest('a')){ mm.classList.remove('open'); burger.setAttribute('aria-expanded','false'); document.body.style.overflow=''; } });
+
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* ── incense smoke ── */
+  var c = document.getElementById('smoke'), ctx = c.getContext('2d'), P = [];
+  function size(){ var r = c.getBoundingClientRect(); c.width = r.width * devicePixelRatio; c.height = r.height * devicePixelRatio; }
+  size(); addEventListener('resize', size);
+  function spawn(){ P.push({x:c.width*(.5 + (Math.random()-.5)*.08), y:c.height, r:(8+Math.random()*14)*devicePixelRatio, vy:(.35+Math.random()*.45)*devicePixelRatio, ph:Math.random()*6.28, a:0, life:0}); }
+  function tick(){
+    ctx.clearRect(0,0,c.width,c.height);
+    if(P.length < 70 && Math.random() < .5) spawn();
+    for(var i=P.length-1;i>=0;i--){
+      var p = P[i]; p.life++; p.y -= p.vy; p.ph += .015; p.r += .09*devicePixelRatio;
+      var x = p.x + Math.sin(p.ph + p.life*.012) * 30 * devicePixelRatio * (p.life/260);
+      p.a = Math.min(.13, p.life/300) * Math.max(0, 1 - p.life/520);
+      var g = ctx.createRadialGradient(x,p.y,0,x,p.y,p.r);
+      g.addColorStop(0,'rgba(236,226,205,'+p.a+')'); g.addColorStop(1,'rgba(236,226,205,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,p.y,p.r,0,6.283); ctx.fill();
+      if(p.life > 520 || p.y < -p.r) P.splice(i,1);
+    }
+    requestAnimationFrame(tick);
+  }
+  if(!reduce) tick();
+
+  /* ── duration toggle with counting prices ── */
+  var durBtns = document.querySelectorAll('.dur button');
+  function setDur(d){
+    durBtns.forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.d == d); });
+    document.querySelectorAll('.price').forEach(function(el){
+      var to = +el.dataset.p.split(',')[d], from = +el.textContent.replace('$','') || to, t0 = performance.now();
+      (function step(t){ var k = Math.min(1,(t-t0)/500); el.textContent = '$' + Math.round(from + (to-from)*(1-Math.pow(1-k,3))); if(k<1) requestAnimationFrame(step); })(t0);
+    });
+  }
+  durBtns.forEach(function(b){ b.addEventListener('click', function(){ setDur(+b.dataset.d); }); });
+
+  /* ── lightbox ── */
+  var items = [].slice.call(document.querySelectorAll('.gitem')), lb = document.getElementById('lb'), lbi = lb.querySelector('img'), ix = 0;
+  function show(i){ ix = (i+items.length)%items.length; var im = items[ix].querySelector('img'); lbi.src = im.src.replace(/w=\d+/,'w=1800'); lbi.alt = im.alt; }
+  function open(i){ show(i); lb.classList.add('open'); document.body.style.overflow='hidden'; lb.querySelector('.x').focus(); }
+  function close(){ lb.classList.remove('open'); document.body.style.overflow=''; }
+  items.forEach(function(it,i){ it.addEventListener('click', function(){ open(i); }); it.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(i); } }); });
+  lb.querySelector('.x').onclick = close; lb.querySelector('.p').onclick = function(){ show(ix-1); }; lb.querySelector('.n').onclick = function(){ show(ix+1); };
+  lb.addEventListener('click', function(e){ if(e.target===lb) close(); });
+  addEventListener('keydown', function(e){ if(!lb.classList.contains('open')) return; if(e.key==='Escape') close(); if(e.key==='ArrowLeft') show(ix-1); if(e.key==='ArrowRight') show(ix+1); });
+
+  /* ── hours tabs ── */
+  document.querySelectorAll('[data-htabs]').forEach(function(root){
+    var tabs = root.querySelectorAll('[role="tab"]');
+    tabs.forEach(function(tab){ tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.setAttribute('aria-selected','false'); document.getElementById(t.getAttribute('aria-controls')).hidden = true; });
+      tab.setAttribute('aria-selected','true'); document.getElementById(tab.getAttribute('aria-controls')).hidden = false;
+    }); });
+  });
+  var day = new Date().getDay();
+  document.querySelectorAll('.htabs tr[data-day="'+day+'"]').forEach(function(tr){ tr.classList.add('today'); });
+
+  var f = document.getElementById('cform');
+  f.addEventListener('submit', function(e){ e.preventDefault(); if(!f.checkValidity()){ f.reportValidity(); return; } document.getElementById('ok').classList.add('show'); f.reset(); });
+  document.getElementById('yr').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>

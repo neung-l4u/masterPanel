@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoSpa — Thai Aromatherapy &amp; Massage · Brisbane &amp; Melbourne</title>
+<meta name="description" content="A calm lotus-pond day spa for Thai aromatherapy, oil massage and herbal rituals. Brisbane & Melbourne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,100;1,9..144,300..500,100&family=DM+Sans:wght@400;500;700&family=Charm:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sage:#dfe6d5;
+  --sage-2:#c9d4bb;
+  --moss:#3f5a45;
+  --moss-deep:#263a2c;
+  --cream:#faf6ee;
+  --blush:#e7a8a1;
+  --accent:#e7a8a1;
+  --accent-ink:#8a3f3a;
+  --ink:#1f2a22;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --script:'Charm',cursive;
+  --ease:cubic-bezier(.25,1,.3,1);
+  --pad:clamp(1.1rem,4vw,4rem);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);line-height:1.65;font-size:clamp(.95rem,.9rem + .2vw,1.05rem);overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background .8s}
+img{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--accent);color:var(--moss-deep)}
+:focus-visible{outline:2px solid var(--moss);outline-offset:3px}
+.serif{font-family:var(--serif);font-variation-settings:"SOFT" 100;font-weight:350;line-height:1.08;letter-spacing:-.015em}
+.serif em{font-style:italic;color:var(--accent-ink);transition:color .8s}
+.kicker{display:inline-flex;align-items:center;gap:.6rem;font-size:.72rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--moss)}
+.kicker::before{content:"";width:18px;height:18px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3c-3 4-3 9 0 14 3-5 3-10 0-14zM12 17c-4-2-8-6-9-11 4 1 7 5 9 11zm0 0c4-2 8-6 9-11-4 1-7 5-9 11z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3c-3 4-3 9 0 14 3-5 3-10 0-14zM12 17c-4-2-8-6-9-11 4 1 7 5 9 11zm0 0c4-2 8-6 9-11-4 1-7 5-9 11z'/%3E%3C/svg%3E") center/contain no-repeat}
+.btn{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--sans);font-weight:700;font-size:.85rem;letter-spacing:.04em;text-decoration:none;padding:1rem 1.9rem;min-height:48px;border-radius:999px;border:0;background:var(--moss-deep);color:var(--cream);cursor:pointer;transition:transform .35s var(--ease),background .35s,box-shadow .35s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 14px 28px -14px rgba(38,58,44,.6);background:var(--moss)}
+.btn--soft{background:var(--accent);color:var(--moss-deep)}
+.btn--soft:hover{background:var(--accent);filter:brightness(1.05)}
+.btn--ghost{background:transparent;color:var(--moss-deep);box-shadow:inset 0 0 0 1.5px var(--moss-deep)}
+.btn--ghost:hover{background:var(--moss-deep);color:var(--cream)}
+.btn svg{width:16px;height:16px}
+.rv{opacity:0;transform:translateY(28px) scale(.985);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+
+/* NAV — floating pill */
+.nav{position:fixed;top:1rem;left:50%;transform:translateX(-50%);z-index:100;width:min(1100px,calc(100% - 2rem));display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.55rem .6rem .55rem 1.4rem;border-radius:999px;background:rgba(250,246,238,.72);backdrop-filter:blur(14px);box-shadow:0 10px 30px -18px rgba(38,58,44,.45),inset 0 0 0 1px rgba(63,90,69,.12);transition:top .4s}
+.brand{display:flex;align-items:center;gap:.55rem;text-decoration:none}
+.brand svg{width:30px;height:30px;color:var(--accent-ink);transition:color .8s}
+.brand b{font-family:var(--serif);font-weight:500;font-size:1.35rem;letter-spacing:-.01em}
+.nav ul{display:flex;gap:.3rem;list-style:none;align-items:center}
+.nav ul a:not(.btn){display:block;text-decoration:none;font-size:.86rem;font-weight:500;padding:.6rem 1rem;border-radius:999px;transition:background .3s}
+.nav ul a:not(.btn):hover{background:var(--sage)}
+.nav .btn{padding:.75rem 1.4rem;font-size:.8rem}
+.burger{display:none;width:46px;height:46px;border-radius:50%;border:0;background:var(--moss-deep);cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.burger span{width:18px;height:1.5px;background:var(--cream);transition:.3s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+@media (max-width:880px){
+  .burger{display:flex}
+  .nav ul{position:absolute;top:calc(100% + .6rem);left:0;right:0;flex-direction:column;align-items:stretch;background:var(--cream);border-radius:28px;padding:1rem;box-shadow:0 20px 40px -20px rgba(38,58,44,.5);opacity:0;pointer-events:none;transform:translateY(-8px);transition:.35s var(--ease)}
+  .nav ul.open{opacity:1;pointer-events:auto;transform:none}
+  .nav ul a:not(.btn){font-size:1.1rem;padding:.9rem 1.2rem}
+  .nav ul .btn{justify-content:center;margin-top:.4rem}
+}
+
+/* HERO — lotus pond */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:130px var(--pad) 6rem;overflow:hidden;background:radial-gradient(80% 60% at 50% 100%,var(--sage-2),transparent 70%),linear-gradient(180deg,var(--cream) 0%,var(--sage) 100%)}
+#pond{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.hero > *:not(#pond){position:relative;z-index:1}
+.lotus{width:clamp(140px,20vw,220px);margin-bottom:1.4rem;overflow:visible}
+.lotus .pt{transform-box:fill-box;transform-origin:50% 100%;transition:transform 1.8s var(--ease),fill .8s}
+.lotus .pt{fill:var(--accent);transform:rotate(var(--r,0deg))}
+.lotus .pt.in2{fill:var(--accent);opacity:.75}
+.lotus .ctr{fill:#e9c46a}
+.lotus:not(.open) .pt{transform:rotate(calc(var(--r,0deg) * .12)) scaleY(.6)}
+.lotus .pad{fill:var(--moss);opacity:.85}
+.hero h1{font-size:clamp(3rem,8vw,7.2rem);max-width:13ch}
+.hero .script{font-family:var(--script);font-size:clamp(1.3rem,2.4vw,1.9rem);color:var(--accent-ink);display:block;margin-bottom:.6rem;transition:color .8s}
+.hero p{max-width:46ch;margin:1.4rem auto 2.2rem;font-size:1.08rem;opacity:.82}
+.hero__ctas{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
+.hero__hint{position:absolute !important;bottom:1.6rem;left:50%;transform:translateX(-50%);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--moss);opacity:.75}
+
+/* INTRO split */
+.intro{padding:clamp(5rem,12vh,8rem) var(--pad);max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,6rem);align-items:center}
+.intro__pics{position:relative;aspect-ratio:1/1.05}
+.intro__pics .a,.intro__pics .b{position:absolute;overflow:hidden;background:var(--sage)}
+.intro__pics .a{inset:0 22% 18% 0;border-radius:999px 999px 24px 24px}
+.intro__pics .b{width:48%;aspect-ratio:1;right:0;bottom:0;border-radius:50%;border:10px solid var(--cream)}
+.intro__pics img{width:100%;height:100%;object-fit:cover}
+.intro__chip{position:absolute;left:6%;bottom:6%;background:var(--cream);border-radius:20px;padding:.9rem 1.2rem;box-shadow:0 18px 40px -22px rgba(38,58,44,.6);font-size:.82rem;display:flex;gap:.7rem;align-items:center}
+.intro__chip b{font-family:var(--serif);font-size:1.8rem;font-weight:400;color:var(--accent-ink);line-height:1}
+.intro h2{font-size:clamp(2.2rem,4.6vw,3.8rem);margin:1rem 0 1.4rem}
+.intro p{opacity:.82;margin-bottom:1.1rem;max-width:50ch}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
+.feat{display:flex;gap:.8rem;align-items:flex-start;background:var(--sage);border-radius:18px;padding:1rem 1.1rem;font-size:.9rem}
+.feat svg{flex:0 0 28px;height:28px;color:var(--moss)}
+.feat b{display:block;font-size:.95rem}
+@media (max-width:880px){.intro{grid-template-columns:1fr}.feats{grid-template-columns:1fr}}
+
+/* AROMA PICKER */
+.aroma{background:var(--moss-deep);color:var(--cream);padding:clamp(5rem,12vh,8rem) var(--pad);border-radius:clamp(28px,4vw,56px);margin:0 clamp(.6rem,2vw,1.6rem);position:relative;overflow:hidden}
+.aroma::before{content:"";position:absolute;width:60vw;height:60vw;max-width:760px;max-height:760px;border-radius:50%;background:radial-gradient(circle,var(--accent),transparent 65%);opacity:.28;right:-18vw;top:-20vw;transition:background .8s}
+.aroma__wrap{position:relative;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(2rem,5vw,5rem);align-items:center}
+.aroma .kicker{color:var(--accent)}
+.aroma h2{font-size:clamp(2.2rem,4.6vw,3.8rem);margin:1rem 0 1.2rem}
+.aroma h2 em{color:var(--accent)}
+.aroma p.lead{opacity:.8;max-width:42ch;margin-bottom:2rem}
+.oils{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem}
+.oil{display:flex;align-items:center;gap:.8rem;background:rgba(250,246,238,.06);border:1px solid rgba(250,246,238,.16);border-radius:16px;padding:.9rem 1rem;cursor:pointer;color:inherit;font:inherit;text-align:left;transition:.35s var(--ease);min-height:60px}
+.oil:hover{background:rgba(250,246,238,.12)}
+.oil[aria-pressed="true"]{background:var(--cream);color:var(--moss-deep);border-color:var(--cream)}
+.oil i{width:28px;height:28px;border-radius:50%;flex:0 0 28px;box-shadow:inset 0 -6px 10px rgba(0,0,0,.18)}
+.oil b{display:block;font-size:.95rem}
+.oil small{opacity:.7;font-size:.75rem}
+.bottle{position:relative;background:rgba(250,246,238,.05);border:1px solid rgba(250,246,238,.14);border-radius:32px;padding:2.4rem;display:grid;grid-template-columns:120px 1fr;gap:2rem;align-items:center;min-height:320px}
+.bottle svg{width:120px;overflow:visible}
+.bottle .liq{fill:var(--accent);transition:fill .8s,transform 1s var(--ease)}
+.bottle h3{font-family:var(--serif);font-weight:400;font-size:2.2rem;line-height:1.1}
+.bottle .th{font-family:var(--script);color:var(--accent);font-size:1.3rem;display:block;margin-bottom:.4rem}
+.bottle p{opacity:.8;margin:.8rem 0 1.2rem;font-size:.95rem}
+.bottle ul{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem}
+.bottle li{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(250,246,238,.3);border-radius:999px;padding:.35rem .8rem}
+.bottle .swap{animation:fadeup .7s var(--ease)}
+@keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (max-width:900px){.aroma__wrap{grid-template-columns:1fr}.bottle{grid-template-columns:1fr;text-align:left}.bottle svg{width:90px}}
+@media (max-width:480px){.oils{grid-template-columns:1fr}}
+
+/* TREATMENTS */
+.treat{padding:clamp(5rem,12vh,8rem) var(--pad);max-width:1240px;margin:0 auto}
+.treat__head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1.5rem;margin-bottom:3rem}
+.treat__head h2{font-size:clamp(2.2rem,4.6vw,3.8rem);margin-top:1rem;max-width:16ch}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.tcard{background:#fff;border-radius:28px;padding:1.4rem;display:flex;flex-direction:column;box-shadow:0 1px 0 rgba(63,90,69,.12),0 20px 40px -32px rgba(38,58,44,.5);transition:transform .5s var(--ease)}
+.tcard:hover{transform:translateY(-8px) rotate(-.4deg)}
+.tcard__img{aspect-ratio:4/3;border-radius:20px;overflow:hidden;background:var(--sage);margin-bottom:1.3rem}
+.tcard__img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.tcard:hover .tcard__img img{transform:scale(1.06)}
+.tcard h3{font-family:var(--serif);font-weight:400;font-size:1.6rem;line-height:1.15}
+.tcard p{font-size:.92rem;opacity:.75;margin:.5rem 0 1.2rem}
+.tcard__foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:1rem;border-top:1px dashed rgba(63,90,69,.25)}
+.tcard__foot span{font-size:.8rem;opacity:.7}
+.tcard__foot b{font-family:var(--serif);font-weight:400;font-size:1.6rem;color:var(--accent-ink);transition:color .8s}
+.tcard--feat{background:var(--sage)}
+.tcard--feat .tcard__img{background:var(--sage-2)}
+@media (max-width:980px){.tgrid{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.tgrid{grid-template-columns:1fr}}
+
+/* GALLERY arches */
+.gal{padding:clamp(4rem,10vh,7rem) 0;background:var(--sage)}
+.gal__head{text-align:center;padding:0 var(--pad);margin-bottom:2.6rem}
+.gal__head h2{font-size:clamp(2.2rem,4.6vw,3.8rem);margin-top:1rem}
+.arches{display:flex;gap:1.2rem;overflow-x:auto;padding:1rem var(--pad) 1.6rem;scroll-snap-type:x mandatory;scrollbar-width:none}
+.arches::-webkit-scrollbar{display:none}
+.arch{flex:0 0 clamp(220px,24vw,320px);aspect-ratio:3/4.4;border-radius:999px 999px 28px 28px;overflow:hidden;scroll-snap-align:center;background:var(--sage-2);cursor:zoom-in;transition:transform .5s var(--ease)}
+.arch:nth-child(even){transform:translateY(32px)}
+.arch:hover{transform:translateY(-6px)}
+.arch img{width:100%;height:100%;object-fit:cover}
+.gal__nav{display:flex;justify-content:center;gap:.6rem;margin-top:1.6rem}
+.gal__nav button{width:50px;height:50px;border-radius:50%;border:1.5px solid var(--moss-deep);background:transparent;cursor:pointer;font-size:1.1rem;transition:.3s}
+.gal__nav button:hover{background:var(--moss-deep);color:var(--cream)}
+.lb{position:fixed;inset:0;z-index:300;background:rgba(31,42,34,.92);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s}
+.lb.open{opacity:1;pointer-events:auto}
+.lb img{max-width:90vw;max-height:84vh;border-radius:24px}
+.lb button{position:absolute;top:1.2rem;right:1.2rem;width:50px;height:50px;border-radius:50%;border:0;background:var(--cream);cursor:pointer;font-size:1.1rem}
+
+/* REVIEWS carousel */
+.revs{padding:clamp(5rem,12vh,8rem) var(--pad);text-align:center;max-width:900px;margin:0 auto}
+.revs__stage{position:relative;min-height:220px;margin-top:2rem}
+.rev{position:absolute;inset:0;opacity:0;transform:translateY(14px);transition:.8s var(--ease);pointer-events:none}
+.rev.on{opacity:1;transform:none;pointer-events:auto}
+.rev q{font-family:var(--serif);font-weight:300;font-style:italic;font-size:clamp(1.5rem,3.2vw,2.4rem);line-height:1.3;quotes:"“" "”"}
+.rev p{margin-top:1.4rem;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--moss)}
+.dots{display:flex;justify-content:center;gap:.5rem;margin-top:1.4rem}
+.dots button{width:10px;height:10px;border-radius:50%;border:0;background:var(--sage-2);cursor:pointer;padding:0;transition:.4s}
+.dots button[aria-current="true"]{width:30px;border-radius:6px;background:var(--moss)}
+
+/* LOCATIONS — switcher */
+.locs{padding:0 var(--pad) clamp(5rem,12vh,8rem);max-width:1240px;margin:0 auto}
+.locs__head{text-align:center;margin-bottom:2.4rem}
+.locs__head h2{font-size:clamp(2.2rem,4.6vw,3.8rem);margin-top:1rem}
+.lswitch{display:flex;justify-content:center;gap:.4rem;background:var(--sage);border-radius:999px;padding:.35rem;width:max-content;margin:0 auto 2rem}
+.lswitch button{border:0;background:transparent;font:inherit;font-weight:700;font-size:.88rem;padding:.75rem 1.6rem;border-radius:999px;cursor:pointer;min-height:44px;transition:.35s}
+.lswitch button[aria-selected="true"]{background:var(--moss-deep);color:var(--cream)}
+.lpanel{display:grid;grid-template-columns:1.2fr 1fr;background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 30px 60px -40px rgba(38,58,44,.6)}
+.lpanel[hidden]{display:none}
+.lpanel iframe{width:100%;height:100%;min-height:380px;border:0;filter:saturate(.7) hue-rotate(-10deg)}
+.lpanel__body{padding:clamp(1.6rem,3.5vw,3rem);display:flex;flex-direction:column}
+.lpanel__city{font-size:.72rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--moss)}
+.lpanel h3{font-family:var(--serif);font-weight:400;font-size:2.4rem;margin:.3rem 0 .8rem}
+.lpanel__meta{font-size:.95rem}
+.lpanel__meta a{font-weight:700;text-decoration:none;border-bottom:2px solid var(--accent)}
+.status{display:inline-flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:700;margin:1rem 0;padding:.4rem .9rem;border-radius:999px;background:var(--sage);width:max-content}
+.status i{width:8px;height:8px;border-radius:50%;background:#5c9a63;box-shadow:0 0 0 4px rgba(92,154,99,.25)}
+.status.closed i{background:#c4675f;box-shadow:0 0 0 4px rgba(196,103,95,.25)}
+.hrs{width:100%;border-collapse:collapse;font-size:.92rem;margin-bottom:1.6rem}
+.hrs td{padding:.42rem 0;border-bottom:1px dashed rgba(63,90,69,.2)}
+.hrs td:last-child{text-align:right;font-weight:500}
+.hrs tr.today td{font-weight:700;color:var(--accent-ink)}
+.lpanel .btn{margin-top:auto;align-self:flex-start}
+@media (max-width:860px){.lpanel{grid-template-columns:1fr}.lpanel iframe{min-height:260px}}
+
+/* CONTACT */
+.contact{background:linear-gradient(180deg,var(--cream),var(--sage));padding:clamp(5rem,12vh,8rem) var(--pad)}
+.contact__card{max-width:1000px;margin:0 auto;background:var(--cream);border-radius:36px;padding:clamp(2rem,5vw,4rem);display:grid;grid-template-columns:.9fr 1.1fr;gap:3rem;box-shadow:0 30px 60px -40px rgba(38,58,44,.5)}
+.contact h2{font-size:clamp(2rem,4vw,3.2rem);margin:1rem 0}
+.contact__card > div > p{opacity:.8}
+.cform{display:grid;gap:1rem}
+.cform .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.cform input,.cform textarea{width:100%;font:inherit;border:0;background:var(--sage);border-radius:16px;padding:1rem 1.2rem;min-height:52px;color:var(--ink);transition:box-shadow .3s}
+.cform textarea{min-height:130px;resize:vertical}
+.cform input:focus,.cform textarea:focus{outline:none;box-shadow:0 0 0 2px var(--moss)}
+.cform label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ok{display:none;font-family:var(--serif);font-style:italic;font-size:1.15rem;color:var(--moss)}
+.ok.show{display:block}
+@media (max-width:820px){.contact__card{grid-template-columns:1fr}.cform .row{grid-template-columns:1fr}}
+
+/* FOOTER */
+.footer{background:var(--moss-deep);color:var(--cream);position:relative}
+.footer__wave{display:block;width:100%;height:60px;color:var(--moss-deep);background:var(--sage)}
+.footer__grid{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2.4rem;padding:3rem var(--pad) 2.4rem}
+.footer .brand svg{color:var(--accent)}
+.footer__brand p{font-family:var(--serif);font-style:italic;font-weight:300;font-size:1.15rem;opacity:.85;margin-top:.9rem;max-width:24ch}
+.footer h4{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem}
+.footer ul{list-style:none}
+.footer li{margin-bottom:.5rem}
+.footer a{text-decoration:none;opacity:.85}
+.footer a:hover{opacity:1;color:var(--accent)}
+.socials{display:flex;gap:.6rem;margin-top:1.2rem}
+.socials a{width:44px;height:44px;border-radius:50%;background:rgba(250,246,238,.1);display:flex;align-items:center;justify-content:center;opacity:1}
+.socials a:hover{background:var(--accent)}
+.socials svg{width:17px;height:17px;fill:var(--cream)}
+.legal{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding:1.4rem var(--pad) 2rem;font-size:.78rem;opacity:.75;border-top:1px solid rgba(250,246,238,.15)}
+.obar{position:fixed;left:.8rem;right:.8rem;bottom:calc(.8rem + env(safe-area-inset-bottom));z-index:90;display:none}
+.obar a{display:block;text-align:center;background:var(--moss-deep);color:var(--cream);text-decoration:none;font-weight:700;padding:1rem;border-radius:999px;box-shadow:0 14px 30px -12px rgba(38,58,44,.7)}
+@media (max-width:840px){.obar{display:block}.legal{padding-bottom:6rem}}
+</style>
+</head>
+<body id="top">
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="DemoSpa home">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3c-3 4-3 9 0 14 3-5 3-10 0-14zM12 17c-4-2-8-6-9-11 4 1 7 5 9 11zm0 0c4-2 8-6 9-11-4 1-7 5-9 11zM4 20h16v1.2H4z"/></svg>
+    <b>DemoSpa</b>
+  </a>
+  <ul id="navlinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#aroma">Aromas</a></li>
+    <li><a href="#treatments">Treatments</a></li>
+    <li><a href="#locations">Visit</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book a visit</a></li>
+  </ul>
+  <button class="burger" aria-expanded="false" aria-controls="navlinks" aria-label="Menu"><span></span><span></span><span></span></button>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <canvas id="pond" aria-hidden="true"></canvas>
+  <svg class="lotus" id="lotus" viewBox="0 0 200 140" aria-hidden="true">
+    <ellipse class="pad" cx="100" cy="128" rx="92" ry="10"/>
+    <g>
+      <path class="pt in2" style="--r:-62deg" d="M100 120c-10-22-10-48 0-74 10 26 10 52 0 74z"/>
+      <path class="pt in2" style="--r:62deg" d="M100 120c-10-22-10-48 0-74 10 26 10 52 0 74z"/>
+      <path class="pt" style="--r:-40deg" d="M100 120c-12-24-12-54 0-82 12 28 12 58 0 82z"/>
+      <path class="pt" style="--r:40deg" d="M100 120c-12-24-12-54 0-82 12 28 12 58 0 82z"/>
+      <path class="pt in2" style="--r:-18deg" d="M100 120c-13-26-13-60 0-92 13 32 13 66 0 92z"/>
+      <path class="pt in2" style="--r:18deg" d="M100 120c-13-26-13-60 0-92 13 32 13 66 0 92z"/>
+      <path class="pt" d="M100 120c-14-28-14-66 0-100 14 34 14 72 0 100z"/>
+      <circle class="ctr" cx="100" cy="112" r="6"/>
+    </g>
+  </svg>
+  <span class="script rv">Sawasdee ka, welcome</span>
+  <h1 class="serif rv d1">Float a little <em>lighter</em> today.</h1>
+  <p class="rv d2">Thai aromatherapy and slow, flowing oil massage in a room that smells like a garden after rain. Choose your oil, close your eyes, drift.</p>
+  <div class="hero__ctas rv d3">
+    <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book your ritual</a>
+    <a class="btn btn--ghost" href="#aroma">Pick your aroma</a>
+  </div>
+  <span class="hero__hint">Touch the water ◦</span>
+</section>
+
+<!-- INTRO -->
+<section class="intro" id="about">
+  <div class="intro__pics rv">
+    <div class="a"><img src="https://i.postimg.cc/QMr54YSt/Copy-of-269712218-2059184294235502-6657828226324914816-n.jpg" alt="Traditional Thai massage stretch" loading="lazy"></div>
+    <div class="b"><img src="https://i.postimg.cc/rFPNJ9vT/Copy-of-wellness-589770-1920.jpg" alt="Candles and spa decor" loading="lazy"></div>
+    <div class="intro__chip"><b>4.9</b><span>from 1,200+<br>happy guests</span></div>
+  </div>
+  <div class="rv d1">
+    <span class="kicker">Our story</span>
+    <h2 class="serif">A little pond of calm, <em>right in the city.</em></h2>
+    <p>Our founder grew up beside her grandmother's lotus pond in Ayutthaya, where neighbours came for herbal oils and gentle hands. DemoSpa is our way of bringing that slow afternoon feeling to you.</p>
+    <p>Every therapist is trained in traditional Thai technique and blends oils fresh for each guest — nothing pre-mixed, nothing rushed.</p>
+    <div class="feats">
+      <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21c-4-3-7-6-7-10a7 7 0 0 1 14 0c0 4-3 7-7 10z"/><path d="M12 8v6M9 11h6"/></svg><div><b>Certified therapists</b>Trained in Thai traditional massage</div></div>
+      <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3h6v4l2 3v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V10l2-3z"/><path d="M7 14h10"/></svg><div><b>Fresh-blended oils</b>Mixed just for you</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- AROMA PICKER -->
+<section class="aroma" id="aroma">
+  <div class="aroma__wrap">
+    <div class="rv">
+      <span class="kicker">The aroma bar</span>
+      <h2 class="serif">Which scent is <em>calling</em> you?</h2>
+      <p class="lead">Tap an oil — the whole spa takes on its colour. Tell your therapist your pick when you arrive, it's included with every oil massage.</p>
+      <div class="oils" role="group" aria-label="Choose an oil">
+        <button class="oil" type="button" aria-pressed="true" data-oil="0"><i style="background:#e7a8a1"></i><span><b>Lotus Blossom</b><small>Soft · floral</small></span></button>
+        <button class="oil" type="button" aria-pressed="false" data-oil="1"><i style="background:#c8d36b"></i><span><b>Lemongrass</b><small>Bright · reviving</small></span></button>
+        <button class="oil" type="button" aria-pressed="false" data-oil="2"><i style="background:#e8c66a"></i><span><b>Plai &amp; Ginger</b><small>Warm · soothing</small></span></button>
+        <button class="oil" type="button" aria-pressed="false" data-oil="3"><i style="background:#b9a7dc"></i><span><b>Jasmine Night</b><small>Sweet · calming</small></span></button>
+      </div>
+    </div>
+    <div class="bottle rv d1" aria-live="polite">
+      <svg viewBox="0 0 120 220" aria-hidden="true">
+        <rect x="46" y="4" width="28" height="22" rx="4" fill="#3f5a45"/>
+        <rect x="50" y="26" width="20" height="18" fill="rgba(250,246,238,.35)"/>
+        <path d="M30 60c0-10 10-16 20-16h20c10 0 20 6 20 16v140a14 14 0 0 1-14 14H44a14 14 0 0 1-14-14z" fill="rgba(250,246,238,.12)" stroke="rgba(250,246,238,.5)" stroke-width="1.5"/>
+        <clipPath id="bc"><path d="M30 60c0-10 10-16 20-16h20c10 0 20 6 20 16v140a14 14 0 0 1-14 14H44a14 14 0 0 1-14-14z"/></clipPath>
+        <g clip-path="url(#bc)"><rect class="liq" id="liq" x="20" y="100" width="80" height="140"/></g>
+        <path d="M40 90v90" stroke="rgba(255,255,255,.45)" stroke-width="5" stroke-linecap="round"/>
+        <rect x="40" y="130" width="40" height="40" rx="6" fill="#faf6ee"/>
+        <path d="M60 140c-3 4-3 9 0 14 3-5 3-10 0-14z" fill="#3f5a45"/>
+      </svg>
+      <div id="oilInfo">
+        <span class="th">ดอกบัว</span>
+        <h3>Lotus Blossom</h3>
+        <p>Delicate and powdery — eases a busy mind and softens tired skin. Our most-requested scent.</p>
+        <ul><li>Calms the mind</li><li>Hydrating</li><li>Best with oil massage</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TREATMENTS -->
+<section class="treat" id="treatments">
+  <div class="treat__head rv">
+    <div><span class="kicker">Treatments</span><h2 class="serif">Rituals to <em>sink into</em></h2></div>
+    <a class="btn btn--ghost" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">See full menu</a>
+  </div>
+  <div class="tgrid">
+    <article class="tcard rv"><div class="tcard__img"><img src="https://i.postimg.cc/zDdCzjDK/alan-caishan-c-U53ZFBr3lk-unsplash.jpg" alt="Thai oil massage" loading="lazy"></div><h3>Thai Aromatherapy</h3><p>Slow, flowing oil massage with your chosen aroma blend.</p><div class="tcard__foot"><span>60 / 90 min</span><b>from $95</b></div></article>
+    <article class="tcard tcard--feat rv d1"><div class="tcard__img"><img src="https://i.postimg.cc/Qd71qZQS/271602579-2066015386885726-5248643883991483846-n.jpg" alt="Traditional Thai massage" loading="lazy"></div><h3>Traditional Thai</h3><p>No oils, fully clothed — rhythmic pressure and gentle yoga stretches.</p><div class="tcard__foot"><span>60 / 90 / 120 min</span><b>from $80</b></div></article>
+    <article class="tcard rv d2"><div class="tcard__img"><img src="https://i.postimg.cc/hPf9fdfG/272106455-2066857463468185-3689533452356941384-n.jpg" alt="Foot massage" loading="lazy"></div><h3>Lotus Foot Ritual</h3><p>Warm soak, salt scrub and reflexology on the soles and calves.</p><div class="tcard__foot"><span>45 / 60 min</span><b>from $65</b></div></article>
+    <article class="tcard rv"><div class="tcard__img"><img src="https://i.postimg.cc/L543yQ9p/Stock-Images-(7).jpg" alt="Neck and shoulder massage" loading="lazy"></div><h3>Head, Neck &amp; Shoulder</h3><p>Perfect for desk shoulders — quick, focused, deeply relieving.</p><div class="tcard__foot"><span>30 / 45 min</span><b>from $50</b></div></article>
+    <article class="tcard rv d1"><div class="tcard__img"><img src="https://i.postimg.cc/nzp4zSQ6/Copy-of-271134519-2053893694764562-3923658756880702584-n.jpg" alt="Hot stone massage" loading="lazy"></div><h3>Warm Stone Ritual</h3><p>Smooth heated stones and lotus oil melt deep, stubborn tension.</p><div class="tcard__foot"><span>75 min</span><b>$115</b></div></article>
+    <article class="tcard rv d2"><div class="tcard__img"><img src="https://i.postimg.cc/76kVzYjY/Copy-of-49247077057-37cac67f79-o.jpg" alt="Couples massage side by side" loading="lazy"></div><h3>Lotus for Two</h3><p>Couples aromatherapy side by side, with a foot ritual and herbal tea for two.</p><div class="tcard__foot"><span>90 min</span><b>$230</b></div></article>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gal" id="gallery">
+  <div class="gal__head rv"><span class="kicker">Inside DemoSpa</span><h2 class="serif">Soft light, <em>softer hands</em></h2></div>
+  <div class="arches" id="arches">
+    <figure class="arch"><img src="https://i.postimg.cc/rFPNJ9vT/Copy-of-wellness-589770-1920.jpg" alt="Candles and spa decor" loading="lazy"></figure>
+    <figure class="arch"><img src="https://i.postimg.cc/xdryr1j9/Copy-of-woman-getting-massage-from-another-person.jpg" alt="Herbal compress massage" loading="lazy"></figure>
+    <figure class="arch"><img src="https://i.postimg.cc/nzp4zSQ6/Copy-of-271134519-2053893694764562-3923658756880702584-n.jpg" alt="Hot stone massage" loading="lazy"></figure>
+    <figure class="arch"><img src="https://i.postimg.cc/QMr54YSt/Copy-of-269712218-2059184294235502-6657828226324914816-n.jpg" alt="Traditional Thai massage stretch" loading="lazy"></figure>
+    <figure class="arch"><img src="https://i.postimg.cc/K81JSWnJ/Copy-of-271512661-2058409864312945-7965416524350208888-n.jpg" alt="Sports massage session" loading="lazy"></figure>
+    <figure class="arch"><img src="https://i.postimg.cc/76kVzYjY/Copy-of-49247077057-37cac67f79-o.jpg" alt="Couples massage side by side" loading="lazy"></figure>
+  </div>
+  <div class="gal__nav"><button type="button" data-g="-1" aria-label="Previous photos">←</button><button type="button" data-g="1" aria-label="Next photos">→</button></div>
+</section>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer"><button aria-label="Close">✕</button><img src="" alt=""></div>
+
+<!-- REVIEWS -->
+<section class="revs">
+  <span class="kicker">Kind words</span>
+  <div class="revs__stage" id="revs">
+    <div class="rev on"><q>I chose lemongrass and left feeling like I'd had a week off. The room is so peaceful.</q><p>— Sarah · Google review</p></div>
+    <div class="rev"><q>Best Thai massage I've found outside Thailand. Strong when I asked, gentle when I needed it.</q><p>— Daniel · Google review</p></div>
+    <div class="rev"><q>The foot ritual is my monthly treat. Lovely staff, spotless and calm.</q><p>— Mei · Facebook review</p></div>
+  </div>
+  <div class="dots" id="dots"></div>
+</section>
+
+<!-- LOCATIONS -->
+<section class="locs" id="locations">
+  <div class="locs__head rv"><span class="kicker">Visit</span><h2 class="serif">Find your <em>nearest pond</em></h2></div>
+  <div class="lswitch" role="tablist" aria-label="Choose location">
+    <button role="tab" aria-selected="true" aria-controls="lp1" id="lt1">Brisbane</button>
+    <button role="tab" aria-selected="false" aria-controls="lp2" id="lt2">Melbourne</button>
+  </div>
+  <div class="lpanel" id="lp1" role="tabpanel" aria-labelledby="lt1" data-hours="10-20,10-20,10-20,10-21,10-21,9-21,9-18">
+    <iframe src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed" title="Map — DemoSpa Albion QLD" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div class="lpanel__body">
+      <p class="lpanel__city">Brisbane · QLD</p>
+      <h3>Demo2</h3>
+      <p class="lpanel__meta">346 Sandgate Road, Albion QLD 4010</p>
+      <p class="lpanel__meta"><a href="tel:0732624972">07 3262 4972</a></p>
+      <span class="status"><i></i><span></span></span>
+      <table class="hrs">
+        <tr data-day="1"><td>Monday</td><td>10am – 8pm</td></tr><tr data-day="2"><td>Tuesday</td><td>10am – 8pm</td></tr><tr data-day="3"><td>Wednesday</td><td>10am – 8pm</td></tr><tr data-day="4"><td>Thursday</td><td>10am – 9pm</td></tr><tr data-day="5"><td>Friday</td><td>10am – 9pm</td></tr><tr data-day="6"><td>Saturday</td><td>9am – 9pm</td></tr><tr data-day="0"><td>Sunday</td><td>9am – 6pm</td></tr>
+      </table>
+      <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book in Brisbane</a>
+    </div>
+  </div>
+  <div class="lpanel" id="lp2" role="tabpanel" aria-labelledby="lt2" hidden data-hours="9-21,9-21,9-21,9-21,9-22,9-22,10-19">
+    <iframe src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed" title="Map — DemoSpa Somerton VIC" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div class="lpanel__body">
+      <p class="lpanel__city">Melbourne · VIC</p>
+      <h3>Melbourne</h3>
+      <p class="lpanel__meta">19 North Park Dr, Somerton VIC 3062</p>
+      <p class="lpanel__meta"><a href="tel:0407505997">0407 505 997</a></p>
+      <span class="status"><i></i><span></span></span>
+      <table class="hrs">
+        <tr data-day="1"><td>Monday</td><td>9am – 9pm</td></tr><tr data-day="2"><td>Tuesday</td><td>9am – 9pm</td></tr><tr data-day="3"><td>Wednesday</td><td>9am – 9pm</td></tr><tr data-day="4"><td>Thursday</td><td>9am – 9pm</td></tr><tr data-day="5"><td>Friday</td><td>9am – 10pm</td></tr><tr data-day="6"><td>Saturday</td><td>9am – 10pm</td></tr><tr data-day="0"><td>Sunday</td><td>10am – 7pm</td></tr>
+      </table>
+      <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book in Melbourne</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact__card rv">
+    <div>
+      <span class="kicker">Say hello</span>
+      <h2 class="serif">Questions? <em>Ask away.</em></h2>
+      <p>Gift vouchers, bridal parties, pregnancy massage or simply which oil to choose — send us a note and we'll reply within a day.</p>
+    </div>
+    <form class="cform" id="cform" novalidate>
+      <div class="row">
+        <div><label for="n">Name</label><input id="n" type="text" autocomplete="name" placeholder="Your name" required></div>
+        <div><label for="e">Email</label><input id="e" type="email" autocomplete="email" placeholder="Email address" required></div>
+      </div>
+      <div><label for="p">Phone</label><input id="p" type="tel" autocomplete="tel" placeholder="Phone (optional)"></div>
+      <div><label for="m">Message</label><textarea id="m" placeholder="Your message" required></textarea></div>
+      <div><button class="btn" type="submit">Send message</button></div>
+      <p class="ok" id="ok" role="status">Thank you — a little note is on its way back to you soon.</p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <svg class="footer__wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 30c120 20 240 30 360 18S600 6 720 10s240 30 360 34 240-14 360-24v40H0z"/></svg>
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <a class="brand" href="#top"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3c-3 4-3 9 0 14 3-5 3-10 0-14zM12 17c-4-2-8-6-9-11 4 1 7 5 9 11zm0 0c4-2 8-6 9-11-4 1-7 5-9 11zM4 20h16v1.2H4z"/></svg><b>DemoSpa</b></a>
+      <p>Thai aromatherapy &amp; massage, slow as a lotus opening.</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V21h3.4z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.1 15.6 2 15.2 2 12s0-3.6.1-4.8C2.3 4 3.8 2.4 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 4.7a5.1 5.1 0 100 10.2 5.1 5.1 0 000-10.2zm0 8.4a3.3 3.3 0 110-6.6 3.3 3.3 0 010 6.6zm5.3-9.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></a>
+      </div>
+    </div>
+    <div><h4>Explore</h4><ul><li><a href="#about">About</a></li><li><a href="#aroma">Aroma bar</a></li><li><a href="#treatments">Treatments</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div><h4>Brisbane</h4><ul><li><a href="tel:0732624972">07 3262 4972</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+    <div><h4>Melbourne</h4><ul><li><a href="tel:0407505997">0407 505 997</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+  </div>
+  <div class="legal">
+    <p>© <span id="yr"></span> DemoSpa. All rights reserved.</p>
+    <p>Powered by <a href="https://www.localforyou.com" target="_blank" rel="noopener">Local For You</a> · <a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Terms</a></p>
+  </div>
+</footer>
+<div class="obar"><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book your ritual ✿</a></div>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root = document.documentElement;
+
+  /* nav */
+  var burger = document.querySelector('.burger'), links = document.getElementById('navlinks');
+  burger.addEventListener('click', function(){ var o = links.classList.toggle('open'); burger.setAttribute('aria-expanded', o); });
+  links.addEventListener('click', function(e){ if(e.target.closest('a')){ links.classList.remove('open'); burger.setAttribute('aria-expanded','false'); } });
+
+  /* reveals */
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* lotus blooms on load */
+  setTimeout(function(){ document.getElementById('lotus').classList.add('open'); }, 250);
+
+  /* pond ripples */
+  var cv = document.getElementById('pond'), cx = cv.getContext('2d'), R = [], hero = document.getElementById('hero');
+  function fit(){ cv.width = hero.clientWidth * devicePixelRatio; cv.height = hero.clientHeight * devicePixelRatio; }
+  fit(); addEventListener('resize', fit);
+  function ripple(x,y,big){ R.push({x:x*devicePixelRatio,y:y*devicePixelRatio,r:0,max:(big?240:120)*devicePixelRatio,a:big?.5:.28}); }
+  var last = 0;
+  hero.addEventListener('pointermove', function(e){ var t = performance.now(); if(t-last < 140) return; last = t; var b = hero.getBoundingClientRect(); ripple(e.clientX-b.left, e.clientY-b.top, false); });
+  hero.addEventListener('pointerdown', function(e){ var b = hero.getBoundingClientRect(); ripple(e.clientX-b.left, e.clientY-b.top, true); });
+  setInterval(function(){ if(!document.hidden && R.length < 4) ripple(Math.random()*hero.clientWidth, hero.clientHeight*(.55+Math.random()*.4), false); }, 1800);
+  function draw(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    for(var i=R.length-1;i>=0;i--){
+      var r = R[i]; r.r += 1.4*devicePixelRatio; var k = 1 - r.r/r.max;
+      if(k <= 0){ R.splice(i,1); continue; }
+      for(var j=0;j<3;j++){
+        var rr = r.r - j*14*devicePixelRatio; if(rr <= 0) continue;
+        cx.beginPath(); cx.ellipse(r.x, r.y, rr, rr*.42, 0, 0, 6.283);
+        cx.strokeStyle = 'rgba(63,90,69,'+(r.a*k*(1-j*.3))+')'; cx.lineWidth = 1.2*devicePixelRatio; cx.stroke();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  if(!reduce) draw();
+
+  /* aroma picker */
+  var OILS = [
+    {c:'#e7a8a1', ink:'#8a3f3a', bg:'#faf6ee', th:'ดอกบัว', n:'Lotus Blossom', d:'Delicate and powdery — eases a busy mind and softens tired skin. Our most-requested scent.', t:['Calms the mind','Hydrating','Best with oil massage'], lv:100},
+    {c:'#c8d36b', ink:'#56621c', bg:'#f7f8ec', th:'ตะไคร้', n:'Lemongrass', d:'Zesty and green — wakes up heavy legs and clears the head. Lovely after a long flight.', t:['Energising','Eases fatigue','Great for feet'], lv:80},
+    {c:'#e8c66a', ink:'#7d5a12', bg:'#fbf6e8', th:'ไพล', n:'Plai & Ginger', d:'Thailand\'s favourite muscle herb. Gently warming for sore backs, knees and shoulders.', t:['Warming','Muscle relief','Deep tissue'], lv:120},
+    {c:'#b9a7dc', ink:'#523f7d', bg:'#f7f4fb', th:'มะลิ', n:'Jasmine Night', d:'Sweet and soft as a Thai garden at dusk. Ideal for evening bookings and better sleep.', t:['Deeply calming','Better sleep','Evening favourite'], lv:90}
+  ];
+  var info = document.getElementById('oilInfo'), liq = document.getElementById('liq');
+  document.querySelectorAll('.oil').forEach(function(b){
+    b.addEventListener('click', function(){
+      var o = OILS[+b.dataset.oil];
+      document.querySelectorAll('.oil').forEach(function(x){ x.setAttribute('aria-pressed', x===b); });
+      root.style.setProperty('--accent', o.c); root.style.setProperty('--accent-ink', o.ink);
+      document.body.style.background = o.bg;
+      liq.setAttribute('y', o.lv);
+      info.innerHTML = '<span class="th">'+o.th+'</span><h3>'+o.n+'</h3><p>'+o.d+'</p><ul>'+o.t.map(function(t){return '<li>'+t+'</li>';}).join('')+'</ul>';
+      info.classList.remove('swap'); void info.offsetWidth; info.classList.add('swap');
+    });
+  });
+
+  /* gallery scroll + lightbox */
+  var arches = document.getElementById('arches');
+  document.querySelectorAll('[data-g]').forEach(function(b){ b.addEventListener('click', function(){ arches.scrollBy({left: +b.dataset.g * arches.clientWidth * .6, behavior:'smooth'}); }); });
+  var lb = document.getElementById('lb'), lbi = lb.querySelector('img');
+  arches.querySelectorAll('img').forEach(function(im){ im.parentNode.tabIndex = 0; im.parentNode.addEventListener('click', function(){ lbi.src = im.src.replace(/w=\d+/,'w=1600'); lbi.alt = im.alt; lb.classList.add('open'); }); });
+  lb.addEventListener('click', function(e){ if(e.target !== lbi) lb.classList.remove('open'); });
+  addEventListener('keydown', function(e){ if(e.key==='Escape') lb.classList.remove('open'); });
+
+  /* reviews carousel */
+  var revs = [].slice.call(document.querySelectorAll('.rev')), dots = document.getElementById('dots'), ri = 0, rt;
+  revs.forEach(function(_,i){ var d = document.createElement('button'); d.type='button'; d.setAttribute('aria-label','Review '+(i+1)); d.onclick = function(){ go(i); }; dots.appendChild(d); });
+  function go(i){ ri = i; revs.forEach(function(r,j){ r.classList.toggle('on', j===i); dots.children[j].setAttribute('aria-current', j===i); }); clearTimeout(rt); rt = setTimeout(function(){ go((ri+1)%revs.length); }, 5500); }
+  go(0);
+
+  /* location switch + open now */
+  var tabs = document.querySelectorAll('.lswitch [role="tab"]');
+  tabs.forEach(function(t){ t.addEventListener('click', function(){ tabs.forEach(function(x){ x.setAttribute('aria-selected', x===t); document.getElementById(x.getAttribute('aria-controls')).hidden = x!==t; }); }); });
+  var now = new Date(), day = now.getDay(), hr = now.getHours() + now.getMinutes()/60;
+  document.querySelectorAll('.lpanel').forEach(function(p){
+    var h = p.dataset.hours.split(',')[(day+6)%7].split('-'), open = hr >= +h[0] && hr < +h[1];
+    var st = p.querySelector('.status'); st.classList.toggle('closed', !open);
+    st.querySelector('span').textContent = open ? 'Open now · until ' + ((+h[1])>12 ? (+h[1]-12)+'pm' : h[1]+'am') : 'Closed now · opens ' + (+h[0]) + 'am';
+    p.querySelectorAll('tr[data-day="'+day+'"]').forEach(function(tr){ tr.classList.add('today'); });
+  });
+
+  /* form */
+  var f = document.getElementById('cform');
+  f.addEventListener('submit', function(e){ e.preventDefault(); if(!f.checkValidity()){ f.reportValidity(); return; } document.getElementById('ok').classList.add('show'); f.reset(); });
+  document.getElementById('yr').textContent = now.getFullYear();
+})();
+</script>
+</body>
+</html>

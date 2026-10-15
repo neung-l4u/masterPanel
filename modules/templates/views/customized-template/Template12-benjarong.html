@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoSpa — Benjarong Thai Spa · Brisbane &amp; Melbourne</title>
+<meta name="description" content="Five colours, five senses. A refined Thai massage spa inspired by Benjarong porcelain — Brisbane & Melbourne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Forum&family=Bai+Jamjuree:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f5e5c6;      /* Pantone P 7-9 U */
+  --cream-l:#faf3e3;
+  --blue:#b6cada;       /* Pantone P 109-10 U */
+  --blue-d:#7f9bb5;
+  --ink-blue:#3f5470;
+  --plum:#4e414c;       /* Pantone P 101-16 U */
+  --plum-d:#362c35;
+  --gold:#c29a4e;
+  --gold-l:#e3c788;
+  --terra:#b5785e;
+  --ink:#2d2530;
+  --display:'Forum',Georgia,serif;
+  --sans:'Bai Jamjuree',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --pad:clamp(1.1rem,4vw,4rem);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-weight:300;background:var(--cream-l);color:var(--ink);line-height:1.75;font-size:clamp(.96rem,.92rem + .2vw,1.05rem);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--blue);color:var(--plum-d)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.disp{font-family:var(--display);font-weight:400;line-height:1.08;letter-spacing:.01em}
+.disp em{font-style:normal;color:var(--gold)}
+.tag{font-size:.74rem;font-weight:500;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-blue);display:inline-flex;align-items:center;gap:.7rem}
+.tag i{width:10px;height:10px;border:1px solid var(--gold);transform:rotate(45deg);display:inline-block}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;font-family:var(--sans);font-weight:500;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;padding:1rem 2rem;min-height:50px;border-radius:999px;background:var(--plum);color:var(--cream-l);border:1px solid var(--plum);cursor:pointer;transition:background .4s,color .4s,box-shadow .4s}
+.btn:hover{background:var(--plum-d);box-shadow:0 0 0 4px var(--cream-l),0 0 0 5px var(--gold)}
+.btn--gold{background:var(--gold);border-color:var(--gold);color:var(--plum-d)}
+.btn--gold:hover{background:var(--gold-l)}
+.btn--o{background:transparent;color:var(--plum)}
+.btn--o:hover{background:var(--plum);color:var(--cream-l)}
+.rv{opacity:0;transform:translateY(22px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+/* lotus-petal band (kleeb bua) */
+.petals{height:28px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='28' viewBox='0 0 36 28'%3E%3Cpath d='M18 2c7 6 10 13 10 26H8C8 15 11 8 18 2z' fill='%23c29a4e' opacity='.9'/%3E%3Cpath d='M18 9c3 4 5 9 5 19H13c0-10 2-15 5-19z' fill='%234e414c'/%3E%3Cpath d='M0 28c0-8 2-13 6-17M36 28c0-8-2-13-6-17' fill='none' stroke='%23c29a4e'/%3E%3C/svg%3E") repeat-x bottom/36px 28px}
+.petals--down{transform:scaleY(-1)}
+
+/* HEADER */
+.head{background:var(--cream-l);text-align:center;padding:1.2rem var(--pad) 0;position:relative;z-index:5}
+.logo{display:inline-flex;flex-direction:column;align-items:center;text-decoration:none}
+.logo svg{width:46px;height:46px}
+.logo b{font-family:var(--display);font-weight:400;font-size:2rem;letter-spacing:.18em;line-height:1.1;margin-top:.3rem}
+.logo small{font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gold)}
+.nav{position:sticky;top:0;z-index:100;background:var(--cream-l);border-top:1px solid rgba(194,154,78,.5);border-bottom:1px solid rgba(194,154,78,.5);margin-top:1rem;transition:box-shadow .4s}
+.nav.on{box-shadow:0 10px 26px -20px rgba(54,44,53,.6)}
+.nav__in{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:2.4rem;padding:.2rem var(--pad);position:relative}
+.nav__in a:not(.btn){text-decoration:none;font-size:.78rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;padding:1rem 0;position:relative}
+.nav__in a:not(.btn)::after{content:"";position:absolute;left:50%;bottom:.55rem;width:6px;height:6px;background:var(--gold);transform:translateX(-50%) rotate(45deg) scale(0);transition:transform .35s var(--ease)}
+.nav__in a:not(.btn):hover::after{transform:translateX(-50%) rotate(45deg) scale(1)}
+.nav .btn{padding:.6rem 1.3rem;min-height:42px;font-size:.7rem}
+.nav .mini{display:none;font-family:var(--display);font-size:1.4rem;letter-spacing:.16em;text-decoration:none}
+.burger{display:none;background:none;border:1px solid var(--plum);border-radius:999px;font:inherit;font-size:.72rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:.55rem 1.1rem;cursor:pointer;min-height:44px}
+@media (max-width:900px){
+  .head{padding-bottom:.4rem}
+  .nav__in{justify-content:space-between;gap:1rem;padding:.6rem var(--pad)}
+  .nav__in > a:not(.mini),.nav__in > .btn{display:none}
+  .nav .mini{display:block}
+  .burger{display:block}
+  .nav__in.open{flex-wrap:wrap;row-gap:0}
+  .nav .mini{order:0;flex:1}
+  .burger{order:1}
+  .nav__in > a:not(.mini){order:2}
+  .nav__in > .btn{order:3}
+  .nav__in.open > a:not(.mini){display:block;width:100%;text-align:center;padding:.8rem 0;border-top:1px solid rgba(194,154,78,.3)}
+  .nav__in.open > .btn{display:inline-flex;margin:0 auto .8rem}
+}
+
+/* HERO */
+.hero{position:relative;padding:clamp(3rem,8vh,5rem) var(--pad) clamp(4rem,9vh,6rem);overflow:hidden}
+.hero__in{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,5rem);align-items:center}
+.hero h1{font-size:clamp(3rem,7vw,6.2rem);margin:1.2rem 0 1rem;color:var(--plum-d)}
+.hero .th{font-size:1.15rem;color:var(--gold);letter-spacing:.06em}
+.hero p{max-width:44ch;margin:1.2rem 0 2.2rem}
+.hero__ctas{display:flex;gap:.9rem;flex-wrap:wrap}
+.swatches{display:flex;gap:.5rem;margin-top:2.4rem;align-items:center}
+.swatches i{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.swatches span{font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;margin-left:.6rem;color:var(--ink-blue)}
+.plate{position:relative;width:min(100%,540px);aspect-ratio:1;justify-self:center}
+.plate svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 30px 40px rgba(54,44,53,.25))}
+.plate .spin{transform-origin:250px 250px;animation:spin 140s linear infinite}
+.plate .spin2{transform-origin:250px 250px;animation:spin 200s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.plate .paint{transition:stroke-dashoffset 2.4s var(--ease),fill-opacity 1.2s ease 1.6s}
+@media (prefers-reduced-motion:reduce){.plate .spin,.plate .spin2{animation:none}}
+@media (max-width:900px){.hero__in{grid-template-columns:1fr}.plate{width:min(90%,420px);order:-1}}
+
+/* FIVE SENSES */
+.five{background:var(--plum);color:var(--cream);padding:clamp(5rem,12vh,8rem) var(--pad) clamp(5rem,12vh,7rem);position:relative}
+.five .tag{color:var(--blue)}
+.five__head{text-align:center;max-width:720px;margin:0 auto 3.4rem}
+.five__head h2{font-size:clamp(2.2rem,4.8vw,3.8rem);margin:.9rem 0 .8rem}
+.five__head p{opacity:.8}
+.senses{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:1.4rem}
+.sense{text-align:center}
+.medal{position:relative;width:min(100%,170px);aspect-ratio:1;margin:0 auto 1.2rem}
+.medal svg{width:100%;height:100%;transition:transform 1.2s var(--ease)}
+.sense:hover .medal svg{transform:rotate(45deg)}
+.medal b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:400;font-size:1.9rem;color:var(--plum-d)}
+.sense h3{font-family:var(--display);font-weight:400;font-size:1.5rem;color:var(--cream-l)}
+.sense .th{display:block;font-size:.88rem;color:var(--gold-l)}
+.sense p{font-size:.9rem;opacity:.78;margin-top:.4rem}
+@media (max-width:980px){.senses{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:560px){.senses{grid-template-columns:1fr 1fr}.sense:last-child{grid-column:1/-1}}
+
+/* CATALOGUE */
+.cat{padding:clamp(5rem,12vh,8rem) var(--pad)}
+.cat__head{text-align:center;margin-bottom:3.6rem}
+.cat__head h2{font-size:clamp(2.2rem,4.8vw,3.8rem);color:var(--plum-d);margin-top:.9rem}
+.cat__head p{max-width:52ch;margin:.8rem auto 0}
+.items{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3.4rem 4rem}
+.item{display:grid;grid-template-columns:150px 1fr;gap:1.6rem;align-items:center}
+.dish{position:relative;width:150px;aspect-ratio:1}
+.dish__img{position:absolute;inset:16px;border-radius:50%;overflow:hidden;background:var(--blue)}
+.dish__img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.dish svg{position:absolute;inset:0;width:100%;height:100%;transition:transform 1.6s var(--ease)}
+.item:hover .dish svg{transform:rotate(90deg)}
+.item:hover .dish__img img{transform:scale(1.08)}
+.item .th{font-size:.88rem;color:var(--gold)}
+.item h3{font-family:var(--display);font-weight:400;font-size:1.7rem;color:var(--plum-d);line-height:1.15}
+.item p{font-size:.92rem;margin:.3rem 0 .6rem}
+.item .pr{display:flex;flex-wrap:wrap;gap:.4rem}
+.item .pr span{font-size:.8rem;font-weight:500;border:1px solid rgba(194,154,78,.6);border-radius:999px;padding:.15rem .7rem}
+.item .pr b{font-weight:600;color:var(--ink-blue)}
+.cat__cta{text-align:center;margin-top:3.6rem}
+@media (max-width:900px){.items{grid-template-columns:1fr;gap:2.4rem}}
+@media (max-width:460px){.item{grid-template-columns:110px 1fr;gap:1rem}.dish{width:110px}.dish__img{inset:12px}}
+
+/* TILES GALLERY */
+.tiles{background:var(--blue);padding:clamp(5rem,12vh,8rem) var(--pad)}
+.tiles__head{display:flex;justify-content:space-between;align-items:flex-end;gap:1.6rem;flex-wrap:wrap;max-width:1200px;margin:0 auto 2.6rem}
+.tiles__head h2{font-size:clamp(2.2rem,4.8vw,3.8rem);color:var(--plum-d);margin-top:.9rem}
+.tiles__head p{max-width:38ch}
+.tgrid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.tile{position:relative;aspect-ratio:1;overflow:hidden;background:var(--cream);padding:10px}
+.tile::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(circle at 0 0,var(--gold) 0 14px,transparent 15px),radial-gradient(circle at 100% 0,var(--gold) 0 14px,transparent 15px),
+  radial-gradient(circle at 0 100%,var(--gold) 0 14px,transparent 15px),radial-gradient(circle at 100% 100%,var(--gold) 0 14px,transparent 15px);z-index:2;pointer-events:none}
+.tile::after{content:"";position:absolute;inset:10px;border:1px solid rgba(255,255,255,.7);z-index:2;pointer-events:none}
+.tile img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease)}
+.tile:hover img{transform:scale(1.07)}
+.tile--wide{grid-column:span 2;aspect-ratio:auto}
+.tile--pat{background:var(--plum) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23e3c788' stroke-width='1'%3E%3Cpath d='M30 8c5 8 5 14 0 22-5-8-5-14 0-22zM30 52c5-8 5-14 0-22-5 8-5 14 0 22zM8 30c8-5 14-5 22 0-8 5-14 5-22 0zM52 30c-8-5-14-5-22 0 8 5 14 5 22 0z'/%3E%3Ccircle cx='30' cy='30' r='3'/%3E%3Cpath d='M0 0l10 10M60 0L50 10M0 60l10-10M60 60L50 50'/%3E%3C/g%3E%3C/svg%3E") center/60px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--cream)}
+.tile--pat p{font-family:var(--display);font-size:1.5rem;line-height:1.25;background:var(--plum);padding:.8rem 1rem;position:relative;z-index:3}
+@media (max-width:860px){.tgrid{grid-template-columns:1fr 1fr}}
+
+/* REVIEWS */
+.revs{padding:clamp(5rem,12vh,8rem) var(--pad);text-align:center}
+.revs h2{font-size:clamp(2rem,4vw,3.2rem);color:var(--plum-d);margin:.9rem 0 3rem}
+.rgrid{max-width:1150px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.rcard{background:#fff;border-radius:200px 200px 16px 16px;padding:3.4rem 1.8rem 2rem;box-shadow:0 26px 50px -40px rgba(54,44,53,.6);border:1px solid rgba(194,154,78,.35)}
+.rcard .st{color:var(--gold);letter-spacing:.3em}
+.rcard p{font-family:var(--display);font-size:1.3rem;line-height:1.4;margin:.8rem 0 1rem;color:var(--plum-d)}
+.rcard b{font-size:.78rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-blue)}
+@media (max-width:860px){.rgrid{grid-template-columns:1fr}}
+
+/* LOCATIONS */
+.locs{background:var(--cream);padding:clamp(5rem,12vh,8rem) var(--pad)}
+.locs__head{text-align:center;margin-bottom:3rem}
+.locs__head h2{font-size:clamp(2.2rem,4.8vw,3.8rem);color:var(--plum-d);margin-top:.9rem}
+.lgrid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.loc{background:var(--cream-l);display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(194,154,78,.5)}
+.loc__map{position:relative;min-height:320px}
+.loc__map iframe{position:absolute;inset:0;width:100%;height:100%;border:0;filter:saturate(.6) hue-rotate(-10deg)}
+.loc__b{padding:1.8rem 1.6rem}
+.loc .tag{font-size:.66rem}
+.loc h3{font-family:var(--display);font-weight:400;font-size:2rem;color:var(--plum-d);margin:.3rem 0 .4rem}
+.loc p{font-size:.92rem}
+.loc p a{font-weight:600;text-decoration:none;color:var(--ink-blue)}
+.loc table{width:100%;border-collapse:collapse;font-size:.86rem;margin:1rem 0 1.4rem}
+.loc td{padding:.24rem 0;border-bottom:1px dotted rgba(78,65,76,.25)}
+.loc td:last-child{text-align:right}
+.loc tr.today td{color:var(--terra);font-weight:600}
+.loc .btn{padding:.8rem 1.4rem;min-height:46px;font-size:.72rem}
+@media (max-width:1100px){.lgrid{grid-template-columns:1fr}}
+@media (max-width:560px){.loc{grid-template-columns:1fr}.loc__map{min-height:220px}}
+
+/* CONTACT */
+.contact{padding:clamp(5rem,12vh,8rem) var(--pad)}
+.contact__card{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:.9fr 1.1fr;gap:3rem;align-items:start}
+.contact h2{font-size:clamp(2.1rem,4.4vw,3.4rem);color:var(--plum-d);margin:.9rem 0}
+.cform{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.cform .full{grid-column:1/-1}
+.cform label{display:block;font-size:.72rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-blue);margin-bottom:.35rem}
+.cform input,.cform textarea{width:100%;font:inherit;color:var(--ink);background:#fff;border:1px solid rgba(78,65,76,.25);border-radius:14px;padding:.85rem 1rem;min-height:50px;transition:border-color .3s,box-shadow .3s}
+.cform textarea{min-height:130px;resize:vertical}
+.cform input:focus,.cform textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(194,154,78,.2)}
+.ok{display:none;color:var(--ink-blue);font-weight:500}
+.ok.show{display:block}
+@media (max-width:860px){.contact__card{grid-template-columns:1fr}.cform{grid-template-columns:1fr}}
+
+/* FOOTER */
+.footer{background:var(--plum-d);color:var(--cream)}
+.footer__in{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2.4rem;padding:3.4rem var(--pad) 2.4rem}
+.footer .logo{align-items:flex-start}
+.footer .logo b{color:var(--cream-l)}
+.footer__brand p{opacity:.8;margin-top:.8rem;max-width:26ch}
+.footer h4{font-size:.72rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-l);margin-bottom:.9rem}
+.footer ul{list-style:none}
+.footer li{margin-bottom:.45rem;opacity:.85}
+.footer a{text-decoration:none}
+.footer a:hover{color:var(--gold-l)}
+.socials{display:flex;gap:.6rem;margin-top:1.2rem}
+.socials a{width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;transition:.3s}
+.socials a:hover{background:var(--gold)}
+.socials svg{width:17px;height:17px;fill:var(--cream)}
+.legal{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding:1.3rem var(--pad) 1.8rem;font-size:.8rem;opacity:.75;border-top:1px solid rgba(194,154,78,.25)}
+.obar{display:none;position:fixed;left:.8rem;right:.8rem;bottom:calc(.8rem + env(safe-area-inset-bottom));z-index:90}
+.obar a{display:flex;width:100%;box-shadow:0 14px 30px -12px rgba(54,44,53,.7)}
+@media (max-width:840px){.obar{display:block}.legal{padding-bottom:6rem}}
+</style>
+</head>
+<body id="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="medal" viewBox="0 0 46 46"><circle cx="23" cy="23" r="21" fill="none" stroke="#c29a4e" stroke-width="1.2"/><circle cx="23" cy="23" r="16" fill="#4e414c"/><path d="M23 9c3 5 3 9 0 14-3-5-3-9 0-14zM23 37c3-5 3-9 0-14-3 5-3 9 0 14zM9 23c5-3 9-3 14 0-5 3-9 3-14 0zM37 23c-5-3-9-3-14 0 5 3 9 3 14 0z" fill="#e3c788"/><circle cx="23" cy="23" r="2.4" fill="#b6cada"/></symbol>
+  <symbol id="ring" viewBox="0 0 150 150"><circle cx="75" cy="75" r="73" fill="none" stroke="#c29a4e" stroke-width="1.2"/><circle cx="75" cy="75" r="65" fill="none" stroke="#c29a4e" stroke-width=".8" stroke-dasharray="2 4"/><g fill="#4e414c"><circle cx="75" cy="5" r="3"/><circle cx="145" cy="75" r="3"/><circle cx="75" cy="145" r="3"/><circle cx="5" cy="75" r="3"/></g><g fill="#b6cada"><circle cx="124.5" cy="25.5" r="2.4"/><circle cx="124.5" cy="124.5" r="2.4"/><circle cx="25.5" cy="124.5" r="2.4"/><circle cx="25.5" cy="25.5" r="2.4"/></g></symbol>
+</svg>
+
+<header class="head">
+  <a class="logo" href="#top" aria-label="DemoSpa home"><svg aria-hidden="true"><use href="#medal"/></svg><b>DEMOSPA</b><small>Benjarong Thai Spa</small></a>
+</header>
+<nav class="nav" id="nav" aria-label="Main">
+  <div class="nav__in" id="navin">
+    <a class="mini" href="#top">DEMOSPA</a>
+    <a href="#senses">Five Senses</a>
+    <a href="#treatments">Treatments</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#locations">Locations</a>
+    <a href="#contact">Contact</a>
+    <a class="btn btn--gold" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book</a>
+    <button class="burger" aria-expanded="false" aria-controls="navin">Menu</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__in">
+    <div>
+      <span class="tag rv"><i></i>Thai Massage &amp; Spa</span>
+      <h1 class="disp rv d1">Five colours.<br><em>Five senses.</em></h1>
+      <span class="th rv d1">เบญจรงค์ · ความงามห้าสี</span>
+      <p class="rv d2">Benjarong — "five colours" — is the porcelain once made only for Siam's royal court, painted layer by layer in enamel and gold. We treat every visit the same way: patiently, in layers, with every sense cared for.</p>
+      <div class="hero__ctas rv d3">
+        <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book a Treatment</a>
+        <a class="btn btn--o" href="#treatments">The Collection</a>
+      </div>
+      <div class="swatches rv d3" aria-hidden="true"><i style="background:#c29a4e"></i><i style="background:#4e414c"></i><i style="background:#b6cada"></i><i style="background:#3f5470"></i><i style="background:#b5785e"></i><span>Our five colours</span></div>
+    </div>
+    <div class="plate rv d1" aria-hidden="true">
+      <svg viewBox="0 0 500 500" id="plateSvg">
+        <defs><clipPath id="pc"><circle cx="250" cy="250" r="128"/></clipPath></defs>
+        <circle cx="250" cy="250" r="246" fill="#faf3e3"/>
+        <g class="spin" id="ringOuter"></g>
+        <g class="spin2" id="ringMid"></g>
+        <circle cx="250" cy="250" r="146" fill="none" stroke="#c29a4e" stroke-width="2"/>
+        <circle cx="250" cy="250" r="138" fill="#4e414c"/>
+        <image href="https://i.postimg.cc/Qd71qZQS/271602579-2066015386885726-5248643883991483846-n.jpg" x="122" y="122" width="256" height="256" preserveAspectRatio="xMidYMid slice" clip-path="url(#pc)"/>
+        <circle cx="250" cy="250" r="128" fill="none" stroke="#e3c788" stroke-width="1.5"/>
+        <circle cx="250" cy="250" r="246" fill="none" stroke="#c29a4e" stroke-width="3"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="petals" aria-hidden="true"></div>
+
+<!-- FIVE SENSES -->
+<section class="five" id="senses">
+  <div class="five__head rv"><span class="tag"><i></i>Benja · the five</span><h2 class="disp">A colour for <em>every sense</em></h2><p>Each visit is painted in five layers, like the porcelain we're named after.</p></div>
+  <div class="senses">
+    <div class="sense rv"><div class="medal"><svg viewBox="0 0 170 170"><circle cx="85" cy="85" r="82" fill="#c29a4e"/><circle cx="85" cy="85" r="70" fill="none" stroke="#faf3e3" stroke-dasharray="3 5"/><circle cx="85" cy="85" r="58" fill="#faf3e3"/></svg><b>๑</b></div><span class="th">สัมผัส</span><h3>Touch</h3><p>Skilled Thai hands, pressure tuned to you.</p></div>
+    <div class="sense rv d1"><div class="medal"><svg viewBox="0 0 170 170"><circle cx="85" cy="85" r="82" fill="#b6cada"/><circle cx="85" cy="85" r="70" fill="none" stroke="#faf3e3" stroke-dasharray="3 5"/><circle cx="85" cy="85" r="58" fill="#faf3e3"/></svg><b>๒</b></div><span class="th">กลิ่น</span><h3>Scent</h3><p>Jasmine, lemongrass and plai oils blended fresh.</p></div>
+    <div class="sense rv d2"><div class="medal"><svg viewBox="0 0 170 170"><circle cx="85" cy="85" r="82" fill="#b5785e"/><circle cx="85" cy="85" r="70" fill="none" stroke="#faf3e3" stroke-dasharray="3 5"/><circle cx="85" cy="85" r="58" fill="#faf3e3"/></svg><b>๓</b></div><span class="th">รส</span><h3>Taste</h3><p>Butterfly-pea and ginger tea in porcelain cups.</p></div>
+    <div class="sense rv d3"><div class="medal"><svg viewBox="0 0 170 170"><circle cx="85" cy="85" r="82" fill="#3f5470"/><circle cx="85" cy="85" r="70" fill="none" stroke="#faf3e3" stroke-dasharray="3 5"/><circle cx="85" cy="85" r="58" fill="#faf3e3"/></svg><b>๔</b></div><span class="th">เสียง</span><h3>Sound</h3><p>Soft ranat and khim — Thai classical music.</p></div>
+    <div class="sense rv d3"><div class="medal"><svg viewBox="0 0 170 170"><circle cx="85" cy="85" r="82" fill="#f5e5c6"/><circle cx="85" cy="85" r="70" fill="none" stroke="#4e414c" stroke-dasharray="3 5"/><circle cx="85" cy="85" r="58" fill="#faf3e3"/></svg><b>๕</b></div><span class="th">รูป</span><h3>Sight</h3><p>Candlelit rooms dressed in silk and porcelain.</p></div>
+  </div>
+</section>
+
+<div class="petals petals--down" aria-hidden="true"></div>
+
+<!-- CATALOGUE -->
+<section class="cat" id="treatments">
+  <div class="cat__head rv"><span class="tag"><i></i>The Collection</span><h2 class="disp">Treatments, <em>hand-painted</em></h2><p>Every treatment begins with a warm foot cleanse and ends with tea. Prices include GST.</p></div>
+  <div class="items">
+    <article class="item rv"><div class="dish"><div class="dish__img"><img src="https://i.postimg.cc/Qd71qZQS/271602579-2066015386885726-5248643883991483846-n.jpg" alt="Traditional Thai massage" loading="lazy"></div><svg aria-hidden="true"><use href="#ring"/></svg></div><div><span class="th">นวดแผนไทย</span><h3>Traditional Thai</h3><p>Rhythmic acupressure and gentle yoga stretches, fully clothed.</p><div class="pr"><span>60 min <b>$85</b></span><span>90 min <b>$120</b></span></div></div></article>
+    <article class="item rv d1"><div class="dish"><div class="dish__img"><img src="https://i.postimg.cc/zDdCzjDK/alan-caishan-c-U53ZFBr3lk-unsplash.jpg" alt="Thai oil massage" loading="lazy"></div><svg aria-hidden="true"><use href="#ring"/></svg></div><div><span class="th">นวดน้ำมัน</span><h3>Thai Aromatic Oil</h3><p>Long, warm strokes with your choice of jasmine or lemongrass oil.</p><div class="pr"><span>60 min <b>$95</b></span><span>90 min <b>$130</b></span></div></div></article>
+    <article class="item rv"><div class="dish"><div class="dish__img"><img src="https://i.postimg.cc/xdryr1j9/Copy-of-woman-getting-massage-from-another-person.jpg" alt="Herbal compress massage" loading="lazy"></div><svg aria-hidden="true"><use href="#ring"/></svg></div><div><span class="th">ประคบสมุนไพร</span><h3>Herbal Compress</h3><p>Steamed Thai herb bundles pressed along tired muscles.</p><div class="pr"><span>75 min <b>$125</b></span></div></div></article>
+    <article class="item rv d1"><div class="dish"><div class="dish__img"><img src="https://i.postimg.cc/nzp4zSQ6/Copy-of-271134519-2053893694764562-3923658756880702584-n.jpg" alt="Hot stone massage" loading="lazy"></div><svg aria-hidden="true"><use href="#ring"/></svg></div><div><span class="th">นวดหินร้อน</span><h3>Hot Stone</h3><p>Warm basalt stones and oil for deep, slow release.</p><div class="pr"><span>60 min <b>$105</b></span><span>90 min <b>$140</b></span></div></div></article>
+    <article class="item rv"><div class="dish"><div class="dish__img"><img src="https://i.postimg.cc/hPf9fdfG/272106455-2066857463468185-3689533452356941384-n.jpg" alt="Foot massage" loading="lazy"></div><svg aria-hidden="true"><use href="#ring"/></svg></div><div><span class="th">นวดเท้า</span><h3>Foot Reflexology</h3><p>Pressure-point work on the soles, calves and lower legs.</p><div class="pr"><span>45 min <b>$65</b></span><span>60 min <b>$80</b></span></div></div></article>
+    <article class="item rv d1"><div class="dish"><div class="dish__img"><img src="https://i.postimg.cc/L543yQ9p/Stock-Images-(7).jpg" alt="Neck and shoulder massage" loading="lazy"></div><svg aria-hidden="true"><use href="#ring"/></svg></div><div><span class="th">นวดคอ บ่า ไหล่</span><h3>Neck &amp; Shoulder</h3><p>Targeted relief for desk shoulders and tension headaches.</p><div class="pr"><span>30 min <b>$50</b></span><span>45 min <b>$65</b></span></div></div></article>
+    <article class="item rv"><div class="dish"><div class="dish__img"><img src="https://i.postimg.cc/K81JSWnJ/Copy-of-271512661-2058409864312945-7965416524350208888-n.jpg" alt="Sports massage session" loading="lazy"></div><svg aria-hidden="true"><use href="#ring"/></svg></div><div><span class="th">นวดนักกีฬา</span><h3>Sports Massage</h3><p>Firm, focused work and stretching for active bodies.</p><div class="pr"><span>60 min <b>$100</b></span><span>90 min <b>$135</b></span></div></div></article>
+    <article class="item rv d1"><div class="dish"><div class="dish__img"><img src="https://i.postimg.cc/76kVzYjY/Copy-of-49247077057-37cac67f79-o.jpg" alt="Couples massage side by side" loading="lazy"></div><svg aria-hidden="true"><use href="#ring"/></svg></div><div><span class="th">นวดคู่</span><h3>Royal Pair</h3><p>Side-by-side treatment for two in our porcelain suite.</p><div class="pr"><span>60 min <b>$180</b></span><span>90 min <b>$250</b></span></div></div></article>
+  </div>
+  <div class="cat__cta rv"><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Online</a></div>
+</section>
+
+<!-- TILES -->
+<section class="tiles" id="gallery">
+  <div class="tiles__head rv"><div><span class="tag"><i></i>Gallery</span><h2 class="disp">Glazed in <em>quiet</em></h2></div><p>Cream walls, powder-blue silk and porcelain at every turn.</p></div>
+  <div class="tgrid rv d1">
+    <figure class="tile tile--wide"><img src="https://i.postimg.cc/rFPNJ9vT/Copy-of-wellness-589770-1920.jpg" alt="Candles and spa decor" loading="lazy"></figure>
+    <figure class="tile"><img src="https://i.postimg.cc/QMr54YSt/Copy-of-269712218-2059184294235502-6657828226324914816-n.jpg" alt="Traditional Thai massage stretch" loading="lazy"></figure>
+    <figure class="tile tile--pat"><p>“Painted<br>in layers,<br>like porcelain.”</p></figure>
+    <figure class="tile"><img src="https://i.postimg.cc/xdryr1j9/Copy-of-woman-getting-massage-from-another-person.jpg" alt="Herbal compress massage" loading="lazy"></figure>
+    <figure class="tile"><img src="https://i.postimg.cc/zDdCzjDK/alan-caishan-c-U53ZFBr3lk-unsplash.jpg" alt="Thai oil massage" loading="lazy"></figure>
+    <figure class="tile tile--wide"><img src="https://i.postimg.cc/76kVzYjY/Copy-of-49247077057-37cac67f79-o.jpg" alt="Couples massage side by side" loading="lazy"></figure>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="revs">
+  <span class="tag rv"><i></i>Guest words</span>
+  <h2 class="disp rv d1">Kindly <em>said</em></h2>
+  <div class="rgrid">
+    <article class="rcard rv"><div class="st">★★★★★</div><p>“Refined without being stuffy. The herbal compress was heavenly.”</p><b>Amelia · Google</b></article>
+    <article class="rcard rv d1"><div class="st">★★★★★</div><p>“Tea in real Benjarong cups after the massage — such a lovely touch.”</p><b>Nok · Google</b></article>
+    <article class="rcard rv d2"><div class="st">★★★★★</div><p>“The Royal Pair suite for our anniversary was perfect.”</p><b>Daniel &amp; Jo · Facebook</b></article>
+  </div>
+</section>
+
+<!-- LOCATIONS -->
+<section class="locs" id="locations">
+  <div class="locs__head rv"><span class="tag"><i></i>Visit</span><h2 class="disp">Two <em>salons</em></h2></div>
+  <div class="lgrid">
+    <article class="loc rv">
+      <div class="loc__map"><iframe src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed" title="Map — DemoSpa Albion QLD" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+      <div class="loc__b"><span class="tag"><i></i>Brisbane · QLD</span><h3>Demo2</h3><p>346 Sandgate Road, Albion QLD 4010<br><a href="tel:0732624972">07 3262 4972</a></p>
+        <table><tr data-day="1"><td>Mon</td><td>10am – 8pm</td></tr><tr data-day="2"><td>Tue</td><td>10am – 8pm</td></tr><tr data-day="3"><td>Wed</td><td>10am – 8pm</td></tr><tr data-day="4"><td>Thu</td><td>10am – 9pm</td></tr><tr data-day="5"><td>Fri</td><td>10am – 9pm</td></tr><tr data-day="6"><td>Sat</td><td>9am – 9pm</td></tr><tr data-day="0"><td>Sun</td><td>9am – 6pm</td></tr></table>
+        <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Brisbane</a></div>
+    </article>
+    <article class="loc rv d1">
+      <div class="loc__map"><iframe src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed" title="Map — DemoSpa Somerton VIC" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+      <div class="loc__b"><span class="tag"><i></i>Melbourne · VIC</span><h3>Melbourne</h3><p>19 North Park Dr, Somerton VIC 3062<br><a href="tel:0407505997">0407 505 997</a></p>
+        <table><tr data-day="1"><td>Mon</td><td>9am – 9pm</td></tr><tr data-day="2"><td>Tue</td><td>9am – 9pm</td></tr><tr data-day="3"><td>Wed</td><td>9am – 9pm</td></tr><tr data-day="4"><td>Thu</td><td>9am – 9pm</td></tr><tr data-day="5"><td>Fri</td><td>9am – 10pm</td></tr><tr data-day="6"><td>Sat</td><td>9am – 10pm</td></tr><tr data-day="0"><td>Sun</td><td>10am – 7pm</td></tr></table>
+        <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Melbourne</a></div>
+    </article>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact__card">
+    <div class="rv"><span class="tag"><i></i>Enquiries</span><h2 class="disp">With <em>pleasure</em></h2><p>Gift vouchers boxed in silk, private suite bookings and bridal parties — leave a note and we'll reply within a day.</p></div>
+    <form class="cform rv d1" id="cform" novalidate>
+      <div><label for="n">Name</label><input id="n" type="text" autocomplete="name" required></div>
+      <div><label for="e">Email</label><input id="e" type="email" autocomplete="email" required></div>
+      <div class="full"><label for="p">Phone</label><input id="p" type="tel" autocomplete="tel" placeholder="Optional"></div>
+      <div class="full"><label for="m">Message</label><textarea id="m" required></textarea></div>
+      <div class="full"><button class="btn" type="submit">Send Message</button></div>
+      <p class="ok full" id="ok" role="status">Thank you — we'll be in touch shortly.</p>
+    </form>
+  </div>
+</section>
+
+<div class="petals" aria-hidden="true" style="background-color:var(--cream-l)"></div>
+<footer class="footer">
+  <div class="footer__in">
+    <div class="footer__brand">
+      <a class="logo" href="#top"><svg aria-hidden="true"><use href="#medal"/></svg><b>DEMOSPA</b><small>Benjarong Thai Spa</small></a>
+      <p>Five colours, five senses — Thai massage painted in layers.</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V21h3.4z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.1 15.6 2 15.2 2 12s0-3.6.1-4.8C2.3 4 3.8 2.4 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 4.7a5.1 5.1 0 100 10.2 5.1 5.1 0 000-10.2zm0 8.4a3.3 3.3 0 110-6.6 3.3 3.3 0 010 6.6zm5.3-9.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></a>
+      </div>
+    </div>
+    <div><h4>Explore</h4><ul><li><a href="#senses">Five senses</a></li><li><a href="#treatments">Treatments</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div><h4>Brisbane</h4><ul><li><a href="tel:0732624972">07 3262 4972</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+    <div><h4>Melbourne</h4><ul><li><a href="tel:0407505997">0407 505 997</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+  </div>
+  <div class="legal">
+    <p>© <span id="yr"></span> DemoSpa. All rights reserved.</p>
+    <p>Powered by <a href="https://www.localforyou.com" target="_blank" rel="noopener">Local For You</a> · <a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Terms</a></p>
+  </div>
+</footer>
+<div class="obar"><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book a Treatment</a></div>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var nav = document.getElementById('nav'), navin = document.getElementById('navin'), burger = document.querySelector('.burger');
+  addEventListener('scroll', function(){ nav.classList.toggle('on', nav.getBoundingClientRect().top <= 0 && scrollY > 120); }, {passive:true});
+  burger.addEventListener('click', function(){ var o = navin.classList.toggle('open'); burger.setAttribute('aria-expanded', o); burger.textContent = o ? 'Close' : 'Menu'; });
+  navin.addEventListener('click', function(e){ var a = e.target.closest('a'); if(a && navin.classList.contains('open')){ navin.classList.remove('open'); burger.setAttribute('aria-expanded','false'); burger.textContent = 'Menu'; } });
+
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* paint the Benjarong plate — five colours, layer by layer */
+  var NS = 'http://www.w3.org/2000/svg', C = 250;
+  function el(tag, at, parent){ var e = document.createElementNS(NS, tag); for(var k in at) e.setAttribute(k, at[k]); parent.appendChild(e); return e; }
+  var outer = document.getElementById('ringOuter'), mid = document.getElementById('ringMid'), layers = [];
+  /* layer 1: gold rim circles */
+  var L1 = el('g', {}, outer);
+  [236, 226, 198].forEach(function(r){ el('circle', {cx:C, cy:C, r:r, fill:'none', stroke:'#c29a4e', 'stroke-width': r===226 ? 1 : 1.6, class:'paint'}, L1); });
+  layers.push(L1);
+  /* layer 2: plum lotus petals (kleeb bua) */
+  var L2 = el('g', {}, outer), n = 28;
+  for(var i=0;i<n;i++){
+    var a = i/n*360;
+    el('path', {d:'M250 30c9 8 13 16 13 26s-5 12-13 12-13-2-13-12 4-18 13-26z', transform:'rotate('+a+' 250 250)', fill:'#4e414c', 'fill-opacity':0, stroke:'#4e414c', 'stroke-width':1.2, class:'paint'}, L2);
+  }
+  layers.push(L2);
+  /* layer 3: powder-blue petal hearts */
+  var L3 = el('g', {}, outer);
+  for(var j=0;j<n;j++){
+    el('path', {d:'M250 44c4 4 6 8 6 13s-3 6-6 6-6-1-6-6 2-9 6-13z', transform:'rotate('+(j/n*360)+' 250 250)', fill:'#b6cada', 'fill-opacity':0, stroke:'#7f9bb5', 'stroke-width':1, class:'paint'}, L3);
+  }
+  layers.push(L3);
+  /* layer 4: ink-blue prajam-yam flowers */
+  var L4 = el('g', {}, mid), m = 14;
+  for(var k=0;k<m;k++){
+    var g = el('g', {transform:'rotate('+(k/m*360)+' 250 250)'}, L4);
+    el('path', {d:'M250 76c4 6 4 10 0 16-4-6-4-10 0-16zM250 108c4-6 4-10 0-16-4 6-4 10 0 16zM234 92c6-4 10-4 16 0-6 4-10 4-16 0zM266 92c-6-4-10-4-16 0 6 4 10 4 16 0z', fill:'#3f5470', 'fill-opacity':0, stroke:'#3f5470', 'stroke-width':1, class:'paint'}, g);
+  }
+  layers.push(L4);
+  /* layer 5: terracotta dots + gold vine */
+  var L5 = el('g', {}, mid);
+  el('circle', {cx:C, cy:C, r:180, fill:'none', stroke:'#c29a4e', 'stroke-width':1, 'stroke-dasharray':'1 7', class:'paint'}, L5);
+  for(var q=0;q<m;q++){
+    var ang = (q+.5)/m*Math.PI*2;
+    el('circle', {cx:(C + Math.sin(ang)*158).toFixed(1), cy:(C - Math.cos(ang)*158).toFixed(1), r:4, fill:'#b5785e', 'fill-opacity':0, stroke:'#b5785e', class:'paint'}, L5);
+  }
+  layers.push(L5);
+  /* prepare strokes */
+  layers.forEach(function(Lg){ Lg.querySelectorAll('.paint').forEach(function(p){ var len = 0; try{ len = p.getTotalLength(); }catch(e){ len = 400; } p.style.strokeDasharray = p.getAttribute('stroke-dasharray') || len; p.style.strokeDashoffset = reduce ? 0 : len; if(p.hasAttribute('fill-opacity')){ p.removeAttribute('fill-opacity'); p.dataset.fill = 1; p.style.fillOpacity = reduce ? 1 : 0; } }); });
+  function paint(){
+    layers.forEach(function(Lg, idx){
+      setTimeout(function(){ Lg.querySelectorAll('.paint').forEach(function(p){ p.style.strokeDashoffset = 0; if(p.dataset.fill) p.style.fillOpacity = 1; }); }, idx * 650);
+    });
+  }
+  if(!reduce) setTimeout(paint, 300);
+
+  var day = new Date().getDay();
+  document.querySelectorAll('tr[data-day="'+day+'"]').forEach(function(tr){ tr.classList.add('today'); });
+  var f = document.getElementById('cform');
+  f.addEventListener('submit', function(e){ e.preventDefault(); if(!f.checkValidity()){ f.reportValidity(); return; } document.getElementById('ok').classList.add('show'); f.reset(); });
+  document.getElementById('yr').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>

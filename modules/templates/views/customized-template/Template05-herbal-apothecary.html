@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoSpa — Thai Herbal Massage &amp; Compress · Brisbane &amp; Melbourne</title>
+<meta name="description" content="Thai herbal compress and traditional massage, hand-bundled from fresh herbs each morning. Build your own luk pra kob. Brisbane & Melbourne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Karla:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f1e7d3;
+  --paper-2:#e6d8bd;
+  --clay:#b4532f;
+  --clay-deep:#8e3c1f;
+  --turmeric:#dda229;
+  --leaf:#5d6b3a;
+  --bark:#3a2a1e;
+  --ink:#2a1f17;
+  --display:'Gloock',Georgia,serif;
+  --sans:'Karla',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.3,1,.3,1);
+  --pad:clamp(1.1rem,4vw,4rem);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.65;font-size:clamp(.95rem,.9rem + .2vw,1.05rem);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.35;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .42 0 0 0 0 .28 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23p)'/%3E%3C/svg%3E")}
+img{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--turmeric);color:var(--bark)}
+:focus-visible{outline:2px dashed var(--clay);outline-offset:3px}
+.disp{font-family:var(--display);font-weight:400;line-height:1.02;letter-spacing:-.01em}
+.disp em{font-style:italic;color:var(--clay)}
+.mono{font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase}
+.label{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid currentColor;padding:.3rem .7rem;color:var(--clay)}
+.stamp{display:inline-flex;align-items:center;justify-content:center;width:110px;height:110px;border-radius:50%;border:2px dashed var(--clay);color:var(--clay);font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;text-align:center;line-height:1.3;transform:rotate(-12deg);padding:.6rem}
+.btn{display:inline-flex;align-items:center;gap:.7rem;font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:1rem 1.6rem;min-height:48px;background:var(--clay);color:var(--paper);border:1.5px solid var(--bark);box-shadow:4px 4px 0 var(--bark);cursor:pointer;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--bark)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--bark)}
+.btn--paper{background:var(--paper);color:var(--bark)}
+.btn--leaf{background:var(--leaf)}
+.rv{opacity:0;transform:translateY(22px) rotate(var(--rot,0deg));transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:rotate(var(--rot,0deg))}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:rotate(var(--rot,0deg))}}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:var(--paper);border-bottom:1.5px solid var(--bark)}
+.nav__in{display:flex;align-items:stretch;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:.8rem;padding:.8rem var(--pad);text-decoration:none;border-right:1.5px solid var(--bark)}
+.logo svg{width:34px;height:34px;color:var(--leaf)}
+.logo b{font-family:var(--display);font-weight:400;font-size:1.6rem;line-height:1}
+.logo small{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--clay)}
+.nav ul{list-style:none;display:flex}
+.nav ul li{border-left:1.5px solid var(--bark)}
+.nav ul a{display:flex;align-items:center;height:100%;padding:0 1.6rem;text-decoration:none;font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;transition:background .3s}
+.nav ul a:hover{background:var(--paper-2)}
+.nav ul a.book{background:var(--clay);color:var(--paper)}
+.nav ul a.book:hover{background:var(--clay-deep)}
+.burger{display:none;border:0;border-left:1.5px solid var(--bark);background:var(--turmeric);padding:0 1.4rem;cursor:pointer;font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;min-width:88px}
+@media (max-width:980px){
+  .burger{display:block}
+  .nav ul{position:absolute;top:100%;left:0;right:0;flex-direction:column;background:var(--paper);border-bottom:1.5px solid var(--bark);display:none}
+  .nav ul.open{display:flex}
+  .nav ul li{border-left:0;border-top:1.5px solid var(--bark)}
+  .nav ul a{padding:1.2rem var(--pad);font-size:.9rem}
+}
+
+/* MARQUEE */
+.tick{background:var(--bark);color:var(--paper);overflow:hidden;border-bottom:1.5px solid var(--bark)}
+.tick__t{display:flex;width:max-content;animation:tk 40s linear infinite}
+.tick span{font-family:var(--mono);font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;padding:.7rem 1.4rem;white-space:nowrap}
+.tick span::before{content:"✿ ";color:var(--turmeric)}
+@keyframes tk{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.tick__t{animation:none}}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(2rem,5vw,5rem);align-items:center;padding:clamp(3rem,8vh,6rem) var(--pad) clamp(4rem,10vh,7rem);max-width:1360px;margin:0 auto;position:relative}
+.hero__bot{position:absolute;right:42%;top:2rem;width:clamp(120px,14vw,200px);color:var(--leaf);opacity:.5;pointer-events:none}
+.hero h1{font-size:clamp(3.2rem,8.4vw,8rem);margin:1.4rem 0 1.4rem}
+.hero h1 .u{background:linear-gradient(transparent 62%,rgba(221,162,41,.55) 62%,rgba(221,162,41,.55) 88%,transparent 88%)}
+.hero p{max-width:46ch;font-size:1.1rem;margin-bottom:2.2rem}
+.hero__ctas{display:flex;gap:1.2rem;flex-wrap:wrap}
+.spec{position:relative;background:#fbf6ea;padding:14px 14px 0;box-shadow:0 30px 50px -30px rgba(58,42,30,.6);--rot:2deg}
+.spec__img{aspect-ratio:4/5;background:var(--paper-2);overflow:hidden}
+.spec__img img{width:100%;height:100%;object-fit:cover;filter:sepia(.25) saturate(.9)}
+.spec__lbl{display:grid;grid-template-columns:1fr auto;gap:.6rem;padding:1rem .4rem 1.1rem;border-top:1px dashed var(--bark);margin-top:14px;font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+.spec__lbl b{font-family:var(--display);font-weight:400;font-size:1.4rem;text-transform:none;letter-spacing:0;display:block}
+.tape{position:absolute;width:110px;height:30px;background:rgba(221,162,41,.55);top:-14px;left:50%;transform:translateX(-50%) rotate(-3deg);mix-blend-mode:multiply}
+.hero .stamp{position:absolute;right:-30px;bottom:110px;background:var(--paper)}
+body > section,body > footer{overflow-x:clip}
+@media (max-width:900px){.hero{grid-template-columns:1fr}.hero .stamp{right:4px}.hero__bot{display:none}.spec{max-width:420px}}
+
+/* PROCESS */
+.proc{border-top:1.5px solid var(--bark);border-bottom:1.5px solid var(--bark);background:var(--paper-2)}
+.proc__grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.proc article{padding:2.4rem clamp(1.2rem,2.5vw,2.4rem) 2.6rem;border-right:1.5px solid var(--bark);position:relative}
+.proc article:last-child{border-right:0}
+.proc .mono{color:var(--clay)}
+.proc svg{width:54px;height:54px;color:var(--bark);margin:1rem 0 1rem}
+.proc h3{font-family:var(--display);font-weight:400;font-size:1.7rem;line-height:1.1;margin-bottom:.5rem}
+.proc p{font-size:.93rem;opacity:.85}
+@media (max-width:900px){.proc__grid{grid-template-columns:1fr 1fr}.proc article:nth-child(2){border-right:0}.proc article:nth-child(-n+2){border-bottom:1.5px solid var(--bark)}}
+@media (max-width:520px){.proc__grid{grid-template-columns:1fr}.proc article{border-right:0;border-bottom:1.5px solid var(--bark)}}
+
+/* COMPRESS BUILDER */
+.build{padding:clamp(5rem,12vh,8rem) var(--pad);max-width:1300px;margin:0 auto}
+.build__head{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;margin-bottom:3rem}
+.build h2{font-size:clamp(2.4rem,5.4vw,4.6rem);margin-top:1rem;max-width:14ch}
+.build__head p{max-width:40ch}
+.build__grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start}
+.herbs{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.herb{position:relative;cursor:pointer;display:block}
+.herb input{position:absolute;opacity:0;pointer-events:none}
+.herb__card{display:flex;gap:.9rem;align-items:center;padding:1rem;background:#fbf6ea;border:1.5px solid var(--bark);transition:.25s;min-height:84px}
+.herb__card i{flex:0 0 42px;height:42px;border-radius:50%;border:1.5px solid var(--bark);background:var(--h);position:relative}
+.herb__card i::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-weight:700;opacity:0;transition:.25s}
+.herb__card b{display:block;font-family:var(--display);font-weight:400;font-size:1.2rem;line-height:1.1}
+.herb__card small{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+.herb input:checked + .herb__card{background:var(--bark);color:var(--paper);box-shadow:4px 4px 0 var(--clay);transform:translate(-2px,-2px)}
+.herb input:checked + .herb__card i::after{opacity:1}
+.herb input:focus-visible + .herb__card{outline:2px dashed var(--clay);outline-offset:3px}
+.ball{position:relative;background:#fbf6ea;border:1.5px solid var(--bark);padding:2rem;box-shadow:8px 8px 0 var(--bark)}
+.ball__svg{width:100%;max-width:300px;margin:0 auto;display:block;overflow:visible}
+.ball__svg .cloth{fill:#efe4cc;stroke:var(--bark);stroke-width:1.5}
+.ball__svg .speck{transition:opacity .5s,transform .5s var(--ease);transform-box:fill-box;transform-origin:center}
+.ball__svg .speck.off{opacity:0;transform:scale(0)}
+.ball__svg .steam path{fill:none;stroke:rgba(58,42,30,.35);stroke-width:2;stroke-linecap:round;opacity:0;transition:opacity .6s}
+.ball__svg.hot .steam path{opacity:1;animation:steam 3s ease-in-out infinite}
+.ball__svg.hot .steam path:nth-child(2){animation-delay:.8s}
+.ball__svg.hot .steam path:nth-child(3){animation-delay:1.6s}
+@keyframes steam{0%{transform:translateY(8px);opacity:0}40%{opacity:.9}100%{transform:translateY(-18px);opacity:0}}
+.ball__out{margin-top:1.4rem;border-top:1px dashed var(--bark);padding-top:1.2rem}
+.ball__name{font-family:var(--display);font-size:1.8rem;line-height:1.1}
+.ball__ben{display:flex;flex-wrap:wrap;gap:.4rem;margin:.8rem 0 1.2rem;min-height:30px}
+.ball__ben span{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;background:var(--paper-2);border:1px solid var(--bark);padding:.25rem .55rem}
+.ball__row{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.ball__row b{font-family:var(--display);font-weight:400;font-size:2rem;color:var(--clay)}
+.ball__empty{opacity:.65;font-style:italic}
+@media (max-width:900px){.build__grid{grid-template-columns:1fr}}
+@media (max-width:460px){.herbs{grid-template-columns:1fr}}
+
+/* LEDGER MENU */
+.ledger{background:var(--bark);color:var(--paper);padding:clamp(5rem,12vh,8rem) var(--pad)}
+.ledger__wrap{max-width:1100px;margin:0 auto}
+.ledger h2{font-size:clamp(2.4rem,5.4vw,4.6rem);margin:1rem 0 2.6rem}
+.ledger h2 em{color:var(--turmeric)}
+.ledger .label{color:var(--turmeric)}
+.ltable{width:100%;border-collapse:collapse}
+.ltable th{font-family:var(--mono);font-weight:400;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;text-align:left;color:var(--turmeric);padding:0 0 .8rem;border-bottom:1.5px solid var(--paper)}
+.ltable th:last-child,.ltable td:last-child{text-align:right}
+.ltable td{padding:1.3rem 1rem 1.3rem 0;border-bottom:1px dashed rgba(241,231,211,.3);vertical-align:top}
+.ltable td:first-child{font-family:var(--mono);font-size:.72rem;color:var(--turmeric);width:3.4rem;padding-top:1.6rem}
+.ltable h3{font-family:var(--display);font-weight:400;font-size:1.6rem;line-height:1.15}
+.ltable p{font-size:.9rem;opacity:.72;margin-top:.2rem;max-width:52ch}
+.ltable .t{font-family:var(--mono);font-size:.78rem;white-space:nowrap;padding-top:1.6rem}
+.ltable .p{font-family:var(--display);font-size:1.6rem;color:var(--turmeric);white-space:nowrap}
+.ltable tr{transition:background .3s}
+.ltable tbody tr:hover{background:rgba(241,231,211,.05)}
+@media (max-width:640px){.ltable .t{display:none}.ltable th:nth-child(3){display:none}}
+
+/* PINBOARD GALLERY */
+.pins{padding:clamp(5rem,12vh,8rem) var(--pad)}
+.pins__head{text-align:center;margin-bottom:3rem}
+.pins__head h2{font-size:clamp(2.4rem,5.4vw,4.6rem);margin-top:1rem}
+.pins__grid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1.4rem,3vw,2.6rem)}
+.pol{background:#fbf6ea;padding:12px 12px 0;box-shadow:0 20px 34px -24px rgba(58,42,30,.7);position:relative;transition:transform .5s var(--ease)}
+.pol:nth-child(1){--rot:-2.5deg}.pol:nth-child(2){--rot:1.5deg;margin-top:2rem}.pol:nth-child(3){--rot:-1deg}
+.pol:nth-child(4){--rot:2deg}.pol:nth-child(5){--rot:-1.5deg;margin-top:-1rem}.pol:nth-child(6){--rot:2.5deg}
+.pol:hover{transform:rotate(0) scale(1.03)!important;z-index:2}
+.pol .tape{width:80px;height:24px;top:-12px}
+.pol__img{aspect-ratio:1;overflow:hidden;background:var(--paper-2)}
+.pol__img img{width:100%;height:100%;object-fit:cover;filter:sepia(.2)}
+.pol figcaption{font-family:var(--display);font-size:1.15rem;padding:.8rem .2rem 1rem;text-align:center}
+@media (max-width:820px){.pins__grid{grid-template-columns:1fr 1fr}.pol{margin-top:0!important}}
+
+/* QUOTE strip */
+.say{border-top:1.5px solid var(--bark);border-bottom:1.5px solid var(--bark);display:grid;grid-template-columns:repeat(3,1fr)}
+.say blockquote{padding:2.4rem clamp(1.2rem,2.5vw,2.4rem);border-right:1.5px solid var(--bark);font-family:var(--display);font-size:1.25rem;line-height:1.35}
+.say blockquote:last-child{border-right:0}
+.say cite{display:block;margin-top:1rem;font-family:var(--mono);font-style:normal;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--clay)}
+@media (max-width:820px){.say{grid-template-columns:1fr}.say blockquote{border-right:0;border-bottom:1.5px solid var(--bark)}}
+
+/* LOCATIONS — parcel tags */
+.locs{padding:clamp(5rem,12vh,8rem) var(--pad);max-width:1300px;margin:0 auto}
+.locs h2{font-size:clamp(2.4rem,5.4vw,4.6rem);margin:1rem 0 3rem}
+.tags{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.ptag{position:relative;background:#fbf6ea;border:1.5px solid var(--bark);clip-path:polygon(9% 0,100% 0,100% 100%,9% 100%,0 calc(100% - 9%),0 9%);padding:2rem 2rem 2rem calc(9% + 1.6rem);display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+.ptag::before{content:"";position:absolute;left:3.6%;top:50%;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--bark);background:var(--paper);transform:translateY(-50%)}
+.ptag h3{font-family:var(--display);font-weight:400;font-size:2.2rem;line-height:1.05;margin:.6rem 0}
+.ptag p{font-size:.93rem}
+.ptag p a{font-weight:700;text-decoration:none;border-bottom:2px solid var(--turmeric)}
+.ptag iframe{width:100%;height:100%;min-height:200px;border:1.5px solid var(--bark);filter:sepia(.5) saturate(.7)}
+.ptag table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.74rem;margin:1rem 0 1.2rem}
+.ptag td{padding:.25rem 0;border-bottom:1px dashed rgba(58,42,30,.3)}
+.ptag td:last-child{text-align:right}
+.ptag tr.today td{background:rgba(221,162,41,.35);font-weight:500}
+.ptag .full{grid-column:1/-1}
+@media (max-width:1060px){.tags{grid-template-columns:1fr}}
+@media (max-width:560px){.ptag{grid-template-columns:1fr;clip-path:none}.ptag::before{display:none}.ptag{padding:1.6rem}}
+
+/* CONTACT — notepad */
+.contact{background:var(--clay);padding:clamp(5rem,12vh,8rem) var(--pad);border-top:1.5px solid var(--bark)}
+.contact__wrap{max-width:1150px;margin:0 auto;display:grid;grid-template-columns:.9fr 1.1fr;gap:3rem;align-items:center;color:var(--paper)}
+.contact h2{font-size:clamp(2.4rem,5vw,4.2rem);margin:1rem 0}
+.contact h2 em{color:var(--turmeric)}
+.contact .label{color:var(--paper)}
+.pad{background:#fbf6ea;color:var(--ink);padding:2.2rem 2rem 2rem 3.4rem;position:relative;box-shadow:10px 10px 0 var(--bark);border:1.5px solid var(--bark);background-image:linear-gradient(transparent 31px,rgba(180,83,47,.25) 32px);background-size:100% 32px;--rot:-1deg}
+.pad::before{content:"";position:absolute;left:2.2rem;top:0;bottom:0;width:1.5px;background:rgba(180,83,47,.6)}
+.pad label{display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--clay);margin-top:.6rem}
+.pad input,.pad textarea{width:100%;font:inherit;font-size:1.05rem;background:transparent;border:0;border-bottom:1.5px solid var(--bark);padding:.4rem 0;min-height:44px;color:var(--ink)}
+.pad textarea{min-height:96px;resize:vertical;border-bottom:0}
+.pad input:focus,.pad textarea:focus{outline:none;border-color:var(--clay)}
+.pad .btn{margin-top:1.2rem}
+.ok{display:none;margin-top:1rem;font-family:var(--display);font-size:1.2rem;color:var(--leaf)}
+.ok.show{display:block}
+@media (max-width:860px){.contact__wrap{grid-template-columns:1fr}}
+
+/* FOOTER */
+.footer{background:var(--paper);border-top:1.5px solid var(--bark)}
+.footer__grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr}
+.footer__grid > div{padding:2.6rem clamp(1.2rem,2.5vw,2.4rem);border-right:1.5px solid var(--bark)}
+.footer__grid > div:last-child{border-right:0}
+.footer__brand p{margin-top:1rem;max-width:28ch;font-size:.95rem}
+.footer h4{font-family:var(--mono);font-weight:500;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--clay);margin-bottom:1rem}
+.footer ul{list-style:none}
+.footer li{margin-bottom:.45rem}
+.footer a{text-decoration:none}
+.footer a:hover{color:var(--clay);text-decoration:underline}
+.socials{display:flex;gap:.6rem;margin-top:1.3rem}
+.socials a{width:44px;height:44px;border:1.5px solid var(--bark);display:flex;align-items:center;justify-content:center;background:var(--turmeric);box-shadow:3px 3px 0 var(--bark)}
+.socials svg{width:17px;height:17px;fill:var(--bark)}
+.footer__word{font-family:var(--display);font-size:clamp(4rem,17vw,16rem);line-height:.8;text-align:center;color:var(--clay);border-top:1.5px solid var(--bark);padding:2rem 0 1rem;letter-spacing:-.03em}
+.legal{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding:1.2rem var(--pad) 1.6rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;border-top:1.5px solid var(--bark)}
+.obar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:90;background:var(--turmeric);border-top:1.5px solid var(--bark);padding:.4rem .8rem calc(.4rem + env(safe-area-inset-bottom))}
+.obar a{display:block;text-align:center;text-decoration:none;font-family:var(--mono);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:.8rem;padding:.85rem;color:var(--bark)}
+@media (max-width:900px){.footer__grid{grid-template-columns:1fr 1fr}.footer__grid > div:nth-child(2){border-right:0}.footer__grid > div:nth-child(-n+2){border-bottom:1.5px solid var(--bark)}}
+@media (max-width:840px){.obar{display:block}.legal{padding-bottom:5.5rem}}
+</style>
+</head>
+<body id="top">
+
+<header class="nav">
+  <div class="nav__in">
+    <a class="logo" href="#top" aria-label="DemoSpa home">
+      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="20" cy="24" r="12"/><path d="M14 13c2-3 4-5 6-6 2 1 4 3 6 6M20 7v-4M15 24c2-2 8-2 10 0M14 29c3 2 9 2 12 0"/></svg>
+      <span><b>DemoSpa</b><small>Thai Herbal House</small></span>
+    </a>
+    <ul id="navlinks">
+      <li><a href="#process">Process</a></li>
+      <li><a href="#builder">Build a Compress</a></li>
+      <li><a href="#remedies">Remedies</a></li>
+      <li><a href="#locations">Visit</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a class="book" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book →</a></li>
+    </ul>
+    <button class="burger" aria-expanded="false" aria-controls="navlinks">Menu</button>
+  </div>
+</header>
+<div class="tick" aria-hidden="true"><div class="tick__t" id="tick"></div></div>
+
+<!-- HERO -->
+<section class="hero">
+  <svg class="hero__bot" viewBox="0 0 120 200" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M60 200V40M60 150C40 130 28 100 26 60M60 120C80 100 92 70 96 30M60 90C48 70 44 50 46 20M26 60c-6 10-8 22-4 30M96 30c6 12 6 24 0 34M46 20c-4 10-2 20 4 26"/></svg>
+  <div>
+    <span class="label rv">Est. 2009 · Fresh herbs daily</span>
+    <h1 class="disp rv d1">Herbs, heat &amp; <span class="u">healing</span> <em>hands.</em></h1>
+    <p class="rv d2">Every morning we pound turmeric, plai, lemongrass and kaffir lime, bundle them in cotton and steam them until the whole house smells of Thailand. That's your massage.</p>
+    <div class="hero__ctas rv d3">
+      <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book a treatment →</a>
+      <a class="btn btn--paper" href="#builder">Build your compress</a>
+    </div>
+  </div>
+  <figure class="spec rv d2">
+    <span class="tape"></span>
+    <div class="spec__img"><img src="https://i.postimg.cc/xdryr1j9/Copy-of-woman-getting-massage-from-another-person.jpg" alt="Herbal compress massage" fetchpriority="high"></div>
+    <figcaption class="spec__lbl"><span><b>Luk Pra Kob</b>Thai herbal compress</span><span>No. 07<br>ลูกประคบ</span></figcaption>
+    <span class="stamp">Hand-<br>bundled<br>daily</span>
+  </figure>
+</section>
+
+<!-- PROCESS -->
+<section class="proc" id="process">
+  <div class="proc__grid">
+    <article class="rv"><span class="mono">Step 01</span><svg viewBox="0 0 54 54" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M27 50V18M27 34c-8-4-12-12-12-22 8 4 12 12 12 22zM27 28c8-4 12-12 12-22-8 4-12 12-12 22z"/><path d="M10 50h34"/></svg><h3>Harvest</h3><p>Fresh herbs from local Thai growers, delivered three times a week.</p></article>
+    <article class="rv d1"><span class="mono">Step 02</span><svg viewBox="0 0 54 54" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 30h34l-4 16H14z"/><path d="M27 30V8M22 12l5-4 5 4M20 22l7 8 7-8"/></svg><h3>Pound</h3><p>Ground by hand in a granite mortar to release the oils.</p></article>
+    <article class="rv d2"><span class="mono">Step 03</span><svg viewBox="0 0 54 54" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="27" cy="32" r="12"/><path d="M19 22c3-4 5-6 8-8 3 2 5 4 8 8M27 14V8M14 50h26"/></svg><h3>Bundle</h3><p>Tied in cotton muslin with a long handle — the classic luk pra kob.</p></article>
+    <article class="rv d3"><span class="mono">Step 04</span><svg viewBox="0 0 54 54" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 40h30v6H12zM16 40V30h22v10"/><path d="M20 24c-2-3 2-5 0-8M27 24c-2-3 2-5 0-8M34 24c-2-3 2-5 0-8"/></svg><h3>Steam &amp; press</h3><p>Steamed to the perfect warmth and pressed rhythmically along your body.</p></article>
+  </div>
+</section>
+
+<!-- BUILDER -->
+<section class="build" id="builder">
+  <div class="build__head rv">
+    <div><span class="label">The compress bar</span><h2 class="disp">Bundle your <em>own blend</em></h2></div>
+    <p>Pick three or more herbs and watch your compress take shape. Bring the blend name to reception — we'll bundle it fresh for your session.</p>
+  </div>
+  <div class="build__grid">
+    <div class="herbs rv" id="herbs">
+      <label class="herb"><input type="checkbox" value="0"><span class="herb__card" style="--h:#dda229"><i></i><span><b>Turmeric</b><small>ขมิ้น · anti-inflammatory</small></span></span></label>
+      <label class="herb"><input type="checkbox" value="1"><span class="herb__card" style="--h:#c9b56a"><i></i><span><b>Plai</b><small>ไพล · muscle relief</small></span></span></label>
+      <label class="herb"><input type="checkbox" value="2"><span class="herb__card" style="--h:#9fb24a"><i></i><span><b>Lemongrass</b><small>ตะไคร้ · refreshing</small></span></span></label>
+      <label class="herb"><input type="checkbox" value="3"><span class="herb__card" style="--h:#5d6b3a"><i></i><span><b>Kaffir Lime</b><small>มะกรูด · clears the mind</small></span></span></label>
+      <label class="herb"><input type="checkbox" value="4"><span class="herb__card" style="--h:#e9e4d4"><i></i><span><b>Camphor</b><small>การบูร · eases breathing</small></span></span></label>
+      <label class="herb"><input type="checkbox" value="5"><span class="herb__card" style="--h:#7a4b2a"><i></i><span><b>Tamarind Leaf</b><small>ใบมะขาม · skin soothing</small></span></span></label>
+    </div>
+    <div class="ball rv d1">
+      <svg class="ball__svg" id="ballSvg" viewBox="0 0 300 300" aria-hidden="true">
+        <g class="steam"><path d="M120 60c-8-12 8-20 0-34"/><path d="M150 54c-8-12 8-20 0-34"/><path d="M180 60c-8-12 8-20 0-34"/></g>
+        <path d="M150 96l-6-24h12z" fill="#7a4b2a"/>
+        <rect x="140" y="20" width="20" height="56" rx="4" fill="#efe4cc" stroke="#3a2a1e" stroke-width="1.5" transform="rotate(0 150 48)"/>
+        <path class="cloth" d="M100 120c10-18 30-26 50-26s40 8 50 26l-14 6c-10-10-22-14-36-14s-26 4-36 14z"/>
+        <circle class="cloth" cx="150" cy="190" r="86"/>
+        <path d="M110 118c10 6 26 8 40 8s30-2 40-8" fill="none" stroke="#b4532f" stroke-width="5" stroke-linecap="round"/>
+        <g id="specks"></g>
+        <path d="M80 190c20 10 50 14 70 14s50-4 70-14M88 222c20 8 42 10 62 10s42-2 62-10" fill="none" stroke="rgba(58,42,30,.18)" stroke-width="1.5"/>
+      </svg>
+      <div class="ball__out" aria-live="polite">
+        <div class="mono" style="color:var(--clay)">Your blend</div>
+        <div class="ball__name" id="bName">Pick some herbs ↖</div>
+        <div class="ball__ben" id="bBen"><span class="ball__empty">Benefits will appear here</span></div>
+        <div class="ball__row"><div><span class="mono">Herbal compress massage · 75 min</span><br><b id="bPrice">$120</b></div><a class="btn btn--leaf" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book this blend →</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEDGER -->
+<section class="ledger" id="remedies">
+  <div class="ledger__wrap">
+    <span class="label rv">The remedy ledger</span>
+    <h2 class="disp rv d1">Treatments &amp; <em>prices</em></h2>
+    <table class="ltable rv d2">
+      <thead><tr><th>No.</th><th>Remedy</th><th>Time</th><th>Price</th></tr></thead>
+      <tbody>
+        <tr><td>R/01</td><td><h3>Herbal Compress Massage</h3><p>Traditional Thai massage finished with two steaming luk pra kob.</p></td><td class="t">75 min</td><td class="p">$120</td></tr>
+        <tr><td>R/02</td><td><h3>Traditional Thai Massage</h3><p>Clothed acupressure and stretching on a floor mat.</p></td><td class="t">60 · 90 min</td><td class="p">$80 · $110</td></tr>
+        <tr><td>R/03</td><td><h3>Turmeric Body Scrub</h3><p>Ground turmeric, tamarind and honey — glowing skin, Thai-bride style.</p></td><td class="t">45 min</td><td class="p">$85</td></tr>
+        <tr><td>R/04</td><td><h3>Plai Oil Deep Tissue</h3><p>Warm plai &amp; ginger oil worked deep into sore shoulders and backs.</p></td><td class="t">60 · 90 min</td><td class="p">$90 · $120</td></tr>
+        <tr><td>R/05</td><td><h3>Herbal Foot Soak &amp; Reflexology</h3><p>Kaffir lime soak followed by pressure-point foot massage.</p></td><td class="t">60 min</td><td class="p">$75</td></tr>
+        <tr><td>R/06</td><td><h3>The Full Apothecary</h3><p>Scrub, compress massage and herbal steam. Our two-hour signature.</p></td><td class="t">120 min</td><td class="p">$195</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PINBOARD -->
+<section class="pins" id="gallery">
+  <div class="pins__head rv"><span class="label">Pinned up</span><h2 class="disp">Around <em>the house</em></h2></div>
+  <div class="pins__grid">
+    <figure class="pol rv"><span class="tape"></span><div class="pol__img"><img src="https://i.postimg.cc/Qd71qZQS/271602579-2066015386885726-5248643883991483846-n.jpg" alt="Traditional Thai massage" loading="lazy"></div><figcaption>Traditional Thai, room 3</figcaption></figure>
+    <figure class="pol rv d1"><span class="tape"></span><div class="pol__img"><img src="https://i.postimg.cc/zDdCzjDK/alan-caishan-c-U53ZFBr3lk-unsplash.jpg" alt="Thai oil massage" loading="lazy"></div><figcaption>Warm plai oil massage</figcaption></figure>
+    <figure class="pol rv d2"><span class="tape"></span><div class="pol__img"><img src="https://i.postimg.cc/hPf9fdfG/272106455-2066857463468185-3689533452356941384-n.jpg" alt="Foot massage" loading="lazy"></div><figcaption>Feet first, always</figcaption></figure>
+    <figure class="pol rv"><span class="tape"></span><div class="pol__img"><img src="https://i.postimg.cc/nzp4zSQ6/Copy-of-271134519-2053893694764562-3923658756880702584-n.jpg" alt="Hot stone massage" loading="lazy"></div><figcaption>Hot stones, warming</figcaption></figure>
+    <figure class="pol rv d1"><span class="tape"></span><div class="pol__img"><img src="https://i.postimg.cc/QMr54YSt/Copy-of-269712218-2059184294235502-6657828226324914816-n.jpg" alt="Traditional Thai massage stretch" loading="lazy"></div><figcaption>Palm pressure, slow</figcaption></figure>
+    <figure class="pol rv d2"><span class="tape"></span><div class="pol__img"><img src="https://i.postimg.cc/rFPNJ9vT/Copy-of-wellness-589770-1920.jpg" alt="Candles and spa decor" loading="lazy"></div><figcaption>Candles at dusk</figcaption></figure>
+  </div>
+</section>
+
+<section class="say">
+  <blockquote class="rv">“You can smell the lemongrass from the street. The compress is unreal for lower back pain.”<cite>Marco · Google ★★★★★</cite></blockquote>
+  <blockquote class="rv d1">“Feels like a little Thai village clinic, in the best way. Honest, skilled and warm.”<cite>Anh · Google ★★★★★</cite></blockquote>
+  <blockquote class="rv d2">“I built a turmeric-plai blend and booked it monthly. My knees thank me.”<cite>Ruth · Facebook ★★★★★</cite></blockquote>
+</section>
+
+<!-- LOCATIONS -->
+<section class="locs" id="locations">
+  <span class="label rv">Find the house</span>
+  <h2 class="disp rv d1">Two doors, <em>same herbs</em></h2>
+  <div class="tags">
+    <article class="ptag rv">
+      <div>
+        <span class="mono" style="color:var(--clay)">Brisbane · QLD</span>
+        <h3>Demo2</h3>
+        <p>346 Sandgate Road,<br>Albion QLD 4010<br><a href="tel:0732624972">07 3262 4972</a></p>
+      </div>
+      <iframe src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed" title="Map — DemoSpa Albion QLD" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="full">
+        <table><tr data-day="1"><td>Mon</td><td>10:00 – 20:00</td></tr><tr data-day="2"><td>Tue</td><td>10:00 – 20:00</td></tr><tr data-day="3"><td>Wed</td><td>10:00 – 20:00</td></tr><tr data-day="4"><td>Thu</td><td>10:00 – 21:00</td></tr><tr data-day="5"><td>Fri</td><td>10:00 – 21:00</td></tr><tr data-day="6"><td>Sat</td><td>09:00 – 21:00</td></tr><tr data-day="0"><td>Sun</td><td>09:00 – 18:00</td></tr></table>
+        <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Brisbane →</a>
+      </div>
+    </article>
+    <article class="ptag rv d1">
+      <div>
+        <span class="mono" style="color:var(--clay)">Melbourne · VIC</span>
+        <h3>Melbourne</h3>
+        <p>19 North Park Dr,<br>Somerton VIC 3062<br><a href="tel:0407505997">0407 505 997</a></p>
+      </div>
+      <iframe src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed" title="Map — DemoSpa Somerton VIC" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="full">
+        <table><tr data-day="1"><td>Mon</td><td>09:00 – 21:00</td></tr><tr data-day="2"><td>Tue</td><td>09:00 – 21:00</td></tr><tr data-day="3"><td>Wed</td><td>09:00 – 21:00</td></tr><tr data-day="4"><td>Thu</td><td>09:00 – 21:00</td></tr><tr data-day="5"><td>Fri</td><td>09:00 – 22:00</td></tr><tr data-day="6"><td>Sat</td><td>09:00 – 22:00</td></tr><tr data-day="0"><td>Sun</td><td>10:00 – 19:00</td></tr></table>
+        <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Melbourne →</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact__wrap">
+    <div class="rv">
+      <span class="label">Write to us</span>
+      <h2 class="disp">Leave us <em>a note</em></h2>
+      <p>Allergic to an herb? Want a compress for a sports injury? Planning a group visit? Jot it down — we read every note.</p>
+    </div>
+    <form class="pad rv d1" id="cform" novalidate>
+      <label for="n">Name</label><input id="n" type="text" autocomplete="name" required>
+      <label for="e">Email</label><input id="e" type="email" autocomplete="email" required>
+      <label for="p">Phone (optional)</label><input id="p" type="tel" autocomplete="tel">
+      <label for="m">Your note</label><textarea id="m" required></textarea>
+      <button class="btn" type="submit">Send the note →</button>
+      <p class="ok" id="ok" role="status">Got it — we'll write back soon. ✿</p>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <a class="logo" href="#top" style="border:0;padding:0"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="20" cy="24" r="12"/><path d="M14 13c2-3 4-5 6-6 2 1 4 3 6 6M20 7v-4M15 24c2-2 8-2 10 0M14 29c3 2 9 2 12 0"/></svg><span><b>DemoSpa</b><small>Thai Herbal House</small></span></a>
+      <p>Herbs, heat and healing hands — Thai herbal massage since 2009.</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V21h3.4z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.1 15.6 2 15.2 2 12s0-3.6.1-4.8C2.3 4 3.8 2.4 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 4.7a5.1 5.1 0 100 10.2 5.1 5.1 0 000-10.2zm0 8.4a3.3 3.3 0 110-6.6 3.3 3.3 0 010 6.6zm5.3-9.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></a>
+      </div>
+    </div>
+    <div><h4>Explore</h4><ul><li><a href="#process">Process</a></li><li><a href="#builder">Build a compress</a></li><li><a href="#remedies">Remedies</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div><h4>Brisbane</h4><ul><li><a href="tel:0732624972">07 3262 4972</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+    <div><h4>Melbourne</h4><ul><li><a href="tel:0407505997">0407 505 997</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+  </div>
+  <div class="footer__word" aria-hidden="true">DemoSpa</div>
+  <div class="legal">
+    <p>© <span id="yr"></span> DemoSpa. All rights reserved.</p>
+    <p>Powered by <a href="https://www.localforyou.com" target="_blank" rel="noopener">Local For You</a> · <a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Terms</a></p>
+  </div>
+</footer>
+<div class="obar"><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book a treatment →</a></div>
+
+<script>
+(function(){
+  /* ticker */
+  var words = ['Turmeric','Plai','Lemongrass','Kaffir lime','Camphor','Tamarind','Ginger','Pandan','Jasmine','Galangal'], h = '';
+  for(var r=0;r<3;r++) words.forEach(function(w){ h += '<span>'+w+'</span>'; });
+  document.getElementById('tick').innerHTML = h + h;
+
+  var burger = document.querySelector('.burger'), links = document.getElementById('navlinks');
+  burger.addEventListener('click', function(){ var o = links.classList.toggle('open'); burger.setAttribute('aria-expanded', o); burger.textContent = o ? 'Close' : 'Menu'; });
+  links.addEventListener('click', function(e){ if(e.target.closest('a')){ links.classList.remove('open'); burger.setAttribute('aria-expanded','false'); burger.textContent='Menu'; } });
+
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* compress builder */
+  var H = [
+    {n:'Turmeric', w:'Golden', c:'#dda229', b:['Anti-inflammatory','Brightens skin']},
+    {n:'Plai', w:'Warrior', c:'#c9b56a', b:['Sore muscles','Joint relief']},
+    {n:'Lemongrass', w:'Morning', c:'#9fb24a', b:['Refreshing','Lifts mood']},
+    {n:'Kaffir Lime', w:'Clear', c:'#5d6b3a', b:['Clears the mind','Cleansing']},
+    {n:'Camphor', w:'Cool', c:'#d9d2bd', b:['Opens breathing','Cooling']},
+    {n:'Tamarind', w:'Gentle', c:'#7a4b2a', b:['Soothes skin','Softening']}
+  ];
+  var specks = document.getElementById('specks'), svgns = 'http://www.w3.org/2000/svg', groups = [];
+  H.forEach(function(herb,hi){
+    var g = document.createElementNS(svgns,'g');
+    for(var i=0;i<16;i++){
+      var a = Math.random()*6.283, rr = Math.sqrt(Math.random())*70;
+      var c = document.createElementNS(svgns, i%3 ? 'circle' : 'ellipse');
+      var cx = 150 + Math.cos(a)*rr, cy = 194 + Math.sin(a)*rr*.9;
+      c.setAttribute('cx', cx.toFixed(1)); c.setAttribute('cy', cy.toFixed(1));
+      if(i%3){ c.setAttribute('r', (2.5+Math.random()*4).toFixed(1)); } else { c.setAttribute('rx', (6+Math.random()*5).toFixed(1)); c.setAttribute('ry', '2.4'); c.setAttribute('transform','rotate('+Math.round(Math.random()*180)+' '+cx.toFixed(1)+' '+cy.toFixed(1)+')'); }
+      c.setAttribute('fill', herb.c); c.setAttribute('class','speck off'); c.style.transitionDelay = (i*25)+'ms';
+      if(c.hasAttribute('transform')){ var w = document.createElementNS(svgns,'g'); w.setAttribute('transform', c.getAttribute('transform')); c.removeAttribute('transform'); w.appendChild(c); g.appendChild(w); }
+      else g.appendChild(c);
+    }
+    specks.appendChild(g); groups.push(g);
+  });
+  var boxes = document.querySelectorAll('#herbs input'), bName = document.getElementById('bName'), bBen = document.getElementById('bBen'), bPrice = document.getElementById('bPrice'), ballSvg = document.getElementById('ballSvg');
+  function upd(){
+    var sel = [];
+    boxes.forEach(function(b){ var on = b.checked; groups[+b.value].querySelectorAll('.speck').forEach(function(s){ s.classList.toggle('off', !on); }); if(on) sel.push(H[+b.value]); });
+    ballSvg.classList.toggle('hot', sel.length >= 3);
+    if(!sel.length){ bName.textContent = 'Pick some herbs ↖'; bBen.innerHTML = '<span class="ball__empty">Benefits will appear here</span>'; bPrice.textContent = '$120'; return; }
+    var name = sel.length < 3 ? 'Add ' + (3-sel.length) + ' more herb' + (3-sel.length>1?'s':'') + '…' : 'The ' + sel[0].w + ' ' + sel[sel.length-1].n + ' Blend';
+    bName.textContent = name;
+    var bens = []; sel.forEach(function(s){ s.b.forEach(function(x){ if(bens.indexOf(x) < 0) bens.push(x); }); });
+    bBen.innerHTML = bens.map(function(x){ return '<span>'+x+'</span>'; }).join('');
+    bPrice.textContent = '$' + (120 + Math.max(0, sel.length-3)*5);
+  }
+  boxes.forEach(function(b){ b.addEventListener('change', upd); });
+  [0,1,2].forEach(function(i){ boxes[i].checked = true; }); upd();
+
+  var day = new Date().getDay();
+  document.querySelectorAll('tr[data-day="'+day+'"]').forEach(function(tr){ tr.classList.add('today'); });
+
+  var f = document.getElementById('cform');
+  f.addEventListener('submit', function(e){ e.preventDefault(); if(!f.checkValidity()){ f.reportValidity(); return; } document.getElementById('ok').classList.add('show'); f.reset(); });
+  document.getElementById('yr').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoSpa — Gold Lacquer Thai Spa · Brisbane &amp; Melbourne</title>
+<meta name="description" content="A luxury Thai massage spa inspired by lai rod nam, Thailand's black-and-gold lacquer art. Brisbane & Melbourne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy:ital@0;1&family=Tenor+Sans&family=Charmonman:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lacquer:#24181c;
+  --plum:#3e2a31;        /* Pantone 19-1110 Chocolate Plum */
+  --plum-2:#4b343c;
+  --popcorn:#f8dc8a;     /* Pantone 12-0825 Popcorn */
+  --gold:#d4ad5c;
+  --gold-d:#9c7633;
+  --cerulean:#98b4cf;    /* Pantone 15-4020 Cerulean */
+  --cream:#f4ead6;
+  --muted:#c9b9a8;
+  --gild:linear-gradient(110deg,#9c7633 0%,#f8dc8a 28%,#c79a45 52%,#fbe6a8 72%,#a8803b 100%);
+  --display:'Sorts Mill Goudy',Georgia,serif;
+  --sans:'Tenor Sans',system-ui,sans-serif;
+  --thai:'Charmonman',serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --pad:clamp(1.1rem,4vw,4rem);
+  --lai:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23f8dc8a' stroke-width='1.3' stroke-linecap='round'%3E%3Cpath d='M0 60C20 40 40 40 60 60s40 20 60 0'/%3E%3Cpath d='M60 0C40 20 40 40 60 60s20 40 0 60'/%3E%3Cpath d='M30 45c-6-8-2-16 6-14 6 2 4 10-2 9'/%3E%3Cpath d='M90 75c6 8 2 16-6 14-6-2-4-10 2-9'/%3E%3Cpath d='M45 90c-8 6-16 2-14-6 2-6 10-4 9 2'/%3E%3Cpath d='M75 30c8-6 16-2 14 6-2 6-10 4-9-2'/%3E%3C/g%3E%3Cg fill='%23f8dc8a'%3E%3Cpath d='M60 48c5 5 5 9 0 12-5-3-5-7 0-12zM60 72c5-5 5-9 0-12-5 3-5 7 0 12zM48 60c5-5 9-5 12 0-3 5-7 5-12 0zM72 60c-5-5-9-5-12 0 3 5 7 5 12 0z'/%3E%3Ccircle cx='0' cy='0' r='5'/%3E%3Ccircle cx='120' cy='0' r='5'/%3E%3Ccircle cx='0' cy='120' r='5'/%3E%3Ccircle cx='120' cy='120' r='5'/%3E%3Cpath d='M22 22c3-6 8-8 12-6-2 5-7 8-12 6zM98 98c-3 6-8 8-12 6 2-5 7-8 12-6zM98 22c-6-3-8-8-6-12 5 2 8 7 6 12zM22 98c6 3 8 8 6 12-5-2-8-7-6-12z'/%3E%3C/g%3E%3C/svg%3E");
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--display);background:var(--lacquer);color:var(--cream);line-height:1.75;font-size:clamp(1.02rem,.96rem + .22vw,1.12rem);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--gold);color:var(--lacquer)}
+:focus-visible{outline:2px solid var(--cerulean);outline-offset:3px}
+.disp{font-family:var(--display);font-weight:400;line-height:1.08;letter-spacing:-.005em}
+.gild{background:var(--gild);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 8s linear infinite}
+@keyframes sheen{to{background-position:-200% 0}}
+.disp em{font-style:italic}
+.th{font-family:var(--thai);font-weight:400;color:var(--gold)}
+.eyebrow{font-family:var(--sans);font-size:.76rem;letter-spacing:.36em;text-transform:uppercase;color:var(--cerulean)}
+.orn{display:block;width:180px;height:18px;margin:1rem auto;color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;font-family:var(--sans);font-size:.78rem;letter-spacing:.26em;text-transform:uppercase;text-decoration:none;padding:1rem 2.2rem;min-height:50px;background:var(--gild);background-size:220% 100%;color:var(--lacquer);border:0;cursor:pointer;clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,10px 100%,0 50%);transition:background-position .9s var(--ease)}
+.btn:hover{background-position:100% 0}
+.btn--o{background:transparent;color:var(--popcorn);clip-path:none;border:1px solid rgba(212,173,92,.6)}
+.btn--o:hover{background:rgba(212,173,92,.1)}
+.rv{opacity:0;transform:translateY(22px);transition:opacity 1.2s var(--ease),transform 1.2s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.gild{animation:none}}
+.lacq{background-color:var(--plum);background-image:linear-gradient(160deg,rgba(255,255,255,.04),transparent 40%,rgba(0,0,0,.25))}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(36,24,28,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(212,173,92,.35)}
+.nav__in{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:.85rem var(--pad)}
+.nav ul{list-style:none;display:flex;gap:2rem;align-items:center}
+.nav ul.r{justify-content:flex-end}
+.nav ul a:not(.btn){text-decoration:none;font-family:var(--sans);font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);transition:color .3s}
+.nav ul a:not(.btn):hover{color:var(--popcorn)}
+.nav .btn{padding:.7rem 1.5rem;min-height:44px;font-size:.7rem}
+.logo{text-decoration:none;text-align:center;line-height:1}
+.logo b{display:block;font-family:var(--display);font-weight:400;font-size:1.9rem;letter-spacing:.06em}
+.logo small{display:block;font-family:var(--thai);font-size:.82rem;color:var(--gold);margin-top:.2rem}
+.burger{display:none;justify-self:end;background:none;border:1px solid rgba(212,173,92,.6);color:var(--popcorn);font-family:var(--sans);font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;padding:.6rem 1rem;cursor:pointer;min-height:44px}
+.mnav{display:none}
+@media (max-width:980px){
+  .nav__in{grid-template-columns:1fr auto}
+  .nav ul{display:none}
+  .logo{text-align:left}
+  .burger{display:block}
+  .mnav{display:flex;position:fixed;inset:0;z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:1.3rem;background:var(--lacquer) var(--lai) center/120px;opacity:0;pointer-events:none;transition:opacity .5s}
+  .mnav::before{content:"";position:absolute;inset:0;background:rgba(36,24,28,.9)}
+  .mnav > *{position:relative}
+  .mnav.open{opacity:1;pointer-events:auto}
+  .mnav a:not(.btn){font-size:2rem;text-decoration:none;color:var(--cream)}
+}
+
+/* HERO — gold leaf catching the light */
+.hero{position:relative;overflow:hidden;min-height:calc(100svh - 72px);display:flex;align-items:center;padding:clamp(3rem,8vh,5rem) var(--pad)}
+.hero__base,.hero__leaf{position:absolute;inset:0;background:var(--lai) center/120px;pointer-events:none}
+.hero__base{opacity:.13}
+.hero__leaf{opacity:1;-webkit-mask-image:radial-gradient(circle 240px at var(--mx,70%) var(--my,40%),#000 0,rgba(0,0,0,.55) 40%,transparent 72%);mask-image:radial-gradient(circle 240px at var(--mx,70%) var(--my,40%),#000 0,rgba(0,0,0,.55) 40%,transparent 72%);filter:drop-shadow(0 0 6px rgba(248,220,138,.55))}
+.hero__glow{position:absolute;width:520px;height:520px;left:var(--mx,70%);top:var(--my,40%);transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(248,220,138,.16),transparent 65%);pointer-events:none}
+.hero__in{position:relative;z-index:2;max-width:1260px;width:100%;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(2rem,5vw,5rem);align-items:center}
+.cartouche{position:relative;padding:clamp(2rem,4vw,3.4rem);background:rgba(36,24,28,.82);border:1px solid rgba(212,173,92,.55);box-shadow:inset 0 0 0 6px rgba(36,24,28,.82),inset 0 0 0 7px rgba(212,173,92,.35)}
+.cartouche::before,.cartouche::after{content:"";position:absolute;left:50%;width:24px;height:24px;background:var(--lacquer);border:1px solid var(--gold);transform:translateX(-50%) rotate(45deg)}
+.cartouche::before{top:-12px}.cartouche::after{bottom:-12px}
+.hero h1{font-size:clamp(2.8rem,6vw,5.4rem);margin:.9rem 0 1.2rem}
+.hero .th{font-size:1.3rem;display:block;margin-bottom:1rem}
+.hero p{color:var(--muted);max-width:44ch;margin-bottom:2rem}
+.hero__ctas{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+.niche{position:relative;justify-self:center;width:min(100%,430px)}
+.niche__frame{position:relative;aspect-ratio:3/4.3;padding:12px;background:var(--gild);clip-path:polygon(50.0% 0.0%,52.78% 5.19%,55.56% 7.33%,58.33% 8.98%,61.11% 10.37%,63.89% 11.6%,66.67% 12.7%,69.44% 13.72%,72.22% 14.67%,75.0% 15.56%,77.78% 16.4%,80.56% 17.2%,83.33% 17.96%,86.11% 18.7%,88.89% 19.4%,91.67% 20.08%,94.44% 20.74%,97.22% 21.38%,100.0% 22.0%,100% 100%,0% 100%,0.0% 22.0%,2.78% 21.38%,5.56% 20.74%,8.33% 20.08%,11.11% 19.4%,13.89% 18.7%,16.67% 17.96%,19.44% 17.2%,22.22% 16.4%,25.0% 15.56%,27.78% 14.67%,30.56% 13.72%,33.33% 12.7%,36.11% 11.6%,38.89% 10.37%,41.67% 8.98%,44.44% 7.33%,47.22% 5.19%)}
+.niche__img{width:100%;height:100%;background:var(--plum);overflow:hidden;clip-path:polygon(50.0% 0.0%,52.78% 5.19%,55.56% 7.33%,58.33% 8.98%,61.11% 10.37%,63.89% 11.6%,66.67% 12.7%,69.44% 13.72%,72.22% 14.67%,75.0% 15.56%,77.78% 16.4%,80.56% 17.2%,83.33% 17.96%,86.11% 18.7%,88.89% 19.4%,91.67% 20.08%,94.44% 20.74%,97.22% 21.38%,100.0% 22.0%,100% 100%,0% 100%,0.0% 22.0%,2.78% 21.38%,5.56% 20.74%,8.33% 20.08%,11.11% 19.4%,13.89% 18.7%,16.67% 17.96%,19.44% 17.2%,22.22% 16.4%,25.0% 15.56%,27.78% 14.67%,30.56% 13.72%,33.33% 12.7%,36.11% 11.6%,38.89% 10.37%,41.67% 8.98%,44.44% 7.33%,47.22% 5.19%)}
+.niche__img img{width:100%;height:100%;object-fit:cover}
+.niche figcaption{text-align:center;margin-top:.9rem;font-style:italic;color:var(--muted);font-size:.95rem}
+.hint{font-family:var(--sans);font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);opacity:.7}
+@media (max-width:900px){.hero__in{grid-template-columns:1fr}.niche{width:min(80%,340px);order:-1}}
+
+/* CRAFT */
+.craft{padding:clamp(5rem,12vh,8rem) var(--pad);text-align:center}
+.craft h2{font-size:clamp(2.2rem,4.8vw,3.8rem);margin-top:.6rem}
+.craft > p{max-width:60ch;margin:0 auto;color:var(--muted)}
+.craft__row{max-width:1180px;margin:3.4rem auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem}
+.cstep{position:relative;padding:2.4rem 1.4rem 2rem;border:1px solid rgba(212,173,92,.35);background:linear-gradient(180deg,rgba(75,52,60,.5),transparent)}
+.cstep b{display:block;font-family:var(--thai);font-weight:700;font-size:2.2rem;line-height:1}
+.cstep h3{font-family:var(--display);font-weight:400;font-size:1.5rem;margin:.8rem 0 .2rem}
+.cstep .th{display:block;font-size:.95rem;margin-bottom:.6rem}
+.cstep p{font-size:.95rem;color:var(--muted)}
+.cstep::after{content:"";position:absolute;right:-1rem;top:50%;width:.6rem;height:.6rem;border-top:1px solid var(--gold);border-right:1px solid var(--gold);transform:rotate(45deg)}
+.cstep:last-child::after{display:none}
+@media (max-width:900px){.craft__row{grid-template-columns:1fr 1fr}.cstep::after{display:none}}
+@media (max-width:520px){.craft__row{grid-template-columns:1fr}}
+
+/* CABINETS */
+.cabs{padding:clamp(5rem,12vh,8rem) var(--pad);background:linear-gradient(180deg,var(--lacquer),#1c1216 50%,var(--lacquer))}
+.cabs__head{text-align:center;margin-bottom:3.4rem}
+.cabs__head h2{font-size:clamp(2.2rem,4.8vw,3.8rem);margin-top:.6rem}
+.cabs__head p{color:var(--muted);margin-top:.4rem}
+.cgrid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(1.2rem,2.4vw,2rem)}
+.cab{position:relative;aspect-ratio:3/4.1;perspective:1300px;cursor:pointer;border:1px solid var(--gold-d);padding:8px;background:var(--lacquer)}
+.cab__in{position:relative;width:100%;height:100%;overflow:hidden;background:var(--plum)}
+.cab__in img{width:100%;height:100%;object-fit:cover;transform:scale(1.1);transition:transform 1.6s var(--ease)}
+.cab__info{position:absolute;left:0;right:0;bottom:0;padding:2.4rem 1.1rem 1.1rem;background:linear-gradient(transparent,rgba(36,24,28,.95) 45%);text-align:center}
+.cab__info p{font-size:.9rem;color:var(--muted);line-height:1.5}
+.cab__info .pr{display:block;margin-top:.5rem;font-family:var(--sans);font-size:.72rem;letter-spacing:.14em;color:var(--popcorn)}
+.door{position:absolute;top:8px;bottom:8px;width:calc(50% - 8px);background:var(--plum) var(--lai) center/80px;box-shadow:inset 0 0 0 1px rgba(212,173,92,.55),inset 0 0 0 8px var(--plum),inset 0 0 0 9px rgba(212,173,92,.4),inset 0 0 40px rgba(0,0,0,.5);transition:transform 1.4s var(--ease);z-index:2}
+.door::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.06),transparent 40%,rgba(0,0,0,.3))}
+.door--l{left:8px;transform-origin:left center}
+.door--r{right:8px;transform-origin:right center}
+.door--l::before,.door--r::before{content:"";position:absolute;top:50%;width:8px;height:30px;margin-top:-15px;background:var(--gild);border-radius:2px;z-index:1}
+.door--l::before{right:6px}.door--r::before{left:6px}
+.plaque{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;width:78%;padding:1rem .6rem;text-align:center;background:var(--lacquer);border:1px solid var(--gold);box-shadow:0 0 0 4px var(--lacquer),0 0 0 5px rgba(212,173,92,.45);transition:opacity .5s,transform .8s var(--ease);pointer-events:none}
+.plaque .th{display:block;font-size:1rem;line-height:1.3}
+.plaque h3{font-family:var(--display);font-weight:400;font-size:1.3rem;line-height:1.2}
+.cab:hover .door--l,.cab.open .door--l,.cab:focus-visible .door--l{transform:rotateY(-80deg)}
+.cab:hover .door--r,.cab.open .door--r,.cab:focus-visible .door--r{transform:rotateY(80deg)}
+.cab:hover .plaque,.cab.open .plaque,.cab:focus-visible .plaque{opacity:0;transform:translate(-50%,-60%)}
+.cab:hover .cab__in img,.cab.open .cab__in img{transform:scale(1)}
+.cab__info h3{font-family:var(--display);font-weight:400;font-size:1.35rem;color:var(--popcorn)}
+.cabs__note{text-align:center;margin-top:2.4rem}
+@media (max-width:1040px){.cgrid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.cgrid{grid-template-columns:1fr}.cab{aspect-ratio:4/4.4}}
+@media (prefers-reduced-motion:reduce){.door{transition:none}}
+
+/* GALLERY */
+.gal{padding:clamp(5rem,12vh,8rem) var(--pad)}
+.gal__head{text-align:center;margin-bottom:3rem}
+.gal__head h2{font-size:clamp(2.2rem,4.8vw,3.8rem);margin-top:.6rem}
+.ggrid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1.3fr 1fr;grid-template-rows:auto auto;gap:1.4rem}
+.gframe{position:relative;padding:10px;background:var(--gild);box-shadow:0 30px 50px -30px rgba(0,0,0,.9)}
+.gframe .mat{padding:12px;background:var(--cerulean);height:100%}
+.gframe .img{height:100%;min-height:220px;overflow:hidden;background:var(--plum)}
+.gframe img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease)}
+.gframe:hover img{transform:scale(1.05)}
+.gframe--tall{grid-row:span 2}
+.gframe--tall .img{min-height:520px}
+.gframe figcaption{position:absolute;left:50%;bottom:-.9rem;transform:translateX(-50%);background:var(--lacquer);border:1px solid var(--gold);padding:.25rem 1rem;font-family:var(--sans);font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;color:var(--popcorn);white-space:nowrap}
+@media (max-width:860px){.ggrid{grid-template-columns:1fr 1fr}.gframe--tall{grid-column:1/-1;grid-row:auto}.gframe--tall .img{min-height:320px}}
+
+/* QUOTE */
+.quote{padding:clamp(4rem,10vh,6rem) var(--pad);text-align:center;border-top:1px solid rgba(212,173,92,.2);border-bottom:1px solid rgba(212,173,92,.2);background:var(--lacquer) var(--lai) center/120px;position:relative}
+.quote::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(36,24,28,.92) 30%,rgba(36,24,28,.97))}
+.quote > *{position:relative}
+.quote blockquote{font-family:var(--display);font-style:italic;font-size:clamp(1.6rem,3.4vw,2.6rem);line-height:1.35;max-width:28ch;margin:0 auto}
+.quote cite{display:block;margin-top:1rem;font-family:var(--sans);font-style:normal;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--cerulean)}
+
+/* LOCATIONS */
+.locs{padding:clamp(5rem,12vh,8rem) var(--pad)}
+.locs__head{text-align:center;margin-bottom:3rem}
+.locs__head h2{font-size:clamp(2.2rem,4.8vw,3.8rem);margin-top:.6rem}
+.lgrid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.loc{border:1px solid rgba(212,173,92,.45);padding:10px}
+.loc__in{border:1px solid rgba(212,173,92,.25);padding:1.6rem 1.6rem 1.9rem;height:100%;display:flex;flex-direction:column}
+.loc iframe{width:100%;height:220px;border:0;filter:invert(.9) hue-rotate(160deg) sepia(.35) saturate(.7) brightness(.85);margin-bottom:1.3rem}
+.loc h3{font-family:var(--display);font-weight:400;font-size:2rem;line-height:1.1}
+.loc .th{font-size:1rem}
+.loc p{color:var(--muted);font-size:.98rem}
+.loc p a{color:var(--popcorn);text-decoration:none}
+.loc table{width:100%;border-collapse:collapse;font-size:.95rem;margin:1rem 0 1.6rem;color:var(--muted)}
+.loc td{padding:.3rem 0;border-bottom:1px solid rgba(212,173,92,.14)}
+.loc td:last-child{text-align:right}
+.loc tr.today td{color:var(--cerulean)}
+.loc .btn{align-self:flex-start;margin-top:auto}
+@media (max-width:860px){.lgrid{grid-template-columns:1fr}}
+
+/* CONTACT */
+.contact{padding:clamp(5rem,12vh,8rem) var(--pad)}
+.contact__in{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:.9fr 1.1fr;gap:3rem}
+.contact h2{font-size:clamp(2.1rem,4.4vw,3.4rem);margin:.6rem 0 1rem}
+.contact__in > div > p{color:var(--muted)}
+.cform{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem 1.6rem}
+.cform .full{grid-column:1/-1}
+.cform label{display:block;font-family:var(--sans);font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem}
+.cform input,.cform textarea{width:100%;font:inherit;color:var(--cream);background:rgba(62,42,49,.6);border:1px solid rgba(212,173,92,.35);padding:.85rem 1rem;min-height:50px;transition:border-color .3s,box-shadow .3s}
+.cform textarea{min-height:130px;resize:vertical}
+.cform input:focus,.cform textarea:focus{outline:none;border-color:var(--popcorn);box-shadow:0 0 18px rgba(248,220,138,.15)}
+.ok{display:none;font-style:italic;color:var(--popcorn)}
+.ok.show{display:block}
+@media (max-width:860px){.contact__in{grid-template-columns:1fr}.cform{grid-template-columns:1fr}}
+
+/* FOOTER */
+.footer{border-top:1px solid rgba(212,173,92,.35);background:#1c1216}
+.footer__band{height:40px;background:var(--lai) center/60px;opacity:.35}
+.footer__in{max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2.4rem;padding:3rem var(--pad) 2.4rem}
+.footer .logo{text-align:left}
+.footer__brand p{font-style:italic;color:var(--muted);margin-top:.8rem;max-width:26ch}
+.footer h4{font-family:var(--sans);font-weight:400;font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.9rem}
+.footer ul{list-style:none}
+.footer li{margin-bottom:.45rem;color:var(--muted)}
+.footer a{text-decoration:none}
+.footer a:hover{color:var(--popcorn)}
+.socials{display:flex;gap:.6rem;margin-top:1.2rem}
+.socials a{width:44px;height:44px;border:1px solid rgba(212,173,92,.6);display:flex;align-items:center;justify-content:center;transition:.3s}
+.socials a:hover{background:var(--gold)}
+.socials a:hover svg{fill:var(--lacquer)}
+.socials svg{width:16px;height:16px;fill:var(--popcorn)}
+.legal{max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding:1.3rem var(--pad) 1.8rem;font-family:var(--sans);font-size:.72rem;letter-spacing:.06em;color:var(--muted);border-top:1px solid rgba(212,173,92,.18)}
+.obar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:90;background:rgba(36,24,28,.96);border-top:1px solid var(--gold);padding:.55rem .8rem calc(.55rem + env(safe-area-inset-bottom))}
+.obar a{display:flex;width:100%}
+@media (max-width:840px){.obar{display:block}.legal{padding-bottom:6rem}}
+</style>
+</head>
+<body id="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="orn" viewBox="0 0 180 18"><g fill="none" stroke="currentColor" stroke-width="1"><path d="M0 9h62M118 9h62"/><path d="M62 9c8-8 16-8 20 0-4 8-12 8-20 0zM118 9c-8-8-16-8-20 0 4 8 12 8 20 0z"/></g><path d="M90 1c4 4 6 6 6 8s-2 4-6 8c-4-4-6-6-6-8s2-4 6-8z" fill="currentColor"/></symbol>
+</svg>
+
+<header class="nav">
+  <div class="nav__in">
+    <ul>
+      <li><a href="#craft">The Craft</a></li>
+      <li><a href="#treatments">Treatments</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+    </ul>
+    <a class="logo" href="#top" aria-label="DemoSpa home"><b class="gild">DemoSpa</b><small>ลายรดน้ำ สปา</small></a>
+    <ul class="r">
+      <li><a href="#locations">Locations</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Reserve</a></li>
+    </ul>
+    <button class="burger" aria-expanded="false" aria-controls="mnav">Menu</button>
+  </div>
+</header>
+<nav class="mnav" id="mnav" aria-label="Mobile">
+  <a href="#craft">The Craft</a><a href="#treatments">Treatments</a><a href="#gallery">Gallery</a><a href="#locations">Locations</a><a href="#contact">Contact</a>
+  <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Reserve</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero lacq" id="hero">
+  <div class="hero__base" aria-hidden="true"></div>
+  <div class="hero__glow" aria-hidden="true"></div>
+  <div class="hero__leaf" aria-hidden="true"></div>
+  <div class="hero__in">
+    <div class="cartouche rv">
+      <span class="eyebrow">Thai Massage · Luxury Spa</span>
+      <h1 class="disp">Gold, laid gently <em class="gild">on darkness.</em></h1>
+      <span class="th">ศิลปะลายรดน้ำ</span>
+      <p>Lai rod nam is Thailand's art of gold leaf on black lacquer — patient, precise, made to last. Our massage follows the same craft: slow layers of skilled touch that leave you quietly glowing.</p>
+      <div class="hero__ctas">
+        <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Reserve a Treatment</a>
+        <a class="btn btn--o" href="#treatments">Open the Cabinets</a>
+      </div>
+      <p class="hint" style="margin:1.6rem 0 0">Move across the lacquer to catch the gold</p>
+    </div>
+    <figure class="niche rv d2">
+      <div class="niche__frame"><div class="niche__img"><img src="https://i.postimg.cc/zDdCzjDK/alan-caishan-c-U53ZFBr3lk-unsplash.jpg" alt="Thai oil massage" fetchpriority="high"></div></div>
+      <figcaption>The Gold Leaf Oil Ritual</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- CRAFT -->
+<section class="craft" id="craft">
+  <span class="eyebrow rv">The Craft</span>
+  <h2 class="disp rv d1">Four steps, <em class="gild">like the masters</em></h2>
+  <svg class="orn rv d1" aria-hidden="true"><use href="#orn"/></svg>
+  <p class="rv d2">A lai rod nam panel is lacquered, stencilled, gilded and finally washed with water to reveal the gold. Every DemoSpa treatment follows four quiet steps of its own.</p>
+  <div class="craft__row">
+    <div class="cstep rv"><b class="gild">๑</b><h3>Lacquer</h3><span class="th">ลงรัก</span><p>Settle in: shoes off, warm towel, butterfly-pea tea.</p></div>
+    <div class="cstep rv d1"><b class="gild">๒</b><h3>Stencil</h3><span class="th">ลวดลาย</span><p>A short consultation to map where you hold tension.</p></div>
+    <div class="cstep rv d2"><b class="gild">๓</b><h3>Gold</h3><span class="th">ปิดทอง</span><p>Your treatment, in a private candlelit room.</p></div>
+    <div class="cstep rv d3"><b class="gild">๔</b><h3>Wash</h3><span class="th">รดน้ำ</span><p>A warm rinse, cool tea and time to glow.</p></div>
+  </div>
+</section>
+
+<!-- CABINETS -->
+<section class="cabs" id="treatments">
+  <div class="cabs__head rv"><span class="eyebrow">Treatments</span><h2 class="disp">The <em class="gild">lacquer cabinets</em></h2><svg class="orn" aria-hidden="true"><use href="#orn"/></svg><p>Hover or tap a cabinet to open it.</p></div>
+  <div class="cgrid">
+    <article class="cab rv" tabindex="0" aria-label="Traditional Thai massage"><div class="cab__in"><img src="https://i.postimg.cc/Qd71qZQS/271602579-2066015386885726-5248643883991483846-n.jpg" alt="Traditional Thai massage" loading="lazy"><div class="cab__info"><h3>Traditional Thai</h3><p>Acupressure and assisted stretches, fully clothed.</p><span class="pr">60 $90 · 90 $125 · 120 $155</span></div></div><div class="door door--l" aria-hidden="true"></div><div class="door door--r" aria-hidden="true"></div><div class="plaque" aria-hidden="true"><span class="th">นวดแผนไทย</span><h3 class="gild">Traditional Thai</h3></div></article>
+    <article class="cab rv d1" tabindex="0" aria-label="Gold leaf oil ritual"><div class="cab__in"><img src="https://i.postimg.cc/zDdCzjDK/alan-caishan-c-U53ZFBr3lk-unsplash.jpg" alt="Thai oil massage" loading="lazy"><div class="cab__info"><h3>Gold Leaf Oil Ritual</h3><p>Warm oil with a shimmer of gold, long flowing strokes.</p><span class="pr">60 $105 · 90 $140</span></div></div><div class="door door--l" aria-hidden="true"></div><div class="door door--r" aria-hidden="true"></div><div class="plaque" aria-hidden="true"><span class="th">นวดน้ำมัน</span><h3 class="gild">Thai Oil</h3></div></article>
+    <article class="cab rv d2" tabindex="0" aria-label="Herbal compress"><div class="cab__in"><img src="https://i.postimg.cc/xdryr1j9/Copy-of-woman-getting-massage-from-another-person.jpg" alt="Herbal compress massage" loading="lazy"><div class="cab__info"><h3>Herbal Compress</h3><p>Steamed Thai herb bundles pressed into tired muscles.</p><span class="pr">75 $130 · 105 $160</span></div></div><div class="door door--l" aria-hidden="true"></div><div class="door door--r" aria-hidden="true"></div><div class="plaque" aria-hidden="true"><span class="th">ประคบสมุนไพร</span><h3 class="gild">Herbal Compress</h3></div></article>
+    <article class="cab rv d3" tabindex="0" aria-label="Hot stone"><div class="cab__in"><img src="https://i.postimg.cc/nzp4zSQ6/Copy-of-271134519-2053893694764562-3923658756880702584-n.jpg" alt="Hot stone massage" loading="lazy"><div class="cab__info"><h3>Hot Stone</h3><p>Warm basalt stones for deep, slow release.</p><span class="pr">60 $110 · 90 $145</span></div></div><div class="door door--l" aria-hidden="true"></div><div class="door door--r" aria-hidden="true"></div><div class="plaque" aria-hidden="true"><span class="th">นวดหินร้อน</span><h3 class="gild">Hot Stone</h3></div></article>
+    <article class="cab rv" tabindex="0" aria-label="Foot reflexology"><div class="cab__in"><img src="https://i.postimg.cc/hPf9fdfG/272106455-2066857463468185-3689533452356941384-n.jpg" alt="Foot massage" loading="lazy"><div class="cab__info"><h3>Foot Reflexology</h3><p>Pressure points of the soles and lower legs.</p><span class="pr">45 $70 · 60 $85</span></div></div><div class="door door--l" aria-hidden="true"></div><div class="door door--r" aria-hidden="true"></div><div class="plaque" aria-hidden="true"><span class="th">นวดเท้า</span><h3 class="gild">Foot Reflexology</h3></div></article>
+    <article class="cab rv d1" tabindex="0" aria-label="Neck and shoulder"><div class="cab__in"><img src="https://i.postimg.cc/L543yQ9p/Stock-Images-(7).jpg" alt="Neck and shoulder massage" loading="lazy"><div class="cab__info"><h3>Neck &amp; Shoulder</h3><p>Focused relief for the desk-weary.</p><span class="pr">30 $55 · 45 $70</span></div></div><div class="door door--l" aria-hidden="true"></div><div class="door door--r" aria-hidden="true"></div><div class="plaque" aria-hidden="true"><span class="th">นวดคอ บ่า ไหล่</span><h3 class="gild">Neck &amp; Shoulder</h3></div></article>
+    <article class="cab rv d2" tabindex="0" aria-label="Sports massage"><div class="cab__in"><img src="https://i.postimg.cc/K81JSWnJ/Copy-of-271512661-2058409864312945-7965416524350208888-n.jpg" alt="Sports massage session" loading="lazy"><div class="cab__info"><h3>Sports Massage</h3><p>Deep work and stretching for active bodies.</p><span class="pr">60 $105 · 90 $140</span></div></div><div class="door door--l" aria-hidden="true"></div><div class="door door--r" aria-hidden="true"></div><div class="plaque" aria-hidden="true"><span class="th">นวดนักกีฬา</span><h3 class="gild">Sports</h3></div></article>
+    <article class="cab rv d3" tabindex="0" aria-label="Couples suite"><div class="cab__in"><img src="https://i.postimg.cc/76kVzYjY/Copy-of-49247077057-37cac67f79-o.jpg" alt="Couples massage side by side" loading="lazy"><div class="cab__info"><h3>The Gilded Suite</h3><p>Side-by-side treatment for two, with champagne tea.</p><span class="pr">60 $190 · 90 $260</span></div></div><div class="door door--l" aria-hidden="true"></div><div class="door door--r" aria-hidden="true"></div><div class="plaque" aria-hidden="true"><span class="th">นวดคู่</span><h3 class="gild">For Two</h3></div></article>
+  </div>
+  <p class="cabs__note rv"><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Reserve Online</a></p>
+</section>
+
+<!-- GALLERY -->
+<section class="gal" id="gallery">
+  <div class="gal__head rv"><span class="eyebrow">Gallery</span><h2 class="disp">Framed <em class="gild">in gold</em></h2><svg class="orn" aria-hidden="true"><use href="#orn"/></svg></div>
+  <div class="ggrid">
+    <figure class="gframe rv"><div class="mat"><div class="img"><img src="https://i.postimg.cc/rFPNJ9vT/Copy-of-wellness-589770-1920.jpg" alt="Candles and spa decor" loading="lazy"></div></div><figcaption>Candlelight</figcaption></figure>
+    <figure class="gframe gframe--tall rv d1"><div class="mat"><div class="img"><img src="https://i.postimg.cc/QMr54YSt/Copy-of-269712218-2059184294235502-6657828226324914816-n.jpg" alt="Traditional Thai massage stretch" loading="lazy"></div></div><figcaption>The Thai Room</figcaption></figure>
+    <figure class="gframe rv d2"><div class="mat"><div class="img"><img src="https://i.postimg.cc/nzp4zSQ6/Copy-of-271134519-2053893694764562-3923658756880702584-n.jpg" alt="Hot stone massage" loading="lazy"></div></div><figcaption>Warm Stones</figcaption></figure>
+    <figure class="gframe rv"><div class="mat"><div class="img"><img src="https://i.postimg.cc/76kVzYjY/Copy-of-49247077057-37cac67f79-o.jpg" alt="Couples massage side by side" loading="lazy"></div></div><figcaption>The Gilded Suite</figcaption></figure>
+    <figure class="gframe rv d2"><div class="mat"><div class="img"><img src="https://i.postimg.cc/xdryr1j9/Copy-of-woman-getting-massage-from-another-person.jpg" alt="Herbal compress massage" loading="lazy"></div></div><figcaption>Herbal Compress</figcaption></figure>
+  </div>
+</section>
+
+<section class="quote">
+  <svg class="orn" aria-hidden="true"><use href="#orn"/></svg>
+  <blockquote class="rv">“Opulent but serene — the most beautiful spa I've been to, and the massage matched it.”</blockquote>
+  <cite>Guest review · Google ★★★★★</cite>
+  <svg class="orn" aria-hidden="true"><use href="#orn"/></svg>
+</section>
+
+<!-- LOCATIONS -->
+<section class="locs" id="locations">
+  <div class="locs__head rv"><span class="eyebrow">Visit</span><h2 class="disp">Two <em class="gild">gilded rooms</em></h2></div>
+  <div class="lgrid">
+    <article class="loc lacq rv"><div class="loc__in">
+      <iframe src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed" title="Map — DemoSpa Albion QLD" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <span class="th">บริสเบน</span><h3>Brisbane — Demo2</h3>
+      <p>346 Sandgate Road, Albion QLD 4010 · <a href="tel:0732624972">07 3262 4972</a></p>
+      <table><tr data-day="1"><td>Monday</td><td>10am – 8pm</td></tr><tr data-day="2"><td>Tuesday</td><td>10am – 8pm</td></tr><tr data-day="3"><td>Wednesday</td><td>10am – 8pm</td></tr><tr data-day="4"><td>Thursday</td><td>10am – 9pm</td></tr><tr data-day="5"><td>Friday</td><td>10am – 9pm</td></tr><tr data-day="6"><td>Saturday</td><td>9am – 9pm</td></tr><tr data-day="0"><td>Sunday</td><td>9am – 6pm</td></tr></table>
+      <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Reserve Brisbane</a>
+    </div></article>
+    <article class="loc lacq rv d1"><div class="loc__in">
+      <iframe src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed" title="Map — DemoSpa Somerton VIC" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <span class="th">เมลเบิร์น</span><h3>Melbourne</h3>
+      <p>19 North Park Dr, Somerton VIC 3062 · <a href="tel:0407505997">0407 505 997</a></p>
+      <table><tr data-day="1"><td>Monday</td><td>9am – 9pm</td></tr><tr data-day="2"><td>Tuesday</td><td>9am – 9pm</td></tr><tr data-day="3"><td>Wednesday</td><td>9am – 9pm</td></tr><tr data-day="4"><td>Thursday</td><td>9am – 9pm</td></tr><tr data-day="5"><td>Friday</td><td>9am – 10pm</td></tr><tr data-day="6"><td>Saturday</td><td>9am – 10pm</td></tr><tr data-day="0"><td>Sunday</td><td>10am – 7pm</td></tr></table>
+      <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Reserve Melbourne</a>
+    </div></article>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact__in">
+    <div class="rv"><span class="eyebrow">Enquiries</span><h2 class="disp">At <em class="gild">your service</em></h2><p>Gift vouchers in lacquered boxes, private suite bookings and celebrations — our concierge replies within a day.</p></div>
+    <form class="cform rv d1" id="cform" novalidate>
+      <div><label for="n">Name</label><input id="n" type="text" autocomplete="name" required></div>
+      <div><label for="e">Email</label><input id="e" type="email" autocomplete="email" required></div>
+      <div class="full"><label for="p">Phone</label><input id="p" type="tel" autocomplete="tel" placeholder="Optional"></div>
+      <div class="full"><label for="m">Message</label><textarea id="m" required></textarea></div>
+      <div class="full"><button class="btn" type="submit">Send Enquiry</button></div>
+      <p class="ok full" id="ok" role="status">Thank you — our concierge will be in touch shortly.</p>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__band" aria-hidden="true"></div>
+  <div class="footer__in">
+    <div class="footer__brand">
+      <a class="logo" href="#top"><b class="gild">DemoSpa</b><small>ลายรดน้ำ สปา</small></a>
+      <p>Gold, laid gently on darkness.</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V21h3.4z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.1 15.6 2 15.2 2 12s0-3.6.1-4.8C2.3 4 3.8 2.4 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 4.7a5.1 5.1 0 100 10.2 5.1 5.1 0 000-10.2zm0 8.4a3.3 3.3 0 110-6.6 3.3 3.3 0 010 6.6zm5.3-9.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></a>
+      </div>
+    </div>
+    <div><h4>Explore</h4><ul><li><a href="#craft">The craft</a></li><li><a href="#treatments">Treatments</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div><h4>Brisbane</h4><ul><li><a href="tel:0732624972">07 3262 4972</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+    <div><h4>Melbourne</h4><ul><li><a href="tel:0407505997">0407 505 997</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+  </div>
+  <div class="legal">
+    <p>© <span id="yr"></span> DemoSpa. All rights reserved.</p>
+    <p>Powered by <a href="https://www.localforyou.com" target="_blank" rel="noopener">Local For You</a> · <a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Terms</a></p>
+  </div>
+</footer>
+<div class="obar"><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Reserve a Treatment</a></div>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var burger = document.querySelector('.burger'), mn = document.getElementById('mnav');
+  burger.addEventListener('click', function(){ var o = mn.classList.toggle('open'); burger.setAttribute('aria-expanded', o); burger.textContent = o ? 'Close' : 'Menu'; document.body.style.overflow = o ? 'hidden' : ''; });
+  mn.addEventListener('click', function(e){ if(e.target.closest('a')){ mn.classList.remove('open'); burger.setAttribute('aria-expanded','false'); burger.textContent = 'Menu'; document.body.style.overflow = ''; } });
+
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(x){ io.observe(x); });
+
+  /* gold leaf catches the light where the pointer moves; drifts on its own on touch screens */
+  var hero = document.getElementById('hero'), tx = .7, ty = .4, cx = .7, cy = .4, lastMove = 0;
+  hero.addEventListener('pointermove', function(e){ var r = hero.getBoundingClientRect(); tx = (e.clientX - r.left) / r.width; ty = (e.clientY - r.top) / r.height; lastMove = performance.now(); });
+  function tick(t){
+    if(t - lastMove > 2500){ tx = .5 + Math.cos(t/3200) * .32; ty = .45 + Math.sin(t/2300) * .25; }
+    cx += (tx - cx) * .08; cy += (ty - cy) * .08;
+    hero.style.setProperty('--mx', (cx*100).toFixed(2) + '%'); hero.style.setProperty('--my', (cy*100).toFixed(2) + '%');
+    requestAnimationFrame(tick);
+  }
+  if(!reduce) requestAnimationFrame(tick);
+
+  /* cabinets: tap/Enter toggles; touch devices open one at a time */
+  var cabs = document.querySelectorAll('.cab');
+  cabs.forEach(function(c){
+    c.addEventListener('click', function(){ var o = !c.classList.contains('open'); cabs.forEach(function(x){ x.classList.remove('open'); }); if(o) c.classList.add('open'); });
+    c.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); c.click(); } });
+  });
+
+  var day = new Date().getDay();
+  document.querySelectorAll('tr[data-day="'+day+'"]').forEach(function(tr){ tr.classList.add('today'); });
+  var f = document.getElementById('cform');
+  f.addEventListener('submit', function(e){ e.preventDefault(); if(!f.checkValidity()){ f.reportValidity(); return; } document.getElementById('ok').classList.add('show'); f.reset(); });
+  document.getElementById('yr').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoSpa — Royal Thai Massage &amp; Spa · Brisbane &amp; Melbourne</title>
+<meta name="description" content="Royal Thai massage and spa rituals wrapped in silk. Gift vouchers, couples rituals and Thai treatments — Brisbane & Melbourne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Mitr:wght@300;400;500&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+:root{
+  --plum:#2b0d2f;
+  --plum-2:#43143f;
+  --plum-3:#5e1d55;
+  --magenta:#b3306c;
+  --rose:#e46e9a;
+  --gold:#e0b45a;
+  --gold-2:#f6dc9a;
+  --pearl:#fbf3ec;
+  --pearl-2:#f3e4dc;
+  --ink:#24101f;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Mitr',system-ui,sans-serif;
+  --script:'Pinyon Script',cursive;
+  --ease:cubic-bezier(.2,.9,.25,1);
+  --pad:clamp(1.1rem,4vw,4rem);
+  --silk:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23e0b45a' stroke-width='1'%3E%3Cpath d='M22 2l20 20-20 20L2 22z'/%3E%3Cpath d='M22 11l11 11-11 11-11-11z'/%3E%3C/g%3E%3Ccircle cx='22' cy='22' r='2.2' fill='%23e0b45a'/%3E%3Ccircle cx='0' cy='0' r='1.6' fill='%23e0b45a'/%3E%3Ccircle cx='44' cy='0' r='1.6' fill='%23e0b45a'/%3E%3Ccircle cx='0' cy='44' r='1.6' fill='%23e0b45a'/%3E%3Ccircle cx='44' cy='44' r='1.6' fill='%23e0b45a'/%3E%3C/svg%3E");
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-weight:300;background:var(--pearl);color:var(--ink);line-height:1.7;font-size:clamp(.95rem,.9rem + .2vw,1.05rem);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--magenta);color:var(--pearl)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.serif{font-family:var(--serif);font-weight:400;line-height:1.08}
+.serif em{font-style:italic;color:var(--magenta)}
+.shine{background:linear-gradient(100deg,var(--gold) 0%,var(--gold-2) 25%,var(--gold) 45%,#b98634 60%,var(--gold-2) 80%,var(--gold) 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:-250% 0}}
+.over{font-size:.74rem;font-weight:400;letter-spacing:.32em;text-transform:uppercase;color:var(--magenta);display:flex;align-items:center;gap:.8rem}
+.over::before,.over::after{content:"◆";font-size:.5rem;color:var(--gold)}
+.center .over{justify-content:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;font-family:var(--sans);font-weight:400;font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;padding:1rem 2rem;min-height:48px;border-radius:999px;cursor:pointer;border:1px solid var(--gold);color:var(--plum);background:linear-gradient(135deg,var(--gold-2),var(--gold));box-shadow:0 10px 24px -12px rgba(179,48,108,.6);transition:transform .35s var(--ease),box-shadow .35s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 18px 30px -12px rgba(179,48,108,.7)}
+.btn--o{background:transparent;color:var(--gold-2);box-shadow:none}
+.btn--o:hover{background:rgba(224,180,90,.12)}
+.btn--plum{background:var(--plum);color:var(--gold-2);border-color:var(--plum)}
+.rv{opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.shine{animation:none}}
+
+/* TOP + NAV */
+.weave{height:12px;background:var(--plum) var(--silk) repeat-x center/22px 22px}
+.nav{position:sticky;top:0;z-index:100;background:rgba(43,13,47,.97);color:var(--pearl);border-bottom:1px solid rgba(224,180,90,.35)}
+.nav__in{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:.85rem var(--pad)}
+.logo{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+.logo__mark{width:42px;height:42px;border:1px solid var(--gold);transform:rotate(45deg);display:flex;align-items:center;justify-content:center}
+.logo__mark span{transform:rotate(-45deg);font-family:var(--serif);font-style:italic;color:var(--gold);font-size:1.1rem}
+.logo b{font-family:var(--serif);font-weight:500;font-size:1.5rem;letter-spacing:.04em}
+.logo small{display:block;font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;color:var(--gold);margin-top:-.2rem}
+.nav ul{list-style:none;display:flex;gap:2rem;align-items:center}
+.nav ul a:not(.btn){text-decoration:none;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;position:relative;padding:.4rem 0}
+.nav ul a:not(.btn)::after{content:"";position:absolute;left:50%;bottom:0;width:6px;height:6px;background:var(--gold);transform:translateX(-50%) rotate(45deg) scale(0);transition:transform .3s var(--ease)}
+.nav ul a:not(.btn):hover::after{transform:translateX(-50%) rotate(45deg) scale(1)}
+.nav .btn{padding:.7rem 1.4rem;font-size:.72rem}
+.burger{display:none;background:none;border:1px solid var(--gold);border-radius:50%;width:46px;height:46px;cursor:pointer;color:var(--gold);font-size:1.2rem}
+@media (max-width:920px){
+  .burger{display:block}
+  .nav ul{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:var(--plum);border-bottom:1px solid var(--gold);max-height:0;overflow:hidden;transition:max-height .5s var(--ease)}
+  .nav ul.open{max-height:480px}
+  .nav ul li{width:100%;text-align:center;border-top:1px solid rgba(224,180,90,.15)}
+  .nav ul a:not(.btn){display:block;padding:1.1rem}
+  .nav ul .btn{margin:1rem 0 1.2rem}
+}
+
+/* HERO */
+.hero{position:relative;min-height:calc(100svh - 80px);background:radial-gradient(90% 70% at 50% 30%,var(--plum-3),var(--plum) 70%);color:var(--pearl);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem var(--pad) 9rem;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:var(--silk) center/44px;opacity:.07}
+#ribbon{position:absolute;left:0;right:0;bottom:0;width:100%;height:58%;pointer-events:none}
+.hero > *:not(#ribbon){position:relative;z-index:2}
+.hero .script{font-family:var(--script);font-size:clamp(2rem,4vw,3.2rem);color:var(--rose);line-height:1}
+.hero h1{font-size:clamp(3.2rem,9vw,8.4rem);margin:.6rem 0 1.4rem;letter-spacing:-.01em}
+.hero h1 i{font-style:italic}
+.hero p{max-width:50ch;margin:0 auto 2.4rem;opacity:.85;font-size:1.05rem}
+.hero__ctas{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.hero__badges{display:flex;gap:2.4rem;margin-top:3rem;font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-2);flex-wrap:wrap;justify-content:center}
+.hero__badges span::before{content:"◆ ";color:var(--magenta)}
+
+/* INTRO */
+.intro{padding:clamp(5rem,12vh,8rem) var(--pad);max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,6rem);align-items:center}
+.intro h2{font-size:clamp(2.2rem,4.8vw,4rem);margin:1rem 0 1.4rem}
+.intro p{opacity:.82;margin-bottom:1rem;max-width:50ch}
+.intro__sig{font-family:var(--script);font-size:2.2rem;color:var(--magenta);margin-top:1rem}
+.bolts{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;height:clamp(360px,44vw,520px)}
+.bolt{position:relative;border-radius:200px 200px 10px 10px;overflow:hidden;background:var(--plum-2)}
+.bolt:nth-child(2){margin-top:3rem}
+.bolt:nth-child(3){margin-top:1.4rem}
+.bolt img{width:100%;height:100%;object-fit:cover}
+.bolt::after{content:"";position:absolute;left:0;right:0;bottom:0;height:28%;background:var(--plum) var(--silk) center/22px;border-top:2px solid var(--gold)}
+.bolt:nth-child(2)::after{background-color:var(--magenta)}
+.bolt:nth-child(3)::after{background-color:#7b4a1c}
+@media (max-width:860px){.intro{grid-template-columns:1fr}}
+
+/* SWATCH TREATMENTS */
+.sw{background:var(--pearl-2);padding:clamp(5rem,12vh,8rem) var(--pad)}
+.sw__head{text-align:center;max-width:680px;margin:0 auto 3.4rem}
+.sw__head h2{font-size:clamp(2.2rem,4.8vw,4rem);margin:1rem 0 .8rem}
+.sw__head p{opacity:.75}
+.swgrid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
+.flip{perspective:1400px;height:360px;cursor:pointer}
+.flip__in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .9s var(--ease)}
+.flip:hover .flip__in,.flip.on .flip__in,.flip:focus-within .flip__in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:6px;padding:2rem;display:flex;flex-direction:column;overflow:hidden}
+.face--f{color:var(--pearl);justify-content:flex-end;background:var(--c,var(--plum)) var(--silk) center/var(--s,44px)}
+.face--f::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.0) 30%,rgba(255,255,255,.22) 48%,rgba(255,255,255,0) 66%);background-size:300% 100%;animation:sheen 5s ease-in-out infinite}
+@keyframes sheen{0%{background-position:120% 0}60%,100%{background-position:-120% 0}}
+.face--f::after{content:"";position:absolute;inset:12px;border:1px solid rgba(224,180,90,.6);border-radius:2px;pointer-events:none}
+.face--f > *{position:relative;z-index:1}
+.face--f .th{font-size:.9rem;color:var(--gold-2)}
+.face--f h3{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.1;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+.face--f small{font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;opacity:.85;margin-top:.5rem}
+.face--b{transform:rotateY(180deg);background:var(--pearl);border:1px solid var(--gold)}
+.face--b h3{font-family:var(--serif);font-size:1.6rem;font-weight:500;margin-bottom:.5rem}
+.face--b p{font-size:.92rem;opacity:.8;margin-bottom:1rem}
+.face--b ul{list-style:none;margin-top:auto;border-top:1px solid var(--pearl-2);padding-top:.8rem}
+.face--b li{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.92rem}
+.face--b li b{font-family:var(--serif);font-weight:500;color:var(--magenta);font-size:1.1rem}
+.sw__hint{text-align:center;margin-top:2rem;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;opacity:.6}
+@media (max-width:960px){.swgrid{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.swgrid{grid-template-columns:1fr}.flip{height:330px}}
+
+/* VOUCHER DESIGNER */
+.gift{background:var(--plum);color:var(--pearl);padding:clamp(5rem,12vh,8rem) var(--pad);position:relative;overflow:hidden}
+.gift::before{content:"";position:absolute;inset:0;background:var(--silk) center/44px;opacity:.05}
+.gift__wrap{position:relative;max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(2rem,5vw,5rem);align-items:center}
+.gift .over{color:var(--rose)}
+.gift h2{font-size:clamp(2.2rem,4.8vw,4rem);margin:1rem 0 1rem}
+.gift h2 em{color:var(--rose)}
+.gift > div > div > p{opacity:.8;margin-bottom:2rem}
+.gform{display:grid;gap:1.2rem}
+.gform label.l{display:block;font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-2);margin-bottom:.5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chips button{font:inherit;font-size:.88rem;color:var(--pearl);background:transparent;border:1px solid rgba(224,180,90,.4);border-radius:999px;padding:.55rem 1.1rem;min-height:42px;cursor:pointer;transition:.3s}
+.chips button[aria-pressed="true"]{background:var(--gold);color:var(--plum);border-color:var(--gold)}
+.sw-c{display:flex;gap:.6rem}
+.sw-c button{width:40px;height:40px;border-radius:50%;border:2px solid transparent;cursor:pointer;background:var(--c);box-shadow:inset 0 0 0 3px var(--plum);transition:.3s}
+.sw-c button[aria-pressed="true"]{border-color:var(--gold)}
+.gform input{width:100%;font:inherit;color:var(--pearl);background:rgba(251,243,236,.06);border:1px solid rgba(224,180,90,.35);border-radius:10px;padding:.85rem 1rem;min-height:48px}
+.gform input:focus{outline:none;border-color:var(--gold)}
+.gform .two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.voucher{position:relative;aspect-ratio:1.6/1;border-radius:14px;padding:clamp(1.4rem,3vw,2.2rem);color:var(--pearl);background:var(--vc,#b3306c) var(--silk) center/30px;box-shadow:0 40px 70px -30px rgba(0,0,0,.7);display:flex;flex-direction:column;overflow:hidden;transform:rotate(-2deg);transition:background-color .6s,transform .6s var(--ease)}
+.voucher:hover{transform:rotate(0) scale(1.02)}
+.voucher::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.18),transparent 40%,rgba(0,0,0,.25))}
+.voucher::after{content:"";position:absolute;inset:10px;border:1px solid rgba(246,220,154,.7);border-radius:8px;pointer-events:none}
+.voucher > *{position:relative;z-index:1}
+.voucher__top{display:flex;justify-content:space-between;align-items:flex-start}
+.voucher__top b{font-family:var(--serif);font-size:1.3rem;font-weight:500}
+.voucher__top span{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-2)}
+.voucher__amt{font-family:var(--serif);font-size:clamp(3rem,7vw,5rem);line-height:1;margin-top:auto;text-shadow:0 4px 20px rgba(0,0,0,.3)}
+.voucher__for{font-family:var(--script);font-size:clamp(1.6rem,3vw,2.2rem);line-height:1.1;color:var(--gold-2)}
+.voucher__tr{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;opacity:.9;margin-top:.3rem}
+.voucher__msg{font-style:italic;font-size:.85rem;opacity:.85;margin-top:.4rem;min-height:1.4em}
+.gift__buy{margin-top:1.8rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.gift__buy small{opacity:.7}
+@media (max-width:900px){.gift__wrap{grid-template-columns:1fr}.gift__wrap > .voucher-col{order:-1}}
+
+/* GALLERY slider */
+.gal{padding:clamp(5rem,12vh,8rem) var(--pad)}
+.gal__wrap{max-width:1240px;margin:0 auto}
+.gal__head{display:flex;justify-content:space-between;align-items:flex-end;gap:1.5rem;flex-wrap:wrap;margin-bottom:2.4rem}
+.gal__head h2{font-size:clamp(2.2rem,4.8vw,4rem);margin-top:1rem}
+.stage{position:relative;aspect-ratio:16/8;border-radius:8px;overflow:hidden;background:var(--plum-2)}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity 1s var(--ease),transform 6s linear}
+.stage img.on{opacity:1;transform:scale(1)}
+.stage__cap{position:absolute;left:1.6rem;bottom:1.4rem;z-index:2;color:var(--pearl);font-family:var(--serif);font-style:italic;font-size:1.4rem;text-shadow:0 2px 16px rgba(0,0,0,.5)}
+.thumbs{display:grid;grid-template-columns:repeat(6,1fr);gap:.7rem;margin-top:.9rem}
+.thumbs button{aspect-ratio:1.4;border:0;padding:0;border-radius:4px;overflow:hidden;cursor:pointer;opacity:.5;transition:.4s;background:var(--pearl-2);outline:2px solid transparent;outline-offset:2px}
+.thumbs button.on{opacity:1;outline-color:var(--gold)}
+.thumbs img{width:100%;height:100%;object-fit:cover}
+.garrows{display:flex;gap:.6rem}
+.garrows button{width:50px;height:50px;border-radius:50%;border:1px solid var(--plum);background:transparent;cursor:pointer;font-size:1.1rem;transition:.3s}
+.garrows button:hover{background:var(--plum);color:var(--gold-2)}
+@media (max-width:700px){.stage{aspect-ratio:4/3}.thumbs{grid-template-columns:repeat(3,1fr)}}
+
+/* REVIEWS */
+.revs{padding:0 var(--pad) clamp(5rem,12vh,8rem)}
+.rgrid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.rcard{background:#fff;border-top:3px solid var(--magenta);padding:2rem;box-shadow:0 24px 50px -36px rgba(43,13,47,.5)}
+.rcard .st{color:var(--gold);letter-spacing:.2em}
+.rcard p{font-family:var(--serif);font-style:italic;font-size:1.15rem;line-height:1.5;margin:.9rem 0 1.2rem}
+.rcard b{font-weight:400;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--magenta)}
+@media (max-width:860px){.rgrid{grid-template-columns:1fr}}
+
+/* LOCATIONS rows */
+.locs{background:var(--pearl-2);padding:clamp(5rem,12vh,8rem) var(--pad)}
+.locs__wrap{max-width:1240px;margin:0 auto}
+.locs h2{font-size:clamp(2.2rem,4.8vw,4rem);margin:1rem 0 2.6rem}
+.lrow{background:var(--pearl);border:1px solid rgba(224,180,90,.6);margin-bottom:1.4rem;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:2rem;padding:2rem 2.2rem;align-items:start}
+.lrow h3{font-family:var(--serif);font-weight:400;font-size:2.2rem;line-height:1.1}
+.lrow .city{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--magenta)}
+.lrow p{font-size:.95rem;margin-top:.6rem}
+.lrow p a{text-decoration:none;border-bottom:1px solid var(--gold)}
+.lrow table{width:100%;border-collapse:collapse;font-size:.88rem}
+.lrow td{padding:.28rem 0;border-bottom:1px dotted rgba(36,16,31,.18)}
+.lrow td:last-child{text-align:right}
+.lrow tr.today td{color:var(--magenta);font-weight:500}
+.lrow__act{display:flex;flex-direction:column;gap:.7rem;align-items:flex-start}
+.lrow__act button{font:inherit;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;background:none;border:0;border-bottom:1px solid var(--plum);cursor:pointer;padding:.4rem 0;min-height:40px}
+.lrow__map{grid-column:1/-1;height:0;overflow:hidden;transition:height .6s var(--ease)}
+.lrow__map.open{height:320px}
+.lrow__map iframe{width:100%;height:320px;border:0;filter:sepia(.3) hue-rotate(-30deg) saturate(.8)}
+@media (max-width:900px){.lrow{grid-template-columns:1fr}}
+
+/* CONTACT */
+.contact{padding:clamp(5rem,12vh,8rem) var(--pad)}
+.contact__wrap{max-width:820px;margin:0 auto;text-align:center}
+.contact h2{font-size:clamp(2.2rem,4.8vw,4rem);margin:1rem 0 .8rem}
+.contact__wrap > p{opacity:.78;margin-bottom:2.4rem}
+.cform{display:grid;grid-template-columns:1fr 1fr;gap:1rem;text-align:left}
+.cform .full{grid-column:1/-1}
+.cform input,.cform textarea{width:100%;font:inherit;color:var(--ink);background:#fff;border:1px solid rgba(224,180,90,.7);border-radius:8px;padding:.95rem 1.1rem;min-height:52px}
+.cform textarea{min-height:130px;resize:vertical}
+.cform input:focus,.cform textarea:focus{outline:none;border-color:var(--magenta);box-shadow:0 0 0 3px rgba(179,48,108,.15)}
+.cform label{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--magenta);display:block;margin-bottom:.35rem}
+.cform .btn{justify-self:center;grid-column:1/-1}
+.ok{grid-column:1/-1;text-align:center;display:none;font-family:var(--serif);font-style:italic;font-size:1.2rem;color:var(--magenta)}
+.ok.show{display:block}
+@media (max-width:640px){.cform{grid-template-columns:1fr}}
+
+/* FOOTER */
+.footer{background:var(--plum);color:var(--pearl)}
+.footer__grid{max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2.4rem;padding:3.6rem var(--pad) 2.4rem}
+.footer__brand p{font-family:var(--serif);font-style:italic;opacity:.8;margin-top:1rem;max-width:26ch}
+.footer h4{font-weight:400;font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.footer ul{list-style:none}
+.footer li{margin-bottom:.5rem;opacity:.85}
+.footer a{text-decoration:none}
+.footer a:hover{color:var(--gold-2)}
+.socials{display:flex;gap:.7rem;margin-top:1.3rem}
+.socials a{width:44px;height:44px;border:1px solid var(--gold);transform:rotate(45deg);display:flex;align-items:center;justify-content:center;transition:.3s}
+.socials a svg{transform:rotate(-45deg);width:16px;height:16px;fill:var(--gold)}
+.socials a:hover{background:var(--gold)}
+.socials a:hover svg{fill:var(--plum)}
+.legal{max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding:1.4rem var(--pad) 2rem;font-size:.78rem;opacity:.75;border-top:1px solid rgba(224,180,90,.2)}
+.obar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:90;background:var(--plum);border-top:2px solid var(--gold);padding:.5rem .8rem calc(.5rem + env(safe-area-inset-bottom))}
+.obar a{display:block}
+@media (max-width:840px){.obar{display:block}.legal{padding-bottom:6rem}}
+</style>
+</head>
+<body id="top">
+
+<div class="weave" aria-hidden="true"></div>
+<header class="nav">
+  <div class="nav__in">
+    <a class="logo" href="#top" aria-label="DemoSpa home"><span class="logo__mark"><span>D</span></span><span><b>DemoSpa</b><small>Royal Thai Spa</small></span></a>
+    <button class="burger" aria-expanded="false" aria-controls="navlinks" aria-label="Menu">☰</button>
+    <ul id="navlinks">
+      <li><a href="#about">Heritage</a></li>
+      <li><a href="#treatments">Treatments</a></li>
+      <li><a href="#gift">Gift Vouchers</a></li>
+      <li><a href="#locations">Locations</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <svg id="ribbon" viewBox="0 0 1440 500" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="rg1" x1="0" x2="1"><stop offset="0" stop-color="#b3306c"/><stop offset=".45" stop-color="#e46e9a"/><stop offset=".7" stop-color="#e0b45a"/><stop offset="1" stop-color="#5e1d55"/></linearGradient>
+      <linearGradient id="rg2" x1="0" x2="1"><stop offset="0" stop-color="#e0b45a"/><stop offset=".5" stop-color="#f6dc9a"/><stop offset="1" stop-color="#b3306c"/></linearGradient>
+    </defs>
+    <path id="r1" fill="url(#rg1)" opacity=".85"/>
+    <path id="r2" fill="url(#rg2)" opacity=".55"/>
+  </svg>
+  <span class="script rv">Sawasdee</span>
+  <h1 class="serif rv d1">Wrapped in <i class="shine">silk</i>,<br>restored by <i>touch.</i></h1>
+  <p class="rv d2">Royal Thai massage, rich aromatic oils and rituals once reserved for the palace — served with the grace of Siam in every detail.</p>
+  <div class="hero__ctas rv d3">
+    <a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book a Ritual</a>
+    <a class="btn btn--o" href="#gift">Design a Gift</a>
+  </div>
+  <div class="hero__badges rv d3"><span>Royal Thai technique</span><span>Private suites</span><span>Couples rituals</span></div>
+</section>
+
+<!-- INTRO -->
+<section class="intro" id="about">
+  <div class="rv">
+    <span class="over">Our heritage</span>
+    <h2 class="serif">Woven like silk, <em>one thread at a time.</em></h2>
+    <p>Thai silk is famous for its shimmer — the way it changes colour as it moves. We think a good massage should feel the same: never one note, always shifting to what your body needs next.</p>
+    <p>Our therapists trained in royal Thai massage, a refined style known for its gentle, respectful touch. Expect warm oils, private suites, and every detail looked after.</p>
+    <p class="intro__sig">Khun Malai, founder</p>
+  </div>
+  <div class="bolts rv d1">
+    <div class="bolt"><img src="https://i.postimg.cc/Qd71qZQS/271602579-2066015386885726-5248643883991483846-n.jpg" alt="Traditional Thai massage" loading="lazy"></div>
+    <div class="bolt"><img src="https://i.postimg.cc/zDdCzjDK/alan-caishan-c-U53ZFBr3lk-unsplash.jpg" alt="Thai oil massage" loading="lazy"></div>
+    <div class="bolt"><img src="https://i.postimg.cc/nzp4zSQ6/Copy-of-271134519-2053893694764562-3923658756880702584-n.jpg" alt="Hot stone massage" loading="lazy"></div>
+  </div>
+</section>
+
+<!-- SWATCHES -->
+<section class="sw" id="treatments">
+  <div class="sw__head center rv">
+    <span class="over">The Silk Collection</span>
+    <h2 class="serif">Choose your <em>thread</em></h2>
+    <p>Each treatment has its own silk. Hover or tap a swatch to see what's woven inside.</p>
+  </div>
+  <div class="swgrid">
+    <div class="flip rv" tabindex="0" style="--c:#43143f"><div class="flip__in">
+      <div class="face face--f"><span class="th">นวดแผนไทย</span><h3>Royal Thai Massage</h3><small>Signature · Clothed</small></div>
+      <div class="face face--b"><h3>Royal Thai Massage</h3><p>A graceful, gentle style taught in the palace tradition — thumb pressure, palm circles and soft stretches.</p><ul><li>60 min <b>$85</b></li><li>90 min <b>$120</b></li><li>120 min <b>$150</b></li></ul></div>
+    </div></div>
+    <div class="flip rv d1" tabindex="0" style="--c:#b3306c;--s:30px"><div class="flip__in">
+      <div class="face face--f"><span class="th">นวดน้ำมัน</span><h3>Silk Oil Ritual</h3><small>Warm aromatic oil</small></div>
+      <div class="face face--b"><h3>Silk Oil Ritual</h3><p>Long, gliding strokes with warmed jasmine and rice-bran oil. Skin left soft as silk.</p><ul><li>60 min <b>$95</b></li><li>90 min <b>$130</b></li></ul></div>
+    </div></div>
+    <div class="flip rv d2" tabindex="0" style="--c:#7b4a1c;--s:56px"><div class="flip__in">
+      <div class="face face--f"><span class="th">ลูกประคบ</span><h3>Golden Herbal Compress</h3><small>Steamed herbs</small></div>
+      <div class="face face--b"><h3>Golden Herbal Compress</h3><p>Steamed turmeric and lemongrass pouches pressed along the body. Ideal for aches and cool evenings.</p><ul><li>75 min <b>$120</b></li><li>105 min <b>$150</b></li></ul></div>
+    </div></div>
+    <div class="flip rv" tabindex="0" style="--c:#1f4d4a;--s:36px"><div class="flip__in">
+      <div class="face face--f"><span class="th">นวดเท้า</span><h3>Jade Foot Reflexology</h3><small>Feet &amp; lower legs</small></div>
+      <div class="face face--b"><h3>Jade Foot Reflexology</h3><p>A warm foot soak, then pressure-point work along the soles with a polished wooden stick.</p><ul><li>45 min <b>$65</b></li><li>60 min <b>$80</b></li></ul></div>
+    </div></div>
+    <div class="flip rv d1" tabindex="0" style="--c:#5e1d55;--s:22px"><div class="flip__in">
+      <div class="face face--f"><span class="th">คู่รัก</span><h3>Twin Silk Suite</h3><small>For two</small></div>
+      <div class="face face--b"><h3>Twin Silk Suite</h3><p>Side-by-side massage in our private couples suite, with Thai tea and a rose petal foot bath.</p><ul><li>60 min <b>$180</b></li><li>90 min <b>$250</b></li></ul></div>
+    </div></div>
+    <div class="flip rv d2" tabindex="0" style="--c:#a7802f;--s:48px"><div class="flip__in">
+      <div class="face face--f"><span class="th">ราชวงศ์</span><h3>The Palace Day</h3><small>Half-day package</small></div>
+      <div class="face face--b"><h3>The Palace Day</h3><p>Foot ritual, royal Thai massage, herbal compress and facial — three hours of total indulgence.</p><ul><li>3 hrs <b>$290</b></li></ul></div>
+    </div></div>
+  </div>
+  <p class="sw__hint">Tap a swatch to turn it over</p>
+</section>
+
+<!-- VOUCHER -->
+<section class="gift" id="gift">
+  <div class="gift__wrap">
+    <div class="rv">
+      <span class="over">Gift Vouchers</span>
+      <h2 class="serif">Design a gift <em>they'll treasure</em></h2>
+      <div><p>Pick a value, a treatment and a silk colour — watch the voucher come to life. Delivered by email instantly, or printed on silk-touch card in store.</p></div>
+      <div class="gform">
+        <div><span class="l" style="display:block;font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-2);margin-bottom:.5rem">Value</span>
+          <div class="chips" id="amts"><button type="button" aria-pressed="false" data-v="100">$100</button><button type="button" aria-pressed="true" data-v="150">$150</button><button type="button" aria-pressed="false" data-v="200">$200</button><button type="button" aria-pressed="false" data-v="290">The Palace Day</button></div></div>
+        <div><span class="l" style="display:block;font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-2);margin-bottom:.5rem">Silk colour</span>
+          <div class="sw-c" id="cols"><button type="button" aria-label="Magenta" aria-pressed="true" style="--c:#b3306c"></button><button type="button" aria-label="Plum" aria-pressed="false" style="--c:#5e1d55"></button><button type="button" aria-label="Jade" aria-pressed="false" style="--c:#1f4d4a"></button><button type="button" aria-label="Saffron" aria-pressed="false" style="--c:#a7802f"></button><button type="button" aria-label="Midnight" aria-pressed="false" style="--c:#1d2147"></button></div></div>
+        <div class="two">
+          <div><label class="l" for="vto">To</label><input id="vto" type="text" maxlength="22" placeholder="Their name" value="Somchai"></div>
+          <div><label class="l" for="vfrom">From</label><input id="vfrom" type="text" maxlength="22" placeholder="Your name" value=""></div>
+        </div>
+        <div><label class="l" for="vmsg">Short message</label><input id="vmsg" type="text" maxlength="48" placeholder="Happy birthday — relax, you deserve it"></div>
+      </div>
+    </div>
+    <div class="voucher-col rv d1">
+      <div class="voucher" id="voucher">
+        <div class="voucher__top"><b>DemoSpa</b><span>Gift of Silk</span></div>
+        <div class="voucher__amt" id="vAmt">$150</div>
+        <div class="voucher__for" id="vFor">for Somchai</div>
+        <div class="voucher__tr" id="vTr">Redeemable on any treatment</div>
+        <div class="voucher__msg" id="vMsg"></div>
+      </div>
+      <div class="gift__buy"><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Buy this voucher</a><small>Valid 12 months · both locations</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gal" id="gallery">
+  <div class="gal__wrap">
+    <div class="gal__head rv"><div><span class="over">The suites</span><h2 class="serif">A glimpse <em>inside</em></h2></div><div class="garrows"><button type="button" id="gp" aria-label="Previous">←</button><button type="button" id="gn" aria-label="Next">→</button></div></div>
+    <div class="stage rv d1" id="stage">
+      <img class="on" src="https://i.postimg.cc/QMr54YSt/Copy-of-269712218-2059184294235502-6657828226324914816-n.jpg" alt="Traditional Thai massage stretch" data-cap="Royal Thai in session">
+      <img src="https://i.postimg.cc/xdryr1j9/Copy-of-woman-getting-massage-from-another-person.jpg" alt="Herbal compress massage" data-cap="Golden herbal compress" loading="lazy">
+      <img src="https://i.postimg.cc/rFPNJ9vT/Copy-of-wellness-589770-1920.jpg" alt="Candles and spa decor" data-cap="Candlelit suites" loading="lazy">
+      <img src="https://i.postimg.cc/L543yQ9p/Stock-Images-(7).jpg" alt="Neck and shoulder massage" data-cap="Neck &amp; shoulder ritual" loading="lazy">
+      <img src="https://i.postimg.cc/76kVzYjY/Copy-of-49247077057-37cac67f79-o.jpg" alt="Couples massage side by side" data-cap="The Twin Silk Suite" loading="lazy">
+      <img src="https://i.postimg.cc/hPf9fdfG/272106455-2066857463468185-3689533452356941384-n.jpg" alt="Foot massage" data-cap="Jade foot reflexology" loading="lazy">
+      <span class="stage__cap" id="cap">Royal Thai in session</span>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="revs">
+  <div class="rgrid">
+    <article class="rcard rv"><div class="st">★★★★★</div><p>“Gave my mum the Palace Day voucher — she hasn't stopped talking about it.”</p><b>Priya · Google</b></article>
+    <article class="rcard rv d1"><div class="st">★★★★★</div><p>“Elegant, spotless and so calming. The silk oil ritual is pure luxury.”</p><b>Tom · Google</b></article>
+    <article class="rcard rv d2"><div class="st">★★★★★</div><p>“The couples suite for our anniversary was perfect. Beautiful touches everywhere.”</p><b>Jess &amp; Ben · Facebook</b></article>
+  </div>
+</section>
+
+<!-- LOCATIONS -->
+<section class="locs" id="locations">
+  <div class="locs__wrap">
+    <span class="over rv">Our spas</span>
+    <h2 class="serif rv d1">Visit a <em>silk suite</em></h2>
+    <article class="lrow rv">
+      <div><span class="city">Brisbane · QLD</span><h3>Demo2</h3><p>346 Sandgate Road, Albion QLD 4010<br><a href="tel:0732624972">07 3262 4972</a></p></div>
+      <table>
+        <tr data-day="1"><td>Monday</td><td>10am – 8pm</td></tr><tr data-day="2"><td>Tuesday</td><td>10am – 8pm</td></tr><tr data-day="3"><td>Wednesday</td><td>10am – 8pm</td></tr><tr data-day="4"><td>Thursday</td><td>10am – 9pm</td></tr><tr data-day="5"><td>Friday</td><td>10am – 9pm</td></tr><tr data-day="6"><td>Saturday</td><td>9am – 9pm</td></tr><tr data-day="0"><td>Sunday</td><td>9am – 6pm</td></tr>
+      </table>
+      <div class="lrow__act"><a class="btn btn--plum" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Brisbane</a><button type="button" data-map="m1" aria-expanded="false">Show map ↓</button></div>
+      <div class="lrow__map" id="m1" data-src="https://www.google.com/maps?q=-27.428973,153.04233&output=embed" data-title="Map — DemoSpa Albion QLD"></div>
+    </article>
+    <article class="lrow rv d1">
+      <div><span class="city">Melbourne · VIC</span><h3>Melbourne</h3><p>19 North Park Dr, Somerton VIC 3062<br><a href="tel:0407505997">0407 505 997</a></p></div>
+      <table>
+        <tr data-day="1"><td>Monday</td><td>9am – 9pm</td></tr><tr data-day="2"><td>Tuesday</td><td>9am – 9pm</td></tr><tr data-day="3"><td>Wednesday</td><td>9am – 9pm</td></tr><tr data-day="4"><td>Thursday</td><td>9am – 9pm</td></tr><tr data-day="5"><td>Friday</td><td>9am – 10pm</td></tr><tr data-day="6"><td>Saturday</td><td>9am – 10pm</td></tr><tr data-day="0"><td>Sunday</td><td>10am – 7pm</td></tr>
+      </table>
+      <div class="lrow__act"><a class="btn btn--plum" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book Melbourne</a><button type="button" data-map="m2" aria-expanded="false">Show map ↓</button></div>
+      <div class="lrow__map" id="m2" data-src="https://www.google.com/maps?q=-37.6406811,144.9686265&output=embed" data-title="Map — DemoSpa Somerton VIC"></div>
+    </article>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact__wrap">
+    <span class="over rv" style="justify-content:center">Enquiries</span>
+    <h2 class="serif rv d1">May we <em>assist you?</em></h2>
+    <p class="rv d1">Corporate gifting, bridal parties, private suite bookings — our concierge will reply within a day.</p>
+    <form class="cform rv d2" id="cform" novalidate>
+      <div><label for="n">Name</label><input id="n" type="text" autocomplete="name" required></div>
+      <div><label for="e">Email</label><input id="e" type="email" autocomplete="email" required></div>
+      <div class="full"><label for="p">Phone</label><input id="p" type="tel" autocomplete="tel" placeholder="Optional"></div>
+      <div class="full"><label for="m">Message</label><textarea id="m" required></textarea></div>
+      <button class="btn" type="submit">Send Enquiry</button>
+      <p class="ok" id="ok" role="status">Thank you — our concierge will be in touch shortly.</p>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="weave" aria-hidden="true"></div>
+  <div class="footer__grid">
+    <div class="footer__brand">
+      <a class="logo" href="#top"><span class="logo__mark"><span>D</span></span><span><b>DemoSpa</b><small>Royal Thai Spa</small></span></a>
+      <p>Wrapped in silk, restored by touch.</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V21h3.4z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.1 15.6 2 15.2 2 12s0-3.6.1-4.8C2.3 4 3.8 2.4 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 4.7a5.1 5.1 0 100 10.2 5.1 5.1 0 000-10.2zm0 8.4a3.3 3.3 0 110-6.6 3.3 3.3 0 010 6.6zm5.3-9.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></a>
+      </div>
+    </div>
+    <div><h4>Explore</h4><ul><li><a href="#about">Heritage</a></li><li><a href="#treatments">Treatments</a></li><li><a href="#gift">Gift vouchers</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div><h4>Brisbane</h4><ul><li><a href="tel:0732624972">07 3262 4972</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+    <div><h4>Melbourne</h4><ul><li><a href="tel:0407505997">0407 505 997</a></li><li><a href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book online</a></li></ul></div>
+  </div>
+  <div class="legal">
+    <p>© <span id="yr"></span> DemoSpa. All rights reserved.</p>
+    <p>Powered by <a href="https://www.localforyou.com" target="_blank" rel="noopener">Local For You</a> · <a href="https://www.localforyou.com/terms" target="_blank" rel="noopener">Terms</a></p>
+  </div>
+</footer>
+<div class="obar"><a class="btn" href="https://demo4.localforyoucarts.com" target="_blank" rel="noopener">Book a Ritual</a></div>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var burger = document.querySelector('.burger'), links = document.getElementById('navlinks');
+  burger.addEventListener('click', function(){ var o = links.classList.toggle('open'); burger.setAttribute('aria-expanded', o); });
+  links.addEventListener('click', function(e){ if(e.target.closest('a')){ links.classList.remove('open'); burger.setAttribute('aria-expanded','false'); } });
+
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* silk ribbon */
+  var r1 = document.getElementById('r1'), r2 = document.getElementById('r2');
+  function ribbon(t, base, amp, thick, ph){
+    var top = [], bot = [], N = 36;
+    for(var i=0;i<=N;i++){
+      var x = i/N*1440, k = i/N;
+      var y = base + Math.sin(k*5 + t + ph)*amp + Math.sin(k*2.2 - t*.6)*amp*.6;
+      var w = thick * (.35 + .65*Math.abs(Math.cos(k*3.2 + t*.8 + ph)));
+      top.push([x, y - w/2]); bot.push([x, y + w/2]);
+    }
+    var d = 'M' + top.map(function(p){ return p[0].toFixed(1)+' '+p[1].toFixed(1); }).join(' L');
+    d += ' L' + bot.reverse().map(function(p){ return p[0].toFixed(1)+' '+p[1].toFixed(1); }).join(' L') + 'Z';
+    return d;
+  }
+  function frame(ts){
+    var t = ts/2400;
+    r1.setAttribute('d', ribbon(t, 370, 60, 110, 0));
+    r2.setAttribute('d', ribbon(t*1.15, 400, 50, 56, 1.6));
+    if(!reduce) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* flip cards via tap */
+  document.querySelectorAll('.flip').forEach(function(f){
+    f.addEventListener('click', function(){ f.classList.toggle('on'); });
+    f.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); f.classList.toggle('on'); } });
+  });
+
+  /* voucher designer */
+  var vAmt = document.getElementById('vAmt'), vFor = document.getElementById('vFor'), vTr = document.getElementById('vTr'), vMsg = document.getElementById('vMsg'), voucher = document.getElementById('voucher');
+  function group(id, fn){ var bs = document.querySelectorAll('#'+id+' button'); bs.forEach(function(b){ b.addEventListener('click', function(){ bs.forEach(function(x){ x.setAttribute('aria-pressed', x===b); }); fn(b); }); }); }
+  group('amts', function(b){ var v = b.dataset.v; vAmt.textContent = '$' + v; vTr.textContent = v==='290' ? 'The Palace Day · 3 hours' : 'Redeemable on any treatment'; });
+  group('cols', function(b){ voucher.style.setProperty('--vc', getComputedStyle(b).getPropertyValue('--c')); });
+  var vto = document.getElementById('vto'), vfrom = document.getElementById('vfrom'), vmsg = document.getElementById('vmsg');
+  function upd(){ vFor.textContent = 'for ' + (vto.value.trim() || 'someone special') + (vfrom.value.trim() ? ', from ' + vfrom.value.trim() : ''); vMsg.textContent = vmsg.value.trim() ? '“' + vmsg.value.trim() + '”' : ''; }
+  [vto,vfrom,vmsg].forEach(function(i){ i.addEventListener('input', upd); }); upd();
+
+  /* gallery */
+  var imgs = [].slice.call(document.querySelectorAll('#stage img')), thumbs = document.getElementById('thumbs'), cap = document.getElementById('cap'), gi = 0, gt;
+  imgs.forEach(function(im,i){ var b = document.createElement('button'); b.type='button'; b.setAttribute('aria-label','Show photo '+(i+1)); b.innerHTML = '<img src="'+im.src.replace(/w=\d+/,'w=300')+'" alt="" loading="lazy">'; b.onclick = function(){ show(i); }; thumbs.appendChild(b); });
+  function show(i){ gi = (i+imgs.length)%imgs.length; imgs.forEach(function(im,j){ im.classList.toggle('on', j===gi); thumbs.children[j].classList.toggle('on', j===gi); }); cap.innerHTML = imgs[gi].dataset.cap; clearTimeout(gt); if(!reduce) gt = setTimeout(function(){ show(gi+1); }, 5000); }
+  document.getElementById('gp').onclick = function(){ show(gi-1); };
+  document.getElementById('gn').onclick = function(){ show(gi+1); };
+  show(0);
+
+  /* map reveal (lazy iframe) */
+  document.querySelectorAll('[data-map]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var m = document.getElementById(b.dataset.map);
+      if(!m.firstChild){ var f = document.createElement('iframe'); f.src = m.dataset.src; f.title = m.dataset.title; f.loading = 'lazy'; f.referrerPolicy = 'no-referrer-when-downgrade'; m.appendChild(f); }
+      var o = m.classList.toggle('open'); b.setAttribute('aria-expanded', o); b.textContent = o ? 'Hide map ↑' : 'Show map ↓';
+    });
+  });
+  var day = new Date().getDay();
+  document.querySelectorAll('tr[data-day="'+day+'"]').forEach(function(tr){ tr.classList.add('today'); });
+
+  var f = document.getElementById('cform');
+  f.addEventListener('submit', function(e){ e.preventDefault(); if(!f.checkValidity()){ f.reportValidity(); return; } document.getElementById('ok').classList.add('show'); f.reset(); });
+  document.getElementById('yr').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
