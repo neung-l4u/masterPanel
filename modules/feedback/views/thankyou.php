@@ -1,3 +1,12 @@
+<?php
+// Set by the feedback form's redirect. This page only re-states what the
+// server already decided; it never grants anything and makes no request, so
+// a hand-typed ?credit=granted changes a sentence and nothing else.
+$creditState = $_GET['credit'] ?? '';
+$creditMins  = isset($_GET['minutes']) ? (int) $_GET['minutes'] : 0;
+$creditBal   = isset($_GET['balance']) && $_GET['balance'] !== '' ? (int) $_GET['balance'] : null;
+$creditOn    = trim($_GET['claimed'] ?? '');
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -49,6 +58,28 @@
             </div>
             <h1>Thank You!</h1>
             <p>Your submission has been received. We will get back to you shortly.</p>
+            <?php if ($creditState === 'granted'): ?>
+            <div class="alert alert-success mt-4 text-start">
+                <strong><?php echo $creditMins ?: 30; ?> free minutes added.</strong>
+                <?php if ($creditBal !== null): ?>
+                Your balance is now <strong><?php echo $creditBal; ?> minutes</strong>.
+                <?php endif; ?>
+                We have emailed you the details. These are goodwill minutes and do not
+                change your billing or cancellation date.
+            </div>
+            <?php elseif ($creditState === 'already_claimed'): ?>
+            <div class="alert alert-info mt-4 text-start">
+                Thank you for the feedback. This shop has already received its free
+                minutes<?php echo $creditOn !== '' ? ' on ' . htmlspecialchars($creditOn) : ''; ?>,
+                and the offer is one per shop.
+            </div>
+            <?php elseif ($creditState !== ''): ?>
+            <div class="alert alert-info mt-4 text-start">
+                Thank you for the feedback. We could not confirm your free minutes
+                automatically, so our team will check and apply them for you.
+            </div>
+            <?php endif; ?>
+
             <a href="feedbackForm.php" class="btn btn-success mt-4">Back to Home</a>
         </div>
     </div>
