@@ -2,6 +2,12 @@
    Downgrade Form v1.0.0 - JavaScript Controller
    ============================================================ */
 
+// ===== Form Mode =====
+// 'customer' hides the staff-only fields (Monday project search, internal
+// details, submitted-by), so those must not be validated as required.
+const FORM_MODE = document.body.dataset.mode || 'customer';
+const IS_STAFF = (FORM_MODE === 'staff');
+
 // ===== Package Comparison Data (Downgrade — reverse of upgrade) =====
 const downgradeData = {
     'ultimate_to_growth': {
@@ -40,17 +46,22 @@ const downgradeData = {
 };
 
 // ===== Section Visibility =====
+// The product list appears only for "Unsubscribe specific product". Unchecking
+// everything on the way out matters: a stale checked box would otherwise keep
+// an Araya section on screen after the customer switched to cancelling
+// everything.
 function updateSectionVisibility() {
-    const requestType    = $('input[name="requestType"]:checked').val();
-    const isDowngradePkg = (requestType === 'Downgrade to other product');
+    const requestType  = $('input[name="requestType"]:checked').val();
+    const isSpecific   = (requestType === 'Unsubscribe specific product');
 
-    // Second-level target choice appears only for "Downgrade to other product"
-    if (isDowngradePkg) {
-        $('#downgradeTargetGroup').slideDown(200);
+    if (isSpecific) {
+        $('#productSelectGroup').slideDown(200);
     } else {
-        $('#downgradeTargetGroup').slideUp(200);
-        $('input[name="downgradeTarget"]').prop('checked', false);
+        $('#productSelectGroup').slideUp(200);
+        $('#productCheckboxList input[name="cancelledProducts[]"]').prop('checked', false);
     }
+
+    recomputeConditionalState();
 }
 
 // ===== Star Rating Widget =====
@@ -99,7 +110,13 @@ function initStarRating(widgetId, inputId, labelId) {
 (function () {
     const $input = $('#mondayProjectId');
     const $dropdown = $('#projectSearchDropdown');
-    if (!$input.length) return;
+    // Guarded on the dropdown, not on #mondayProjectId. Customer mode now has
+    // #mondayProjectId too -- as a hidden input the email lookup fills -- so
+    // guarding on that alone would run this whole staff search on the customer
+    // page, and its #country handler would download the country's entire shop
+    // directory into the customer's browser on every country change. The
+    // dropdown is rendered in staff mode only.
+    if (!$dropdown.length || !$input.length) return;
 
     let searchTimer = null;
     let allProjects = [];
@@ -154,6 +171,10 @@ function initStarRating(widgetId, inputId, labelId) {
     $('#country').on('change', function () {
         const country = $(this).val();
         $input.val('');
+        // The board id goes with it. Leaving it behind would submit a board id
+        // with no project id under a different country -- a request attached to
+        // the wrong shop in Monday.
+        $('#boardId').val('');
         $dropdown.removeClass('show').empty();
         allProjects = [];
         if (country) fetchProjects(country);
@@ -167,6 +188,12 @@ function initStarRating(widgetId, inputId, labelId) {
     });
 
     $dropdown.on('click', '.project-search-item', function () {
+        // Staff picked a shop explicitly, so the email lookup no longer owns
+        // the shop fields. Without releasing it the form would keep showing
+        // the looked-up shop's name and status line while submitting THIS
+        // shop's project id, and a later failed lookup would clear the id
+        // just chosen here.
+        if (typeof udmLookup !== 'undefined' && udmLookup) udmLookup.release();
         $input.val($(this).data('id'));
         $('#boardId').val($(this).data('boardid'));
         $dropdown.removeClass('show').empty();
@@ -179,10 +206,306 @@ function initStarRating(widgetId, inputId, labelId) {
     });
 })();
 
+// ===== Customer Email Lookup =====
+// The lookup lives in assets/js/emailLookup.js, shared with the upgrade form.
+//
+// Both modes get it. CS asked for both sides to work the same way, which means
+// "staff should not have to type what the email can fill" -- not "remove the
+// project search". Staff keeps both, and with both active they can disagree:
+// staff searches shop X, then an email fills shop Y. Last action wins, and the
+// status line says which shop is currently attached, so what will be submitted
+// is never ambiguous.
+
+// The products from the last successful lookup. The product checkbox list is
+// rendered from this, and it is the empty array whenever no lookup has
+// succeeded -- which is what makes the "enter your email first" prompt
+// distinguishable from "this shop has no products".
+let udmLookupProducts = [];
+
+// The shop from the last successful lookup, or null. The post-submit Araya
+// redirect reads its name.
+let udmLookupShop = null;
+
+// `var`, not `const`: the staff project-search handler above is registered
+// before this line runs and calls udmLookup.release(). A const would sit in the
+// temporal dead zone until here, where even `typeof` throws rather than
+// reporting undefined, so the guard there could not do its job. A click can
+// only happen after this script has run, but a hoisted var makes that
+// ordering irrelevant instead of merely unreachable.
+var udmLookup = udmInitEmailLookup({
+    email:        '#emailAddress',
+    country:      '#country',
+    status:       '#emailLookupStatus',
+    branchPicker: '#branchPicker',
+    branchList:   '#branchPickerList',
+
+    // The downgrade form's field names differ from the upgrade form's: contact
+    // person rather than owner name, mobile number rather than phone number.
+    shopFields: {
+        shopName:  '#shopName',
+        ownerName: '#contactPerson',
+        phone:     '#mobileNumber',
+    },
+
+    identityFields: {
+        shopId:  '#mondayProjectId',
+        boardId: '#boardId',
+    },
+
+    // No productList/productSelect options: this form has no manual product
+    // select to fall back to. It renders checkboxes from onProducts instead.
+    onProducts: function (subscriptions, shop) {
+        udmLookupProducts = subscriptions || [];
+        udmLookupShop     = shop || null;
+        udmRenderProductList();
+    },
+
+    onChange: updateSectionVisibility,
+});
+
+// Tags per product name, from assets/API/classifyProducts.php. The map that
+// produces them lives in config.php, which the browser cannot read, so this is
+// asked for rather than computed here -- two copies of the rules would drift.
+let udmProductTags = {};
+
+// Id of the latest tag request, so a slow response for a previous shop cannot
+// overwrite the tags of the current one.
+let udmTagRequestSeq = 0;
+
+// The lookup calls this after every state change: a successful match, a branch
+// choice, a revert, a failure. It renders from udmLookupProducts wholesale
+// rather than patching what is on screen, so there is no path on which a
+// previous shop's products survive. It is called with an empty list on every
+// failure/invalidation path, so it must be safe to wipe ticked boxes.
+function udmRenderProductList() {
+    const $list  = $('#productCheckboxList');
+    const $enter = $('#productListPrompt');
+    const $empty = $('#productListEmpty');
+
+    if (!udmLookupProducts.length) {
+        $list.empty();
+        udmProductTags = {};
+        udmTagRequestSeq++;   // drop any in-flight classification
+
+        // An empty list has two meanings. udmLookupShop tells them apart: it is
+        // non-null when a shop was found that has no active products.
+        if (udmLookupShop) {
+            $enter.hide();
+            $empty.show();
+        } else {
+            $empty.hide();
+            $enter.show();
+        }
+        recomputeConditionalState();
+        return;
+    }
+
+    $enter.hide();
+    $empty.hide();
+
+    const html = udmLookupProducts.map(function (product, i) {
+        const id   = 'cancelProduct' + i;
+        const name = udmEscapeHtml(product.name);
+        const nameAttr = udmEscapeAttr(product.name);
+        return `
+            <div class="product-checkbox-item">
+                <input type="checkbox" id="${id}" name="cancelledProducts[]" value="${nameAttr}">
+                <label for="${id}">${name}</label>
+            </div>`;
+    }).join('');
+
+    $list.html(html);
+
+    // Fresh boxes are all unticked, so no tags apply until classification lands.
+    udmProductTags = {};
+    udmFetchProductTags(udmLookupProducts.map(p => p.name));
+    recomputeConditionalState();
+}
+
+// Product names come from Monday and are rendered as HTML, so they are escaped
+// rather than trusted. Same guard as the shared lookup's.
+function udmEscapeHtml(value) {
+    return $('<div>').text(value == null ? '' : String(value)).html();
+}
+
+// For a value that lands inside a double-quoted HTML attribute. jQuery's
+// text()->html() round trip escapes & < > but NOT the double quote, so a
+// product name containing one would close value="..." and anything after it
+// would be parsed as further attributes. No name in the mirror contains a
+// quote today, but the names come from a free-text Monday column, so a
+// product called 6" Display is one edit away.
+function udmEscapeAttr(value) {
+    return udmEscapeHtml(value).replace(/"/g, '&quot;');
+}
+
+// Classification drives which conditional sections exist, so a failure here
+// must fail safe: no tags means no conditional section fires, which is the same
+// state as a shop whose products are all add-ons. The customer can still
+// submit.
+function udmFetchProductTags(names) {
+    const seq = ++udmTagRequestSeq;
+
+    if (!names.length) {
+        udmProductTags = {};
+        recomputeConditionalState();
+        return;
+    }
+
+    $.getJSON('../assets/API/classifyProducts.php', { names: names })
+        .done(function (data) {
+            if (seq !== udmTagRequestSeq) { return; }
+            udmProductTags = (data && data.tags) ? data.tags : {};
+        })
+        .fail(function () {
+            if (seq !== udmTagRequestSeq) { return; }
+            udmProductTags = {};
+        })
+        .always(function () {
+            if (seq !== udmTagRequestSeq) { return; }
+            recomputeConditionalState();
+        });
+}
+
+// The tags across every currently checked product, as a set.
+function udmCheckedTags() {
+    const tags = {};
+
+    $('#productCheckboxList input[name="cancelledProducts[]"]:checked').each(function () {
+        const name = $(this).val();
+        (udmProductTags[name] || []).forEach(function (tag) {
+            tags[tag] = true;
+        });
+    });
+
+    return tags;
+}
+
+// Item 2c's options are chosen by business type, per CS. "Other" gets the
+// union: we do not know which applies, and offering too much is recoverable
+// where offering nothing is not.
+const UDM_KEEP_OPTIONS = {
+    Restaurant: ['Pro Plan', 'Website Hosting'],
+    Massage:    ['Booking System', 'Website Hosting'],
+    Other:      ['Pro Plan', 'Booking System', 'Website Hosting'],
+};
+
+// Rendered from scratch on every call, like the product list: the business type
+// can change after a plan bundle is already checked, and a stale option from
+// the previous type must not survive it.
+function udmRenderKeepList() {
+    const $list   = $('#keepProductsList');
+    const type    = $('#businessType').val() || 'Other';
+    const options = UDM_KEEP_OPTIONS[type] || UDM_KEEP_OPTIONS.Other;
+
+    // What was ticked before, so a re-render for an unrelated reason does not
+    // silently discard the customer's answer.
+    const wasChecked = {};
+    $list.find('input[name="keepProducts[]"]:checked').each(function () {
+        wasChecked[$(this).val()] = true;
+    });
+
+    const html = options.map(function (name, i) {
+        const id      = 'keepProduct' + i;
+        const checked = wasChecked[name] ? ' checked' : '';
+        return `
+            <div class="check-card">
+                <input type="checkbox" id="${id}" name="keepProducts[]" value="${udmEscapeAttr(name)}"${checked}>
+                <label for="${id}"><i class="bi bi-bookmark-check"></i> ${udmEscapeHtml(name)}</label>
+            </div>`;
+    }).join('');
+
+    $list.html(html);
+}
+
+// ===== Conditional State =====
+// Every conditional section is recomputed from the currently checked boxes,
+// wholesale, on every change. Never incremental add/remove: ticking and then
+// unticking a product must not leave a section behind, which is exactly the
+// failure the upgrade form hit when updateSectionVisibility was not called on
+// every change to the field that drives it.
+//
+// Tasks 7 and 8 extend this. It is the only place that reads udmCheckedTags().
+function recomputeConditionalState() {
+    const tags = udmCheckedTags();
+    const hasAraya      = tags.araya       === true;
+    const hasPlanBundle = tags.plan_bundle === true;
+
+    // --- Item 2b: five Araya-specific reasons ---
+    // Unchecking them on the way out keeps the payload honest: a reason
+    // specific to the AI Receptionist must not be submitted by someone who has
+    // since switched to cancelling something else.
+    $('#arayaReasons').toggleClass('d-none', !hasAraya);
+    if (!hasAraya) {
+        $('#arayaReasons input[name="reasons[]"]').prop('checked', false);
+    }
+
+    // --- Item 3a: the stop-now warning, only when both conditions hold ---
+    const stoppingNow = $('#effImmediate').is(':checked');
+    $('#arayaImmediateWarning').toggleClass('d-none', !(hasAraya && stoppingNow));
+
+    // --- Item 4: the Araya conditions block in the info modal ---
+    $('#arayaConditions').toggleClass('d-none', !hasAraya);
+
+    // --- Item 5: hide the two feedback questions the Araya form also asks ---
+    //
+    // Hiding alone is not enough where a field is required: a hidden required
+    // field fails validation with nothing visible for the customer to fix,
+    // which makes the form permanently unsubmittable. Neither of these two
+    // carries required today, but the attribute is dropped explicitly so that
+    // adding required to the markup later cannot reintroduce that trap silently.
+    // (#overallRatingGroup is absent in staff mode; jQuery no-ops on it.)
+    $('#improvementSuggestionGroup').toggleClass('d-none', hasAraya);
+    $('#overallRatingGroup').toggleClass('d-none', hasAraya);
+
+    if (hasAraya) {
+        $('#improvementSuggestion').removeAttr('required').val('');
+        $('#overallRating').removeAttr('required').val('');
+        udmResetStars('overallRatingWidget', 'overallRatingLabel');
+    }
+
+    // --- Item 2c: what to keep, when a plan bundle is being cancelled ---
+    //
+    // Gated on plan_bundle specifically, not on the word "bundle": "Social
+    // Media Marketing Bundle" is an add-on, and asking someone cancelling it
+    // what plan they want to keep makes no sense.
+    $('#keepProductsGroup').toggleClass('d-none', !hasPlanBundle);
+
+    if (hasPlanBundle) {
+        udmRenderKeepList();
+    } else {
+        // Clear it: an answer about keeping a plan must not be submitted by
+        // someone who has since unchecked the plan.
+        $('#keepProductsList').empty();
+    }
+}
+
+// Clearing #overallRating leaves the stars lit, because the widget's state
+// lives in CSS classes rather than in the input. Hiding the group makes that
+// invisible, but unchecking the Araya product brings the group back still
+// showing a rating the field no longer holds.
+function udmResetStars(widgetId, labelId) {
+    const widget = document.getElementById(widgetId);
+    if (!widget) return;
+
+    widget.querySelectorAll('.star').forEach(function (s) {
+        s.classList.remove('active', 'selected');
+    });
+
+    const labelEl = labelId ? document.getElementById(labelId) : null;
+    if (labelEl) labelEl.textContent = '';
+}
+
 $(function () {
 
     // --- Request type toggle ---
     $('input[name="requestType"]').on('change', updateSectionVisibility);
+    // Delegated: the checkboxes are rendered after a lookup, so they do not
+    // exist when this binds.
+    $('#productCheckboxList').on('change', 'input[name="cancelledProducts[]"]', recomputeConditionalState);
+
+    // The keep-list options are chosen by business type, so changing it has to
+    // re-render them.
+    $('#businessType').on('change', recomputeConditionalState);
 
     // --- Custom date toggle ---
     $('input[name="effectiveDate"]').on('change', function () {
@@ -191,6 +514,9 @@ $(function () {
         } else {
             $('#customDateGroup').slideUp(200).find('input').val('');
         }
+        // Item 3a's warning depends on this choice as well as on the checked
+        // products, so it has to be recomputed here too.
+        recomputeConditionalState();
     });
 
     // --- Other reason toggle ---
@@ -261,17 +587,33 @@ function sendData(formData) {
 
     const country = (formData.country || '').toUpperCase();
 
+    const cancelledProducts = formData.cancelledProducts || [];
+    const keepProducts      = formData.keepProducts || [];
+
     const jsonData = Object.assign({}, formData, {
         date: formattedDate,
         // ---- Normalized fields (shared upgrade/downgrade webhook schema) ----
         formType: 'downgrade',
-        // "Downgrade to other product" carries a second-level target; report the
-        // specific target as changeType so downstream keeps the old granularity.
-        changeType: formData.downgradeTarget || formData.requestType || '',
+        // changeType carries the request type. It used to carry the
+        // second-level downgrade target when there was one, but that radio
+        // group is gone: the products being cancelled are real product names
+        // now, and they travel in cancelledProducts.
+        //
+        // The old second-level target key is dropped from the payload rather than sent as a
+        // permanently empty string, because an always-empty field invites a
+        // consumer to keep reading it. CONFIRM WITH THE MAKE.COM SCENARIO
+        // OWNER before this reaches production.
+        changeType: formData.requestType || '',
         requestType: formData.requestType || '',
-        downgradeTarget: formData.downgradeTarget || '',
+        cancelledProducts: cancelledProducts,
+        // A flat string too: a Make.com scenario reading a single cell is far
+        // more likely than one iterating an array.
+        cancelledProductsText: Array.isArray(cancelledProducts) ? cancelledProducts.join(', ') : cancelledProducts,
+        keepProducts: keepProducts,
+        keepProductsText: Array.isArray(keepProducts) ? keepProducts.join(', ') : keepProducts,
         email: formData.emailAddress || '',
         shopName: formData.shopName || '',
+        businessType: formData.businessType || '',
         mondayProjectId: formData.mondayProjectId || '',
         country: formData.country || '',
         countryBoardId: COUNTRY_BOARD_IDS[country] || '',
@@ -279,7 +621,8 @@ function sendData(formData) {
         newProduct: formData.newProduct || '',
         contractPeriod: formData.contractPeriod || '',
         billingDate: formData.billingDate || '',
-        staffName: formData.accountManager || '',
+        staffName: formData.accountManager || formData.submittedBy || '',
+        submittedBy: formData.submittedBy || '',
         reason: reasonText || '',
         note: formData.staffDowngradeNote || '',
     });
@@ -291,11 +634,39 @@ function sendData(formData) {
         data: JSON.stringify(jsonData),
         success: () => {
             console.log("Downgrade webhook sent.");
-            window.location.replace("thankyou.php");
+            window.location.replace(udmPostSubmitUrl(cancelledProducts, formData));
         },
         error: () => {
             console.error("Downgrade webhook failed.");
         }
+    });
+}
+
+// Where to send the customer after a successful submission.
+//
+// A customer who cancelled an AI Receptionist product goes to the feedback
+// form for it, with their shop name and email carried over so they do not
+// retype what they just typed. Everyone else goes to the normal thank-you
+// page.
+//
+// The URL comes from config.php and is empty until CS supplies it, so this
+// returns the thank-you page until then and starts redirecting with no code
+// change afterwards.
+function udmPostSubmitUrl(cancelledProducts, formData) {
+    const feedbackUrl = document.body.dataset.arayaFeedbackUrl || '';
+    if (!feedbackUrl) return 'thankyou.php';
+
+    const names = Array.isArray(cancelledProducts) ? cancelledProducts : [cancelledProducts];
+    const hasAraya = names.some(function (name) {
+        return (udmProductTags[name] || []).indexOf('araya') !== -1;
+    });
+
+    if (!hasAraya) return 'thankyou.php';
+
+    const sep = feedbackUrl.indexOf('?') === -1 ? '?' : '&';
+    return feedbackUrl + sep + $.param({
+        shopName: formData.shopName || '',
+        email:    formData.emailAddress || '',
     });
 }
 
@@ -324,11 +695,17 @@ function saveToDB(payload, result, cmdSubmit) {
 // ===== Validation =====
 function validateForm() {
     let isValid = true;
-    const requestType    = $('input[name="requestType"]:checked').val();
-    const isDowngradePkg = (requestType === 'Downgrade to other product');
+    const requestType = $('input[name="requestType"]:checked').val();
+    const isSpecific  = (requestType === 'Unsubscribe specific product');
 
-    // Always required text fields
-    ['shopName', 'address', 'contactPerson', 'emailAddress', 'mobileNumber'].forEach(id => {
+    // Always required text fields. Country and business type are new, and
+    // country especially: without it no lookup can run at all.
+    const requiredFields = ['country', 'businessType', 'shopName', 'address', 'contactPerson', 'emailAddress', 'mobileNumber'];
+
+    // Staff names themselves at the end of the form.
+    if (IS_STAFF) requiredFields.push('submittedBy');
+
+    requiredFields.forEach(id => {
         const el = document.getElementById(id);
         if (el && !el.value.trim()) {
             el.classList.add('is-invalid');
@@ -348,13 +725,22 @@ function validateForm() {
         if (errEl) errEl.style.display = 'none';
     }
 
-    // Downgrade target (second level) required when downgrading to another product
-    const tgtErrEl = document.getElementById('downgradeTargetError');
-    if (isDowngradePkg && !$('input[name="downgradeTarget"]:checked').val()) {
-        if (tgtErrEl) { tgtErrEl.style.display = ''; tgtErrEl.textContent = 'Please select a product to downgrade to.'; }
+    // At least one product, when unsubscribing from specific products.
+    //
+    // The message distinguishes "you have not ticked anything" from "we have
+    // nothing to show you": the second is not the customer's fault and ticking
+    // harder will not fix it.
+    const prodErrEl = document.getElementById('productListError');
+    if (isSpecific && $('#productCheckboxList input[name="cancelledProducts[]"]:checked').length === 0) {
+        if (prodErrEl) {
+            prodErrEl.style.display = '';
+            prodErrEl.textContent = $('#productCheckboxList input[name="cancelledProducts[]"]').length
+                ? 'Please select at least one product to unsubscribe from.'
+                : 'We could not find any products for this email address. Please choose "Unsubscribe all services", or contact our team and we will help.';
+        }
         isValid = false;
-    } else if (tgtErrEl) {
-        tgtErrEl.style.display = 'none';
+    } else if (prodErrEl) {
+        prodErrEl.style.display = 'none';
     }
 
     // Effective date
@@ -373,14 +759,33 @@ function validateForm() {
         isValid = false;
     }
 
-    // Contact preference
-    if (!$('input[name="contactPreference"]:checked').val()) {
-        const errEl = document.getElementById('contactPreferenceError');
-        if (errEl) { errEl.style.display = ''; errEl.textContent = 'Please select a contact preference.'; }
-        isValid = false;
-    } else {
-        const errEl = document.getElementById('contactPreferenceError');
-        if (errEl) errEl.style.display = 'none';
+    // Contact preference. Customer mode only: staff must not answer on the
+    // customer's behalf, and the field is not rendered for them at all. This is
+    // the one genuinely required field the staff variant removes, so validating
+    // it unconditionally would make the staff form unsubmittable -- the exact
+    // hidden-required-field trap, arrived at from the other direction.
+    if (!IS_STAFF) {
+        if (!$('input[name="contactPreference"]:checked').val()) {
+            const errEl = document.getElementById('contactPreferenceError');
+            if (errEl) { errEl.style.display = ''; errEl.textContent = 'Please select a contact preference.'; }
+            isValid = false;
+        } else {
+            const errEl = document.getElementById('contactPreferenceError');
+            if (errEl) errEl.style.display = 'none';
+        }
+
+        // The policy acknowledgement gates submission, customer mode only.
+        const $ack = $('#policyAcknowledge');
+        if ($ack.length && !$ack.is(':checked')) {
+            $ack.addClass('is-invalid');
+            const errEl = document.getElementById('policyAcknowledgeError');
+            if (errEl) { errEl.style.display = ''; errEl.textContent = 'Please confirm you understand the policy.'; }
+            isValid = false;
+        } else {
+            $ack.removeClass('is-invalid');
+            const errEl = document.getElementById('policyAcknowledgeError');
+            if (errEl) errEl.style.display = 'none';
+        }
     }
 
     if (!isValid) {
@@ -417,6 +822,8 @@ document.addEventListener('DOMContentLoaded', function () {
 // ===== Test Mode Autofill =====
 function applyTestAutofill() {
     // Business Info
+    $('#country').val('TH');
+    $('#businessType').val('Massage').trigger('change');
     $('#shopName').val('Test Shop');
     $('#tradingName').val('Test Shop LLC');
     $('#address').val('123 Test St, Los Angeles, CA 90001');
@@ -425,18 +832,17 @@ function applyTestAutofill() {
     $('#mobileNumber').val('+1 (555) 010-0000');
 
     // Staff fields
-    $('#country').val('TH');
     $('#mondayProjectId').val('99999');
     $('#boardId').val('1943203205'); // TH project board
 
-    // Request Type
-    $('#reqOtherProduct').prop('checked', true).trigger('change');
-    $('#tgtOrderingOnly').prop('checked', true).trigger('change');
+    // Request Type. The old second-level target radio is gone, and the product
+    // checkboxes come from a lookup, so there is nothing to tick here: a test
+    // submission uses "all services", which needs no product selection.
+    $('#reqUnsubscribe').prop('checked', true).trigger('change');
 
     // Staff downgrade fields
     $('#contractPeriod').val('12 months');
     $('#accountManager').val('Test Manager');
-    $('#billingDate').val(new Date().toISOString().split('T')[0]);
     $('#staffDowngradeNote').val('Test mode - automated autofill');
 
     // Effective Date
@@ -445,9 +851,6 @@ function applyTestAutofill() {
     // Reasons
     $('#reasonBudget').prop('checked', true);
     $('#reasonResults').prop('checked', true);
-
-    // Features to Keep
-    $('#keepNone').prop('checked', true);
 
     // Additional Details
     $('#improvementSuggestion').val('Test mode - improvement suggestion');
@@ -460,6 +863,10 @@ function applyTestAutofill() {
 
     // Additional Comments
     $('#additionalComments').val('Test mode - automated autofill');
+
+    // New in these revisions
+    $('#submittedBy').val('Test Staff');
+    $('#policyAcknowledge').prop('checked', true);
 }
 
 function setStarUI(widgetId, val, labelId) {

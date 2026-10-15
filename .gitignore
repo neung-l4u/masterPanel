@@ -157,3 +157,5 @@ out
 /api/aiAraya/stripe_webhook.php
 /api/docusign/docusign_config.php
 /api/docusign/logs/
+# Local browser-test launcher: localhost URLs and real customer emails
+test-links.html

@@ -1103,3 +1103,25 @@ body {
         grid-template-columns: 1fr;
     }
 }
+/* Email lookup status, customer mode */
+.email-lookup-status { margin-top: .5rem; font-size: .875rem; }
+.email-lookup-status:empty { display: none; }
+.email-lookup-status .els-found { color: #198754; }
+.email-lookup-status .els-neutral { color: #6c757d; }
+.email-lookup-status .els-stale { color: #fd7e14; }
+.email-lookup-status .els-revert { margin-left: .5rem; }
+
+/* Branch picker, customer mode: shown only when one email matches several shops */
+.branch-picker-list { display: flex; flex-direction: column; gap: .5rem; }
+.branch-option {
+    display: flex; align-items: center; gap: .65rem;
+    padding: .65rem .85rem; border: 1px solid #dee2e6; border-radius: .5rem;
+    cursor: pointer; transition: border-color .15s, background-color .15s;
+}
+.branch-option:hover { border-color: #adb5bd; background: #f8f9fa; }
+.branch-option:has(input:checked) { border-color: #0d6efd; background: #f0f6ff; }
+.branch-option:focus-within { outline: 2px solid #0d6efd; outline-offset: 2px; }
+.branch-option input { flex: 0 0 auto; margin: 0; }
+.branch-option-body { display: flex; flex-direction: column; }
+.branch-option-name { font-weight: 500; }
+.branch-option-meta { font-size: .8125rem; color: #6c757d; }

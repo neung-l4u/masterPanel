@@ -21,7 +21,7 @@ $testMode = $_GET['testMode'] ?? 'false';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/upgradeForm.css?v=2.0.0" rel="stylesheet">
+    <link href="../assets/css/upgradeForm.css?v=2.2.0" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,9 +103,9 @@ $testMode = $_GET['testMode'] ?? 'false';
                     <!-- ============================================================ -->
                     <form id="upgradeForm" name="upgradeForm" method="post" enctype="multipart/form-data">
 
-                        <!-- ========== SECTION: Shop Details ========== -->
+                        <!-- ========== SECTION: Business Information ========== -->
                         <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-shop-window"></i> Shop Details</h5>
+                            <h5 class="section-title"><i class="bi bi-shop-window"></i> Business Information</h5>
 
                             <div class="mb-3">
                                 <label for="country" class="form-label">Country <span class="text-danger">*</span></label>
@@ -119,6 +119,17 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     <option value="TH">Thailand</option>
                                 </select>
                                 <div class="invalid-feedback">Please select a country.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="businessType" class="form-label">Business Type <span class="text-danger">*</span></label>
+                                <select class="form-select" id="businessType" name="businessType" required>
+                                    <option value="">-- Select Business Type --</option>
+                                    <option value="Restaurant">Restaurant</option>
+                                    <option value="Massage">Massage</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a business type.</div>
                             </div>
 
                             <?php if ($mode === 'staff'): ?>
@@ -136,28 +147,42 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <div id="projectSearchDropdown" class="project-search-dropdown d-none"></div>
                             <?php endif; ?>
 
+                            <div class="mb-3">
+                                <label for="emailAddress" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="emailAddress" name="emailAddress" placeholder="e.g. owner@restaurant.com" required>
+                                <div class="invalid-feedback">Please enter an email address.</div>
+<?php if ($mode === 'customer'): ?>
+                                <div class="form-text">We'll use this to find your shop and current products.</div>
+                                <div id="emailLookupStatus" class="email-lookup-status" aria-live="polite"></div>
+                                <?php endif; ?>
+                            </div>
+
+<?php if ($mode === 'customer'): ?>
+                            <!-- One owner often runs several branches under one email. When the
+                                 lookup matches more than one, the customer picks theirs rather
+                                 than the form guessing and risking the wrong Monday project. -->
+                            <div id="branchPicker" class="branch-picker mb-3 d-none">
+                                <label class="form-label">Which shop is yours? <span class="text-danger">*</span></label>
+                                <div id="branchPickerList" class="branch-picker-list" role="radiogroup" aria-label="Choose your shop"></div>
+                            </div>
+<?php endif; ?>
+
                             <div class="row">
                                 <div class="col-md-12 mb-3">
-                                    <label for="shopName" class="form-label">Shop Name</label>
+                                    <label for="shopName" class="form-label">Business Name</label>
                                     <input type="text" class="form-control" id="shopName" name="shopName" placeholder="<?php echo $mode === 'staff' ? 'Auto-filled from ID' : 'e.g. Bangkok Thai Kitchen'; ?>">
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="ownerName" class="form-label">Owner's Name</label>
+                                    <label for="ownerName" class="form-label">Contact Person</label>
                                     <input type="text" class="form-control" id="ownerName" name="ownerName" placeholder="<?php echo $mode === 'staff' ? 'Auto-filled from ID' : 'e.g. John D.'; ?>">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
                                     <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="<?php echo $mode === 'staff' ? 'Auto-filled from ID' : 'e.g. +1 555 123 4567'; ?>">
                                 </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="emailAddress" class="form-label">Email Address <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="emailAddress" name="emailAddress" placeholder="e.g. owner@restaurant.com" required>
-                                <div class="invalid-feedback">Please enter an email address.</div>
                             </div>
 
                             <div class="row">
@@ -200,41 +225,36 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     </div>
                                     <input type="hidden" id="originalProduct" name="originalProduct">
                                     <?php else: ?>
-                                    <label for="originalProduct" class="form-label">Current Product</label>
-                                    <select class="form-select" id="originalProduct" name="originalProduct">
-                                        <option value="">-- Select Current Product --</option>
-                                        <optgroup label="Pro Plans">
-                                            <option value="pro_starter">Pro - Local Starter</option>
-                                            <option value="pro_growth">Pro - Local Growth</option>
-                                            <option value="pro_ultimate">Pro - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Solo Plans">
-                                            <option value="solo_starter">Solo - Local Starter</option>
-                                            <option value="solo_growth">Solo - Local Growth</option>
-                                            <option value="solo_ultimate">Solo - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Bundle Plans">
-                                            <option value="bundle_starter">Bundle - Local Starter</option>
-                                            <option value="bundle_growth">Bundle - Local Growth</option>
-                                            <option value="bundle_ultimate">Bundle - Local Ultimate</option>
-                                        </optgroup>
-                                    </select>
+                                    <label class="form-label">Current Product</label>
+
+                                    <!-- Filled from the email lookup. Hidden until the lookup succeeds. -->
+                                    <div id="customerProductList" class="subscription-list d-none"></div>
+                                    <input type="hidden" id="originalProduct" name="originalProduct" value="">
+
+                                    <!-- Manual fallback: shown whenever the lookup has not produced products. -->
+                                    <div id="customerProductSelectWrap">
+                                        <select class="form-select" id="originalProductSelect" name="originalProductManual">
+                                            <option value="">-- Select Current Product --</option>
+                                            <option value="bundle_starter">Local Starter Bundle</option>
+                                            <option value="bundle_growth">Local Growth Bundle</option>
+                                            <option value="bundle_ultimate">Local Ultimate Bundle</option>
+                                            <option value="solo_starter">Local Starter Solo</option>
+                                            <option value="solo_growth">Local Growth Solo</option>
+                                            <option value="solo_ultimate">Local Ultimate Solo</option>
+                                        </select>
+                                    </div>
                                     <?php endif; ?>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="newProduct" class="form-label">New Product <span class="text-danger">*</span></label>
                                     <select class="form-select" id="newProduct" name="newProduct">
                                         <option value="">-- Select New Product --</option>
-                                        <optgroup label="Pro Plans">
-                                            <option value="pro_starter">Pro - Local Starter</option>
-                                            <option value="pro_growth">Pro - Local Growth</option>
-                                            <option value="pro_ultimate">Pro - Local Ultimate</option>
-                                        </optgroup>
-                                        <optgroup label="Bundle Plans">
-                                            <option value="bundle_starter">Bundle - Local Starter</option>
-                                            <option value="bundle_growth">Bundle - Local Growth</option>
-                                            <option value="bundle_ultimate">Bundle - Local Ultimate</option>
-                                        </optgroup>
+                                        <option value="bundle_starter">Local Starter Bundle</option>
+                                        <option value="bundle_growth">Local Growth Bundle</option>
+                                        <option value="bundle_ultimate">Local Ultimate Bundle</option>
+                                        <option value="solo_starter">Local Starter Solo</option>
+                                        <option value="solo_growth">Local Growth Solo</option>
+                                        <option value="solo_ultimate">Local Ultimate Solo</option>
                                     </select>
                                 </div>
                             </div>
@@ -243,36 +263,41 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <div id="packageComparisonCard" class="mb-3" style="display:none;"></div>
 
                             <div class="row">
+                                <?php if ($mode === 'staff'): ?>
+                                <!-- Promotion is staff-only: entering a discount is one of the two
+                                     things that distinguishes the staff form from the customer one. -->
                                 <div class="col-md-6 mb-3">
                                     <label for="promotion" class="form-label">Promotion</label>
                                     <input type="text" class="form-control" id="promotion" name="promotion" placeholder="e.g. 20% off first 3 months">
                                 </div>
-                                <?php if ($mode === 'staff'): ?>
+                                <?php endif; ?>
                                 <div class="col-md-6 mb-3">
                                     <label for="contractPeriod" class="form-label">Contract Period <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="contractPeriod" name="contractPeriod" placeholder="e.g. 12 months">
-                                    <div class="invalid-feedback">Please enter the contract period.</div>
+                                    <select class="form-select" id="contractPeriod" name="contractPeriod" required>
+                                        <option value="">-- Select Contract Period --</option>
+                                        <option value="No Contract">No Contract</option>
+                                        <option value="6 Months">6 Months</option>
+                                        <option value="12 Months">12 Months</option>
+                                    </select>
+                                    <div class="form-text">A lower rate may be available with a contract.</div>
+                                    <div class="invalid-feedback">Please select a contract period.</div>
                                 </div>
-                                <?php endif; ?>
                             </div>
 
                             <div class="mb-3">
-                                <label for="upgradeReason" class="form-label">Reason of Upgrade / Upgrade Purpose <span class="text-danger">*</span></label>
+                                <label for="upgradeReason" class="form-label">Upgrade Goal <span class="text-danger">*</span></label>
                                 <textarea class="form-control" id="upgradeReason" name="upgradeReason" rows="2" placeholder="e.g. Want more repeat customers / Want to advertise for walk-in customers"></textarea>
                                 <div class="invalid-feedback">Please enter the reason for upgrade.</div>
                             </div>
 
                             <?php if ($mode === 'staff'): ?>
+                            <!-- Billing Date removed per CS. The Upgrade Person field is the other
+                                 thing that distinguishes the staff form from the customer one. -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="salesAgent" class="form-label">Sales Agent / Upgrade Person <span class="text-danger">*</span></label>
+                                    <label for="salesAgent" class="form-label">Upgrade Person <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="salesAgent" name="salesAgent" placeholder="e.g. John D.">
-                                    <div class="invalid-feedback">Please enter the sales agent name.</div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="billingDate" class="form-label">Billing Date <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="billingDate" name="billingDate">
-                                    <div class="invalid-feedback">Please enter the billing date.</div>
+                                    <div class="invalid-feedback">Please enter the upgrade person's name.</div>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -285,17 +310,13 @@ $testMode = $_GET['testMode'] ?? 'false';
 
                         <!-- ========== SECTION: Add-on Products ========== -->
                         <div class="form-section" id="addonSection" style="display:none;">
-                            <h5 class="section-title"><i class="bi bi-bag-plus"></i> Add-on Products <small class="text-muted">(Purchase / Not free offer)</small></h5>
+                            <h5 class="section-title"><i class="bi bi-bag-plus"></i> Add-on Products</h5>
                             <div class="checkbox-grid">
                                 <div class="check-card"><input type="checkbox" id="addonWebTemplate" name="addons[]" value="Website Template"><label for="addonWebTemplate"><i class="bi bi-layout-text-window-reverse"></i> Website Template</label></div>
                                 <div class="check-card"><input type="checkbox" id="addonWebMakeover" name="addons[]" value="Website Makeover"><label for="addonWebMakeover"><i class="bi bi-brush"></i> Website Makeover</label></div>
                                 <div class="check-card"><input type="checkbox" id="addonAraya" name="addons[]" value="ARAYA (Massage)"><label for="addonAraya"><i class="bi bi-robot"></i> ARAYA (Massage)</label></div>
-                                <div class="check-card"><input type="checkbox" id="addonAiMarketing" name="addons[]" value="AI Marketing (Restaurant)"><label for="addonAiMarketing"><i class="bi bi-stars"></i> AI Marketing (Restaurant)</label></div>
-                                <div class="check-card"><input type="checkbox" id="addonUnlimitedPromo" name="addons[]" value="Unlimited Promotion (Restaurant)"><label for="addonUnlimitedPromo"><i class="bi bi-megaphone"></i> Unlimited Promo (Restaurant)</label></div>
                                 <div class="check-card"><input type="checkbox" id="addonSocialMedia" name="addons[]" value="Social Media Post"><label for="addonSocialMedia"><i class="bi bi-share"></i> Social Media Post</label></div>
                                 <div class="check-card"><input type="checkbox" id="addonSMS" name="addons[]" value="SMS Marketing"><label for="addonSMS"><i class="bi bi-chat-left-text"></i> SMS Marketing</label></div>
-                                <div class="check-card"><input type="checkbox" id="addonDineIn" name="addons[]" value="Dine-in Dual"><label for="addonDineIn"><i class="bi bi-cup-straw"></i> Dine-in Dual</label></div>
-                                <div class="check-card"><input type="checkbox" id="addonDelivery" name="addons[]" value="Inhouse Delivery"><label for="addonDelivery"><i class="bi bi-truck"></i> Inhouse Delivery</label></div>
                             </div>
                         </div>
 
@@ -670,6 +691,7 @@ $testMode = $_GET['testMode'] ?? 'false';
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
-<script src="../controllers/upgradeForm.js?v=2.0.0"></script>
+<script src="../assets/js/emailLookup.js?v=1.0.0"></script>
+<script src="../controllers/upgradeForm.js?v=2.1.0"></script>
 </body>
 </html>

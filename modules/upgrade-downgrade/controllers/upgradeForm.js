@@ -45,19 +45,36 @@ const comparisonData = {
 };
 
 // ===== Helper: Get package tier from product value =====
+// Accepts both shapes this field can hold: a select slug like 'solo_starter',
+// and the real Monday product names the email lookup and the staff subscription
+// list write into it, e.g. 'Local Starter Solo, Pro Online Ordering System'.
+// Matching is case-insensitive because the real names are title-cased ("Local
+// Starter Solo"), which a case-sensitive includes('starter') missed entirely.
 function getTier(val) {
     if (!val) return null;
-    if (val.includes('starter')) return 'starter';
-    if (val.includes('growth')) return 'growth';
-    if (val.includes('ultimate')) return 'ultimate';
+    const v = String(val).toLowerCase();
+    if (v.includes('starter')) return 'starter';
+    if (v.includes('growth')) return 'growth';
+    if (v.includes('ultimate')) return 'ultimate';
     return null;
 }
 
+// Same two shapes. The prefixes are checked first so a slug keeps its exact
+// meaning; the word match is the fallback for real product names.
+//
+// Bundle is tested before Solo: a name like 'Local Starter Bundle + Pro Online
+// Ordering System' mentions neither ambiguously, but where both words appear the
+// bundle is the broader package and is what the Solo-to-Bundle gate cares about.
 function getPlanType(val) {
     if (!val) return null;
     if (val.startsWith('pro_')) return 'pro';
     if (val.startsWith('solo_')) return 'solo';
     if (val.startsWith('bundle_')) return 'bundle';
+
+    const v = String(val).toLowerCase();
+    if (v.includes('bundle')) return 'bundle';
+    if (v.includes('solo')) return 'solo';
+    if (v.includes('pro ') || v.includes('pro-')) return 'pro';
     return null;
 }
 
@@ -281,6 +298,42 @@ function updateSectionVisibility() {
     if (!$('#country').val()) $input.prop('disabled', true);
 })();
 
+// ===== Customer Email Lookup =====
+// The lookup itself lives in assets/js/emailLookup.js, shared with the
+// downgrade form. What stays here is this form's wiring: which fields the
+// lookup may fill and clear, and that every state change has to re-run
+// updateSectionVisibility(), because the hidden #originalProduct field drives
+// the Solo-to-Bundle gate and the comparison card.
+udmInitEmailLookup({
+    email:        '#emailAddress',
+    country:      '#country',
+    status:       '#emailLookupStatus',
+    branchPicker: '#branchPicker',
+    branchList:   '#branchPickerList',
+
+    shopFields: {
+        shopName:  '#shopName',
+        ownerName: '#ownerName',
+        phone:     '#phoneNumber',
+    },
+
+    identityFields: {
+        shopId:  '#mondayProjectId',
+        boardId: '#boardId',
+    },
+
+    productList:       '#customerProductList',
+    productSelectWrap: '#customerProductSelectWrap',
+    productSelect:     '#originalProductSelect',
+    productHidden:     '#originalProduct',
+
+    onChange: updateSectionVisibility,
+
+    // Staff mode searches Monday by project id instead, and must not have its
+    // fields overwritten by an email lookup.
+    disabled: IS_STAFF,
+});
+
 // ===== DOM Ready =====
 $(function () {
 
@@ -289,6 +342,17 @@ $(function () {
 
     // --- Product selection change ---
     $('#originalProduct, #newProduct').on('change', updateSectionVisibility);
+
+    // In customer mode #originalProduct is a hidden input, and a hidden input
+    // never fires change. The visible control is #originalProductSelect, whose
+    // value has to be mirrored into it: #originalProduct is what the webhook
+    // payload reads, and what getPlanType() consults to decide whether this is a
+    // Solo-to-Bundle upgrade (which gates an extra required-fields section).
+    // Without this, a customer's selection reaches neither.
+    $('#originalProductSelect').on('change', function () {
+        $('#originalProduct').val($(this).val() || '');
+        updateSectionVisibility();
+    });
 
     // --- Menu/Logo status: show link field when Google Drive selected ---
     $('#menuLogoStatus').on('change', function () {
@@ -422,7 +486,6 @@ function sendData(formData) {
         originalProduct: formData.originalProduct || '',
         newProduct: formData.newProduct || '',
         contractPeriod: formData.contractPeriod || '',
-        billingDate: formData.billingDate || '',
         staffName: formData.salesAgent || '',
         reason: formData.upgradeReason || '',
         note: formData.upgradeNote || '',
@@ -508,14 +571,16 @@ function validateForm() {
         }
     });
 
-    // Country select
-    const countryEl = document.getElementById('country');
-    if (countryEl && !countryEl.value) {
-        countryEl.classList.add('is-invalid');
-        isValid = false;
-    } else if (countryEl) {
-        countryEl.classList.remove('is-invalid');
-    }
+    // Country and Business Type selects
+    ['country', 'businessType'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.value) {
+            el.classList.add('is-invalid');
+            isValid = false;
+        } else if (el) {
+            el.classList.remove('is-invalid');
+        }
+    });
 
     // Upgrade type radio must be selected
     if (!upgradeType) {
@@ -527,9 +592,11 @@ function validateForm() {
 
     // If upgrade package, validate upgrade info fields
     if (isUpgradePackage) {
+        // contractPeriod is now a required dropdown in both modes. Billing Date
+        // was removed per CS; salesAgent (Upgrade Person) stays staff-only.
         const upgradeFields = IS_STAFF
-            ? ['contractPeriod', 'upgradeReason', 'salesAgent', 'billingDate']
-            : ['upgradeReason'];
+            ? ['contractPeriod', 'upgradeReason', 'salesAgent']
+            : ['contractPeriod', 'upgradeReason'];
         upgradeFields.forEach(id => {
             const el = document.getElementById(id);
             if (el && !el.value.trim()) {
@@ -618,6 +685,7 @@ function applyTestAutofill() {
         $('#phoneNumber').val('555-010-0000');
         $('#bestTimeContact').val('Weekdays 9am-5pm PST');
         $('#emailAddress').val('test@example.com');
+        $('#businessType').val('Restaurant');
 
         $('#typeUpgradePackage').prop('checked', true).trigger('change');
 
@@ -627,18 +695,16 @@ function applyTestAutofill() {
             $('#originalProductList').html(`
                 <div class="subscription-item">
                     <i class="bi bi-check-circle-fill"></i>
-                    <div><div class="sub-name">Pro - Local Starter (Test)</div></div>
+                    <div><div class="sub-name">Local Starter Bundle (Test)</div></div>
                 </div>`);
         }, 1500);
 
-        $('#newProduct').val('pro_growth').trigger('change');
+        $('#newProduct').val('bundle_growth').trigger('change');
         $('#promotion').val('1trial');
-        $('#contractPeriod').val('12 months');
+        $('#contractPeriod').val('12 Months');
         $('#upgradeReason').val('Test mode - automated autofill');
         $('#salesAgent').val('Test Agent');
 
-        const today = new Date().toISOString().split('T')[0];
-        $('#billingDate').val(today);
         $('#upgradeNote').val('Please upgrade ASAP.');
 
         // Add-on products

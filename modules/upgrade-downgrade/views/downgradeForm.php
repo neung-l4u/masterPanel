@@ -7,6 +7,19 @@ global $db;
 $stripeID = $_GET['stripeID'] ?? '';
 $mode = $_GET['mode'] ?? 'customer';
 $testMode = $_GET['testMode'] ?? 'false';
+
+// Where a customer who cancelled an AI Receptionist product is sent to give
+// feedback on it. Empty until CS supplies the URL, at which point the redirect
+// starts working with no code change. config.php is gitignored, so an absent
+// file or key must simply mean "no redirect".
+$arayaFeedbackUrl = '';
+$udmConfigPath = __DIR__ . '/../assets/config.php';
+if (is_file($udmConfigPath)) {
+    $udmConfig = require $udmConfigPath;
+    if (is_array($udmConfig)) {
+        $arayaFeedbackUrl = (string) ($udmConfig['araya_feedback_url'] ?? '');
+    }
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -28,7 +41,7 @@ $testMode = $_GET['testMode'] ?? 'false';
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <title>Downgrade / Unsubscription Form - Local For You</title>
 </head>
-<body data-mode="<?php echo htmlspecialchars($mode); ?>">
+<body data-mode="<?php echo htmlspecialchars($mode); ?>" data-araya-feedback-url="<?php echo htmlspecialchars($arayaFeedbackUrl); ?>">
 
 <div class="container">
     <main>
@@ -104,14 +117,44 @@ $testMode = $_GET['testMode'] ?? 'false';
                     <form id="downgradeForm" name="downgradeForm" method="post" enctype="multipart/form-data">
 
                         <!-- ========== SECTION: Business Information ========== -->
+                        <!-- One ordered list per CS item 1. Country is in both
+                             modes now, not staff only: the email lookup keys on
+                             country + email, so a customer with no country
+                             cannot be looked up at all. -->
                         <div class="form-section">
                             <h5 class="section-title"><i class="bi bi-building"></i> Business Information</h5>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="shopName" class="form-label">Shop Name <span class="text-danger">*</span></label>
+                                    <label for="country" class="form-label">Country <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="country" name="country" required>
+                                        <option value="">-- Select Country --</option>
+                                        <option value="US">United States</option>
+                                        <option value="CA">Canada</option>
+                                        <option value="AU">Australia</option>
+                                        <option value="NZ">New Zealand</option>
+                                        <option value="UK">United Kingdom</option>
+                                        <option value="TH">Thailand</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your country.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="businessType" class="form-label">Business Type <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="businessType" name="businessType" required>
+                                        <option value="">-- Select Business Type --</option>
+                                        <option value="Restaurant">Restaurant</option>
+                                        <option value="Massage">Massage</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your business type.</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="shopName" class="form-label">Business Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="shopName" name="shopName" placeholder="e.g. The Green Kitchen" required>
-                                    <div class="invalid-feedback">Please enter the shop name.</div>
+                                    <div class="invalid-feedback">Please enter the business name.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="tradingName" class="form-label">Trading Name</label>
@@ -120,39 +163,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                             </div>
 
                             <div class="mb-3">
-                                <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="address" name="address" placeholder="e.g. 123 Main St, Los Angeles, CA 90001" required>
-                                <div class="invalid-feedback">Please enter the business address.</div>
-                            </div>
-
-                            <?php if ($mode === 'staff'): ?>
-                            <div class="mb-3">
-                                <label for="country" class="form-label">Country</label>
-                                <select class="form-select" id="country" name="country">
-                                    <option value="">-- Select Country --</option>
-                                    <option value="US">United States</option>
-                                    <option value="CA">Canada</option>
-                                    <option value="AU">Australia</option>
-                                    <option value="NZ">New Zealand</option>
-                                    <option value="UK">United Kingdom</option>
-                                    <option value="TH">Thailand</option>
-                                </select>
-                            </div>
-                            <div class="mb-3 position-relative">
-                                <label for="mondayProjectId" class="form-label">Monday Project / Shop ID <small class="text-muted">(Staff Reference)</small></label>
-                                <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="Type shop name or ID to search..." autocomplete="off">
-                                <input type="hidden" id="boardId" name="boardId" value="">
-                                <div id="projectSearchDropdown" class="project-search-dropdown"></div>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-
-                        <!-- ========== SECTION: Contact Information ========== -->
-                        <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-person-lines-fill"></i> Contact Information</h5>
-
-                            <div class="mb-3">
-                                <label for="contactPerson" class="form-label">Contact Person Name <span class="text-danger">*</span></label>
+                                <label for="contactPerson" class="form-label">Contact Person <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="contactPerson" name="contactPerson" placeholder="e.g. Jane Smith" required>
                                 <div class="invalid-feedback">Please enter the contact person name.</div>
                             </div>
@@ -162,13 +173,53 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     <label for="emailAddress" class="form-label">Email Address <span class="text-danger">*</span></label>
                                     <input type="email" class="form-control" id="emailAddress" name="emailAddress" placeholder="e.g. jane@example.com" required>
                                     <div class="invalid-feedback">Please enter a valid email address.</div>
+                                    <!-- The lookup writes its result here. -->
+                                    <div id="emailLookupStatus" class="email-lookup-status" aria-live="polite"></div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="mobileNumber" class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                                    <label for="mobileNumber" class="form-label">Phone Number <span class="text-danger">*</span></label>
                                     <input type="tel" class="form-control" id="mobileNumber" name="mobileNumber" placeholder="e.g. +1 (555) 123-4567" required>
-                                    <div class="invalid-feedback">Please enter the mobile number.</div>
+                                    <div class="invalid-feedback">Please enter the phone number.</div>
                                 </div>
                             </div>
+
+                            <!-- One email can belong to several branches, so the
+                                 customer picks which shop is theirs before
+                                 anything is filled. -->
+                            <div id="branchPicker" class="branch-picker mb-3 d-none">
+                                <label class="form-label">Which of these is your shop?</label>
+                                <div id="branchPickerList" class="branch-picker-list" role="radiogroup" aria-label="Choose your shop"></div>
+                            </div>
+
+                            <!-- CS did not ask for address to go, and it is
+                                 currently required, so it stays, after the
+                                 ordered list. -->
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="address" name="address" placeholder="e.g. 123 Main St, Los Angeles, CA 90001" required>
+                                <div class="invalid-feedback">Please enter the business address.</div>
+                            </div>
+
+                            <?php if ($mode === 'staff'): ?>
+                            <!-- Staff keeps the project search and gains the
+                                 lookup. A staff member taking a cancellation
+                                 call may have the shop ID to hand rather than
+                                 the email, so removing this would make their
+                                 job harder, not easier. -->
+                            <div class="mb-3 position-relative">
+                                <label for="mondayProjectId" class="form-label">Monday Project / Shop ID <small class="text-muted">(Staff Reference)</small></label>
+                                <input type="text" class="form-control" id="mondayProjectId" name="mondayProjectId" placeholder="Type shop name or ID to search..." autocomplete="off">
+                                <input type="hidden" id="boardId" name="boardId" value="">
+                                <div id="projectSearchDropdown" class="project-search-dropdown"></div>
+                            </div>
+                            <?php else: ?>
+                            <!-- Customer mode has no search, but the lookup
+                                 fills these, and the webhook payload reads
+                                 them. Without these inputs a customer
+                                 submission carries no project id at all. -->
+                            <input type="hidden" id="mondayProjectId" name="mondayProjectId" value="">
+                            <input type="hidden" id="boardId" name="boardId" value="">
+                            <?php endif; ?>
                         </div>
 
                         <!-- ========== SECTION: Type of Request ========== -->
@@ -177,8 +228,8 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <div class="mb-3">
                                 <div class="radio-card-group-vertical">
                                     <div class="radio-card-v">
-                                        <input type="radio" name="requestType" id="reqOtherProduct" value="Downgrade to other product" required>
-                                        <label for="reqOtherProduct"><i class="bi bi-box-arrow-down"></i> Downgrade to other product</label>
+                                        <input type="radio" name="requestType" id="reqOtherProduct" value="Unsubscribe specific product" required>
+                                        <label for="reqOtherProduct"><i class="bi bi-box-arrow-down"></i> Unsubscribe specific product</label>
                                     </div>
                                     <div class="radio-card-v radio-card-v-danger">
                                         <input type="radio" name="requestType" id="reqUnsubscribe" value="Unsubscribe all services">
@@ -187,24 +238,34 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 </div>
                                 <div class="invalid-feedback d-block" id="requestTypeError" style="display:none!important;"></div>
                             </div>
-                            <!-- Second level: which product to downgrade to -->
-                            <div class="mb-3" id="downgradeTargetGroup" style="display:none;">
-                                <label class="form-label">Which product would you like to downgrade to? <span class="text-danger">*</span></label>
-                                <div class="radio-card-group-vertical">
-                                    <div class="radio-card-v">
-                                        <input type="radio" name="downgradeTarget" id="tgtWebsiteOnly" value="Downgrade to website service only">
-                                        <label for="tgtWebsiteOnly"><i class="bi bi-globe"></i> Website service only</label>
-                                    </div>
-                                    <div class="radio-card-v">
-                                        <input type="radio" name="downgradeTarget" id="tgtOrderingOnly" value="Downgrade to online ordering system/booking system only">
-                                        <label for="tgtOrderingOnly"><i class="bi bi-bag-check"></i> Online ordering system / booking system only</label>
-                                    </div>
-                                    <div class="radio-card-v">
-                                        <input type="radio" name="downgradeTarget" id="tgtMarketingOnly" value="Downgrade to marketing only (Solo)">
-                                        <label for="tgtMarketingOnly"><i class="bi bi-megaphone"></i> Marketing only (Solo)</label>
-                                    </div>
+
+                            <!-- The shop's real products, from the email lookup.
+                                 This replaces a fixed three-option radio group
+                                 ("website only" / "ordering only" / "marketing
+                                 only") that bore no relation to what the
+                                 customer actually bought. -->
+                            <div class="mb-3" id="productSelectGroup" style="display:none;">
+                                <label class="form-label">Which products would you like to unsubscribe from? <span class="text-danger">*</span></label>
+
+                                <!-- Shown until a lookup succeeds. An empty box
+                                     here would read as "you have no products",
+                                     which is a different and alarming claim. -->
+                                <div id="productListPrompt" class="product-list-prompt">
+                                    <i class="bi bi-envelope-at"></i>
+                                    Enter your email address above and we will show the products on your account.
                                 </div>
-                                <div class="invalid-feedback d-block" id="downgradeTargetError" style="display:none!important;"></div>
+
+                                <!-- Shown when a shop WAS found but has no active
+                                     products. Telling this customer to enter their
+                                     email would be a dead end. -->
+                                <div id="productListEmpty" class="product-list-empty" style="display:none;">
+                                    <i class="bi bi-info-circle"></i>
+                                    We found your shop, but there are no active products on it. Please choose
+                                    &ldquo;Unsubscribe all services&rdquo; above, or contact our team and we will help.
+                                </div>
+
+                                <div id="productCheckboxList" class="product-checkbox-list"></div>
+                                <div class="invalid-feedback d-block" id="productListError" style="display:none!important;"></div>
                             </div>
                         </div>
 
@@ -241,8 +302,8 @@ $testMode = $_GET['testMode'] ?? 'false';
                             <div class="mb-3">
                                 <div class="radio-card-group-vertical">
                                     <div class="radio-card-v">
-                                        <input type="radio" name="effectiveDate" id="effImmediate" value="Immediately" required>
-                                        <label for="effImmediate"><i class="bi bi-lightning-charge"></i> Immediately</label>
+                                        <input type="radio" name="effectiveDate" id="effImmediate" value="Stop the service now" required>
+                                        <label for="effImmediate"><i class="bi bi-lightning-charge"></i> Stop the service now &nbsp;<small class="text-muted">(billing continues until the end of your notice period)</small></label>
                                     </div>
                                     <div class="radio-card-v">
                                         <input type="radio" name="effectiveDate" id="effEndBilling" value="End of current billing cycle">
@@ -264,6 +325,12 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <div class="mt-3" id="customDateGroup" style="display:none;">
                                     <label for="customDate" class="form-label">Select Date <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control" id="customDate" name="customDate" style="max-width: 260px;">
+                                </div>
+                                <!-- Item 3a: only when stopping now AND an AI
+                                     Receptionist product is being cancelled. -->
+                                <div class="alert alert-warning mt-3 d-none" id="arayaImmediateWarning">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    Your AI Receptionist will stop answering calls right away and any remaining minutes will be forfeited. Billing continues until the end of your 30-day notice period.
                                 </div>
                             </div>
                         </div>
@@ -314,37 +381,72 @@ $testMode = $_GET['testMode'] ?? 'false';
                                     <label for="reasonOther"><i class="bi bi-three-dots"></i> Other</label>
                                 </div>
                             </div>
+                            <!-- Item 2b: appended only when an AI Receptionist
+                                 product is checked. These five are specific to
+                                 it and would be noise otherwise. Same name as
+                                 the other reasons, so the payload is unchanged. -->
+                            <div class="checkbox-grid mb-3 d-none" id="arayaReasons">
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonArayaExpensive" name="reasons[]" value="Too expensive for the value we get">
+                                    <label for="reasonArayaExpensive"><i class="bi bi-cash-stack"></i> Too expensive for the value we get</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonArayaCalls" name="reasons[]" value="Not enough calls to justify the cost">
+                                    <label for="reasonArayaCalls"><i class="bi bi-telephone-x"></i> Not enough calls to justify the cost</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonArayaPerform" name="reasons[]" value="The service didn't perform as we expected">
+                                    <label for="reasonArayaPerform"><i class="bi bi-graph-down-arrow"></i> The service didn't perform as we expected</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonArayaBooking" name="reasons[]" value="Problems with the booking system">
+                                    <label for="reasonArayaBooking"><i class="bi bi-calendar-x"></i> Problems with the booking system</label>
+                                </div>
+                                <div class="check-card">
+                                    <input type="checkbox" id="reasonArayaStaff" name="reasons[]" value="We have staff answering calls now">
+                                    <label for="reasonArayaStaff"><i class="bi bi-people-fill"></i> We have staff answering calls now</label>
+                                </div>
+                            </div>
                             <div id="otherReasonGroup" style="display:none;">
                                 <label for="otherReason" class="form-label">Please specify</label>
                                 <input type="text" class="form-control" id="otherReason" name="otherReason" placeholder="Please describe your reason...">
                             </div>
                         </div>
 
-                        <!-- ========== SECTION: Features to Keep ========== -->
-                        <div class="form-section">
-                            <h5 class="section-title"><i class="bi bi-bookmark-heart"></i> Useful Features to Keep Activated</h5>
-                            <p class="text-muted mb-3" style="font-size:.84rem;">Select any features you would like to remain active after the change.</p>
-                            <div class="checkbox-grid">
-                                <div class="check-card">
-                                    <input type="checkbox" id="keepAraya" name="featuresKeep[]" value="Araya (Massage) $199/month">
-                                    <label for="keepAraya"><i class="bi bi-robot"></i> Araya (Massage) <small>$199/mo</small></label>
-                                </div>
-                                <div class="check-card">
-                                    <input type="checkbox" id="keepNone" name="featuresKeep[]" value="None">
-                                    <label for="keepNone"><i class="bi bi-x-circle"></i> None</label>
-                                </div>
-                            </div>
+                        <!-- ========== SECTION: Products to Keep ========== -->
+                        <!-- Item 2c. Only asked when a plan bundle is being
+                             cancelled: someone cancelling a social media add-on
+                             has no plan to keep anything from, and asking them
+                             would be a confusing question put to a customer who
+                             is already cancelling.
+                             Without prices for now -- CS sanctioned shipping
+                             without them, and resolving them needs three
+                             answers CS has not given. -->
+                        <div class="form-section d-none" id="keepProductsGroup">
+                            <h5 class="section-title"><i class="bi bi-bookmark-heart"></i> Would you like to keep any of these?</h5>
+                            <p class="text-muted small mb-3">You are cancelling a plan. These can stay active on their own if you would like to keep them.</p>
+                            <div class="checkbox-grid" id="keepProductsList"></div>
                         </div>
 
                         <!-- ========== SECTION: Additional Details (For Improvement) ========== -->
                         <div class="form-section">
                             <h5 class="section-title"><i class="bi bi-clipboard2-pulse"></i> Additional Details (For Improvement)</h5>
 
-                            <div class="mb-4">
+                            <!-- Item 5: hidden when an AI Receptionist product
+                                 is being cancelled, because the Araya feedback
+                                 form asks this too. -->
+                            <div class="mb-4" id="improvementSuggestionGroup">
                                 <label for="improvementSuggestion" class="form-label">What could we improve to keep you with us?</label>
                                 <textarea class="form-control" id="improvementSuggestion" name="improvementSuggestion" rows="3" placeholder="Your feedback helps us improve our services..."></textarea>
                             </div>
 
+                            <?php if ($mode === 'customer'): ?>
+                            <!-- Customer mode only: a staff member taking the
+                                 call must not answer this on the customer's
+                                 behalf. The required attribute stays on the
+                                 markup and the whole block is gated instead --
+                                 an attribute on an element that does not exist
+                                 cannot block a submission. -->
                             <div class="mb-4">
                                 <label class="form-label">Would you like us to contact you to discuss alternative options? <span class="text-danger">*</span></label>
                                 <div class="radio-card-group-vertical">
@@ -359,6 +461,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 </div>
                                 <div class="invalid-feedback d-block" id="contactPreferenceError" style="display:none!important;"></div>
                             </div>
+                            <?php endif; ?>
 
                             <div class="sub-section">
                                 <h6 class="sub-section-title"><i class="bi bi-headset"></i> Feedback on Customer Support / Account Manager</h6>
@@ -370,7 +473,11 @@ $testMode = $_GET['testMode'] ?? 'false';
 
                             </div>
 
-                            <div class="mb-3">
+                            <!-- Item 5, and removed outright in staff mode:
+                                 a staff member must not rate the customer's
+                                 experience on their behalf. -->
+                            <?php if ($mode === 'customer'): ?>
+                            <div class="mb-3" id="overallRatingGroup">
                                 <label class="form-label">Rate your overall experience with Local For You: (1–5 stars)</label>
                                 <div class="star-rating-widget" id="overallRatingWidget">
                                     <span class="star" data-value="1"><i class="bi bi-star-fill"></i></span>
@@ -382,6 +489,7 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 </div>
                                 <input type="hidden" name="overallRating" id="overallRating" value="">
                             </div>
+                            <?php endif; ?>
                         </div>
 
                         <!-- ========== SECTION: Additional Comments ========== -->
@@ -391,6 +499,42 @@ $testMode = $_GET['testMode'] ?? 'false';
                                 <textarea class="form-control" id="additionalComments" name="additionalComments" rows="3" placeholder="Any additional information..."></textarea>
                             </div>
                         </div>
+
+                        <?php if ($mode === 'customer'): ?>
+                        <!-- ========== SECTION: Policy ========== -->
+                        <!-- Item 6. Customer mode only: a staff member cannot
+                             acknowledge a policy on the customer's behalf. -->
+                        <div class="form-section" id="policySection">
+                            <h5 class="section-title"><i class="bi bi-file-earmark-text"></i> Cancellation Policy</h5>
+
+                            <div class="policy-body">
+                                <p>All cancellations are subject to a <strong>30-day notice period</strong>. Your service remains active and billable until that period ends.</p>
+                                <p>You are responsible for removing any marketing material, printed or online, that still advertises a service you have cancelled. We cannot remove material that is not under our control.</p>
+                                <p>If you cancel all of your services, or your website hosting specifically, <strong>your website will be discontinued</strong> and will no longer be reachable.</p>
+                            </div>
+
+                            <div class="checkbox-grid mt-3">
+                                <div class="check-card">
+                                    <input type="checkbox" id="policyAcknowledge" name="policyAcknowledge" value="Yes, I understand." required>
+                                    <label for="policyAcknowledge"><i class="bi bi-check2-square"></i> Yes, I understand.</label>
+                                </div>
+                            </div>
+                            <div class="invalid-feedback d-block" id="policyAcknowledgeError" style="display:none!important;"></div>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if ($mode === 'staff'): ?>
+                        <!-- Who processed this request. Staff only, and the one
+                             field the staff variant adds. -->
+                        <div class="form-section">
+                            <h5 class="section-title"><i class="bi bi-person-badge"></i> Submitted By <span class="text-danger">*</span></h5>
+                            <div class="mb-3">
+                                <label for="submittedBy" class="form-label">Your name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="submittedBy" name="submittedBy" placeholder="e.g. Jane from Customer Success" required>
+                                <div class="invalid-feedback">Please enter your name.</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
 
                         <!-- ===== Submit ===== -->
                         <div class="submit-area">
@@ -495,6 +639,21 @@ $testMode = $_GET['testMode'] ?? 'false';
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <!-- Item 4: shown only when an AI Receptionist product is
+                     being cancelled. -->
+                <div class="notice-card notice-cancel d-none" id="arayaConditions">
+                    <div class="notice-icon"><i class="bi bi-robot"></i></div>
+                    <div>
+                        <strong>AI Receptionist &mdash; Cancellation Conditions</strong>
+                        <ul class="mb-0">
+                            <li>Cancellation takes effect at the end of your 30-day notice period.</li>
+                            <li>Your included minute allowance stays available until that date.</li>
+                            <li>Any remaining balance is not refunded or carried over.</li>
+                            <li>Overage minutes used before that date appear on your final invoice.</li>
+                            <li>Your other services are unaffected by cancelling the AI Receptionist.</li>
+                        </ul>
+                    </div>
+                </div>
                 <div class="notice-card notice-cancel">
                     <div class="notice-icon"><i class="bi bi-calendar-x"></i></div>
                     <div>
@@ -564,6 +723,7 @@ $testMode = $_GET['testMode'] ?? 'false';
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
-<script src="../controllers/downgradeForm.js?v=1.0.0"></script>
+<script src="../assets/js/emailLookup.js?v=1.0.0"></script>
+<script src="../controllers/downgradeForm.js?v=1.1.0"></script>
 </body>
 </html>
