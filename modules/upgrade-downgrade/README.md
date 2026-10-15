@@ -52,24 +52,36 @@ fill in:
 
 ### The Make.com payload contract
 
-Both forms post to Make.com scenarios this project cannot inspect, and these
-keys have changed or are in doubt:
+**Reconciled against the exported blueprint on 2026-10-15.** The scenario is
+`[Mark] Upgrade/Downgrade Form : Logs to monday & send email`, and it reads 47
+webhook fields across three Monday modules and eight email modules.
 
-- **`downgradeTarget` is gone** from the downgrade payload. It used to carry a
-  second-level radio choice; the products being cancelled are real product names
-  now and travel in `cancelledProducts` / `cancelledProductsText`.
-- **`changeType`** used to carry `downgradeTarget || requestType` on the
-  downgrade form. It now always carries the request type.
-- **`featuresKeep` is gone**, replaced by `keepProducts` /
-  `keepProductsText`. `assets/email/customerDowngrade.html` and
-  `internalDowngrade.html` were updated to read `{{1.keepProductsText}}`.
-- **`effectiveDate`** no longer emits the value `Immediately`; that option is
-  now `Stop the service now`.
-- **`originalProductManual`** on the upgrade form, and `originalProduct` now
-  carrying product names rather than slugs.
+Resolved:
 
-Confirm all of these with whoever owns the scenarios before this reaches
-production.
+- **`downgradeTarget`** is not read anywhere in the scenario, so dropping it
+  broke nothing.
+- **`changeType`** is not read either. Its change of meaning is invisible to
+  this scenario.
+- **`effectiveDate`** is printed verbatim into the emails and never compared
+  against a string, so renaming the `Immediately` option is safe.
+- **`originalProduct`** is printed into the Monday update. It now carries
+  product names rather than slugs, which reads better there.
+- **`featuresKeep`** IS read, by all four downgrade email modules (42, 43, 45,
+  46). The keep-list renamed this answer to `keepProducts`, which would have
+  left an empty box in every one of those emails. The payload now sends
+  `featuresKeep` alongside the new names so the scenario needs no edit.
+
+Known mismatches that are not ours to fix:
+
+- **`experienceRating`** is read by modules 42 and 45 but has never existed on
+  either form; the scenario asks for a field that was never sent. The rating
+  it presumably wants is `overallRating`, which the scenario also reads and
+  the form does send. Left alone deliberately: adding an alias would put two
+  keys for one value in the payload.
+- **`phoneNumber`** and **`addons`** are read by the shared Monday update
+  (module 50) but only exist on the upgrade form, so those two lines have
+  always been blank for a downgrade. Pre-existing, not a regression.
+- Module 50's update body begins with the literal text `Test update`.
 
 ### Deferred to their own specs
 

@@ -611,6 +611,13 @@ function sendData(formData) {
         cancelledProductsText: Array.isArray(cancelledProducts) ? cancelledProducts.join(', ') : cancelledProducts,
         keepProducts: keepProducts,
         keepProductsText: Array.isArray(keepProducts) ? keepProducts.join(', ') : keepProducts,
+        // The Make.com scenario's four downgrade emails read {{1.featuresKeep}},
+        // which was this answer's name before the keep-list replaced the old
+        // fixed checkbox. Confirmed by reading the exported blueprint: modules
+        // 42, 43, 45 and 46 all reference it. Sending it alongside the new
+        // names keeps those emails filled in without a scenario edit, and this
+        // is the whole reason the payload change needed confirming.
+        featuresKeep: Array.isArray(keepProducts) ? keepProducts.join(', ') : keepProducts,
         email: formData.emailAddress || '',
         shopName: formData.shopName || '',
         businessType: formData.businessType || '',
