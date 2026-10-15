@@ -78,8 +78,26 @@ production.
   — but the resolver needs three answers from CS: which billing period to
   display, why Solo variants do not match by name, and how to present combined
   products. CS sanctioned shipping without them.
-- **The AI Araya feedback form** (item 7's redirect destination). The hook is
-  built and gated on `araya_feedback_url`; the form itself does not exist yet.
+- **The AI Araya feedback form** is built. `modules/feedback` has an Araya mode,
+  and completing it grants the shop 30 goodwill minutes once per shop for the
+  lifetime of the account. See
+  `docs/superpowers/specs/2026-10-14-araya-feedback-credit-design.md`.
+
+  Three settings have to line up before the flow does anything:
+
+  1. `araya_feedback_url` in this module's `config.php`, pointing at
+     `modules/feedback/views/feedbackForm.php`. The redirect appends `mode`,
+     `shop_id`, `shopName` and `email` itself.
+  2. `gcal_base_url` and `feedback_credit_token` in
+     `modules/feedback/assets/config.php`, copied from `config.example.php`.
+  3. `FEEDBACK_CREDIT_TOKEN` in the gcal API's environment, matching the token
+     above. Unset there rejects every credit request, which is the safe
+     default.
+
+  With any of them unset the customer still reaches a thank-you page and their
+  feedback is still recorded; only the credit is skipped. A redirect that
+  arrives without a `shop_id` renders the ordinary lead enquiry form rather
+  than promising minutes that cannot be granted.
 
 ### Flagged for CS, not a build item
 

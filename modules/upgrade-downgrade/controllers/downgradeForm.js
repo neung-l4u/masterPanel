@@ -665,6 +665,15 @@ function udmPostSubmitUrl(cancelledProducts, formData) {
 
     const sep = feedbackUrl.indexOf('?') === -1 ? '?' : '&';
     return feedbackUrl + sep + $.param({
+        mode:     'araya',
+        // The feedback form needs this to enter Araya mode at all, and the
+        // credit behind it is granted once per shop for the lifetime of the
+        // account -- which cannot key off a shop name the customer types,
+        // where "Thai Spa" and "thai spa" would be two shops. It is
+        // whatever the email lookup resolved, and empty when no lookup
+        // succeeded, in which case the form correctly stays a lead enquiry
+        // rather than promising minutes we cannot grant.
+        shop_id:  $('#mondayProjectId').val() || '',
         shopName: formData.shopName || '',
         email:    formData.emailAddress || '',
     });
