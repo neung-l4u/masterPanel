@@ -3,6 +3,26 @@ session_start();
 require_once '../assets/db/db.php';
 require_once '../assets/db/initDB.php';
 global $db;
+
+// Araya mode is entered by the downgrade form's post-submit redirect, which
+// carries the shop identity it already resolved from the email lookup.
+//
+// A shop_id is required for the mode, not just mode=araya: the 30-minute
+// credit is granted once per shop for the lifetime of the account, and a
+// once-per-lifetime grant cannot key off a shop name the customer types. With
+// no shop_id this form is exactly what it was before -- a lead enquiry form --
+// so a truncated URL degrades to the old behaviour instead of breaking.
+$fbMode   = ($_GET['mode'] ?? '') === 'araya' ? 'araya' : 'lead';
+$fbShopId = trim($_GET['shop_id'] ?? '');
+$isAraya  = ($fbMode === 'araya' && $fbShopId !== '');
+// The mode that is posted is the effective one: mode=araya with no shop_id is lead mode.
+$fbMode   = $isAraya ? 'araya' : 'lead';
+
+// Prefilled from the lookup, shown rather than hidden so the customer can see
+// the system recognised them. shop_id is what the credit keys on, so what they
+// read here cannot redirect it.
+$fbShopName = trim($_GET['shopName'] ?? '');
+$fbEmail    = trim($_GET['email'] ?? '');
 ?>
 <!doctype html>
 <html lang="en">
@@ -40,9 +60,16 @@ global $db;
             <div class="form-div">
                 <img src="../assets/img/L4U-Site-Icon.png" alt="Logo Image" class="mb-4 logo-img">
                 <h3 class="mb-4 text-center text-uppercase form-title">Feedback Form</h3>
+                <?php if ($isAraya): ?>
+                <p class="text-muted mt-3">
+                    Sorry to see the AI Receptionist go. Telling us why takes a minute,
+                    and we will add <strong>30 free minutes</strong> to your account as a thank-you.
+                </p>
+                <?php else: ?>
                 <p class="text-muted mt-3">
                     Our feedback system allows you to easily share your thoughts, suggestions, or issues. Every entry helps us improve our service and better meet your needs.
                 </p>
+                <?php endif; ?>
                 <form id="feedbackForm" name="feedbackForm" method="post" enctype="multipart/form-data">
                     <div class="mb-4">
                         <label for="name" class="form-label"><i class="bi bi-file-person"></i> Your Name</label>
@@ -51,14 +78,15 @@ global $db;
 
                     <div class="mb-4">
                         <label for="shopName" class="form-label"><i class="bi bi-shop-window"></i> Shop Name</label>
-                        <input type="text" class="form-control" id="shopName" name="shopName" placeholder="e.g. The Calm Spa" required>
+                        <input type="text" class="form-control" id="shopName" name="shopName" placeholder="e.g. The Calm Spa" value="<?php echo htmlspecialchars($fbShopName); ?>"<?php echo $isAraya ? ' readonly' : ''; ?> required>
                     </div>
 
                     <div class="mb-4">
                         <label for="email" class="form-label"><i class="bi bi-envelope"></i> Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="e.g. hello@example.com" required>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="e.g. hello@example.com" value="<?php echo htmlspecialchars($fbEmail); ?>"<?php echo $isAraya ? ' readonly' : ''; ?> required>
                     </div>
 
+                    <?php if (!$isAraya): ?>
                     <div class="mb-4">
                         <label for="shopType" class="form-label"><i class="bi bi-shop-window"></i> Shop Type</label>
                         <select class="form-select" id="shopType" name="shopType" required>
@@ -73,7 +101,11 @@ global $db;
                         <label for="shopTypeOtherInput" class="form-label">Other (please specify)</label>
                         <input type="text" class="form-control" id="shopTypeOtherInput" name="shopTypeOtherInput" placeholder="Enter your custom shop type">
                     </div>
+                    <?php endif; ?>
 
+                    <?php if ($isAraya): ?>
+                    <input type="hidden" name="package" value="AI Receptionist cancellation">
+                    <?php else: ?>
                     <div class="mb-4">
                         <label for="package" class="form-label"><i class="bi bi-bookmark-check"></i> Topic</label>
                         <select class="form-select" id="package" name="package" required>
@@ -94,25 +126,35 @@ global $db;
                         <label for="packageOtherInput" class="form-label">Other (please specify)</label>
                         <input type="text" class="form-control" id="packageOtherInput" name="packageOtherInput" placeholder="Enter your custom request">
                     </div>
+                    <?php endif; ?>
 
                     <div class="mb-4">
+                        <?php if ($isAraya): ?>
+                        <label for="description" class="form-label"><i class="bi bi-chat-right-text"></i> Why did you cancel the AI Receptionist?</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Anything you tell us here helps us improve it..." required></textarea>
+                        <?php else: ?>
                         <label for="description" class="form-label"><i class="bi bi-chat-right-text"></i> Description</label>
                         <textarea class="form-control" id="description" name="description" rows="4" placeholder="Tell us more about your business or needs..." required></textarea>
+                        <?php endif; ?>
                     </div>
 
+                    <?php if (!$isAraya): ?>
                     <div class="mb-3" id="imageDiv">
                         <label for="image" class="form-label"><i class="bi bi-file-earmark-arrow-up"></i> Upload Image</label>
                         <input type="file" id="image" name="image" class="form-control file-input mb-2" onchange="handleFileUpload(this)" accept="image/*">
                         <input type="hidden" name="filePath" class="filePath w-100">
                         <input type="hidden" name="fileName" class="fileName w-100">
                     </div>
+                    <?php endif; ?>
 
                     <div class="text-end">
                         <button type="submit" id="cmdSubmit" class="btn btn-submit">Submit</button>
                         <div id="result" class="mt-3"></div>
                     </div>
-                    <input type="hidden" name="formVersion" value="1.0.0">
+                    <input type="hidden" name="formVersion" value="1.1.0">
                     <input type="hidden" name="emailVersion" value="1.0.0">
+                    <input type="hidden" name="mode" value="<?php echo htmlspecialchars($fbMode); ?>">
+                    <input type="hidden" name="shop_id" value="<?php echo htmlspecialchars($fbShopId); ?>">
                 </form>
             </div>
         </section>
