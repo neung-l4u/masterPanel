@@ -18,7 +18,14 @@ set_exception_handler(function ($e) {
     exit(1);
 });
 
-const ENDPOINT = 'http://localhost/masterPanel-ud-lookup/modules/upgrade-downgrade/assets/API/lookupByEmail.php';
+// Derived from this file's own location rather than hardcoded, because the
+// checkout has moved once already (a git worktree that was later removed) and
+// a baked-in path turns every assertion here into a false failure.
+// UD_TEST_BASE_URL overrides it for a host served from somewhere else.
+$udDocRoot = realpath(__DIR__ . '/../../..');
+$udAppDir  = $udDocRoot === false ? 'masterPanel' : basename($udDocRoot);
+define('ENDPOINT', rtrim(getenv('UD_TEST_BASE_URL') ?: "http://localhost/{$udAppDir}", '/')
+    . '/modules/upgrade-downgrade/assets/API/lookupByEmail.php');
 
 /** @return array{status:int, json:?array, body:string} */
 function call(array $params): array

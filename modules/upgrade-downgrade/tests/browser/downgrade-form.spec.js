@@ -12,7 +12,13 @@
  */
 const { chromium } = require('playwright');
 
-const BASE = 'http://localhost/masterPanel-ud-lookup/modules/upgrade-downgrade/views';
+// The app directory is read from this file's own path, because the checkout
+// has moved once already and a hardcoded one fails every check for the wrong
+// reason. UD_TEST_BASE_URL overrides it.
+const path = require('path');
+const APP_DIR = path.basename(path.resolve(__dirname, '../../../..'));
+const ROOT = (process.env.UD_TEST_BASE_URL || `http://localhost/${APP_DIR}`).replace(/\/$/, '');
+const BASE = `${ROOT}/modules/upgrade-downgrade/views`;
 const DOWN = u => `${BASE}/downgradeForm.php?${u}`;
 const UP = u => `${BASE}/upgradeForm.php?${u}`;
 
