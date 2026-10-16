@@ -16,14 +16,14 @@ set_exception_handler(function ($e) {
 });
 
 echo "== board constants ==\n";
-test("six project boards", count(UDM_PROJECT_BOARDS) === 6);
-test("TH board matches live.php", UDM_PROJECT_BOARDS['TH'] === 1943203205);
-test("AU board matches live.php", UDM_PROJECT_BOARDS['AU'] === 1943203246);
-test("NZ board matches live.php", UDM_PROJECT_BOARDS['NZ'] === 1943203264);
-test("CA board matches live.php", UDM_PROJECT_BOARDS['CA'] === 1943203287);
-test("UK board matches live.php", UDM_PROJECT_BOARDS['UK'] === 1943203305);
-test("US board matches live.php", UDM_PROJECT_BOARDS['US'] === 1940392927);
-test("subscriptions board id", UDM_SUBSCRIPTIONS_BOARD === 1881439330);
+test("six project boards", count(UP_DOWN_PROJECT_BOARDS) === 6);
+test("TH board matches live.php", UP_DOWN_PROJECT_BOARDS['TH'] === 1943203205);
+test("AU board matches live.php", UP_DOWN_PROJECT_BOARDS['AU'] === 1943203246);
+test("NZ board matches live.php", UP_DOWN_PROJECT_BOARDS['NZ'] === 1943203264);
+test("CA board matches live.php", UP_DOWN_PROJECT_BOARDS['CA'] === 1943203287);
+test("UK board matches live.php", UP_DOWN_PROJECT_BOARDS['UK'] === 1943203305);
+test("US board matches live.php", UP_DOWN_PROJECT_BOARDS['US'] === 1940392927);
+test("subscriptions board id", UP_DOWN_SUBSCRIPTIONS_BOARD === 1881439330);
 
 echo "== upDownLoadConfig ==\n";
 $config = upDownLoadConfig();

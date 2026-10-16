@@ -7,15 +7,15 @@
  * without touching the network.
  */
 
-const UDM_PAGE_LIMIT     = 100;  // keeps nested column queries under Monday's complexity cap
-const UDM_MAX_PAGES      = 50;   // 100 * 50 = 5000. The binding board is
+const UP_DOWN_PAGE_LIMIT     = 100;  // keeps nested column queries under Monday's complexity cap
+const UP_DOWN_MAX_PAGES      = 50;   // 100 * 50 = 5000. The binding board is
                                  // Active Subscriptions, measured at 2865
                                  // items; the per-country project boards are
                                  // far smaller (AU, the largest, is ~1300).
                                  // The guard below turns an overflow into an
                                  // error rather than a silent truncation, so
                                  // raising this is about headroom, not safety.
-const UDM_CONTACT_CHUNK  = 100;
+const UP_DOWN_CONTACT_CHUNK  = 100;
 
 // ── Pure extractors ──────────────────────────────────────────────────────────
 
@@ -181,7 +181,7 @@ function upDownExtractSubscriptionRows(array $response): array
 function upDownProjectPageQuery(int $boardId, ?string $cursor): string
 {
     $cursorArg = $cursor ? ', cursor: "' . addslashes($cursor) . '"' : '';
-    $limit     = UDM_PAGE_LIMIT;
+    $limit     = UP_DOWN_PAGE_LIMIT;
 
     return <<<GQL
     {
@@ -207,8 +207,8 @@ function upDownProjectPageQuery(int $boardId, ?string $cursor): string
 function upDownSubscriptionPageQuery(?string $cursor): string
 {
     $cursorArg = $cursor ? ', cursor: "' . addslashes($cursor) . '"' : '';
-    $limit     = UDM_PAGE_LIMIT;
-    $board     = UDM_SUBSCRIPTIONS_BOARD;
+    $limit     = UP_DOWN_PAGE_LIMIT;
+    $board     = UP_DOWN_SUBSCRIPTIONS_BOARD;
 
     return <<<GQL
     {
@@ -264,7 +264,7 @@ function upDownFetchAllPages(string $token, callable $queryFor, callable $extrac
     $rows   = [];
     $cursor = null;
 
-    for ($page = 0; $page < UDM_MAX_PAGES; $page++) {
+    for ($page = 0; $page < UP_DOWN_MAX_PAGES; $page++) {
         $res = upDownMondayRequestRetrying($token, $queryFor($cursor));
 
         if (isset($res['error']) || isset($res['errors']) || !isset($res['data'])) {
@@ -279,11 +279,11 @@ function upDownFetchAllPages(string $token, callable $queryFor, callable $extrac
     }
 
     // Exhausting the page cap with a cursor still pending means the board is
-    // larger than UDM_MAX_PAGES * UDM_PAGE_LIMIT. Returning the partial set
+    // larger than UP_DOWN_MAX_PAGES * UP_DOWN_PAGE_LIMIT. Returning the partial set
     // here would hand a truncated board to the stale-row deletion, which is
     // the exact failure this function exists to prevent.
     if ($cursor) {
-        return ['rows' => [], 'error' => 'page cap reached with more pages pending; raise UDM_MAX_PAGES'];
+        return ['rows' => [], 'error' => 'page cap reached with more pages pending; raise UP_DOWN_MAX_PAGES'];
     }
 
     return ['rows' => $rows, 'error' => null];
@@ -299,7 +299,7 @@ function upDownFetchAllPages(string $token, callable $queryFor, callable $extrac
  */
 function upDownSyncCountry($db, string $token, string $country, string $syncedAt): array
 {
-    $boardId = UDM_PROJECT_BOARDS[$country] ?? null;
+    $boardId = UP_DOWN_PROJECT_BOARDS[$country] ?? null;
     if ($boardId === null) {
         return ['country' => $country, 'error' => 'unknown country', 'shops' => 0, 'deleted' => 0];
     }
@@ -325,7 +325,7 @@ function upDownSyncCountry($db, string $token, string $country, string $syncedAt
     $contactIds = array_values(array_unique(array_filter(array_column($rows, 'contact_id'))));
     $contacts   = [];
 
-    foreach (array_chunk($contactIds, UDM_CONTACT_CHUNK) as $chunk) {
+    foreach (array_chunk($contactIds, UP_DOWN_CONTACT_CHUNK) as $chunk) {
         $res = upDownMondayRequestRetrying($token, upDownContactBatchQuery($chunk));
 
         // A chunk that failed its retries must abort the country before any
@@ -418,7 +418,7 @@ function upDownSyncSubscriptions($db, string $token, string $syncedAt): array
     // One combined name map across countries: the subscriptions board is global
     // and carries no country of its own.
     $nameMap = [];
-    foreach (array_keys(UDM_PROJECT_BOARDS) as $cc) {
+    foreach (array_keys(UP_DOWN_PROJECT_BOARDS) as $cc) {
         $nameMap += upDownLoadShopNameMap($db, $cc);
     }
 
@@ -456,7 +456,7 @@ function upDownRunSync($db, ?array $onlyCountries = null): array
     $token    = $config['monday_token'];
     $syncedAt = date('Y-m-d H:i:s');
 
-    $countries = $onlyCountries ?? array_keys(UDM_PROJECT_BOARDS);
+    $countries = $onlyCountries ?? array_keys(UP_DOWN_PROJECT_BOARDS);
     $summary   = ['syncedAt' => $syncedAt, 'countries' => [], 'subscriptions' => null];
 
     foreach ($countries as $country) {

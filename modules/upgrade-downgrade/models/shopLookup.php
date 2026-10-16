@@ -7,7 +7,7 @@
  */
 
 /** Past this age the mirror is reported stale but still served. */
-const UDM_STALE_AFTER_HOURS = 48;
+const UP_DOWN_STALE_AFTER_HOURS = 48;
 
 /**
  * Find a mirrored shop by country and email.
@@ -66,7 +66,7 @@ function upDownLookupShopByEmail($db, string $country, string $email): array
     }
 
     $syncedAt = (string) $shops[0]['synced_at'];
-    $stale    = (strtotime($syncedAt) < time() - UDM_STALE_AFTER_HOURS * 3600);
+    $stale    = (strtotime($syncedAt) < time() - UP_DOWN_STALE_AFTER_HOURS * 3600);
 
     // The first match stays at the top level unchanged, so a caller that only
     // understands one shop keeps working; `shops` carries the full list.

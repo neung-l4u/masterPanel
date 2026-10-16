@@ -161,13 +161,13 @@ TH 30. 2482 shops total, 1691 with an email, 915 active subscriptions, 183s.
 
 ## Page cap
 
-`UDM_MAX_PAGES` in `mondayMirror.php` is 50 pages of 100 = 5000 items. The
+`UP_DOWN_MAX_PAGES` in `mondayMirror.php` is 50 pages of 100 = 5000 items. The
 **Active Subscriptions board is the binding constraint**, not the per-country
 project boards: it already holds 2865 items (915 of them active). The first
 attempt failed at the old cap of 20 (2000 items).
 
 The guard turns an overflow into a visible error (`page cap reached with more
-pages pending; raise UDM_MAX_PAGES`) rather than silently truncating, so the
+pages pending; raise UP_DOWN_MAX_PAGES`) rather than silently truncating, so the
 subscriptions pass keeps its old rows. If you ever see that message, raise the
 constant. Do not assume the board shrank.
 

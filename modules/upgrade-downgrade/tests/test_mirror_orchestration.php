@@ -111,11 +111,11 @@ test("treated as an error", $r['error'] !== null);
 test("returns no rows", $r['rows'] === []);
 
 echo "== upDownFetchAllPages: the page cap does not truncate silently ==\n";
-// Every page carries a cursor, so the loop exhausts UDM_MAX_PAGES with more
+// Every page carries a cursor, so the loop exhausts UP_DOWN_MAX_PAGES with more
 // pending. Returning the partial set would feed a truncated board to the
 // stale-row deletion.
 $always = [];
-for ($i = 0; $i < UDM_MAX_PAGES + 2; $i++) { $always[] = projectPage([$i], 'MORE'); }
+for ($i = 0; $i < UP_DOWN_MAX_PAGES + 2; $i++) { $always[] = projectPage([$i], 'MORE'); }
 resetStubs($always);
 $r = upDownFetchAllPages('tok',
     function ($c) { return upDownProjectPageQuery(1943203205, $c); },
@@ -123,7 +123,7 @@ $r = upDownFetchAllPages('tok',
 test("reports an error rather than success", $r['error'] !== null);
 test("the error names the page cap", strpos($r['error'], 'page cap') !== false);
 test("returns no rows", $r['rows'] === []);
-test("stopped at the cap", count($GLOBALS['stub_calls']) === UDM_MAX_PAGES);
+test("stopped at the cap", count($GLOBALS['stub_calls']) === UP_DOWN_MAX_PAGES);
 
 echo "== upDownSyncCountry: a failed project fetch writes nothing ==\n";
 resetStubs([['error' => 'boom']]);

@@ -383,7 +383,7 @@ function upDownCheckedTags() {
 // Item 2c's options are chosen by business type, per CS. "Other" gets the
 // union: we do not know which applies, and offering too much is recoverable
 // where offering nothing is not.
-const UDM_KEEP_OPTIONS = {
+const UP_DOWN_KEEP_OPTIONS = {
     Restaurant: ['Pro Plan', 'Website Hosting'],
     Massage:    ['Booking System', 'Website Hosting'],
     Other:      ['Pro Plan', 'Booking System', 'Website Hosting'],
@@ -395,7 +395,7 @@ const UDM_KEEP_OPTIONS = {
 function upDownRenderKeepList() {
     const $list   = $('#keepProductsList');
     const type    = $('#businessType').val() || 'Other';
-    const options = UDM_KEEP_OPTIONS[type] || UDM_KEEP_OPTIONS.Other;
+    const options = UP_DOWN_KEEP_OPTIONS[type] || UP_DOWN_KEEP_OPTIONS.Other;
 
     // What was ticked before, so a re-render for an unrelated reason does not
     // silently discard the customer's answer.

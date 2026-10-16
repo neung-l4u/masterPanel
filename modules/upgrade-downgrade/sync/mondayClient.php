@@ -8,7 +8,7 @@
  */
 
 /** Country code => Monday project board id. */
-const UDM_PROJECT_BOARDS = [
+const UP_DOWN_PROJECT_BOARDS = [
     'CA' => 1943203287,
     'AU' => 1943203246,
     'NZ' => 1943203264,
@@ -17,7 +17,7 @@ const UDM_PROJECT_BOARDS = [
     'TH' => 1943203205,
 ];
 
-const UDM_SUBSCRIPTIONS_BOARD = 1881439330;
+const UP_DOWN_SUBSCRIPTIONS_BOARD = 1881439330;
 
 /**
  * Load the module config.

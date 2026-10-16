@@ -181,7 +181,7 @@ test("flags it stale", $r['stale'] === true);
 
 // The 48-hour threshold is what the whole stale flag turns on, so test both
 // sides of it rather than only a value far past it.
-$justUnder = date('Y-m-d H:i:s', time() - (UDM_STALE_AFTER_HOURS - 1) * 3600);
+$justUnder = date('Y-m-d H:i:s', time() - (UP_DOWN_STALE_AFTER_HOURS - 1) * 3600);
 upDownUpsertShop($db, [
     'shop_id' => 'TEST_SHOP_FRESH47', 'country' => 'ZZ', 'email' => 'fresh47@testshop.com',
     'shop_name' => 'Nearly Stale Shop', 'shop_type' => '', 'owner_name' => 'Recent',
@@ -190,7 +190,7 @@ upDownUpsertShop($db, [
 $r = upDownLookupShopByEmail($db, 'ZZ', 'fresh47@testshop.com');
 test("an hour inside the threshold is NOT stale", $r['stale'] === false);
 
-$justOver = date('Y-m-d H:i:s', time() - (UDM_STALE_AFTER_HOURS + 1) * 3600);
+$justOver = date('Y-m-d H:i:s', time() - (UP_DOWN_STALE_AFTER_HOURS + 1) * 3600);
 upDownUpsertShop($db, [
     'shop_id' => 'TEST_SHOP_STALE49', 'country' => 'ZZ', 'email' => 'stale49@testshop.com',
     'shop_name' => 'Just Stale Shop', 'shop_type' => '', 'owner_name' => 'Older',
