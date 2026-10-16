@@ -7,7 +7,7 @@ include '../assets/db/initDB.php';
 
 $rows = $db->query(
     'SELECT id, shopName, emailAddress, country, requestType, testMode, status, submittedAt, payload
-     FROM upgrade_downgrade_logs
+     FROM l4u_up_down_logs
      WHERE formType = ?
      ORDER BY id DESC',
     'downgrade'

@@ -1,9 +1,9 @@
 -- ============================================================
--- Migration: upgrade_downgrade_logs
+-- Migration: l4u_up_down_logs
 -- Database : db_localforyou
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS `upgrade_downgrade_logs` (
+CREATE TABLE IF NOT EXISTS `l4u_up_down_logs` (
     `id`              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
 
     -- Form meta

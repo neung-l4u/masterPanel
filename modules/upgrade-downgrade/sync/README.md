@@ -35,7 +35,20 @@ Without it the sync exits 1 with `FATAL: cannot initialise: Failed opening
 required '.../initDB.php'`, written to the log, and the lookup endpoint returns
 503 with a generic body.
 
-**2. Apply the migration.** It creates the two mirror tables and is idempotent
+**2. Apply the migrations.** Both are idempotent (`CREATE TABLE IF NOT
+EXISTS`), and on a database that predates the up_down naming run
+`rename_up_down_tables.sql` FIRST -- before uploading the renamed code, because
+the code reads the new names only:
+
+    mysql -u root -p db_localforyou < modules/upgrade-downgrade/assets/db/rename_up_down_tables.sql
+    mysql -u root -p db_localforyou < modules/upgrade-downgrade/assets/db/migration_up_down_logs.sql
+
+The rename is guarded per table, so running it twice does nothing. It RENAMEs
+`upgrade_downgrade_logs` rather than recreating it, because that table holds
+real customer submissions which cannot be regenerated. The two mirror tables
+can be, so a fresh database may skip their rename and just create them below.
+
+**2b. Create the mirror tables.** Idempotent
 (`CREATE TABLE IF NOT EXISTS`):
 
     mysql -u root -p db_localforyou < modules/upgrade-downgrade/assets/db/migration_up_down_mirror.sql
