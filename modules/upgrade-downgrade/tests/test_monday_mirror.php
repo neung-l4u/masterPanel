@@ -20,7 +20,7 @@ set_exception_handler(function ($e) {
     exit(1);
 });
 
-echo "== udmExtractProjectRows ==\n";
+echo "== upDownExtractProjectRows ==\n";
 
 // Shape copied from a real live.php response: a project item carries many
 // board_relation columns and only connect_boards0 points at Contacts.
@@ -52,7 +52,7 @@ $projectResponse = [
     ]]],
 ];
 
-$rows = udmExtractProjectRows($projectResponse, 'TH', 1943203205);
+$rows = upDownExtractProjectRows($projectResponse, 'TH', 1943203205);
 test("returns one row per item", count($rows) === 2);
 test("shop_id is the item id", $rows[0]['shop_id'] === '1879900670');
 test("shop_name is the item name", $rows[0]['shop_name'] === 'Cher Thai Cuisine');
@@ -65,12 +65,12 @@ test("contact_id comes from connect_boards0", $rows[0]['contact_id'] === '555000
 test("an unlinked item has an empty contact_id", $rows[1]['contact_id'] === '');
 test("an empty color1 gives an empty shop_type", $rows[1]['shop_type'] === '');
 
-$rows = udmExtractProjectRows(['data' => ['boards' => []]], 'TH', 1943203205);
+$rows = upDownExtractProjectRows(['data' => ['boards' => []]], 'TH', 1943203205);
 test("an empty board gives no rows", $rows === []);
-$rows = udmExtractProjectRows(['error' => 'boom'], 'TH', 1943203205);
+$rows = upDownExtractProjectRows(['error' => 'boom'], 'TH', 1943203205);
 test("an error response gives no rows", $rows === []);
 
-echo "== udmExtractContactFields ==\n";
+echo "== upDownExtractContactFields ==\n";
 $contact = [
     'id' => '555000111',
     'name' => 'Fallback Name',
@@ -82,14 +82,14 @@ $contact = [
         ['id' => 'contact_email', 'text' => 'Somchai@Shop.COM'],
     ],
 ];
-$f = udmExtractContactFields($contact);
+$f = upDownExtractContactFields($contact);
 test("joins first and last name", $f['owner_name'] === 'Somchai Jaidee');
 test("prefers contact_phone", $f['phone'] === '+66812345678');
 test("normalizes the email", $f['email'] === 'somchai@shop.com');
 
 $noPhone = $contact;
 $noPhone['column_values'][2]['text'] = '';
-$f = udmExtractContactFields($noPhone);
+$f = upDownExtractContactFields($noPhone);
 test("falls back to dup__of_mobile", $f['phone'] === '+66899999999');
 
 // Unlike live.php, email is NEVER used as a phone substitute here: the email
@@ -97,18 +97,18 @@ test("falls back to dup__of_mobile", $f['phone'] === '+66899999999');
 $noPhones = $contact;
 $noPhones['column_values'][2]['text'] = '';
 $noPhones['column_values'][3]['text'] = '';
-$f = udmExtractContactFields($noPhones);
+$f = upDownExtractContactFields($noPhones);
 test("with no phone at all, phone is empty, not the email", $f['phone'] === '');
 test("the email is still populated", $f['email'] === 'somchai@shop.com');
 
 $nameless = ['id' => '1', 'name' => 'Fallback Name', 'column_values' => [
     ['id' => 'text0', 'text' => ''], ['id' => 'text7', 'text' => ''],
 ]];
-$f = udmExtractContactFields($nameless);
+$f = upDownExtractContactFields($nameless);
 test("falls back to the item name when both name parts are empty",
      $f['owner_name'] === 'Fallback Name');
 
-echo "== udmExtractSubscriptionRows ==\n";
+echo "== upDownExtractSubscriptionRows ==\n";
 $subResponse = [
     'data' => ['boards' => [[
         'items_page' => [
@@ -155,7 +155,7 @@ $subResponse = [
     ]]],
 ];
 
-$subs = udmExtractSubscriptionRows($subResponse);
+$subs = upDownExtractSubscriptionRows($subResponse);
 test("drops non-active rows", count($subs) === 2);
 test("sub_id is the item id", $subs[0]['sub_id'] === '1886326536');
 test("raw_name is the item name", $subs[0]['raw_name'] === 'PO01M00 Pro Online Ordering System');
@@ -185,13 +185,13 @@ foreach ([
     ['AUD - $199 PO01M00 Pro Online Ordering System, AUD - $49 PAO03M00 Promotions Add-on',
                                                                    'Pro Online Ordering System, Promotions Add-on'],
 ] as [$raw, $want]) {
-    $got = udmCleanProductName($raw);
+    $got = upDownCleanProductName($raw);
     test("cleans " . json_encode($raw), $got === $want);
     test("  -> no price survives", strpos($got, '$') === false);
 }
 // An unrecognised shape must show something imperfect rather than a blank line.
-test("a plain name is left alone", udmCleanProductName('Booking System') === 'Booking System');
-test("a name that would clean away is kept", udmCleanProductName('USD - $49') === 'USD - $49');
+test("a plain name is left alone", upDownCleanProductName('Booking System') === 'Booking System');
+test("a name that would clean away is kept", upDownCleanProductName('USD - $49') === 'USD - $49');
 
 // The existing getSubscriptions.php uses a case-insensitive "contains active"
 // test, so these must all count as active.
@@ -200,14 +200,14 @@ foreach (['Active', 'active', 'ACTIVE', 'Active - paid', 'Pending Active'] as $s
     $r['data']['boards'][0]['items_page']['items'] = [[
         'id' => 'X', 'name' => 'n', 'column_values' => [['id' => 'status', 'text' => $status]],
     ]];
-    test("status '{$status}' counts as active", count(udmExtractSubscriptionRows($r)) === 1);
+    test("status '{$status}' counts as active", count(upDownExtractSubscriptionRows($r)) === 1);
 }
 foreach (['Cancelled', 'Paused', ''] as $status) {
     $r = $subResponse;
     $r['data']['boards'][0]['items_page']['items'] = [[
         'id' => 'X', 'name' => 'n', 'column_values' => [['id' => 'status', 'text' => $status]],
     ]];
-    test("status '{$status}' does not count as active", count(udmExtractSubscriptionRows($r)) === 0);
+    test("status '{$status}' does not count as active", count(upDownExtractSubscriptionRows($r)) === 0);
 }
 
 echo "\nPassed: {$passed}  Failed: {$failed}\n";

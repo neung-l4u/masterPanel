@@ -37,7 +37,7 @@ $result['msg']    = 'Save to DB successfully!';
  * reason, never an exception: the customer has already been thanked for
  * feedback that is already saved.
  */
-function udmRequestFeedbackCredit(string $shopId, string $email, string $feedbackRef): array
+function upDownRequestFeedbackCredit(string $shopId, string $email, string $feedbackRef): array
 {
     $out = [
         'attempted'   => true,
@@ -137,7 +137,7 @@ $shopId = trim((string) ($data['shop_id'] ?? ''));
 
 if ($mode === 'araya' && $shopId !== '') {
     try {
-        $result['credit'] = udmRequestFeedbackCredit(
+        $result['credit'] = upDownRequestFeedbackCredit(
             $shopId,
             trim((string) ($data['email'] ?? '')),
             $feedbackId ? ('feedback-' . $feedbackId) : ''

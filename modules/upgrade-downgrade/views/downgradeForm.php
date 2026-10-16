@@ -13,11 +13,11 @@ $testMode = $_GET['testMode'] ?? 'false';
 // starts working with no code change. config.php is gitignored, so an absent
 // file or key must simply mean "no redirect".
 $arayaFeedbackUrl = '';
-$udmConfigPath = __DIR__ . '/../assets/config.php';
-if (is_file($udmConfigPath)) {
-    $udmConfig = require $udmConfigPath;
-    if (is_array($udmConfig)) {
-        $arayaFeedbackUrl = (string) ($udmConfig['araya_feedback_url'] ?? '');
+$upDownConfigPath = __DIR__ . '/../assets/config.php';
+if (is_file($upDownConfigPath)) {
+    $upDownConfig = require $upDownConfigPath;
+    if (is_array($upDownConfig)) {
+        $arayaFeedbackUrl = (string) ($upDownConfig['araya_feedback_url'] ?? '');
     }
 }
 ?>

@@ -18,10 +18,10 @@ const UDM_STALE_AFTER_HOURS = 48;
  * @return array{found: bool, shop?: array, subscriptions?: array,
  *               syncedAt?: string, stale?: bool, multiple?: bool}
  */
-function udmLookupShopByEmail($db, string $country, string $email): array
+function upDownLookupShopByEmail($db, string $country, string $email): array
 {
     $country = strtoupper(trim($country));
-    $email   = udmNormalizeEmail($email);
+    $email   = upDownNormalizeEmail($email);
 
     if ($country === '' || $email === '') {
         return ['found' => false];
@@ -33,7 +33,7 @@ function udmLookupShopByEmail($db, string $country, string $email): array
     // would otherwise still come back in index order, which is not a promise.
     $shops = $db->query(
         "SELECT shop_id, shop_name, shop_type, owner_name, phone, board_id, synced_at
-         FROM l4u_ud_shops
+         FROM l4u_up_down_shops
          WHERE country = ? AND email = ?
          ORDER BY shop_name ASC, shop_id ASC",
         $country, $email
@@ -61,7 +61,7 @@ function udmLookupShopByEmail($db, string $country, string $email): array
             // The email is deliberately not echoed back: the caller already
             // has it, and not returning it keeps this response from being a
             // confirmation oracle for an address someone merely guessed.
-            'subscriptions' => udmLookupSubscriptions($db, (string) $shop['shop_id']),
+            'subscriptions' => upDownLookupSubscriptions($db, (string) $shop['shop_id']),
         ];
     }
 
@@ -96,11 +96,11 @@ function udmLookupShopByEmail($db, string $country, string $email): array
  * shows product names only. The columns stay populated in the mirror for
  * internal reporting.
  */
-function udmLookupSubscriptions($db, string $shopId): array
+function upDownLookupSubscriptions($db, string $shopId): array
 {
     $subs = $db->query(
         "SELECT MIN(sub_id) AS sub_id, product_group, MIN(raw_name) AS raw_name
-         FROM l4u_ud_subscriptions
+         FROM l4u_up_down_subscriptions
          WHERE shop_id = ?
          GROUP BY product_group
          ORDER BY product_group ASC",

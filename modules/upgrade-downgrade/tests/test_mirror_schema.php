@@ -23,15 +23,15 @@ function columnsOf($db, $table) {
     return $out;
 }
 
-echo "== l4u_ud_shops ==\n";
-$shops = columnsOf($db, 'l4u_ud_shops');
+echo "== l4u_up_down_shops ==\n";
+$shops = columnsOf($db, 'l4u_up_down_shops');
 foreach (['shop_id','country','email','shop_name','shop_type',
           'owner_name','phone','board_id','synced_at'] as $col) {
     test("has column {$col}", isset($shops[$col]));
 }
 
-echo "== l4u_ud_subscriptions ==\n";
-$subs = columnsOf($db, 'l4u_ud_subscriptions');
+echo "== l4u_up_down_subscriptions ==\n";
+$subs = columnsOf($db, 'l4u_up_down_subscriptions');
 foreach (['sub_id','shop_id','raw_name','product_group','price',
           'currency','account_name','matched_by','synced_at'] as $col) {
     test("has column {$col}", isset($subs[$col]));
@@ -43,13 +43,13 @@ test("matched_by is the expected enum",
      strpos($subs['matched_by'], "'none'") !== false);
 
 echo "== indexes ==\n";
-$idx = $db->query("SHOW INDEX FROM `l4u_ud_shops`")->fetchAll();
+$idx = $db->query("SHOW INDEX FROM `l4u_up_down_shops`")->fetchAll();
 $names = array_column($idx, 'Key_name');
-test("l4u_ud_shops has idx_country_email", in_array('idx_country_email', $names, true));
+test("l4u_up_down_shops has idx_country_email", in_array('idx_country_email', $names, true));
 
-$idx2 = $db->query("SHOW INDEX FROM `l4u_ud_subscriptions`")->fetchAll();
+$idx2 = $db->query("SHOW INDEX FROM `l4u_up_down_subscriptions`")->fetchAll();
 $names2 = array_column($idx2, 'Key_name');
-test("l4u_ud_subscriptions has idx_shop", in_array('idx_shop', $names2, true));
+test("l4u_up_down_subscriptions has idx_shop", in_array('idx_shop', $names2, true));
 
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

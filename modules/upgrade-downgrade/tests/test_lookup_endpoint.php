@@ -40,15 +40,15 @@ function call(array $params): array
 }
 
 // Fixture
-$db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST\_%'");
-$db->query("DELETE FROM l4u_ud_shops WHERE country = 'ZZ'");
+$db->query("DELETE FROM l4u_up_down_subscriptions WHERE sub_id LIKE 'TEST\_%'");
+$db->query("DELETE FROM l4u_up_down_shops WHERE country = 'ZZ'");
 $now = date('Y-m-d H:i:s');
-udmUpsertShop($db, [
+upDownUpsertShop($db, [
     'shop_id' => 'TEST_SHOP_EP', 'country' => 'ZZ', 'email' => 'endpoint@testshop.com',
     'shop_name' => 'Endpoint Shop', 'shop_type' => 'Thai', 'owner_name' => 'Ep Owner',
     'phone' => '+66800000000', 'board_id' => '1943203205',
 ], $now);
-udmUpsertSubscription($db, [
+upDownUpsertSubscription($db, [
     'sub_id' => 'TEST_SUB_EP', 'shop_id' => 'TEST_SHOP_EP',
     'raw_name' => 'THB - 4900 LSS01M00 Local Starter Solo', 'product_group' => 'Local Starter Solo',
     'price' => '4900.00', 'currency' => 'THB', 'account_name' => 'Endpoint Shop',
@@ -114,7 +114,7 @@ echo "== injection ==\n";
 $r = call(['country' => 'ZZ', 'email' => "' OR 1=1 --"]);
 test("an injection string reports found false", ($r['json']['found'] ?? null) === false);
 test("the fixture row survives",
-     (int) $db->query("SELECT COUNT(*) AS c FROM l4u_ud_shops WHERE shop_id = ?", 'TEST_SHOP_EP')
+     (int) $db->query("SELECT COUNT(*) AS c FROM l4u_up_down_shops WHERE shop_id = ?", 'TEST_SHOP_EP')
               ->fetchArray()['c'] === 1);
 
 echo "== method ==\n";
@@ -176,7 +176,7 @@ call(['country' => "Z\n[2026-01-01 00:00:00] 9.9.9.9 country=XX email=forged out
 $linesAfter = is_file($logFile) ? count(file($logFile)) : 0;
 test("one request appends exactly one log line", ($linesAfter - $linesBefore) === 1);
 
-$db->query("DELETE FROM l4u_ud_subscriptions WHERE sub_id LIKE 'TEST\_%'");
-$db->query("DELETE FROM l4u_ud_shops WHERE country = 'ZZ'");
+$db->query("DELETE FROM l4u_up_down_subscriptions WHERE sub_id LIKE 'TEST\_%'");
+$db->query("DELETE FROM l4u_up_down_shops WHERE country = 'ZZ'");
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

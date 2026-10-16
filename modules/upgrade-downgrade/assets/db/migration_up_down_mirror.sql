@@ -1,12 +1,12 @@
 -- ============================================================
--- Migration: l4u_ud_shops, l4u_ud_subscriptions
+-- Migration: l4u_up_down_shops, l4u_up_down_subscriptions
 -- Database : db_localforyou
 -- Purpose  : local mirror of Monday projects/contacts/subscriptions so the
 --            customer-mode upgrade form can look a shop up by email fast
 --            enough to sit in a customer's typing flow.
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS `l4u_ud_shops` (
+CREATE TABLE IF NOT EXISTS `l4u_up_down_shops` (
     `shop_id`     VARCHAR(20)  NOT NULL COMMENT 'Monday project item id',
     `country`     CHAR(2)      NOT NULL,
     `email`       VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'lowercased, trimmed',
@@ -26,9 +26,9 @@ CREATE TABLE IF NOT EXISTS `l4u_ud_shops` (
   COLLATE=utf8mb4_unicode_ci
   COMMENT='Mirror of Monday project items with their linked contact details';
 
-CREATE TABLE IF NOT EXISTS `l4u_ud_subscriptions` (
+CREATE TABLE IF NOT EXISTS `l4u_up_down_subscriptions` (
     `sub_id`        VARCHAR(20)   NOT NULL COMMENT 'Monday subscription item id',
-    `shop_id`       VARCHAR(20)   NOT NULL DEFAULT '' COMMENT 'FK to l4u_ud_shops.shop_id',
+    `shop_id`       VARCHAR(20)   NOT NULL DEFAULT '' COMMENT 'FK to l4u_up_down_shops.shop_id',
     `raw_name`      VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'item name incl. SKU and price',
     `product_group` VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'mirror lookup_mkwgjt31, customer-facing',
     `price`         DECIMAL(12,2) DEFAULT NULL,

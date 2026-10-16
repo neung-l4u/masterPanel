@@ -275,8 +275,8 @@ async function section(title) { console.log(`\n=== ${title} ===`); }
     await lookup(p, MANY);
     await p.waitForTimeout(1200);
 
-    // udmProductTags is a module-scope `let`, so it is not reachable as
-    // window.udmProductTags. Drive the real code path instead: stub the
+    // upDownProductTags is a module-scope `let`, so it is not reachable as
+    // window.upDownProductTags. Drive the real code path instead: stub the
     // classification endpoint and let the controller's own fetch assign the
     // tags, which is also a truer test than poking at internals.
     async function tagsAs(tagList) {

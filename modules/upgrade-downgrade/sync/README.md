@@ -1,6 +1,6 @@
 # Monday mirror sync
 
-Mirrors Monday into `l4u_ud_shops` and `l4u_ud_subscriptions` (database
+Mirrors Monday into `l4u_up_down_shops` and `l4u_up_down_subscriptions` (database
 `db_localforyou`) so the customer-mode upgrade form can find a shop by email in
 milliseconds instead of the seconds a live Monday query takes.
 
@@ -38,7 +38,7 @@ required '.../initDB.php'`, written to the log, and the lookup endpoint returns
 **2. Apply the migration.** It creates the two mirror tables and is idempotent
 (`CREATE TABLE IF NOT EXISTS`):
 
-    mysql -u root -p db_localforyou < modules/upgrade-downgrade/assets/db/migration_ud_mirror.sql
+    mysql -u root -p db_localforyou < modules/upgrade-downgrade/assets/db/migration_up_down_mirror.sql
 
 **3. Create the module config,** also gitignored:
 

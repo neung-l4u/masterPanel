@@ -26,7 +26,7 @@
  * across must still work: the keyword fallback covers the plan names, and the
  * only loss is the combined-product tagging.
  */
-function udmClassificationMap(): array
+function upDownClassificationMap(): array
 {
     static $map = null;
     if ($map !== null) {
@@ -57,7 +57,7 @@ function udmClassificationMap(): array
  * `addon` means "triggers no conditional flow", so it is meaningless next to
  * any other tag and is dropped when one survives.
  */
-function udmNormalizeTags(array $tags): array
+function upDownNormalizeTags(array $tags): array
 {
     $out = [];
     foreach (['araya', 'plan_bundle', 'plan_solo'] as $known) {
@@ -81,12 +81,12 @@ function udmNormalizeTags(array $tags): array
  * @return string[] A non-empty subset of araya, plan_bundle, plan_solo, addon,
  *                  always in that order.
  */
-function udmClassifyProduct(string $productGroup, array $map = []): array
+function upDownClassifyProduct(string $productGroup, array $map = []): array
 {
     $name = trim($productGroup);
 
     if ($map === []) {
-        $map = udmClassificationMap();
+        $map = upDownClassificationMap();
     }
 
     // Exact match wins outright: this is where a human corrects a
@@ -94,7 +94,7 @@ function udmClassifyProduct(string $productGroup, array $map = []): array
     // An entry that normalises to nothing (empty, or only unknown tags) falls
     // through to the keyword rules: a result is never empty.
     if (isset($map[$name]) && is_array($map[$name])) {
-        $mapped = udmNormalizeTags($map[$name]);
+        $mapped = upDownNormalizeTags($map[$name]);
         if ($mapped !== []) {
             return $mapped;
         }

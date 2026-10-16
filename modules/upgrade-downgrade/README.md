@@ -7,7 +7,7 @@ lets the forms look a customer up by their email address.
 - `views/upgradeForm.php`, `views/downgradeForm.php` — the two forms, each with
   a `?mode=customer` and a `?mode=staff` variant
 - `assets/js/emailLookup.js` — the shared email lookup, used by both forms
-- `assets/productClassify.php` — `udmClassifyProduct()`, which tags a product as
+- `assets/productClassify.php` — `upDownClassifyProduct()`, which tags a product as
   `araya` / `plan_bundle` / `plan_solo` / `addon`
 - `sync/README.md` — the Monday mirror sync and its schedule
 

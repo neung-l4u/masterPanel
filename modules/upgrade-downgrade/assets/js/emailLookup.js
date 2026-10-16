@@ -14,7 +14,7 @@
 // when the email stops matching, only lookup-written fields cleared, a retry
 // allowed after a 503, focus moved when the revert link removes itself) were
 // expensive to find, and a copy guarantees the next one lands in only one file.
-function udmInitEmailLookup(options) {
+function upDownInitEmailLookup(options) {
     const opts = options || {};
 
     const $email        = $(opts.email);

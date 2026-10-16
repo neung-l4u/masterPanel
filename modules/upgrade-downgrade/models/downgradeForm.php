@@ -58,7 +58,7 @@ try {
             if (!is_string($productName)) {
                 continue;
             }
-            if (in_array('araya', udmClassifyProduct($productName), true)) {
+            if (in_array('araya', upDownClassifyProduct($productName), true)) {
                 $arayaProducts[] = $productName;
             }
         }

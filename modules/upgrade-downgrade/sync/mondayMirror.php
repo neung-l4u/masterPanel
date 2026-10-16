@@ -24,7 +24,7 @@ const UDM_CONTACT_CHUNK  = 100;
  * connect_boards0: a project item carries several board-relation columns and
  * only that one points at Contacts & Accounts (board 1862866069).
  */
-function udmExtractProjectRows(array $response, string $country, int $boardId): array
+function upDownExtractProjectRows(array $response, string $country, int $boardId): array
 {
     $rows = [];
 
@@ -63,7 +63,7 @@ function udmExtractProjectRows(array $response, string $country, int $boardId): 
  * phone: here the email is the lookup key, and writing it into the phone field
  * would both lose the key and show an email where the form expects a number.
  */
-function udmExtractContactFields(array $contactItem): array
+function upDownExtractContactFields(array $contactItem): array
 {
     $first = $last = $mobile = $altPhone = $email = '';
 
@@ -83,7 +83,7 @@ function udmExtractContactFields(array $contactItem): array
     return [
         'owner_name' => $owner,
         'phone'      => $mobile !== '' ? $mobile : $altPhone,
-        'email'      => udmNormalizeEmail($email),
+        'email'      => upDownNormalizeEmail($email),
     ];
 }
 
@@ -100,7 +100,7 @@ function udmExtractContactFields(array $contactItem): array
  * Returns the original if cleaning would leave nothing: an unrecognised shape
  * should show something imperfect rather than a blank line.
  */
-function udmCleanProductName(string $name): string
+function upDownCleanProductName(string $name): string
 {
     $out = [];
 
@@ -133,7 +133,7 @@ function udmCleanProductName(string $name): string
  * active", identical to the existing getSubscriptions.php, so this mirror and
  * the staff-mode live call agree on what counts.
  */
-function udmExtractSubscriptionRows(array $response): array
+function upDownExtractSubscriptionRows(array $response): array
 {
     $rows = [];
 
@@ -164,7 +164,7 @@ function udmExtractSubscriptionRows(array $response): array
                 // or prices reach a list that is specified to show names only.
                 'product_group'  => $group !== ''
                     ? $group
-                    : udmCleanProductName((string) ($item['name'] ?? '')),
+                    : upDownCleanProductName((string) ($item['name'] ?? '')),
                 'price'          => $price === '' ? null : $price,
                 'currency'       => strtoupper($currency),
                 'account_name'   => $account,
@@ -178,7 +178,7 @@ function udmExtractSubscriptionRows(array $response): array
 
 // ── Fetching ─────────────────────────────────────────────────────────────────
 
-function udmProjectPageQuery(int $boardId, ?string $cursor): string
+function upDownProjectPageQuery(int $boardId, ?string $cursor): string
 {
     $cursorArg = $cursor ? ', cursor: "' . addslashes($cursor) . '"' : '';
     $limit     = UDM_PAGE_LIMIT;
@@ -204,7 +204,7 @@ function udmProjectPageQuery(int $boardId, ?string $cursor): string
     GQL;
 }
 
-function udmSubscriptionPageQuery(?string $cursor): string
+function upDownSubscriptionPageQuery(?string $cursor): string
 {
     $cursorArg = $cursor ? ', cursor: "' . addslashes($cursor) . '"' : '';
     $limit     = UDM_PAGE_LIMIT;
@@ -232,7 +232,7 @@ function udmSubscriptionPageQuery(?string $cursor): string
     GQL;
 }
 
-function udmContactBatchQuery(array $ids): string
+function upDownContactBatchQuery(array $ids): string
 {
     $idList = implode(',', array_map('intval', $ids));
     $count  = count($ids);
@@ -259,13 +259,13 @@ function udmContactBatchQuery(array $ids): string
  * rather than returning what it got: a truncated board looks like a set of
  * closed projects, and stale-row deletion would then delete live shops.
  */
-function udmFetchAllPages(string $token, callable $queryFor, callable $extract): array
+function upDownFetchAllPages(string $token, callable $queryFor, callable $extract): array
 {
     $rows   = [];
     $cursor = null;
 
     for ($page = 0; $page < UDM_MAX_PAGES; $page++) {
-        $res = udmMondayRequestRetrying($token, $queryFor($cursor));
+        $res = upDownMondayRequestRetrying($token, $queryFor($cursor));
 
         if (isset($res['error']) || isset($res['errors']) || !isset($res['data'])) {
             $msg = $res['error'] ?? ($res['errors'][0]['message'] ?? 'unknown Monday error');
@@ -297,17 +297,17 @@ function udmFetchAllPages(string $token, callable $queryFor, callable $extract):
  * On any fetch error the country is skipped with its existing rows left
  * intact, mirroring live.php's refusal to cache an error as an empty result.
  */
-function udmSyncCountry($db, string $token, string $country, string $syncedAt): array
+function upDownSyncCountry($db, string $token, string $country, string $syncedAt): array
 {
     $boardId = UDM_PROJECT_BOARDS[$country] ?? null;
     if ($boardId === null) {
         return ['country' => $country, 'error' => 'unknown country', 'shops' => 0, 'deleted' => 0];
     }
 
-    $fetched = udmFetchAllPages(
+    $fetched = upDownFetchAllPages(
         $token,
-        fn($cursor) => udmProjectPageQuery($boardId, $cursor),
-        fn($res) => udmExtractProjectRows($res, $country, $boardId)
+        fn($cursor) => upDownProjectPageQuery($boardId, $cursor),
+        fn($res) => upDownExtractProjectRows($res, $country, $boardId)
     );
 
     if ($fetched['error'] !== null) {
@@ -326,7 +326,7 @@ function udmSyncCountry($db, string $token, string $country, string $syncedAt): 
     $contacts   = [];
 
     foreach (array_chunk($contactIds, UDM_CONTACT_CHUNK) as $chunk) {
-        $res = udmMondayRequestRetrying($token, udmContactBatchQuery($chunk));
+        $res = upDownMondayRequestRetrying($token, upDownContactBatchQuery($chunk));
 
         // A chunk that failed its retries must abort the country before any
         // write. Proceeding would upsert every shop in the chunk with an empty
@@ -358,7 +358,7 @@ function udmSyncCountry($db, string $token, string $country, string $syncedAt): 
         }
 
         foreach ($res['data']['items'] as $item) {
-            $contacts[(string) $item['id']] = udmExtractContactFields($item);
+            $contacts[(string) $item['id']] = upDownExtractContactFields($item);
         }
     }
 
@@ -367,7 +367,7 @@ function udmSyncCountry($db, string $token, string $country, string $syncedAt): 
     foreach ($rows as $row) {
         $c = $contacts[$row['contact_id']] ?? ['owner_name' => '', 'phone' => '', 'email' => ''];
 
-        $action = udmUpsertShop($db, [
+        $action = upDownUpsertShop($db, [
             'shop_id'    => $row['shop_id'],
             'country'    => $row['country'],
             'email'      => $c['email'],
@@ -381,7 +381,7 @@ function udmSyncCountry($db, string $token, string $country, string $syncedAt): 
         $action === 'inserted' ? $inserted++ : $updated++;
     }
 
-    $deleted = udmDeleteStaleShops($db, $country, $syncedAt);
+    $deleted = upDownDeleteStaleShops($db, $country, $syncedAt);
 
     return [
         'country'   => $country,
@@ -400,12 +400,12 @@ function udmSyncCountry($db, string $token, string $country, string $syncedAt): 
  * Runs after every country, because the name fallback needs the shop table
  * already populated.
  */
-function udmSyncSubscriptions($db, string $token, string $syncedAt): array
+function upDownSyncSubscriptions($db, string $token, string $syncedAt): array
 {
-    $fetched = udmFetchAllPages(
+    $fetched = upDownFetchAllPages(
         $token,
-        fn($cursor) => udmSubscriptionPageQuery($cursor),
-        fn($res) => udmExtractSubscriptionRows($res)
+        fn($cursor) => upDownSubscriptionPageQuery($cursor),
+        fn($res) => upDownExtractSubscriptionRows($res)
     );
 
     if ($fetched['error'] !== null) {
@@ -419,16 +419,16 @@ function udmSyncSubscriptions($db, string $token, string $syncedAt): array
     // and carries no country of its own.
     $nameMap = [];
     foreach (array_keys(UDM_PROJECT_BOARDS) as $cc) {
-        $nameMap += udmLoadShopNameMap($db, $cc);
+        $nameMap += upDownLoadShopNameMap($db, $cc);
     }
 
     $matched = ['relation' => 0, 'name' => 0, 'none' => 0];
 
     foreach ($rows as $row) {
-        $resolved = udmResolveShopId($row, $nameMap);
+        $resolved = upDownResolveShopId($row, $nameMap);
         $matched[$resolved['matched_by']]++;
 
-        udmUpsertSubscription($db, [
+        upDownUpsertSubscription($db, [
             'sub_id'        => $row['sub_id'],
             'shop_id'       => $resolved['shop_id'],
             'raw_name'      => $row['raw_name'],
@@ -440,7 +440,7 @@ function udmSyncSubscriptions($db, string $token, string $syncedAt): array
         ], $syncedAt);
     }
 
-    $deleted = $rows === [] ? 0 : udmDeleteStaleSubscriptions($db, $syncedAt);
+    $deleted = $rows === [] ? 0 : upDownDeleteStaleSubscriptions($db, $syncedAt);
 
     return ['error' => null, 'subscriptions' => count($rows),
             'matched' => $matched, 'deleted' => $deleted];
@@ -450,9 +450,9 @@ function udmSyncSubscriptions($db, string $token, string $syncedAt): array
  * Full run. One timestamp for the whole run, so "not refreshed by this run"
  * is a single unambiguous comparison.
  */
-function udmRunSync($db, ?array $onlyCountries = null): array
+function upDownRunSync($db, ?array $onlyCountries = null): array
 {
-    $config   = udmLoadConfig();
+    $config   = upDownLoadConfig();
     $token    = $config['monday_token'];
     $syncedAt = date('Y-m-d H:i:s');
 
@@ -460,10 +460,10 @@ function udmRunSync($db, ?array $onlyCountries = null): array
     $summary   = ['syncedAt' => $syncedAt, 'countries' => [], 'subscriptions' => null];
 
     foreach ($countries as $country) {
-        $summary['countries'][] = udmSyncCountry($db, $token, $country, $syncedAt);
+        $summary['countries'][] = upDownSyncCountry($db, $token, $country, $syncedAt);
     }
 
-    $summary['subscriptions'] = udmSyncSubscriptions($db, $token, $syncedAt);
+    $summary['subscriptions'] = upDownSyncSubscriptions($db, $token, $syncedAt);
 
     return $summary;
 }

@@ -3,15 +3,15 @@
 // won, so the customer could land on the thank-you page before the credit
 // was known. Both paths now report in here and the redirect happens once,
 // when the save has answered or when it is clear it never will.
-let udmCreditOutcome = null;
-let udmSaveDone = false;
-let udmRedirected = false;
+let upDownCreditOutcome = null;
+let upDownSaveDone = false;
+let upDownRedirected = false;
 
-function udmGoToThankYou() {
-    if (udmRedirected) return;
-    udmRedirected = true;
+function upDownGoToThankYou() {
+    if (upDownRedirected) return;
+    upDownRedirected = true;
 
-    const c = udmCreditOutcome || {};
+    const c = upDownCreditOutcome || {};
     const params = [];
     if (c.attempted) {
         params.push('credit=' + encodeURIComponent(c.granted ? 'granted' : (c.reason || 'unknown')));
@@ -70,7 +70,7 @@ function sendMail(formData) {
         success: () => {
             console.log("✅ Webhook sent successfully.");
             // The save carries the credit outcome, so the redirect waits for it.
-            if (udmSaveDone) udmGoToThankYou();
+            if (upDownSaveDone) upDownGoToThankYou();
         },
         error: () => {
             console.error("❌ Webhook sending failed.");
@@ -88,8 +88,8 @@ function saveToDB(payload, result, cmdSubmit) {
             if (typeof data === 'string') {
                 try { data = JSON.parse(data); } catch (e) { data = {}; }
             }
-            udmCreditOutcome = (data && data.credit) || null;
-            udmSaveDone = true;
+            upDownCreditOutcome = (data && data.credit) || null;
+            upDownSaveDone = true;
             result.html(`<div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
             let countdown = 3;
             const countdownInterval = setInterval(() => {
@@ -97,14 +97,14 @@ function saveToDB(payload, result, cmdSubmit) {
                 $('#countDown').text(countdown);
                 if (countdown <= 0) {
                     clearInterval(countdownInterval);
-                    udmGoToThankYou();
+                    upDownGoToThankYou();
                 }
             }, 1000);
         },
         error: () => {
             // The feedback may still have been recorded; the customer is not
             // the right person to debug that. They keep the retry button.
-            udmSaveDone = true;
+            upDownSaveDone = true;
             result.html(`<div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> An error occurred. Please try again.</div>`);
             cmdSubmit.show();
         }

@@ -25,7 +25,7 @@ const UDM_SUBSCRIPTIONS_BOARD = 1881439330;
  * Throws rather than returning a default: a sync that silently runs without a
  * token would look like "Monday returned nothing" and quietly empty the mirror.
  */
-function udmLoadConfig(): array
+function upDownLoadConfig(): array
 {
     $file = __DIR__ . '/../assets/config.php';
 
@@ -50,7 +50,7 @@ function udmLoadConfig(): array
  * One Monday GraphQL request. Returns the decoded body, or
  * ['error' => '...'] for a transport-level failure.
  */
-function udmMondayRequest(string $token, string $gql, int $timeout = 90): array
+function upDownMondayRequest(string $token, string $gql, int $timeout = 90): array
 {
     $ch = curl_init('https://api.monday.com/v2');
     curl_setopt_array($ch, [
@@ -82,13 +82,13 @@ function udmMondayRequest(string $token, string $gql, int $timeout = 90): array
  * Returns the last response, so the caller still sees the error after the final
  * attempt.
  */
-if (!function_exists('udmMondayRequestRetrying')) {
-function udmMondayRequestRetrying(string $token, string $gql, int $attempts = 3): array
+if (!function_exists('upDownMondayRequestRetrying')) {
+function upDownMondayRequestRetrying(string $token, string $gql, int $attempts = 3): array
 {
     $res = ['error' => 'no attempt made'];
 
     for ($i = 0; $i < $attempts; $i++) {
-        $res = udmMondayRequest($token, $gql);
+        $res = upDownMondayRequest($token, $gql);
         if (!isset($res['error']) && !isset($res['errors']) && isset($res['data'])) {
             return $res;
         }
