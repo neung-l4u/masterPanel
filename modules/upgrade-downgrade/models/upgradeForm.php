@@ -25,7 +25,7 @@ $requestType    = $data['upgradeType']      ?? null;
 $submittedAt    = $data['date']             ?? null;
 
 $db->query(
-    'INSERT INTO `upgrade_downgrade_logs`
+    'INSERT INTO `l4u_up_down_logs`
         (`formType`, `formVersion`, `formMode`, `testMode`,
          `stripeId`, `mondayProjectId`, `shopName`, `emailAddress`,
          `country`, `requestType`, `payload`, `submittedAt`)

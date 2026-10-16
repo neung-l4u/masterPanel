@@ -1,6 +1,6 @@
 # Monday mirror sync
 
-Mirrors Monday into `l4u_ud_shops` and `l4u_ud_subscriptions` (database
+Mirrors Monday into `l4u_up_down_shops` and `l4u_up_down_subscriptions` (database
 `db_localforyou`) so the customer-mode upgrade form can find a shop by email in
 milliseconds instead of the seconds a live Monday query takes.
 
@@ -35,10 +35,23 @@ Without it the sync exits 1 with `FATAL: cannot initialise: Failed opening
 required '.../initDB.php'`, written to the log, and the lookup endpoint returns
 503 with a generic body.
 
-**2. Apply the migration.** It creates the two mirror tables and is idempotent
+**2. Apply the migrations.** Both are idempotent (`CREATE TABLE IF NOT
+EXISTS`), and on a database that predates the up_down naming run
+`rename_up_down_tables.sql` FIRST -- before uploading the renamed code, because
+the code reads the new names only:
+
+    mysql -u root -p db_localforyou < modules/upgrade-downgrade/assets/db/rename_up_down_tables.sql
+    mysql -u root -p db_localforyou < modules/upgrade-downgrade/assets/db/migration_up_down_logs.sql
+
+The rename is guarded per table, so running it twice does nothing. It RENAMEs
+`upgrade_downgrade_logs` rather than recreating it, because that table holds
+real customer submissions which cannot be regenerated. The two mirror tables
+can be, so a fresh database may skip their rename and just create them below.
+
+**2b. Create the mirror tables.** Idempotent
 (`CREATE TABLE IF NOT EXISTS`):
 
-    mysql -u root -p db_localforyou < modules/upgrade-downgrade/assets/db/migration_ud_mirror.sql
+    mysql -u root -p db_localforyou < modules/upgrade-downgrade/assets/db/migration_up_down_mirror.sql
 
 **3. Create the module config,** also gitignored:
 
@@ -77,20 +90,43 @@ Twice daily. A customer who signed up one to three days ago is not using the
 upgrade form yet, so twelve-hour-old data is accurate enough for the people who
 reach this form.
 
-Windows Task Scheduler (two tasks; adjust the PHP and project paths to the
-deployment):
+**Production is Linux (cPanel), so cron is the one that matters.** The script
+resolves every path from `__DIR__`, so it needs no working directory and a bare
+absolute path is enough:
+
+    0 6,18 * * * /usr/local/bin/php /home/USER/public_html/modules/upgrade-downgrade/sync/syncMondayMirror.php >/dev/null 2>&1
+
+Find both paths on the box rather than assuming them: shared hosts put PHP
+somewhere different per account and often ship several versions.
+
+    which php; php -v | head -1
+    find ~ -maxdepth 4 -type d -name upgrade-downgrade
+
+Install with `crontab -e`, confirm with `crontab -l`.
+
+**The hours are server time, not Bangkok time.** The script sets `Asia/Bangkok`
+for its own timestamps, so the log can read 06:00 while cron actually fired at
+whatever the host's clock said. Check the offset with `date` and shift the hours
+if 06:00 and 18:00 local genuinely matter; for a twice-daily mirror they usually
+do not.
+
+To prove it works without waiting for 06:00, run the exact command from the
+crontab line by hand, then check the log picked up a fresh entry:
+
+    tail -5 modules/upgrade-downgrade/assets/logs/mirror-sync.log
+
+A cron that never logs is almost always the wrong PHP binary (a CGI build that
+needs `-q`, or a version too old) or a path typo. Fix the crontab line, not the
+script.
+
+Windows Task Scheduler, for a local XAMPP checkout (two tasks; adjust the PHP
+and project paths):
 
     schtasks /create /tn "L4U UD Mirror Sync AM" /sc daily /st 06:00 /tr "C:\xampp\php\php.exe C:\xampp\htdocs\masterPanel\modules\upgrade-downgrade\sync\syncMondayMirror.php"
     schtasks /create /tn "L4U UD Mirror Sync PM" /sc daily /st 18:00 /tr "C:\xampp\php\php.exe C:\xampp\htdocs\masterPanel\modules\upgrade-downgrade\sync\syncMondayMirror.php"
 
 Check with `schtasks /query /tn "L4U UD Mirror Sync AM"`, test with
-`schtasks /run /tn "L4U UD Mirror Sync AM"`, then confirm a fresh entry appears
-in `assets/logs/mirror-sync.log`. If it does not, the task's PHP path or working
-directory is wrong: fix the task, not the script.
-
-cron:
-
-    0 6,18 * * * cd /path/to/masterPanel && php modules/upgrade-downgrade/sync/syncMondayMirror.php >> /dev/null 2>&1
+`schtasks /run /tn "L4U UD Mirror Sync AM"`.
 
 The script keeps its own log, so discarding stdout loses nothing.
 

@@ -7,7 +7,7 @@ lets the forms look a customer up by their email address.
 - `views/upgradeForm.php`, `views/downgradeForm.php` — the two forms, each with
   a `?mode=customer` and a `?mode=staff` variant
 - `assets/js/emailLookup.js` — the shared email lookup, used by both forms
-- `assets/productClassify.php` — `udmClassifyProduct()`, which tags a product as
+- `assets/productClassify.php` — `upDownClassifyProduct()`, which tags a product as
   `araya` / `plan_bundle` / `plan_solo` / `addon`
 - `sync/README.md` — the Monday mirror sync and its schedule
 
@@ -52,24 +52,36 @@ fill in:
 
 ### The Make.com payload contract
 
-Both forms post to Make.com scenarios this project cannot inspect, and these
-keys have changed or are in doubt:
+**Reconciled against the exported blueprint on 2026-10-15.** The scenario is
+`[Mark] Upgrade/Downgrade Form : Logs to monday & send email`, and it reads 47
+webhook fields across three Monday modules and eight email modules.
 
-- **`downgradeTarget` is gone** from the downgrade payload. It used to carry a
-  second-level radio choice; the products being cancelled are real product names
-  now and travel in `cancelledProducts` / `cancelledProductsText`.
-- **`changeType`** used to carry `downgradeTarget || requestType` on the
-  downgrade form. It now always carries the request type.
-- **`featuresKeep` is gone**, replaced by `keepProducts` /
-  `keepProductsText`. `assets/email/customerDowngrade.html` and
-  `internalDowngrade.html` were updated to read `{{1.keepProductsText}}`.
-- **`effectiveDate`** no longer emits the value `Immediately`; that option is
-  now `Stop the service now`.
-- **`originalProductManual`** on the upgrade form, and `originalProduct` now
-  carrying product names rather than slugs.
+Resolved:
 
-Confirm all of these with whoever owns the scenarios before this reaches
-production.
+- **`downgradeTarget`** is not read anywhere in the scenario, so dropping it
+  broke nothing.
+- **`changeType`** is not read either. Its change of meaning is invisible to
+  this scenario.
+- **`effectiveDate`** is printed verbatim into the emails and never compared
+  against a string, so renaming the `Immediately` option is safe.
+- **`originalProduct`** is printed into the Monday update. It now carries
+  product names rather than slugs, which reads better there.
+- **`featuresKeep`** IS read, by all four downgrade email modules (42, 43, 45,
+  46). The keep-list renamed this answer to `keepProducts`, which would have
+  left an empty box in every one of those emails. The payload now sends
+  `featuresKeep` alongside the new names so the scenario needs no edit.
+
+Known mismatches that are not ours to fix:
+
+- **`experienceRating`** is read by modules 42 and 45 but has never existed on
+  either form; the scenario asks for a field that was never sent. The rating
+  it presumably wants is `overallRating`, which the scenario also reads and
+  the form does send. Left alone deliberately: adding an alias would put two
+  keys for one value in the payload.
+- **`phoneNumber`** and **`addons`** are read by the shared Monday update
+  (module 50) but only exist on the upgrade form, so those two lines have
+  always been blank for a downgrade. Pre-existing, not a regression.
+- Module 50's update body begins with the literal text `Test update`.
 
 ### Deferred to their own specs
 
@@ -78,8 +90,26 @@ production.
   — but the resolver needs three answers from CS: which billing period to
   display, why Solo variants do not match by name, and how to present combined
   products. CS sanctioned shipping without them.
-- **The AI Araya feedback form** (item 7's redirect destination). The hook is
-  built and gated on `araya_feedback_url`; the form itself does not exist yet.
+- **The AI Araya feedback form** is built. `modules/feedback` has an Araya mode,
+  and completing it grants the shop 30 goodwill minutes once per shop for the
+  lifetime of the account. See
+  `docs/superpowers/specs/2026-10-14-araya-feedback-credit-design.md`.
+
+  Three settings have to line up before the flow does anything:
+
+  1. `araya_feedback_url` in this module's `config.php`, pointing at
+     `modules/feedback/views/feedbackForm.php`. The redirect appends `mode`,
+     `shop_id`, `shopName` and `email` itself.
+  2. `gcal_base_url` and `feedback_credit_token` in
+     `modules/feedback/assets/config.php`, copied from `config.example.php`.
+  3. `FEEDBACK_CREDIT_TOKEN` in the gcal API's environment, matching the token
+     above. Unset there rejects every credit request, which is the safe
+     default.
+
+  With any of them unset the customer still reaches a thank-you page and their
+  feedback is still recorded; only the credit is skipped. A redirect that
+  arrives without a `shop_id` renders the ordinary lead enquiry form rather
+  than promising minutes that cannot be granted.
 
 ### Flagged for CS, not a build item
 

@@ -25,7 +25,7 @@ $requestType    = $data['requestType']      ?? null;
 $submittedAt    = $data['date']             ?? null;
 
 $db->query(
-    'INSERT INTO `upgrade_downgrade_logs`
+    'INSERT INTO `l4u_up_down_logs`
         (`formType`, `formVersion`, `formMode`, `testMode`,
          `stripeId`, `mondayProjectId`, `shopName`, `emailAddress`,
          `country`, `requestType`, `payload`, `submittedAt`)
@@ -58,7 +58,7 @@ try {
             if (!is_string($productName)) {
                 continue;
             }
-            if (in_array('araya', udmClassifyProduct($productName), true)) {
+            if (in_array('araya', upDownClassifyProduct($productName), true)) {
                 $arayaProducts[] = $productName;
             }
         }

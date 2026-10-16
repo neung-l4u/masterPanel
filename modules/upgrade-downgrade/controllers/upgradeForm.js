@@ -304,7 +304,7 @@ function updateSectionVisibility() {
 // lookup may fill and clear, and that every state change has to re-run
 // updateSectionVisibility(), because the hidden #originalProduct field drives
 // the Solo-to-Bundle gate and the comparison card.
-udmInitEmailLookup({
+upDownInitEmailLookup({
     email:        '#emailAddress',
     country:      '#country',
     status:       '#emailLookupStatus',

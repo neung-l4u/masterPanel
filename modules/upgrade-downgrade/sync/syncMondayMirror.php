@@ -1,6 +1,6 @@
 <?php
 /**
- * Mirror Monday into l4u_ud_shops / l4u_ud_subscriptions.
+ * Mirror Monday into l4u_up_down_shops / l4u_up_down_subscriptions.
  *
  * Intended to run twice a day:
  *
@@ -45,7 +45,7 @@ $started = microtime(true);
  * in the log is the thing this script most needs to avoid: cron discards stdout,
  * so the log is usually the only evidence an overnight run ever happened.
  */
-function udmSyncLog(string $text): void
+function upDownSyncLog(string $text): void
 {
     $logDir = __DIR__ . '/../assets/logs';
     if (!is_dir($logDir)) {
@@ -56,10 +56,10 @@ function udmSyncLog(string $text): void
 }
 
 /** Report a fatal, to the log as well as the caller, and stop. */
-function udmSyncFatal(string $message, bool $isCli): void
+function upDownSyncFatal(string $message, bool $isCli): void
 {
     $line = '[' . date('Y-m-d H:i:s') . " +07] ud mirror sync FATAL: {$message}\n";
-    udmSyncLog($line);
+    upDownSyncLog($line);
     // On the web path the message goes to the response, so it must not carry a
     // stack trace or a filesystem path beyond what the message itself says.
     fwrite($isCli ? STDERR : STDOUT, $line);
@@ -78,7 +78,7 @@ try {
     require_once __DIR__ . '/mondayClient.php';
     require_once __DIR__ . '/mondayMirror.php';
 } catch (Throwable $e) {
-    udmSyncFatal('cannot initialise: ' . $e->getMessage(), $isCli);
+    upDownSyncFatal('cannot initialise: ' . $e->getMessage(), $isCli);
 }
 
 // Country filter: CLI arguments, or ?countries=TH,AU over HTTP.
@@ -98,7 +98,7 @@ if ($only !== null) {
     // An empty filter would otherwise sync no countries at all and still report
     // success, which reads as a healthy run that did nothing.
     if ($only === []) {
-        udmSyncFatal('country filter given but no valid country codes in it', $isCli);
+        upDownSyncFatal('country filter given but no valid country codes in it', $isCli);
     }
 }
 
@@ -106,9 +106,9 @@ $lines    = [];
 $hadError = false;
 
 try {
-    $summary = udmRunSync($db, $only);
+    $summary = upDownRunSync($db, $only);
 } catch (Throwable $e) {
-    udmSyncFatal($e->getMessage(), $isCli);
+    upDownSyncFatal($e->getMessage(), $isCli);
 }
 
 foreach ($summary['countries'] as $c) {
@@ -150,6 +150,6 @@ $output = "[{$stamp} +07] ud mirror sync {$status} ({$elapsed}s)\n"
 echo $output;
 
 // Keep a log so an overnight failure is still visible in the morning.
-udmSyncLog($output);
+upDownSyncLog($output);
 
 exit($hadError ? 1 : 0);

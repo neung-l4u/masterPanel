@@ -12,7 +12,7 @@
  * Stored normalized and queried normalized, so idx_country_email is usable
  * without a LOWER() call that would defeat it.
  */
-function udmNormalizeEmail(?string $email): string
+function upDownNormalizeEmail(?string $email): string
 {
     if ($email === null) return '';
     // Strips the non-breaking space that copy-paste from Monday carries in.
@@ -28,10 +28,10 @@ function udmNormalizeEmail(?string $email): string
  * whitespace collapsed to one space. Used only for the fallback match when a
  * subscription has no relation to a project item.
  */
-function udmNormalizeShopName(?string $name): string
+function upDownNormalizeShopName(?string $name): string
 {
     if ($name === null) return '';
-    // See udmNormalizeEmail: a byte-set trim() would corrupt a name ending in
+    // See upDownNormalizeEmail: a byte-set trim() would corrupt a name ending in
     // a multibyte character whose encoding ends in 0xA0 -- Thai U+0E20 is
     // E0 B8 A0, so 'ลาภ' would be truncated to invalid UTF-8 and then
     // normalize to an empty string, silently breaking the name fallback.
@@ -53,14 +53,14 @@ function udmNormalizeShopName(?string $name): string
  * @param array $shopsByName  Map of normalized shop name => shop_id.
  * @return array{shop_id: string, matched_by: string}
  */
-function udmResolveShopId(array $subscription, array $shopsByName): array
+function upDownResolveShopId(array $subscription, array $shopsByName): array
 {
     $linked = (string) ($subscription['linked_shop_id'] ?? '');
     if ($linked !== '') {
         return ['shop_id' => $linked, 'matched_by' => 'relation'];
     }
 
-    $key = udmNormalizeShopName($subscription['account_name'] ?? '');
+    $key = upDownNormalizeShopName($subscription['account_name'] ?? '');
     if ($key !== '' && isset($shopsByName[$key])) {
         return ['shop_id' => (string) $shopsByName[$key], 'matched_by' => 'name'];
     }

@@ -14,17 +14,17 @@
  * re-running over unchanged data hits that case constantly. So existence is
  * checked first rather than inferred from affected_rows.
  */
-if (!function_exists('udmUpsertShop')) {
-function udmUpsertShop($db, array $shop, string $syncedAt): string
+if (!function_exists('upDownUpsertShop')) {
+function upDownUpsertShop($db, array $shop, string $syncedAt): string
 {
     $existing = $db->query(
-        "SELECT shop_id FROM l4u_ud_shops WHERE shop_id = ?",
+        "SELECT shop_id FROM l4u_up_down_shops WHERE shop_id = ?",
         (string) $shop['shop_id']
     )->fetchArray();
     $action = empty($existing) ? 'inserted' : 'updated';
 
     $db->query(
-        "INSERT INTO l4u_ud_shops
+        "INSERT INTO l4u_up_down_shops
             (shop_id, country, email, shop_name, shop_type,
              owner_name, phone, board_id, synced_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -39,7 +39,7 @@ function udmUpsertShop($db, array $shop, string $syncedAt): string
             synced_at  = VALUES(synced_at)",
         (string) $shop['shop_id'],
         (string) $shop['country'],
-        udmNormalizeEmail($shop['email'] ?? ''),
+        upDownNormalizeEmail($shop['email'] ?? ''),
         (string) ($shop['shop_name']  ?? ''),
         (string) ($shop['shop_type']  ?? ''),
         (string) ($shop['owner_name'] ?? ''),
@@ -58,11 +58,11 @@ function udmUpsertShop($db, array $shop, string $syncedAt): string
  * price is bound as a string so a null stays null instead of being coerced to
  * 0.00, which would misreport a free or unpriced line as costing nothing.
  */
-if (!function_exists('udmUpsertSubscription')) {
-function udmUpsertSubscription($db, array $sub, string $syncedAt): string
+if (!function_exists('upDownUpsertSubscription')) {
+function upDownUpsertSubscription($db, array $sub, string $syncedAt): string
 {
     $existing = $db->query(
-        "SELECT sub_id FROM l4u_ud_subscriptions WHERE sub_id = ?",
+        "SELECT sub_id FROM l4u_up_down_subscriptions WHERE sub_id = ?",
         (string) $sub['sub_id']
     )->fetchArray();
     $action = empty($existing) ? 'inserted' : 'updated';
@@ -71,7 +71,7 @@ function udmUpsertSubscription($db, array $sub, string $syncedAt): string
     $price = ($price === null || $price === '') ? null : (string) $price;
 
     $db->query(
-        "INSERT INTO l4u_ud_subscriptions
+        "INSERT INTO l4u_up_down_subscriptions
             (sub_id, shop_id, raw_name, product_group, price,
              currency, account_name, matched_by, synced_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -101,19 +101,19 @@ function udmUpsertSubscription($db, array $sub, string $syncedAt): string
 
 /**
  * Map of normalized shop name => shop_id for one country, for the fallback
- * match in udmResolveShopId.
+ * match in upDownResolveShopId.
  */
-if (!function_exists('udmLoadShopNameMap')) {
-function udmLoadShopNameMap($db, string $country): array
+if (!function_exists('upDownLoadShopNameMap')) {
+function upDownLoadShopNameMap($db, string $country): array
 {
     $rows = $db->query(
-        "SELECT shop_id, shop_name FROM l4u_ud_shops WHERE country = ?",
+        "SELECT shop_id, shop_name FROM l4u_up_down_shops WHERE country = ?",
         $country
     )->fetchAll();
 
     $map = [];
     foreach ($rows as $r) {
-        $key = udmNormalizeShopName($r['shop_name']);
+        $key = upDownNormalizeShopName($r['shop_name']);
         if ($key !== '') $map[$key] = (string) $r['shop_id'];
     }
     return $map;
@@ -127,11 +127,11 @@ function udmLoadShopNameMap($db, string $country): array
  * Scoped by country because a country whose Monday fetch failed is skipped
  * entirely; deleting globally would wipe the rows of every skipped country.
  */
-if (!function_exists('udmDeleteStaleShops')) {
-function udmDeleteStaleShops($db, string $country, string $syncedAt): int
+if (!function_exists('upDownDeleteStaleShops')) {
+function upDownDeleteStaleShops($db, string $country, string $syncedAt): int
 {
     $db->query(
-        "DELETE FROM l4u_ud_shops WHERE country = ? AND synced_at < ?",
+        "DELETE FROM l4u_up_down_shops WHERE country = ? AND synced_at < ?",
         $country, $syncedAt
     );
     return (int) $db->affectedRows();
@@ -145,11 +145,11 @@ function udmDeleteStaleShops($db, string $country, string $syncedAt): int
  * Not scoped by country: the subscriptions board is one global board, synced
  * in one pass, so anything older than this run's timestamp is genuinely gone.
  */
-if (!function_exists('udmDeleteStaleSubscriptions')) {
-function udmDeleteStaleSubscriptions($db, string $syncedAt): int
+if (!function_exists('upDownDeleteStaleSubscriptions')) {
+function upDownDeleteStaleSubscriptions($db, string $syncedAt): int
 {
     $db->query(
-        "DELETE FROM l4u_ud_subscriptions WHERE synced_at < ?",
+        "DELETE FROM l4u_up_down_subscriptions WHERE synced_at < ?",
         $syncedAt
     );
     return (int) $db->affectedRows();

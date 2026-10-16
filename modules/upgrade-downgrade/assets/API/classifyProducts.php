@@ -32,7 +32,7 @@ if (!is_array($names)) {
     $names = [];
 }
 
-$map  = udmClassificationMap();
+$map  = upDownClassificationMap();
 $tags = [];
 
 foreach ($names as $name) {
@@ -51,7 +51,7 @@ foreach ($names as $name) {
     }
     // Keyed by the name exactly as asked, so the caller can look its own
     // strings back up without having to re-trim them.
-    $tags[$name] = udmClassifyProduct($name, $map);
+    $tags[$name] = upDownClassifyProduct($name, $map);
 }
 
 // Cast to object so an empty result encodes as {} rather than [], and so a

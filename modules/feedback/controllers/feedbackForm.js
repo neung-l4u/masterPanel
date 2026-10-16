@@ -1,3 +1,27 @@
+// The credit outcome comes back from saveToDB, but the webhook call runs
+// alongside it and used to redirect on its own -- whichever finished first
+// won, so the customer could land on the thank-you page before the credit
+// was known. Both paths now report in here and the redirect happens once,
+// when the save has answered or when it is clear it never will.
+let upDownCreditOutcome = null;
+let upDownSaveDone = false;
+let upDownRedirected = false;
+
+function upDownGoToThankYou() {
+    if (upDownRedirected) return;
+    upDownRedirected = true;
+
+    const c = upDownCreditOutcome || {};
+    const params = [];
+    if (c.attempted) {
+        params.push('credit=' + encodeURIComponent(c.granted ? 'granted' : (c.reason || 'unknown')));
+        if (c.granted && c.minutes != null) params.push('minutes=' + encodeURIComponent(c.minutes));
+        if (c.new_balance != null) params.push('balance=' + encodeURIComponent(c.new_balance));
+        if (c.claimed_at) params.push('claimed=' + encodeURIComponent(c.claimed_at));
+    }
+    window.location.replace('thankyou.php' + (params.length ? '?' + params.join('&') : ''));
+}
+
 $('#feedbackForm').on('submit', function (e) {
     e.preventDefault();
     const result = $('#result');
@@ -45,8 +69,8 @@ function sendMail(formData) {
         data: JSON.stringify(jsonData),
         success: () => {
             console.log("✅ Webhook sent successfully.");
-            window.location.replace("thankyou.php");
-
+            // The save carries the credit outcome, so the redirect waits for it.
+            if (upDownSaveDone) upDownGoToThankYou();
         },
         error: () => {
             console.error("❌ Webhook sending failed.");
@@ -59,7 +83,13 @@ function saveToDB(payload, result, cmdSubmit) {
         url: "../models/feedbackForm.php",
         type: "POST",
         data: { payload },
-        success: () => {
+        success: (res) => {
+            let data = res;
+            if (typeof data === 'string') {
+                try { data = JSON.parse(data); } catch (e) { data = {}; }
+            }
+            upDownCreditOutcome = (data && data.credit) || null;
+            upDownSaveDone = true;
             result.html(`<div class="alert alert-warning mt-2"><img src="../assets/img/loading.gif" alt="Loading" height="24"> Saving data <span id="countDown">3</span>...</div>`);
             let countdown = 3;
             const countdownInterval = setInterval(() => {
@@ -67,11 +97,14 @@ function saveToDB(payload, result, cmdSubmit) {
                 $('#countDown').text(countdown);
                 if (countdown <= 0) {
                     clearInterval(countdownInterval);
-                    window.location.reload();
+                    upDownGoToThankYou();
                 }
             }, 1000);
         },
         error: () => {
+            // The feedback may still have been recorded; the customer is not
+            // the right person to debug that. They keep the retry button.
+            upDownSaveDone = true;
             result.html(`<div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> An error occurred. Please try again.</div>`);
             cmdSubmit.show();
         }

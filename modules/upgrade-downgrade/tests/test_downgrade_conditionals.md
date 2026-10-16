@@ -5,7 +5,7 @@ The form's conditional sections are driven by `recomputeConditionalState()` in
 repo, so they are verified by hand. Run this whole script after any change to
 that function or to the markup it toggles.
 
-`udmClassifyProduct()` itself is covered automatically:
+`upDownClassifyProduct()` itself is covered automatically:
 
     php tests/test_product_classify.php
 
@@ -20,7 +20,7 @@ after a lookup has rendered at least one product checkbox:
 ```javascript
 // Tag the first rendered product however the test needs
 const name = $('#productCheckboxList input').first().val();
-udmProductTags[name] = ['araya'];            // or ['plan_bundle'], ['addon'],
+upDownProductTags[name] = ['araya'];            // or ['plan_bundle'], ['addon'],
                                              // or ['araya','plan_bundle']
 $('#productCheckboxList input').first().prop('checked', true);
 recomputeConditionalState();

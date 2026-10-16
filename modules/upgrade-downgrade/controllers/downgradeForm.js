@@ -193,7 +193,7 @@ function initStarRating(widgetId, inputId, labelId) {
         // the looked-up shop's name and status line while submitting THIS
         // shop's project id, and a later failed lookup would clear the id
         // just chosen here.
-        if (typeof udmLookup !== 'undefined' && udmLookup) udmLookup.release();
+        if (typeof upDownLookup !== 'undefined' && upDownLookup) upDownLookup.release();
         $input.val($(this).data('id'));
         $('#boardId').val($(this).data('boardid'));
         $dropdown.removeClass('show').empty();
@@ -220,19 +220,19 @@ function initStarRating(widgetId, inputId, labelId) {
 // rendered from this, and it is the empty array whenever no lookup has
 // succeeded -- which is what makes the "enter your email first" prompt
 // distinguishable from "this shop has no products".
-let udmLookupProducts = [];
+let upDownLookupProducts = [];
 
 // The shop from the last successful lookup, or null. The post-submit Araya
 // redirect reads its name.
-let udmLookupShop = null;
+let upDownLookupShop = null;
 
 // `var`, not `const`: the staff project-search handler above is registered
-// before this line runs and calls udmLookup.release(). A const would sit in the
+// before this line runs and calls upDownLookup.release(). A const would sit in the
 // temporal dead zone until here, where even `typeof` throws rather than
 // reporting undefined, so the guard there could not do its job. A click can
 // only happen after this script has run, but a hoisted var makes that
 // ordering irrelevant instead of merely unreachable.
-var udmLookup = udmInitEmailLookup({
+var upDownLookup = upDownInitEmailLookup({
     email:        '#emailAddress',
     country:      '#country',
     status:       '#emailLookupStatus',
@@ -255,9 +255,9 @@ var udmLookup = udmInitEmailLookup({
     // No productList/productSelect options: this form has no manual product
     // select to fall back to. It renders checkboxes from onProducts instead.
     onProducts: function (subscriptions, shop) {
-        udmLookupProducts = subscriptions || [];
-        udmLookupShop     = shop || null;
-        udmRenderProductList();
+        upDownLookupProducts = subscriptions || [];
+        upDownLookupShop     = shop || null;
+        upDownRenderProductList();
     },
 
     onChange: updateSectionVisibility,
@@ -266,30 +266,30 @@ var udmLookup = udmInitEmailLookup({
 // Tags per product name, from assets/API/classifyProducts.php. The map that
 // produces them lives in config.php, which the browser cannot read, so this is
 // asked for rather than computed here -- two copies of the rules would drift.
-let udmProductTags = {};
+let upDownProductTags = {};
 
 // Id of the latest tag request, so a slow response for a previous shop cannot
 // overwrite the tags of the current one.
-let udmTagRequestSeq = 0;
+let upDownTagRequestSeq = 0;
 
 // The lookup calls this after every state change: a successful match, a branch
-// choice, a revert, a failure. It renders from udmLookupProducts wholesale
+// choice, a revert, a failure. It renders from upDownLookupProducts wholesale
 // rather than patching what is on screen, so there is no path on which a
 // previous shop's products survive. It is called with an empty list on every
 // failure/invalidation path, so it must be safe to wipe ticked boxes.
-function udmRenderProductList() {
+function upDownRenderProductList() {
     const $list  = $('#productCheckboxList');
     const $enter = $('#productListPrompt');
     const $empty = $('#productListEmpty');
 
-    if (!udmLookupProducts.length) {
+    if (!upDownLookupProducts.length) {
         $list.empty();
-        udmProductTags = {};
-        udmTagRequestSeq++;   // drop any in-flight classification
+        upDownProductTags = {};
+        upDownTagRequestSeq++;   // drop any in-flight classification
 
-        // An empty list has two meanings. udmLookupShop tells them apart: it is
+        // An empty list has two meanings. upDownLookupShop tells them apart: it is
         // non-null when a shop was found that has no active products.
-        if (udmLookupShop) {
+        if (upDownLookupShop) {
             $enter.hide();
             $empty.show();
         } else {
@@ -303,10 +303,10 @@ function udmRenderProductList() {
     $enter.hide();
     $empty.hide();
 
-    const html = udmLookupProducts.map(function (product, i) {
+    const html = upDownLookupProducts.map(function (product, i) {
         const id   = 'cancelProduct' + i;
-        const name = udmEscapeHtml(product.name);
-        const nameAttr = udmEscapeAttr(product.name);
+        const name = upDownEscapeHtml(product.name);
+        const nameAttr = upDownEscapeAttr(product.name);
         return `
             <div class="product-checkbox-item">
                 <input type="checkbox" id="${id}" name="cancelledProducts[]" value="${nameAttr}">
@@ -317,14 +317,14 @@ function udmRenderProductList() {
     $list.html(html);
 
     // Fresh boxes are all unticked, so no tags apply until classification lands.
-    udmProductTags = {};
-    udmFetchProductTags(udmLookupProducts.map(p => p.name));
+    upDownProductTags = {};
+    upDownFetchProductTags(upDownLookupProducts.map(p => p.name));
     recomputeConditionalState();
 }
 
 // Product names come from Monday and are rendered as HTML, so they are escaped
 // rather than trusted. Same guard as the shared lookup's.
-function udmEscapeHtml(value) {
+function upDownEscapeHtml(value) {
     return $('<div>').text(value == null ? '' : String(value)).html();
 }
 
@@ -334,45 +334,45 @@ function udmEscapeHtml(value) {
 // would be parsed as further attributes. No name in the mirror contains a
 // quote today, but the names come from a free-text Monday column, so a
 // product called 6" Display is one edit away.
-function udmEscapeAttr(value) {
-    return udmEscapeHtml(value).replace(/"/g, '&quot;');
+function upDownEscapeAttr(value) {
+    return upDownEscapeHtml(value).replace(/"/g, '&quot;');
 }
 
 // Classification drives which conditional sections exist, so a failure here
 // must fail safe: no tags means no conditional section fires, which is the same
 // state as a shop whose products are all add-ons. The customer can still
 // submit.
-function udmFetchProductTags(names) {
-    const seq = ++udmTagRequestSeq;
+function upDownFetchProductTags(names) {
+    const seq = ++upDownTagRequestSeq;
 
     if (!names.length) {
-        udmProductTags = {};
+        upDownProductTags = {};
         recomputeConditionalState();
         return;
     }
 
     $.getJSON('../assets/API/classifyProducts.php', { names: names })
         .done(function (data) {
-            if (seq !== udmTagRequestSeq) { return; }
-            udmProductTags = (data && data.tags) ? data.tags : {};
+            if (seq !== upDownTagRequestSeq) { return; }
+            upDownProductTags = (data && data.tags) ? data.tags : {};
         })
         .fail(function () {
-            if (seq !== udmTagRequestSeq) { return; }
-            udmProductTags = {};
+            if (seq !== upDownTagRequestSeq) { return; }
+            upDownProductTags = {};
         })
         .always(function () {
-            if (seq !== udmTagRequestSeq) { return; }
+            if (seq !== upDownTagRequestSeq) { return; }
             recomputeConditionalState();
         });
 }
 
 // The tags across every currently checked product, as a set.
-function udmCheckedTags() {
+function upDownCheckedTags() {
     const tags = {};
 
     $('#productCheckboxList input[name="cancelledProducts[]"]:checked').each(function () {
         const name = $(this).val();
-        (udmProductTags[name] || []).forEach(function (tag) {
+        (upDownProductTags[name] || []).forEach(function (tag) {
             tags[tag] = true;
         });
     });
@@ -392,7 +392,7 @@ const UDM_KEEP_OPTIONS = {
 // Rendered from scratch on every call, like the product list: the business type
 // can change after a plan bundle is already checked, and a stale option from
 // the previous type must not survive it.
-function udmRenderKeepList() {
+function upDownRenderKeepList() {
     const $list   = $('#keepProductsList');
     const type    = $('#businessType').val() || 'Other';
     const options = UDM_KEEP_OPTIONS[type] || UDM_KEEP_OPTIONS.Other;
@@ -409,8 +409,8 @@ function udmRenderKeepList() {
         const checked = wasChecked[name] ? ' checked' : '';
         return `
             <div class="check-card">
-                <input type="checkbox" id="${id}" name="keepProducts[]" value="${udmEscapeAttr(name)}"${checked}>
-                <label for="${id}"><i class="bi bi-bookmark-check"></i> ${udmEscapeHtml(name)}</label>
+                <input type="checkbox" id="${id}" name="keepProducts[]" value="${upDownEscapeAttr(name)}"${checked}>
+                <label for="${id}"><i class="bi bi-bookmark-check"></i> ${upDownEscapeHtml(name)}</label>
             </div>`;
     }).join('');
 
@@ -424,9 +424,9 @@ function udmRenderKeepList() {
 // failure the upgrade form hit when updateSectionVisibility was not called on
 // every change to the field that drives it.
 //
-// Tasks 7 and 8 extend this. It is the only place that reads udmCheckedTags().
+// Tasks 7 and 8 extend this. It is the only place that reads upDownCheckedTags().
 function recomputeConditionalState() {
-    const tags = udmCheckedTags();
+    const tags = upDownCheckedTags();
     const hasAraya      = tags.araya       === true;
     const hasPlanBundle = tags.plan_bundle === true;
 
@@ -460,7 +460,7 @@ function recomputeConditionalState() {
     if (hasAraya) {
         $('#improvementSuggestion').removeAttr('required').val('');
         $('#overallRating').removeAttr('required').val('');
-        udmResetStars('overallRatingWidget', 'overallRatingLabel');
+        upDownResetStars('overallRatingWidget', 'overallRatingLabel');
     }
 
     // --- Item 2c: what to keep, when a plan bundle is being cancelled ---
@@ -471,7 +471,7 @@ function recomputeConditionalState() {
     $('#keepProductsGroup').toggleClass('d-none', !hasPlanBundle);
 
     if (hasPlanBundle) {
-        udmRenderKeepList();
+        upDownRenderKeepList();
     } else {
         // Clear it: an answer about keeping a plan must not be submitted by
         // someone who has since unchecked the plan.
@@ -483,7 +483,7 @@ function recomputeConditionalState() {
 // lives in CSS classes rather than in the input. Hiding the group makes that
 // invisible, but unchecking the Araya product brings the group back still
 // showing a rating the field no longer holds.
-function udmResetStars(widgetId, labelId) {
+function upDownResetStars(widgetId, labelId) {
     const widget = document.getElementById(widgetId);
     if (!widget) return;
 
@@ -611,6 +611,13 @@ function sendData(formData) {
         cancelledProductsText: Array.isArray(cancelledProducts) ? cancelledProducts.join(', ') : cancelledProducts,
         keepProducts: keepProducts,
         keepProductsText: Array.isArray(keepProducts) ? keepProducts.join(', ') : keepProducts,
+        // The Make.com scenario's four downgrade emails read {{1.featuresKeep}},
+        // which was this answer's name before the keep-list replaced the old
+        // fixed checkbox. Confirmed by reading the exported blueprint: modules
+        // 42, 43, 45 and 46 all reference it. Sending it alongside the new
+        // names keeps those emails filled in without a scenario edit, and this
+        // is the whole reason the payload change needed confirming.
+        featuresKeep: Array.isArray(keepProducts) ? keepProducts.join(', ') : keepProducts,
         email: formData.emailAddress || '',
         shopName: formData.shopName || '',
         businessType: formData.businessType || '',
@@ -634,7 +641,7 @@ function sendData(formData) {
         data: JSON.stringify(jsonData),
         success: () => {
             console.log("Downgrade webhook sent.");
-            window.location.replace(udmPostSubmitUrl(cancelledProducts, formData));
+            window.location.replace(upDownPostSubmitUrl(cancelledProducts, formData));
         },
         error: () => {
             console.error("Downgrade webhook failed.");
@@ -652,19 +659,28 @@ function sendData(formData) {
 // The URL comes from config.php and is empty until CS supplies it, so this
 // returns the thank-you page until then and starts redirecting with no code
 // change afterwards.
-function udmPostSubmitUrl(cancelledProducts, formData) {
+function upDownPostSubmitUrl(cancelledProducts, formData) {
     const feedbackUrl = document.body.dataset.arayaFeedbackUrl || '';
     if (!feedbackUrl) return 'thankyou.php';
 
     const names = Array.isArray(cancelledProducts) ? cancelledProducts : [cancelledProducts];
     const hasAraya = names.some(function (name) {
-        return (udmProductTags[name] || []).indexOf('araya') !== -1;
+        return (upDownProductTags[name] || []).indexOf('araya') !== -1;
     });
 
     if (!hasAraya) return 'thankyou.php';
 
     const sep = feedbackUrl.indexOf('?') === -1 ? '?' : '&';
     return feedbackUrl + sep + $.param({
+        mode:     'araya',
+        // The feedback form needs this to enter Araya mode at all, and the
+        // credit behind it is granted once per shop for the lifetime of the
+        // account -- which cannot key off a shop name the customer types,
+        // where "Thai Spa" and "thai spa" would be two shops. It is
+        // whatever the email lookup resolved, and empty when no lookup
+        // succeeded, in which case the form correctly stays a lead enquiry
+        // rather than promising minutes we cannot grant.
+        shop_id:  $('#mondayProjectId').val() || '',
         shopName: formData.shopName || '',
         email:    formData.emailAddress || '',
     });

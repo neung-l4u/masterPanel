@@ -43,7 +43,7 @@ header('Cache-Control: no-store');
  * trivially confirmable, which is why the log must not be publicly readable
  * (see the .htaccess in assets/logs).
  */
-function udmLogLookup(string $country, string $email, string $outcome): void
+function upDownLogLookup(string $country, string $email, string $outcome): void
 {
     $logDir = __DIR__ . '/../logs';
     if (!is_dir($logDir)) {
@@ -71,19 +71,19 @@ function udmLogLookup(string $country, string $email, string $outcome): void
 }
 
 /** Refuse and stop, with a body that never carries internals. */
-function udmLookupRefuse(int $status, string $reason, string $country, string $email, string $outcome): void
+function upDownLookupRefuse(int $status, string $reason, string $country, string $email, string $outcome): void
 {
     if ($status !== 200) {
         http_response_code($status);
     }
-    udmLogLookup($country, $email, $outcome);
+    upDownLogLookup($country, $email, $outcome);
     echo json_encode(['found' => false, 'reason' => $reason]);
     exit;
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
     // Logged like any other call: a scripted POST probe should leave a trace.
-    udmLookupRefuse(405, 'method not allowed', '', '', 'method-not-allowed');
+    upDownLookupRefuse(405, 'method not allowed', '', '', 'method-not-allowed');
 }
 
 // is_string first: ?country[]=x makes $_GET['country'] an array, and casting
@@ -92,15 +92,15 @@ $country = (isset($_GET['country']) && is_string($_GET['country'])) ? trim($_GET
 $email   = (isset($_GET['email'])   && is_string($_GET['email']))   ? trim($_GET['email'])   : '';
 
 if ($country === '' || $email === '') {
-    udmLookupRefuse(200, 'country and email are both required', $country, $email, 'missing-parameter');
+    upDownLookupRefuse(200, 'country and email are both required', $country, $email, 'missing-parameter');
 }
 
 if (strlen($country) !== 2 || !ctype_alpha($country)) {
-    udmLookupRefuse(200, 'country must be a 2-letter code', $country, $email, 'bad-country');
+    upDownLookupRefuse(200, 'country must be a 2-letter code', $country, $email, 'bad-country');
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    udmLookupRefuse(200, 'not a valid email address', $country, $email, 'bad-email');
+    upDownLookupRefuse(200, 'not a valid email address', $country, $email, 'bad-email');
 }
 
 // Inside the try: initDB.php constructs the db object, and in PHP 8 mysqli
@@ -114,14 +114,14 @@ try {
     require_once __DIR__ . '/../../models/shopLookup.php';
 
     if (!isset($db)) {
-        udmLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'db-unavailable');
+        upDownLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'db-unavailable');
     }
 
-    $result = udmLookupShopByEmail($db, $country, $email);
+    $result = upDownLookupShopByEmail($db, $country, $email);
 } catch (Throwable $e) {
     // $e is deliberately not reported to the caller: its message carries file
     // paths and connection details.
-    udmLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'error');
+    upDownLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'error');
 }
 
 $encoded = json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -130,8 +130,8 @@ $encoded = json_encode($result, JSON_UNESCAPED_UNICODE);
 // -- a 200 with a zero-length body, which the form's parse fails on with nothing
 // to diagnose. Mirrored names come from Monday, so a bad byte is not impossible.
 if ($encoded === false) {
-    udmLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'encode-failed');
+    upDownLookupRefuse(503, 'lookup temporarily unavailable', $country, $email, 'encode-failed');
 }
 
-udmLogLookup($country, $email, $result['found'] ? 'found' : 'not-found');
+upDownLogLookup($country, $email, $result['found'] ? 'found' : 'not-found');
 echo $encoded;
