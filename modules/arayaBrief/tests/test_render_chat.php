@@ -36,6 +36,27 @@ function mk(array $monday = [], array $gcal = []): array {
 function res(array $m, array $um = [], array $ug = []): array {
     return ['matched' => $m, 'unmatchedMonday' => $um, 'unmatchedGcal' => $ug];
 }
+/**
+ * A minimal, fully-populated brief whose sections can be overridden directly.
+ *
+ * Some rendering cases cannot be reached through arayaBuildBrief, because the
+ * rules legitimately refuse to produce them -- an unrecognised exclusion
+ * reason, for instance. Building the brief shape here lets the renderer be
+ * tested on input a future rules change might emit.
+ */
+function arayaChatFixtureBrief(array $sections = []): array {
+    return array_merge([
+        'generated_for' => TODAY,
+        'overview' => [
+            'live' => 0, 'pendingCancel' => 0, 'setup' => 0, 'cancelled' => 0,
+            'canceledAfterLive' => 0, 'cancelBeforeLive' => 0, 'total' => 0,
+        ],
+        'live' => [], 'upsell' => [], 'upsellExcluded' => [],
+        'idleNew' => [], 'idleQuiet' => [], 'setup' => [], 'cancelling' => [],
+        'gaps' => [],
+    ], $sections);
+}
+
 function render(array $r): string {
     return arayaRenderChat(arayaBuildBrief($r, TODAY));
 }
@@ -160,6 +181,36 @@ foreach (['✅ ร้านที่ LIVE (นาทีคงเหลือ · 
 }
 test("sections are separated by the rule", substr_count($out, ARAYA_CHAT_SEP) >= 8);
 test("it is one message (no split markers)", substr_count($out, 'ARAYA DAILY BRIEF') === 1);
+
+// The upsell-exclusion reason is the line someone acts on, so it must read in
+// Thai while still naming the board status they will look up on Monday.
+echo "== upsellExcluded reason ==\n";
+$excluded = [
+    'name' => 'Me Ya Wi', 'remaining_minutes' => -109, 'days_until_refresh' => 5,
+    'live_status' => 'Waiting to cancel',
+    'reason' => 'Status is "Waiting to cancel"; the shop has given notice.',
+];
+$out = arayaRenderChat(arayaChatFixtureBrief(['upsellExcluded' => [$excluded]]));
+test("the reason is Thai, not the English source string",
+     str_contains($out, 'ร้านแจ้งยกเลิกแล้ว') && !str_contains($out, 'has given notice'));
+test("the board status stays verbatim so it can be looked up",
+     str_contains($out, 'สถานะ "Waiting to cancel"'));
+test("the excluded shop still shows its signed balance",
+     str_contains($out, 'Me Ya Wi (-109 mins'));
+
+// Derived from the reason text when live_status is absent on the row.
+$noStatus = $excluded;
+unset($noStatus['live_status']);
+$out = arayaRenderChat(arayaChatFixtureBrief(['upsellExcluded' => [$noStatus]]));
+test("the status is recovered from the reason when the row omits it",
+     str_contains($out, 'สถานะ "Waiting to cancel"'));
+
+// An unrecognised reason shape must degrade to the English text, never vanish.
+$novel = ['name' => 'Odd Shop', 'remaining_minutes' => 5, 'days_until_refresh' => 1,
+          'reason' => 'some new policy reason'];
+$out = arayaRenderChat(arayaChatFixtureBrief(['upsellExcluded' => [$novel]]));
+test("an unknown reason falls back to its English text rather than blank",
+     str_contains($out, 'some new policy reason'));
 
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

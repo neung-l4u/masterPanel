@@ -32,6 +32,30 @@ function arayaChatOwner($po): string
     return $po === '' ? '' : ' · @' . $po;
 }
 
+/**
+ * Why a shop that met the numeric upsell test is not being pitched, in Thai.
+ *
+ * buildBrief.php composes this reason in English and 100 tests pin those
+ * strings, so the translation lives here instead -- the same split used for gap
+ * details. This line is the one a person acts on, so it has to read in their
+ * language; the board status stays in it verbatim, since that is what they will
+ * look up on Monday.
+ */
+function arayaChatExcludedReason($row): string
+{
+    $reason = arayaClean($row['reason'] ?? '');
+    $status = arayaClean($row['live_status'] ?? '');
+
+    if ($status === '' && preg_match('/"([^"]+)"/', $reason, $m) === 1) {
+        $status = $m[1];
+    }
+    if ($status !== '') {
+        return 'สถานะ "' . $status . '" — ร้านแจ้งยกเลิกแล้ว';
+    }
+    // An unrecognised shape degrades to the English reason rather than nothing.
+    return $reason;
+}
+
 function arayaChatName($row): string
 {
     $n = arayaClean($row['name'] ?? '');
@@ -119,7 +143,7 @@ function arayaRenderChat(array $brief): string
     foreach ($brief['upsellExcluded'] ?? [] as $r) {
         $B[] = arayaChatName($r) . ' (' . arayaChatMins($r['remaining_minutes'] ?? null)
             . ' · รีเฟรชอีก ' . (int)($r['days_until_refresh'] ?? 0) . ' วัน) — ไม่นับ: '
-            . arayaClean($r['reason'] ?? '');
+            . arayaChatExcludedReason($r);
     }
     $S[] = $B;
 
