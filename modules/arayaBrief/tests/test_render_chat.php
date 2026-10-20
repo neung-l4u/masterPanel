@@ -339,7 +339,7 @@ $longNote = str_repeat('เนื้อหายาวมาก ', 40);
 $out = render(res([mk(['name' => 'Wall Of Text', 'live_status' => 'Not Live',
                        'register_date' => '2026-01-01', 'note' => $longNote])]));
 $noteLines = array_values(array_filter(explode("
-", $out), fn($l) => str_starts_with($l, '   ')));
+", $out), fn($l) => str_starts_with($l, '    ')));
 test("a long note is cut to one line", count($noteLines) === 1);
 test("the cut note is marked with an ellipsis", str_contains($noteLines[0], '…'));
 test("the cut note is not longer than the limit plus the ellipsis",
@@ -352,7 +352,7 @@ $out = render(res([mk(['name' => 'Multi', 'live_status' => 'Not Live',
 line two
 line three"])]));
 $noteLines = array_values(array_filter(explode("
-", $out), fn($l) => str_starts_with($l, '   ')));
+", $out), fn($l) => str_starts_with($l, '    ')));
 test("a multi-paragraph note collapses to one line", count($noteLines) === 1);
 test("its words survive the collapse",
      str_contains($noteLines[0], 'line one') && str_contains($noteLines[0], 'line three'));
