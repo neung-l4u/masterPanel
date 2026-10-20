@@ -26,7 +26,14 @@ const ARAYA_MONDAY_COLUMNS = [
     'text_mm7z30rd'            => 'reason_for_cancel',
     'text_mm1b8q0z'            => 'note',
     'text_mm2y84v4'            => 'calendar_id',
-    'email_mm7r176d'           => 'email',
+    // text_mks6asn5 is the column gcal's own app/monday_notify.py matches
+    // shop_email against (MONDAY_EMAIL_COLUMN_ID), so it is the field proven in
+    // production to correspond to gcal's shop_email. Only 'email' is used for
+    // matching. email_mm7r176d ("Email Address(email type)") is read by nothing
+    // else in either repo; it is carried as email_alt for display only, so the
+    // team can see whether the two ever disagree.
+    'text_mks6asn5'            => 'email',
+    'email_mm7r176d'           => 'email_alt',
 ];
 
 const ARAYA_MONDAY_DATE_KEYS = ['register_date', 'live_date'];
@@ -89,7 +96,7 @@ function arayaFlattenMondayItem(array $item): array
         $text = isset($cv['text']) && is_string($cv['text']) ? $cv['text'] : null;
         if (in_array($key, ARAYA_MONDAY_DATE_KEYS, true)) {
             $row[$key] = arayaMondayDate($text, $cv['value'] ?? null);
-        } elseif ($key === 'email' && arayaMondayClean($text) === '') {
+        } elseif (($key === 'email' || $key === 'email_alt') && arayaMondayClean($text) === '') {
             // An email column's text can be empty while the JSON value still carries it.
             $decoded = is_string($cv['value'] ?? null) ? json_decode($cv['value'], true) : null;
             $row[$key] = is_array($decoded) ? arayaMondayClean($decoded['email'] ?? '') : '';

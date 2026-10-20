@@ -210,7 +210,7 @@ $r = arayaMatchShops($monday, $gcal);
 test("with no name to fall back on, a duplicated email matches nothing", count($r['matched']) === 0);
 assertConserved('duplicate gcal emails', $monday, $gcal, $r);
 
-echo "== arayaMatchShops: a conflicting strong key vetoes the name fallback ==\n";
+echo "== arayaMatchShops: only a conflicting calendar id vetoes the name fallback ==\n";
 $monday = [['name' => 'Same Name', 'calendar_id' => 'CAL-A', 'email' => '']];
 $gcal   = [['shop_id' => 'v1', 'shop_name' => 'Same Name', 'calendar_id' => 'cal-b', 'shop_email' => '']];
 $r = arayaMatchShops($monday, $gcal);
@@ -222,8 +222,10 @@ assertConserved('calendar veto', $monday, $gcal, $r);
 $monday = [['name' => 'Same Name', 'calendar_id' => '', 'email' => 'a@x.com']];
 $gcal   = [['shop_id' => 'v2', 'shop_name' => 'Same Name', 'calendar_id' => '', 'shop_email' => 'b@x.com']];
 $r = arayaMatchShops($monday, $gcal);
-test("differing non-empty emails do not pair by name", count($r['matched']) === 0);
-assertConserved('email veto', $monday, $gcal, $r);
+test("differing non-empty emails still pair by name (email is not a veto)",
+     count($r['matched']) === 1 && $r['matched'][0]['matched_by'] === 'name'
+     && $r['matched'][0]['gcal']['shop_id'] === 'v2');
+assertConserved('email mismatch pairs by name', $monday, $gcal, $r);
 
 $monday = [['name' => 'Same Name', 'calendar_id' => '', 'email' => '']];
 $gcal   = [['shop_id' => 'v3', 'shop_name' => 'Same Name', 'calendar_id' => 'cal-b', 'shop_email' => 'b@x.com']];

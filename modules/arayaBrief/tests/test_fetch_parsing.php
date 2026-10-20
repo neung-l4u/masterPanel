@@ -59,6 +59,7 @@ $item = [
         ['id' => 'text_mm7z30rd', 'text' => '', 'value' => null],
         ['id' => 'text_mm1b8q0z', 'text' => "  waiting on POS{$nb}", 'value' => '"waiting on POS"'],
         ['id' => 'text_mm2y84v4', 'text' => "{$nb}cal-1 ", 'value' => '"cal-1"'],
+        ['id' => 'text_mks6asn5', 'text' => 'shop@shop.com', 'value' => '"shop@shop.com"'],
         ['id' => 'email_mm7r176d', 'text' => 'Owner@Shop.com', 'value' => '{"email":"Owner@Shop.com","text":"Owner@Shop.com"}'],
     ],
 ];
@@ -72,24 +73,27 @@ test("live_date is YYYY-MM-DD", $row['live_date'] === '2026-09-15');
 test("empty text column is an empty string", $row['reason_for_cancel'] === '');
 test("note is trimmed of nbsp", $row['note'] === 'waiting on POS');
 test("calendar_id is trimmed of nbsp", $row['calendar_id'] === 'cal-1');
-test("email read from the email column", $row['email'] === 'Owner@Shop.com');
+test("email comes from text_mks6asn5 (the column gcal matches on)", $row['email'] === 'shop@shop.com');
+test("email_alt comes from email_mm7r176d, and differs from email", $row['email_alt'] === 'Owner@Shop.com' && $row['email'] !== $row['email_alt']);
 $expectedKeys = ['name', 'live_status', 'setup_status', 'po', 'register_date', 'live_date',
-                 'reason_for_cancel', 'note', 'calendar_id', 'email'];
+                 'reason_for_cancel', 'note', 'calendar_id', 'email', 'email_alt'];
 $gotKeys = array_keys($row); sort($gotKeys); sort($expectedKeys);
-test("the row has exactly the ten keys the consumers read", $gotKeys === $expectedKeys);
+test("the row has exactly the eleven keys the consumers read", $gotKeys === $expectedKeys);
 
 echo "== monday: missing and odd columns ==\n";
 $bare = arayaFlattenMondayItem(['id' => '2', 'name' => 'Bare', 'column_values' => []]);
-test("absent columns default to empty strings", $bare['live_status'] === '' && $bare['live_date'] === '' && $bare['email'] === '');
+test("absent columns default to empty strings", $bare['live_status'] === '' && $bare['live_date'] === '' && $bare['email'] === '' && $bare['email_alt'] === '');
 $odd = arayaFlattenMondayItem(['id' => '3', 'name' => 'Odd', 'column_values' => [
     ['id' => 'date4', 'text' => '', 'value' => null],
     ['id' => 'date_mm7zba5t', 'text' => 'Sept 15', 'value' => '{"date":"not-a-date"}'],
     ['id' => 'email_mm7r176d', 'text' => '', 'value' => '{"email":"hidden@x.com"}'],
+    ['id' => 'text_mks6asn5', 'text' => '', 'value' => null],
     ['id' => 'unrelated_col', 'text' => 'ignored', 'value' => null],
 ]]);
 test("a null date value reads as empty", $odd['register_date'] === '');
 test("an unparseable date reads as empty, not garbage", $odd['live_date'] === '');
-test("empty email text falls back to the JSON value", $odd['email'] === 'hidden@x.com');
+test("empty email_alt text falls back to the JSON value", $odd['email_alt'] === 'hidden@x.com');
+test("an empty email column stays empty and is not filled from email_alt", $odd['email'] === '');
 test("an unrelated column is ignored", !in_array('ignored', $odd, true));
 $datetimeOnly = arayaFlattenMondayItem(['name' => 'T', 'column_values' => [
     ['id' => 'date4', 'text' => '2026-01-02 10:30', 'value' => '{"date":"2026-01-02","time":"10:30:00"}'],

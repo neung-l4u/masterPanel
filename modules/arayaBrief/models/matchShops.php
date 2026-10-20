@@ -123,9 +123,17 @@ function arayaMatchShops(array $mondayShops, array $gcalShops): array
         }
     }
 
-    // Pass 3: normalized name. A non-empty calendar id or email that disagrees
-    // between the two sides proves they are different shops, so it vetoes the
-    // pairing. An empty value carries no information and never vetoes.
+    // Pass 3: normalized name. A non-empty calendar id that disagrees between
+    // the two sides vetoes the pairing: a calendar id is a machine identifier,
+    // so two different non-empty ones genuinely mean different shops. An empty
+    // value carries no information and never vetoes.
+    //
+    // Email deliberately does NOT veto. It is not an identifier of the shop: a
+    // board may legitimately hold an owner's address where gcal holds the shop's
+    // booking address, and gcal's monday_notify.py treats an email mismatch as
+    // merely "no email match" before falling back to name, never as proof of
+    // non-identity. Vetoing on it would block the name fallback for precisely the
+    // Amelia-based shops that have no calendar ID and therefore depend on it.
     foreach ($mondayShops as $mi => $m) {
         if (isset($hits[$mi])) {
             continue;
@@ -137,12 +145,10 @@ function arayaMatchShops(array $mondayShops, array $gcalShops): array
         }
         $gi = $byName[$name];
         $g = $gcalShops[$gi];
-        foreach ([['calendar_id', 'calendar_id'], ['email', 'shop_email']] as [$mk, $gk]) {
-            $mv = arayaNormalizeKey($m[$mk] ?? '');
-            $gv = arayaNormalizeKey($g[$gk] ?? '');
-            if ($mv !== '' && $gv !== '' && $mv !== $gv) {
-                continue 2;
-            }
+        $mv = arayaNormalizeKey($m['calendar_id'] ?? '');
+        $gv = arayaNormalizeKey($g['calendar_id'] ?? '');
+        if ($mv !== '' && $gv !== '' && $mv !== $gv) {
+            continue;
         }
         $hits[$mi] = ['i' => $gi, 'by' => 'name'];
         $claimed[$gi] = true;
