@@ -62,6 +62,7 @@
                                             <th>Email</th>
                                             <th>Client</th>
                                             <th>Amount</th>
+                                            <th>Slip</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -86,6 +87,7 @@
             </div>
             <div class="modal-body text-center p-2">
                 <img id="slipImg" src="" alt="slip" style="max-width:100%; border-radius:8px;">
+                <iframe id="slipPdf" src="" style="display:none; width:100%; height:70vh; border:0; border-radius:8px;"></iframe>
             </div>
             <div class="modal-footer">
                 <a id="slipDownloadBtn" href="" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i> เปิดในแท็บใหม่</a>
@@ -175,8 +177,11 @@
                     <button type="button" class="btn btn-outline-info" id="btnPreviewReceipt">
                         <i class="bi bi-receipt"></i> ดูตัวอย่าง Receipt
                     </button>
-                    <button type="button" class="btn btn-secondary" id="btnSendReceipt" disabled>
+                    <button type="button" class="btn btn-primary" id="btnSendReceipt" style="display:none;">
                         <i class="bi bi-send"></i> ส่ง Receipt
+                    </button>
+                    <button type="button" class="btn btn-danger" id="btnSendReceiptFix" style="display:none;">
+                        <i class="bi bi-send"></i> ส่ง Report
                     </button>
                 </div>
             </div>
@@ -203,7 +208,7 @@ let invoiceThTable = $('#invoiceThTable').DataTable({
     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
     columnDefs: [
         { targets: [0,1,2,3], className: 'dt-left' },
-        { targets: [4,5,6,7], className: 'dt-center', orderable: false }
+        { targets: [4,5,6,7,8], className: 'dt-center', orderable: false }
     ]
 });
 
@@ -216,7 +221,9 @@ $('#btnResetFilter').on('click', function() {
 let pendingInvoiceId = null;
 
 window.viewSlip = function(url) {
-    $('#slipImg').attr('src', url);
+    const isPdf = /\.pdf$/i.test(url);
+    $('#slipImg').toggle(!isPdf).attr('src', isPdf ? '' : url);
+    $('#slipPdf').toggle(isPdf).attr('src', isPdf ? url : '');
     $('#slipDownloadBtn').attr('href', url);
     $('#slipModal').modal('show');
     return false;
@@ -248,15 +255,13 @@ window.openSendModal = function(invoiceId) {
             var detail = (p.quotation && p.quotation[0] && p.quotation[0].detail) ? p.quotation[0].detail[0] : {};
 
             var itemsHtml = '';
-            items.forEach(function(item) {
-                var label = item.product || item.setupfee || item.addon || '-';
-                itemsHtml += '<tr><td>' + label + '</td>'
-                    + '<td class="text-center">' + (item.qyt||'-') + '</td>'
-                    + '<td class="text-right">฿' + parseFloat(item.amount||0).toLocaleString('th-TH',{minimumFractionDigits:2}) + '</td></tr>';
+            items.forEach(function(item, idx) {
+                itemsHtml += buildItemRow(item);
             });
+            if (!itemsHtml) { itemsHtml = buildItemRow({}); }
 
             var slipViewBtn = r.slip
-                ? '<a href="modules/signup/assets/uploads/' + r.slip + '" target="_blank" class="btn btn-sm btn-outline-success mr-1"><i class="bi bi-image"></i> ดูสลิป</a>'
+                ? '<a href="modules/signup/assets/uploads/' + r.slip + '" target="_blank" class="btn btn-sm btn-outline-light mr-1"><i class="bi bi-image"></i> ดูสลิป</a>'
                 : '<span class="badge badge-secondary mr-1">ไม่มีสลิป</span>';
             var slipUploadBtn = isRejected
                 ? '<label class="btn btn-sm btn-outline-warning mb-0" style="cursor:pointer;"><i class="bi bi-upload"></i> แก้ไขสลิป<input type="file" id="slipReplaceInput" data-invoice="'+r.id+'" data-shop="'+r.name+'" accept="image/*,application/pdf" style="display:none;"></label>'
@@ -326,24 +331,42 @@ window.openSendModal = function(invoiceId) {
                 +'</div>'
                 +'</div>'
 
-                // Items table
+                // Items table (แก้ไขได้ในตัว)
+                +'<div class="d-flex justify-content-between align-items-center mb-1 flex-wrap" style="gap:8px;">'
+                +'<div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:.5px;text-transform:uppercase;">รายการสินค้า</div>'
+                +'<div class="d-flex align-items-center" style="gap:6px;">'
+                +'<label class="mb-0" style="font-size:11.5px;color:#64748b;">วันที่บนใบ</label>'
+                +'<input type="date" id="invDate" class="form-control form-control-sm" style="width:150px;font-size:12px;" value="' + itemEsc(thaiDateToISO((p.quotation && p.quotation[0] && p.quotation[0].date) || '')) + '">'
+                +'<button type="button" class="btn btn-xs btn-outline-primary" id="btnAddItem" style="padding:2px 8px;font-size:11px;"><i class="bi bi-plus-lg"></i> เพิ่มรายการ</button>'
+                +'</div>'
+                +'</div>'
                 +'<table class="table table-sm" style="font-size:13px;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;">'
-                +'<thead style="background:#1e3a8a;color:#fff;"><tr><th>รายการ</th><th class="text-center" style="width:70px;">จำนวน</th><th class="text-right" style="width:100px;">ราคา</th></tr></thead>'
-                +'<tbody>' + itemsHtml + '</tbody>'
+                +'<thead style="background:#1e3a8a;color:#fff;"><tr><th style="width:110px;">ชนิด</th><th>รายการ</th><th class="text-center" style="width:70px;">จำนวน</th><th class="text-right" style="width:110px;">ราคา (รวม VAT)</th><th class="text-center" style="width:44px;"></th></tr></thead>'
+                +'<tbody id="itemsTbody">' + itemsHtml + '</tbody>'
                 +'</table>'
 
-                // Summary
+                // Summary (คำนวณสดตามรายการด้านบน)
                 +'<div style="background:#f8fafc;border-radius:8px;padding:12px 16px;font-size:13px;">'
                 +'<table style="width:100%;">'
-                +'<tr><td style="color:#64748b;">ราคาก่อน VAT</td><td class="text-right">฿' + parseFloat(summary.subtotal||0).toLocaleString('th-TH',{minimumFractionDigits:2}) + '</td></tr>'
-                +'<tr><td style="color:#64748b;">VAT 7%</td><td class="text-right">฿' + parseFloat(summary.vat||0).toLocaleString('th-TH',{minimumFractionDigits:2}) + '</td></tr>'
-                +'<tr><td style="color:#64748b;">รวม (inc. VAT)</td><td class="text-right">฿' + parseFloat(summary.grandtotal_inc_vat||0).toLocaleString('th-TH',{minimumFractionDigits:2}) + '</td></tr>'
-                + whtRow
+                +'<tr><td style="color:#64748b;">ราคาก่อน VAT</td><td class="text-right" id="sumSubtotal">฿0.00</td></tr>'
+                +'<tr><td style="color:#64748b;">VAT 7%</td><td class="text-right" id="sumVat">฿0.00</td></tr>'
+                +'<tr><td style="color:#64748b;">รวม (inc. VAT)</td><td class="text-right" id="sumGross">฿0.00</td></tr>'
+                +'<tr id="sumWhtRow"><td style="color:#64748b;">หัก ณ ที่จ่าย 3%</td><td class="text-right text-danger" id="sumWht">- ฿0.00</td></tr>'
                 +'<tr><td colspan="2"><hr style="margin:6px 0;"></td></tr>'
-                +'<tr><td style="font-weight:700;font-size:14px;">ยอดสุทธิที่ต้องชำระ</td><td class="text-right" style="font-weight:800;font-size:16px;color:#2563eb;">฿' + parseFloat(summary.net_payment||0).toLocaleString('th-TH',{minimumFractionDigits:2}) + '</td></tr>'
+                +'<tr><td style="font-weight:700;font-size:14px;">ยอดสุทธิที่ต้องชำระ</td><td class="text-right" style="font-weight:800;font-size:16px;color:#2563eb;" id="sumNet">฿0.00</td></tr>'
                 +'</table>'
+                +'<div class="d-flex justify-content-between align-items-center mt-2 pt-2" style="border-top:1px dashed #cbd5e1;">'
+                +'<label class="mb-0" style="font-size:11.5px;color:#64748b;cursor:pointer;">'
+                +'<input type="checkbox" id="chkSyncAmount" checked> อัปเดตยอดเงินในระบบตามรายการนี้'
+                +'</label>'
+                +'<button type="button" class="btn btn-sm btn-success" id="btnSaveItems"><i class="bi bi-save mr-1"></i>บันทึกรายการ</button>'
+                +'</div>'
                 +'</div>'
             );
+
+            // เก็บประเภทลูกค้าไว้ให้ตัวคำนวณใช้ แล้วคำนวณยอดครั้งแรก
+            $('#itemsTbody').data('custType', r.type || '');
+            recalcItems();
         },
         error: function() {
             $('#sendModalBody').html('<p class="text-danger">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>');
@@ -353,11 +376,18 @@ window.openSendModal = function(invoiceId) {
 
     function updateSendReceiptBtn() {
         const status = $('#sendModalStatusSelect').val();
-        const $btn = $('#btnSendReceipt');
+        const $btnConfirmed = $('#btnSendReceipt');
+        const $btnFix = $('#btnSendReceiptFix');
+        
         if (status === 'confirmed') {
-            $btn.prop('disabled', false).removeClass('btn-secondary').addClass('btn-primary');
+            $btnConfirmed.show();
+            $btnFix.hide();
+        } else if (status === 'rejected') {
+            $btnConfirmed.hide();
+            $btnFix.show();
         } else {
-            $btn.prop('disabled', true).removeClass('btn-primary').addClass('btn-secondary');
+            $btnConfirmed.hide();
+            $btnFix.hide();
         }
     }
 
@@ -473,10 +503,6 @@ $(document).on('click', '.ief-btn-ok', function() {
     $(document).on('click', '#btnSendReceipt', function() {
         if (!pendingInvoiceId) return;
         const btn = $(this);
-        if ($('#sendModalStatusSelect').val() !== 'confirmed') {
-            showNotify('error', 'สามารถส่ง Receipt ได้เมื่อสถานะ "ยืนยันเรียบร้อย" เท่านั้น');
-            return;
-        }
         btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> กำลังส่ง...');
 
         $.ajax({
@@ -502,11 +528,44 @@ $(document).on('click', '.ief-btn-ok', function() {
         });
     });
 
+    $(document).on('click', '#btnSendReceiptFix', function() {
+        if (!pendingInvoiceId) return;
+        const btn = $(this);
+        const needfix = $('#needfixText').val().trim();
+        if (!needfix) {
+            showNotify('error', 'กรุณาระบุสาเหตุที่ต้องแก้ไข');
+            return;
+        }
+        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> กำลังส่ง...');
+
+        $.ajax({
+            url: 'pages/tableRendering/sendReceiptTH.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { id: pendingInvoiceId },
+            success: function(res) {
+                $('#sendModal').modal('hide');
+                if (res.success) {
+                    showNotify('success', 'ส่ง Receipt (แก้ไข) สำเร็จแล้ว');
+                    invoiceThTable.ajax.reload(null, false);
+                } else {
+                    showNotify('error', 'เกิดข้อผิดพลาด: ' + res.message);
+                }
+            },
+            error: function() {
+                showNotify('error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
+            },
+            complete: function() {
+                btn.prop('disabled', false).html('<i class="bi bi-send"></i> ส่ง Receipt (แก้ไข)');
+            }
+        });
+    });
+
     let currentInvoiceData = null;
 
     $(document).on('click', '#btnPreviewReceipt', function() {
         if (!pendingInvoiceId) return;
-        window.open('pages/receiptTH.php?invoice_id=' + pendingInvoiceId, '_blank');
+        window.open('pages/previewReceiptTH.php?invoice_id=' + pendingInvoiceId, '_blank');
         return;
         if (!currentInvoiceData) return;
         var r = currentInvoiceData;
@@ -696,6 +755,175 @@ $(document).on('click', '#btnSaveStatus', function() {
         },
         error: function() { showNotify('error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ'); },
         complete: function() { btn.prop('disabled', false).html('<i class="bi bi-check2"></i> บันทึก'); }
+    });
+});
+
+// ===== Items Editor =====
+// แก้ไขรายการสินค้าได้ในตัว modal แล้วบันทึกผ่าน api/invoice/updateProductJson.php
+// ซึ่งจะรักษา quotation (ข้อมูลลูกค้า + วันที่บนใบ) ไว้ ไม่สร้างทับ
+
+function itemNum(v) {
+    const n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.\-]/g, ''));
+    return isNaN(n) ? 0 : n;
+}
+function itemEsc(s) { return $('<div>').text(s == null ? '' : s).html(); }
+
+// ฐานข้อมูลเก็บวันที่เป็น dd/mm/yyyy แต่ <input type="date"> ใช้ yyyy-mm-dd
+// จึงต้องแปลงกลับไปมาตอนแสดงและตอนบันทึก
+function thaiDateToISO(s) {
+    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(s || '').trim());
+    return m ? (m[3] + '-' + m[2] + '-' + m[1]) : '';
+}
+function isoToThaiDate(s) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '').trim());
+    return m ? (m[3] + '/' + m[2] + '/' + m[1]) : '';
+}
+
+// อ่านชนิด/ชื่อออกจาก item หนึ่งรายการ (product / setupfee / addon)
+function readItemKind(item) {
+    const kinds = ['product', 'setupfee', 'addon'];
+    for (const k of kinds) {
+        if (item[k] !== undefined && item[k] !== null && String(item[k]).trim() !== '') {
+            return { kind: k, name: String(item[k]).trim() };
+        }
+    }
+    return { kind: 'product', name: '' };
+}
+
+function buildItemRow(item) {
+    item = item || {};
+    const r = readItemKind(item);
+    const qyt = item.qyt || '1';
+    // ช่องราคากรอกเป็นราคาเต็มรวม VAT (fullamount) ตามที่ฝ่ายบัญชีกำหนด
+    //
+    // ยึด amount (ฐานก่อน VAT) เป็นหลักเสมอ เพราะเป็นค่าที่ backend ใช้คำนวณ
+    // summary จริง ส่วน fullamount ใช้ได้ต่อเมื่อสอดคล้องกัน (= amount x 1.07)
+    // ถ้าไม่ตรงแปลว่าใบนั้นข้อมูลเพี้ยน ให้คำนวณใหม่จาก amount แทนการเชื่อค่าเดิม
+    // มิฉะนั้นค่าที่เพี้ยนจะถูกโหลดเข้าช่องกรอกแล้วหาร 1.07 ซ้ำทุกครั้งที่กดบันทึก
+    const base = Math.round(itemNum(item.amount) * 1.07 * 100) / 100;
+    const full = itemNum(item.fullamount);
+    const amount = (full > 0 && Math.abs(full - base) <= 0.02) ? full : base;
+    const opt = function (k, label) {
+        return '<option value="' + k + '"' + (k === r.kind ? ' selected' : '') + '>' + label + '</option>';
+    };
+    return '<tr class="item-row">'
+        + '<td><select class="form-control form-control-sm it-kind" style="font-size:12px;padding:2px 4px;height:auto;">'
+        +   opt('product', 'Product') + opt('setupfee', 'Setup Fee') + opt('addon', 'Add-on')
+        + '</select></td>'
+        + '<td><input type="text" class="form-control form-control-sm it-name" style="font-size:12px;" value="' + itemEsc(r.name) + '" placeholder="ชื่อรายการ"></td>'
+        + '<td><input type="text" class="form-control form-control-sm it-qyt text-center" style="font-size:12px;" value="' + itemEsc(qyt) + '"></td>'
+        + '<td><input type="text" class="form-control form-control-sm it-amount text-right" style="font-size:12px;" value="' + amount.toFixed(2) + '"></td>'
+        + '<td class="text-center"><button type="button" class="btn btn-xs btn-outline-danger it-del" style="padding:2px 6px;font-size:11px;" title="ลบรายการ"><i class="bi bi-x-lg"></i></button></td>'
+        + '</tr>';
+}
+
+// คำนวณยอดสดตามรายการที่กรอก (สูตรเดียวกับที่ใบเดิมในฐานข้อมูลใช้)
+function recalcItems() {
+    const $body = $('#itemsTbody');
+    if (!$body.length) return;
+
+    // ช่องราคาเป็นราคาเต็มรวม VAT จึงรวมเป็น gross ก่อน แล้วถอด VAT ออกมาเป็นฐาน
+    let full = 0;
+    $body.find('tr.item-row').each(function () {
+        const q = itemNum($(this).find('.it-qyt').val()) || 1;
+        full += itemNum($(this).find('.it-amount').val()) * q;
+    });
+    const gross = Math.round(full * 100) / 100;
+    const sub   = Math.round(gross / 1.07 * 100) / 100;
+    const vat   = Math.round((gross - sub) * 100) / 100;
+    // หัก ณ ที่จ่าย 3% ของฐานก่อน VAT เฉพาะนิติบุคคล
+    const isJur = $body.data('custType') === 'นิติบุคคล';
+    const wht   = isJur ? Math.round(sub * 0.03 * 100) / 100 : 0;
+    const net   = Math.round((gross - wht) * 100) / 100;
+
+    const f = n => '฿' + n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    $('#sumSubtotal').text(f(sub));
+    $('#sumVat').text(f(vat));
+    $('#sumGross').text(f(gross));
+    $('#sumWht').text('- ' + f(wht));
+    $('#sumNet').text(f(net));
+    $('#sumWhtRow').toggle(isJur);
+}
+
+$(document).on('input change', '.it-amount, .it-qyt', recalcItems);
+
+$(document).on('click', '#btnAddItem', function () {
+    $('#itemsTbody').append(buildItemRow({}));
+    recalcItems();
+});
+
+$(document).on('click', '.it-del', function () {
+    if ($('#itemsTbody tr.item-row').length <= 1) {
+        showNotify('error', 'ต้องมีอย่างน้อย 1 รายการ');
+        return;
+    }
+    $(this).closest('tr').remove();
+    recalcItems();
+});
+
+$(document).on('click', '#btnSaveItems', function () {
+    if (!pendingInvoiceId) return;
+
+    const items = [];
+    let missingName = false;
+    $('#itemsTbody tr.item-row').each(function () {
+        const $row = $(this);
+        const name = ($row.find('.it-name').val() || '').trim();
+        if (!name) { missingName = true; return false; }
+        // ช่องกรอกคือราคาเต็มรวม VAT เก็บเป็น fullamount ส่วน amount คือฐานก่อน VAT
+        const full = itemNum($row.find('.it-amount').val());
+        items.push({
+            kind:   $row.find('.it-kind').val(),
+            name:   name,
+            qyt:    ($row.find('.it-qyt').val() || '1').trim(),
+            amount: Math.round(full / 1.07 * 100) / 100,
+            fullamount: full
+        });
+    });
+
+    if (missingName) { showNotify('error', 'กรุณาใส่ชื่อให้ครบทุกรายการ'); return; }
+    if (!items.length) { showNotify('error', 'ต้องมีอย่างน้อย 1 รายการ'); return; }
+
+    // datepicker คืนค่าเป็น yyyy-mm-dd แปลงกลับเป็น dd/mm/yyyy ก่อนส่ง
+    // (เว้นว่างได้ = ใช้ค่าเดิมในฐานข้อมูล)
+    const invDate = isoToThaiDate($('#invDate').val());
+
+    const $btn = $(this).prop('disabled', true)
+        .html('<span class="spinner-border spinner-border-sm mr-1"></span>กำลังบันทึก');
+
+    $.ajax({
+        url: 'api/invoice/updateProductJson.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            invoice_id: pendingInvoiceId,
+            payload: JSON.stringify(Object.assign(
+                {
+                    items: items,
+                    withholding_mode: 'auto',
+                    sync_amount: $('#chkSyncAmount').is(':checked') ? 1 : 0
+                },
+                // ส่ง date เฉพาะตอนกรอก เพื่อไม่ให้ไปทับค่าเดิมด้วยค่าว่าง
+                invDate !== '' ? { date: invDate } : {}
+            ))
+        },
+        success: function (res) {
+            if (res.success) {
+                showNotify('success', 'บันทึกรายการเรียบร้อย');
+                openSendModal(pendingInvoiceId);
+                invoiceThTable.ajax.reload(null, false);
+            } else {
+                showNotify('error', 'บันทึกไม่สำเร็จ: ' + res.message);
+            }
+        },
+        error: function (xhr) {
+            let m = 'เกิดข้อผิดพลาดในการบันทึก';
+            try { m = JSON.parse(xhr.responseText).message || m; } catch (e) {}
+            showNotify('error', m);
+        },
+        complete: function () {
+            $btn.prop('disabled', false).html('<i class="bi bi-save mr-1"></i>บันทึกรายการ');
+        }
     });
 });
 

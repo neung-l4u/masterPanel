@@ -2,22 +2,104 @@
 date_default_timezone_set("Asia/Bangkok");
 error_reporting(E_ERROR | E_PARSE);
 
+// Warn this many days before an SSL certificate expires. Let's Encrypt auto-renews
+// at ~30 days, so a larger window just reports healthy certificates every day.
+define('SSL_WARN_DAYS', 1);
+
+// Wait this long before re-testing a site that just failed, to ride out a brief blip.
+define('RECHECK_DELAY_SEC', 20);
+
+// How long a name must stay unresolvable before it is reported. The resolver on the
+// host misfires for a few minutes at a time; a domain that is really gone stays gone.
+define('DNS_FAIL_GRACE_MIN', 60);
+
+// Google Chat webhook for the "Website Down" space, used for every monitor.
+// Set MONITOR_CHAT_WEBHOOK in the environment, or drop the URL in chat_webhook.txt (gitignored).
+$__hookFile = __DIR__ . '/chat_webhook.txt';
+define('CHAT_WEBHOOK', getenv('MONITOR_CHAT_WEBHOOK')
+    ?: (is_readable($__hookFile) ? trim(file_get_contents($__hookFile)) : ''));
+
 // Only run the main loop when executed directly as cron (not included by actionMonitor.php)
 if (!defined('MONITOR_FUNCTIONS_ONLY')) {
+    // Cron only. Without this anyone who knows the URL can trigger a full run of
+    // every monitor over the web, and hammer the server (or the Chat space) with it.
+    if (PHP_SAPI !== 'cli') {
+        http_response_code(403);
+        exit('This script runs from cron only.');
+    }
+
+    // A full pass over every monitor takes longer than the 5-minute cron interval,
+    // so refuse to start if the previous run is still going. Without this the runs
+    // stack up and the same site gets checked (and alerted on) by several at once.
+    // ponytail: single global lock; if checks ever need to run in parallel, shard by id instead.
+    //Separate locks for the scheduled run and for a button-triggered sweep, so the
+    //two never block each other — a manual re-check must not have to wait out cron.
+    //Each still refuses to overlap a run of its own kind, which is what actually
+    //causes duplicate alerts. Also keyed by uid: cron may run as root and the web
+    //sweep as the web user, and a lock file one of them cannot open must not read
+    //as "already running".
+    $manualRun = (bool) array_intersect(['--all', '--down'], $argv ?? []);
+    $lockFile  = sys_get_temp_dir() . '/monitor_' . ($manualRun ? 'manual' : 'cron')
+               . '_' . (function_exists('posix_geteuid') ? posix_geteuid() : 'x') . '.lock';
+    $lock      = @fopen($lockFile, 'c');
+    if ($lock && !flock($lock, LOCK_EX | LOCK_NB)) {
+        exit(0);   // a run of this same kind is still in progress
+    }
+    //If the lock could not be opened at all, carry on rather than skip the run.
+
     require_once __DIR__ . '/../../assets/db/db.php';
     require_once __DIR__ . '/../../assets/db/initDB.php';
-    $monitors = $db->query(
-        "SELECT * FROM monitors
-         WHERE is_active = 1
-           AND delete_at IS NULL
-           AND (last_checked_at IS NULL
-                OR last_checked_at <= NOW() - INTERVAL check_interval MINUTE)"
-    )->fetchAll();
+    // "--all"  : every monitor, whenever it was last seen (Check All Now button)
+    // "--down" : only the ones currently marked down (re-check from the Down list)
+    // no flag  : the scheduled run, which takes only the monitors that are due.
+    $argvList = $argv ?? [];
+    $checkAll  = in_array('--all', $argvList, true);
+    $checkDown = in_array('--down', $argvList, true);
+
+    $monitors = $checkDown
+        ? $db->query(
+            "SELECT * FROM monitors WHERE is_active = 1 AND delete_at IS NULL AND last_status = 'down'"
+          )->fetchAll()
+        : ($checkAll
+        ? $db->query(
+            "SELECT * FROM monitors WHERE is_active = 1 AND delete_at IS NULL"
+          )->fetchAll()
+        : $db->query(
+            "SELECT * FROM monitors
+             WHERE is_active = 1
+               AND delete_at IS NULL
+               AND (last_checked_at IS NULL
+                    OR last_checked_at <= NOW() - INTERVAL check_interval MINUTE)"
+          )->fetchAll());
 
     foreach ($monitors as $monitor) {
         $result = checkTarget($monitor);
-        saveResult($db, $monitor, $result);
-        handleNotifications($db, $monitor, $result);
+
+        // Confirm before believing a failure: slow or briefly flaky sites time out once
+        // and come straight back. A genuinely down site fails the retry too.
+        // Only worth doing on a state change, so healthy sites cost nothing extra.
+        if ($result['status'] === 'down' && $monitor['last_status'] !== 'down') {
+            sleep(RECHECK_DELAY_SEC);
+            $result = checkTarget($monitor);
+
+            // A resolver hiccup looks identical to a dead domain, and can persist for
+            // both tries. Give DNS one more chance, further apart, before alerting.
+            if ($result['status'] === 'down' && $result['httpCode'] === 0
+                && stripos((string)$result['errorMsg'], 'resolve host') !== false) {
+                sleep(RECHECK_DELAY_SEC);
+                $result = checkTarget($monitor);
+            }
+        }
+
+        //Only the run that actually flipped the stored status announces it, so a
+        //concurrent run cannot send the same alert a second time.
+        $changed = saveResult($db, $monitor, $result);
+        if ($changed) {
+            handleNotifications($db, $monitor, $result);
+        } else {
+            //Status unchanged, but SSL warnings are time-based and still apply.
+            handleSslNotifications($db, $monitor, $result);
+        }
     }
 }
 
@@ -33,20 +115,75 @@ function checkTarget(array $monitor): array {
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_TIMEOUT        => 15,
-        CURLOPT_CONNECTTIMEOUT => 10,
+        CURLOPT_TIMEOUT        => 30,   // measured: slowest healthy site ~16s, so 15s was cutting off real sites
+        CURLOPT_CONNECTTIMEOUT => 10,   // measured: slowest real connect ~1s, 10s is already generous
         CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_USERAGENT      => 'MasterPanel-Monitor/1.0',
     ]);
     $startMs    = microtime(true);
-    curl_exec($ch);
+    $body       = (string) curl_exec($ch);
     $responseMs = (int) round((microtime(true) - $startMs) * 1000);
     $httpCode   = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError  = curl_error($ch);
     curl_close($ch);
 
-    $status    = ($httpCode >= 200 && $httpCode < 400) ? 'up' : 'down';
-    $errorMsg  = ($status === 'down') ? ("HTTP {$httpCode}" . ($curlError ? " / {$curlError}" : '')) : null;
+    // A broken WordPress still answers with HTTP 200, so the status code alone is not
+    // enough — a full disk in particular usually shows as a database-connection page.
+    // Only checked on a 2xx/3xx body; a real page never contains these strings.
+    // ponytail: substring matching; add a needle here if another failure page turns up.
+    // Report the symptom the page actually shows, never a guessed cause: an
+    // "Error establishing a database connection" can be a full disk, a stopped
+    // MySQL, a bad wp-config, a PHP/plugin mismatch or a corrupted database.
+    $failureSignatures = [
+        'There has been a critical error'          => 'WordPress critical error (ดู error log ของเว็บเพื่อหาสาเหตุ)',
+        'Error establishing a database connection' => 'เชื่อมต่อฐานข้อมูลไม่ได้ (พื้นที่เต็ม / MySQL ล่ม / wp-config / plugin — ต้องตรวจเพิ่ม)',
+        'No space left on device'                  => 'พื้นที่เต็ม (No space left on device)',
+        'Disk quota exceeded'                      => 'พื้นที่เต็ม (Disk quota exceeded)',
+        'Allowed memory size of'                   => 'PHP memory หมด (Allowed memory size exhausted)',
+        'Maximum execution time of'                => 'PHP ทำงานเกินเวลา (Maximum execution time)',
+    ];
+
+    $wpFailure = null;
+    if ($httpCode >= 200 && $httpCode < 400) {
+        foreach ($failureSignatures as $needle => $label) {
+            if (stripos($body, $needle) !== false) { $wpFailure = $label; break; }
+        }
+    }
+    $isWpFatal = $wpFailure !== null;
+
+    $status = ($httpCode >= 200 && $httpCode < 400 && !$isWpFatal) ? 'up' : 'down';
+    if ($status === 'down') {
+        $errorMsg = $isWpFatal
+            ? "{$wpFailure} (HTTP {$httpCode})"
+            : ("HTTP {$httpCode}" . ($curlError ? " / {$curlError}" : ''));
+    } else {
+        $errorMsg = null;
+    }
+
+    // Work out WHY it is down, so the alert can say so in plain language.
+    $reason    = 'up';
+    $resolvedIP = null;
+    if ($status === 'down') {
+        $a = $parsedHost ? @dns_get_record($parsedHost, DNS_A) : [];
+        $resolvedIP = $a[0]['ip'] ?? null;
+
+        $err = strtolower((string) $curlError);
+
+        if ($isWpFatal) {
+            $reason = 'wp_fatal';
+        } elseif (!$resolvedIP) {
+            // Nothing resolves — ask the registry whether the domain exists at all.
+            $reason = domainReason($parsedHost);
+        } elseif (str_contains($err, 'timed out')) {
+            $reason = 'timeout';        // answered too slowly, or not at all
+        } elseif (str_contains($err, 'could not connect') || str_contains($err, 'connection refused')) {
+            $reason = 'conn_refused';   // DNS fine, but nothing listening
+        } elseif (str_contains($err, 'ssl') || str_contains($err, 'certificate')) {
+            $reason = 'ssl_error';
+        } else {
+            $reason = 'down';           // DNS fine, server answered badly (403/500/404)
+        }
+    }
 
     // SSL check (https only)
     $sslExpiry    = null;
@@ -69,10 +206,50 @@ function checkTarget(array $monitor): array {
         }
     }
 
-    return compact('status', 'httpCode', 'responseMs', 'errorMsg', 'sslExpiry', 'sslDaysLeft');
+    return compact('status', 'httpCode', 'responseMs', 'errorMsg', 'sslExpiry', 'sslDaysLeft', 'reason', 'resolvedIP');
 }
 
-function saveResult(object $db, array $monitor, array $result): void {
+/**
+ * Classify an unresolvable host via WHOIS on the registrable domain:
+ * 'unregistered' (never bought / dropped), 'expired' (past expiry or on hold),
+ * or 'down' when WHOIS is unavailable or inconclusive.
+ * ponytail: text matching on WHOIS output; registrars word things differently,
+ * so anything unrecognised falls back to the generic 'down' wording.
+ */
+function domainReason(?string $host): string {
+    if (!$host) return 'down';
+    $host = preg_replace('/^www\./i', '', $host);
+
+    // Keep the last 3 labels for second-level TLDs (co.uk, com.au), else 2.
+    $parts = explode('.', $host);
+    $n     = count($parts);
+    if ($n > 2 && strlen($parts[$n - 2]) <= 3 && strlen($parts[$n - 1]) <= 3) {
+        $domain = implode('.', array_slice($parts, -3));
+    } else {
+        $domain = implode('.', array_slice($parts, -2));
+    }
+
+    $out = @shell_exec('whois ' . escapeshellarg($domain) . ' 2>/dev/null');
+    if (!$out) return 'down';   // whois binary missing or query failed
+
+    if (preg_match('/(no match|not found|no data found|no entries found|domain not registered|status:\s*free|status:\s*available)/i', $out)) {
+        return 'unregistered';
+    }
+    if (preg_match('/(redemptionperiod|pendingdelete|serverhold|clienthold)/i', $out)) {
+        return 'expired';
+    }
+    if (preg_match('/(?:expir\w*[^:\n]*|paid-till|renewal date)\s*:\s*([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}[-\/][A-Za-z]{3}[-\/][0-9]{4})/i', $out, $m)) {
+        $ts = strtotime($m[1]);
+        if ($ts && $ts < time()) return 'expired';
+    }
+
+    // Registered, not expired, not on hold — yet it would not resolve. That is a
+    // name-server or resolver problem, which is usually temporary.
+    return 'dns_fail';
+}
+
+/** Returns true only for the run that actually changed the stored status. */
+function saveResult(object $db, array $monitor, array $result): bool {
     $db->query(
         "INSERT INTO monitor_logs (monitor_id, checked_at, status, http_code, response_ms, ssl_expiry, ssl_days_left, error_msg, check_type)
          VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, 'auto')",
@@ -85,6 +262,10 @@ function saveResult(object $db, array $monitor, array $result): void {
         $result['errorMsg']
     );
 
+    //Claim the status change: only update when the stored status still differs.
+    //Two runs can be in flight at once (a scheduled sweep and a manual re-check,
+    //or a long DNS retry overlapping the next tick) and both would otherwise see
+    //the stale "up" they loaded at start and both announce the same outage.
     $db->query(
         "UPDATE monitors SET
             last_checked_at  = NOW(),
@@ -93,13 +274,131 @@ function saveResult(object $db, array $monitor, array $result): void {
             ssl_expiry_date  = ?,
             ssl_days_left    = ?,
             update_at        = NOW()
-         WHERE id = ?",
+         WHERE id = ? AND (last_status <> ? OR last_status IS NULL)",
         $result['status'],
         $result['responseMs'],
         $result['sslExpiry'],
         $result['sslDaysLeft'],
-        $monitor['id']
+        $monitor['id'],
+        $result['status']
     );
+    $changedStatus = $db->affectedRows() > 0;
+
+    //Nothing changed status-wise, but the check still happened — record that.
+    if (!$changedStatus) {
+        $db->query(
+            "UPDATE monitors SET last_checked_at = NOW(), last_response_ms = ?,
+                ssl_expiry_date = ?, ssl_days_left = ?, update_at = NOW()
+             WHERE id = ?",
+            $result['responseMs'], $result['sslExpiry'], $result['sslDaysLeft'], $monitor['id']
+        );
+    }
+
+    return $changedStatus;
+}
+
+/**
+ * Render an alert from the monitor_templates row, falling back to the built-in
+ * wording when the table is missing (production may not be migrated yet) or the
+ * template is switched off. Returns null when the alert should not be sent.
+ */
+function renderTemplate(object $db, string $key, array $monitor, array $result): ?array {
+    // Country and hosting server come from the linked websiteList row; manual monitors have none.
+    $site = !empty($monitor['source_wID']) ? $db->query(
+        "SELECT c.name AS country, CONCAT_WS(' - ', REGEXP_REPLACE(sv.svName, '^[0-9]+: *', ''), sv.svServerLocation) AS server
+           FROM websiteList w
+           LEFT JOIN Countries c ON c.id = w.countryID
+           LEFT JOIN L4UServers sv ON sv.svID = w.svID
+          WHERE w.wID = ?", $monitor['source_wID']
+    )->fetchArray() : [];
+
+    $vars = [
+        '{country}'     => ($site['country'] ?? '') ?: '-',
+        '{server}'      => ($site['server'] ?? '') ?: '-',
+        '{name}'        => $monitor['name'],
+        '{url}'         => $monitor['url'],
+        '{domain}'      => preg_replace('#^www\.#i', '', (string) parse_url($monitor['url'], PHP_URL_HOST)),
+        '{httpCode}'    => $result['httpCode']    ?? '',
+        '{errorMsg}'    => $result['errorMsg']    ?? '',
+        '{responseMs}'  => $result['responseMs']  ?? '',
+        '{sslExpiry}'   => $result['sslExpiry']   ?? '',
+        '{sslDaysLeft}' => $result['sslDaysLeft'] ?? '',
+        '{resolvedIP}'  => $result['resolvedIP'] ?? '',
+        '{diskUsed}'    => $result['diskUsed']    ?? '',
+        '{diskLimit}'   => $result['diskLimit']   ?? '',
+        '{diskPercent}' => $result['diskPercent'] ?? '',
+        '{cpanelUser}'  => $result['cpanelUser']  ?? '',
+        '{time}'        => date('Y-m-d H:i:s'),
+    ];
+
+    $defaults = [
+        'down'      => ['เว็บเปิดไม่ได้ (เซิร์ฟเวอร์ตอบ error)', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nอาการ : {errorMsg}\nTime : {time}", 1],
+        'recovered' => ['[RECOVERED] {name} is back online', "Monitor: {name}\nURL: {url}\nCountry: {country}\nServer: {server}\nStatus: RECOVERED\nResponse: {responseMs}ms\nTime: {time}", 0],
+        'ssl'       => ['[SSL WARNING] {name} - {sslDaysLeft} days left', "Monitor: {name}\nURL: {url}\nCountry: {country}\nServer: {server}\nSSL Expiry: {sslExpiry}\nDays Left: {sslDaysLeft}\nTime: {time}", 0],
+        'wp_fatal'     => ['Wordpress พัง - เว็บเปิดไม่ได้', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nอาการ : {errorMsg}\nTime : {time}", 1],
+        'unregistered' => ['Domain Live ใน Website list แต่ Down (ไม่ได้ถูกซื้อ)', "Domain : {url}\nประเทศ : {country}\nServer : {server}\nTime : {time}", 1],
+        'expired'      => ['Domain Live ใน Website list แต่ Down (แต่โดเมนหมดอายุ)', "Domain : {url}\nประเทศ : {country}\nServer : {server}\nTime : {time}", 1],
+        'ssl_expired'  => ['SSL หมดอายุแล้ว - เว็บเข้าไม่ได้', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nSSL หมดอายุเมื่อ : {sslExpiry}\nTime : {time}", 1],
+        'moved_away'   => ['Domain ไม่ได้ชี้มาที่ Server เราแล้ว (อาจยกเลิกบริการ)', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nIP ปลายทาง : {resolvedIP}\nTime : {time}", 0],
+        'disk_warn'    => ['พื้นที่ใกล้เต็ม - เสี่ยงเว็บล่ม', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\ncPanel : {cpanelUser}\nใช้ไป : {diskUsed} / {diskLimit} ({diskPercent}%)\nTime : {time}", 0],
+        'dns_fail'     => ['DNS หาไม่เจอชั่วคราว (โดเมนยังไม่หมดอายุ)', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nอาการ : {errorMsg}\nหมายเหตุ : โดเมนยังจดทะเบียนอยู่ปกติ มักเกิดจาก DNS/nameserver กระตุกชั่วคราว\nTime : {time}", 0],
+        'timeout'      => ['เว็บตอบช้าเกินกำหนด (Timeout)', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nอาการ : {errorMsg}\nรอนานสุด : 30 วินาที\nTime : {time}", 1],
+        'conn_refused' => ['เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nIP : {resolvedIP}\nอาการ : {errorMsg}\nTime : {time}", 1],
+        'ssl_error'    => ['SSL/ใบรับรองมีปัญหา', "Domain : {domain}\nประเทศ : {country}\nServer : {server}\nอาการ : {errorMsg}\nTime : {time}", 1],
+    ];
+
+    $tpl = null;
+    // db::query() calls exit() on error, so check the table exists before reading it.
+    if ($db->query("SHOW TABLES LIKE 'monitor_templates'")->fetchArray()) {
+        $tpl = $db->query("SELECT title, body, mention_all, is_active FROM monitor_templates WHERE tpl_key = ?", $key)->fetchArray();
+    }
+
+    if ($tpl) {
+        if ((int)$tpl['is_active'] !== 1) return null;
+        $title = $tpl['title'];
+        $body  = $tpl['body'];
+        $mention = (int)$tpl['mention_all'] === 1;
+    } else {
+        if (!isset($defaults[$key])) $key = 'down';
+        [$title, $body, $mention] = $defaults[$key];
+        $mention = (bool)$mention;
+    }
+
+    return [
+        'subject' => strtr($title, $vars),
+        'body'    => strtr($body, $vars),
+        'mention' => $mention,
+    ];
+}
+
+/**
+ * True when a down site no longer resolves to any server we run, i.e. the client
+ * has moved their hosting elsewhere without telling us. Checked by IP rather than
+ * by nameserver: plenty of our real clients put Cloudflare/GoDaddy in front of
+ * their DNS while still hosting with us, and those must not be treated as gone.
+ * Returns false whenever we cannot tell (behind a proxy, no server IPs on file).
+ */
+function hasLeftOurServers(object $db, ?string $ip): bool {
+    if (!$ip) return false;
+
+    // Cloudflare (and similar proxies) hide the real origin, so the address we see
+    // says nothing about who hosts the site. Never call these departed.
+    foreach (['104.16.','104.17.','104.18.','104.19.','104.20.','104.21.','104.22.',
+              '104.23.','104.24.','104.25.','104.26.','104.27.','104.28.','104.29.',
+              '104.30.','104.31.','172.64.','172.65.','172.66.','172.67.','172.68.',
+              '172.69.','172.70.','172.71.','162.159.','198.41.','188.114.','190.93.',
+              '197.234.','203.0.'] as $cf) {
+        if (str_starts_with($ip, $cf)) return false;
+    }
+
+    static $ourIPs = null;
+    if ($ourIPs === null) {
+        $rows = $db->query("SELECT svIP FROM L4UServers WHERE svStatus = 1 AND svIP IS NOT NULL AND svIP <> ''")->fetchAll();
+        $ourIPs = array_map(fn($r) => trim($r['svIP']), $rows);
+    }
+    if (!$ourIPs) return false;   // nothing to compare against — never guess
+
+    return !in_array($ip, $ourIPs, true);
 }
 
 function handleNotifications(object $db, array $monitor, array $result): void {
@@ -108,34 +407,104 @@ function handleNotifications(object $db, array $monitor, array $result): void {
 
     // Status changed → send alert or recovery
     if ($prevStatus !== $newStatus && $prevStatus !== 'unknown') {
-        $subject = $newStatus === 'down'
-            ? "[DOWN] {$monitor['name']} is unreachable"
-            : "[RECOVERED] {$monitor['name']} is back online";
-        $body = $newStatus === 'down'
-            ? "Monitor: {$monitor['name']}\nURL: {$monitor['url']}\nStatus: DOWN\nHTTP: {$result['httpCode']}\nError: {$result['errorMsg']}\nTime: " . date('Y-m-d H:i:s')
-            : "Monitor: {$monitor['name']}\nURL: {$monitor['url']}\nStatus: RECOVERED\nResponse: {$result['responseMs']}ms\nTime: " . date('Y-m-d H:i:s');
+        // Pick the template that matches WHY it went down, so the alert explains itself.
+        $key = $newStatus === 'down' ? ($result['reason'] ?? 'down') : 'recovered';
 
-        sendNotifications($monitor, $subject, $body);
+        // A down site pointing at someone else's server is a departed client,
+        // not an outage — say so instead of paging the team about a broken website.
+        if ($key === 'down' && hasLeftOurServers($db, $result['resolvedIP'] ?? null)) {
+            $key = 'moved_away';
+        }
+
+        // The server's DNS resolver fails for a minute or two at a time and the site
+        // comes straight back. Those blips were the bulk of the alerts and the team
+        // started ignoring the channel. Stay quiet unless the name has failed to
+        // resolve for a sustained period — a genuinely dead domain always will.
+        $worthAnnouncing = $key !== 'dns_fail' || dnsFailurePersisted($db, $monitor['id']);
+
+        // Don't announce a recovery from an outage that was never announced — a
+        // lone "back to normal" with no preceding alert just confuses the channel.
+        if ($key === 'recovered' && !dnsOutageWasAnnounced($db, $monitor['id'])) {
+            $worthAnnouncing = false;
+        }
+
+        if ($worthAnnouncing) {
+            $msg = renderTemplate($db, $key, $monitor, $result);
+            if ($msg) sendNotifications($monitor, $msg['subject'], $msg['body'], $msg['mention']);
+        }
     }
 
-    // SSL expiring ≤ 30 days — send once per day (cnt==1 means only the row just saved exists today)
-    if ($result['sslDaysLeft'] !== null && $result['sslDaysLeft'] <= 30) {
+    handleSslNotifications($db, $monitor, $result);
+}
+
+/**
+ * Has this monitor failed DNS for long enough to be worth reporting?
+ *
+ * True when it has not resolved successfully for DNS_FAIL_GRACE_MIN and has failed
+ * at least twice in that window — which separates a dead domain from the resolver
+ * hiccups that clear on their own within a couple of checks.
+ */
+/**
+ * Was the outage this site is recovering from actually reported?
+ *
+ * Only DNS blips are ever suppressed, so a recovery is worth sending unless the
+ * failure right before it was a short DNS wobble that stayed quiet.
+ */
+function dnsOutageWasAnnounced(object $db, int $monitorId): bool {
+    $last = $db->query(
+        "SELECT status, error_msg FROM monitor_logs
+          WHERE monitor_id = ? AND status = 'down'
+          ORDER BY checked_at DESC LIMIT 1",
+        $monitorId
+    )->fetchArray();
+
+    if (!$last) return true;   // nothing to compare against — say it
+    $wasDnsBlip = stripos((string) $last['error_msg'], 'resolve host') !== false;
+    if (!$wasDnsBlip) return true;   // a real outage was announced
+
+    //It was a DNS failure: it was only announced if it had persisted.
+    return dnsFailurePersisted($db, $monitorId);
+}
+
+function dnsFailurePersisted(object $db, int $monitorId): bool {
+    $row = $db->query(
+        "SELECT
+            SUM(status = 'up') AS ups,
+            SUM(status = 'down' AND error_msg LIKE '%resolve host%') AS dns_fails
+         FROM monitor_logs
+         WHERE monitor_id = ? AND checked_at >= NOW() - INTERVAL ? MINUTE",
+        $monitorId, DNS_FAIL_GRACE_MIN
+    )->fetchArray();
+
+    return (int) ($row['ups'] ?? 0) === 0 && (int) ($row['dns_fails'] ?? 0) >= 2;
+}
+
+function handleSslNotifications(object $db, array $monitor, array $result): void {
+    // SSL alerts, sent at most once per day per monitor.
+    // Let's Encrypt renews itself at ~30 days, so warning that early is pure noise —
+    // only warn once renewal has clearly not happened (SSL_WARN_DAYS), and again
+    // once the certificate is actually expired.
+    if ($result['sslDaysLeft'] !== null && $result['sslDaysLeft'] <= SSL_WARN_DAYS) {
+        $key = $result['sslDaysLeft'] < 0 ? 'ssl_expired' : 'ssl';
+
+        // cnt == 1 means the row just saved is today's first one in this band.
         $countRow = $db->query(
             "SELECT COUNT(*) AS cnt FROM monitor_logs
-             WHERE monitor_id = ? AND ssl_days_left <= 30
+             WHERE monitor_id = ? AND ssl_days_left <= ?
+               AND (? = 0 OR ssl_days_left < 0)
                AND DATE(checked_at) = CURDATE()
-               AND check_type = 'auto'"
-        , $monitor['id'])->fetchArray();
+               AND check_type = 'auto'",
+            $monitor['id'], SSL_WARN_DAYS, $key === 'ssl_expired' ? 1 : 0
+        )->fetchArray();
 
         if (($countRow['cnt'] ?? 0) == 1) {
-            $subject = "[SSL WARNING] {$monitor['name']} — {$result['sslDaysLeft']} days left";
-            $body    = "Monitor: {$monitor['name']}\nURL: {$monitor['url']}\nSSL Expiry: {$result['sslExpiry']}\nDays Left: {$result['sslDaysLeft']}";
-            sendNotifications($monitor, $subject, $body);
+            $msg = renderTemplate($db, $key, $monitor, $result);
+            if ($msg) sendNotifications($monitor, $msg['subject'], $msg['body'], $msg['mention']);
         }
     }
 }
 
-function sendNotifications(array $monitor, string $subject, string $body): void {
+function sendNotifications(array $monitor, string $subject, string $body, bool $mentionAll = true): void {
     // Email
     if (!empty($monitor['notify_email'])) {
         $emails = array_map('trim', explode(',', $monitor['notify_email']));
@@ -161,10 +530,14 @@ function sendNotifications(array $monitor, string $subject, string $body): void 
         curl_close($ch);
     }
 
-    // Webhook
-    if (!empty($monitor['notify_webhook'])) {
-        $payload = json_encode(['subject' => $subject, 'body' => $body, 'timestamp' => date('c')]);
-        $ch = curl_init($monitor['notify_webhook']);
+    // Webhook — per-monitor override, else the shared Google Chat space.
+    $hook = !empty($monitor['notify_webhook']) ? $monitor['notify_webhook'] : CHAT_WEBHOOK;
+    if (!empty($hook)) {
+        // Google Chat webhook wants {"text": ...}; <users/all> pings everyone in the space.
+        $payload = str_contains($hook, 'chat.googleapis.com')
+            ? json_encode(['text' => ($mentionAll ? "<users/all> " : "") . "*{$subject}*\n```\n{$body}\n```"], JSON_UNESCAPED_UNICODE)
+            : json_encode(['subject' => $subject, 'body' => $body, 'timestamp' => date('c')]);
+        $ch = curl_init($hook);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST           => true,

@@ -96,7 +96,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                             <label for="bg1">3. Header Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="homeHeaderBG" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -148,7 +148,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formIntroductionImage1">
                                         <div class="d-flex flex-column">
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <img class="preview" id="homeIntroImg1" src="../assets/img/default.png" alt="place">
                                                 <input class="picname" type="hidden" value="">
                                                 <div class="d-flex flex-column gap-2">
                                                     <input type="file" class="file-input">
@@ -162,7 +162,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formIntroductionImage2">
                                         <div class="d-flex flex-column">
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <img class="preview" id="homeIntroImg2" src="../assets/img/default.png" alt="place">
                                                 <input class="picname" type="hidden" value="">
                                                 <div class="d-flex flex-column gap-2">
                                                     <input type="file" class="file-input">
@@ -178,7 +178,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formIntroductionImage3">
                                         <div class="d-flex flex-column">
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <img class="preview" id="homeIntroImg3" src="../assets/img/default.png" alt="place">
                                                 <input class="picname" type="hidden" value="">
                                                 <div class="d-flex flex-column gap-2">
                                                     <input type="file" class="file-input">
@@ -192,7 +192,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                     <form method="post" enctype="multipart/form-data" class="uploadForm" id="formIntroductionImage4">
                                         <div class="d-flex flex-column">
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                <img class="preview" src="../assets/img/default.png" alt="place">
+                                                <img class="preview" id="homeIntroImg4" src="../assets/img/default.png" alt="place">
                                                 <input class="picname" type="hidden" value="">
                                                 <div class="d-flex flex-column gap-2">
                                                     <input type="file" class="file-input">
@@ -236,7 +236,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                                 <label for="textFeaturedDish1">9.Featured Dish Image #1</label>
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                     <div class="d-flex flex-column gap-2">
-                                                        <img class="preview" src="../assets/img/default.png" alt="place">
+                                                        <img class="preview" id="homeDishImg1" src="../assets/img/default.png" alt="place">
                                                         <input class="picname" type="hidden" value="">
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="d-flex flex-column gap-2">
@@ -258,7 +258,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                                 <label for="textFeaturedDish2">10.Featured Dish Image #2</label>
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                     <div class="d-flex flex-column gap-2">
-                                                        <img class="preview" src="../assets/img/default.png" alt="place">
+                                                        <img class="preview" id="homeDishImg2" src="../assets/img/default.png" alt="place">
                                                         <input class="picname" type="hidden" value="">
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="d-flex flex-column gap-2">
@@ -282,7 +282,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                                 <label for="textFeaturedDish3">11.Featured Dish Image #3</label>
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                     <div class="d-flex flex-column gap-2">
-                                                        <img class="preview" src="../assets/img/default.png" alt="place">
+                                                        <img class="preview" id="homeDishImg3" src="../assets/img/default.png" alt="place">
                                                         <input class="picname" type="hidden" value="">
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="d-flex flex-column gap-2">
@@ -304,7 +304,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                                 <label for="textFeaturedDish4">12.Featured Dish Image #4</label>
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                     <div class="d-flex flex-column gap-2">
-                                                        <img class="preview" src="../assets/img/default.png" alt="place">
+                                                        <img class="preview" id="homeDishImg4" src="../assets/img/default.png" alt="place">
                                                         <input class="picname" type="hidden" value="">
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="d-flex flex-column gap-2">
@@ -330,7 +330,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                                 <label for="textTrstimonial1">13. Testimonial #1</label>
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                     <div class="d-flex flex-column gap-2">
-                                                        <img class="preview" src="../assets/img/default.png" alt="place">
+                                                        <img class="preview" id="homeTestimonialImg1" src="../assets/img/default.png" alt="place">
                                                         <input class="picname" type="hidden" value="">
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="d-flex flex-column gap-2">
@@ -353,7 +353,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                                 <label for="textTrstimonial2">14. Testimonial #2</label>
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                     <div class="d-flex flex-column gap-2">
-                                                        <img class="preview" src="../assets/img/default.png" alt="place">
+                                                        <img class="preview" id="homeTestimonialImg2" src="../assets/img/default.png" alt="place">
                                                         <input class="picname" type="hidden" value="">
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="d-flex flex-column gap-2">
@@ -378,7 +378,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                                 <label for="textTrstimonial3">15. Testimonial #3</label>
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                     <div class="d-flex flex-column gap-2">
-                                                        <img class="preview" src="../assets/img/default.png" alt="place">
+                                                        <img class="preview" id="homeTestimonialImg3" src="../assets/img/default.png" alt="place">
                                                         <input class="picname" type="hidden" value="">
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="d-flex flex-column gap-2">
@@ -401,7 +401,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                                 <label for="textTrstimonial4">16. Testimonial #4</label>
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                     <div class="d-flex flex-column gap-2">
-                                                        <img class="preview" src="../assets/img/default.png" alt="place">
+                                                        <img class="preview" id="homeTestimonialImg4" src="../assets/img/default.png" alt="place">
                                                         <input class="picname" type="hidden" value="">
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="d-flex flex-column gap-2">
@@ -467,7 +467,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                             <label for="">19. Delivery Map Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="homeDeliveryMapImg" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -504,7 +504,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                             <label for="bg1">22. Promotion Area Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="homePromotionImg" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -567,7 +567,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formCarousel1">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="homeCarouselImg1" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <input type="file" class="file-input">
@@ -581,7 +581,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formCarousel2">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="homeCarouselImg2" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <input type="file" class="file-input">
@@ -597,7 +597,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formCarousel3">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="homeCarouselImg3" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <input type="file" class="file-input">
@@ -611,7 +611,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                         <form method="post" enctype="multipart/form-data" class="uploadForm" id="formCarousel4">
                                             <div class="d-flex flex-column">
                                                 <div class="d-flex flex-column gap-2 p-2 border rounded">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="homeCarouselImg4" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <input type="file" class="file-input">
@@ -692,7 +692,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                             <label for="bg1">1. About Page Header Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="aboutHeaderBG" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -761,7 +761,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                             <label for="textAboutPromotion">5. Promotion Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="aboutImg1" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -782,7 +782,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                             <label for="textbgAboutBackground">6. Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="aboutImg2" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -952,7 +952,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                             <label for="formbgContactHeadBackground">1. Contact Page Header Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="contactHeaderBG" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -973,7 +973,7 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                                             <label for="formbgContactBackground">2. Contact Page Background Image</label>
                                             <div class="d-flex flex-column gap-2 p-2 border rounded">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <img class="preview" src="../assets/img/default.png" alt="place">
+                                                    <img class="preview" id="contactImg1" src="../assets/img/default.png" alt="place">
                                                     <input class="picname" type="hidden" value="">
                                                     <div class="d-flex flex-column gap-2">
                                                         <div class="d-flex flex-column gap-2">
@@ -1041,8 +1041,8 @@ $pageDetail = $db->query('SELECT * FROM `templatepagedetails` WHERE `projectID` 
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <label for="notesAbout">Notes / Additional Comments</label>
-                                    <textarea class="form-control" name="notes" id="notesAbout" rows="3" placeholder="Notes / Additional Comments"></textarea>
+                                    <label for="notesContact">Notes / Additional Comments</label>
+                                    <textarea class="form-control" name="notes" id="notesContact" rows="3" placeholder="Notes / Additional Comments"></textarea>
                                 </div>
                             </div>
                         </div>

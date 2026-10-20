@@ -93,9 +93,13 @@ if ($period === 'custom') {
                                                 <span>Transfers</span>
                                                 <span class="font-weight-bold" id="domainTransfers"><span class="skeleton-text">--</span></span>
                                             </div>
-                                            <div class="d-flex justify-content-between">
+                                            <div class="d-flex justify-content-between mb-2">
                                                 <span>Renewal Due</span>
                                                 <span class="font-weight-bold" id="domainRenewal"><span class="skeleton-text">--</span></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span>Expired</span>
+                                                <span class="font-weight-bold" id="domainExpired"><span class="skeleton-text">--</span></span>
                                             </div>
                                         </div>
                                     </div>
@@ -149,6 +153,31 @@ if ($period === 'custom') {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expiring Domains Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title font-weight-bold">Expiring Domains <small class="text-muted">(expired + next 90 days)</small></h3>
+                    </div>
+                    <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Domain</th>
+                                    <th>Expiry Date</th>
+                                    <th class="text-right">Days Left</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expiringTableBody">
+                                <tr><td colspan="3" class="text-center text-muted py-4">Loading domains...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -217,6 +246,22 @@ if ($period === 'custom') {
         document.getElementById('domainPending').textContent = data.domains.pending_approval;
         document.getElementById('domainTransfers').textContent = data.domains.transfers;
         document.getElementById('domainRenewal').textContent = data.domains.renewal_due;
+        document.getElementById('domainExpired').textContent = data.domains.expired;
+
+        // Expiring domains table
+        var expiring = data.domains.expiring || [];
+        var expRows = '';
+        for (var j = 0; j < expiring.length; j++) {
+            var d = expiring[j];
+            var cls = d.days_left <= 0 ? 'text-danger' : (d.days_left <= 30 ? 'text-warning' : '');
+            var name = String(d.domain_name).replace(/[&<>"']/g, function(c) { return '&#' + c.charCodeAt(0) + ';'; });
+            expRows += '<tr>' +
+                '<td>' + name + '</td>' +
+                '<td>' + formatDate(d.expiry_date) + '</td>' +
+                '<td class="text-right font-weight-bold ' + cls + '">' + (d.days_left <= 0 ? 'Expired' : d.days_left) + '</td>' +
+                '</tr>';
+        }
+        document.getElementById('expiringTableBody').innerHTML = expRows || '<tr><td colspan="3" class="text-center text-muted">No expiring domains</td></tr>';
 
         // Sales
         document.getElementById('salesToday').textContent = '$' + formatNumber(data.sales.today);
@@ -253,6 +298,8 @@ if ($period === 'custom') {
         document.getElementById('domainPending').textContent = '0';
         document.getElementById('domainTransfers').textContent = '0';
         document.getElementById('domainRenewal').textContent = '0';
+        document.getElementById('domainExpired').textContent = '0';
+        document.getElementById('expiringTableBody').innerHTML = '<tr><td colspan="3" class="text-center text-danger">Failed to load data.</td></tr>';
         document.getElementById('salesToday').textContent = '$0.00';
         document.getElementById('salesWeek').textContent = '$0.00';
         document.getElementById('salesMonth').textContent = '$0.00';

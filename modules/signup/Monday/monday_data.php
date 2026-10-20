@@ -157,6 +157,25 @@ $Step04_Comments00N2v00000IyVpq = $_POST['additionComment'] ?? ''; //  Additiona
 
 $Step04_SocialNetworks00N2u000000mNZG = $_POST['byAgent'] ?? ''; //  Marketing Agent
 
+// monday_user_id ของ Sales Agent ที่เลือก ส่งต่อให้ webhook Make.com ไปสร้าง item ใน monday.com
+// เชื่อค่าจากฐานข้อมูลเป็นหลัก ไม่เชื่อค่าที่ POST มา เพราะ client แก้ได้
+// ถ้าเลือก "Other" / ไม่ได้เลือก / คนนั้นยังไม่มี monday_user_id จะได้ค่าว่าง
+$byAgentMondayId = '';
+$salesAgentLabel = trim((string) ($_POST['byAgent'] ?? ''));
+if ($salesAgentLabel !== '' && $salesAgentLabel !== 'Other') {
+    $agentDbPath = __DIR__ . '/../assets/db/db.php';
+    $agentInitPath = __DIR__ . '/../assets/db/initDB.php';
+    $agentFnPath = __DIR__ . '/../assets/function/salesAgents.php';
+    if (file_exists($agentDbPath) && file_exists($agentInitPath) && file_exists($agentFnPath)) {
+        include_once $agentDbPath;
+        include_once $agentInitPath;
+        include_once $agentFnPath;
+        if (isset($db)) {
+            $byAgentMondayId = getSalesAgentMondayId($db, $salesAgentLabel);
+        }
+    }
+}
+
 $Step04_SocialNetworks00N2v00000IyVq9 = $_POST['byPerson'] ?? ''; //  Referred  by person
 
 $Step04_SocialNetworks00N2v00000IyVqA = $_POST['byRestaurant'] ?? ''; //  Referred  by shop
@@ -249,6 +268,9 @@ if ($response) {
 
   $formData = $_POST;
 
+  // ใช้ค่าที่ resolve จากฐานข้อมูลเสมอ ทับค่าที่ client ส่งมา (ถ้ามี)
+  $formData['byAgentMondayId'] = $byAgentMondayId;
+
   // รวบรวม addon ทุกตัวให้เป็น field เดียว "addons" (คั่นด้วย , )
   // ครอบคลุม 2 รูปแบบ:
   //   1) key ที่ขึ้นต้นด้วย "addon" (addonPOS, addonPricingDesign ฯลฯ)
@@ -339,48 +361,65 @@ if ($response) {
   // Send as comma-separated string
   $formData['addonsName'] = implode(', ', $addonsNames);
 
-
+  // --- สร้าง storeID รูปแบบ {ชื่อร้าน}-{ประเทศ}-{ประเภท}-{สาขา} ---
+  // เช่น guaytiewruekhunpa-TH-TRT-0001
+  // เลขสาขาได้จากการ select storeID เดิมบนบอร์ด Projects ของประเทศนั้นบน monday.com
+  // ถ้าชื่อร้านเป็นภาษาไทยล้วน slug จะว่าง -> ให้กรอก storeSlug มาเอง
+  $storeIdFnPath = __DIR__ . '/../assets/function/generateStoreID.php';
+  if (file_exists($storeIdFnPath)) {
+      include_once $storeIdFnPath;
+      try {
+          $storeIdInfo = generateStoreID(
+              $_POST['shopName']     ?? '',
+              $_POST['country_code'] ?? '',
+              $_POST['formType']     ?? '',
+              $_POST['storeSlug']    ?? ''
+          );
+          $formData['storeID']       = $storeIdInfo['storeID'];
+          $formData['storeIDBranch'] = $storeIdInfo['branch'];
+          // reason จะมีค่าเมื่อสร้างไม่สำเร็จ (empty_slug / monday_unavailable / unknown_country)
+          $formData['storeIDReason'] = $storeIdInfo['reason'];
+          error_log('[monday_data] storeID=' . $storeIdInfo['storeID']
+              . ' branch=' . $storeIdInfo['branch']
+              . ' looked_up=' . ($storeIdInfo['looked_up'] ? 'yes' : 'no')
+              . ' reason=' . $storeIdInfo['reason']);
+      } catch (\Throwable $e) {
+          // storeID พังต้องไม่ทำให้ submit ทั้งฟอร์มล้ม
+          $formData['storeID']       = '';
+          $formData['storeIDReason'] = 'exception';
+          error_log('[monday_data] storeID error: ' . $e->getMessage());
+      }
+  }
 
   // Webhook URL
+  // Note: For non-TH countries, send to izna04q2cdj68bqylepknapxa4l0wkaz when user clicks "Save to Monday"
+  // For TH, use the TH-specific loop below instead
 
   //$webhookUrl = "https://hook.eu1.make.com/xmrmdjm7lst6gg8qj1yxy1fdklcsoudo";
   //$webhookUrl = "https://hook.us1.make.com/w5le4gjhr9m4oprgwn2ogzpl6un7xtab";
   //$webhookUrl = "https://hook.us1.make.com/udh53vpfeeeithv4rvu5oqsbb7z308vf";
   //$webhookUrl = "https://hook.us1.make.com/myqks921kn2ono23uszzxnfg1dmseag8";
+
+  // Send to izna04q2cdj68bqylepknapxa4l0wkaz only for non-TH countries
+  if (($formData['country_code'] ?? '') !== 'TH') {
     $webhookUrl = "https://hook.us1.make.com/izna04q2cdj68bqylepknapxa4l0wkaz";
 
+    // Make POST request to webhook URL with form data
+    $ch = curl_init($webhookUrl);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($formData));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
 
-
-  // Make POST request to webhook URL with form data
-
-  $ch = curl_init($webhookUrl);
-
-  curl_setopt($ch, CURLOPT_POST, 1);
-
-  curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($formData));
-
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-  $response = curl_exec($ch);
-
-  curl_close($ch);
-
-
-
-  // Check if the request was successful
-
-  if ($response === false) {
-
-      // Handle error
-
-      // Failed to send data to webhook
-
-  } else {
-
-      // Webhook request successful
-
-      // Data sent to webhook successfully
-
+    // Check if the request was successful
+    if ($response === false) {
+        // Handle error
+        // Failed to send data to webhook
+    } else {
+        // Webhook request successful
+        // Data sent to webhook successfully
+    }
   }
 
   // Send to TH invoice webhook if country is Thailand
@@ -432,6 +471,7 @@ if ($response) {
           $thPayload = [
               'invoice_id'    => (int)$row['id'],
               'invoiceID'     => $row['invoiceID'],
+              'storeID'       => $formData['storeID'] ?? '',
               'name'          => $row['name'],
               'address'       => $row['address'],
               'taxNumber'     => $row['taxNumber'],

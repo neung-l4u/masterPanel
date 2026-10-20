@@ -125,12 +125,12 @@
                                    registered email address</span>. <br>
                               Please check your email inbox shortly.</p>
 
-                         <div class="mb-3">
-                              <input class="btn btn-warning" type="button" value="Contract" onclick="genPDF();">
-                              <input class="btn btn-warning" id="docusignSendBtn" type="button"
-                                   value="Send for Signature" onclick="sendContractsForSignature();">
-                              <div id="docusignStatus" class="small mt-2" style="display:none;"></div>
-                         </div>
+                    <div class="mb-3">
+                        <input class="btn btn-warning" type="button" value="Contract" onclick="genPDF();">
+                        <input class="btn btn-warning" id="docusignSendBtn" type="button"
+                               value="Send for Signature" onclick="sendContractsForSignature();">
+                        <div id="docusignStatus" class="small mt-2" style="display:none;"></div>
+                    </div>
 
                          <!-- TH Payment Section -->
                          <div id="thPaymentSection" style="display:none; text-align:left;" class="mb-3">
@@ -233,32 +233,25 @@
                                     ico.innerHTML='<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'30\' height=\'30\' fill=\'#aaa\' viewBox=\'0 0 16 16\'><path d=\'M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5\'/><path d=\'M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z\'/></svg>';
                                   }
                                 ">
-                              </div>
-                              <!-- Submit button -->
-                              <button type="button" id="thSendSlipButton"
-                                   style="width:100%; padding:14px; border:none; border-radius:10px; background:#1a73e8; color:#fff; font-size:16px; font-weight:600; cursor:pointer; margin-bottom:8px;"
-                                   onclick="sendThTransferProof()">ส่งหลักฐานการโอน</button>
-                              <button type="button" id="thFinishButton" disabled class="btn btn-success w-100"
-                                   style="display:none; padding:14px; border-radius:10px; font-size:16px; font-weight:600;"
-                                   onclick="window.location.href='https://localforyou.com/thank-you/';">เสร็จสิ้น</button>
-                         </div>
-                         <!-- end TH Payment Section -->
-
-                         <div class="pt-2" id="crmControls">
-                              <div class="form-switch">
-                                   <input class="form-check-input" type="checkbox" role="switch" id="enableCRM"
-                                        onclick="enableCRMButton();">
-                                   <label class="form-check-label text-danger" for="enableCRM">Save to Monday</label>
-                              </div>
-                              <img src="assets/img/ballLoading.gif" alt="loading" id="ballLoading" width="30"
-                                   height="30" style="display:none;">
-                              <span id="countdownText" class="text-muted fw-bold"
-                                   style="display:none; margin-left: 10px;"></span>
-                              <button type="button" id="CRMButton" disabled class="btn btn-primary"
-                                   style="display:none;" onclick="submitToCRM();">Save</button>
-                         </div>
+                        </div>
+                        <!-- Submit button -->
+                        <button type="button"
+                            style="width:100%; padding:14px; border:none; border-radius:10px; background:#1a73e8; color:#fff; font-size:16px; font-weight:600; cursor:pointer; margin-bottom:8px;"
+                            onclick="sendThTransferProof()">ส่งหลักฐานการโอน</button>
                     </div>
-               </div>
+                    <!-- end TH Payment Section -->
+
+                    <div class="pt-2">
+                        <div class="form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="enableCRM" onclick="enableCRMButton();">
+                            <label class="form-check-label text-danger" for="enableCRM">Save to Monday</label>
+                        </div>
+                        <img src="assets/img/ballLoading.gif" alt="loading" id="ballLoading" width="30" height="30" style="display:none;">
+                        <span id="countdownText" class="text-muted fw-bold" style="display:none; margin-left: 10px;"></span>
+                        <button type="button" id="CRMButton" disabled class="btn btn-primary" style="display:none;" onclick="submitToCRM();">Save</button>
+                    </div>
+                </div>
+            </div>
 
                <div class="respondFail">
                     <div class="modal-header bg-danger d-flex flex-column">
@@ -292,34 +285,20 @@
 <script src="assets/js/modalSubmit.js?v=2.0.0"></script>
 <script>
 function sendThTransferProof() {
-     const slipInput = document.getElementById('thSlipUpload');
-     let quotationID = $("#quotationID").val();
-     const shopName = $("#shopName").val();
-     const country = $("#formCountry").val();
-     const sendBtn = $("#thSendSlipButton");
+    const slipInput = document.getElementById('thSlipUpload');
+    const quotationID = $("#quotationID").val();
+    const shopName = $("#shopName").val();
+    const country = $("#formCountry").val();
+    const sendBtn = $("button[onclick='sendThTransferProof()']");
 
-     if (!slipInput.files || slipInput.files.length === 0) {
-          alert('กรุณาเลือกไฟล์สลิปโอนเงินก่อน');
-          return;
-     }
-
-     // Fallback: ถ้า quotationID ว่าง ให้ลองดึงจาก dataInvoice
-     if (!quotationID) {
-          try {
-               const dataInvoice = JSON.parse($("#dataInvoice").val() || '[]');
-               if (Array.isArray(dataInvoice) && dataInvoice.length > 0 && dataInvoice[0].id) {
-                    quotationID = dataInvoice[0].id;
-                    $("#quotationID").val(quotationID);
-               }
-          } catch (e) {
-               console.warn('sendThTransferProof dataInvoice parse error:', e);
-          }
-     }
-
-     if (!quotationID) {
-          alert('ไม่พบ Quotation ID กรุณาลองใหม่อีกครั้ง');
-          return;
-     }
+    if (!slipInput.files || slipInput.files.length === 0) {
+        alert('กรุณาเลือกไฟล์สลิปโอนเงินก่อน');
+        return;
+    }
+    if (!quotationID) {
+        alert('ไม่พบ Quotation ID กรุณาลองใหม่อีกครั้ง');
+        return;
+    }
 
      const fd = new FormData();
      fd.append('slip', slipInput.files[0]);
@@ -329,30 +308,102 @@ function sendThTransferProof() {
 
      sendBtn.prop('disabled', true).text('กำลังส่ง...');
 
-     $.ajax({
-          url: settings.url_uploadSlip,
-          type: 'POST',
-          data: fd,
-          contentType: false,
-          processData: false,
-          success: function(res) {
-               if (res.success) {
-                    sendBtn.text('ส่งสำเร็จ ✓').removeClass('btn-primary').css({
-                         'background': '#198754',
-                         'color': '#fff'
-                    });
-                    $("#thSlipFileName").text(slipInput.files[0].name + ' (อัปโหลดพร้อมแล้ว)').css(
-                         'color', '#0d6efd');
-                    $("#thFinishButton").prop('disabled', false).fadeIn("slow");
-               } else {
-                    alert('เกิดข้อผิดพลาด: ' + res.message);
-                    sendBtn.prop('disabled', false).text('ส่งหลักฐานการโอน');
-               }
-          },
-          error: function() {
-               alert('เกิดข้อผิดพลาดในการส่งไฟล์ กรุณาลองใหม่');
-               sendBtn.prop('disabled', false).text('ส่งหลักฐานการโอน');
-          }
-     });
+    $.ajax({
+        url: settings.url_uploadSlip,
+        type: 'POST',
+        data: fd,
+        contentType: false,
+        processData: false,
+        success: function(res) {
+            if (res.success) {
+                sendBtn.text('ส่งสำเร็จ ✓').removeClass('btn-primary').css({'background':'#198754','color':'#fff'});
+                $("#thSlipFileName").text(slipInput.files[0].name + ' (อัปโหลดพร้อมแล้ว)').css('color', '#0d6efd');
+            } else {
+                alert('เกิดข้อผิดพลาด: ' + res.message);
+                sendBtn.prop('disabled', false).text('ส่งหลักฐานการโอน');
+            }
+        },
+        error: function() {
+            alert('เกิดข้อผิดพลาดในการส่งไฟล์ กรุณาลองใหม่');
+            sendBtn.prop('disabled', false).text('ส่งหลักฐานการโอน');
+        }
+    });
+}
+
+function enableCRMButton() {
+    const checkbox = document.getElementById('enableCRM');
+    const btn = document.getElementById('CRMButton');
+    if (checkbox.checked) {
+        btn.style.display = 'inline-block';
+        btn.prop('disabled', false);
+    } else {
+        btn.style.display = 'none';
+        btn.prop('disabled', true);
+    }
+}
+
+function submitToCRM() {
+    const btn = document.getElementById('CRMButton');
+    const loading = document.getElementById('ballLoading');
+    const countdown = document.getElementById('countdownText');
+    
+    btn.prop('disabled', true);
+    loading.style.display = 'inline-block';
+    countdown.style.display = 'inline';
+    
+    // Collect form data
+    const formData = {
+        first_name: $("#first_name").val() || '',
+        last_name: $("#last_name").val() || '',
+        email: $("#email").val() || '',
+        mobile: $("#mobile").val() || '',
+        shopName: $("#shopName").val() || '',
+        storeSlug: $("#storeSlug").val() || '',
+        country_code: $("#formCountry").val() || '',
+        countryTextOnly: $("#formCountry").find('option:selected').text() || '',
+        company: $("#company").val() || '',
+        businessNumber: $("#businessNumber").val() || '',
+        tradingName: $("#tradingName").val() || '',
+        phone: $("#phone").val() || '',
+        url: $("#url").val() || '',
+        supportLanguage: $("#supportLanguage").val() || '',
+        physicalShopNumber: $("#physicalShopNumber").val() || '',
+        street: $("#street").val() || '',
+        city: $("#city").val() || '',
+        state_codexxx: $("#state_codexxx").val() || '',
+        zip: $("#zip").val() || '',
+        shopCountry: $("#shopCountry").val() || '',
+        shipNumber: $("#shipNumber").val() || '',
+        shipAddress1: $("#shipAddress1").val() || '',
+        contractPeriod: $("#contractPeriod").val() || '',
+        product: $("#product").val() || '',
+        emailBooking: $("#emailBooking").val() || '',
+        passwordBooking: $("#passwordBooking").val() || '',
+        payCheck: $("#payCheck").val() || '',
+        socialFacebook: $("#socialFacebook").val() || '',
+        socialInstagram: $("#socialInstagram").val() || '',
+        currency: $("#currency").val() || 'USD',
+        formType: $("#formType").val() || '',
+    };
+    
+    // Send to webhook
+    $.ajax({
+        url: 'Monday/monday_data.php',
+        type: 'POST',
+        data: formData,
+        dataType: 'json',
+        success: function(res) {
+            loading.style.display = 'none';
+            countdown.style.display = 'none';
+            btn.text('Saved ✓').removeClass('btn-primary').css({'background':'#198754','color':'#fff'});
+        },
+        error: function(xhr, status, error) {
+            loading.style.display = 'none';
+            countdown.style.display = 'none';
+            btn.prop('disabled', false);
+            alert('เกิดข้อผิดพลาดในการบันทึก: ' + error);
+            btn.text('Save');
+        }
+    });
 }
 </script>

@@ -213,6 +213,16 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataSignupLogs.php";
         $title = "Master panel : SignUp Logs (Staff)";
         break;
+    case "paymentPassword":
+        $showPage = "paymentPassword.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "paymentPassword";
+        // หน้านี้ init DataTable เอง (ต้องเรียงใหม่->เก่า และมีปุ่มในตาราง)
+        // ถ้าปล่อยให้ main.php init ให้ ค่า order/pageLength ที่ตั้งไว้จะไม่ถูกใช้
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Payment Password";
+        break;
     case "formASAPLogs":
         $showPage = "formASAPLogs.php";
         $activeMenu["lv1"] = "logs";
@@ -389,6 +399,14 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Monitor";
         break;
+    case "managerWebhook":
+        $showPage = "managerWebhook.php";
+        $activeMenu["lv1"] = "monitor";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Manage Text Website Down";
+        break;
     case "invoiceThailand":
         $showPage = "invoiceThailand.php";
         $activeMenu["lv1"] = "formMgmt";
@@ -404,6 +422,14 @@ switch ($menuPage){
         $datatable["show"] = "false";
         $datatable["src"] = "";
         $title = "Master panel : ส่งหลักฐานชำระเงิน";
+        break;
+    case "dataCustomer":
+        $showPage = "dataCustomer.php";
+        $activeMenu["lv1"] = "formMgmt";
+        $activeMenu["lv2"] = "dataCustomer";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Data Customer";
         break;
     // [HIDDEN] billingTH — ซ่อนไว้ก่อน เนื่องจาก invoiceThailand ครอบคลุม feature เดียวกัน
     // case "billingTH":

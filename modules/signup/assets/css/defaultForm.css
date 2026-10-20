@@ -273,8 +273,10 @@ ul.suggest li{
     color: gray !important;
     font-size: small;
 }
-input#couponCode, input#couponCode2{
-    text-transform: uppercase;
+/* the coupon fields are dropdowns, so they must not carry the global select margin
+   that would push them out of their input-group */
+#couponCode, #couponCode2{
+    margin-bottom: 0;
 }
 
 input::-webkit-outer-spin-button,

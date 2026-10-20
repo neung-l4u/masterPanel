@@ -37,13 +37,43 @@ $password = "Localeats#".date("Y");
     }
 
     .filterCol{
-        width: 30%;
+        width: 23%;
         max-width: 300px;
     }
     .filterLabel{
-        /*border: 1px solid black;*/
-        width: 100px;
+        white-space: nowrap;
     }
+    /* URL / server cells: one line, long addresses end in an ellipsis (full address on hover) */
+    #websiteListTable td a.siteLink{
+        display: inline-block;
+        max-width: 360px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: bottom;
+    }
+    #websiteListTable td.serverCell{ white-space: nowrap; }
+    /* group toggle and branch rows */
+    #websiteListTable .grp-toggle{ line-height: 1; }
+    #websiteListTable .grp-count{ font-weight: 500; }
+    /* colour the cells, not the row: Bootstrap paints (and stripes) every cell over the row background */
+    table.dataTable tbody tr.branch-row{
+        box-shadow: none !important;
+    }
+    table.dataTable tbody tr.branch-row > td{
+        background: #f6f8fb !important;
+        box-shadow: none !important;
+    }
+    table.dataTable tbody tr.branch-row:hover{ transform: none !important; }
+    table.dataTable tbody tr.branch-row:hover > td{ background: #eef2f8 !important; }
+    #websiteListTable td.dt-body-right{ white-space: nowrap; }
+    table.dataTable tbody tr.branch-row td{
+        padding-top: .45rem !important;
+        padding-bottom: .45rem !important;
+        font-size: .85rem !important;
+    }
+    table.dataTable tbody tr.branch-row td.branch-name{ padding-left: 2.6rem !important; }
+    table.dataTable tbody tr.branch-row.branch-hit > td{ background: #fff4cc !important; }
     .filterSelect{
         width: 100% !important;
     }
@@ -163,6 +193,19 @@ $password = "Localeats#".date("Y");
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <div class="filterCol">
+                                <label for="filterDomainProvider" class="form-label filterLabel">Domain Provider</label>
+                                <select class="form-select filterSelect" id="filterDomainProvider" onchange="filterChange()" aria-label="Domain provider">
+                                    <option value="" selected>All</option>
+                                    <option value="none">Not set</option>
+                                    <?php
+                                    $dbDomainProviders = $db->query('SELECT id, name FROM DomainProviders WHERE id > 0 ORDER BY name;')->fetchAll();
+                                    foreach ($dbDomainProviders as $row){
+                                        ?>
+                                        <option value="<?php echo (int) $row['id']; ?>"><?php echo htmlspecialchars($row['name']); ?></option>
+                                    <?php }//foreach ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -220,6 +263,7 @@ $password = "Localeats#".date("Y");
                                     <th width="16%">Server</th>
                                     <th width="7%">Status</th>
                                     <th width="7%"></th>
+                                    <th>Branches</th>
                                 </tr>
                                 </thead>
                             </table>
@@ -416,6 +460,38 @@ $password = "Localeats#".date("Y");
                                     <input type="text" class="form-control" id="inputContactEmailRemark" placeholder="e.g. Email for Hoonhay">
                                 </div>
 
+                                <div class="form-group">
+                                    <label class="d-block mb-2">Google Tag Manager / Google Analytics (Example)</label>
+                                    <div class="border rounded p-3 bg-light">
+                                        <div class="form-row align-items-end mb-3">
+                                            <div class="col-md-7">
+                                                <label for="inputGtmContainerId" class="mb-1"><strong>GTM Container ID</strong></label>
+                                                <input type="text" class="form-control" id="inputGtmContainerId" placeholder="GTM-NMCF5CZF" autocomplete="off">
+                                            </div>
+                                            <div class="col-md-5">
+                                                <small class="text-muted d-block">ใส่ Container ID ของเว็บที่กำลังติดตั้ง แล้วโค้ดด้านล่างจะเปลี่ยนตามอัตโนมัติ</small>
+                                            </div>
+                                        </div>
+
+                                        <p class="mb-1"><strong>Google Analytics (GA4)</strong></p>
+                                        <p class="mb-1 text-muted">Measurement ID : G-G8J517F780</p>
+                                        <p class="mb-3 text-muted">Google Tag ID : GT-T9H36C6Z</p>
+
+                                        <hr class="my-3">
+
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <strong>1. Paste this code as high in the &lt;head&gt; of the page as possible:</strong>
+                                            <button type="button" class="btn btn-sm btn-outline-primary ml-2" data-copy-target="gtmHeadCode">Copy</button>
+                                        </div>
+                                        <pre id="gtmHeadCode" class="bg-white border rounded p-2 mb-3" style="font-size:12px; white-space:pre-wrap; word-break:break-all;"></pre>
+
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <strong>2. Paste this code immediately after the opening &lt;body&gt; tag:</strong>
+                                            <button type="button" class="btn btn-sm btn-outline-primary ml-2" data-copy-target="gtmBodyCode">Copy</button>
+                                        </div>
+                                        <pre id="gtmBodyCode" class="bg-white border rounded p-2 mb-0" style="font-size:12px; white-space:pre-wrap; word-break:break-all;"></pre>
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox" id="inputGloriaFood">
@@ -720,6 +796,69 @@ $password = "Localeats#".date("Y");
         $("#inputOtherCount").text(currentText.length);
     }
 
+    // GTM snippet generator + copy buttons
+    const GTM_EXAMPLE_ID = "GTM-NMCF5CZF";
+    const inputGtmContainerId = $("#inputGtmContainerId");
+
+    function buildGtmHeadCode(id) {
+        return "<!-- Google Tag Manager -->\n" +
+            "<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n" +
+            "new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n" +
+            "j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n" +
+            "'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n" +
+            "})(window,document,'script','dataLayer','" + id + "');<\/script>\n" +
+            "<!-- End Google Tag Manager -->";
+    }
+
+    function buildGtmBodyCode(id) {
+        return "<!-- Google Tag Manager (noscript) -->\n" +
+            "<noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id=" + id + "\"\n" +
+            "height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"><\/iframe><\/noscript>\n" +
+            "<!-- End Google Tag Manager (noscript) -->";
+    }
+
+    function renderGtmSnippets() {
+        const id = inputGtmContainerId.val().trim() || GTM_EXAMPLE_ID;
+        // .text() keeps the snippet inert: it is shown as characters, never parsed as markup
+        $("#gtmHeadCode").text(buildGtmHeadCode(id));
+        $("#gtmBodyCode").text(buildGtmBodyCode(id));
+    }
+
+    inputGtmContainerId.on('input', renderGtmSnippets);
+    renderGtmSnippets();
+
+    $(document).on('click', '[data-copy-target]', function() {
+        const btn = $(this);
+        const text = $("#" + btn.data('copy-target')).text();
+        const done = function(ok) {
+            btn.text(ok ? 'Copied!' : 'Copy failed')
+               .toggleClass('btn-outline-primary', !ok)
+               .toggleClass('btn-success', ok)
+               .toggleClass('btn-outline-danger', !ok && true);
+            setTimeout(function() {
+                btn.text('Copy')
+                   .removeClass('btn-success btn-outline-danger')
+                   .addClass('btn-outline-primary');
+            }, 1500);
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(function() { done(true); }, function() { done(false); });
+        } else {
+            // http://localhost:8080 is not a secure context in some browsers, so keep a fallback
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            let ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            document.body.removeChild(ta);
+            done(ok);
+        }
+    });
+
     inputOther.on('input', function() {
         const len = $(this).val().length;
         $("#inputOtherCount").text(len);
@@ -756,6 +895,7 @@ $password = "Localeats#".date("Y");
     const filterTemplate = $("#filterTemplate");
     const filterCountry = $("#filterCountry");
     const filterServer = $("#filterServer");
+    const filterDomainProvider = $("#filterDomainProvider");
 
     const newModalForm = new bootstrap.Modal(document.getElementById("formModal"), {});
 
@@ -816,8 +956,6 @@ $password = "Localeats#".date("Y");
                 urlTxt = `<a href="${res.wWordpressURL}" target="_blank">${iconLink}</a> ${res.wWordpressURL}`;
                 WordpressURL.html(urlTxt);
 
-                txt = `<a onclick="copyText('admin@localforyou.com')" href="#">${iconCopy}</a> admin@localforyou.com`;
-                txt2 = `<a onclick="copyText('L4U=New@min')" href="#">${iconCopy}</a> L4U=New@min`;
 
                 WordpressUser.html(res.wWordpressUser);
                 WordpressPass.html(res.wWordpressPass);
@@ -1063,6 +1201,7 @@ $password = "Localeats#".date("Y");
         filterTemplate.val('');
         filterCountry.val('');
         filterServer.val('');
+        filterDomainProvider.val('');
         reloadTable_bs5();
     }
 
@@ -1088,6 +1227,7 @@ $password = "Localeats#".date("Y");
                     d.template  = $("#filterTemplate").val();
                     d.country   = $("#filterCountry").val();
                     d.server    = $("#filterServer").val();
+                    d.domainProvider = $("#filterDomainProvider").val();
                 }
             },
             columnDefs: [
@@ -1098,8 +1238,47 @@ $password = "Localeats#".date("Y");
                 {
                     targets: [5],
                     orderable: false
+                },
+                {
+                    targets: [3],
+                    className: 'serverCell'
+                },
+                {
+                    // branch names/domains, so Search finds a group by any of its branches
+                    targets: [6],
+                    visible: false
                 }
             ],
+        });
+
+        // Branch sites (subdomains, booking sites) are sent with their main row in data[7] and shown as a
+        // child row. Searching opens every group whose branches match and highlights the matching branches.
+        const table = $('#websiteListTable').DataTable();
+        const branchRows = (children, term) => $(children.map(c => {
+            const hit = term && $('<div>').html(c.slice(1, 5).join(' ')).text().toLowerCase().includes(term);
+            return '<tr class="branch-row' + (hit ? ' branch-hit' : '') + '"><td></td>'
+                + '<td class="branch-name"><span class="text-muted me-1">↳</span>' + c[1] + '</td>'
+                + '<td>' + c[2] + '</td><td class="serverCell">' + c[3] + '</td><td>' + c[4]
+                + '</td><td class="dt-body-right">' + c[5] + '</td></tr>';
+        }).join(''));
+        const setOpen = (row, open, term) => {
+            if (open) row.child(branchRows(row.data()[7], term)).show(); else row.child.hide();
+            $(row.node()).find('.grp-toggle i').attr('class', open ? 'bi bi-chevron-down' : 'bi bi-chevron-right');
+        };
+        $('#websiteListTable tbody').on('click', '.grp-toggle', function (e) {
+            e.preventDefault();
+            const row = table.row($(this).closest('tr'));
+            setOpen(row, !row.child.isShown(), '');
+        });
+        table.on('draw', () => {
+            const term = table.search().trim().toLowerCase();
+            table.rows({ page: 'current' }).every(function () {
+                const d = this.data();
+                if (!d[7] || !d[7].length) return;
+                // d[8]: the server asks to open groups whose branches matched the filters but whose main row did not
+                if (term && $('<div>').html(d[6]).text().toLowerCase().includes(term)) setOpen(this, true, term);
+                else if (!term) setOpen(this, !!d[8], '');
+            });
         });
     });
 

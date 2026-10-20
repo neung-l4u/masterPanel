@@ -121,7 +121,10 @@ $response = [
         return [
             'product' => $item['product'] ?? $item['setupfee'] ?? $item['addon'] ?? '-',
             'qyt' => $item['qyt'] ?? '1',
-            'amount' => $item['amount'] ?? '0.00',
+            // ส่งราคาเต็มรวม VAT ให้ปลายทางโชว์ ใบเก่าไม่มี fullamount จึงถอดจาก amount
+            'amount' => isset($item['fullamount'])
+                ? $item['fullamount']
+                : number_format(round((float)($item['amount'] ?? 0) * 1.07, 2), 2, '.', ''),
         ];
     }, $items),
     'quotation' => array_map(function($q) {

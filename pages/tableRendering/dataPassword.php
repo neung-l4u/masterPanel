@@ -1,5 +1,6 @@
 <?php
 session_start();
+if (empty($_SESSION['id'])) { http_response_code(401); exit; }
 global $db;
 $loginID = $_SESSION['id'];
 $teamID = $_SESSION['teamID'];

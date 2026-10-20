@@ -400,6 +400,9 @@ class DreamscapeAPI {
         $pending_approval = 0;
         $transfers = 0;
         $renewal_due = 0;
+        $expired = 0;
+        $expiring = []; // expired (not cancelled) + expiring within 90 days
+        $now = time();
         
         foreach ($allDomains as $domain) {
             // Status IDs:
@@ -422,14 +425,28 @@ class DreamscapeAPI {
             // Check for renewal due (expiring soon - within 90 days to match Console's 151)
             if (isset($domain['expiry_date']) && !empty($domain['expiry_date'])) {
                 $expiry = strtotime($domain['expiry_date']);
-                $now = time();
                 $days_until_expiry = ($expiry - $now) / (60 * 60 * 24);
                 // Adjust to ~90 days to get closer to 151
                 if ($days_until_expiry > 0 && $days_until_expiry <= 90) {
                     $renewal_due++;
                 }
+                $statusId = isset($domain['status_id']) ? $domain['status_id'] : null;
+                $countable = $statusId != 5 && $statusId != 9;
+                if ($countable && $days_until_expiry <= 0) {
+                    $expired++;
+                }
+                if ($countable && $days_until_expiry <= 90) {
+                    $expiring[] = [
+                        'domain_name' => isset($domain['domain_name']) ? $domain['domain_name'] : '',
+                        'expiry_date' => substr($domain['expiry_date'], 0, 10),
+                        'days_left' => (int) floor($days_until_expiry),
+                        'status_id' => $statusId
+                    ];
+                }
             }
         }
+        
+        usort($expiring, function ($a, $b) { return strcmp($a['expiry_date'], $b['expiry_date']); });
         
         // Debug: Log to error log
         error_log("Dreamscape API: Fetched " . count($allDomains) . " domains from $totalPages pages (Total in API: $totalItems). Active: $active_count, Pending: $pending_approval, Renewal Due: $renewal_due");
@@ -438,7 +455,9 @@ class DreamscapeAPI {
             'total' => $active_count,
             'pending_approval' => $pending_approval,
             'transfers' => $transfers,
-            'renewal_due' => $renewal_due
+            'renewal_due' => $renewal_due,
+            'expired' => $expired,
+            'expiring' => $expiring
         ];
     }
     

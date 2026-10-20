@@ -155,6 +155,22 @@ out
 /modules/printer/assets/php/config.php
 /vendor/
 /api/aiAraya/stripe_webhook.php
+# Google Chat webhook URL (credential, do not commit)
+assets/php/chat_webhook.txt
+
+# WHM API tokens (credentials, do not commit)
+assets/php/whm_tokens.json
+
+# Make credit dashboard: API token + fetched snapshots (do not commit)
+/modules/viewcreditmake/config.php
+/modules/viewcreditmake/cache/
+
+# Payments API secret (credential, do not commit)
+assets/db/payments_secret.txt
+
+# Secrets for server-side scripts (service-account keys, webhook URLs). Never commit.
+/config/
+
 /api/docusign/docusign_config.php
 /api/docusign/logs/
 # Local browser-test launcher: localhost URLs and real customer emails

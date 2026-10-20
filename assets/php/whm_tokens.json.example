@@ -1,0 +1,7 @@
+{
+  "_comment": "TEMPLATE ONLY - never put real credentials here; this file is tracked by git. Copy it to whm_tokens.json (gitignored) and edit that one. Key = svID from L4UServers.",
+  "2": { "host": "az1-tr102.supercp.com",       "user": "adayinbk", "token": "PASTE_TOKEN_HERE" },
+  "3": { "host": "mi3-tr104.supercp.com",       "user": "thaieatd", "token": "PASTE_TOKEN_HERE" },
+  "4": { "host": "nl1-cl9-atr1.supercp.com",    "user": "katietha", "token": "PASTE_TOKEN_HERE" },
+  "5": { "host": "s13415.use1.stableserver.net","user": "thaimass", "token": "PASTE_TOKEN_HERE" }
+}

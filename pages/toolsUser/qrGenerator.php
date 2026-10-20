@@ -4,6 +4,30 @@
  * Rendered inside the master panel layout (sidebar/navbar provided by main.php).
  * Tailwind is loaded scoped for this page's markup only.
  */
+
+// Handle AJAX request for template images
+if (isset($_GET['action']) && $_GET['action'] === 'getTemplateImages') {
+    header('Content-Type: application/json');
+    $imagesDir = __DIR__ . '/assets/images/';
+    $images = [];
+    
+    if (is_dir($imagesDir)) {
+        $files = scandir($imagesDir);
+        foreach ($files as $file) {
+            if ($file !== '.' && $file !== '..') {
+                $filePath = $imagesDir . $file;
+                $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif', 'webp']) && is_file($filePath)) {
+                    $images[] = 'pages/toolsUser/assets/images/' . $file;
+                }
+            }
+        }
+    }
+    
+    sort($images);
+    echo json_encode(['success' => true, 'images' => $images]);
+    exit;
+}
 ?>
 
 <!-- Content Header -->
@@ -47,6 +71,36 @@
             #qrgenApp .custom-scrollbar::-webkit-scrollbar { width: 5px; }
             #qrgenApp .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
             #qrgenApp .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+            #templateBgSelect {
+                display: block !important;
+                width: 100% !important;
+                padding: 0.625rem 0.75rem !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 0.5rem !important;
+                font-size: 0.75rem !important;
+                font-weight: 600 !important;
+                background-color: #ffffff !important;
+                cursor: pointer !important;
+                transition: all 0.2s ease !important;
+                font-family: 'Sarabun', sans-serif !important;
+                color: #1e293b !important;
+                box-sizing: border-box !important;
+                min-height: 38px !important;
+            }
+            #templateBgSelect:hover {
+                border-color: #94a3b8 !important;
+            }
+            #templateBgSelect:focus {
+                outline: none !important;
+                box-shadow: 0 0 0 2px #3b82f6 !important;
+                border-color: #3b82f6 !important;
+            }
+            #templateBgSelect option {
+                padding: 0.5rem !important;
+                background-color: #ffffff !important;
+                color: #1e293b !important;
+                font-family: 'Sarabun', sans-serif !important;
+            }
             @media print {
                 body > :not(#printSection) { display: none !important; }
                 #printSection { display: block !important; }
@@ -66,7 +120,13 @@
                             <h2 class="font-bold text-slate-800">ภาพพื้นหลังเทมเพลต</h2>
                         </div>
                         <div>
-                            <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">อัปโหลดรูปพื้นหลัง (เลือกทีละหลายไฟล์ได้)</span>
+                            <label class="block text-xs font-bold text-slate-500 mb-2">เลือกพื้นหลังจากเทมเพลต</label>
+                            <select id="templateBgSelect">
+                                <option value="">-- เลือกพื้นหลังเทมเพลต --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">หรืออัปโหลดรูปพื้นหลังเพิ่มเติม (เลือกทีละหลายไฟล์ได้)</span>
                             <label class="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl p-4 bg-slate-50 hover:bg-slate-100 cursor-pointer transition">
                                 <input type="file" id="userBgUpload" accept="image/*" multiple class="hidden">
                                 <i data-lucide="image-plus" class="w-7 h-7 text-slate-400 mb-1"></i>
@@ -314,6 +374,7 @@
     const btnRemoveLogo = document.getElementById('btnRemoveLogo');
     const userBgUpload = document.getElementById('userBgUpload');
     const bgGalleryGrid = document.getElementById('bgGalleryGrid');
+    const templateBgSelect = document.getElementById('templateBgSelect');
     const tabSingle = document.getElementById('tabSingle');
     const tabBulk = document.getElementById('tabBulk');
     const panelSingle = document.getElementById('panelSingle');
@@ -509,7 +570,52 @@
         return tempCanvas.toDataURL();
     }
 
-    function preloadGalleryTemplates() { updateGalleryUI(); renderPreview(); }
+    async function preloadGalleryTemplates() {
+        try {
+            const response = await fetch('pages/toolsUser/qrGenerator.php?action=getTemplateImages');
+            const data = await response.json();
+            console.log('Template images loaded:', data);
+            if (data.success && data.images && data.images.length > 0) {
+                for (const imgPath of data.images) {
+                    await new Promise((resolve) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const fileName = imgPath.split('/').pop();
+                            bgGallery.push({ id: Date.now() + Math.random(), name: fileName, imgObj: img, path: imgPath });
+                            // Add option to dropdown
+                            const option = document.createElement('option');
+                            option.value = bgGallery.length - 1;
+                            option.textContent = fileName;
+                            templateBgSelect.appendChild(option);
+                            resolve();
+                        };
+                        img.onerror = () => {
+                            console.warn('Failed to load image:', imgPath);
+                            resolve();
+                        };
+                        img.src = imgPath;
+                    });
+                }
+                if (bgGallery.length > 0) {
+                    activeBgIndex = 0;
+                    templateBgSelect.value = '0';
+                    console.log('Gallery loaded with', bgGallery.length, 'images');
+                }
+            }
+        } catch (err) {
+            console.warn('Could not load template images:', err);
+        }
+        updateGalleryUI(); renderPreview();
+    }
+
+    templateBgSelect.addEventListener('change', (e) => {
+        const index = parseInt(e.target.value);
+        if (!isNaN(index) && index >= 0 && index < bgGallery.length) {
+            activeBgIndex = index;
+            updateGalleryUI();
+            renderPreview();
+        }
+    });
 
     function updateGalleryUI() {
         bgGalleryGrid.innerHTML = '';
