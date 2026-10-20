@@ -1,0 +1,6 @@
+*
+!.gitignore
+# The deny rules must ship. Without this line the "*" above ignores them, the
+# .htaccess never reaches production, and the cached customer list is fetchable
+# over HTTP while looking protected here.
+!.htaccess

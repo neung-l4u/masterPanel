@@ -158,7 +158,8 @@ Board `2032016220`, via the existing Monday MCP/GraphQL access.
 | Reason For Cancel | `text_mm7z30rd` | Cancellation section |
 | Note | `text_mm1b8q0z` | Stalled-setup second line |
 | Google Calendar ID | `text_mm2y84v4` | Primary match key |
-| Email (email type) | `email_mm7r176d` | Secondary match key |
+| Email Address (text type) | `text_mks6asn5` | Secondary match key |
+| Email Address (email type) | `email_mm7r176d` | Display only, as `email_alt` |
 | Last updated | `pulse_updated_mm3fxzh5` | Reserved for future ghosting fallback |
 
 ## Matching

@@ -13,13 +13,13 @@
 - **Two repos.** Tasks 1–3 are in `D:\Projects\2.LocalEats\github\gcal-booking-api-main`. Tasks 4–11 are in `C:\xampp\htdocs\masterPanel`. Never mix them in one commit.
 - **Spec:** `docs/superpowers/specs/2026-10-20-araya-daily-brief-design.md` in masterPanel. It is the authority; this plan implements it.
 - **PHP function prefix:** every new global PHP function is prefixed `araya` (matching the `upDown` prefix convention in `modules/upgrade-downgrade/sync/`). No classes — the module convention is plain functions.
-- **UTF-8 trimming:** never use `trim()` on a shop name. Shop names contain Thai text, and `trim()` is byte-based: it eats the trailing `0xA0` byte of `ภ` (U+0E20 = `E0 B8 A0`), leaving invalid UTF-8. Always use `preg_replace('/^[\s\x{00A0}]+|[\s\x{00A0}]+$/u', '', $s)`. This bug is already documented in `modules/upgrade-downgrade/tests/test_mirror_match.php`.
+- **UTF-8 trimming:** never use `trim()` on a shop name; use `preg_replace('/^[\s\x{00A0}]+|[\s\x{00A0}]+$/u', '', $s)`. Two distinct hazards, both verified in this session: (a) `trim()` with `\xA0` added to its character list IS byte-based and corrupts a Thai name ending in ภ (U+0E20 = `E0 B8 A0`) by eating the trailing `A0` byte — the bug documented in `modules/upgrade-downgrade/tests/test_mirror_match.php`; (b) default `trim()` does NOT corrupt that name, but it also does NOT strip a non-breaking space, so padded Monday values survive and break matching. A test asserting only that a plain Thai name survives default `trim()` proves nothing: test an NBSP-padded Thai name, which does fail under bare `trim()`.
 - **Timezone:** `Asia/Bangkok` everywhere. Every PHP test file and entry point starts with `date_default_timezone_set("Asia/Bangkok");`.
 - **Secrets:** the Google Chat webhook URL and the gcal admin key live only in `modules/arayaBrief/assets/config.php`, which is gitignored. Never commit a real value; never print one in output or logs.
 - **Monday board:** id `2032016220`. Column ids are listed in the spec's "Monday fields read" table and must be used verbatim.
 - **Money/minutes are never summed across currencies.** This iteration reports no revenue, so no cross-currency sum may be introduced.
 - **PHP test command:** `php modules/arayaBrief/tests/<file>.php`. Exit code 0 and a final `Failed: 0` line means pass.
-- **Python test command:** `python -m pytest tests/<file>.py -v` from the gcal repo root.
+- **Python test command:** `./.venv/Scripts/python.exe -m pytest tests/<file>.py -v` from the gcal repo root. The system Python lacks fastapi/sqlmodel — the repo venv is the only working interpreter.
 
 ---
 
@@ -105,7 +105,7 @@ def test_resolve_allocation(fixed_enabled, fixed_minutes, latest, expected):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `python -m pytest tests/test_araya_summary.py -v`
+Run: `./.venv/Scripts/python.exe -m pytest tests/test_araya_summary.py -v`
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.araya_summary'`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -168,8 +168,8 @@ def resolve_allocation(
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `python -m pytest tests/test_araya_summary.py -v`
-Expected: PASS — 16 passed
+Run: `./.venv/Scripts/python.exe -m pytest tests/test_araya_summary.py -v`
+Expected: PASS — 15 passed
 
 - [ ] **Step 5: Commit**
 
@@ -266,7 +266,7 @@ def test_unset_server_key_rejects_everything(expected):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `python -m pytest tests/test_araya_auth.py -v`
+Run: `./.venv/Scripts/python.exe -m pytest tests/test_araya_auth.py -v`
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.araya_auth'`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -305,8 +305,8 @@ def require_admin_key(provided: str | None, expected: str | None) -> None:
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `python -m pytest tests/test_araya_auth.py -v`
-Expected: PASS — 14 passed
+Run: `./.venv/Scripts/python.exe -m pytest tests/test_araya_auth.py -v`
+Expected: PASS — 11 passed
 
 - [ ] **Step 5: Commit**
 
@@ -459,7 +459,7 @@ Write the fixtures (`seeded_live_shop`, `seeded_demo_shop`, `seeded_internal_sho
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `python -m pytest tests/test_araya_endpoint.py -v`
+Run: `./.venv/Scripts/python.exe -m pytest tests/test_araya_endpoint.py -v`
 Expected: FAIL — 404 on the route (it does not exist yet)
 
 - [ ] **Step 3: Write minimal implementation**
@@ -547,11 +547,11 @@ If `BANGKOK_TZ` is not already defined in `main.py`, replace that line with `tod
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `python -m pytest tests/test_araya_endpoint.py tests/test_araya_summary.py tests/test_araya_auth.py -v`
+Run: `./.venv/Scripts/python.exe -m pytest tests/test_araya_endpoint.py tests/test_araya_summary.py tests/test_araya_auth.py -v`
 Expected: PASS — all green
 
 Then run the whole suite to confirm nothing regressed:
-Run: `python -m pytest tests/ -q`
+Run: `./.venv/Scripts/python.exe -m pytest tests/ -q`
 Expected: no new failures compared to before this task
 
 - [ ] **Step 5: Document the env var**
@@ -1281,8 +1281,10 @@ echo "== idle rule A: live >=10 days and used <15% ==\n";
 foreach ([
     ['2026-10-10', 250, 230, true,  'day 10, used 8%'],
     ['2026-10-11', 250, 230, false, 'day 9 is too early'],
-    ['2026-10-01', 250, 212, true,  'used exactly 15.2% over'],
-    ['2026-10-01', 250, 213, true,  'used 14.8%, under the line'],
+    // These two bracket the 15% threshold from either side: 38/250 is 15.2%,
+    // which is NOT under the line, and 37/250 is 14.8%, which is.
+    ['2026-10-01', 250, 212, false, 'used 15.2%, just over the line'],
+    ['2026-10-01', 250, 213, true,  'used 14.8%, just under the line'],
     ['2026-10-01', 250, 100, false, 'used 60%, busy'],
     ['2026-10-01', 1000, 900, true, 'big allocation, used 10%'],
     ['2026-10-01', 1000, 800, false, 'big allocation, used 20%'],
@@ -2176,7 +2178,7 @@ Run: `for f in modules/upgrade-downgrade/tests/test_*.php; do php "$f" >/dev/nul
 Expected: no output
 
 In the gcal repo:
-Run: `python -m pytest tests/ -q`
+Run: `./.venv/Scripts/python.exe -m pytest tests/ -q`
 Expected: no new failures
 
 - [ ] **Step 6: Commit**

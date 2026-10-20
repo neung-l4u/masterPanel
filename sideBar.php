@@ -242,6 +242,12 @@ include ('assets/api/checkSession.php');
                                 <p>Monday Report &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
                             </a>
                         </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=arayaBrief" class="nav-link <?php echo $activeMenu["lv2"] == "arayaBrief" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-sunrise"></i>
+                                <p>Araya Daily Brief</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
