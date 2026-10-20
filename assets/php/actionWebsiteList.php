@@ -1,6 +1,7 @@
 <?php
 global $db;
 session_start();
+if (empty($_SESSION['id'])) { http_response_code(401); exit; }
 include '../../assets/db/db.php';
 include "../../assets/db/initDB.php";
 $myID = $_SESSION['id'];

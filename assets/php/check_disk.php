@@ -45,7 +45,7 @@ foreach (array_keys($servers) as $svID) {
 
     // Match cPanel accounts back to the websites we watch.
     $sites = $db->query(
-        "SELECT wCPanelUser, wDomain FROM websiteList
+        "SELECT wID, wCPanelUser, wDomain FROM websiteList
           WHERE delete_at IS NULL AND svID = ? AND wCPanelUser <> '' AND wCPanelUser IS NOT NULL",
         (int) $svID
     )->fetchAll();
@@ -61,7 +61,7 @@ foreach (array_keys($servers) as $svID) {
                 PHP_URL_HOST
             ));
 
-        $monitor = ['name' => $domain, 'url' => $site['wDomain'],
+        $monitor = ['name' => $domain, 'url' => $site['wDomain'], 'source_wID' => $site['wID'],
                     'notify_email' => '', 'notify_line' => '', 'notify_webhook' => ''];
 
         $msg = renderTemplate($db, 'disk_warn', $monitor, [

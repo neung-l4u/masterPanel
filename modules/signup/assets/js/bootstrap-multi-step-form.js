@@ -2472,11 +2472,9 @@ function trimSpace(param, place) {
 function checkDomain(param) {
   const domainName = param;
   const baseUrlAU = 'https://localforyoudomains.com/domain-names/search/?domain=';
-  const baseUrlUS = 'https://www.secureserver.net/products/domain-registration/find?plid=596413&domainToCheck=';
-  //const baseUrlUS = 'https://www.godaddy.com/th-th/domainsearch/find?domainToCheck=';
+  // US/CA: static reseller login link (set in index.php), no domain search param
 
   $('#domainHelpAU').find('a').attr('href', baseUrlAU + domainName);
-  $('#domainHelpUS').find('a').attr('href', baseUrlUS + domainName);
 }//checkDomain
 
 $("#byAgent").change(function(){

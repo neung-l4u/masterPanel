@@ -51,13 +51,19 @@ $productName     = trim($_POST['product_name']      ?? '');
 $billingDate     = trim($_POST['billing_date']      ?? date('Y-m-d'));
 $mondayItemId    = trim($_POST['monday_item_id']    ?? '');
 $nextChargeDateRaw = trim($_POST['next_charge_date'] ?? '');
+// รอบฟรีจากโปรโมชั่น (เช่น Buy 1 Get 1 Free) → ออกใบกำกับภาษียอด 0 ตามที่บัญชีต้องการ
+$freeCycle       = ($_POST['free_cycle'] ?? '') === '1';
+if ($freeCycle) {
+    $amount = 0.0;
+}
 
 if ($email === '' || !preg_match('/^\d+$/', $mondayItemId)) {
     echo json_encode(['success' => false, 'message' => 'ต้องระบุ email และ monday_item_id']);
     exit;
 }
 
-if ($amount <= 0) {
+// ยอด 0 ได้เฉพาะเมื่อส่ง free_cycle=1 มาชัดเจน กัน mapping ใน Make พังแล้วออกบิล 0 โดยไม่ตั้งใจ
+if (!$freeCycle && $amount <= 0) {
     echo json_encode(['success' => false, 'message' => 'ต้องระบุ amount > 0']);
     exit;
 }
@@ -81,6 +87,41 @@ if (empty($custRows[0])) {
 $cust       = $custRows[0];
 $customerId = (int)$cust['id'];
 
+// --- กันออกบิลซ้ำ: รอบเดียวกัน (project item + billingDate) ออกได้ใบเดียว เผื่อ Make retry ---
+$dupRows = $db->query(
+    'SELECT i.`id`, i.`invoiceID`, i.`billingSeq`, i.`amount`, r.`id` AS receipt_id
+     FROM `thInvoice` i LEFT JOIN `thReceipt` r ON r.`invoice_id` = i.`id`
+     WHERE i.`customer_id` = ? AND i.`monday_item_id` = ? AND i.`billingDate` = ? AND i.`status` != ?
+     LIMIT 1',
+    $customerId, $mondayItemId, $billingDate, 'cancelled'
+)->fetchAll();
+if (!empty($dupRows[0])) {
+    $dup = $dupRows[0];
+    $baseUrl = 'https://report.localforyou.com';
+    echo json_encode([
+        'success' => true,
+        'duplicate' => true,
+        'message' => 'Invoice for this billing date already exists',
+        'pulse_name' => $pulseName,
+        'monday_item_id' => $mondayItemId,
+        'customer_id' => $customerId,
+        'customer_name' => $cust['name'],
+        'customer_email' => $cust['email'],
+        'invoice_id' => (int)$dup['id'],
+        'invoiceID' => $dup['invoiceID'],
+        'receipt_id' => (int)$dup['receipt_id'],
+        'receiptID' => $dup['invoiceID'],
+        'billingSeq' => (int)$dup['billingSeq'],
+        'billing_date' => $billingDate,
+        'next_charge_date' => $nextChargeDateRaw,
+        'amount' => (float)$dup['amount'],
+        'currency' => 'THB',
+        'slip_form_url' => $baseUrl . '/modules/customerMailUpSlip/index.php?invoice_id=' . (int)$dup['id'],
+        'receipt_url' => $baseUrl . '/pages/receiptTH.php?invoice_id=' . (int)$dup['id'],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 // --- หา billingSeq ถัดไป ---
 $seqRows = $db->query(
     'SELECT MAX(`billingSeq`) AS maxSeq FROM `thInvoice` WHERE `customer_id` = ?',
@@ -94,7 +135,8 @@ $invoiceID = $cust['customerCode'] . '-' . str_pad($nextSeq, 4, '0', STR_PAD_LEF
 $gross    = $amount;
 $net      = round($gross / 1.07, 2);
 $vat      = round($gross - $net, 2);
-$withhold = round($net * 0.03, 2);
+// หัก ณ ที่จ่าย 3% เฉพาะนิติบุคคล ตามกฎเดียวกับฟอร์ม signup (modules/signup/assets/js/ajaxFunction.js)
+$withhold = ($cust['type'] ?? '') === 'นิติบุคคล' ? round($net * 0.03, 2) : 0.0;
 $netPay   = round($gross - $withhold, 2);
 $thBathIn = convertToBahtText($netPay);
 
@@ -109,7 +151,9 @@ $billingDateThai = date('d/m/Y', strtotime($billingDate));
 $productItems = $productName !== '' ? [[
     'product' => $productName,
     'qyt'     => '1',
-    'amount'  => number_format($gross, 2, '.', ''),
+    // amount = ราคาก่อน VAT, fullamount = ราคารวม VAT (รูปแบบเดียวกับใบจาก signup)
+    'amount'     => number_format($net, 2, '.', ''),
+    'fullamount' => number_format($gross, 2, '.', ''),
 ]] : [];
 
 $productJson = json_encode([
@@ -142,11 +186,11 @@ $db->query(
 );
 $newInvoiceId = (int)$db->lastInsertId();
 
-// --- INSERT thReceipt (status = pending รอลูกค้าส่งสลิป) ---
+// --- INSERT thReceipt (pending รอลูกค้าส่งสลิป / รอบฟรีไม่ต้องจ่าย → confirmed ทันที) ---
 $thBathRe = convertToBahtText($netPay);
 $db->query(
-    'INSERT INTO `thReceipt`(`invoice_id`, `receiptID`, `amount_paid`, `thBathRe`, `status`) VALUES (?,?,?,?,?)',
-    $newInvoiceId, $invoiceID, $netPay, $thBathRe, 'pending'
+    'INSERT INTO `thReceipt`(`invoice_id`, `receiptID`, `amount_paid`, `thBathRe`, `confirmed_by`, `status`) VALUES (?,?,?,?,?,?)',
+    $newInvoiceId, $invoiceID, $netPay, $thBathRe, $freeCycle ? 'promotion' : null, $freeCycle ? 'confirmed' : 'pending'
 );
 $receiptId = (int)$db->lastInsertId();
 
@@ -175,7 +219,8 @@ echo json_encode([
     'next_charge_date' => $nextChargeDateRaw,
     'amount' => $netPay,
     'currency' => 'THB',
-    'status' => 'pending',
+    'free_cycle' => $freeCycle,
+    'status' => $freeCycle ? 'confirmed' : 'pending',
     'slip_form_url' => $baseUrl . '/modules/customerMailUpSlip/index.php?invoice_id=' . $newInvoiceId,
     'receipt_url' => $baseUrl . '/pages/receiptTH.php?invoice_id=' . $newInvoiceId,
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

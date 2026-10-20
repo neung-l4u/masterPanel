@@ -42,6 +42,9 @@ const DASHBOARD_TAB = 'dashboard';
 const CURRENT_STAGES = ['Completed', 'Cancellation Req', 'Pause', 'Suspend'];
 const MONDAY_BOARDS = ['AU' => '1943203246', 'NZ' => '1943203264', 'UK' => '1943203305', 'US' => '1940392927', 'TH' => '1943203205', 'CA' => '1943203287'];
 const MONDAY_COLS = ['stage3', 'color1', 'domain_name', 'website', 'text67'];
+const PIPELINE_BOARD = '5029892180';   // IT : Website Tasks (New)
+const PIPELINE_COLS = ['status' => 'color_mm58m4mk', 'due' => 'date_mm58d58r', 'qt' => 'boolean_mm58vj6m', 'brief' => 'link_mm58qk0e', 'task' => 'color_mm58jka'];   // Site Status, Due date, IT QT Web, Brief, Status (task)
+const PIPELINE_ACTIVE_GROUPS = ['New Request', 'Task Queue', 'Working On It'];
 // Links that are not the shop's own domain (social pages, third-party ordering/booking hosts).
 const NOT_A_SHOP_DOMAIN = '/facebook|instagram|google|foodbooking|gloriafood|tiktok|yelp|ubereats|doordash|menulog|localforyou\.com$|toasttab|vagaro|squareup|spoton|chowbus|glossgenius|blizzfull|smiledining|acuityscheduling|fresha\.com$|linktr\.ee|wixsite\.com$/';
 const CLOUDFLARE_PREFIXES = ['104.16.', '104.17.', '104.18.', '104.19.', '104.20.', '104.21.', '104.22.', '104.23.', '104.24.', '104.25.',
@@ -120,17 +123,19 @@ function sheet_read($name) {
 }
 
 // ---------------------------------------------------------------- Sources
+function monday_call($token, $q) {
+    for ($i = 0; $i < 3; $i++) {
+        [$code, $r] = http_json('https://api.monday.com/v2', [CURLOPT_POST => 1, CURLOPT_POSTFIELDS => json_encode(['query' => $q]),
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json', "Authorization: $token", 'API-Version: 2024-10']]);
+        if ($code === 200 && empty($r['errors'])) return $r['data'];
+        sleep(5);
+    }
+    throw new RuntimeException('monday API failed');
+}
+
 function monday_projects($token) {
     $cv = 'id name column_values(ids: ' . json_encode(MONDAY_COLS) . ') { id text }';
-    $call = function ($q) use ($token) {
-        for ($i = 0; $i < 3; $i++) {
-            [$code, $r] = http_json('https://api.monday.com/v2', [CURLOPT_POST => 1, CURLOPT_POSTFIELDS => json_encode(['query' => $q]),
-                CURLOPT_HTTPHEADER => ['Content-Type: application/json', "Authorization: $token", 'API-Version: 2024-10']]);
-            if ($code === 200 && empty($r['errors'])) return $r['data'];
-            sleep(5);
-        }
-        throw new RuntimeException('monday API failed');
-    };
+    $call = fn($q) => monday_call($token, $q);
     $out = [];
     foreach (MONDAY_BOARDS as $cc => $board) {
         $page = $call("{ boards(ids:[$board]) { items_page(limit:500) { cursor items { $cv } } } }")['boards'][0]['items_page'];
@@ -146,6 +151,44 @@ function monday_projects($token) {
         }
     }
     return $out;
+}
+
+// Websites not live yet on the IT : Website Tasks board, with how late the draft is.
+// Due date = deadline for sending the draft. A draft counts as sent when an update says "draft is now finished" or "Website Draft version"
+// (the update also holds logins, so only its date is kept) or the IT QT Web box is ticked.
+function monday_pipeline($token) {
+    $cv = 'id name group { title } column_values(ids: ' . json_encode(array_values(PIPELINE_COLS)) . ') { id text }';
+    $page = monday_call($token, '{ boards(ids:[' . PIPELINE_BOARD . "]) { items_page(limit:500) { cursor items { $cv } } } }")['boards'][0]['items_page'];
+    $items = $page['items'];
+    while (!empty($page['cursor'])) {
+        $page = monday_call($token, '{ next_items_page(limit:500, cursor:"' . $page['cursor'] . "\") { cursor items { $cv } } }")['next_items_page'];
+        $items = array_merge($items, $page['items']);
+    }
+    // A shop can have a second item with the same name (King Thai Massage: one in New Request, one Online in
+    // Completion tasks); when any copy is Online the site is live, so the others are not listed.
+    $live = [];
+    foreach ($items as $it) foreach ($it['column_values'] as $c) if ($c['id'] === PIPELINE_COLS['status'] && $c['text'] === 'Online') $live[$it['name']] = 1;
+    $out = [];
+    foreach ($items as $it) {
+        if (isset($live[$it['name']])) continue;
+        $v = array_column($it['column_values'], 'text', 'id');
+        $st = (string) $v[PIPELINE_COLS['status']];
+        $active = in_array($it['group']['title'], PIPELINE_ACTIVE_GROUPS, true);
+        // active groups: anything not live yet (blank = not started); other groups (Completion, Hold): only Draft / Pre Live
+        if ((string) $v[PIPELINE_COLS['brief']] === '') continue;   // only website builds (they have a Brief), not edit tasks
+        if (!(in_array($st, ['Draft', 'Pre Live'], true) || ($active && in_array($st, ['', 'Wait shop owner'], true)))) continue;
+        $out[$it['id']] = ['id' => $it['id'], 'name' => $it['name'], 'group' => $it['group']['title'], 'status' => $st ?: 'Not started',
+            'due' => (string) $v[PIPELINE_COLS['due']], 'qt' => $v[PIPELINE_COLS['qt']] !== '', 'task' => (string) $v[PIPELINE_COLS['task']], 'draft_sent' => ''];
+    }
+    foreach (array_chunk(array_keys($out), 50) as $ids) {
+        foreach (monday_call($token, '{ items(ids:[' . implode(',', $ids) . ']) { id updates(limit:100) { created_at text_body } } }')['items'] as $it) {
+            foreach ($it['updates'] as $u) if (preg_match('/draft is now finished|website draft version/i', $u['text_body'])) {
+                $d = substr($u['created_at'], 0, 10);
+                if ($out[$it['id']]['draft_sent'] === '' || $d < $out[$it['id']]['draft_sent']) $out[$it['id']]['draft_sent'] = $d;   // first time it was sent
+            }
+        }
+    }
+    return array_values($out);
 }
 
 function dreamscape_domains() {
@@ -168,6 +211,13 @@ function norm_domain($x) {
     $x = rtrim(preg_replace('/^www\./', '', $x), '.');
     if (!preg_match('/^[a-z0-9.-]+\.[a-z]{2,}$/', $x) || preg_match(NOT_A_SHOP_DOMAIN, $x)) return '';
     return $x;
+}
+
+// The site we actually host for a websiteList row. Booking sites live on *.localforyoubooking.com while
+// wDomain holds the shop's own main domain (often a site we do not host), so scan the booking host instead.
+function site_host($w) {
+    $wp = host_of($w['wWordpressURL'] ?? '');
+    return str_ends_with($wp, '.localforyoubooking.com') ? $wp : host_of($w['wDomain']);
 }
 
 function host_of($x) { return preg_replace('/^www\./', '', preg_split('#[/?\#:]#', preg_replace('#^[a-z]+://#', '', strtolower(trim((string) $x))))[0]); }
@@ -277,6 +327,7 @@ function run_scan() {
     $today = date('Y-m-d');
 
     logmsg('monday…');      $projects = monday_projects($CFG['monday_token']);
+    logmsg('pipeline…');    $pipeline = monday_pipeline($CFG['monday_token']);
     logmsg('dreamscape…');  $ds = dreamscape_domains();
     $servers = []; $serverByIp = []; $serverName = [];
     foreach ($db->query("SELECT svID, svName, svIP FROM L4UServers WHERE svStatus = 1")->fetchAll() as $s) {
@@ -286,7 +337,7 @@ function run_scan() {
     }
     // Extra IPs a server answers on that L4UServers does not hold (e.g. Server 4 sites resolve to .48, the table has .49).
     foreach ($CFG['server_ip_aliases'] ?? [] as $ip => $no) $serverByIp[$ip] = $no;
-    $wl = $db->query("SELECT wID, wProject, wDomain, wLiveStatus, svID FROM websiteList WHERE delete_at IS NULL")->fetchAll();
+    $wl = $db->query("SELECT wID, wProject, wDomain, wWordpressURL, wLiveStatus, wSystemVoucher, wIndustry, svID FROM websiteList WHERE delete_at IS NULL")->fetchAll();
 
     // customers = current-stage projects with at least one usable domain
     $customers = [];
@@ -297,7 +348,7 @@ function run_scan() {
     }
     $hosts = [];
     foreach ($customers as $c) foreach ($c['domains'] as $d) $hosts[$d] = 1;
-    foreach ($wl as $w) if ($w['wLiveStatus'] !== 'Draft' && ($h = host_of($w['wDomain']))) $hosts[$h] = 1;
+    foreach ($wl as $w) if ($w['wLiveStatus'] !== 'Draft' && ($h = site_host($w))) $hosts[$h] = 1;
     logmsg('scanning ' . count($hosts) . ' sites…');
     $scan = scan_sites(array_keys($hosts));
     // One more pass for anything that did not answer 200: a slow or briefly busy site should not be reported offline.
@@ -312,7 +363,7 @@ function run_scan() {
     $who = whois_lookup(array_keys($outside));
 
     $wlByHost = [];
-    foreach ($wl as $w) if ($h = host_of($w['wDomain'])) $wlByHost[$h] = $w;
+    foreach ($wl as $w) if ($h = site_host($w)) $wlByHost[$h] = $w;
 
     // ---- one primary domain per customer
     $rows = [];
@@ -343,19 +394,20 @@ function run_scan() {
     // ---- our WordPress (websiteList = sites on A2)
     $wp = [];
     foreach ($wl as $w) {
-        $h = host_of($w['wDomain']); $f = $facts[$h] ?? []; $s = $scan[$h] ?? ['http' => 0];
+        $h = site_host($w); $f = $facts[$h] ?? []; $s = $scan[$h] ?? ['http' => 0];
         $ok = $s['http'] === 200 && !empty($f['wp']) && empty($f['holding']);
         $st = $w['wLiveStatus'];
         // A subdomain is told by its name (bankstown.thaiparagon.com.au), not by the websiteList status:
         // branch sites are often saved as "Live", and a few main domains are saved as "Subdomain".
         $sub = $h !== '' && registrable($h) !== $h;
         // Transferred / Redirect sites are no longer hosted by us, so they are listed but not counted.
-        $state = in_array($st, ['Draft', 'Pre Live'], true) ? 'Draft'
-               : (in_array($st, ['Transferred', 'Redirect'], true) ? $st
-               : (!empty($f['challenge']) ? 'Not checked' : (in_array($st, ['Live', 'Subdomain'], true) && $ok ? 'Online' : 'Offline')));
-        $res = $sub && in_array($state, ['Online', 'Offline'], true) ? "Subdomain " . strtolower($state) : $state;
+        // Unpublished sites show a holding 404 on purpose (awaiting payment), so they are not "down".
+        $state = in_array($st, ['Draft', 'Pre Live', 'Transferred', 'Redirect', 'Unpublished'], true) ? $st
+               : (!empty($f['challenge']) ? 'Not checked' : (in_array($st, ['Live', 'Subdomain'], true) && $ok ? 'Online' : 'Down'));
+        $res = $sub && in_array($state, ['Online', 'Down'], true) ? "Subdomain " . strtolower($state) : $state;
         $wp[] = $w + ['host' => $h, 'result' => $res, 'server' => $servers[$w['svID']] ?? '', 'http' => $s['http'],
-            'amelia' => !empty($f['amelia']), 'gf' => !empty($f['gf_button']), 'cw' => !empty($f['cw_button'])];
+            'amelia' => !empty($f['amelia']), 'gf' => !empty($f['gf_button']), 'cw' => !empty($f['cw_button']),
+            'voucher' => !empty($w['wSystemVoucher'])];
     }
 
     // ---- counts
@@ -363,21 +415,48 @@ function run_scan() {
     $online = array_filter($wp, fn($w) => $w['result'] === 'Online');
     $subOn = array_filter($wp, fn($w) => $w['result'] === 'Subdomain online');
     $byCountry = []; foreach (array_keys(MONDAY_BOARDS) as $cc) $byCountry[$cc] = $cnt($rows, fn($r) => $r['country'] === $cc);
-    $byServer = []; foreach ($online as $w) $byServer[$w['server']] = ($byServer[$w['server']] ?? 0) + 1;
-    $subByServer = []; foreach ($subOn as $w) $subByServer[$w['server']] = ($subByServer[$w['server']] ?? 0) + 1;
-    foreach (array_keys($subByServer) as $k) $byServer[$k] ??= 0;   // a server with only subdomains still gets a line
-    ksort($byServer);
     $n = [
         'domains' => count($rows), 'dreamscape' => $cnt($rows, fn($r) => $r['reg'] === 'Dreamscape'),
         'godaddy' => $cnt($rows, fn($r) => $r['reg'] === 'GoDaddy'), 'other' => $cnt($rows, fn($r) => $r['reg'] === 'Other'),
         'expiring' => $cnt($rows, fn($r) => strpos($r['dstate'], 'Expires') === 0), 'expired' => $cnt($rows, fn($r) => $r['dstate'] === 'Expired'),
-        'wp_online' => count($online), 'wp_offline' => $cnt($wp, fn($w) => $w['result'] === 'Offline'), 'wp_draft' => $cnt($wp, fn($w) => $w['result'] === 'Draft'),
+        'wp_online' => count($online), 'wp_draft' => $cnt($wp, fn($w) => $w['result'] === 'Draft'), 'wp_prelive' => $cnt($wp, fn($w) => $w['result'] === 'Pre Live'),
+        'wp_down' => $cnt($wp, fn($w) => $w['result'] === 'Down'), 'wp_unpublished' => $cnt($wp, fn($w) => $w['result'] === 'Unpublished'),
         'amelia' => $cnt($online, fn($w) => $w['amelia']), 'amelia_sub' => $cnt($subOn, fn($w) => $w['amelia']),
         'gf_button' => $cnt($online, fn($w) => $w['gf']), 'cw_button' => $cnt($online, fn($w) => $w['cw']),
+        'voucher' => $cnt($online, fn($w) => $w['voucher']),   // from the websiteList flag: no HTML fingerprint for vouchers yet
         'gloriafood' => $cnt($rows, fn($r) => $r['system'] === 'GloriaFood'), 'cloudwaitress' => $cnt($rows, fn($r) => $r['system'] === 'CloudWaitress'),
-        'sub_online' => count($subOn), 'sub_offline' => $cnt($wp, fn($w) => $w['result'] === 'Subdomain offline'),
+        'sub_online' => count($subOn), 'sub_offline' => $cnt($wp, fn($w) => $w['result'] === 'Subdomain down'),
         'not_checked' => $cnt($wp, fn($w) => $w['result'] === 'Not checked'),
     ];
+    // shop type from websiteList.wIndustry (tb_shopType: 1 Restaurant, 2 Massage), over the sites counted in WORDPRESS
+    $counted = array_filter($wp, fn($w) => !in_array($w['result'], ['Transferred', 'Redirect'], true));
+    $n['type_restaurant'] = $cnt($counted, fn($w) => (int) $w['wIndustry'] === 1);
+    $n['type_massage'] = $cnt($counted, fn($w) => (int) $w['wIndustry'] === 2);
+    $n['type_not_set'] = $cnt($counted, fn($w) => empty($w['wIndustry']));
+    $n['type_other'] = count($counted) - $n['type_restaurant'] - $n['type_massage'] - $n['type_not_set'];
+    // ---- draft deadlines (IT : Website Tasks board): Due date is when the draft must be sent
+    $days = fn($from, $to) => (int) round((strtotime($to) - strtotime($from)) / 86400);
+    $dm = fn($d) => date(substr($d, 0, 4) === date('Y') ? 'd/m' : 'd/m/y', strtotime($d));   // year only when it is not this year
+    // Due date = deadline for the draft, so a site is overdue when the draft was not sent by then:
+    // not sent and the date has passed, or sent after the date. Sent drafts are listed by how long they
+    // have waited to go live; drafts not sent and not late yet are "upcoming".
+    $noDraftLate = []; $sent = []; $upcoming = []; $goingLive = [];
+    foreach (sort_by($pipeline, fn($p) => $p['due'] ?: '9999') as $p) {
+        $p['name'] = preg_replace('/^WEB-[\d-]*\s*/', '', $p['name']);
+        $sentOn = $p['draft_sent'];   // '' when no draft update was found
+        $p['late'] = $p['due'] === '' ? 0 : max(0, $days($p['due'], $sentOn ?: $today));
+        // the task Status "Queue go to Live" = the shop approved and IT is putting the site live now
+        if ($p['task'] === 'Queue go to Live') { $p['waiting'] = $sentOn !== '' ? $days($sentOn, $today) : null; $goingLive[] = $p; }
+        elseif ($sentOn !== '' || $p['qt']) { $p['waiting'] = $sentOn !== '' ? $days($sentOn, $today) : null; $sent[] = $p; }
+        elseif ($p['late']) $noDraftLate[] = $p;
+        else $upcoming[] = $p;
+    }
+    usort($sent, fn($x, $y) => ($y['waiting'] ?? -1) <=> ($x['waiting'] ?? -1));   // longest wait first
+    $overdue = count($noDraftLate) + count(array_filter(array_merge($sent, $goingLive), fn($p) => $p['late'] > 0));
+    $n['pipeline'] = count($pipeline); $n['pipeline_overdue'] = $overdue;
+
+    // wp_offline keeps its old meaning (down + unpublished) for the dashboard chart and annual_summary.
+    $n['wp_offline'] = $n['wp_down'] + $n['wp_unpublished'];
 
     // ---- detail sheets
     $updated = 'Updated ' . date('d/m/Y H:i');
@@ -389,9 +468,9 @@ function run_scan() {
     $exp = array_filter($rows, fn($r) => $r['dstate'] === 'Expired' || strpos($r['dstate'], 'Expires') === 0);
     sheet_replace('3_expiry', array_merge([['Status', 'Expiry date', 'Days left', 'Domain', 'Registrar', 'Project', 'Country', $updated]],
         array_map(fn($r) => [$r['dstate'], $r['expiry'], $r['days'], $r['domain'], $r['reg_name'], $r['project'], $r['country']], sort_by($exp, fn($r) => $r['expiry']))));
-    sheet_replace('4_wordpress', array_merge([['Result', 'websiteList status', 'Server', 'Domain', 'Project', 'HTTP', 'Amelia', 'GloriaFood button', 'CloudWaitress button', 'wID', $updated]],
+    sheet_replace('4_wordpress', array_merge([['Result', 'websiteList status', 'Server', 'Domain', 'Project', 'HTTP', 'Amelia', 'GloriaFood button', 'CloudWaitress button', 'Voucher (websiteList)', 'Shop type', 'wID', $updated]],
         array_map(fn($w) => [$w['result'], $w['wLiveStatus'], $w['server'] === '' ? '' : trim('Server ' . $w['server'] . ' ' . ($serverName[$w['server']] ?? '')), $w['host'], $w['wProject'], $w['http'],
-            $w['amelia'] ? 'Yes' : '', $w['gf'] ? 'Yes' : '', $w['cw'] ? 'Yes' : '', $w['wID']], sort_by($wp, fn($w) => $w['result'] . $w['server'] . $w['host']))));
+            $w['amelia'] ? 'Yes' : '', $w['gf'] ? 'Yes' : '', $w['cw'] ? 'Yes' : '', $w['voucher'] ? 'Yes' : '', [1 => 'Restaurant', 2 => 'Massage'][(int) $w['wIndustry']] ?? (empty($w['wIndustry']) ? 'Not set' : 'Other'), $w['wID']], sort_by($wp, fn($w) => $w['result'] . $w['server'] . $w['host']))));
     $ord = array_filter($rows, fn($r) => in_array($r['system'], ['GloriaFood', 'CloudWaitress'], true));
     sheet_replace('5_ordering', array_merge([['System', 'Domain', 'Project', 'Country', $updated]],
         array_map(fn($r) => [$r['system'], $r['domain'], $r['project'], $r['country']], sort_by($ord, fn($r) => $r['system'] . $r['domain']))));
@@ -409,32 +488,70 @@ function run_scan() {
         return ' (' . ($d > 0 ? '▲' : '▼') . abs($d) . ')';
     };
     $view = fn($sheet, $text = 'View') => '<' . sheet_url($sheet) . "|$text>";
-    $short = fn($host) => explode('.', $host)[0];          // "adayinbkk.com.au" -> "adayinbkk"
-    arsort($byCountry);
 
-    $srv = [];
-    $subTxt = fn($no) => ' | subdomain ' . ($subByServer[$no] ?? 0);
-    foreach ($byServer as $no => $v) if ($no !== '') $srv[] = '`S' . $no . ' ' . $short($serverName[$no] ?? '') . "` $v" . $subTxt($no);
-    if (isset($byServer[''])) $srv[] = "`no server set` {$byServer['']}" . $subTxt('');
+    // Layout agreed with the team lead (Oct 2026): numbered sections, "label : value (▲n)" lines.
+    $row = fn($emoji, $label, $v, $k = null) => trim("$emoji $label") . " : $v" . ($k ? $delta($k) : '');
+    $wpTotal = $n['wp_online'] + $n['wp_down'] + $n['sub_online'] + $n['sub_offline'] + $n['wp_unpublished'] + $n['wp_draft'] + $n['wp_prelive'] + $n['not_checked'];
+    $dueTxt = fn($p) => $p['due'] !== '' ? $dm($p['due']) : 'not set';
+    $numbered = function (array $items, callable $detail) {
+        $out = []; $i = 1;
+        foreach ($items as $p) $out[] = ($i++) . ". {$p['name']}\n   • " . $detail($p);
+        return $out;
+    };
+    $sentLines = $numbered($sent, fn($p) => ($p['late'] ? '🔴 ' : '') . "Status : {$p['status']} | Sent : " . ($p['draft_sent'] !== '' ? $dm($p['draft_sent']) : 'IT QT ✓')
+        . ' (Due date : ' . $dueTxt($p) . ')' . ($p['late'] ? " | Sent {$p['late']} days late" : '') . ($p['waiting'] !== null ? " | Waiting : {$p['waiting']} days" : ''));
+    $lateLines = $numbered($noDraftLate, fn($p) => "Status : {$p['status']} | Not sent (Due date : " . $dueTxt($p) . ") | Over due : {$p['late']} days");
+    $liveLines = $numbered($goingLive, fn($p) => "Status : {$p['status']} | Sent : " . ($p['draft_sent'] !== '' ? $dm($p['draft_sent']) : 'IT QT ✓')
+        . ' (Due date : ' . $dueTxt($p) . ')' . ($p['waiting'] !== null ? " | Since draft : {$p['waiting']} days" : ''));
+    $upcomingLines = $numbered($upcoming, fn($p) => "Status : {$p['status']} (Due date : " . $dueTxt($p) . ')');
+
     $sections = [
-        ['📊 *Domain & Website Report* · ' . date('d/m/Y')],
-        $n['expired'] || $n['expiring']
-            ? ['🚨 *Action needed: domain renewal*', "🔴 Expired *{$n['expired']}* · 🟠 Expires in " . EXPIRY_WARN_DAYS . " days *{$n['expiring']}*  →  " . $view('3_expiry', 'View list')]
-            : ['✅ *Nothing to action today*'],
-        ["🌐 *Domains {$n['domains']}*" . $delta('domains') . '  ' . $view('1_domains'),
-         implode(' · ', array_map(fn($cc, $v) => "$cc $v", array_keys($byCountry), $byCountry)),
-         "Dreamscape {$n['dreamscape']} · GoDaddy {$n['godaddy']} · Other {$n['other']}  " . $view('2_registrar')],
-        ['🖥 *WordPress ' . ($n['wp_online'] + $n['wp_offline'] + $n['wp_draft']) . ' · Subdomain ' . ($n['sub_online'] + $n['sub_offline']) . '*  ' . $view('4_wordpress'),
-         "🟢 Online *{$n['wp_online']}*" . $delta('wp_online') . " · ⚪ Offline {$n['wp_offline']}" . $delta('wp_offline') . " · 📝 Draft {$n['wp_draft']}",
-         "🔗 Subdomain · 🟢 Online *{$n['sub_online']}*" . $delta('sub_online') . " · ⚪ Offline {$n['sub_offline']}" . $delta('sub_offline')]
-         + ($n['not_checked'] ? [3 => "⚠️ Not checked *{$n['not_checked']}* (the host showed a bot-check page instead of the site)"] : []),
-        $srv,
-        ["Amelia {$n['amelia']} · Amelia Sub {$n['amelia_sub']} · GF button {$n['gf_button']} · CW button {$n['cw_button']}"],
-        ['🍽 *Ordering sites*  ' . $view('5_ordering'),
-         "GloriaFood {$n['gloriafood']}" . $delta('gloriafood') . " · CloudWaitress {$n['cloudwaitress']}" . $delta('cloudwaitress')],
+        '📊 *Domain & Website Report* · ' . date('d/m/Y'),
+        implode("\n", [
+            "*1. Domains (Total : {$n['domains']})*" . $delta('domains') . '  ' . $view('1_domains', 'View'),
+            '*Status*',
+            $row('🔴', 'Expired', $n['expired'], 'expired'),
+            $row('🟠', 'Expires ≤ ' . EXPIRY_WARN_DAYS . ' days', $n['expiring'], 'expiring') . '  ' . $view('3_expiry', 'Expiry list'),
+        ]),
+        implode("\n", array_merge([
+            "*2. WordPress sites (Total : $wpTotal)*  " . $view('4_wordpress', 'View'),
+            '*Categorization*',
+            $row('🍜', 'Restaurant', $n['type_restaurant'], 'type_restaurant'),
+            $row('💆', 'Massage', $n['type_massage'], 'type_massage'),
+            $row('❔', 'Not set', $n['type_not_set'], 'type_not_set'),
+            $row('🏷️', 'Other', $n['type_other'], 'type_other'),
+            '',
+            '*Sites status*',
+            $row('🟢', 'Live - online', $n['wp_online'], 'wp_online'),
+            $row('🔴', 'Live - down', $n['wp_down'], 'wp_down'),
+            $row('🔗', 'Subdomain - online', $n['sub_online'], 'sub_online'),
+            $row('🔴', 'Subdomain - down', $n['sub_offline'], 'sub_offline'),
+            $row('⏸️', 'Unpublished', $n['wp_unpublished'], 'wp_unpublished'),
+            $row('📝', 'Draft', $n['wp_draft'], 'wp_draft'),
+            $row('🚀', 'Pre Live', $n['wp_prelive'], 'wp_prelive'),
+        ], $n['not_checked'] ? [$row('⚠️', 'Not checked (bot-check)', $n['not_checked'])] : [])),
+        implode("\n", [
+            '*3. Plugin & integrations (status : on live sites)*  ' . $view('4_wordpress', 'View'),
+            $row('📅', 'Amelia', $n['amelia'], 'amelia'),
+            $row('📅', 'Amelia - subdomain', $n['amelia_sub'], 'amelia_sub'),
+            $row('🎟️', 'Voucher', $n['voucher'], 'voucher'),
+            $row('🍔', 'GloriaFood button', $n['gf_button'], 'gf_button'),
+            $row('🛒', 'CloudWaitress button', $n['cw_button'], 'cw_button'),
+            '',
+            "( Ordering platform total : GloriaFood {$n['gloriafood']}" . $delta('gloriafood') . " & CloudWaitress {$n['cloudwaitress']}" . $delta('cloudwaitress') . ' )  ' . $view('5_ordering', 'View'),
+        ]),
+        implode("\n", array_merge(
+            ["*4. Draft & Onboard status (Total : {$n['pipeline']})*  <https://local-for-you.monday.com/boards/" . PIPELINE_BOARD . '|View board>',
+             "*Status summary :* 🔴 Over due : {$n['pipeline_overdue']}" . $delta('pipeline_overdue') . ' | 🚀 Going live : ' . count($goingLive) . ' | 🟡 Draft sent : ' . count($sent) . ' | ⚪ Upcoming : ' . count($upcoming)],
+            $lateLines ? ['', '*Over due - draft not sent (Total : ' . count($lateLines) . ')*'] : [], $lateLines,
+            $liveLines ? ['', '*🚀 Going live - in progress (Total : ' . count($liveLines) . ')*'] : [], $liveLines,
+            $sentLines ? ['', '*Draft sent - Waiting to go live (Total : ' . count($sentLines) . ')*', '_Sorted by waiting time (from longest to shortest)_'] : [], $sentLines,
+            $upcomingLines ? ['', '*Upcoming draft (Total : ' . count($upcomingLines) . ')*'] : [], $upcomingLines,
+        )),
+        '📈 *' . $view('daily_summary', 'View all (dashboard)') . '*',
     ];
-    $msg = [implode("\n--------------------------------------------\n", array_map(fn($lines) => implode("\n", $lines), $sections))];
-    $message = implode("\n", $msg);
+    $message = implode("\n\n", $sections);
+
     if (DRY_RUN) { echo $message, "\n"; return; }
 
     // ---- daily_summary: one row per day (re-running the same day replaces that day's row)
@@ -472,17 +589,23 @@ function run_send() {
     global $CFG;
     $hist = sheet_read('daily_summary');
     $last = end($hist);
-    $msgCol = array_search('message', $hist[0] ?? [], true);
-    if (count($hist) < 2 || $last[0] !== date('Y-m-d') || $msgCol === false || empty($last[$msgCol])) {
-        // Report what was observed, not why.
-        $text = 'Domain report: no scan result for ' . date('d/m/Y') . ' (latest row: ' . ($last[0] ?? 'none') . ')';
-    } else {
-        $text = $last[$msgCol];
+    $ok = true;
+    // every config key that starts with chat_webhook gets the same report (add a space = add a key, no code change)
+    foreach (array_filter(array_keys($CFG), fn($k) => str_starts_with($k, 'chat_webhook')) as $hook) {
+        if (empty($CFG[$hook])) { logmsg("chat $hook: not set in config/domain_report.php, skipped"); continue; }
+        $col = array_search('message', $hist[0] ?? [], true);
+        if (count($hist) < 2 || $last[0] !== date('Y-m-d') || $col === false || empty($last[$col])) {
+            // Report what was observed, not why.
+            $text = 'Domain report: no scan result for ' . date('d/m/Y') . ' (latest row: ' . ($last[0] ?? 'none') . ')';
+        } else {
+            $text = $last[$col];
+        }
+        [$code] = http_json($CFG[$hook], [CURLOPT_POST => 1, CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=UTF-8'],
+            CURLOPT_POSTFIELDS => json_encode(['text' => $text], JSON_UNESCAPED_UNICODE)]);
+        logmsg("chat $hook HTTP $code");
+        $ok = $ok && $code === 200;
     }
-    [$code] = http_json($CFG['chat_webhook'], [CURLOPT_POST => 1, CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=UTF-8'],
-        CURLOPT_POSTFIELDS => json_encode(['text' => $text], JSON_UNESCAPED_UNICODE)]);
-    logmsg("chat HTTP $code");
-    if ($code !== 200) exit(1);
+    if (!$ok) exit(1);
 }
 
 // ---------------------------------------------------------------- Dashboard (one-off: php domain_report.php dashboard)
