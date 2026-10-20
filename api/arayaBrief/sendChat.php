@@ -72,15 +72,18 @@ try {
     ]);
     $response = curl_exec($ch);
     $status   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlErr  = curl_error($ch);
+    $curlErrNo = curl_errno($ch);
     curl_close($ch);
 
     if ($response === false || $status < 200 || $status >= 300) {
-        // Never log the webhook URL: it is the credential. curl's own error
-        // text can embed the host, so only the HTTP status and errno-free
-        // category are reported.
+        // Never log the webhook URL: it is the credential, and curl's error
+        // TEXT can embed the host. The errno is just a number, so it carries
+        // no secret while still saying which failure this was -- 6 is DNS, 7
+        // is connection refused, 28 is a timeout. Without it every outage
+        // reads identically as "HTTP 0" and nobody can tell them apart.
         throw new RuntimeException(
-            "Chat webhook returned HTTP {$status}" . ($response === false ? ' (request failed)' : '')
+            "Chat webhook returned HTTP {$status}"
+            . ($response === false ? " (curl errno {$curlErrNo})" : '')
         );
     }
 
@@ -90,7 +93,8 @@ try {
 
 } catch (Throwable $e) {
     $why = $e->getMessage();
-    error_log("[arayaBrief] {$today} failed: {$why}");
+    // Only echo: cron redirects stdout to the log, so error_log would write
+    // the same sentence a second time into the same file.
     try {
         global $db;
         arayaBriefLogSend($db, $today, 'failed', $why);

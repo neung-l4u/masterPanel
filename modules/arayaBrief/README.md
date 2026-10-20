@@ -67,4 +67,4 @@ No row for the date at all = cron did not run or DB was unreachable.
 | Not configured | `Missing config: ...` or `Config ... is invalid (missing: <keys>)` - fix `config.php` |
 | Monday down | `Monday request failed (curl error N)`, `Monday returned HTTP N`, `Monday returned a GraphQL error` - no brief is posted; retry later |
 | gcal down | Does **not** fail the run: the brief posts from Monday only and says gcal was unavailable. The cause appears only in the cron log as `gcal fetch failed: ...`; HTTP 401/403 there means `gcal_admin_key` does not match `ARAYA_ADMIN_KEY`. |
-| Chat webhook | `Chat webhook returned HTTP N` (0 = could not connect) - check the webhook URL |
+| Chat webhook | `Chat webhook returned HTTP N`. HTTP 0 means the request never completed and carries a curl errno: 6 = DNS, 7 = refused, 28 = timeout, 35/60 = TLS. A 404 usually means the webhook was revoked in the space |
