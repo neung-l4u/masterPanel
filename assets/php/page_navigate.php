@@ -341,6 +341,14 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Revenue Report";
         break;
+    case "arayaBrief":
+        $showPage = "arayaBrief.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "arayaBrief";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Araya Daily Brief";
+        break;
     case "reportDeliveries":
         $showPage = "reportDeliveries.php";
         $activeMenu["lv1"] = "report";
