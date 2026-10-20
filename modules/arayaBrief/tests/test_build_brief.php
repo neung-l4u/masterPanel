@@ -108,6 +108,8 @@ foreach (['Waiting to cancel', 'Canceled', 'Cancel Before LIVE'] as $status) {
     $b = arayaBuildBrief(res([mk(['live_status' => $status], ['days_until_refresh' => 5, 'remaining_minutes' => 10])]), TODAY);
     test("{$status} is not an upsell target", count($b['upsell']) === 0);
     test("{$status} exclusion is explained", count($b['upsellExcluded']) === 1);
+    test("{$status} exclusion carries a reason",
+         count($b['upsellExcluded']) === 1 && is_string($b['upsellExcluded'][0]['reason']) && $b['upsellExcluded'][0]['reason'] !== '');
 }
 
 $b = arayaBuildBrief(res([mk([], ['billing_day' => 0, 'days_until_refresh' => null, 'remaining_minutes' => 10])]), TODAY);
@@ -126,6 +128,8 @@ foreach ([
     ['2026-10-01', 250, 100, false, 'used 60%, busy'],
     ['2026-10-01', 1000, 900, true, 'big allocation, used 10%'],
     ['2026-10-01', 1000, 800, false, 'big allocation, used 20%'],
+    ['2026-10-01', 200, 170, false, 'exactly 15% used is not under the line'],
+    ['2026-10-01', 250, 250, true,  'fraction 0 is valid and idle'],
 ] as [$liveDate, $alloc, $remaining, $want, $case]) {
     $b = arayaBuildBrief(res([mk(['live_date' => $liveDate], ['allocation' => $alloc, 'remaining_minutes' => $remaining])]), TODAY);
     test("idleNew {$case}", (count($b['idleNew']) === 1) === $want);
@@ -135,6 +139,24 @@ $b = arayaBuildBrief(res([mk(['live_date' => '2026-01-01'], ['allocation' => 0, 
 test("zero allocation is never divided by", count($b['idleNew']) === 0);
 test("zero allocation is a data gap",
      count(array_filter($b['gaps'], fn($g) => $g['kind'] === 'no_allocation')) === 1);
+
+// A missing key and a null allocation behave like zero.
+foreach (['missing key' => false, 'null' => true] as $label => $setNull) {
+    $m = mk(['live_date' => '2026-01-01'], ['remaining_minutes' => 10]);
+    if ($setNull) { $m['gcal']['allocation'] = null; } else { unset($m['gcal']['allocation']); }
+    $b = arayaBuildBrief(res([$m]), TODAY);
+    test("{$label} allocation is never divided by", count($b['idleNew']) === 0);
+    test("{$label} allocation is a data gap",
+         count(array_filter($b['gaps'], fn($g) => $g['kind'] === 'no_allocation')) === 1);
+}
+
+// Balance above allocation (top-up): excluded with a gap, not clamped or flagged.
+$b = arayaBuildBrief(res([mk(['live_date' => '2026-01-01'], ['allocation' => 250, 'remaining_minutes' => 300])]), TODAY);
+test("a topped-up shop is not reported idle", count($b['idleNew']) === 0);
+$gp = array_values(array_filter($b['gaps'], fn($g) => $g['kind'] === 'no_allocation'));
+test("a topped-up shop raises no_allocation", count($gp) === 1);
+test("the top-up gap mentions both numbers",
+     count($gp) === 1 && strpos($gp[0]['detail'], '300') !== false && strpos($gp[0]['detail'], '250') !== false);
 
 echo "== idle rule C: latest period under 30% of the prior three ==\n";
 $quiet = [
@@ -177,9 +199,26 @@ $b = arayaBuildBrief(res([mk(['live_date' => '2026-01-01'], ['allocation' => 250
 test("a shop matching A and C appears only under C",
      count($b['idleQuiet']) === 1 && count($b['idleNew']) === 0);
 
+// A malformed closed period makes rule C not evaluable rather than shifting onto older data.
+$bad = $quiet; unset($bad[1]['used_minutes']);
+$b = arayaBuildBrief(res([mk(['live_date' => '2026-01-01'], ['closed_periods' => $bad])]), TODAY);
+test("a malformed closed period is not evaluated by rule C", count($b['idleQuiet']) === 0);
+
 echo "== idle rules only consider live shops ==\n";
 $b = arayaBuildBrief(res([mk(['live_status' => 'Waiting to cancel', 'live_date' => '2026-01-01'], ['allocation' => 250, 'remaining_minutes' => 250])]), TODAY);
 test("a cancelling shop is not an idle finding", count($b['idleNew']) === 0);
+
+// A LIVE shop with unusable minutes raises a gap but is still listed.
+foreach (['null' => null, 'non-numeric' => 'abc'] as $label => $val) {
+    $b = arayaBuildBrief(res([mk([], ['remaining_minutes' => $val])]), TODAY);
+    test("{$label} remaining minutes still lists the shop with null minutes",
+         count($b['live']) === 1 && $b['live'][0]['remaining_minutes'] === null);
+    test("{$label} remaining minutes raises no_remaining_minutes",
+         count(array_filter($b['gaps'], fn($g) => $g['kind'] === 'no_remaining_minutes' && $g['name'] !== '' && $g['detail'] !== '')) === 1);
+}
+$b = arayaBuildBrief(res([mk(['live_status' => 'Waiting to cancel'], ['remaining_minutes' => null])]), TODAY);
+test("no_remaining_minutes is raised for LIVE shops only",
+     count(array_filter($b['gaps'], fn($g) => $g['kind'] === 'no_remaining_minutes')) === 0);
 
 echo "== setup section ==\n";
 $b = arayaBuildBrief(res([
@@ -220,11 +259,30 @@ test("unmatched gcal shop is a gap",
 test("every gap names a shop",
      count(array_filter($b['gaps'], fn($g) => ($g['name'] ?? '') === '')) === 0);
 
+// Thai name ending in U+0E20 must survive byte-for-byte (bare trim() corrupts it).
+$thai = "ร้านลาภ";
+$b = arayaBuildBrief(res([mk(['name' => $thai])]), TODAY);
+test("a Thai name ending in ภ survives byte-for-byte", $b['live'][0]['name'] === $thai);
+$b = arayaBuildBrief(res([mk(['name' => "  {$thai} "])]), TODAY);
+test("a padded Thai name is trimmed without corruption", $b['live'][0]['name'] === $thai);
+// NBSP padding (U+00A0 = C2 A0) is stripped by the safe trim; bare trim() leaves it.
+$b = arayaBuildBrief(res([mk(['name' => "\u{00A0}{$thai}\u{00A0}"])]), TODAY);
+test("an NBSP-padded Thai name is trimmed exactly", $b['live'][0]['name'] === $thai);
+
+// A status outside every bucket is a gap but still counts in the total.
+$b = arayaBuildBrief(res([mk(['live_status' => 'Mystery'])]), TODAY);
+test("unknown status raises unknown_status",
+     count(array_filter($b['gaps'], fn($g) => $g['kind'] === 'unknown_status')) === 1);
+test("unknown status still counts toward the total", $b['overview']['total'] === 1);
+
 echo "== empty input ==\n";
 $b = arayaBuildBrief(res([]), TODAY);
 test("no shops is not an error", $b['overview']['total'] === 0);
 test("sections are empty arrays, not null",
      $b['live'] === [] && $b['upsell'] === [] && $b['gaps'] === []);
+foreach (['live', 'upsell', 'upsellExcluded', 'idleNew', 'idleQuiet', 'setup', 'cancelling', 'gaps'] as $k) {
+    test("section '{$k}' is present and an array", array_key_exists($k, $b) && is_array($b[$k]));
+}
 test("generated_for is the given day", $b['generated_for'] === TODAY);
 
 echo "\nPassed: {$passed}  Failed: {$failed}\n";

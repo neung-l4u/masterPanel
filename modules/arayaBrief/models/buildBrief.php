@@ -105,7 +105,11 @@ function arayaQuietFinding(array $periods): ?array
         $end = arayaClean($p['period_end'] ?? '');
         $used = arayaNum($p['used_minutes'] ?? null);
         if ($end === '' || $used === null) {
-            continue;
+            // A malformed closed period makes the history untrustworthy. Skipping it
+            // would shift the comparison onto older periods and judge the shop on stale
+            // data, so the shop is treated as not evaluable. No gap is raised; this
+            // reuses the "not flagged" outcome of the other not-evaluable cases.
+            return null;
         }
         $rows[] = ['end' => $end, 'used' => $used];
     }
@@ -189,6 +193,9 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
             if ($lifespan === null) {
                 arayaGap($gaps, 'no_live_date', $name, 'Live date is missing, unreadable or in the future; lifespan and the idle rules cannot be evaluated.');
             }
+            if ($g !== null && $minutes === null) {
+                arayaGap($gaps, 'no_remaining_minutes', $name, 'Remaining minutes are missing or not a number in gcal; the upsell and idle checks could not run for this shop.');
+            }
         } elseif ($isPending) {
             $overview['pendingCancel']++;
             if ($lifespan === null) {
@@ -234,8 +241,6 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
             } elseif ($minutes !== null && $refresh <= ARAYA_UPSELL_MAX_DAYS && $minutes < ARAYA_UPSELL_MAX_MINUTES) {
                 $row = ['name' => $name, 'po' => $po, 'remaining_minutes' => $minutes, 'days_until_refresh' => $refresh,
                         'allocation' => $alloc, 'currency' => arayaClean($g['currency'] ?? '')];
-                // Only LIVE shops: one not live yet has no reason to have a billing
-                // day, and raising it would fill the section with noise.
                 if ($isLive) {
                     $upsell[] = $row;
                 } else {
@@ -257,7 +262,12 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
             } elseif ($quiet === null && $minutes !== null) {
                 $daysLive = arayaDaysSince($liveDate, $todayYmd);
                 $usedFraction = ($alloc - $minutes) / $alloc;
-                if ($daysLive !== null && $daysLive >= ARAYA_IDLE_MIN_DAYS_LIVE && $usedFraction < ARAYA_IDLE_MAX_USED_PCT) {
+                if ($usedFraction < 0) {
+                    // Balance above allocation (typically a top-up): the allocation does
+                    // not describe the current balance. Not clamped to 0, which would
+                    // report real top-ups as zero usage and flag them idle.
+                    arayaGap($gaps, 'no_allocation', $name, 'Remaining minutes (' . $minutes . ') exceed the allocation (' . $alloc . '); the balance is above the allocation, so the usage percentage is not meaningful and the idle rule was not evaluated.');
+                } elseif ($daysLive !== null && $daysLive >= ARAYA_IDLE_MIN_DAYS_LIVE && $usedFraction < ARAYA_IDLE_MAX_USED_PCT) {
                     $idleNew[] = ['name' => $name, 'po' => $po, 'days_live' => $daysLive, 'remaining_minutes' => $minutes,
                                   'allocation' => $alloc, 'used_pct' => round($usedFraction * 100, 1)];
                 }
