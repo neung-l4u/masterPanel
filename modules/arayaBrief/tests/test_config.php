@@ -55,21 +55,27 @@ try {
 }
 
 // A real token must never reach an error message, a log or a stack trace.
+// The config below is invalid, so validation throws and the catch really runs:
+// the secrets are on the keys that ARE set, while the missing key is what
+// triggers the throw. Asserting inside a block that never executes would pass
+// no matter what the message contained.
+$leaky = [
+    'gcal_base_url'    => 'https://example.test',
+    'gcal_admin_key'   => 'ADMINKEY_SUPERSECRET',
+    'monday_token'     => 'MONDAY_SUPERSECRET',
+    // chat_webhook_url deliberately absent -> throws.
+];
+$threw = false;
 try {
-    arayaValidateConfig($complete + ['monday_token' => 'SUPERSECRET123'], '/cfg.php');
-    test("a valid config leaks nothing because it does not throw", true);
+    arayaValidateConfig($leaky, '/cfg.php');
 } catch (RuntimeException $e) {
-    test("secret never appears in the message", !str_contains($e->getMessage(), 'SUPERSECRET123'));
+    $threw = true;
+    $msg = $e->getMessage();
+    test("the admin key never appears in the message", !str_contains($msg, 'ADMINKEY_SUPERSECRET'));
+    test("the monday token never appears in the message", !str_contains($msg, 'MONDAY_SUPERSECRET'));
+    test("the message still names the missing key", str_contains($msg, 'chat_webhook_url'));
 }
-
-$blankKey = $complete;
-$blankKey['monday_token'] = '';
-try {
-    arayaValidateConfig($blankKey, '/cfg.php');
-} catch (RuntimeException $e) {
-    test("other secrets never appear in the message",
-         !str_contains($e->getMessage(), $complete['gcal_admin_key'] === 'k' ? 'chat.example.test/hook' : 'x'));
-}
+test("the leaky config actually threw, so the assertions above ran", $threw);
 
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);
