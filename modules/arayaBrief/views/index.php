@@ -13,6 +13,10 @@ if (empty($_SESSION['id'])) {
     exit;
 }
 
+// A full client roster has no business sitting in a browser or proxy cache,
+// least of all on a shared machine after someone logs out.
+header('Cache-Control: no-store');
+
 date_default_timezone_set('Asia/Bangkok');
 require_once '../models/loadBrief.php';
 require_once '../models/renderChat.php';
@@ -52,8 +56,14 @@ $error = null;
 try {
     $brief = arayaLoadBrief($useFixture, $useCache);
 } catch (Throwable $e) {
+    // The detail goes to the log, not the page. Today's messages carry no
+    // credentials by design, but a future one that quoted an upstream response
+    // body would publish it to whoever opened the page. A failure also must not
+    // answer 200, or monitoring reads a broken report as a healthy one.
     error_log('[arayaBrief] dashboard load failed: ' . $e->getMessage());
-    $error = $e->getMessage();
+    $error = 'Could not build the brief. The Monday API is the likely cause; '
+        . 'the details are in the PHP error log.';
+    http_response_code(502);
 }
 
 $refreshQuery = http_build_query(array_filter(['fixture' => $useFixture ? 'sample' : null, 'nocache' => 1]));
@@ -126,7 +136,7 @@ if ($brief) {
             <h1 class="h3 fw-bold mb-0"><i class="bi bi-sunrise"></i> Araya Daily Brief</h1>
             <div class="note">
                 <?php if ($brief) { ?>
-                    For <?php echo arayaH($brief['generated_for']); ?> &middot; generated <?php echo arayaH(date('H:i')); ?> (Bangkok)
+                    For <?php echo arayaH($brief['generated_for']); ?> &middot; page rendered <?php echo arayaH(date('H:i')); ?> (Bangkok)
                     <?php if ($useFixture) { ?> &middot; <strong>sample data, no API calls</strong><?php } ?>
                 <?php } ?>
             </div>

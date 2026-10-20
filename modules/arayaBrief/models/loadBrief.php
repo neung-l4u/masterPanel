@@ -15,6 +15,44 @@ require_once __DIR__ . '/fetchMonday.php';
 require_once __DIR__ . '/matchShops.php';
 require_once __DIR__ . '/buildBrief.php';
 
+/**
+ * Strip the gaps and flags that only say "gcal was down".
+ *
+ * With gcal unreachable the rules see an empty shop list, so every Monday shop
+ * earns an unmatched_monday gap -- about 38 identical rows on the real board,
+ * in the one section whose whole value is that a genuine gap stands out. The
+ * count staff watch would become noise and hide the real findings, and the same
+ * flood reaches the Chat message. The per-row "not in gcal" flag is just as
+ * empty when it is true of every shop.
+ *
+ * buildBrief is right to raise those gaps: judging one shop at a time, each
+ * really has no gcal match. It simply cannot know the whole upstream was down.
+ * That knowledge lives here, so the suppression does too -- on the path both
+ * the dashboard and the message take, so the two cannot disagree.
+ *
+ * Gaps of every other kind survive, because those are still true.
+ */
+function arayaSuppressOutageNoise(array $brief): array
+{
+    if (empty($brief['gcal_unavailable'])) {
+        return $brief;
+    }
+
+    $brief['gaps'] = array_values(array_filter(
+        $brief['gaps'] ?? [],
+        fn($g) => ($g['kind'] ?? '') !== 'unmatched_monday'
+    ));
+
+    // The outage banner carries the message instead of 38 identical badges.
+    foreach ($brief['live'] ?? [] as $i => $row) {
+        if (!empty($row['gcal_missing'])) {
+            $brief['live'][$i]['gcal_missing'] = false;
+        }
+    }
+
+    return $brief;
+}
+
 function arayaLoadBrief(bool $useFixture = false, bool $useCache = true): array
 {
     $today = (new DateTimeImmutable('now'))->format('Y-m-d');
@@ -41,5 +79,5 @@ function arayaLoadBrief(bool $useFixture = false, bool $useCache = true): array
 
     $brief = arayaBuildBrief(arayaMatchShops($monday, $gcal), $today);
     $brief['gcal_unavailable'] = $gcalFailed;
-    return $brief;
+    return arayaSuppressOutageNoise($brief);
 }
