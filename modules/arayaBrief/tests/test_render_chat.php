@@ -86,12 +86,6 @@ echo "== empty sections say so rather than being blank ==\n";
 $out = render(res([mk([], ['days_until_refresh' => 26, 'remaining_minutes' => 200])]));
 test("no upsell today is stated explicitly", str_contains($out, 'ไม่มีวันนี้'));
 
-echo "== deferred sections are absent, not empty headings ==\n";
-$out = render(res([mk()]));
-foreach (['รายได้', 'Subscription', 'Top-up', 'คุณภาพสาย', 'Respond.io', 'ค้างชำระ'] as $deferred) {
-    test("no heading for the deferred '{$deferred}'", !str_contains($out, $deferred));
-}
-
 echo "== data gaps are shown, never swallowed ==\n";
 $out = render(res([mk()], [['name' => 'Orphan Shop', 'live_status' => 'LIVE']]));
 test("an unmatched shop is named in the message", str_contains($out, 'Orphan Shop'));
@@ -141,13 +135,20 @@ test("padded gap name is cleaned", str_contains($out, '• ' . $thai . ' [blank_
 echo "== every gap kind renders and names its shop ==\n";
 $kinds = ['unmatched_monday', 'unmatched_gcal', 'no_live_date', 'no_billing_day', 'no_allocation',
           'no_register_date', 'blank_status', 'unknown_status', 'no_remaining_minutes'];
+// Details that match the shapes buildBrief.php really emits.
+$realDetail = [
+    'unmatched_monday' => 'On the Monday tracker (LIVE) but no matching shop in gcal-booking-api; minutes unknown.',
+    'unknown_status'   => 'Monday live_status "Paused" is not a known label; counted in the total only.',
+    'no_allocation'    => 'No minute allocation in gcal; the idle rule would divide by zero, so it was not evaluated.',
+];
 foreach ($kinds as $k) {
     $b = $emptyBrief;
-    $b['gaps'] = [['kind' => $k, 'name' => "Shop-{$k}", 'detail' => "detail for {$k}"]];
+    $detail = $realDetail[$k] ?? "detail for {$k}";
+    $b['gaps'] = [['kind' => $k, 'name' => "Shop-{$k}", 'detail' => $detail]];
     $out = arayaRenderChat($b);
     test("gap kind '{$k}' names its shop and kind", str_contains($out, "Shop-{$k}") && str_contains($out, "[{$k}]"));
     test("gap kind '{$k}' renders a Thai detail, not the English one",
-        !str_contains($out, "detail for {$k}") && preg_match('/\] [^\n]*[\x{0E00}-\x{0E7F}]/u', $out) === 1);
+        !str_contains($out, $detail) && preg_match('/\] [^\n]*[\x{0E00}-\x{0E7F}]/u', $out) === 1);
 }
 echo "== an unknown gap kind falls back to its English detail ==\n";
 $b = $emptyBrief;
@@ -170,6 +171,7 @@ $full = [
     'gaps' => [['kind' => 'no_allocation', 'name' => 'S-gap', 'detail' => 'd']],
 ];
 $out = arayaRenderChat($full);
+$out_full = $out;
 $order = ['ดึงข้อมูลนาทีไม่ได้', 'ARAYA DAILY BRIEF', 'LIVE: 1', 'S-live', 'S-upsell', 'S-idlenew', 'S-idlequiet', 'S-setup', 'S-cancel', 'S-gap'];
 $pos = array_map(fn($s) => mb_strpos($out, $s), $order);
 test("every section is present", !in_array(false, $pos, true));
@@ -179,8 +181,46 @@ foreach (['✅ ร้านที่ LIVE (นาทีคงเหลือ · 
           '📉 เคยใช้แล้วเงียบไป', '🚧 ทำไมยังไม่ไลฟ์ (Setup ค้าง)', '❌ แจ้งยกเลิก', '⚠️ ข้อมูลไม่ครบ'] as $h) {
     test("heading '{$h}' is verbatim", str_contains($out, "\n" . $h . "\n"));
 }
-test("sections are separated by the rule", substr_count($out, ARAYA_CHAT_SEP) >= 8);
+test("exactly 8 rules: 1 after the header + 7 between 8 sections", substr_count($out, ARAYA_CHAT_SEP) === 8);
 test("it is one message (no split markers)", substr_count($out, 'ARAYA DAILY BRIEF') === 1);
+
+echo "== gap details carry their values ==\n";
+function gapOut(string $kind, string $detail): string {
+    global $emptyBrief;
+    $b = $emptyBrief;
+    $b['gaps'] = [['kind' => $kind, 'name' => 'G', 'detail' => $detail]];
+    return arayaRenderChat($b);
+}
+$out = gapOut('unknown_status', 'Monday live_status "Paused" is not a known label; counted in the total only.');
+test("unknown_status names the unrecognised status", str_contains($out, 'ไม่รู้จัก: "Paused"'));
+$out = gapOut('unmatched_monday', 'On the Monday tracker (Not Live) but no matching shop in gcal-booking-api; minutes unknown.');
+test("unmatched_monday names the Monday status", str_contains($out, 'สถานะ: Not Live'));
+$out = gapOut('no_allocation', 'Remaining minutes (310) exceed the allocation (250); the balance is above the allocation, so the usage percentage is not meaningful and the idle rule was not evaluated.');
+test("no_allocation (exceeds) carries both numbers", str_contains($out, 'นาทีคงเหลือ (310) มากกว่านาทีที่ได้รับ (250)'));
+$out = gapOut('no_allocation', 'No minute allocation in gcal; the idle rule would divide by zero, so it was not evaluated.');
+test("no_allocation (missing) is a different sentence from the exceed case",
+    str_contains($out, 'gcal ไม่มีจำนวนนาทีที่ได้รับ') && !str_contains($out, 'มากกว่า'));
+foreach (['unknown_status', 'unmatched_monday', 'no_allocation'] as $k) {
+    $out = gapOut($k, 'unexpected wording 42');
+    test("{$k}: when extraction fails the English detail is appended", str_contains($out, '(unexpected wording 42)'));
+}
+$out = gapOut('no_live_date', 'Live date is missing, unreadable or in the future; lifespan unknown.');
+test("no_live_date for a non-LIVE shop does not claim an idle check", !str_contains($out, 'กฎร้านเงียบ'));
+$out = gapOut('no_live_date', 'Live date is missing, unreadable or in the future; lifespan and the idle rules cannot be evaluated.');
+test("no_live_date for a LIVE shop mentions the idle check", str_contains($out, 'กฎร้านเงียบ'));
+
+echo "== the allowlist of headings ==\n";
+$headingAllow = ['📊 OVERVIEW', '✅ ร้านที่ LIVE (นาทีคงเหลือ · อยู่กับเรามานาน)', '💰 โอกาสอัพเซลล์ (นาที <70 และรีเฟรชอีก ≤15 วัน)',
+    '📉 ไลฟ์แล้วแต่ไม่มีการใช้งาน', '📉 เคยใช้แล้วเงียบไป', '🚧 ทำไมยังไม่ไลฟ์ (Setup ค้าง)', '❌ แจ้งยกเลิก', '⚠️ ข้อมูลไม่ครบ'];
+// A heading is the first non-blank line of each block after a rule (the header block excluded).
+$blocks = explode(ARAYA_CHAT_SEP, $out_full);
+array_shift($blocks);
+$found = [];
+foreach ($blocks as $blk) {
+    $lines = array_values(array_filter(explode("\n", $blk), fn($l) => $l !== ''));
+    $found[] = $lines[0] ?? '';
+}
+test("the fully populated brief has exactly the 8 permitted headings, in order", $found === $headingAllow);
 
 // The upsell-exclusion reason is the line someone acts on, so it must read in
 // Thai while still naming the board status they will look up on Monday.
@@ -211,6 +251,46 @@ $novel = ['name' => 'Odd Shop', 'remaining_minutes' => 5, 'days_until_refresh' =
 $out = arayaRenderChat(arayaChatFixtureBrief(['upsellExcluded' => [$novel]]));
 test("an unknown reason falls back to its English text rather than blank",
      str_contains($out, 'some new policy reason'));
+
+echo "== exclusion reason is never invented ==\n";
+foreach (['Plan "Enterprise" is excluded from upsell.', 'Shop "Aunya" is on a trial.'] as $r) {
+    $out = arayaRenderChat(arayaChatFixtureBrief(['upsellExcluded' => [['name' => 'T', 'remaining_minutes' => 5, 'days_until_refresh' => 1, 'reason' => $r]]]));
+    test("'{$r}' stays English and is not reported as cancelling",
+        str_contains($out, $r) && !str_contains($out, 'ร้านแจ้งยกเลิกแล้ว'));
+}
+
+echo "== sparse brief ==\n";
+$out = arayaRenderChat(arayaChatFixtureBrief());
+test("no doubled rule", preg_match('/━\n+━/u', $out) === 0);
+test("no trailing rule", preg_match('/━\s*$/u', $out) === 0);
+test("ends with exactly one newline", substr($out, -1) === "\n" && substr($out, -2, 1) !== "\n");
+
+echo "== null data in live rows ==\n";
+$warn = [];
+set_error_handler(function ($no, $str) use (&$warn) { $warn[] = $str; return true; });
+foreach ([
+    'null remaining_minutes' => ['name' => 'NullMin', 'remaining_minutes' => null, 'lifespan' => ['months' => 1, 'days' => 2], 'gcal_missing' => false],
+    'null lifespan'          => ['name' => 'NullLife', 'remaining_minutes' => 50, 'lifespan' => null, 'gcal_missing' => false],
+    'gcal_missing'           => ['name' => 'NoGcal', 'remaining_minutes' => null, 'lifespan' => null, 'gcal_missing' => true],
+] as $label => $row) {
+    $out = arayaRenderChat(arayaChatFixtureBrief(['live' => [$row]]));
+    test("{$label}: names the shop", str_contains($out, $row['name']));
+    test("{$label}: no 'null' and no empty ()", !str_contains($out, 'null') && !str_contains($out, '()'));
+}
+restore_error_handler();
+test("null data raised no PHP warnings", $warn === []);
+
+echo "== NBSP padding on owner, cancel reason, setup note ==\n";
+$b = arayaChatFixtureBrief([
+    'upsell' => [['name' => 'U', 'po' => $nb . 'Namva' . $nb, 'remaining_minutes' => 10, 'days_until_refresh' => 3]],
+    'cancelling' => [['name' => 'C', 'po' => 'A', 'lifespan' => null, 'reason' => $nb . $nb . 'too pricey' . $nb]],
+    'setup' => [['name' => 'S', 'live_status' => 'Stuck', 'setup_status' => 'Stuck', 'po' => 'A', 'note' => $nb . 'call back' . $nb, 'days_stalled' => 3]],
+]);
+$out = arayaRenderChat($b);
+test("owner is cleaned", str_contains($out, '· @Namva') && !str_contains($out, '@Namva' . $nb));
+test("cancel reason is cleaned", str_contains($out, 'เหตุผล: too pricey'));
+test("setup note is cleaned", str_contains($out, "\n   call back\n"));
+test("no NBSP survives anywhere", !str_contains($out, $nb));
 
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

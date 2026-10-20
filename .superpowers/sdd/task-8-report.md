@@ -69,3 +69,64 @@ Leaving Shop — Waiting to cancel · 9 ด. 19 วัน · @Aim
 • Shop no_remaining_minutes [no_remaining_minutes] gcal ไม่มีข้อมูลนาทีคงเหลือ จึงเช็กอัพเซลล์และร้านเงียบไม่ได้
 • Shop invented_kind [invented_kind] English detail for invented_kind
 ```
+
+# Task 8 report
+
+Final suite: 88 passed, 0 failed. Mutations (loose regex, dropped gap value, fake REVENUE heading) each failed the suite; regression loop clean.
+
+## Rendered message (representative brief)
+```
+☀️ ARAYA DAILY BRIEF — 20 Oct 2026 (07:00)
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 OVERVIEW
+LIVE: 3 ร้าน
+แจ้งยกเลิก (pending): 1 ร้าน
+Setup ค้างอยู่: 1 ร้าน
+ยกเลิกแล้ว: 2 ร้าน (Cancel Before LIVE 1 · Canceled 1)
+รวมลูกค้าทั้งหมด: 7 ร้าน
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ ร้านที่ LIVE (นาทีคงเหลือ · อยู่กับเรามานาน)
+Aunya Shop (152 mins · 4 ด. 19 วัน)
+Ghost (ไม่พบใน gcal ⚠️)
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+💰 โอกาสอัพเซลล์ (นาที <70 และรีเฟรชอีก ≤15 วัน)
+Low Shop (50 mins · รีเฟรชอีก 3 วัน) · @Aim
+Me Ya Wi (-109 mins · รีเฟรชอีก 5 วัน) — ไม่นับ: สถานะ "Waiting to cancel" — ร้านแจ้งยกเลิกแล้ว
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+📉 ไลฟ์แล้วแต่ไม่มีการใช้งาน
+New Idle (ใช้ 4% · live มา 12 วัน · เหลือ 240 mins) · @Aim
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+📉 เคยใช้แล้วเงียบไป
+Quiet (รอบล่าสุดใช้ 5 นาที · เฉลี่ยก่อนหน้า 100) · @Aim
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚧 ทำไมยังไม่ไลฟ์ (Setup ค้าง)
+Stuck Shop — Stuck · ค้าง 187 วัน · @Namva
+   waiting on menu
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ แจ้งยกเลิก
+Leaver — Waiting to cancel · 9 ด. 19 วัน · @Aim
+   เหตุผล: ยังไม่ได้บันทึก
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️ ข้อมูลไม่ครบ
+• A [unknown_status] ช่อง Live Status มีค่าที่ระบบไม่รู้จัก: "Paused"
+• B [unmatched_monday] อยู่ใน Monday (สถานะ: Not Live) แต่หาร้านที่ตรงกันใน gcal ไม่พบ จึงไม่ทราบนาทีคงเหลือ
+• C [no_allocation] นาทีคงเหลือ (310) มากกว่านาทีที่ได้รับ (250) จึงใช้เปอร์เซ็นต์การใช้งานไม่ได้
+• D [no_allocation] gcal ไม่มีจำนวนนาทีที่ได้รับ จึงใช้เปอร์เซ็นต์การใช้งานไม่ได้
+• E [no_live_date] ยังไม่มีวัน live (หรืออ่านไม่ได้) จึงคำนวณอายุการใช้งานไม่ได้ และเช็กกฎร้านเงียบไม่ได้
+• F [no_live_date] ยังไม่มีวัน live (หรืออ่านไม่ได้) จึงคำนวณอายุการใช้งานไม่ได้
+```

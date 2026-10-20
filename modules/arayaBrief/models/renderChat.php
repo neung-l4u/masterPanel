@@ -46,13 +46,17 @@ function arayaChatExcludedReason($row): string
     $reason = arayaClean($row['reason'] ?? '');
     $status = arayaClean($row['live_status'] ?? '');
 
-    if ($status === '' && preg_match('/"([^"]+)"/', $reason, $m) === 1) {
+    // Anchored to the whole known sentence on purpose. A partial match (any
+    // quoted word) would state something untrue in Thai for a future reason such
+    // as 'Plan "Enterprise" is excluded', and a confident untruth in a line
+    // someone acts on is worse than leaving the English in place.
+    if ($status === '' && preg_match('/^Status is "([^"]+)"; the shop has given notice\.$/u', $reason, $m) === 1) {
         $status = $m[1];
     }
     if ($status !== '') {
         return 'สถานะ "' . $status . '" — ร้านแจ้งยกเลิกแล้ว';
     }
-    // An unrecognised shape degrades to the English reason rather than nothing.
+    // Anything else degrades to the English reason rather than a guess.
     return $reason;
 }
 
@@ -71,22 +75,54 @@ function arayaChatDate(string $ymd): string
     return ($d && $d->format('Y-m-d') === $ymd) ? $d->format('j M Y') : $ymd;
 }
 
-/** Thai gap sentences by kind; an unknown kind falls back to the English detail. */
+/**
+ * Thai gap sentences by kind; an unknown kind falls back to the English detail.
+ *
+ * The values the team needs (which status, which numbers) live only in the
+ * English detail that buildBrief.php composes, so they are lifted out with one
+ * narrowly anchored pattern per kind. When a pattern misses, the English detail
+ * is appended in parentheses rather than losing the value.
+ */
 function arayaChatGapDetail($g): string
 {
     static $th = [
-        'unmatched_monday'     => 'อยู่ใน Monday แต่หาร้านที่ตรงกันใน gcal ไม่พบ จึงไม่ทราบนาทีคงเหลือ',
         'unmatched_gcal'       => 'มีอยู่ใน gcal แต่ไม่มี item ใน Monday board',
-        'no_live_date'         => 'ยังไม่มีวัน live จึงคำนวณอายุการใช้งานและเช็กกฎร้านเงียบไม่ได้',
         'no_billing_day'       => 'ยังไม่ได้ตั้งวันบิล จึงเช็กกฎอัพเซลล์ไม่ได้',
-        'no_allocation'        => 'ไม่ทราบจำนวนนาทีที่ได้รับ หรือนาทีคงเหลือมากกว่าที่ได้รับ จึงใช้เปอร์เซ็นต์การใช้งานไม่ได้',
         'no_register_date'     => 'ยังไม่มีวันลงทะเบียน จึงคำนวณจำนวนวันที่ค้างไม่ได้',
         'blank_status'         => 'ช่อง Live Status ใน Monday ว่างอยู่',
-        'unknown_status'       => 'ช่อง Live Status มีค่าที่ระบบไม่รู้จัก',
         'no_remaining_minutes' => 'gcal ไม่มีข้อมูลนาทีคงเหลือ จึงเช็กอัพเซลล์และร้านเงียบไม่ได้',
     ];
     $kind = arayaClean($g['kind'] ?? '');
-    return $th[$kind] ?? arayaClean($g['detail'] ?? '');
+    $detail = arayaClean($g['detail'] ?? '');
+    $keep = $detail === '' ? '' : ' (' . $detail . ')';
+
+    switch ($kind) {
+        case 'unmatched_monday':
+            if (preg_match('/^On the Monday tracker \((.+?)\) but no matching shop in gcal-booking-api; minutes unknown\.$/u', $detail, $m) === 1) {
+                $st = $m[1] === 'no status' ? 'ไม่มีสถานะ' : $m[1];
+                return 'อยู่ใน Monday (สถานะ: ' . $st . ') แต่หาร้านที่ตรงกันใน gcal ไม่พบ จึงไม่ทราบนาทีคงเหลือ';
+            }
+            return 'อยู่ใน Monday แต่หาร้านที่ตรงกันใน gcal ไม่พบ จึงไม่ทราบนาทีคงเหลือ' . $keep;
+        case 'unknown_status':
+            if (preg_match('/^Monday live_status "([^"]*)" is not a known label;/u', $detail, $m) === 1) {
+                return 'ช่อง Live Status มีค่าที่ระบบไม่รู้จัก: "' . $m[1] . '"';
+            }
+            return 'ช่อง Live Status มีค่าที่ระบบไม่รู้จัก' . $keep;
+        case 'no_allocation':
+            if (preg_match('/^Remaining minutes \((.+?)\) exceed the allocation \((.+?)\);/u', $detail, $m) === 1) {
+                return 'นาทีคงเหลือ (' . $m[1] . ') มากกว่านาทีที่ได้รับ (' . $m[2] . ') จึงใช้เปอร์เซ็นต์การใช้งานไม่ได้';
+            }
+            if (preg_match('/^No minute allocation in gcal;/u', $detail) === 1) {
+                return 'gcal ไม่มีจำนวนนาทีที่ได้รับ จึงใช้เปอร์เซ็นต์การใช้งานไม่ได้';
+            }
+            return 'ข้อมูลนาทีที่ได้รับไม่ถูกต้อง จึงใช้เปอร์เซ็นต์การใช้งานไม่ได้' . $keep;
+        case 'no_live_date':
+            // A LIVE shop also loses the idle-rule check; a pending-cancel shop
+            // never faces that rule, so only claim it when the detail says so.
+            $base = 'ยังไม่มีวัน live (หรืออ่านไม่ได้) จึงคำนวณอายุการใช้งานไม่ได้';
+            return strpos($detail, 'idle rules') !== false ? $base . ' และเช็กกฎร้านเงียบไม่ได้' : $base;
+    }
+    return $th[$kind] ?? $detail;
 }
 
 function arayaRenderChat(array $brief): string
