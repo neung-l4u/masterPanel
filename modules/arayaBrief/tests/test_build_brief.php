@@ -259,7 +259,10 @@ test("unmatched gcal shop is a gap",
 test("every gap names a shop",
      count(array_filter($b['gaps'], fn($g) => ($g['name'] ?? '') === '')) === 0);
 
-// Thai name ending in U+0E20 must survive byte-for-byte (bare trim() corrupts it).
+// Thai name ending in U+0E20 must survive byte-for-byte. Default trim() does
+// NOT corrupt this one -- only a trim() with \xA0 in its character list does,
+// by eating the trailing A0 byte. The NBSP-padded case below is what catches
+// bare trim(), which leaves the non-breaking space in place.
 $thai = "ร้านลาภ";
 $b = arayaBuildBrief(res([mk(['name' => $thai])]), TODAY);
 test("a Thai name ending in ภ survives byte-for-byte", $b['live'][0]['name'] === $thai);

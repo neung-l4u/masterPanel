@@ -28,8 +28,17 @@ const ARAYA_QUIET_MAX_PCT_OF_MEAN = 0.30;
 const ARAYA_QUIET_MIN_PRIOR_PERIODS = 3;
 
 /**
- * Trim a string safely for UTF-8. Never use trim(): it is byte-based and
- * corrupts a Thai name ending in U+0E20 (E0 B8 A0).
+ * Trim a string safely for UTF-8. Never use trim() here, for two reasons:
+ *
+ *  - trim() with \xA0 added to its character list is byte-based and corrupts a
+ *    Thai name ending in U+0E20 (E0 B8 A0) by eating the trailing A0 byte,
+ *    leaving invalid UTF-8. That is the bug behind
+ *    modules/upgrade-downgrade/tests/test_mirror_match.php.
+ *  - Default trim() leaves such a name intact, but it does not strip a
+ *    non-breaking space either, so NBSP-padded Monday values survive and then
+ *    fail to match their gcal counterpart.
+ *
+ * The /u regex below handles both. test_build_brief.php covers both cases.
  */
 function arayaClean($s): string
 {
