@@ -63,12 +63,12 @@ function render(array $r): string {
 
 echo "== the shop line format the user asked for ==\n";
 $out = render(res([mk(['name' => 'Aunya Shop', 'live_date' => '2026-06-01'], ['remaining_minutes' => 152])]));
-test("shop renders as 'Name (152 mins · ...)'", str_contains($out, 'Aunya Shop (152 mins'));
-test("lifespan follows the minutes in the same parens", preg_match('/Aunya Shop \(152 mins · 4 ด\. 19 ว/u', $out) === 1);
+test("shop renders as 'Name (152 mins · ...)'", str_contains($out, 'Aunya Shop* (152 mins'));
+test("lifespan follows the minutes in the same parens", preg_match('/Aunya Shop\* \(152 mins · 4 ด\. 19 ว/u', $out) === 1);
 
 echo "== negative minutes ==\n";
 $out = render(res([mk(['name' => 'Me Ya Wi'], ['remaining_minutes' => -109])]));
-test("a negative balance shows its sign", str_contains($out, 'Me Ya Wi (-109 mins'));
+test("a negative balance shows its sign", str_contains($out, 'Me Ya Wi* (-109 mins'));
 
 echo "== overview ==\n";
 $out = render(res([mk(['live_status' => 'LIVE']), mk(['live_status' => 'Canceled'])]));
@@ -115,7 +115,7 @@ test("valid UTF-8", mb_check_encoding($out, 'UTF-8'));
 echo "== Thai shop names survive byte for byte ==\n";
 $thai = 'ร้านนวดไทยสบายภ';
 $out = render(res([mk(['name' => $thai], ['shop_name' => $thai])]));
-test("a Thai name appears unchanged", str_contains($out, $thai . ' ('));
+test("a Thai name appears unchanged", str_contains($out, $thai . '* ('));
 
 echo "== NBSP padding is cleaned (catches bare trim) ==\n";
 $nb = "\u{00A0}";
@@ -124,13 +124,13 @@ $emptyBrief = ['generated_for' => TODAY, 'overview' => [], 'live' => [], 'upsell
 $b = $emptyBrief;
 $b['live'] = [['name' => $nb . $nb . $thai . $nb, 'remaining_minutes' => 50, 'lifespan' => ['months' => 1, 'days' => 2], 'gcal_missing' => false]];
 $out = arayaRenderChat($b);
-test("padded Thai name is cleaned and intact", str_contains($out, "\n" . $thai . ' (50 mins'));
+test("padded Thai name is cleaned and intact", str_contains($out, '*' . $thai . '* (50 mins'));
 test("no NBSP survives in the line", !str_contains($out, $nb));
 test("output still valid UTF-8", mb_check_encoding($out, 'UTF-8'));
 $b = $emptyBrief;
 $b['gaps'] = [['kind' => 'blank_status', 'name' => $nb . $thai . $nb, 'detail' => 'x']];
 $out = arayaRenderChat($b);
-test("padded gap name is cleaned", str_contains($out, '• ' . $thai . ' [blank_status]'));
+test("padded gap name is cleaned", str_contains($out, '• *' . $thai . '* [blank_status]'));
 
 echo "== every gap kind renders and names its shop ==\n";
 $kinds = ['unmatched_monday', 'unmatched_gcal', 'no_live_date', 'no_billing_day', 'no_allocation',
@@ -148,13 +148,17 @@ foreach ($kinds as $k) {
     $out = arayaRenderChat($b);
     test("gap kind '{$k}' names its shop and kind", str_contains($out, "Shop-{$k}") && str_contains($out, "[{$k}]"));
     test("gap kind '{$k}' renders a Thai detail, not the English one",
-        !str_contains($out, $detail) && preg_match('/\] [^\n]*[\x{0E00}-\x{0E7F}]/u', $out) === 1);
+        // The instruction is on its own indented line under the name now, so
+        // look for Thai there rather than beside the kind tag.
+        !str_contains($out, $detail) && preg_match('/\n    [^\n]*[\x{0E00}-\x{0E7F}]/u', $out) === 1);
 }
 echo "== an unknown gap kind falls back to its English detail ==\n";
 $b = $emptyBrief;
 $b['gaps'] = [['kind' => 'invented_kind', 'name' => 'Odd Shop', 'detail' => 'something new went wrong']];
 $out = arayaRenderChat($b);
-test("unknown kind prints its English detail", str_contains($out, '• Odd Shop [invented_kind] something new went wrong'));
+test("unknown kind prints its English detail",
+     str_contains($out, '• *Odd Shop* [invented_kind]')
+     && str_contains($out, "\n    something new went wrong"));
 
 echo "== a fully populated brief renders in section order ==\n";
 $full = [
@@ -249,7 +253,7 @@ test("the reason is Thai, not the English source string",
 test("the board status stays verbatim so it can be looked up",
      str_contains($out, 'สถานะ "Waiting to cancel"'));
 test("the excluded shop still shows its signed balance",
-     str_contains($out, 'Me Ya Wi (-109 mins'));
+     str_contains($out, 'Me Ya Wi* (-109 mins'));
 
 // Derived from the reason text when live_status is absent on the row.
 $noStatus = $excluded;
@@ -302,7 +306,7 @@ $b = arayaChatFixtureBrief([
 $out = arayaRenderChat($b);
 test("owner is cleaned", str_contains($out, '· @Namva') && !str_contains($out, '@Namva' . $nb));
 test("cancel reason is cleaned", str_contains($out, 'เหตุผล: too pricey'));
-test("setup note is cleaned", str_contains($out, "\n   call back\n"));
+test("setup note is cleaned", str_contains($out, "\n    call back\n"));
 test("no NBSP survives anywhere", !str_contains($out, $nb));
 
 echo "== gap texts are written as instructions ==" . PHP_EOL;
@@ -364,10 +368,14 @@ $out = render(res([
     mk(['name' => 'Shop One', 'live_status' => 'Not Live', 'register_date' => '2026-01-01', 'note' => 'note one']),
     mk(['name' => 'Shop Two', 'live_status' => 'Not Live', 'register_date' => '2026-02-01', 'note' => 'note two']),
 ]));
-test("a blank line separates one shop from the next",
-     str_contains($out, "note one
+// Bold names now carry the separation a blank line used to, so six entries
+// stay six rows instead of eighteen. Assert the compact shape directly.
+test("each shop is one bulleted row with its name in bold",
+     str_contains($out, '• *Shop One*') && str_contains($out, '• *Shop Two*'));
+test("no blank line is spent between entries",
+     !str_contains($out, "note one
 
-Shop Two"));
+"));
 
 // Those blank lines must not leak to the edges of the block, which would
 // double the gap around the separator rules.

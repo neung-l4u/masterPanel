@@ -29,7 +29,7 @@ function arayaChatLifespan($lifespan): string
 // A board note is cut to this many characters in the Chat message.
 // Long enough to tell whether the note concerns you, short enough that
 // the shop names stay the thing you see first.
-const ARAYA_CHAT_NOTE_MAX = 110;
+const ARAYA_CHAT_NOTE_MAX = 75;
 
 /**
  * A board note, cut down to one scannable line.
@@ -212,10 +212,10 @@ function arayaRenderChat(array $brief): string
         $B = ['✅ ร้านที่ LIVE (นาทีคงเหลือ · อยู่กับเรามานาน)'];
         foreach ($brief['live'] as $r) {
             if (!empty($r['gcal_missing'])) {
-                $B[] = arayaChatName($r) . ' (ไม่พบใน gcal ⚠️)';
+                $B[] = '• *' . arayaChatName($r) . '* (ไม่พบใน gcal ⚠️)';
                 continue;
             }
-            $B[] = arayaChatName($r) . ' (' . arayaChatMins($r['remaining_minutes'] ?? null)
+            $B[] = '• *' . arayaChatName($r) . '* (' . arayaChatMins($r['remaining_minutes'] ?? null)
                 . ' · ' . arayaChatLifespan($r['lifespan'] ?? null) . ')';
         }
         $S[] = $B;
@@ -227,7 +227,7 @@ function arayaRenderChat(array $brief): string
     if (!empty($brief['atRisk'])) {
         $B = ['🚨 ต้องโทรวันนี้ (นาทีหมดหรือใกล้หมด)'];
         foreach ($brief['atRisk'] as $r) {
-            $B[] = '• ' . arayaChatName($r) . ' ' . arayaChatMins($r['remaining_minutes'] ?? null)
+            $B[] = '• *' . arayaChatName($r) . '* ' . arayaChatMins($r['remaining_minutes'] ?? null)
                  . ($r['overdrawn'] ? ' ⚠️ ใช้เกินโควตาแล้ว' : '')
                  . ($r['days_until_refresh'] === null ? '' : ' · รีเฟรชอีก ' . (int)$r['days_until_refresh'] . ' วัน')
                  . arayaChatOwner($r['po'] ?? '');
@@ -238,7 +238,7 @@ function arayaRenderChat(array $brief): string
     if (!empty($brief['runningOut'])) {
         $B = ['⏳ นาทีจะหมดก่อนรอบรีเฟรช'];
         foreach ($brief['runningOut'] as $r) {
-            $B[] = '• ' . arayaChatName($r) . ' ' . arayaChatMins($r['remaining_minutes'] ?? null)
+            $B[] = '• *' . arayaChatName($r) . '* ' . arayaChatMins($r['remaining_minutes'] ?? null)
                  . ' · ใช้ราว ' . $r['per_day'] . ' นาที/วัน'
                  . ($r['days_until_empty'] === null ? '' : ' → หมดในอีกราว ' . (int)$r['days_until_empty'] . ' วัน')
                  . ' (รีเฟรชอีก ' . (int)$r['days_until_refresh'] . ' วัน)'
@@ -258,12 +258,12 @@ function arayaRenderChat(array $brief): string
         $B[] = 'ไม่มีวันนี้ ✅';
     } else {
         foreach ($brief['upsell'] as $r) {
-            $B[] = arayaChatName($r) . ' (' . arayaChatMins($r['remaining_minutes'] ?? null)
+            $B[] = '• *' . arayaChatName($r) . '* (' . arayaChatMins($r['remaining_minutes'] ?? null)
                 . ' · รีเฟรชอีก ' . (int)($r['days_until_refresh'] ?? 0) . ' วัน)' . arayaChatOwner($r['po'] ?? '');
         }
     }
     foreach ($brief['upsellExcluded'] ?? [] as $r) {
-        $B[] = arayaChatName($r) . ' (' . arayaChatMins($r['remaining_minutes'] ?? null)
+        $B[] = '• *' . arayaChatName($r) . '* (' . arayaChatMins($r['remaining_minutes'] ?? null)
             . ' · รีเฟรชอีก ' . (int)($r['days_until_refresh'] ?? 0) . ' วัน) — ไม่นับ: '
             . arayaChatExcludedReason($r);
     }
@@ -273,7 +273,7 @@ function arayaRenderChat(array $brief): string
     if (!empty($brief['idleNew'])) {
         $B = ['📉 ไลฟ์แล้วแต่แทบไม่ได้ใช้'];
         foreach ($brief['idleNew'] as $r) {
-            $B[] = arayaChatName($r) . ' (ใช้ ' . $r['used_pct'] . '% · live มา ' . (int)$r['days_live']
+            $B[] = '• *' . arayaChatName($r) . '* (ใช้ ' . $r['used_pct'] . '% · live มา ' . (int)$r['days_live']
                 . ' วัน · เหลือ ' . arayaChatMins($r['remaining_minutes'] ?? null) . ')' . arayaChatOwner($r['po'] ?? '');
         }
         $S[] = $B;
@@ -283,7 +283,7 @@ function arayaRenderChat(array $brief): string
     if (!empty($brief['idleQuiet'])) {
         $B = ['📉 เคยใช้แล้วหายไป'];
         foreach ($brief['idleQuiet'] as $r) {
-            $B[] = arayaChatName($r) . ' (รอบล่าสุดใช้ ' . $r['latest_used'] . ' นาที · เฉลี่ยก่อนหน้า '
+            $B[] = '• *' . arayaChatName($r) . '* (รอบล่าสุดใช้ ' . $r['latest_used'] . ' นาที · เฉลี่ยก่อนหน้า '
                 . round($r['prior_mean'], 1) . ')' . arayaChatOwner($r['po'] ?? '');
         }
         $S[] = $B;
@@ -298,15 +298,14 @@ function arayaRenderChat(array $brief): string
                 $status = arayaClean($r['live_status'] ?? '');
             }
             $stalled = $r['days_stalled'] === null ? 'ไม่ทราบวันที่ลงทะเบียน' : 'ค้าง ' . (int)$r['days_stalled'] . ' วัน';
-            // A blank line between shops: with a note under each name, six
-            // entries run together into one block otherwise.
-            if (count($B) > 1) {
-                $B[] = '';
-            }
-            $B[] = arayaChatName($r) . ' — ' . $status . ' · ' . $stalled . arayaChatOwner($r['po'] ?? '');
+            // The shop name in bold carries the separation that a blank line
+            // used to, without spending a line on it: six entries stay six
+            // scannable rows instead of eighteen.
+            $B[] = '• *' . arayaChatName($r) . '* — ' . $status . ' · ' . $stalled
+                 . arayaChatOwner($r['po'] ?? '');
             $note = arayaChatNote($r['note'] ?? '');
             if ($note !== '') {
-                $B[] = '   ' . $note;
+                $B[] = '    ' . $note;
             }
         }
         $S[] = $B;
@@ -317,7 +316,7 @@ function arayaRenderChat(array $brief): string
         $B = ['❌ แจ้งยกเลิก'];
         foreach ($brief['cancelling'] as $r) {
             $reason = arayaClean($r['reason'] ?? '');
-            $B[] = arayaChatName($r) . ' — Waiting to cancel · ' . arayaChatLifespan($r['lifespan'] ?? null)
+            $B[] = '• *' . arayaChatName($r) . '* — Waiting to cancel · ' . arayaChatLifespan($r['lifespan'] ?? null)
                 . arayaChatOwner($r['po'] ?? '');
             $B[] = '   เหตุผล: ' . ($reason === '' ? 'ยังไม่ได้บันทึก' : $reason);
         }
@@ -335,7 +334,11 @@ function arayaRenderChat(array $brief): string
     if ($gapsAction) {
         $B = ['⚠️ ข้อมูลไม่ครบ'];
         foreach ($gapsAction as $g) {
-            $B[] = '• ' . arayaChatName($g) . ' [' . arayaClean($g['kind'] ?? '') . '] ' . arayaChatGapDetail($g);
+            // The instruction goes on its own indented line: these are the
+            // longest lines in the message, and run together with the name
+            // they are the hardest part to skim.
+            $B[] = '• *' . arayaChatName($g) . '* [' . arayaClean($g['kind'] ?? '') . ']';
+            $B[] = '    ' . arayaChatGapDetail($g);
         }
         if ($gapsExpected > 0) {
             $B[] = '(อีก ' . $gapsExpected . ' รายการเป็นร้านที่ยกเลิกแล้ว ไม่ต้องทำอะไร)';
