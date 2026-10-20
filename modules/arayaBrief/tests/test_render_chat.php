@@ -327,5 +327,58 @@ $text = arayaChatGapDetail(['kind' => 'name_mismatch', 'detail' => $instructionC
 test("name_mismatch names the other spelling", str_contains($text, 'Other Spelling'));
 test("name_mismatch offers the durable fix", str_contains($text, 'Google Calendar ID'));
 
+echo "== setup notes stay readable ==" . PHP_EOL;
+// A board note is free text and some run to several paragraphs with their own
+// line breaks. Printed raw they turn this section into a wall of text in which
+// the shop names -- the thing the list exists to show -- disappear.
+$longNote = str_repeat('เนื้อหายาวมาก ', 40);
+$out = render(res([mk(['name' => 'Wall Of Text', 'live_status' => 'Not Live',
+                       'register_date' => '2026-01-01', 'note' => $longNote])]));
+$noteLines = array_values(array_filter(explode("
+", $out), fn($l) => str_starts_with($l, '   ')));
+test("a long note is cut to one line", count($noteLines) === 1);
+test("the cut note is marked with an ellipsis", str_contains($noteLines[0], '…'));
+test("the cut note is not longer than the limit plus the ellipsis",
+     mb_strlen(trim($noteLines[0])) <= ARAYA_CHAT_NOTE_MAX + 1);
+
+// Newlines inside a note must not break the layout.
+$out = render(res([mk(['name' => 'Multi', 'live_status' => 'Not Live',
+                       'register_date' => '2026-01-01', 'note' => "line one
+
+line two
+line three"])]));
+$noteLines = array_values(array_filter(explode("
+", $out), fn($l) => str_starts_with($l, '   ')));
+test("a multi-paragraph note collapses to one line", count($noteLines) === 1);
+test("its words survive the collapse",
+     str_contains($noteLines[0], 'line one') && str_contains($noteLines[0], 'line three'));
+
+// A short note is left exactly as written.
+$out = render(res([mk(['name' => 'Short', 'live_status' => 'Not Live',
+                       'register_date' => '2026-01-01', 'note' => 'รอลูกค้าตอบกลับ'])]));
+test("a short note is not cut", str_contains($out, '   รอลูกค้าตอบกลับ'));
+test("and gets no ellipsis", !str_contains($out, 'รอลูกค้าตอบกลับ…'));
+
+echo "== setup entries are separated ==" . PHP_EOL;
+$out = render(res([
+    mk(['name' => 'Shop One', 'live_status' => 'Not Live', 'register_date' => '2026-01-01', 'note' => 'note one']),
+    mk(['name' => 'Shop Two', 'live_status' => 'Not Live', 'register_date' => '2026-02-01', 'note' => 'note two']),
+]));
+test("a blank line separates one shop from the next",
+     str_contains($out, "note one
+
+Shop Two"));
+
+// Those blank lines must not leak to the edges of the block, which would
+// double the gap around the separator rules.
+test("no block ends with a blank line before a rule", !str_contains($out, "
+
+
+━"));
+test("no block starts with a blank line after a rule", !str_contains($out, "━
+
+
+"));
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

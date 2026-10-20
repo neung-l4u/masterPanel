@@ -26,6 +26,43 @@ function arayaChatLifespan($lifespan): string
     return (int)$lifespan['months'] . ' ด. ' . (int)$lifespan['days'] . ' วัน';
 }
 
+// A board note is cut to this many characters in the Chat message.
+// Long enough to tell whether the note concerns you, short enough that
+// the shop names stay the thing you see first.
+const ARAYA_CHAT_NOTE_MAX = 110;
+
+/**
+ * A board note, cut down to one scannable line.
+ *
+ * Notes are free text and some run to several paragraphs with their own line
+ * breaks. Printed as-is they turn this section into a wall of text in which
+ * the shop names disappear -- the opposite of what the list is for. The
+ * dashboard shows the note in full; here it only has to say enough that
+ * someone can tell whether it concerns them.
+ */
+function arayaChatNote($note): string
+{
+    $note = arayaClean($note);
+    if ($note === '') {
+        return '';
+    }
+    // Collapse every run of whitespace, newlines included, into single spaces.
+    $note = preg_replace('/[\s\x{00A0}]+/u', ' ', $note);
+    $note = arayaClean($note);
+
+    if (mb_strlen($note, 'UTF-8') <= ARAYA_CHAT_NOTE_MAX) {
+        return $note;
+    }
+    // Cut on a space where there is one near the limit, so the line does not
+    // end mid-word.
+    $cut = mb_substr($note, 0, ARAYA_CHAT_NOTE_MAX, 'UTF-8');
+    $lastSpace = mb_strrpos($cut, ' ', 0, 'UTF-8');
+    if ($lastSpace !== false && $lastSpace > ARAYA_CHAT_NOTE_MAX * 0.6) {
+        $cut = mb_substr($cut, 0, $lastSpace, 'UTF-8');
+    }
+    return arayaClean($cut) . '…';
+}
+
 function arayaChatOwner($po): string
 {
     $po = arayaClean($po);
@@ -261,8 +298,13 @@ function arayaRenderChat(array $brief): string
                 $status = arayaClean($r['live_status'] ?? '');
             }
             $stalled = $r['days_stalled'] === null ? 'ไม่ทราบวันที่ลงทะเบียน' : 'ค้าง ' . (int)$r['days_stalled'] . ' วัน';
+            // A blank line between shops: with a note under each name, six
+            // entries run together into one block otherwise.
+            if (count($B) > 1) {
+                $B[] = '';
+            }
             $B[] = arayaChatName($r) . ' — ' . $status . ' · ' . $stalled . arayaChatOwner($r['po'] ?? '');
-            $note = arayaClean($r['note'] ?? '');
+            $note = arayaChatNote($r['note'] ?? '');
             if ($note !== '') {
                 $B[] = '   ' . $note;
             }
@@ -306,6 +348,14 @@ function arayaRenderChat(array $brief): string
             $L[] = '';
             $L[] = ARAYA_CHAT_SEP;
             $L[] = '';
+        }
+        // Blank lines inside a block are deliberate spacing between entries;
+        // ones at its edges would just double the gap around the separator.
+        while ($B && $B[0] === '') {
+            array_shift($B);
+        }
+        while ($B && end($B) === '') {
+            array_pop($B);
         }
         foreach ($B as $line) {
             $L[] = $line;
