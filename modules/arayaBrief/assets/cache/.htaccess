@@ -1,0 +1,20 @@
+# The cached upstream responses are working data, not web content.
+#
+# Being gitignored is not the same as being unreachable. These filenames are
+# predictable -- gcal.json and monday.json -- so without this, anyone could
+# fetch the entire customer list over HTTP: every shop name, contact email,
+# Google Calendar ID, assigned PO and minute balance in one request. No
+# credential is cached, but the client list is exactly what an attacker would
+# want from this panel.
+#
+# Apache 2.4 and 2.2 spellings, so the deny survives either.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
+
+# Directory listing is off regardless of the server-wide default.
+Options -Indexes
