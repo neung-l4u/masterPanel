@@ -143,5 +143,92 @@ $q2 = arayaMondayBuildQuery('MSw5N|"q');
 test("a later query uses next_items_page with the cursor", strpos($q2, 'next_items_page(limit: 100, cursor: "MSw5N|\\"q")') !== false);
 test("a later query does not repeat the board", strpos($q2, '2032016220') === false);
 
+echo "== monday: page walk (fake poster) ==\n";
+function fakePage(array $names, ?string $cursor, bool $first): array {
+    $items = array_map(fn($n) => ['id' => $n, 'name' => $n, 'column_values' => []], $names);
+    $page = ['cursor' => $cursor, 'items' => $items];
+    return ['data' => $first ? ['boards' => [['items_page' => $page]]] : ['next_items_page' => $page]];
+}
+/** Fake poster serving $pages in order; records each cursor it is handed. */
+function fakePoster(array $pages, array &$seen): callable {
+    return function (?string $cursor) use ($pages, &$seen): array {
+        $i = count($seen);
+        $seen[] = $cursor;
+        if (!isset($pages[$i])) { throw new LogicException('poster called past the end'); }
+        $p = $pages[$i];
+        if ($p instanceof Throwable) { throw $p; }
+        return $p;
+    };
+}
+$names = fn(array $rows) => array_column($rows, 'name');
+
+$seen = [];
+$rows = arayaCollectMondayPages(fakePoster([
+    fakePage(['a', 'b'], 'c1', true), fakePage(['c'], 'c2', false), fakePage(['d', 'e'], null, false),
+], $seen));
+test("three pages merge every row in page order", $names($rows) === ['a', 'b', 'c', 'd', 'e']);
+test("three pages: poster called exactly 3 times", count($seen) === 3);
+test("three pages: cursors handed over are null, c1, c2", $seen === [null, 'c1', 'c2']);
+
+$seen = [];
+$rows = arayaCollectMondayPages(fakePoster([fakePage(['a'], 'c1', true), fakePage(['b'], '', false)], $seen));
+test("an empty cursor ends the walk after the pages served", $names($rows) === ['a', 'b'] && count($seen) === 2);
+$seen = [];
+$rows = arayaCollectMondayPages(fakePoster([fakePage(['a'], 'c1', true), fakePage(['b'], null, false), fakePage(['zz'], null, false)], $seen));
+test("a null cursor ends the walk and no further page is requested", $names($rows) === ['a', 'b'] && count($seen) === 2);
+
+$seen = [];
+$rows = arayaCollectMondayPages(fakePoster([fakePage(['a', 'b'], null, true)], $seen));
+test("a single page with a null cursor returns exactly its rows", $names($rows) === ['a', 'b'] && $seen === [null]);
+
+$seen = [];
+$thrown = throwsRuntime(function () use (&$seen) { arayaCollectMondayPages(fakePoster([
+    fakePage(['a'], 'c1', true), fakePage(['b'], 'c2', false), fakePage(['c'], 'c1', false),
+], $seen)); }, $msg);
+test("a repeated cursor throws RuntimeException", $thrown && strpos($msg, 'repeated cursor') !== false);
+test("a repeated cursor stops the walk at the page that repeated it", count($seen) === 3);
+
+$seen = [];
+$endless = function (?string $cursor) use (&$seen): array {
+    $seen[] = $cursor;
+    $n = count($seen);
+    if ($n > 500) { throw new LogicException('runaway walk: no page cap'); }
+    return fakePage(["r{$n}"], "cur{$n}", $n === 1);
+};
+$thrown = throwsRuntime(fn() => arayaCollectMondayPages($endless), $msg);
+test("an endless cursor throws at the page cap", $thrown && strpos($msg, 'page limit') !== false);
+test("an endless cursor stops after exactly the cap of " . ARAYA_MONDAY_MAX_PAGES . " requests", count($seen) === ARAYA_MONDAY_MAX_PAGES);
+test("the endless walk handed over null, cur1, cur2 in order", array_slice($seen, 0, 3) === [null, 'cur1', 'cur2']);
+
+$seen = [];
+$rows = arayaCollectMondayPages(fakePoster([
+    fakePage(['a'], 'c1', true), fakePage([], 'c2', false), fakePage(['b', 'c'], null, false),
+], $seen));
+test("a non-null cursor with zero items does not end the walk early", $names($rows) === ['a', 'b', 'c']);
+test("the empty page was followed by a request for its cursor", $seen === [null, 'c1', 'c2']);
+
+$seen = [];
+$result = null;
+$caught = null;
+try {
+    $result = arayaCollectMondayPages(fakePoster([
+        fakePage(['a', 'b'], 'c1', true),
+        ['errors' => [['message' => 'boom']]],
+    ], $seen));
+} catch (RuntimeException $e) { $caught = $e; }
+test("an error on a later page throws the page's own error, not a later guard", $caught !== null && strpos($caught->getMessage(), 'GraphQL error') !== false);
+test("an error on a later page returns no partial rows", $result === null);
+test("an error on a later page stopped the walk there", $seen === [null, 'c1']);
+
+$seen = [];
+$caught = null;
+try {
+    arayaCollectMondayPages(fakePoster([fakePage(['a'], 'c1', true), new RuntimeException('Monday returned HTTP 502.')], $seen));
+} catch (RuntimeException $e) { $caught = $e; }
+test("a transport failure on a later page propagates", $caught !== null && $caught->getMessage() === 'Monday returned HTTP 502.');
+
+echo "== monday: arayaFetchMonday ==\n";
+test("arayaFetchMonday is callable", is_callable('arayaFetchMonday'));
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

@@ -177,20 +177,18 @@ function arayaMondayPost(string $token, string $gql): array
     return $decoded;
 }
 
-function arayaFetchMonday(array $config, bool $useCache = true): array
+/**
+ * Walk the board to exhaustion. $post receives the cursor (null for the first
+ * page) and returns the decoded page. Throws on any failure, a repeated cursor
+ * or an exceeded page cap, so a partial walk is never returned.
+ */
+function arayaCollectMondayPages(callable $post): array
 {
-    if ($useCache) {
-        $cached = arayaCacheGet('monday', 300);
-        if ($cached !== null && isset($cached['items']) && is_array($cached['items']) && $cached['items'] !== []) {
-            return $cached['items'];
-        }
-    }
-
     $rows = [];
     $cursor = null;
     $seen = [];
     for ($page = 0; $page < ARAYA_MONDAY_MAX_PAGES; $page++) {
-        $decoded = arayaMondayPost($config['monday_token'], arayaMondayBuildQuery($cursor));
+        $decoded = $post($cursor);
         $parsed = arayaParseMondayPage($decoded, $cursor === null);
         $rows = array_merge($rows, $parsed['rows']);
         $cursor = $parsed['cursor'];
@@ -205,6 +203,21 @@ function arayaFetchMonday(array $config, bool $useCache = true): array
     if ($cursor !== null) {
         throw new RuntimeException('Monday pagination did not finish within the page limit.');
     }
+    return $rows;
+}
+
+function arayaFetchMonday(array $config, bool $useCache = true): array
+{
+    if ($useCache) {
+        $cached = arayaCacheGet('monday', 300);
+        if ($cached !== null && isset($cached['items']) && is_array($cached['items']) && $cached['items'] !== []) {
+            return $cached['items'];
+        }
+    }
+
+    $rows = arayaCollectMondayPages(
+        fn(?string $cursor): array => arayaMondayPost($config['monday_token'], arayaMondayBuildQuery($cursor))
+    );
     if ($rows === []) {
         throw new RuntimeException('Monday returned zero items for the client tracker.');
     }
