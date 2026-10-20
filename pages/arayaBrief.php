@@ -112,7 +112,6 @@ if ($brief) {
  * Everything is scoped under .araya-brief: this renders inside the admin
  * panel, and the panel's own chrome must not be touched.
  */
-@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Archivo+Narrow:wght@600;700&family=IBM+Plex+Mono:wght@500;600&display=swap");
 
 .araya-brief {
     /* A cool near-black rather than pure grey: easier to read at length. */
@@ -138,7 +137,9 @@ if ($brief) {
     --shadow:     0 1px 2px rgba(21,24,29,.05), 0 1px 3px rgba(21,24,29,.04);
     --shadow-lift:0 2px 4px rgba(21,24,29,.05), 0 8px 20px -6px rgba(21,24,29,.10);
 
-    font-family: "Archivo", system-ui, sans-serif;
+    /* The panel's own stack, via Bootstrap's variable, so this page matches
+       every other report instead of announcing itself with a webfont. */
+    font-family: var(--bs-font-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
     color: var(--ink);
     padding: 4px 0 56px;
 }
@@ -148,8 +149,7 @@ if ($brief) {
 /* ---- Page head ------------------------------------------------------- */
 .araya-brief .page-head { display: flex; flex-wrap: wrap; align-items: flex-start;
     justify-content: space-between; gap: 16px; margin-bottom: 22px; }
-.araya-brief .page-head h1 { font-family: "Archivo Narrow", sans-serif; font-weight: 700;
-    font-size: 1.65rem; letter-spacing: -.012em; margin: 0; display: flex; align-items: center; gap: 10px; }
+.araya-brief .page-head h1 { font-weight: 700; font-size: 1.6rem; letter-spacing: -.02em; margin: 0; display: flex; align-items: center; gap: 10px; }
 .araya-brief .page-head h1 i { color: var(--warn); font-size: 1.4rem; }
 .araya-brief .page-sub { color: var(--ink-3); font-size: .8rem; margin-top: 3px;
     font-variant-numeric: tabular-nums; }
@@ -162,8 +162,7 @@ if ($brief) {
     box-shadow: var(--shadow); overflow: hidden; margin-bottom: 20px; }
 .araya-brief .stat { padding: 16px 18px 15px; border-left: 1px solid var(--line-2); }
 .araya-brief .stat:first-child { border-left: 0; }
-.araya-brief .stat .n { font-family: "Archivo Narrow", sans-serif; font-size: 2.1rem;
-    font-weight: 700; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.araya-brief .stat .n { font-size: 2rem; font-weight: 700; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .araya-brief .stat .l { font-size: .67rem; font-weight: 600; color: var(--ink-3);
     text-transform: uppercase; letter-spacing: .07em; margin-top: 7px; }
 .araya-brief .stat.is-live   .n { color: var(--ok); }
@@ -220,7 +219,7 @@ if ($brief) {
 
 /* Numbers in mono: columns line up, and a change in magnitude shows as a
    change in width before you have read the digits. */
-.araya-brief .mins, .araya-brief .num { font-family: "IBM Plex Mono", monospace;
+.araya-brief .mins, .araya-brief .num { font-family: var(--bs-font-monospace, SFMono-Regular, Menlo, Consolas, monospace);
     font-weight: 600; font-variant-numeric: tabular-nums; font-size: .83rem; }
 .araya-brief .mins-red     { color: var(--danger); }
 .araya-brief .mins-amber   { color: var(--warn); }
@@ -246,7 +245,7 @@ if ($brief) {
 
 .araya-brief pre.chat { white-space: pre-wrap; word-break: break-word; background: #15181d;
     color: #dfe3e9; border-radius: var(--r); padding: 20px; font-size: .8rem; margin: 0;
-    font-family: "IBM Plex Mono", monospace; line-height: 1.65; }
+    font-family: var(--bs-font-monospace, SFMono-Regular, Menlo, Consolas, monospace); line-height: 1.65; }
 
 .araya-brief .alert { border-radius: var(--r); border: 1px solid var(--line);
     border-left: 3px solid currentColor; font-size: .875rem; }
