@@ -46,14 +46,6 @@ include ('assets/api/checkSession.php');
                     </a>
                 </li>
 
-                <!-- Araya Daily Brief -->
-                <li class="nav-item">
-                    <a href="modules/arayaBrief/views/index.php" target="_blank" class="nav-link">
-                        <i class="nav-icon mr-2 bi bi-sunrise"></i>
-                        <p>Araya Daily Brief &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
-                    </a>
-                </li>
-
                 <!-- Website Management -->
                 <li class="nav-item <?php echo $activeMenu["lv1"] == "websiteMgmt" ? "menu-is-opening menu-open":""; ?>">
                     <a href="#" class="nav-link <?php echo $activeMenu["lv1"] == "websiteMgmt" ? "active":""; ?>">
@@ -242,6 +234,12 @@ include ('assets/api/checkSession.php');
                             <a href="modules/mondayReport/views/index.php?id=<?php echo $_SESSION['id']; ?>" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-kanban"></i>
                                 <p>Monday Report &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
+                            <a href="modules/arayaBrief/views/index.php" target="_blank" class="nav-link">
+                                <i class="nav-icon mr-3 bi bi-sunrise"></i>
+                                <p>Araya Daily Brief &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
                             </a>
                         </li>
                     </ul>
