@@ -288,5 +288,32 @@ foreach (['live', 'upsell', 'upsellExcluded', 'idleNew', 'idleQuiet', 'setup', '
 }
 test("generated_for is the given day", $b['generated_for'] === TODAY);
 
+echo "== live date falls back to gcal signup_date ==" . PHP_EOL;
+// The tracker's Live Date is blank on most real shops, which switched the idle
+// rules off for the whole fleet. gcal's signup date is the next best evidence.
+$b = arayaBuildBrief(res([mk(['live_date' => ''], ['signup_date' => '2026-05-01'])]), TODAY);
+test("a blank live date falls back to signup_date", $b['live'][0]['lifespan'] !== null);
+test("the fallback is labelled as such", $b['live'][0]['date_source'] === 'signup_date');
+test("no no_live_date gap when the fallback worked",
+     count(array_filter($b['gaps'], fn($g) => $g['kind'] === 'no_live_date')) === 0);
+
+$b = arayaBuildBrief(res([mk(['live_date' => '2026-06-01'], ['signup_date' => '2020-01-01'])]), TODAY);
+test("a real live date wins over signup_date", $b['live'][0]['lifespan']['months'] === 4);
+test("and is labelled live_date", $b['live'][0]['date_source'] === 'live_date');
+
+$b = arayaBuildBrief(res([mk(['live_date' => ''], ['signup_date' => ''])]), TODAY);
+test("both blank still raises the gap",
+     count(array_filter($b['gaps'], fn($g) => $g['kind'] === 'no_live_date')) === 1);
+test("and the gap text names both sources",
+     str_contains($b['gaps'][0]['detail'], 'signup date'));
+
+// The fallback must reach the idle rules, which was the point of adding it.
+$b = arayaBuildBrief(res([mk(['live_date' => ''], ['signup_date' => '2026-01-01', 'allocation' => 250, 'remaining_minutes' => 240])]), TODAY);
+test("the idle rule now runs off the fallback date", count($b['idleNew']) === 1);
+
+// A cancelling shop carries the label too.
+$b = arayaBuildBrief(res([mk(['live_status' => 'Waiting to cancel', 'live_date' => ''], ['signup_date' => '2026-05-01'])]), TODAY);
+test("a cancelling row also carries date_source", $b['cancelling'][0]['date_source'] === 'signup_date');
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

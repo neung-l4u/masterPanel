@@ -166,7 +166,24 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
         }
         $status = arayaClean($m['live_status'] ?? '');
         $po = arayaClean($m['po'] ?? '');
+
+        // The tracker's Live Date is the right answer when it is filled in, but
+        // in practice it is blank on most shops, which left every lifespan
+        // unknown and switched the idle rules off for the whole fleet. gcal's
+        // signup_date is the next best evidence a shop exists and since when.
+        // It is a sign-up date, not a go-live date, so it reads early for a
+        // shop that took a while to switch on -- hence date_source, which the
+        // dashboard and the message show rather than passing one off as the
+        // other.
         $liveDate = arayaClean($m['live_date'] ?? '');
+        $dateSource = $liveDate !== '' ? 'live_date' : '';
+        if ($liveDate === '' && $g !== null) {
+            $signup = arayaClean($g['signup_date'] ?? '');
+            if ($signup !== '') {
+                $liveDate = $signup;
+                $dateSource = 'signup_date';
+            }
+        }
         $overview['total']++;
 
         if ($g === null) {
@@ -195,12 +212,13 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
             $overview['live']++;
             $live[] = [
                 'name' => $name, 'po' => $po, 'live_date' => $liveDate, 'lifespan' => $lifespan,
+                'date_source' => $dateSource,
                 'remaining_minutes' => $minutes, 'allocation' => $alloc,
                 'days_until_refresh' => $g ? arayaNum($g['days_until_refresh'] ?? null) : null,
                 'gcal_missing' => $g === null,
             ];
             if ($lifespan === null) {
-                arayaGap($gaps, 'no_live_date', $name, 'Live date is missing, unreadable or in the future; lifespan and the idle rules cannot be evaluated.');
+                arayaGap($gaps, 'no_live_date', $name, 'No usable date: the tracker Live Date is empty and gcal has no signup date either, so lifespan and the idle rules cannot be evaluated.');
             }
             if ($g !== null && $minutes === null) {
                 arayaGap($gaps, 'no_remaining_minutes', $name, 'Remaining minutes are missing or not a number in gcal; the upsell and idle checks could not run for this shop.');
@@ -208,10 +226,11 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
         } elseif ($isPending) {
             $overview['pendingCancel']++;
             if ($lifespan === null) {
-                arayaGap($gaps, 'no_live_date', $name, 'Live date is missing, unreadable or in the future; lifespan unknown.');
+                arayaGap($gaps, 'no_live_date', $name, 'No usable date: the tracker Live Date is empty and gcal has no signup date either, so lifespan is unknown.');
             }
             $cancelling[] = [
                 'name' => $name, 'po' => $po, 'live_date' => $liveDate, 'lifespan' => $lifespan,
+                'date_source' => $dateSource,
                 'reason' => arayaClean($m['reason_for_cancel'] ?? ''),
             ];
         } elseif ($isSetup) {
