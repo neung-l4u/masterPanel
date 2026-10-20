@@ -211,7 +211,9 @@ if ($brief) {
                     <tr>
                         <td class="fw-semibold"><?php echo arayaH($g['name']); ?></td>
                         <td><?php echo arayaH($gapKindLabels[$g['kind']] ?? $g['kind']); ?></td>
-                        <td class="note"><?php echo arayaH($g['detail']); ?></td>
+                        <?php // Same Thai instruction the Chat message sends, so
+                              // whoever reads either one is told the same thing. ?>
+                        <td class="note"><?php echo arayaH(arayaChatGapDetail($g)); ?></td>
                     </tr>
                 <?php } ?>
                 </tbody>

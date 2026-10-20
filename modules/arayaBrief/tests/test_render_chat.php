@@ -192,22 +192,23 @@ function gapOut(string $kind, string $detail): string {
     return arayaRenderChat($b);
 }
 $out = gapOut('unknown_status', 'Monday live_status "Paused" is not a known label; counted in the total only.');
-test("unknown_status names the unrecognised status", str_contains($out, 'ไม่รู้จัก: "Paused"'));
+test("unknown_status names the unrecognised status", str_contains($out, '"Paused"'));
 $out = gapOut('unmatched_monday', 'On the Monday tracker (Not Live) but no matching shop in gcal-booking-api; minutes unknown.');
 test("unmatched_monday names the Monday status", str_contains($out, 'สถานะ: Not Live'));
 $out = gapOut('no_allocation', 'Remaining minutes (310) exceed the allocation (250); the balance is above the allocation, so the usage percentage is not meaningful and the idle rule was not evaluated.');
-test("no_allocation (exceeds) carries both numbers", str_contains($out, 'นาทีคงเหลือ (310) มากกว่านาทีที่ได้รับ (250)'));
+test("no_allocation (exceeds) carries both numbers",
+     str_contains($out, '(310)') && str_contains($out, '(250)'));
 $out = gapOut('no_allocation', 'No minute allocation in gcal; the idle rule would divide by zero, so it was not evaluated.');
 test("no_allocation (missing) is a different sentence from the exceed case",
-    str_contains($out, 'gcal ไม่มีจำนวนนาทีที่ได้รับ') && !str_contains($out, 'มากกว่า'));
+    str_contains($out, 'ยังไม่ได้ตั้งโควตา') && !str_contains($out, 'มากกว่า'));
 foreach (['unknown_status', 'unmatched_monday', 'no_allocation'] as $k) {
     $out = gapOut($k, 'unexpected wording 42');
     test("{$k}: when extraction fails the English detail is appended", str_contains($out, '(unexpected wording 42)'));
 }
 $out = gapOut('no_live_date', 'Live date is missing, unreadable or in the future; lifespan unknown.');
-test("no_live_date for a non-LIVE shop does not claim an idle check", !str_contains($out, 'กฎร้านเงียบ'));
+test("no_live_date for a non-LIVE shop does not claim an idle check", !str_contains($out, 'กฎร้านไม่ใช้งาน'));
 $out = gapOut('no_live_date', 'Live date is missing, unreadable or in the future; lifespan and the idle rules cannot be evaluated.');
-test("no_live_date for a LIVE shop mentions the idle check", str_contains($out, 'กฎร้านเงียบ'));
+test("no_live_date for a LIVE shop mentions the idle check", str_contains($out, 'กฎร้านไม่ใช้งาน'));
 
 echo "== the allowlist of headings ==\n";
 $headingAllow = ['📊 OVERVIEW', '✅ ร้านที่ LIVE (นาทีคงเหลือ · อยู่กับเรามานาน)', '💰 โอกาสอัพเซลล์ (นาที <70 และรีเฟรชอีก ≤15 วัน)',
@@ -291,6 +292,28 @@ test("owner is cleaned", str_contains($out, '· @Namva') && !str_contains($out, 
 test("cancel reason is cleaned", str_contains($out, 'เหตุผล: too pricey'));
 test("setup note is cleaned", str_contains($out, "\n   call back\n"));
 test("no NBSP survives anywhere", !str_contains($out, $nb));
+
+echo "== gap texts are written as instructions ==" . PHP_EOL;
+// These lines go to the team that owns the Monday board, not to whoever wrote
+// the rules. "The matcher could not pair them" is not something they can act
+// on; each line has to name the change to make.
+$instructionCases = [
+    ['unmatched_gcal', 'In gcal-booking-api but no item on the Monday board. Either add it to the board, or if it is a test or retired shop, it can be ignored.'],
+    ['no_billing_day', 'No billing day set in gcal, so the upsell rule cannot be evaluated.'],
+    ['no_register_date', 'No register date on the Monday item, so days stalled cannot be computed.'],
+    ['blank_status', 'Live Status is empty on the Monday item.'],
+    ['unknown_status', 'Monday live_status "Zzz" is not a known label; counted in the total only.'],
+    ['no_live_date', 'No usable date: the tracker Live Date is empty and gcal has no signup date either, so lifespan and the idle rules cannot be evaluated.'],
+    ['name_mismatch', 'Looks like the same shop as "Other Spelling" in gcal, but the names differ so they were not paired.'],
+];
+foreach ($instructionCases as [$kind, $detail]) {
+    $text = arayaChatGapDetail(['kind' => $kind, 'detail' => $detail]);
+    test("{$kind} tells the reader what to do", str_contains($text, '→'));
+    test("{$kind} is not left in English", !str_contains($text, 'cannot be'));
+}
+$text = arayaChatGapDetail(['kind' => 'name_mismatch', 'detail' => $instructionCases[6][1]]);
+test("name_mismatch names the other spelling", str_contains($text, 'Other Spelling'));
+test("name_mismatch offers the durable fix", str_contains($text, 'Google Calendar ID'));
 
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

@@ -85,43 +85,60 @@ function arayaChatDate(string $ymd): string
  */
 function arayaChatGapDetail($g): string
 {
+    // Written for whoever has to act, not for whoever wrote the rules: name
+    // the system, the field and the change. The reader owns the Monday board,
+    // not this code, so "the matcher could not pair them" tells them nothing
+    // they can do.
     static $th = [
-        'unmatched_gcal'       => 'มีอยู่ใน gcal แต่ไม่มี item ใน Monday board',
-        'no_billing_day'       => 'ยังไม่ได้ตั้งวันบิล จึงเช็กกฎอัพเซลล์ไม่ได้',
-        'no_register_date'     => 'ยังไม่มีวันลงทะเบียน จึงคำนวณจำนวนวันที่ค้างไม่ได้',
-        'blank_status'         => 'ช่อง Live Status ใน Monday ว่างอยู่',
-        'no_remaining_minutes' => 'gcal ไม่มีข้อมูลนาทีคงเหลือ จึงเช็กอัพเซลล์และร้านเงียบไม่ได้',
-        'name_mismatch' => 'ชื่อร้านใน Monday กับ gcal ไม่ตรงกัน จึงจับคู่ไม่ได้และไม่มีนาทีในรายงาน แก้ชื่อให้ตรง หรือใส่ Google Calendar ID ในบอร์ดจะชัวร์กว่า',
+        'unmatched_gcal'       => 'มีร้านนี้ใน gcal แต่ยังไม่มีใน Monday board → เพิ่ม item ในบอร์ด (ถ้าเป็นร้านเทสต์หรือเลิกใช้แล้ว ข้ามได้)',
+        'no_billing_day'       => 'ยังไม่ได้ตั้ง billing day ใน gcal → ตั้งวันตัดรอบให้ร้านนี้ ไม่งั้นระบบเช็กโอกาสอัพเซลล์ไม่ได้',
+        'no_register_date'     => 'ช่อง Register Date ใน Monday ว่าง → กรอกวันที่ลูกค้าสมัคร ไม่งั้นนับวันที่ค้าง setup ไม่ได้',
+        'blank_status'         => 'ช่อง Live Status ใน Monday ว่าง → เลือกสถานะให้ร้านนี้ ไม่งั้นร้านจะไม่ถูกนับในสรุป',
+        'no_remaining_minutes' => 'gcal ไม่มีตัวเลขนาทีคงเหลือของร้านนี้ → ฝั่ง IT ช่วยเช็ก ไม่งั้นเช็กอัพเซลล์และร้านเงียบไม่ได้',
     ];
     $kind = arayaClean($g['kind'] ?? '');
     $detail = arayaClean($g['detail'] ?? '');
     $keep = $detail === '' ? '' : ' (' . $detail . ')';
 
     switch ($kind) {
+        case 'name_mismatch':
+            if (preg_match('/same shop as "([^"]+)" in gcal/u', $detail, $m) === 1) {
+                return 'ชื่อใน Monday ไม่ตรงกับใน gcal ("' . $m[1] . '") ระบบเลยจับคู่ไม่ได้ '
+                     . 'และนาทีของร้านนี้ไม่ขึ้นในรายงาน → แก้ชื่อในบอร์ดให้ตรง '
+                     . 'หรือใส่ Google Calendar ID ในบอร์ด แล้วชื่อจะไม่สำคัญอีก';
+            }
+            return 'ชื่อใน Monday ไม่ตรงกับใน gcal ระบบเลยจับคู่ไม่ได้ '
+                 . 'และนาทีของร้านนี้ไม่ขึ้นในรายงาน → ใส่ Google Calendar ID ในบอร์ด' . $keep;
         case 'unmatched_monday':
             if (preg_match('/^On the Monday tracker \((.+?)\) but no matching shop in gcal-booking-api; minutes unknown\.$/u', $detail, $m) === 1) {
                 $st = $m[1] === 'no status' ? 'ไม่มีสถานะ' : $m[1];
-                return 'อยู่ใน Monday (สถานะ: ' . $st . ') แต่หาร้านที่ตรงกันใน gcal ไม่พบ จึงไม่ทราบนาทีคงเหลือ';
+                return 'อยู่ใน Monday (สถานะ: ' . $st . ') แต่ไม่มีร้านนี้ใน gcal '
+                     . 'เลยไม่รู้นาทีคงเหลือ → เช็กว่าร้านถูกตั้งใน gcal แล้วหรือยัง '
+                     . 'ถ้าตั้งแล้วให้ใส่ Google Calendar ID ในบอร์ด';
             }
-            return 'อยู่ใน Monday แต่หาร้านที่ตรงกันใน gcal ไม่พบ จึงไม่ทราบนาทีคงเหลือ' . $keep;
+            return 'อยู่ใน Monday แต่ไม่มีร้านนี้ใน gcal เลยไม่รู้นาทีคงเหลือ '
+                 . '→ เช็กว่าร้านถูกตั้งใน gcal แล้วหรือยัง' . $keep;
         case 'unknown_status':
             if (preg_match('/^Monday live_status "([^"]*)" is not a known label;/u', $detail, $m) === 1) {
-                return 'ช่อง Live Status มีค่าที่ระบบไม่รู้จัก: "' . $m[1] . '"';
+                return 'ช่อง Live Status เป็น "' . $m[1] . '" ซึ่งไม่ใช่ตัวเลือกมาตรฐาน '
+                     . '→ เปลี่ยนเป็นสถานะที่มีในลิสต์ ไม่งั้นร้านนี้จะไม่ถูกนับในสรุป';
             }
-            return 'ช่อง Live Status มีค่าที่ระบบไม่รู้จัก' . $keep;
+            return 'ช่อง Live Status เป็นค่าที่ไม่ใช่ตัวเลือกมาตรฐาน → เปลี่ยนเป็นสถานะที่มีในลิสต์' . $keep;
         case 'no_allocation':
             if (preg_match('/^Remaining minutes \((.+?)\) exceed the allocation \((.+?)\);/u', $detail, $m) === 1) {
-                return 'นาทีคงเหลือ (' . $m[1] . ') มากกว่านาทีที่ได้รับ (' . $m[2] . ') จึงใช้เปอร์เซ็นต์การใช้งานไม่ได้';
+                return 'นาทีคงเหลือ (' . $m[1] . ') มากกว่าโควตาที่ตั้งไว้ (' . $m[2] . ') '
+                     . '→ ปกติเกิดตอนเพิ่งเติมนาที ถ้าไม่ได้เพิ่งเติมให้ฝั่ง IT เช็กตัวเลขใน gcal';
             }
             if (preg_match('/^No minute allocation in gcal;/u', $detail) === 1) {
-                return 'gcal ไม่มีจำนวนนาทีที่ได้รับ จึงใช้เปอร์เซ็นต์การใช้งานไม่ได้';
+                return 'ยังไม่ได้ตั้งโควตานาทีให้ร้านนี้ใน gcal → ตั้งโควตา ไม่งั้นเช็กกฎร้านไม่ใช้งานไม่ได้';
             }
-            return 'ข้อมูลนาทีที่ได้รับไม่ถูกต้อง จึงใช้เปอร์เซ็นต์การใช้งานไม่ได้' . $keep;
+            return 'โควตานาทีใน gcal ไม่ถูกต้อง → ฝั่ง IT ช่วยเช็ก' . $keep;
         case 'no_live_date':
             // A LIVE shop also loses the idle-rule check; a pending-cancel shop
             // never faces that rule, so only claim it when the detail says so.
-            $base = 'ยังไม่มีวัน live (หรืออ่านไม่ได้) จึงคำนวณอายุการใช้งานไม่ได้';
-            return strpos($detail, 'idle rules') !== false ? $base . ' และเช็กกฎร้านเงียบไม่ได้' : $base;
+            $base = 'ไม่มีวัน live ทั้งใน Monday และ gcal → กรอกช่อง Live Date ในบอร์ด '
+                  . 'ไม่งั้นคำนวณว่าอยู่กับเรามานานเท่าไหร่ไม่ได้';
+            return strpos($detail, 'idle rules') !== false ? $base . ' และเช็กกฎร้านไม่ใช้งานไม่ได้' : $base;
     }
     return $th[$kind] ?? $detail;
 }
