@@ -238,11 +238,21 @@ function arayaRenderChat(array $brief): string
         $S[] = $B;
     }
 
-    // Data gaps
-    if (!empty($brief['gaps'])) {
+    // Data gaps. Only the ones someone has to act on are listed: a cancelled
+    // shop is missing from gcal because cancelling is what removes it, and on
+    // the real board those outnumber the genuine problems 25 to 3. Listing all
+    // of them every morning would bury the real ones and teach the team to
+    // scroll past the section. The expected ones are counted, not named, so
+    // the number stays honest and the dashboard still shows them in full.
+    $gapsAction = array_filter($brief['gaps'] ?? [], fn($g) => empty($g['expected']));
+    $gapsExpected = count($brief['gaps'] ?? []) - count($gapsAction);
+    if ($gapsAction) {
         $B = ['⚠️ ข้อมูลไม่ครบ'];
-        foreach ($brief['gaps'] as $g) {
+        foreach ($gapsAction as $g) {
             $B[] = '• ' . arayaChatName($g) . ' [' . arayaClean($g['kind'] ?? '') . '] ' . arayaChatGapDetail($g);
+        }
+        if ($gapsExpected > 0) {
+            $B[] = '(อีก ' . $gapsExpected . ' รายการเป็นร้านที่ยกเลิกแล้ว ไม่ต้องทำอะไร)';
         }
         $S[] = $B;
     }

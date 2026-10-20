@@ -315,5 +315,28 @@ test("the idle rule now runs off the fallback date", count($b['idleNew']) === 1)
 $b = arayaBuildBrief(res([mk(['live_status' => 'Waiting to cancel', 'live_date' => ''], ['signup_date' => '2026-05-01'])]), TODAY);
 test("a cancelling row also carries date_source", $b['cancelling'][0]['date_source'] === 'signup_date');
 
+echo "== expected vs actionable gaps ==" . PHP_EOL;
+// A cancelled shop has no gcal row because cancelling is what removes it.
+// Recording it keeps the count honest; flagging it as work does not.
+$b = arayaBuildBrief(res([], [
+    ['name' => 'Gone A', 'live_status' => 'Canceled'],
+    ['name' => 'Gone B', 'live_status' => 'Cancel Before LIVE'],
+    ['name' => 'Real',   'live_status' => 'LIVE'],
+]), TODAY);
+test("cancelled shops are marked expected", $b['gapsExpected'] === 2);
+test("a live shop with no gcal row still needs action", $b['gapsNeedingAction'] >= 1);
+test("every gap is still recorded", count($b['gaps']) === $b['gapsExpected'] + $b['gapsNeedingAction']);
+
+$byName = [];
+foreach ($b['gaps'] as $g) { $byName[$g['name']] = $g; }
+test("a Canceled shop carries expected=true", $byName['Gone A']['expected'] === true);
+test("a Cancel Before LIVE shop carries expected=true", $byName['Gone B']['expected'] === true);
+test("a LIVE shop carries expected=false", $byName['Real']['expected'] === false);
+
+// Gaps that are not about a missing gcal row are never "expected".
+$b = arayaBuildBrief(res([mk(['live_status' => 'Not Live', 'register_date' => ''])]), TODAY);
+$reg = array_values(array_filter($b['gaps'], fn($g) => $g['kind'] === 'no_register_date'));
+test("a board-data gap is never marked expected", $reg[0]['expected'] === false);
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

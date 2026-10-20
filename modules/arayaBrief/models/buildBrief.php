@@ -100,10 +100,25 @@ function arayaNum($v)
     return $v + 0;
 }
 
-function arayaGap(array &$gaps, string $kind, string $name, string $detail): void
+/**
+ * Record a shop a rule had to skip.
+ *
+ * $expected marks the ones nobody needs to act on. A shop that cancelled is
+ * absent from gcal because that is what cancelling means, and on the real
+ * board those outnumber the genuine problems 25 to 3 -- left in one list they
+ * bury the rows that matter and train people to ignore the whole section.
+ * They are still recorded, so the count stays honest and anything odd among
+ * them is still findable; they are just kept apart from the work.
+ */
+function arayaGap(array &$gaps, string $kind, string $name, string $detail, bool $expected = false): void
 {
     $name = arayaClean($name);
-    $gaps[] = ['kind' => $kind, 'name' => $name === '' ? '(unnamed shop)' : $name, 'detail' => $detail];
+    $gaps[] = [
+        'kind' => $kind,
+        'name' => $name === '' ? '(unnamed shop)' : $name,
+        'detail' => $detail,
+        'expected' => $expected,
+    ];
 }
 
 /** Rule C test. Returns the finding, or null when not flagged or not evaluable. */
@@ -187,8 +202,13 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
         $overview['total']++;
 
         if ($g === null) {
+            // A cancelled shop has no gcal row because cancelling is what
+            // removes it. Recording it keeps the count honest, but it is not
+            // something anyone needs to chase.
+            $cancelledHere = in_array($status, ARAYA_CANCELLED_STATUSES, true);
             arayaGap($gaps, 'unmatched_monday', $name,
-                'On the Monday tracker (' . ($status === '' ? 'no status' : $status) . ') but no matching shop in gcal-booking-api; minutes unknown.');
+                'On the Monday tracker (' . ($status === '' ? 'no status' : $status) . ') but no matching shop in gcal-booking-api; minutes unknown.',
+                $cancelledHere);
         }
 
         $isLive = $status === ARAYA_STATUS_LIVE;
@@ -337,5 +357,9 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
         'setup' => $setup,
         'cancelling' => $cancelling,
         'gaps' => $gaps,
+        // Split once here so the dashboard and the Chat message cannot
+        // disagree about which gaps are worth acting on.
+        'gapsNeedingAction' => count(array_filter($gaps, fn($g) => empty($g['expected']))),
+        'gapsExpected' => count(array_filter($gaps, fn($g) => !empty($g['expected']))),
     ];
 }

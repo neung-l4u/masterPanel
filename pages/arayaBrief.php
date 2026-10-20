@@ -120,6 +120,9 @@ if ($brief) {
         .araya-brief .gaps .head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; width: 100%; background: none; border: 0; text-align: left; color: #842029; font-weight: 700; }
         .araya-brief .gaps .count { background: #dc3545; color: #fff; border-radius: 999px; padding: 2px 12px; font-size: .95rem; }
         .araya-brief .gaps.none { border-color: #198754; background: #f1faf4; }
+        .araya-brief .gaps.expected { border-color: #ced4da; background: #f8f9fa; }
+        .araya-brief .gaps.expected .head { color: #495057; }
+        .araya-brief .gaps.expected .count { background: #adb5bd; }
         .araya-brief .gaps.none .head { color: #0f5132; cursor: default; }
         .araya-brief .gaps.none .count { background: #198754; }
         .araya-brief .money { cursor: help; }
@@ -181,13 +184,21 @@ if ($brief) {
         <?php } ?>
     </div>
 
-    <!-- Data gaps first: these are the shops most likely to be a real problem. -->
-    <?php $gapCount = count($brief['gaps']); ?>
+    <!-- Data gaps first: these are the shops most likely to be a real problem.
+         Cancelled shops are absent from gcal because that is what cancelling
+         means; on the real board they outnumber the genuine problems 25 to 3,
+         so they are kept behind a second toggle rather than burying the rows
+         someone has to act on. -->
+    <?php
+        $gapsAction = array_values(array_filter($brief['gaps'], fn($g) => empty($g['expected'])));
+        $gapsExpected = array_values(array_filter($brief['gaps'], fn($g) => !empty($g['expected'])));
+        $gapCount = count($gapsAction);
+    ?>
     <div class="gaps mb-4 <?php echo $gapCount === 0 ? 'none' : ''; ?>" id="gaps">
         <?php if ($gapCount > 0) { ?>
         <button class="head" type="button" data-bs-toggle="collapse" data-bs-target="#gapList" aria-expanded="false" aria-controls="gapList">
             <i class="bi bi-exclamation-octagon-fill"></i>
-            <span>Data gaps - shops a rule had to skip</span>
+            <span>Data gaps - needs a look</span>
             <span class="count"><?php echo $gapCount; ?></span>
             <i class="bi bi-chevron-down ms-auto"></i>
         </button>
@@ -195,7 +206,7 @@ if ($brief) {
             <table class="table table-sm mb-0">
                 <thead><tr><th>Shop</th><th>Problem</th><th>Detail</th></tr></thead>
                 <tbody>
-                <?php foreach ($brief['gaps'] as $g) { ?>
+                <?php foreach ($gapsAction as $g) { ?>
                     <tr>
                         <td class="fw-semibold"><?php echo arayaH($g['name']); ?></td>
                         <td><?php echo arayaH($gapKindLabels[$g['kind']] ?? $g['kind']); ?></td>
@@ -206,9 +217,35 @@ if ($brief) {
             </table>
         </div>
         <?php } else { ?>
-        <div class="head"><i class="bi bi-check-circle-fill"></i><span>Data gaps</span><span class="count">0</span></div>
+        <div class="head"><i class="bi bi-check-circle-fill"></i><span>Data gaps - nothing to chase</span><span class="count">0</span></div>
         <?php } ?>
     </div>
+
+    <?php if ($gapsExpected) { ?>
+    <div class="gaps expected mb-4">
+        <button class="head" type="button" data-bs-toggle="collapse" data-bs-target="#gapExpected" aria-expanded="false" aria-controls="gapExpected">
+            <i class="bi bi-archive"></i>
+            <span>Expected - cancelled shops with no gcal record</span>
+            <span class="count"><?php echo count($gapsExpected); ?></span>
+            <i class="bi bi-chevron-down ms-auto"></i>
+        </button>
+        <div class="collapse" id="gapExpected">
+            <div class="px-3 pb-2 note">Normal: cancelling a shop is what removes it from gcal. Listed so the count stays honest.</div>
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Shop</th><th>Status on the board</th></tr></thead>
+                <tbody>
+                <?php foreach ($gapsExpected as $g) {
+                    preg_match('/\(([^)]*)\)/', $g['detail'], $sm); ?>
+                    <tr>
+                        <td class="fw-semibold"><?php echo arayaH($g['name']); ?></td>
+                        <td class="note"><?php echo arayaH($sm[1] ?? '-'); ?></td>
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php } ?>
 
     <div class="panel-card mb-4">
         <h2>Live shops <span class="note fw-normal">(least minutes first; <span class="money">&#128176;</span> = also an upsell candidate)</span></h2>
