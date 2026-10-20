@@ -159,3 +159,11 @@ out
 /api/docusign/logs/
 # Local browser-test launcher: localhost URLs and real customer emails
 test-links.html
+config/google-service-account.json
+assets/php/whm_tokens.json
+modules/viewcreditmake/config.php
+modules/viewcreditmake/cache/
+config/domain_report.php
+config/*.json
+config/*.csv
+api/stripe/cache/*/
