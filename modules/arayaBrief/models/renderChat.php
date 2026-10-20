@@ -167,7 +167,12 @@ function arayaRenderChat(array $brief): string
     }
 
     // Upsell: always printed
-    $B = ['💰 โอกาสอัพเซลล์ (นาที <70 และรีเฟรชอีก ≤15 วัน)'];
+    // The thresholds come from the constants the rule itself uses. Spelling
+    // them out as literals here would let the heading keep announcing "<70"
+    // after someone changed the rule, and this message is the artefact people
+    // act on without opening the dashboard.
+    $B = ['💰 โอกาสอัพเซลล์ (นาที <' . ARAYA_UPSELL_MAX_MINUTES
+        . ' และรีเฟรชอีก ≤' . ARAYA_UPSELL_MAX_DAYS . ' วัน)'];
     if (empty($brief['upsell'])) {
         $B[] = 'ไม่มีวันนี้ ✅';
     } else {

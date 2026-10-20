@@ -18,15 +18,19 @@ if (empty($_SESSION['id'])) {
 header('Cache-Control: no-store');
 
 date_default_timezone_set('Asia/Bangkok');
-require_once '../models/loadBrief.php';
-require_once '../models/renderChat.php';
+// __DIR__, not a bare relative path: a plain '../models/...' resolves against
+// the calling script's directory, which happens to work when Apache serves
+// this file directly but breaks the moment anything includes it from
+// elsewhere -- a CLI harness, or the 07:00 cron that is coming next.
+require_once __DIR__ . '/../models/loadBrief.php';
+require_once __DIR__ . '/../models/renderChat.php';
 
 function arayaH($v): string
 {
     return htmlspecialchars((string)$v, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-/** Minutes keep their sign. Red below zero, amber under 70, green otherwise. */
+/** Minutes keep their sign. Red below zero, amber under the upsell threshold, green otherwise. */
 function arayaMinsCell($v): string
 {
     if ($v === null) {
