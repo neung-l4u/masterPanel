@@ -63,5 +63,30 @@ arayaBriefLogSend($db, '2026-10-20', 'failed', "quote ' and backslash \ survive"
 test("a body with quotes is still bound, not escaped into the SQL",
      str_contains($db->calls[0]['params'][2], "quote '"));
 
+echo "== an empty result means not sent ==" . PHP_EOL;
+// The real db wrapper returns [] for no match, while a naive stub returns null.
+// A `!== null` check passes every stub test and then reports "already sent"
+// every morning against the real database, so the cron would never post and
+// nothing would say why. Both shapes must read as "not sent".
+foreach ([
+    'null'        => null,
+    'empty array' => [],
+    'false'       => false,
+] as $label => $noMatch) {
+    $db = new FakeDb($noMatch);
+    test("a {$label} result reads as not sent",
+         arayaBriefAlreadySentToday($db, '2026-10-20') === false);
+}
+
+// Anything with content is a real row and does mean sent.
+foreach ([
+    'a row array' => ['id' => 1],
+    'an id only'  => ['id' => 7],
+] as $label => $row) {
+    $db = new FakeDb($row);
+    test("{$label} reads as already sent",
+         arayaBriefAlreadySentToday($db, '2026-10-20') === true);
+}
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);
