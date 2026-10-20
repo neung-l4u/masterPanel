@@ -121,6 +121,50 @@ function arayaGap(array &$gaps, string $kind, string $name, string $detail, bool
     ];
 }
 
+/**
+ * A deliberately crude key for spotting two spellings of one shop name.
+ *
+ * Strips everything but letters and digits, so "Chiva Raks Holistic Spa and
+ * Wellness Centre" and "Chivaraks Holistic Spa" start to look alike. This is
+ * far looser than the matcher's normalisation on purpose: its output only ever
+ * produces a suggestion for a human to check, never a pairing, so a false
+ * suggestion costs a glance while a missed one costs a shop's minutes.
+ */
+function arayaLooseKey($s): string
+{
+    $s = mb_strtolower(arayaClean($s), 'UTF-8');
+    // Drop the words that appear in half the names on this board and so carry
+    // no distinguishing information.
+    $s = preg_replace('/\b(thai|massage|spa|and|the|wellness|centre|center|holistic|therapy|therapeutic|llc|ltd)\b/u', ' ', $s);
+    return preg_replace('/[^\p{L}\p{N}]+/u', '', $s) ?? '';
+}
+
+/**
+ * Do two loose keys look like the same shop?
+ *
+ * One containing the other covers the common case, where a board name carries
+ * extra words. Below that, similar_text's percentage catches a transposition
+ * or a missing letter. The bar is high enough that unrelated shops on this
+ * board do not reach it.
+ */
+function arayaLooseMatch(string $a, string $b): bool
+{
+    if ($a === '' || $b === '') {
+        return false;
+    }
+    if ($a === $b) {
+        return true;
+    }
+    // Require a reasonable stem before accepting containment, so a two-letter
+    // remainder cannot match half the board.
+    if (mb_strlen($a) >= 5 && mb_strlen($b) >= 5
+        && (str_contains($a, $b) || str_contains($b, $a))) {
+        return true;
+    }
+    similar_text($a, $b, $pct);
+    return $pct >= 82.0;
+}
+
 /** Rule C test. Returns the finding, or null when not flagged or not evaluable. */
 function arayaQuietFinding(array $periods): ?array
 {
@@ -323,12 +367,75 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
         }
     }
 
+    // A shop unmatched on both sides is usually one shop spelled two ways --
+    // "Chiva Raks Holistic Spa and Wellness Centre" on the board against
+    // "Chivaraks Holistic Spa" in gcal. Reported as two separate "missing"
+    // rows, nobody connects them; named as a likely pair, the fix is obvious.
+    // Only shops that failed to match are compared, so this cannot contradict
+    // a real pairing, and the matcher itself stays strict: a near match is a
+    // hint for a person, never grounds to attribute one shop's minutes to
+    // another.
+    $gcalLeftovers = [];
     foreach ($matchResult['unmatchedGcal'] ?? [] as $g) {
         $n = arayaClean($g['shop_name'] ?? '');
         if ($n === '') {
             $n = arayaClean($g['shop_id'] ?? '');
         }
-        arayaGap($gaps, 'unmatched_gcal', $n, 'Shop exists in gcal-booking-api but has no matching Monday item.');
+        $gcalLeftovers[] = ['name' => $n, 'key' => arayaLooseKey($n)];
+    }
+
+    $mondayLeftovers = [];
+    foreach ($matchResult['unmatchedMonday'] ?? [] as $m) {
+        $status = arayaClean($m['live_status'] ?? '');
+        // A cancelled shop is gone from gcal on purpose; pairing it with a
+        // live gcal row would be noise, not a finding.
+        if (in_array($status, ARAYA_CANCELLED_STATUSES, true)) {
+            continue;
+        }
+        $n = arayaClean($m['name'] ?? '');
+        $mondayLeftovers[$n] = arayaLooseKey($n);
+    }
+
+    $pairedGcal = [];
+    $namedMismatch = [];   // Monday shops already explained by a name_mismatch row.
+    foreach ($gcalLeftovers as $i => $g) {
+        foreach ($mondayLeftovers as $mName => $mKey) {
+            if ($g['key'] === '' || $mKey === '') {
+                continue;
+            }
+            if (!arayaLooseMatch($g['key'], $mKey)) {
+                continue;
+            }
+            $pairedGcal[$i] = true;
+            $namedMismatch[$mName] = true;
+            arayaGap(
+                $gaps,
+                'name_mismatch',
+                $mName,
+                'Looks like the same shop as "' . $g['name'] . '" in gcal, but the '
+                . 'names differ so they were not paired and this shop has no minutes '
+                . 'in the report. Fix by making the names match, or better, by putting '
+                . 'the Google Calendar ID on the Monday item so spelling stops mattering.'
+            );
+            break;
+        }
+    }
+
+    foreach ($gcalLeftovers as $i => $g) {
+        if (isset($pairedGcal[$i])) {
+            continue;   // Already reported as the clearer name_mismatch finding.
+        }
+        arayaGap($gaps, 'unmatched_gcal', $g['name'],
+            'In gcal-booking-api but no item on the Monday board. Either add it to the '
+            . 'board, or if it is a test or retired shop, it can be ignored.');
+    }
+
+    // A shop with a name_mismatch row does not also need a bare "no match in
+    // gcal" row: the mismatch says the same thing and names the likely partner.
+    if ($namedMismatch) {
+        $gaps = array_values(array_filter($gaps, function ($g) use ($namedMismatch) {
+            return !($g['kind'] === 'unmatched_monday' && isset($namedMismatch[$g['name']]));
+        }));
     }
 
     // Most urgent first; unknown minutes last.

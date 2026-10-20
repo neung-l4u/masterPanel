@@ -91,6 +91,7 @@ function arayaChatGapDetail($g): string
         'no_register_date'     => 'ยังไม่มีวันลงทะเบียน จึงคำนวณจำนวนวันที่ค้างไม่ได้',
         'blank_status'         => 'ช่อง Live Status ใน Monday ว่างอยู่',
         'no_remaining_minutes' => 'gcal ไม่มีข้อมูลนาทีคงเหลือ จึงเช็กอัพเซลล์และร้านเงียบไม่ได้',
+        'name_mismatch' => 'ชื่อร้านใน Monday กับ gcal ไม่ตรงกัน จึงจับคู่ไม่ได้และไม่มีนาทีในรายงาน แก้ชื่อให้ตรง หรือใส่ Google Calendar ID ในบอร์ดจะชัวร์กว่า',
     ];
     $kind = arayaClean($g['kind'] ?? '');
     $detail = arayaClean($g['detail'] ?? '');

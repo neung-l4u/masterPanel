@@ -338,5 +338,57 @@ $b = arayaBuildBrief(res([mk(['live_status' => 'Not Live', 'register_date' => ''
 $reg = array_values(array_filter($b['gaps'], fn($g) => $g['kind'] === 'no_register_date'));
 test("a board-data gap is never marked expected", $reg[0]['expected'] === false);
 
+echo "== near-match detection across the two systems ==" . PHP_EOL;
+// The real case: one shop, two spellings, so it matched nothing and its
+// minutes silently never appeared in the report.
+$b = arayaBuildBrief(res([],
+    [['name' => 'Chiva Raks Holistic Spa and Wellness Centre', 'live_status' => 'Not Live']],
+    [['shop_id' => 'g1', 'shop_name' => 'Chivaraks Holistic Spa']]
+), TODAY);
+$kinds = array_column($b['gaps'], 'kind');
+test("a near match is reported as name_mismatch", in_array('name_mismatch', $kinds, true));
+$nm = array_values(array_filter($b['gaps'], fn($g) => $g['kind'] === 'name_mismatch'))[0];
+test("the mismatch names the gcal spelling", str_contains($nm['detail'], 'Chivaraks Holistic Spa'));
+test("the mismatch suggests the calendar-ID fix", str_contains($nm['detail'], 'Google Calendar ID'));
+test("the weaker unmatched_monday row is dropped", !in_array('unmatched_monday', $kinds, true));
+test("the gcal side is not reported separately too", !in_array('unmatched_gcal', $kinds, true));
+test("a name mismatch always needs action", $nm['expected'] === false);
+
+// Unrelated shops must not be paired, or the section cries wolf again.
+$b = arayaBuildBrief(res([],
+    [['name' => 'Silk Thai Therapy', 'live_status' => 'Not Live']],
+    [['shop_id' => 'g2', 'shop_name' => 'SUPERTHAI MASSAGE']]
+), TODAY);
+$kinds = array_column($b['gaps'], 'kind');
+test("unrelated names are not paired", !in_array('name_mismatch', $kinds, true));
+test("both are still reported on their own side",
+     in_array('unmatched_monday', $kinds, true) && in_array('unmatched_gcal', $kinds, true));
+
+// A cancelled shop is gone from gcal on purpose and must not be paired.
+$b = arayaBuildBrief(res([],
+    [['name' => 'Chiva Raks Holistic Spa and Wellness Centre', 'live_status' => 'Canceled']],
+    [['shop_id' => 'g3', 'shop_name' => 'Chivaraks Holistic Spa']]
+), TODAY);
+test("a cancelled shop is never paired",
+     !in_array('name_mismatch', array_column($b['gaps'], 'kind'), true));
+
+// The unmatched-gcal text should tell the reader what to do about it.
+$b = arayaBuildBrief(res([], [], [['shop_id' => 'g4', 'shop_name' => 'Totally Unknown Shop']]), TODAY);
+$ug = array_values(array_filter($b['gaps'], fn($g) => $g['kind'] === 'unmatched_gcal'))[0];
+test("the unmatched-gcal detail says what to do", str_contains($ug['detail'], 'add it to the board'));
+
+echo "== loose key helpers ==" . PHP_EOL;
+test("spacing differences collapse",
+     arayaLooseMatch(arayaLooseKey('Chiva Raks Holistic Spa'), arayaLooseKey('Chivaraks Holistic Spa')));
+test("case differences collapse",
+     arayaLooseMatch(arayaLooseKey('Tableland Traditional Thai massage'), arayaLooseKey('Tableland Traditional Thai Massage')));
+test("a longer name containing a shorter one matches",
+     arayaLooseMatch(arayaLooseKey('Sabai Thai Massage and Bodyworks'), arayaLooseKey('Sabai Thai Massage')));
+test("two different shops do not match",
+     !arayaLooseMatch(arayaLooseKey('Lila Thai Massage'), arayaLooseKey('Mira Thai Massage')));
+test("filler-only names do not all collapse together",
+     !arayaLooseMatch(arayaLooseKey('Thai Massage Spa'), arayaLooseKey('Wellness Centre')));
+test("an empty key never matches", !arayaLooseMatch('', ''));
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

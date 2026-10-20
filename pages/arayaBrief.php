@@ -93,6 +93,7 @@ $gapKindLabels = [
     'no_live_date' => 'No live date', 'no_register_date' => 'No register date',
     'no_billing_day' => 'No billing day', 'no_allocation' => 'No allocation',
     'no_remaining_minutes' => 'No minutes figure',
+    'name_mismatch' => 'Name differs between systems',
 ];
 if ($brief) {
     foreach ($brief['upsell'] as $r) {
