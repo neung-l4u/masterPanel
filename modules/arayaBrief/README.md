@@ -37,11 +37,20 @@ outputs from one data path (`models/loadBrief.php`):
 0 7 * * * /usr/bin/php /home/<user>/public_html/api/arayaBrief/sendChat.php >> /home/<user>/logs/araya-brief.log 2>&1
 ```
 
-Check the server timezone; the script sets Asia/Bangkok for its own date, but
-cron's `0 7` is in the server's clock. The script is CLI only (HTTP gets 403) and
-safe to run twice: a date with a `sent` row is skipped. A `failed` row does not
-block, so re-running after a fix posts the brief. Failures exit 1.
+The script sets Asia/Bangkok for its own date, but cron's `0 7` is the SERVER
+clock. Check it with `date`. If the server is not on Bangkok time, either add
+`CRON_TZ=Asia/Bangkok` on the line above the schedule (Vixie cron and most
+cPanel builds support it) or shift the hour by the offset.
 
+`/usr/bin/php` is often wrong on cPanel -- it may be `/usr/local/bin/php` or an
+`ea-phpNN` path. Confirm with `which php`.
+
+The script is CLI only (HTTP gets 403) and safe to run twice: a date with a
+`sent` row is skipped, and a MySQL named lock stops two overlapping runs from
+both posting. A `failed` row does not block, so re-running after a fix posts
+the brief. Failures exit 1, so cron will mail you.
+
+To re-run by hand after a failure, use the same command as the cron line.
 ## Tests
 
 ```
@@ -68,3 +77,4 @@ No row for the date at all = cron did not run or DB was unreachable.
 | Monday down | `Monday request failed (curl error N)`, `Monday returned HTTP N`, `Monday returned a GraphQL error` - no brief is posted; retry later |
 | gcal down | Does **not** fail the run: the brief posts from Monday only and says gcal was unavailable. The cause appears only in the cron log as `gcal fetch failed: ...`; HTTP 401/403 there means `gcal_admin_key` does not match `ARAYA_ADMIN_KEY`. |
 | Chat webhook | `Chat webhook returned HTTP N`. HTTP 0 means the request never completed and carries a curl errno: 6 = DNS, 7 = refused, 28 = timeout, 35/60 = TLS. A 404 usually means the webhook was revoked in the space |
+| Database | `Failed to connect to MySQL`, or `aborted before completing` with exit 1. No row is written, so the log table shows nothing for that date. Check credentials in `assets/db/initDB.php` and that `l4u_araya_brief_logs` exists |

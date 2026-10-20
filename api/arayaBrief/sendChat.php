@@ -16,18 +16,14 @@ if (PHP_SAPI !== 'cli') {
     exit(1);
 }
 
-// Every path is __DIR__-relative: cron runs with an arbitrary working directory.
-require_once __DIR__ . '/../../modules/arayaBrief/models/loadBrief.php';
-require_once __DIR__ . '/../../modules/arayaBrief/models/renderChat.php';
-require_once __DIR__ . '/../../modules/arayaBrief/models/briefLog.php';
-// The shared wrapper and its (gitignored) credentials set up the global $db.
-require_once __DIR__ . '/../../assets/db/db.php';
-require_once __DIR__ . '/../../assets/db/initDB.php';
-
 /*
  * The db wrapper reports a failure (e.g. cannot connect) with exit($message),
  * which ends the script with status 0 and would look like success to cron. Any
  * exit that does not pass through arayaFinish() is therefore turned into 1.
+ *
+ * Registered BEFORE the requires below: initDB.php opens the connection at
+ * require time, so a database outage -- the exact case this guard exists
+ * for -- would otherwise exit 0 before the guard existed.
  */
 $arayaFinished = false;
 function arayaFinish(int $code): void
@@ -44,10 +40,42 @@ register_shutdown_function(function () {
     }
 });
 
+// An uncaught mysqli exception's stack trace would otherwise carry the
+// credentials passed to new db(...) into cron failure mail.
+ini_set('zend.exception_ignore_args', '1');
+
+// Every path is __DIR__-relative: cron runs with an arbitrary working directory.
+require_once __DIR__ . '/../../modules/arayaBrief/models/loadBrief.php';
+require_once __DIR__ . '/../../modules/arayaBrief/models/renderChat.php';
+require_once __DIR__ . '/../../modules/arayaBrief/models/briefLog.php';
+// The shared wrapper and its (gitignored) credentials set up the global $db.
+require_once __DIR__ . '/../../assets/db/db.php';
+require_once __DIR__ . '/../../assets/db/initDB.php';
+
+/*
+ * The wrapper connects as utf8 (really utf8mb3), which cannot hold a 4-byte
+ * character. The brief's section headings are emoji, and a verified send
+ * stored 16 of them as "?". On a server with a strict sql_mode the INSERT
+ * fails outright AFTER the brief has posted: no sent row is written, so the
+ * next run posts the whole thing a second time.
+ */
+$db->query('SET NAMES utf8mb4');
+
 $today = (new DateTimeImmutable('now'))->format('Y-m-d');
 
 try {
     global $db;
+
+    // The "already sent" check and the post that follows it are not atomic on
+    // their own: two overlapping runs -- a manual one during the cron fire --
+    // would both find no row and both post. A named lock makes the whole
+    // check-and-post sequence exclusive. Timeout 0: if another run holds it,
+    // that run is doing this work, so there is nothing to wait for.
+    $lock = $db->query('SELECT GET_LOCK(?, 0) AS got', ['araya_brief_send'])->fetchArray();
+    if ((int)($lock['got'] ?? 0) !== 1) {
+        echo "[arayaBrief] {$today} another run holds the lock, skipping\n";
+        arayaFinish(0);
+    }
 
     if (arayaBriefAlreadySentToday($db, $today)) {
         echo "[arayaBrief] {$today} already sent, skipping\n";
@@ -93,14 +121,18 @@ try {
 
 } catch (Throwable $e) {
     $why = $e->getMessage();
+    // Printed BEFORE the log write is attempted. The db wrapper reports its
+    // own failures with exit() rather than an exception on older PHP, so a
+    // failing write would end the script right here and the real cause --
+    // Monday, the webhook -- would never be printed at all.
     // Only echo: cron redirects stdout to the log, so error_log would write
     // the same sentence a second time into the same file.
+    echo "[arayaBrief] {$today} failed: {$why}\n";
     try {
         global $db;
         arayaBriefLogSend($db, $today, 'failed', $why);
     } catch (Throwable $ignored) {
         // The log write failing must not hide the original error.
     }
-    echo "[arayaBrief] {$today} failed: {$why}\n";
     arayaFinish(1);
 }
