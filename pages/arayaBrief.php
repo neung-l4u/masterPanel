@@ -102,42 +102,184 @@ if ($brief) {
 }
 ?>
 <style>
-        .araya-brief { font-family: 'Montserrat', sans-serif; color: #1a1a2e; }
-        .araya-brief { padding: 8px 0 48px; }
-        .araya-brief .stat { background: #fff; border-radius: 12px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.08); height: 100%; }
-        .araya-brief .stat .n { font-size: 2rem; font-weight: 800; line-height: 1; }
-        .araya-brief .stat .l { font-size: .78rem; color: #6c757d; text-transform: uppercase; letter-spacing: .04em; margin-top: 6px; }
-        .araya-brief .panel-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.08); height: 100%; }
-        .araya-brief .panel-card.urgent { border: 2px solid #dc3545; }
-        .araya-brief .panel-card h2 { font-size: 1rem; font-weight: 700; margin: 0; padding: 14px 18px; border-bottom: 1px solid #eef0f3; }
-        .araya-brief .panel-card .body { padding: 0; }
-        .araya-brief .table { margin: 0; font-size: .86rem; }
-        .araya-brief .table th { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: #6c757d; white-space: nowrap; }
-        .araya-brief .mins { font-weight: 700; font-variant-numeric: tabular-nums; }
-        .araya-brief .mins-red { color: #dc3545; }
-        .araya-brief .mins-amber { color: #b36b00; }
-        .araya-brief .mins-green { color: #198754; }
-        .araya-brief .mins-unknown { color: #6c757d; }
-        .araya-brief .gaps { border: 2px solid #dc3545; border-radius: 12px; background: #fff5f5; }
-        .araya-brief .gaps .head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; width: 100%; background: none; border: 0; text-align: left; color: #842029; font-weight: 700; }
-        .araya-brief .gaps .count { background: #dc3545; color: #fff; border-radius: 999px; padding: 2px 12px; font-size: .95rem; }
-        .araya-brief .gaps.none { border-color: #198754; background: #f1faf4; }
-        .araya-brief .gaps.expected { border-color: #ced4da; background: #f8f9fa; }
-        .araya-brief .gaps.expected .head { color: #495057; }
-        .araya-brief .gaps.expected .count { background: #adb5bd; }
-        .araya-brief .gaps.none .head { color: #0f5132; cursor: default; }
-        .araya-brief .gaps.none .count { background: #198754; }
-        .araya-brief .money { cursor: help; }
-        .araya-brief .note { color: #6c757d; font-size: .8rem; }
-        .araya-brief pre.chat { white-space: pre-wrap; word-break: break-word; background: #1a1a2e; color: #e9ecef; border-radius: 12px; padding: 18px; font-size: .85rem; margin: 0; }
+/* Araya Daily Brief — an operations console.
+ *
+ * This page is read once each morning by someone deciding which shops to ring,
+ * so it is built around one question: what needs attention first? Urgency is
+ * carried by a left border rail and a warm/cool split, never by decoration.
+ * Numbers are the loudest thing here because they are what the eye is hunting.
+ *
+ * Everything is scoped under .araya-brief: this renders inside the admin
+ * panel, and the panel's own chrome must not be touched.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Archivo+Narrow:wght@600;700&family=IBM+Plex+Mono:wght@500;600&display=swap");
+
+.araya-brief {
+    /* A cool near-black rather than pure grey: easier to read at length. */
+    --ink:        #15181d;
+    --ink-2:      #454c57;
+    --ink-3:      #7b8494;
+    --line:       #e4e7ec;
+    --line-2:     #f1f3f6;
+    --surface:    #ffffff;
+    --canvas:     #f6f7f9;
+
+    /* One hue per state. Amber is the hinge: it means "soon", not "wrong". */
+    --danger:     #c0362c;
+    --danger-bg:  #fdf4f3;
+    --danger-rail:#e0574b;
+    --warn:       #9a6207;
+    --warn-bg:    #fdf9f0;
+    --ok:         #11705a;
+    --ok-bg:      #f2f9f6;
+    --accent:     #1f4ed8;
+
+    --r:          10px;
+    --shadow:     0 1px 2px rgba(21,24,29,.05), 0 1px 3px rgba(21,24,29,.04);
+    --shadow-lift:0 2px 4px rgba(21,24,29,.05), 0 8px 20px -6px rgba(21,24,29,.10);
+
+    font-family: "Archivo", system-ui, sans-serif;
+    color: var(--ink);
+    padding: 4px 0 56px;
+}
+
+.araya-brief *, .araya-brief *::before, .araya-brief *::after { box-sizing: border-box; }
+
+/* ---- Page head ------------------------------------------------------- */
+.araya-brief .page-head { display: flex; flex-wrap: wrap; align-items: flex-start;
+    justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+.araya-brief .page-head h1 { font-family: "Archivo Narrow", sans-serif; font-weight: 700;
+    font-size: 1.65rem; letter-spacing: -.012em; margin: 0; display: flex; align-items: center; gap: 10px; }
+.araya-brief .page-head h1 i { color: var(--warn); font-size: 1.4rem; }
+.araya-brief .page-sub { color: var(--ink-3); font-size: .8rem; margin-top: 3px;
+    font-variant-numeric: tabular-nums; }
+
+/* ---- Stat strip ------------------------------------------------------ */
+/* One hairline-divided row, so the five counts read as a single statement
+   rather than five cards competing for attention. */
+.araya-brief .stats { display: grid; grid-template-columns: repeat(5, 1fr);
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r);
+    box-shadow: var(--shadow); overflow: hidden; margin-bottom: 20px; }
+.araya-brief .stat { padding: 16px 18px 15px; border-left: 1px solid var(--line-2); }
+.araya-brief .stat:first-child { border-left: 0; }
+.araya-brief .stat .n { font-family: "Archivo Narrow", sans-serif; font-size: 2.1rem;
+    font-weight: 700; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.araya-brief .stat .l { font-size: .67rem; font-weight: 600; color: var(--ink-3);
+    text-transform: uppercase; letter-spacing: .07em; margin-top: 7px; }
+.araya-brief .stat.is-live   .n { color: var(--ok); }
+.araya-brief .stat.is-cancel .n { color: var(--warn); }
+.araya-brief .stat.is-setup  .n { color: var(--accent); }
+.araya-brief .stat.is-gone   .n { color: var(--ink-3); }
+
+/* ---- Banners --------------------------------------------------------- */
+.araya-brief .gaps { border: 1px solid var(--line); border-left: 3px solid var(--danger-rail);
+    border-radius: var(--r); background: var(--danger-bg); margin-bottom: 14px;
+    box-shadow: var(--shadow); overflow: hidden; }
+.araya-brief .gaps .head { display: flex; align-items: center; gap: 11px; padding: 13px 17px;
+    cursor: pointer; width: 100%; background: none; border: 0; text-align: left;
+    color: var(--danger); font-weight: 600; font-size: .9rem; transition: background .15s ease; }
+.araya-brief .gaps .head:hover { background: rgba(192,54,44,.045); }
+.araya-brief .gaps .count { background: var(--danger); color: #fff; border-radius: 999px;
+    padding: 1px 10px; font-size: .78rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.araya-brief .gaps .head .bi-chevron-down { transition: transform .2s ease; font-size: .8rem; opacity: .65; }
+.araya-brief .gaps .head[aria-expanded="true"] .bi-chevron-down { transform: rotate(180deg); }
+.araya-brief .gaps.none     { border-left-color: var(--ok); background: var(--ok-bg); }
+.araya-brief .gaps.none .head { color: var(--ok); cursor: default; }
+.araya-brief .gaps.none .count { background: var(--ok); }
+.araya-brief .gaps.expected { border-left-color: var(--ink-3); background: var(--surface); margin-bottom: 20px; }
+.araya-brief .gaps.expected .head { color: var(--ink-2); font-weight: 500; }
+.araya-brief .gaps.expected .count { background: var(--ink-3); }
+
+/* ---- Panels ---------------------------------------------------------- */
+.araya-brief .panel-card { background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden;
+    transition: box-shadow .18s ease; }
+/* Panels size to their content. Stretching a two-row table to match an
+   eight-row neighbour just adds white space under the short one. */
+.araya-brief .row > [class*="col-"] { display: flex; }
+.araya-brief .row > [class*="col-"] > .panel-card { width: 100%; align-self: flex-start; }
+.araya-brief .panel-card:hover { box-shadow: var(--shadow-lift); }
+.araya-brief .panel-card.urgent { border-left: 3px solid var(--danger-rail); }
+.araya-brief .panel-card.soon   { border-left: 3px solid var(--warn); }
+.araya-brief .panel-card h2 { font-size: .92rem; font-weight: 600; letter-spacing: -.005em;
+    margin: 0; padding: 14px 17px 13px; border-bottom: 1px solid var(--line-2);
+    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.araya-brief .panel-card .body { padding: 0; }
+
+/* ---- Tables ---------------------------------------------------------- */
+.araya-brief .table { margin: 0; font-size: .855rem; --bs-table-bg: transparent; }
+.araya-brief .table th { font-size: .66rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .07em; color: var(--ink-3); white-space: nowrap;
+    border-bottom: 1px solid var(--line); padding: 9px 17px; background: transparent; }
+.araya-brief .table td { padding: 11px 17px; border-bottom: 1px solid var(--line-2);
+    vertical-align: middle; color: var(--ink-2); }
+.araya-brief .table tbody tr:last-child td { border-bottom: 0; }
+.araya-brief .table tbody tr { transition: background .12s ease; }
+.araya-brief .table tbody tr:hover { background: var(--canvas); }
+.araya-brief .table td.fw-semibold { color: var(--ink); font-weight: 600; }
+
+/* Numbers in mono: columns line up, and a change in magnitude shows as a
+   change in width before you have read the digits. */
+.araya-brief .mins, .araya-brief .num { font-family: "IBM Plex Mono", monospace;
+    font-weight: 600; font-variant-numeric: tabular-nums; font-size: .83rem; }
+.araya-brief .mins-red     { color: var(--danger); }
+.araya-brief .mins-amber   { color: var(--warn); }
+.araya-brief .mins-green   { color: var(--ok); }
+.araya-brief .mins-unknown { color: var(--ink-3); }
+
+/* ---- Bits ------------------------------------------------------------ */
+.araya-brief .note { color: var(--ink-3); font-size: .78rem; font-weight: 500; }
+.araya-brief h2 .note { font-weight: 500; letter-spacing: 0; text-transform: none; }
+.araya-brief .money { cursor: help; }
+.araya-brief .badge.bg-danger { background: var(--danger) !important; font-weight: 600;
+    font-size: .64rem; letter-spacing: .04em; text-transform: uppercase; padding: .26em .5em;
+    vertical-align: middle; }
+.araya-brief .empty { padding: 26px 17px; color: var(--ink-3); font-size: .84rem; }
+
+.araya-brief .btn-primary { background: var(--accent); border-color: var(--accent);
+    font-weight: 600; font-size: .82rem; }
+.araya-brief .btn-primary:hover { background: #1a43b8; border-color: #1a43b8; }
+.araya-brief .btn-outline-secondary { border-color: var(--line); color: var(--ink-2);
+    font-weight: 600; font-size: .82rem; background: var(--surface); }
+.araya-brief .btn-outline-secondary:hover { background: var(--canvas); color: var(--ink);
+    border-color: var(--ink-3); }
+
+.araya-brief pre.chat { white-space: pre-wrap; word-break: break-word; background: #15181d;
+    color: #dfe3e9; border-radius: var(--r); padding: 20px; font-size: .8rem; margin: 0;
+    font-family: "IBM Plex Mono", monospace; line-height: 1.65; }
+
+.araya-brief .alert { border-radius: var(--r); border: 1px solid var(--line);
+    border-left: 3px solid currentColor; font-size: .875rem; }
+
+/* One quiet entrance, staggered, so the page assembles rather than flashes. */
+@media (prefers-reduced-motion: no-preference) {
+    .araya-brief .stats,
+    .araya-brief .gaps,
+    .araya-brief .panel-card { animation: arayaRise .4s cubic-bezier(.22,.61,.36,1) backwards; }
+    .araya-brief .stats      { animation-delay: .02s; }
+    .araya-brief .gaps       { animation-delay: .06s; }
+    .araya-brief .panel-card { animation-delay: .10s; }
+}
+@keyframes arayaRise { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 991px) {
+    .araya-brief .stats { grid-template-columns: repeat(2, 1fr); }
+    .araya-brief .stat:nth-child(odd) { border-left: 0; }
+    .araya-brief .stat { border-top: 1px solid var(--line-2); }
+    .araya-brief .stats .stat:nth-child(-n+2) { border-top: 0; }
+}
+@media (max-width: 575px) {
+    .araya-brief .stats { grid-template-columns: 1fr; }
+    .araya-brief .stat { border-left: 0; }
+}
 </style>
 
 <div class="araya-brief container-fluid">
 
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="page-head">
         <div>
-            <h1 class="h3 fw-bold mb-0"><i class="bi bi-sunrise"></i> Araya Daily Brief</h1>
-            <div class="note">
+            <h1><i class="bi bi-sunrise"></i>Araya Daily Brief</h1>
+            <div class="page-sub">
                 <?php if ($brief) { ?>
                     For <?php echo arayaH($brief['generated_for']); ?> &middot; page rendered <?php echo arayaH(date('H:i')); ?> (Bangkok)
                     <?php if ($useFixture) { ?> &middot; <strong>sample data, no API calls</strong><?php } ?>
@@ -174,14 +316,20 @@ if ($brief) {
     <?php } ?>
 
     <?php $o = $brief['overview']; ?>
-    <div class="row g-3 mb-3">
+    <?php // One hairline-divided strip rather than five floating cards: these
+          // five numbers are a single statement about the fleet. Colour comes
+          // from a class, not an inline style, so the palette lives in one place. ?>
+    <div class="stats">
         <?php foreach ([
-            ['Live', $o['live'], '#198754'], ['Waiting to cancel', $o['pendingCancel'], '#b36b00'],
-            ['In setup', $o['setup'], '#0d6efd'], ['Cancelled', $o['cancelled'], '#6c757d'],
-            ['All clients', $o['total'], '#1a1a2e'],
-        ] as [$label, $n, $color]) { ?>
-        <div class="col-6 col-md">
-            <div class="stat"><div class="n" style="color:<?php echo $color; ?>"><?php echo (int)$n; ?></div><div class="l"><?php echo arayaH($label); ?></div></div>
+            ['Live', $o['live'], 'is-live'],
+            ['Waiting to cancel', $o['pendingCancel'], 'is-cancel'],
+            ['In setup', $o['setup'], 'is-setup'],
+            ['Cancelled', $o['cancelled'], 'is-gone'],
+            ['All clients', $o['total'], ''],
+        ] as [$label, $n, $cls]) { ?>
+        <div class="stat <?php echo $cls; ?>">
+            <div class="n"><?php echo (int)$n; ?></div>
+            <div class="l"><?php echo arayaH($label); ?></div>
         </div>
         <?php } ?>
     </div>
@@ -281,19 +429,21 @@ if ($brief) {
 
         <?php if ($brief['runningOut']) { ?>
         <div class="col-lg-6">
-            <div class="panel-card">
+            <div class="panel-card soon">
                 <h2>&#9203; Will run out before the refresh <span class="note fw-normal">(projected from this period's own usage)</span></h2>
                 <div class="body table-responsive">
                     <table class="table align-middle">
-                        <thead><tr><th>Shop</th><th class="text-end">Minutes</th><th class="text-end">Per day</th><th class="text-end">Empty in</th><th class="text-end">Refresh in</th><th>Owner</th></tr></thead>
+                        <?php // Four columns, not six: in half the page width six
+                              // forced every shop name to wrap. The rate is the
+                              // evidence for "empty in", so they belong together. ?>
+                        <thead><tr><th>Shop</th><th class="text-end">Minutes</th><th class="text-end">Empty in</th><th>Owner</th></tr></thead>
                         <tbody>
                         <?php foreach ($brief['runningOut'] as $r) { ?>
                             <tr>
-                                <td class="fw-semibold"><?php echo arayaH($r['name']); ?></td>
+                                <td class="fw-semibold"><?php echo arayaH($r['name']); ?>
+                                    <div class="note">at <?php echo arayaH($r['per_day']); ?> mins/day &middot; refresh in <?php echo arayaH($r['days_until_refresh']); ?> d</div></td>
                                 <td class="text-end"><?php echo arayaMinsCell($r['remaining_minutes']); ?></td>
-                                <td class="text-end"><?php echo arayaH($r['per_day']); ?></td>
-                                <td class="text-end fw-semibold"><?php echo $r['days_until_empty'] === null ? '-' : arayaH($r['days_until_empty']) . ' d'; ?></td>
-                                <td class="text-end"><?php echo arayaH($r['days_until_refresh']); ?> d</td>
+                                <td class="text-end"><span class="num mins-amber"><?php echo $r['days_until_empty'] === null ? '-' : arayaH($r['days_until_empty']) . ' d'; ?></span></td>
                                 <td><?php echo arayaOwner($r['po']); ?></td>
                             </tr>
                         <?php } ?>
@@ -325,7 +475,7 @@ if ($brief) {
                         <td><?php echo arayaOwner($r['po']); ?></td>
                     </tr>
                 <?php } ?>
-                <?php if (!$brief['live']) { ?><tr><td colspan="5" class="text-muted">No live shops.</td></tr><?php } ?>
+                <?php if (!$brief['live']) { ?><tr><td colspan="5" class="empty">No live shops.</td></tr><?php } ?>
                 </tbody>
             </table>
         </div>
@@ -347,7 +497,7 @@ if ($brief) {
                                 <td><?php echo arayaOwner($r['po']); ?></td>
                             </tr>
                         <?php } ?>
-                        <?php if (!$brief['upsell']) { ?><tr><td colspan="4" class="text-muted">None today.</td></tr><?php } ?>
+                        <?php if (!$brief['upsell']) { ?><tr><td colspan="4" class="empty">None today.</td></tr><?php } ?>
                         <?php foreach ($brief['upsellExcluded'] as $r) { ?>
                             <tr class="text-muted">
                                 <td><?php echo arayaH($r['name']); ?><div class="note">Not counted: <?php echo arayaH($r['reason']); ?></div></td>
@@ -384,7 +534,7 @@ if ($brief) {
                                 <td><?php echo arayaOwner($r['po']); ?></td>
                             </tr>
                         <?php } ?>
-                        <?php if (!$brief['idleNew'] && !$brief['idleQuiet']) { ?><tr><td colspan="4" class="text-muted">None today.</td></tr><?php } ?>
+                        <?php if (!$brief['idleNew'] && !$brief['idleQuiet']) { ?><tr><td colspan="4" class="empty">None today.</td></tr><?php } ?>
                         </tbody>
                     </table>
                 </div>
@@ -410,7 +560,7 @@ if ($brief) {
                                 <td><?php echo arayaOwner($r['po']); ?></td>
                             </tr>
                         <?php } ?>
-                        <?php if (!$brief['setup']) { ?><tr><td colspan="4" class="text-muted">None.</td></tr><?php } ?>
+                        <?php if (!$brief['setup']) { ?><tr><td colspan="4" class="empty">None.</td></tr><?php } ?>
                         </tbody>
                     </table>
                 </div>
@@ -431,7 +581,7 @@ if ($brief) {
                                 <td><?php echo arayaOwner($r['po']); ?></td>
                             </tr>
                         <?php } ?>
-                        <?php if (!$brief['cancelling']) { ?><tr><td colspan="4" class="text-muted">None.</td></tr><?php } ?>
+                        <?php if (!$brief['cancelling']) { ?><tr><td colspan="4" class="empty">None.</td></tr><?php } ?>
                         </tbody>
                     </table>
                 </div>
