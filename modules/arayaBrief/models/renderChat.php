@@ -38,117 +38,158 @@ function arayaChatName($row): string
     return $n === '' ? '(unnamed shop)' : $n;
 }
 
+const ARAYA_CHAT_SEP = '━━━━━━━━━━━━━━━━━━━━━━━━';
+
+/** "2026-10-20" -> "20 Oct 2026"; anything unparseable is shown as given. */
+function arayaChatDate(string $ymd): string
+{
+    $d = DateTime::createFromFormat('!Y-m-d', $ymd);
+    return ($d && $d->format('Y-m-d') === $ymd) ? $d->format('j M Y') : $ymd;
+}
+
+/** Thai gap sentences by kind; an unknown kind falls back to the English detail. */
+function arayaChatGapDetail($g): string
+{
+    static $th = [
+        'unmatched_monday'     => 'อยู่ใน Monday แต่หาร้านที่ตรงกันใน gcal ไม่พบ จึงไม่ทราบนาทีคงเหลือ',
+        'unmatched_gcal'       => 'มีอยู่ใน gcal แต่ไม่มี item ใน Monday board',
+        'no_live_date'         => 'ยังไม่มีวัน live จึงคำนวณอายุการใช้งานและเช็กกฎร้านเงียบไม่ได้',
+        'no_billing_day'       => 'ยังไม่ได้ตั้งวันบิล จึงเช็กกฎอัพเซลล์ไม่ได้',
+        'no_allocation'        => 'ไม่ทราบจำนวนนาทีที่ได้รับ หรือนาทีคงเหลือมากกว่าที่ได้รับ จึงใช้เปอร์เซ็นต์การใช้งานไม่ได้',
+        'no_register_date'     => 'ยังไม่มีวันลงทะเบียน จึงคำนวณจำนวนวันที่ค้างไม่ได้',
+        'blank_status'         => 'ช่อง Live Status ใน Monday ว่างอยู่',
+        'unknown_status'       => 'ช่อง Live Status มีค่าที่ระบบไม่รู้จัก',
+        'no_remaining_minutes' => 'gcal ไม่มีข้อมูลนาทีคงเหลือ จึงเช็กอัพเซลล์และร้านเงียบไม่ได้',
+    ];
+    $kind = arayaClean($g['kind'] ?? '');
+    return $th[$kind] ?? arayaClean($g['detail'] ?? '');
+}
+
 function arayaRenderChat(array $brief): string
 {
     $L = [];
-    $date = arayaClean($brief['generated_for'] ?? '');
+    $S = []; // sections, joined by separator rules
+    $date = arayaChatDate(arayaClean($brief['generated_for'] ?? ''));
 
     if (!empty($brief['gcal_unavailable'])) {
         $L[] = '⚠️ ดึงข้อมูลนาทีไม่ได้ — รายงานนี้มีแต่ข้อมูลจาก Monday';
         $L[] = '';
     }
 
-    $L[] = '📋 รายงาน AI Araya ประจำวันที่ ' . $date;
+    $L[] = '☀️ ARAYA DAILY BRIEF — ' . $date . ' (07:00)';
+    $L[] = ARAYA_CHAT_SEP;
+    $L[] = '';
 
     // Overview
     $o = $brief['overview'] ?? [];
-    $L[] = '';
-    $L[] = '📊 ภาพรวม';
-    $L[] = 'LIVE: ' . (int)($o['live'] ?? 0);
-    $L[] = 'Waiting to cancel: ' . (int)($o['pendingCancel'] ?? 0);
-    $L[] = 'Setup: ' . (int)($o['setup'] ?? 0);
-    $L[] = 'Cancelled: ' . (int)($o['cancelled'] ?? 0)
-        . ' (Canceled ' . (int)($o['canceledAfterLive'] ?? 0)
-        . ', Cancel Before LIVE ' . (int)($o['cancelBeforeLive'] ?? 0) . ')';
-    $L[] = 'Total: ' . (int)($o['total'] ?? 0);
+    $S[] = [
+        '📊 OVERVIEW',
+        'LIVE: ' . (int)($o['live'] ?? 0) . ' ร้าน',
+        'แจ้งยกเลิก (pending): ' . (int)($o['pendingCancel'] ?? 0) . ' ร้าน',
+        'Setup ค้างอยู่: ' . (int)($o['setup'] ?? 0) . ' ร้าน',
+        'ยกเลิกแล้ว: ' . (int)($o['cancelled'] ?? 0) . ' ร้าน (Cancel Before LIVE '
+            . (int)($o['cancelBeforeLive'] ?? 0) . ' · Canceled ' . (int)($o['canceledAfterLive'] ?? 0) . ')',
+        'รวมลูกค้าทั้งหมด: ' . (int)($o['total'] ?? 0) . ' ร้าน',
+    ];
 
     // Live shops
     if (!empty($brief['live'])) {
-        $L[] = '';
-        $L[] = '🟢 ร้านที่ LIVE (น้อยสุดก่อน)';
+        $B = ['✅ ร้านที่ LIVE (นาทีคงเหลือ · อยู่กับเรามานาน)'];
         foreach ($brief['live'] as $r) {
             if (!empty($r['gcal_missing'])) {
-                $L[] = arayaChatName($r) . ' (ไม่พบใน gcal ⚠️)';
+                $B[] = arayaChatName($r) . ' (ไม่พบใน gcal ⚠️)';
                 continue;
             }
-            $L[] = arayaChatName($r) . ' (' . arayaChatMins($r['remaining_minutes'] ?? null)
+            $B[] = arayaChatName($r) . ' (' . arayaChatMins($r['remaining_minutes'] ?? null)
                 . ' · ' . arayaChatLifespan($r['lifespan'] ?? null) . ')';
         }
+        $S[] = $B;
     }
 
     // Upsell: always printed
-    $L[] = '';
-    $L[] = '💰 โอกาส Upsell';
+    $B = ['💰 โอกาสอัพเซลล์ (นาที <70 และรีเฟรชอีก ≤15 วัน)'];
     if (empty($brief['upsell'])) {
-        $L[] = 'ไม่มีวันนี้ ✅';
+        $B[] = 'ไม่มีวันนี้ ✅';
     } else {
         foreach ($brief['upsell'] as $r) {
-            $L[] = arayaChatName($r) . ' (' . arayaChatMins($r['remaining_minutes'] ?? null)
+            $B[] = arayaChatName($r) . ' (' . arayaChatMins($r['remaining_minutes'] ?? null)
                 . ' · รีเฟรชอีก ' . (int)($r['days_until_refresh'] ?? 0) . ' วัน)' . arayaChatOwner($r['po'] ?? '');
         }
     }
     foreach ($brief['upsellExcluded'] ?? [] as $r) {
-        $L[] = arayaChatName($r) . ' (' . arayaChatMins($r['remaining_minutes'] ?? null)
+        $B[] = arayaChatName($r) . ' (' . arayaChatMins($r['remaining_minutes'] ?? null)
             . ' · รีเฟรชอีก ' . (int)($r['days_until_refresh'] ?? 0) . ' วัน) — ไม่นับ: '
             . arayaClean($r['reason'] ?? '');
     }
+    $S[] = $B;
 
     // Idle, new
     if (!empty($brief['idleNew'])) {
-        $L[] = '';
-        $L[] = '😴 ร้านใหม่ที่ยังใช้น้อย';
+        $B = ['📉 ไลฟ์แล้วแต่ไม่มีการใช้งาน'];
         foreach ($brief['idleNew'] as $r) {
-            $L[] = arayaChatName($r) . ' (ใช้ ' . $r['used_pct'] . '% · live มา ' . (int)$r['days_live']
+            $B[] = arayaChatName($r) . ' (ใช้ ' . $r['used_pct'] . '% · live มา ' . (int)$r['days_live']
                 . ' วัน · เหลือ ' . arayaChatMins($r['remaining_minutes'] ?? null) . ')' . arayaChatOwner($r['po'] ?? '');
         }
+        $S[] = $B;
     }
 
     // Idle, quiet
     if (!empty($brief['idleQuiet'])) {
-        $L[] = '';
-        $L[] = '📉 ร้านเก่าที่เงียบลง';
+        $B = ['📉 เคยใช้แล้วเงียบไป'];
         foreach ($brief['idleQuiet'] as $r) {
-            $L[] = arayaChatName($r) . ' (รอบล่าสุดใช้ ' . $r['latest_used'] . ' นาที · เฉลี่ยก่อนหน้า '
+            $B[] = arayaChatName($r) . ' (รอบล่าสุดใช้ ' . $r['latest_used'] . ' นาที · เฉลี่ยก่อนหน้า '
                 . round($r['prior_mean'], 1) . ')' . arayaChatOwner($r['po'] ?? '');
         }
+        $S[] = $B;
     }
 
     // Setup
     if (!empty($brief['setup'])) {
-        $L[] = '';
-        $L[] = '🛠 Setup ที่ค้างอยู่';
+        $B = ['🚧 ทำไมยังไม่ไลฟ์ (Setup ค้าง)'];
         foreach ($brief['setup'] as $r) {
             $status = arayaClean($r['setup_status'] ?? '');
             if ($status === '') {
                 $status = arayaClean($r['live_status'] ?? '');
             }
             $stalled = $r['days_stalled'] === null ? 'ไม่ทราบวันที่ลงทะเบียน' : 'ค้าง ' . (int)$r['days_stalled'] . ' วัน';
-            $L[] = arayaChatName($r) . ' — ' . $status . ' · ' . $stalled . arayaChatOwner($r['po'] ?? '');
+            $B[] = arayaChatName($r) . ' — ' . $status . ' · ' . $stalled . arayaChatOwner($r['po'] ?? '');
             $note = arayaClean($r['note'] ?? '');
             if ($note !== '') {
-                $L[] = '   ' . $note;
+                $B[] = '   ' . $note;
             }
         }
+        $S[] = $B;
     }
 
     // Cancelling
     if (!empty($brief['cancelling'])) {
-        $L[] = '';
-        $L[] = '🚪 รอยกเลิก';
+        $B = ['❌ แจ้งยกเลิก'];
         foreach ($brief['cancelling'] as $r) {
             $reason = arayaClean($r['reason'] ?? '');
-            $L[] = arayaChatName($r) . ' — Waiting to cancel · ' . arayaChatLifespan($r['lifespan'] ?? null)
+            $B[] = arayaChatName($r) . ' — Waiting to cancel · ' . arayaChatLifespan($r['lifespan'] ?? null)
                 . arayaChatOwner($r['po'] ?? '');
-            $L[] = '   เหตุผล: ' . ($reason === '' ? 'ยังไม่ได้บันทึก' : $reason);
+            $B[] = '   เหตุผล: ' . ($reason === '' ? 'ยังไม่ได้บันทึก' : $reason);
         }
+        $S[] = $B;
     }
 
     // Data gaps
     if (!empty($brief['gaps'])) {
-        $L[] = '';
-        $L[] = '⚠️ ข้อมูลที่ขาด (' . count($brief['gaps']) . ')';
+        $B = ['⚠️ ข้อมูลไม่ครบ'];
         foreach ($brief['gaps'] as $g) {
-            $L[] = '• ' . arayaChatName($g) . ' [' . arayaClean($g['kind'] ?? '') . '] ' . arayaClean($g['detail'] ?? '');
+            $B[] = '• ' . arayaChatName($g) . ' [' . arayaClean($g['kind'] ?? '') . '] ' . arayaChatGapDetail($g);
+        }
+        $S[] = $B;
+    }
+
+    foreach ($S as $i => $B) {
+        if ($i > 0) {
+            $L[] = '';
+            $L[] = ARAYA_CHAT_SEP;
+            $L[] = '';
+        }
+        foreach ($B as $line) {
+            $L[] = $line;
         }
     }
 
