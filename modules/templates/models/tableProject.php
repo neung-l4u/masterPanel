@@ -4,6 +4,7 @@ session_start();
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 include '../../../assets/security/Sanitizer.php';
+include '../assets/php/brief.php';
 
 $iconSendMailDraft = '<i class="bi bi-envelope-slash action_icon text-muted" title="please edit designer"></i>';
 $iconSendMailReady = '<i class="bi bi-envelope-arrow-up-fill action_icon"></i>';
@@ -15,6 +16,7 @@ $iconEdit = '<i class="bi bi-pencil action_icon"></i>';
 $iconDelete = '<i class="bi bi-trash3 action_icon"></i>';
 $iconTemplate = '<i class="bi bi-file-earmark-richtext action_icon"></i>';
 $iconTemplateGray = '<i class="bi bi-file-earmark-richtext action_icon text-muted"></i>';
+$hasBrief = briefTableExists($db);
 
 $param['ownerID'] = $_SESSION['id'];
 
@@ -22,11 +24,14 @@ $param['ownerID'] = $_SESSION['id'];
     // $showAll = in_array($ownerID, [1, 14, 60, 100, 27, 48]);
     $where = '';
 
-    $sql = 'SELECT pj.saveFlag, pj.projectID AS id, pj.projectName, t.name AS "shopType", pj.selectedTemplate, pj.statusID, 
+    // Brief columns are joined only when the migration has run, so the list keeps working without it.
+    $sql = 'SELECT pj.saveFlag, pj.projectID AS id, pj.projectName, pj.shopTypeID, t.name AS "shopType", pj.selectedTemplate, pj.statusID, 
                 s.sNickName AS "owner", c.name AS "countryName", c.code AS "countryCode", pj.projectTimestamp, 
                 pd.home AS "homePage", pd.about AS "aboutPage", pd.services AS "servicesPage", pd.contact AS "contactPage"
+                ' . ($hasBrief ? ', pb.businessNote, pb.systemName, pb.goal, pb.pages, pb.refLinks, pb.colorMode, pb.mood, pb.contentSource' : '') . '
             FROM `tb_project` pj 
             LEFT JOIN `templatepagedetails` pd ON pj.projectID = pd.projectID 
+            ' . ($hasBrief ? 'LEFT JOIN `tb_projectBrief` pb ON pj.projectID = pb.projectID' : '') . '
             LEFT JOIN `Countries` c ON pj.countryID = c.id
             LEFT JOIN `staffs` s ON pj.projectOwner = s.sID
             LEFT JOIN `tb_shopType` t ON pj.shopTypeID = t.id
@@ -57,6 +62,29 @@ $param['ownerID'] = $_SESSION['id'];
 
         $iconTemplateUse = ($row["saveFlag"] == 1) ? $iconTemplate : $iconTemplateGray;
         $linkTemplate = ($row["saveFlag"] == 1) ? '<a href="'. $templateUrl .'" title="Template Designer">'. $iconTemplateUse. '</a>' : $iconTemplateUse;
+        $iconPage = '';
+        $iconSendMail = '<a>'. $iconSendMailDraft .'</a>';
+        $isCustom = isCustomTemplate($row["selectedTemplate"]);
+        $typeLabel = minType($row["shopType"]) ." ". $row["selectedTemplate"];
+
+        if ($isCustom) {
+            // No template designer: the brief on the detail page replaces the page submissions.
+            $missing = $hasBrief ? briefMissing($row, (int)$row["shopTypeID"] === SHOP_TYPE_OTHER) : ['migration'];
+            $ready = $row["saveFlag"] == 1 && !$missing;
+            $linkTemplate = '';
+            $typeLabel = minType($row["shopType"]) ." Custom";
+            // Inner icons carry their own title, which would hide the brief status on hover.
+            $iconPage = '<span title="'. esc($ready ? 'Brief complete' : 'Brief needs: '. implode(', ', $missing)) .'">'
+                . preg_replace('/ title="[^"]*"/', '', $ready ? $iconPageGreen : $iconPageGray) .'</span>';
+            $iconSendMail = '<a title="'. esc($row["saveFlag"] == 1 ? 'Fill the design brief: '. implode(', ', $missing) : 'Open the project and save the design brief') .'">'
+                . str_replace(' title="please edit designer"', '', $iconSendMailDraft) .'</a>';
+            if ($ready) {
+                $iconSendMail = '<a href="#" onclick="sending('. $row["id"] .');" title="Submit brief">'. $iconSendMailReady .'</a>';
+                if ($row["statusID"] == 1) {
+                    $statusText = "Ready";
+                }
+            }
+        } else {
 
         if ($row["shopType"] == 'Restaurant') {
             $iconPageHome = ($row["homePage"] == null) ? '<span title="Home">'. $iconPageGray .'</span>' : '<span title="Home">'. $iconPageGreen .'</span>';
@@ -92,6 +120,7 @@ $param['ownerID'] = $_SESSION['id'];
                 $iconSendMail = '<a>'. $iconSendMailDraft .'</a>';
             }
         }
+        }//template projects
         if ($row["statusID"] == 2) { $iconSendMail = '<a>'. $iconSendMailSend .'</a>'; }
 
         $processingTxt = '<span id="processingTxt' .$row["id"]. '">Processing &nbsp;</span>';
@@ -106,7 +135,7 @@ $param['ownerID'] = $_SESSION['id'];
         $data["data"][] = array(
             $i,
             '<a href="'.esc($url).'" title="Project simple detail">'.esc($row["owner"]).'</a>',
-            '<a href="'.esc($url).'" title="Project simple detail">'.esc(minType($row["shopType"]) ." ". $row["selectedTemplate"]).'</a>',
+            '<a href="'.esc($url).'" title="Project simple detail">'.esc($typeLabel).'</a>',
             '<a href="'.esc($url).'" title="Project simple detail">'.esc($row["projectName"] . " (".$row["countryCode"].")").'</a>',
             $iconPage,
             '<small>'.$statusText.'</small>',

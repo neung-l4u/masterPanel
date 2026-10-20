@@ -1,10 +1,10 @@
-
 <?php
-global $db;
 session_start();
+global $db;
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 include "../assets/php/share_function.php";
+include "../assets/php/brief.php";
 
 $params = array();
 $data = array();
@@ -19,7 +19,9 @@ $data['projectName'] = !empty($_POST['projectName']) ? trim($_POST['projectName'
 $data['email'] = !empty($_POST['email']) ? trim($_POST['email']) : null;
 $data['phone'] = !empty($_POST['phone']) ? trim($_POST['phone']) : null;
 $data['address'] = !empty($_POST['address']) ? trim($_POST['address']) : null;
-$data['logo'] = !empty($_POST['logo']) ? $_POST['logo'] : getRandomPic($data['shopType'],'logo');
+// Sample logos exist only for Restaurant/Massage; getRandomPic() fatals on any other shop type.
+$data['logo'] = !empty($_POST['logo']) ? $_POST['logo']
+    : (in_array(strtolower((string)$data['shopType']), ['restaurant', 'massage'], true) ? getRandomPic($data['shopType'],'logo') : null);
 $data['colorTheme1'] = !empty($_POST['colorTheme1']) ? $_POST['colorTheme1'] : null;
 $data['colorTheme2'] = !empty($_POST['colorTheme2']) ? $_POST['colorTheme2'] : null;
 $data['colorTheme3'] = !empty($_POST['colorTheme3']) ? $_POST['colorTheme3'] : null;
@@ -29,20 +31,20 @@ $data['domainHave'] = ($_POST['domainHave']=='true') ?  1 : 0;
 $data['domainProvidersID'] = !empty($_POST['domainProvidersID']) ? $_POST['domainProvidersID'] : "0";
 $data['domainUser'] = !empty($_POST['domainUser']) ? trim($_POST['domainUser']) : null;
 $data['domainPass'] = !empty($_POST['domainPass']) ? trim($_POST['domainPass']) : null;
-$data['hostingHave'] = ($_POST['hostingHave']=='true') ?  1 : 0;
+$data['hostingHave'] = (!empty($_POST['hostingHave']) && ($_POST['hostingHave'] == 1 || $_POST['hostingHave'] == 'true')) ?  1 : 0;
 $data['hostingProvidersID'] = !empty($_POST['hostingProvidersID']) ? $_POST['hostingProvidersID'] : "0";
 $data['hostingUser'] = !empty($_POST['hostingUser']) ? trim($_POST['hostingUser']) : null;
 $data['hostingPass'] = !empty($_POST['hostingPass']) ? trim($_POST['hostingPass']) : null;
-$data['gloriaHave'] = ($_POST['gloriaHave']=='true') ? 1 : 0;
+$data['gloriaHave'] = (!empty($_POST['gloriaHave']) && ($_POST['gloriaHave'] == 1 || $_POST['gloriaHave'] == 'true')) ? 1 : 0;
 $data['orderURL'] = !empty($_POST['orderURL']) ? trim($_POST['orderURL']) : null;
 $data['tableURL'] = !empty($_POST['tableURL']) ? trim($_POST['tableURL']) : null;
-$data['orderOther'] = ($_POST['orderOther']=='true') ?  1 : 0;
+$data['orderOther'] = (!empty($_POST['orderOther']) && ($_POST['orderOther'] == 1 || $_POST['orderOther'] == 'true')) ?  1 : 0;
 $data['resOtherSystem'] = !empty($_POST['resOtherSystem']) ? trim($_POST['resOtherSystem']) : null;
-$data['amelia'] = ($_POST['amelia']=='true') ?  1 : 0;
-$data['voucher'] = ($_POST['voucher']=='true') ?  1 : 0;
-$data['bookOther'] = ($_POST['bookOther']=='true') ?  1 : 0;
+$data['amelia'] = (!empty($_POST['amelia']) && ($_POST['amelia'] == 1 || $_POST['amelia'] == 'true')) ?  1 : 0;
+$data['voucher'] = (!empty($_POST['voucher']) && ($_POST['voucher'] == 1 || $_POST['voucher'] == 'true')) ?  1 : 0;
+$data['bookOther'] = (!empty($_POST['bookOther']) && ($_POST['bookOther'] == 1 || $_POST['bookOther'] == 'true')) ?  1 : 0;
 $data['masOtherSystem'] = !empty($_POST['masOtherSystem']) ? trim($_POST['masOtherSystem']) : null;
-$data['needEmail'] = ($_POST['needEmail']=='true') ?  1 : 0;
+$data['needEmail'] = (!empty($_POST['needEmail']) && ($_POST['needEmail'] == 1 || $_POST['needEmail'] == 'true')) ?  1 : 0;
 $data['facebookURL'] = !empty($_POST['facebookURL']) ? trim($_POST['facebookURL']) : null;
 $data['instagramURL'] = !empty($_POST['instagramURL']) ? trim($_POST['instagramURL']) : null;
 $data['youtubeURL'] = !empty($_POST['youtubeURL']) ? trim($_POST['youtubeURL']) : null;
@@ -87,6 +89,12 @@ if (!empty($_POST['dayDeliChk']) && $_POST['dayDeliChk'] === 'true') {
 if (!empty($_POST['customDeliChk']) && $_POST['customDeliChk'] === 'true') {
     $data['delivery'] = !empty($_POST['cusDeli']) ? trim($_POST['cusDeli']) : null;
     $data['deliveryCustom'] = "1";
+}
+
+$isCustom = !empty($_POST['isCustom']);
+if ($data['mode'] == "save" && $isCustom && !briefTableExists($db)) {
+    echo json_encode(['result' => 'fail', 'msg' => 'Fully custom is not available yet: run docs/migrations/2026-10-06-templates-fully-custom.sql']);
+    exit;
 }
 
 if ($data['mode'] ==  "save") {
@@ -139,6 +147,7 @@ if ($data['mode'] ==  "save") {
         $myID,
         $data['projectID']
     );
+    if ($isCustom) saveBrief($db, $data['projectID'], $myID);
     $params[ 'result'] = "complete";
     $params['data'] = $data;
 
@@ -157,3 +166,49 @@ if ($data['mode'] ==  "save") {
 }
 
 echo json_encode($params); 
+
+// businessNote is owned by the project modal (models/project.php), so it is not touched here.
+function saveBrief($db, $projectID, $myID): void
+{
+    $txt = fn($k, $max = 65535) => (isset($_POST[$k]) && trim($_POST[$k]) !== '') ? mb_substr(trim($_POST[$k]), 0, $max) : null;
+    $pick = fn($k, array $allowed) => isset($allowed[$_POST[$k] ?? '']) ? $_POST[$k] : null;
+    $flag = fn($k) => (!empty($_POST[$k]) && ($_POST[$k] == 1 || $_POST[$k] === 'true')) ? 1 : 0;
+
+    $links = json_decode($_POST['refLinks'] ?? '[]', true);
+    $links = is_array($links) ? array_values(array_filter(array_map(fn($l) => [
+        'url' => mb_substr(trim((string)($l['url'] ?? '')), 0, 255),
+        'note' => mb_substr(trim((string)($l['note'] ?? '')), 0, 255),
+        'forColor' => empty($l['forColor']) ? 0 : 1,
+    ], $links), fn($l) => $l['url'] !== '')) : [];
+    $deadline = $txt('deadline', 10);
+    if ($deadline !== null && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $deadline)) $deadline = null;
+
+    $db->query('INSERT INTO `tb_projectBrief` (`projectID`, `colorMode`, `systemName`, `systemURL`, `goal`, `pages`, `oldSiteURL`,
+            `keepURLs`, `refLinks`, `mood`, `contentSource`, `hasVectorLogo`, `hasHiResPhotos`, `features`, `tracking`, `assetLinks`, `deadline`, `notes`, `updateBy`)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        ON DUPLICATE KEY UPDATE `colorMode`=VALUES(`colorMode`), `systemName`=VALUES(`systemName`), `systemURL`=VALUES(`systemURL`),
+            `goal`=VALUES(`goal`), `pages`=VALUES(`pages`), `oldSiteURL`=VALUES(`oldSiteURL`), `keepURLs`=VALUES(`keepURLs`),
+            `refLinks`=VALUES(`refLinks`), `mood`=VALUES(`mood`), `contentSource`=VALUES(`contentSource`),
+            `hasVectorLogo`=VALUES(`hasVectorLogo`), `hasHiResPhotos`=VALUES(`hasHiResPhotos`), `features`=VALUES(`features`),
+            `tracking`=VALUES(`tracking`), `assetLinks`=VALUES(`assetLinks`), `deadline`=VALUES(`deadline`), `notes`=VALUES(`notes`), `updateBy`=VALUES(`updateBy`)',
+        $projectID,
+        $pick('colorMode', BRIEF_COLOR_MODES) ?? 'pick',
+        $txt('systemName', 255),
+        $txt('systemURL', 255),
+        $pick('goal', BRIEF_GOALS),
+        $txt('pages'),
+        $txt('oldSiteURL', 255),
+        $flag('keepURLs'),
+        json_encode($links, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        $txt('mood', 255),
+        $pick('contentSource', BRIEF_CONTENT),
+        $flag('hasVectorLogo'),
+        $flag('hasHiResPhotos'),
+        $txt('features'),
+        $txt('tracking'),
+        $txt('assetLinks'),
+        $deadline,
+        $txt('notes'),
+        $myID
+    );
+}

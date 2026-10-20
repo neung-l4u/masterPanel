@@ -35,13 +35,6 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 
-        <!-- Background removal (ES module, exposed on window for the classic script below) -->
-        <script type="module">
-            import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/index.mjs';
-            window.__removeBackground = removeBackground;
-            window.dispatchEvent(new Event('rmbg-ready'));
-        </script>
-
         <style>
             #imgResizerApp { font-family: 'Sarabun', sans-serif; }
             #imgResizerApp .cropper-container { margin: 0 auto; }
@@ -68,20 +61,6 @@
                             <span class="text-xs font-bold text-slate-700">คลิกเพื่ออัปโหลดรูป</span>
                             <span class="text-[10px] text-slate-400 mt-0.5">รองรับไฟล์รูปภาพทั้งหมด</span>
                         </label>
-
-                        <!-- Remove background toggle -->
-                        <label class="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 cursor-pointer">
-                            <span class="flex items-center gap-2">
-                                <i data-lucide="wand-2" class="w-4 h-4 text-slate-500"></i>
-                                <span class="text-xs font-bold text-slate-700">ลบพื้นหลัง (AI)</span>
-                            </span>
-                            <input type="checkbox" id="rmBgToggle" class="w-4 h-4 accent-blue-600">
-                        </label>
-                        <p id="rmBgHint" class="text-[10px] text-slate-400 -mt-2">ครั้งแรกต้องโหลดโมเดล ~6MB อาจใช้เวลาสักครู่</p>
-                        <div id="rmBgStatus" style="display:none" class="text-[11px] font-bold text-blue-600 items-center gap-1.5">
-                            <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>
-                            <span id="rmBgStatusText">กำลังลบพื้นหลัง…</span>
-                        </div>
                     </div>
 
                     <!-- 2. Preset -->
@@ -188,9 +167,6 @@
             const customBox  = document.getElementById('customBox');
             const customW    = document.getElementById('customW');
             const customH    = document.getElementById('customH');
-            const rmBgToggle = document.getElementById('rmBgToggle');
-            const rmBgStatus = document.getElementById('rmBgStatus');
-            const rmBgText   = document.getElementById('rmBgStatusText');
 
             let cropper  = null;
             let current  = PRESETS[0];
@@ -270,63 +246,20 @@
                 });
             });
 
-            function loadIntoCropper(src) {
-                img.src = src;
-                img.classList.remove('hidden');
-                img.style.display = '';
-                empty.classList.add('hidden');
-                hasImage = true;
-                btnExport.disabled = false;
-                initCropper();
-            }
-
-            function blobToDataURL(blob) {
-                return new Promise(function (resolve) {
-                    const r = new FileReader();
-                    r.onload = function (ev) { resolve(ev.target.result); };
-                    r.readAsDataURL(blob);
-                });
-            }
-
-            upload.addEventListener('change', async function (e) {
+            upload.addEventListener('change', function (e) {
                 const file = e.target.files && e.target.files[0];
                 if (!file) return;
-
-                if (rmBgToggle.checked) {
-                    if (!window.__removeBackground) {
-                        alert('โมเดลลบพื้นหลังยังโหลดไม่เสร็จ กรุณารอสักครู่แล้วลองใหม่');
-                        return;
-                    }
-                    upload.disabled = true;
-                    btnExport.disabled = true;
-                    rmBgStatus.style.display = 'flex';
-                    rmBgText.textContent = 'กำลังเตรียมโมเดล…';
-                    refreshIcons();
-                    try {
-                        const outBlob = await window.__removeBackground(file, {
-                            progress: function (key, cur, total) {
-                                if (total && cur <= total && (String(key).indexOf('fetch') !== -1 || String(key).indexOf('compute') === -1)) {
-                                    rmBgText.textContent = 'กำลังโหลดโมเดล ' +
-                                        Math.round((cur / total) * 100) + '%';
-                                } else {
-                                    rmBgText.textContent = 'กำลังลบพื้นหลัง…';
-                                }
-                            },
-                        });
-                        const dataUrl = await blobToDataURL(outBlob);
-                        loadIntoCropper(dataUrl);
-                    } catch (err) {
-                        console.error(err);
-                        alert('ลบพื้นหลังไม่สำเร็จ: ' + (err && err.message ? err.message : err));
-                    } finally {
-                        rmBgStatus.style.display = 'none';
-                        upload.disabled = false;
-                    }
-                    return;
-                }
-
-                const dataUrl = await blobToDataURL(file);
-                loadIntoCropper(dataUrl);
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    img.src = ev.target.result;
+                    img.classList.remove('hidden');
+                    img.style.display = '';
+                    empty.classList.add('hidden');
+                    hasImage = true;
+                    btnExport.disabled = false;
+                    initCropper();
+                };
+                reader.readAsDataURL(file);
             });
 
             // Adjust tools

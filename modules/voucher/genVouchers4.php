@@ -114,10 +114,10 @@ if ($apiResponse['success']) {
             "font" => $font
         ],
         "expires" => [
-            "size" => 8,
+            "size" => 9,
             "angle" => 0,
-            "value" => $expires,
-            "x" => Imagesx($image) - 890,
+            "value" => $expires = preg_replace('/(\d)\s*([a-z])/i', '$1  $2', $expires), // "3years" -> "3  years" (Roboto Black's space is narrow, so two)
+            "x" => 163 - intdiv(imagettfbbox(9, 0, $font, $expires)[2], 2), // centered in the "Valid for ___ from" gap
             "y" => Imagesy($image) - 116,
             "color" => $color["red"],
             "font" => $font

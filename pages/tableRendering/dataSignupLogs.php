@@ -76,7 +76,14 @@ foreach ($result as $row) {
     if (isset($json["EmailInvoice"])) unset($json["EmailInvoice"]);
     
     $shopType = showType($json["CustomerType"]);
-    
+
+    // Hide internal test signups - staff name them with "test", and they would
+    // otherwise sit among real customers here. Filtered server-side so the row
+    // count and paging reflect what is actually shown.
+    if (stripos($json["ShopName"] ?? '', 'test') !== false) {
+        continue;
+    }
+
     // Apply shop type filter
     if (!empty($shopTypeFilter) && $shopType !== $shopTypeFilter) {
         continue;
@@ -145,17 +152,24 @@ foreach ($result as $row) {
         }
     }
 
+    // Placeholder cell - filled in over AJAX by getFirstPaidStatus.php once the
+    // table has rendered, so a slow Stripe lookup never blocks the page.
+    // Full invoice history - the signup charge plus every recurring invoice.
+    $historyCell = '<span class="pay-history-cell text-muted" data-log-id="'.(int)$row["id"].'">'
+        . '<i class="bi bi-hourglass-split"></i></span>';
+
+    // Saved cards / bank accounts, same lazy pattern.
+    $payMethodCell = '<span class="pay-method-cell text-muted" data-log-id="'.(int)$row["id"].'">'
+        . '<i class="bi bi-hourglass-split"></i></span>';
+
     $data["data"][] = array(
-        $date,
         $country,
         $shopType,
         $shopName,
-        $signupLogsBtn,
-        // $stripeLogsBtn,
-        $contractLogsBtn,
-        $contractPushposLogsBtn,
-        // $row["status"]
-        $saleHtml
+        $saleHtml,
+        $historyCell,
+        $payMethodCell,
+        $date
     );//array
 }//foreach
 

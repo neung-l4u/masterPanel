@@ -15,6 +15,49 @@ let readAddonProduct = [];
 
 let couponObjectList = {};
 
+//Postal/zip code rules per country: pattern to validate, maxlength, and a hint for the error message
+//The form's country code for the United Kingdom is "UK", but the reference data
+//(postcode rules, states.json, cities.json) is keyed by the ISO code "GB".
+//Every lookup into that data has to go through here or it silently misses.
+function dataCountryCode(country){
+  return country === "UK" ? "GB" : country;
+}
+
+//Only the maximum length per country; the format itself is not validated.
+const zipRules = {
+  AU: { maxlength: 4 },
+  NZ: { maxlength: 4 },
+  TH: { maxlength: 5 },
+  US: { maxlength: 10 },
+  CA: { maxlength: 7 },
+  GB: { maxlength: 8 }
+};
+
+//Apply the zip rule for a country to the zip input (maxlength + allowed characters)
+function applyZipRule(country){
+  const inputZip = $("#zip");
+  const rule = zipRules[dataCountryCode(country)];
+  inputZip.removeClass("is-invalid");
+  $(".zip-validate-error").remove();
+  if (!rule) {
+    inputZip.attr("maxlength", 10);
+    return;
+  }
+  inputZip.attr("maxlength", rule.maxlength);
+  //Trim any value carried over from a previously selected country
+  if (inputZip.val().length > rule.maxlength) {
+    inputZip.val(inputZip.val().slice(0, rule.maxlength));
+  }
+}
+
+//Postal code format is no longer enforced: the real-world formats vary too much
+//to block a signup on. The field is still required, and maxlength still comes from
+//zipRules above. Kept as a no-op so the onblur handler in index.php keeps working.
+function checkZipField(){
+  $(".zip-validate-error").remove();
+  $("#zip").removeClass("is-invalid");
+}
+
 let cart = {
   subscription: [],
   add_on: [],
@@ -226,12 +269,28 @@ $(".next").on("click", function () {
     }
 
     if (!$("#shopNumber").val() || $("#shopNumber").val().trim() === "") {
-      $("#shopNumber").after(
-        '<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your shop phone number</span>',
-      );
-      if (!hasError) {
-        $("#shopNumber").focus();
-      }
+      $("#shopNumber").after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your shop phone number</span>');
+      if (!hasError) { $("#shopNumber").focus(); }
+      hasError = true;
+    }
+
+    if (!$("#zip").val() || $("#zip").val().trim() === "") {
+      $("#zip").after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please enter your postal code</span>');
+      if (!hasError) { $("#zip").focus(); }
+      hasError = true;
+    }
+
+    if (!$("#state").val()) {
+      $("#state").after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please select a state</span>');
+      if (!hasError) { $("#state").focus(); }
+      hasError = true;
+    }
+
+    //#city carries the option picked, or the free text typed under "Other".
+    if (!$("#city").val() || $("#city").val().trim() === "") {
+      const cityAnchor = $("#citySelect").val() === "__other__" ? $("#cityOther") : $("#citySelect");
+      cityAnchor.after('<span class="step2-validate-error" style="color:red;font-size:12px;display: flex;align-items: center;">Please select or enter your city</span>');
+      if (!hasError) { cityAnchor.focus(); }
       hasError = true;
     }
 
@@ -318,6 +377,19 @@ function checkAcceptAgreement() {
 
 // ON CLICK Submit BUTTON
 cmdSubmit.on("click", async function () {
+  /*
+  ===== Skip email check (ปิดใช้งานชั่วคราว) =====
+  ตอนเปิดใช้ฟีเจอร์นี้ ให้ใช้บรรทัดนี้แทนบรรทัดด้านล่าง เพื่อให้ด่านนี้
+  เช็ค checkbox โดยตรง ไม่พึ่ง #emailExist อย่างเดียว กันกรณีค่าเก่าค้าง
+  จากตอนที่ blur ช่องอีเมลไปก่อนแล้วค่อยติ๊ก
+
+  if (!$("#CheckedBoxSkipEmailCheck").is(":checked") && $("#emailExist").val() === "used") {
+  */
+
+  //ปิดด่านตรวจอีเมลซ้ำตอน submit ควบคู่กับ checkEmailUsed() ที่ปิดไว้แล้ว
+  //ถ้าจะเปิดใช้ใหม่ ให้ uncomment บล็อก if ด้านล่างนี้กลับมา
+  //และลบ return false ที่ต้นฟังก์ชัน checkEmailUsed() ออก
+  /*
   if ($("#emailExist").val() === "used") {
     alert(
       "This email is already in use. The form cannot be submitted with this email.",
@@ -334,9 +406,10 @@ cmdSubmit.on("click", async function () {
     }, 50);
 
     return false; // กัน submit ต่อ
-  } else {
-    let paymentResponse = await requestToPay();
   }
+  */
+
+  let paymentResponse = await requestToPay();
 });
 
 // CALCULATE PROGRESS BAR
@@ -382,6 +455,7 @@ hideButtons = function (step) {
     $(".next").hide();
     $(".submit").show();
   }
+  toggleStickySummary(step);
 };
 
 // enable Others input box when Others checkbox is checked
@@ -452,6 +526,7 @@ $("#formCountry").change(function () {
   const currency = $(".currency");
   const lookup = $(".lookup");
   const zipLabel = $(".zipLabel");
+  const cityLabel = $(".cityLabel");
   const inputCurrency = $('input[name="currency"]');
   const textGST = $(".textGST");
   const fakeNumber = $(".fakeNumber");
@@ -474,6 +549,7 @@ $("#formCountry").change(function () {
       labelBusinessNumber.html("ABN");
       classBusinessNumber.show();
       countryName.html("Australia");
+      cityLabel.html("City/Suburb");
       selectState.show();
       currency.html("AUD");
       formData.formCurrency = "AUD";
@@ -501,6 +577,7 @@ $("#formCountry").change(function () {
       inputBusinessNumber.attr("required", true);
       classBusinessNumber.show();
       countryName.html("New Zealand");
+      cityLabel.html("City/Suburb");
       selectState.show();
       currency.html("NZD");
       formData.formCurrency = "NZD";
@@ -530,6 +607,7 @@ $("#formCountry").change(function () {
       labelBusinessNumber.html("CRN");
       classBusinessNumber.show();
       countryName.html("United Kingdom");
+      cityLabel.html("City/Town");
       selectState.show();
       currency.html("");
       formData.formCurrency = "GBP";
@@ -556,6 +634,7 @@ $("#formCountry").change(function () {
       labelBusinessNumber.html("EIN");
       classBusinessNumber.show();
       countryName.html("Canada");
+      cityLabel.html("City");
       selectState.show();
       currency.html("CAD");
       formData.formCurrency = "CAD";
@@ -582,6 +661,7 @@ $("#formCountry").change(function () {
       labelBusinessNumber.html("EIN");
       classBusinessNumber.show();
       countryName.html("United States");
+      cityLabel.html("City");
       selectState.show();
       currency.html("USD");
       formData.formCurrency = "USD";
@@ -608,6 +688,7 @@ $("#formCountry").change(function () {
       labelBusinessNumber.html("TAX ID");
       classBusinessNumber.show();
       countryName.html("Thailand");
+      cityLabel.html("District");
       selectState.show();
       currency.html("THB");
       formData.formCurrency = "THB";
@@ -661,6 +742,7 @@ $("#formCountry").change(function () {
       labelBusinessNumber.html("ABN");
       inputBusinessNumber.attr("required", true);
       countryName.html("please select country");
+      cityLabel.html("City/Province");
       currency.html("AUD");
       formData.formCurrency = "AUD";
       inputCurrency.val("AUD");
@@ -680,6 +762,8 @@ $("#formCountry").change(function () {
     // domainHelpUS.hide();
   }
   optionState();
+  applyZipRule(formData.formCountry); //zip length/format depends on the country
+  loadCouponOptions(); //the coupon lists depend on the country
 });
 
 //set selected Payment Method
@@ -797,12 +881,13 @@ $("#formType").change(function () {
   let findMassage = formData.formType.search("Massage");
   let tmpType = findMassage >= 0 ? "Massage" : "Restaurant"; //find exactly shop type
   $(".stripeFee").html(settings.PaymentFee[formData.formCountry][tmpType]); //set stripe fee value for shop type
+  loadCouponOptions(); //the coupon lists depend on the shop type
 });
 
 //Generate all state options from selected country
-function optionState() {
-  let shopCountry = formData.formCountry;
-  let optionState = $(".optionState");
+function optionState(){
+  let shopCountry = dataCountryCode(formData.formCountry);
+  let optionState = $('.optionState');
   let allState = {};
 
   const reqState = $.ajax({
@@ -817,24 +902,138 @@ function optionState() {
   reqState.done(function (res) {
     allState = res[shopCountry];
     optionState.empty().show();
-    jQuery.each(allState.state, function (i, val) {
-      optionState.append(
-        "<option value='" +
-          val.text +
-          "'>" +
-          val.code +
-          " : " +
-          val.text +
-          "</option>",
-      );
+    if (!allState || !allState.state) {
+      //No data for this country: don't throw, just leave a usable prompt.
+      optionState.append("<option value=''>Please select Country</option>");
+      return;
+    }
+    optionState.append("<option value=''>Please select State</option>");
+    jQuery.each( allState.state, function( i, val ) {
+      optionState.append("<option value='"+val.text+"'>"+val.code+" : "+val.text+"</option>");
     });
+    //The state list just changed, so the city list below it is stale.
+    optionCity();
   });
 
   reqState.fail(function (xhr, status, error) {
     console.log("ajax request State fail!!");
     console.log(status + ": " + error);
   });
-} //optionState
+
+}//optionState
+
+//Cities are loaded once and cached, then filtered by the selected state.
+let allCities = null;
+
+//Generate the city options for the currently selected state.
+//The list holds the main cities/districts only, so an "Other" option always
+//follows it and reveals a free-text box for anywhere not listed.
+//keepExisting = true  -> พยายามคงค่า city เดิมไว้ (ตอนโหลดรายการ State เสร็จ / prefill)
+//keepExisting = false -> ผู้ใช้เปลี่ยน State เอง ค่าเมืองเดิมใช้ไม่ได้แล้ว ต้องล้าง
+function optionCity(keepExisting){
+  if (keepExisting === undefined) { keepExisting = true; }
+  const shopCountry = dataCountryCode(formData.formCountry);
+  const selectedState = $("#state").val();
+  const optionCity = $(".optionCity");
+
+  function render(){
+    //ค่าที่มีอยู่ก่อน: อาจมาจาก prefill ตอนโหลดฟอร์ม หรือจากที่ผู้ใช้เลือกไว้แล้ว
+    //ต้องเก็บไว้ก่อน empty() เพราะการล้าง option ทำให้ค่าที่เลือกหายไป
+    const previousCity = keepExisting ? ($("#city").val() || "").trim() : "";
+
+    optionCity.empty();
+
+    const list = (allCities && allCities[shopCountry] && allCities[shopCountry][selectedState])
+      ? allCities[shopCountry][selectedState]
+      : [];
+
+    if (!selectedState) {
+      optionCity.append("<option value=''>Please select State</option>");
+    } else {
+      optionCity.append("<option value=''>Please select City</option>");
+      jQuery.each( list, function( i, val ) {
+        optionCity.append("<option value='"+val+"'>"+val+"</option>");
+      });
+      optionCity.append("<option value='__other__'>Other (type it in)</option>");
+    }
+
+    //พยายามคงค่าเดิมไว้ ไม่ล้างทิ้งทันที มิฉะนั้นข้อมูลที่ prefill มาจะหาย
+    const matched = previousCity && list.some(
+      (c) => c.toLowerCase() === previousCity.toLowerCase()
+    );
+
+    if (!selectedState) {
+      //ยังไม่ได้เลือก State ก็ยังไม่มีรายการให้จับคู่ ปล่อยค่าเดิมค้างไว้ก่อน
+      $("#cityOther").val("").hide();
+    } else if (matched) {
+      //ตรงกับรายการที่มี เลือกให้เลย
+      const exact = list.find((c) => c.toLowerCase() === previousCity.toLowerCase());
+      optionCity.val(exact);
+      $("#city").val(exact);
+      $("#cityOther").val("").hide();
+    } else if (previousCity) {
+      //ไม่มีในรายการ (เช่น เมืองเล็กที่ prefill มา) ให้ไปอยู่ช่อง Other แทนการทิ้งค่า
+      optionCity.val("__other__");
+      $("#cityOther").val(previousCity).show();
+      $("#city").val(previousCity);
+    } else {
+      //ไม่มีค่าเดิมจริง ๆ ค่อยเคลียร์
+      $("#city").val("");
+      $("#cityOther").val("").hide();
+    }
+
+    setShipAddress();
+  }
+
+  if (allCities) { render(); return; }
+
+  const reqCity = $.ajax({
+    url: settings.url_getCities,
+    method: 'POST',
+    async: true,
+    dataType: 'json',
+    crossDomain: true,
+    data: { "token": Math.random() }
+  });
+
+  reqCity.done(function(res) {
+    allCities = res;
+    render();
+  });
+
+  reqCity.fail(function(xhr, status, error) {
+    console.log("ajax request City fail!!");
+    console.log(status + ': ' + error);
+    //Fall back to a free-text box so a failed load never blocks the signup.
+    //ค่าเดิมที่ prefill มาต้องไม่หาย จึงย้ายไปไว้ในช่องกรอกเองแทน
+    const previousCity = keepExisting ? ($("#city").val() || "").trim() : "";
+    optionCity.empty().append("<option value='__other__'>Other (type it in)</option>").val("__other__");
+    $("#cityOther").val(previousCity).show();
+    $("#city").val(previousCity);
+  });
+
+}//optionCity
+
+//Show the free-text box when "Other" is picked, otherwise submit the option.
+function onCitySelectChange(){
+  const selected = $("#citySelect").val();
+  const inputOther = $("#cityOther");
+
+  if (selected === "__other__") {
+    inputOther.show().focus();
+    $("#city").val(inputOther.val().trim());
+  } else {
+    inputOther.hide().val("");
+    $("#city").val(selected);
+  }
+  setShipAddress();
+}
+
+//Keep the submitted value in step with the free-text box.
+function syncCityOther(){
+  $("#city").val($("#cityOther").val().trim());
+  setShipAddress();
+}
 
 //Generate cuisines checkbox from array
 function addCuisines() {
@@ -1092,6 +1291,43 @@ function addMainCart(name, price, amount, special, product_id) {
       console.log("No match:", selectedVal);
     }
   });
+
+  // Check for AI/Araya products and show acceptance checkbox
+  const arayaKeywords = ["AI"];
+  const arayaMatched = arayaKeywords.some(k => name.includes(k));
+  $(".termsAI").toggleClass("d-none", !arayaMatched);
+
+  // Remove existing Araya checkbox if present
+  $(".boxArayaAcceptProduct").remove();
+  
+  if (arayaMatched) {
+    // Create Araya acceptance checkbox
+    const arayaHTML = `
+      <div class="boxArayaAcceptProduct mt-3 ms-4 p-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd; border-radius: 4px;">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="arayaAccept" name="arayaAccept" value="yes"
+                 onclick="$('#arayaDetail').toggle();" style="width: 20px; height: 20px;">
+          <label class="form-check-label" for="arayaAccept" style="margin-left: 10px; font-weight: 500; cursor: pointer;">
+            Accept: AI Araya (contract 3 months) Free! Booking system I understand that:
+          </label>
+        </div>
+        <div id="arayaDetail" style="display:none; margin-top: 15px; padding-left: 30px;">
+          <b style="color: #333; font-size: 14px;">Details:</b>
+          <ul style="margin-top: 12px; margin-bottom: 0; padding-left: 20px;">
+            <li style="margin-bottom: 8px; line-height: 1.5; color: #555; font-size: 13px;">This promotion requires a minimum commitment of 3 months.</li>
+            <li style="margin-bottom: 8px; line-height: 1.5; color: #555; font-size: 13px;">Amelia Booking is included at no additional charge while my Araya subscription remains active.</li>
+            <li style="margin-bottom: 8px; line-height: 1.5; color: #555; font-size: 13px;">If I cancel Araya before completing the 3-month minimum commitment, I agree to pay the Amelia subscription fees that were waived under this promotion.</li>
+            <li style="line-height: 1.5; color: #555; font-size: 13px;">After completing the minimum commitment, I may cancel Araya at any time. If I wish to continue using Amelia, standard Amelia subscription fees will apply.</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    // Find the checked product radio and insert after its parent div
+    const checkedRadio = $("input[name='product']:checked");
+    if (checkedRadio.length > 0) {
+      $(arayaHTML).insertAfter(checkedRadio.closest(".form-check"));
+    }
+  }
 
   cart.subscription = [];
   bag.subscription = [];
@@ -1506,15 +1742,61 @@ const loadCouponObject = () => {
     console.log(status + ": " + error);
     return false;
   });
-}; //loadCouponObject
+}//loadCouponObject
+
+//Read one group ("Main" or "Addons") out of the coupon JSON
+function couponGroup(group) {
+  const list = (couponObjectList && couponObjectList.Coupon) ? couponObjectList.Coupon : {};
+  return (typeof list[group] !== "undefined") ? list[group] : {};
+}//couponGroup
+
+//Find the discount object of one coupon code for this shop type + country, or undefined when it is not offered there
+function couponDiscountObject(group, code, formTypeJsonKey, country) {
+  const byCode = couponGroup(group)[code];
+  if (typeof byCode === "undefined") { return undefined; }
+  const byType = byCode[formTypeJsonKey];
+  if (typeof byType === "undefined") { return undefined; }
+  return byType[country];
+}//couponDiscountObject
+
+//Build the <option> list of every coupon in a group that is offered for this shop type + country
+function couponOptionsHtml(couponList, formTypeJsonKey, country) {
+  let options = "";
+  Object.keys(couponList).forEach(function(code) {
+    const byType = couponList[code][formTypeJsonKey];
+    if (typeof byType === "undefined") { return; }
+    if (typeof byType[country] === "undefined") { return; }
+    options += '<option value="' + code + '">' + code + '</option>';
+  });
+  return options;
+}//couponOptionsHtml
+
+//Build the coupon dropdown lists for the country/shop type that was chosen in the earlier steps.
+function loadCouponOptions() {
+  if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
+
+  const country = formData.formCountry;
+  const formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
+  const mainSelect = $("#couponCode");
+  const addonSelect = $("#couponCode2");
+  const blankOption = '<option value="">-- No coupon --</option>';
+
+  //Both lists come from assets/API/couponCode.json, keeping only the codes that exist for this country + shop type
+  mainSelect.html(blankOption + couponOptionsHtml(couponGroup("Main"), formTypeJsonKey, country)).val("");
+  addonSelect.html(blankOption + couponOptionsHtml(couponGroup("Addons"), formTypeJsonKey, country)).val("");
+
+  //nothing is selected any more, so both lists are usable again and no discount is left over
+  mainSelect.removeAttr('disabled');
+  addonSelect.removeAttr('disabled');
+  applyCoupon();
+}//loadCouponOptions
 
 function applyCoupon() {
   if (Object.keys(couponObjectList).length <= 0) {
     loadCouponObject();
   } //if empty couponObjectList then load it via ajax
   const objCode = $("#couponCode");
-  let inputCode = objCode.val().trim().toUpperCase();
-  objCode.val(inputCode);
+  let inputCode = (objCode.val() || "").trim().toUpperCase();
   const discountAmount = $("#discountAmount");
   const discountNumber = $("#discountNumber");
   const couponCurrency = $(".couponCurrency");
@@ -1526,8 +1808,6 @@ function applyCoupon() {
   //formData.formCountry << AU NZ CA UK US
   let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
 
-  let Settings_Coupon_Obj =
-    settings.Payment_Detail.coupon_Code[formData.formCountry];
   let discountValue = 0;
   let gstDecimal = 0;
 
@@ -1545,36 +1825,11 @@ function applyCoupon() {
     $("#couponCode2").attr("disabled", "disabled");
   }
 
-  const availableCoupon = new Set([
-    "1TRIAL",
-    "1SMILE",
-    "WAWIO",
-    "FREEWEB",
-    "PARTNER96",
-    "PARTNER98",
-    "PARTNER195",
-    "PARTNER198",
-    "PARTNER246",
-    "PARTNER268",
-    "PARTNER118",
-    "PARTNER298",
-    "PARTNER368",
-    "ONCE108",
-    "ONCE158",
-    "ONCE198",
-    "ONCE246",
-    "ONCE268",
-    "ONCE348",
-    "AIUS",
-    "ARAYAAI",
-  ]);
+  //the options are built from couponCode.json, so the list itself is the whitelist
+  const foundCoupon = typeof couponGroup("Main")[inputCode] !== "undefined";
 
-  inputCode = inputCode.toUpperCase();
-  const foundCoupon = availableCoupon.has(inputCode);
-
-  if (foundCoupon) {
-    let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
-    let discountObject = discountList[formData.formCountry];
+  if(foundCoupon) {
+    let discountObject = couponDiscountObject("Main", inputCode, formTypeJsonKey, formData.formCountry);
 
     if (typeof discountObject !== "undefined") {
       //Check if this coupon code is available in your settings list.
@@ -1605,9 +1860,9 @@ function applyCoupon() {
 } //function applyCoupon
 
 function applyCoupon2() {
+  if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
   const objCode = $("#couponCode2");
-  let inputCode = objCode.val().trim().toUpperCase();
-  objCode.val(inputCode);
+  let inputCode = (objCode.val() || "").trim().toUpperCase();
   const discountAmount = $("#discountAmount");
   const discountNumber = $("#discountNumber");
   const couponCurrency = $(".couponCurrency");
@@ -1616,8 +1871,7 @@ function applyCoupon2() {
 
   let discountFlag = false;
   let cal = 0;
-  let Settings_Coupon_Obj =
-    settings.Payment_Detail.coupon_Code[formData.formCountry];
+  let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
   let discountValue = 0;
   let gstDecimal = 0;
 
@@ -1635,10 +1889,10 @@ function applyCoupon2() {
     $("#couponCode").attr("disabled", "disabled");
   }
 
-  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") {
-    //check this coupon code is exist in a setting list
+  const discountObject = couponDiscountObject("Addons", inputCode, formTypeJsonKey, formData.formCountry);
+  if (typeof discountObject !== "undefined") { //check this coupon code is exist in the Addons list of the coupon JSON
     discountFlag = true;
-    discountValue = Settings_Coupon_Obj[inputCode].discount; //get the discount value of this coupon
+    discountValue = discountObject.discount; //get the discount value of this coupon
   }
   //
 
@@ -1791,14 +2045,51 @@ function ownerBestTime(val) {
   formData.owner.bestTime = val;
 }
 
+// แปลงชื่อร้านเป็นท่อนแรกของ storeID (ต้องตรงกับ storeIdShopSlug() ใน
+// modules/signup/assets/function/generateStoreID.php)
+// - "&" -> "and"
+// - ตัดสัญลักษณ์และช่องว่างออก เหลือ a-z 0-9
+function storeSlugFromName(val) {
+  return String(val || '')
+    .replace(/\s*&\s*/g, 'and')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
+
 function setRestaurantName(val) {
   $('input[name="company"]').val(val);
   formData.business.shopName = val;
   formData.business.company = val;
+
+  // เติม storeSlug อัตโนมัติจากชื่อร้าน
+  // ช่องนี้ถูกซ่อนเป็น hidden ใน index.php แล้ว ผู้ใช้กรอกเองไม่ได้
+  // จึงเติมทับได้เสมอ ไม่ต้องเช็ค data('touched') เหมือนเดิม
+  // หมายเหตุ: ถ้าชื่อร้านเป็นภาษาไทยล้วน slug จะว่าง ซึ่งฝั่ง server
+  // (generateStoreID.php) จะคืน reason = 'empty_slug' และไม่สร้าง storeID ให้
+  const slugInput = $('#storeSlug');
+  if (slugInput.length) {
+    slugInput.val(storeSlugFromName(val));
+  }
 }
 
-const setCreditFullName = () => {
-  let text = input_first_name.val() + " " + input_last_name.val();
+/*
+===== ปิดใช้งาน: ผู้ใช้แก้ storeSlug เอง =====
+ช่อง #storeSlug ถูกซ่อนเป็น hidden แล้ว จึงไม่มี input event ให้ดักอีกต่อไป
+ถ้าจะเปิดให้กรอกเองอีกครั้ง ให้ uncomment บล็อกนี้ พร้อมกับคืนเงื่อนไข
+!slugInput.data('touched') ใน setRestaurantName() ด้านบน
+และเปลี่ยน input ใน index.php กลับเป็น type="text"
+
+$(function () {
+  // ผู้ใช้แก้เองเมื่อไหร่ ให้หยุด auto-fill และบังคับรูปแบบ slug
+  $('#storeSlug').on('input', function () {
+    $(this).data('touched', true);
+    this.value = storeSlugFromName(this.value);
+  });
+});
+*/
+
+const setCreditFullName = () =>{
+  let text = input_first_name.val()+" "+input_last_name.val();
   input_quotation_name.val(text.trim());
   input_credit_full_name.val(text.trim());
 };
@@ -1867,12 +2158,29 @@ if (!settings.Payment_Module.Invoice) {
 
 //open url in new tab
 function readAgreement() {
-  let inputAccept = $("#acceptTerms");
-  inputAccept.prop("disabled", false);
   modalTermsAction("open");
-  inputAccept.prop("checked", true);
-  checkAcceptAgreement();
 }
+// เลื่อนอ่านถึงท้าย -> ปลดล็อก checkbox, ติ๊ก checkbox -> ปุ่ม I Agree เป็นสีเขียว -> กดแล้วติ๊ก #acceptTerms
+const $termsBody = $("#modalTerms .modal-body");
+const $btnTermsAgree = $("#btnTermsAgree");
+const $termsModalAgree = $("#termsModalAgree");
+function checkTermsScrolledToEnd() {
+  const el = $termsBody[0];
+  if (el.scrollTop + el.clientHeight < el.scrollHeight - 10) return;
+  $termsModalAgree.prop("disabled", false);
+  $("#termsScrollHint").text("Please tick the box to agree.");
+}
+$termsBody.on("scroll", checkTermsScrolledToEnd);
+$("#modalTerms").on("shown.bs.modal", checkTermsScrolledToEnd);
+$termsModalAgree.on("change", function () {
+  $btnTermsAgree.prop("disabled", !this.checked).toggleClass("btn-success", this.checked).toggleClass("btn-secondary", !this.checked);
+  $("#termsScrollHint").toggleClass("d-none", this.checked);
+});
+$btnTermsAgree.on("click", function () {
+  $("#acceptTerms").prop({ disabled: false, checked: true });
+  checkAcceptAgreement();
+  modalTerms.hide();
+});
 const modalTermsAction = (action) => {
   if (action === "open") {
     modalTerms.show();
@@ -2294,7 +2602,48 @@ const setShowPrice = () => {
   subTotalText.html(showPrice.SubTotal);
   gstText.html(showPrice.GST);
   amountText.html(showPrice.GrandTotal);
-};
+
+  updateStickySummary();
+}
+
+//อัปเดตแถบสรุปยอดล่างจอ เรียกทุกครั้งที่ราคาถูกคำนวณใหม่
+function updateStickySummary(){
+  const bar = $("#stickySummary");
+  if (!bar.length) { return; }
+
+  //ชื่อแพ็กเกจหลักที่เลือก + จำนวน add-on ที่ติ๊กไว้
+  const mainLabel = $("input[name='product']:checked").length
+    ? $("input[name='product']:checked").closest(".form-check").find("label").text().split(" - ")[0].trim()
+    : "";
+  const addonCount = $("#addon2 input:checked").length;
+  const setupLabel = $("input[name='setup']:checked").length
+    ? $("input[name='setup']:checked").closest(".form-check").find("label").text().split(" - ")[0].trim()
+    : "";
+
+  const parts = [];
+  if (mainLabel)  { parts.push(mainLabel); }
+  if (addonCount) { parts.push(addonCount + (addonCount > 1 ? " add-ons" : " add-on")); }
+  if (setupLabel) { parts.push(setupLabel); }
+
+  $("#stickySummaryItems").text(parts.length ? parts.join("  •  ") : "No package selected");
+  $("#stickySummaryTotal").text(showPrice.GrandTotal);
+}
+
+//แสดงแถบสรุปเฉพาะ step ที่เลือกสินค้า (step 3 เป็นต้นไป) และซ่อนที่ step อื่น
+function toggleStickySummary(currentStep){
+  const bar = $("#stickySummary");
+  if (!bar.length) { return; }
+  //#products2 จะมีสินค้าก็ต่อเมื่อโหลดรายการแล้วเท่านั้น
+  const hasProducts = $("#products2 input[name='product']").length > 0;
+  if (currentStep >= 3 && hasProducts) {
+    bar.show();
+    $("body").addClass("has-sticky-summary");
+    updateStickySummary();
+  } else {
+    bar.hide();
+    $("body").removeClass("has-sticky-summary");
+  }
+}
 
 function trimSpace(param, place) {
   //console.log("Old Card = "+param);
@@ -2316,19 +2665,11 @@ function trimSpace(param, place) {
 
 function checkDomain(param) {
   const domainName = param;
-  const baseUrlAU =
-    "https://localforyoudomains.com/domain-names/search/?domain=";
-  const baseUrlUS =
-    "https://www.secureserver.net/products/domain-registration/find?plid=596413&domainToCheck=";
-  //const baseUrlUS = 'https://www.godaddy.com/th-th/domainsearch/find?domainToCheck=';
+  const baseUrlAU = 'https://localforyoudomains.com/domain-names/search/?domain=';
+  // US/CA: static reseller login link (set in index.php), no domain search param
 
-  $("#domainHelpAU")
-    .find("a")
-    .attr("href", baseUrlAU + domainName);
-  $("#domainHelpUS")
-    .find("a")
-    .attr("href", baseUrlUS + domainName);
-} //checkDomain
+  $('#domainHelpAU').find('a').attr('href', baseUrlAU + domainName);
+}//checkDomain
 
 $("#byAgent").change(function () {
   if ($(this).val() === "Other") {
@@ -2338,6 +2679,9 @@ $("#byAgent").change(function () {
     $("#byAgent").css("width", "100%");
     $("#otherAgent").fadeOut();
   }
+  //เก็บ monday_user_id ของคนที่เลือกไว้ในช่องซ่อน เพื่อส่งต่อให้ webhook Make.com
+  //"Other" กับ "--None--" มี data-monday-id ว่าง จึงได้ค่าว่างตามที่ต้องการ
+  $("#byAgentMondayId").val($(this).find("option:selected").data("monday-id") || "");
 });
 
 $("#posSystem").change(function () {
@@ -2346,7 +2690,16 @@ $("#posSystem").change(function () {
   } else {
     $("#datePOSBox").fadeOut(300);
   }
-});
+})
+
+/*
+===== Skip email check (ปิดใช้งานชั่วคราว) =====
+ปิดไว้พร้อมกับ checkbox ใน modules/signup/modalSecretSetup.php
+ถ้าจะเปิดใช้ใหม่ ต้อง uncomment ทั้ง 3 จุดในไฟล์นี้ (บล็อกนี้, ในฟังก์ชัน
+checkEmailUsed() ด้านล่าง, และด่านตอน submit ที่ cmdSubmit.on("click", ...))
+พร้อมกับ uncomment checkbox ใน modalSecretSetup.php ด้วย
+
+ฟีเจอร์นี้ใช้ได้กับทุกประเทศ ไม่มีเงื่อนไขผูกกับ country
 
 $("#CheckedBoxSkipEmailCheck").on("change", function () {
   if ($(this).is(":checked")) {
@@ -2355,14 +2708,31 @@ $("#CheckedBoxSkipEmailCheck").on("change", function () {
     $("#emailExist").val("");
   }
 });
+*/
 
 function checkEmailUsed(email) {
+  /*
+  ===== Skip email check (ปิดใช้งานชั่วคราว) =====
+  เวอร์ชันนี้แก้บั๊กค่าเก่าค้างแล้ว คือล้าง #emailExist กับป้ายสถานะทิ้งด้วย
+  ไม่ใช่แค่ return เฉย ๆ เพราะถ้าติ๊กแล้วพิมพ์อีเมลใหม่ ค่า "used" เดิม
+  จะยังค้างอยู่และไปบล็อกตอน submit (เจอบ่อยกับ TH ที่มีช่องอีเมล 2 ช่อง
+  คือ #email กับ #quotationEmail ในบล็อก .quotationDetail)
+
   if ($("#CheckedBoxSkipEmailCheck").is(":checked")) {
+    $("#emailExist").val("");
+    $("#emailUsed").hide();
+    $("#emailunUsed").hide();
     return false;
   }
-  if (email.length < 5) {
-    return false;
-  }
+  */
+
+  //ปิดการตรวจอีเมลซ้ำทั้งหมด ไม่ยิง query ไป database และไม่แสดงป้ายสถานะ
+  //(#emailUsed / #emailunUsed ใน index.php) ถ้าจะเปิดใช้ใหม่ ให้ลบ return
+  //บรรทัดนี้ออก แล้วโค้ดด้านล่างจะกลับมาทำงานเหมือนเดิม
+  //หมายเหตุ: ต้องปลดด่านตอน submit ที่ cmdSubmit.on("click", ...) ควบคู่กันด้วย
+  return false;
+
+  if (email.length<5){ return false; }
   const checkEmail = email;
   const emailunUsed = $("#emailunUsed");
   const emailUsed = $("#emailUsed");

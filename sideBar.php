@@ -53,7 +53,7 @@ include ('assets/api/checkSession.php');
                         <p>Website Management <i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <?php if(in_array($teamID, [1,2,8,10,11])){ ?>
+                        <?php if(in_array($teamID, [1,2,5,8,10,11])){ ?>
                         <li class="nav-item pl-2">
                             <a href="https://report.localforyou.com/modules/websiteList/views/websiteList.php#" target="_blank" class="nav-link">
                                 <i class="nav-icon mr-3 bi bi-list-check"></i>
@@ -127,11 +127,17 @@ include ('assets/api/checkSession.php');
                                 <p>AI Management</p>
                             </a>
                         </li>
-                        <?php if($_SESSION['level'] == 1 || $_SESSION['id'] == 83){ ?>
+                        <?php if($_SESSION['level'] < 4 || $_SESSION['id'] == 83){ ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=invoiceThailand" class="nav-link <?php echo $activeMenu["lv2"] == "invoiceThailand" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-receipt"></i>
                                 <p>Customer Thailand</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=dataCustomer" class="nav-link <?php echo $activeMenu["lv2"] == "dataCustomer" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-person-vcard"></i>
+                                <p>Data Customer</p>
                             </a>
                         </li>
                         <?php } ?>
@@ -238,6 +244,16 @@ include ('assets/api/checkSession.php');
                         </li>
                     </ul>
                 </li>
+
+                <!-- Payment Admin -->
+                <?php if($userLevel <= 1){ ?>
+                <li class="nav-item">
+                    <a href="paymentAdmin.php" target="_blank" class="nav-link">
+                        <i class="nav-icon mr-2 bi bi-credit-card"></i>
+                        <p>Payment Admin &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
+                    </a>
+                </li>
+                <?php } ?>
                 
 
                 <!-- Logs -->
@@ -266,6 +282,12 @@ include ('assets/api/checkSession.php');
                             <a href="main.php?p=signupLogs" class="nav-link <?php echo $activeMenu["lv2"] == "signupLogs" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-person-plus"></i>
                                 <p>SignUp Logs (Staff)</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
+                            <a href="main.php?p=paymentPassword" class="nav-link <?php echo $activeMenu["lv2"] == "paymentPassword" ? "active":""; ?>">
+                                <i class="nav-icon mr-3 bi bi-key"></i>
+                                <p>Payment Password</p>
                             </a>
                         </li>
                         <li class="nav-item pl-2">

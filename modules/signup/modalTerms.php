@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div class="modal fade" id="modalTerms" tabindex="-1" aria-labelledby="modalTermsLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTermsLabel">TERMS AND CONDITIONS</h5>
@@ -10,7 +10,9 @@
                 <?php include("TermsAndCondition.html"); ?>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <small class="text-muted me-auto" id="termsScrollHint">Please scroll to the end to agree.</small>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="btnTermsAgree" disabled>I Agree</button>
             </div>
         </div>
     </div>

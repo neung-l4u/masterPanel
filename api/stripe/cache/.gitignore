@@ -1,0 +1,4 @@
+# Cached Stripe payloads hold customer billing data - keep them out of the repo.
+*.json
+first_paid/
+!.gitignore

@@ -74,11 +74,9 @@ const viewDetail = (id) => {
             urlTxt = `<a href="${res.wWordpressURL}" target="_blank">${iconLink}</a> ${res.wWordpressURL}`;
             WordpressURL.html(urlTxt);
 
-            txt = `<a onclick="copyText('admin@localforyou.com')" href="#">${iconCopy}</a> admin@localforyou.com`;
-            txt2 = `<a onclick="copyText('L4U=New@min')" href="#">${iconCopy}</a> L4U=New@min`;
 
-            WordpressUser.html(txt);
-            WordpressPass.html(txt2);
+            WordpressUser.text(res.wWordpressUser);
+            WordpressPass.text(res.wWordpressPass);
 
             SMTPEmailUser.text(res.wSMTPEmailUser);
             SMTPEmailPass.text(res.wSMTPEmailPass);

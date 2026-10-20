@@ -36,7 +36,12 @@ if (isset($_FILES['file']['name'])) {
 
         if (move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
             $currentDate = date("ymdHis");
-            $newName = $subfolder . "/" . $prefix . "_" . $projectID . "_" . $currentDate . "." . $imageExt;
+            $base = $subfolder . "/" . $prefix . "_" . $projectID . "_" . $currentDate;
+            $newName = $base . "." . $imageExt;
+            // Several files can arrive in the same second (multi-upload); rename() would overwrite silently.
+            for ($n = 2; file_exists($newName); $n++) {
+                $newName = $base . "-" . $n . "." . $imageExt;
+            }
 
             if (rename($location, $newName)) {
                 $location = $newName;
@@ -50,6 +55,17 @@ if (isset($_FILES['file']['name'])) {
 
     header('Content-Type: text/plain; charset=utf-8');
     echo $response;
+    exit;
+}
+
+// Remove one design-brief photo. Only Brief_* files inside this project's own folder can be deleted.
+if (($_POST['act'] ?? '') === 'deleteBrief' && !empty($_POST['projectId'])) {
+    $projectID = $_POST['projectId'];
+    $file = basename((string)($_POST['file'] ?? ''));
+    $row = $db->query('SELECT projectName FROM `tb_project` WHERE projectID = ?;', $projectID)->fetchArray();
+    $path = "../upload/" . (int)$projectID . "-" . sanitizeFolderName($row["projectName"] ?? '') . "/" . $file;
+    header('Content-Type: text/plain; charset=utf-8');
+    echo ($row && preg_match('/^Brief_\d+_[\w-]+\.\w+$/', $file) && is_file($path) && unlink($path)) ? "1" : "0";
     exit;
 }
 

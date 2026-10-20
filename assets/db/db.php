@@ -78,6 +78,24 @@ class db {
         return $result;
     }
 
+    public function fetch() {
+        $params = array();
+        $row = array();
+        $meta = $this->query->result_metadata();
+        while ($field = $meta->fetch_field()) {
+            $params[] = &$row[$field->name];
+        }
+        call_user_func_array(array($this->query, 'bind_result'), $params);
+        if ($this->query->fetch()) {
+            $result = array();
+            foreach ($row as $key => $val) {
+                $result[$key] = $val;
+            }
+            return $result;
+        }
+        return null;
+    }
+
     public function fetchArray() {
         $params = array();
         $row = array();

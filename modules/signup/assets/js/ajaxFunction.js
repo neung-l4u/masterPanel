@@ -137,8 +137,37 @@ function getProductList(country) {
         return orderA - orderB;
       });
 
-      // 4. วนลูปแสดงผล (เหมือนเดิม)
-      let currentType = "";
+            // 4. คำนวณส่วนต่างของ Bundle เทียบกับการซื้อแยก เพื่อโชว์ว่าประหยัดเท่าไหร่
+            // (ใช้รูปแบบเดียวกับ Add-on Flyer/Fridge ที่โชว์ "will save ..." อยู่แล้ว)
+            const normName = (x) => (x || "").replace(/\s+/g, " ").trim();
+            const bundleSaving = {};
+            (function buildBundleSaving(){
+                //ราคาแพ็กเกจเดี่ยว ใช้ตัวแรกที่เจอของแต่ละชื่อ
+                const soloPrice = {};
+                readMainProduct.forEach((x) => {
+                    if (x.type === "solo" && !(normName(x.name) in soloPrice)) {
+                        soloPrice[normName(x.name)] = x.amount;
+                    }
+                });
+                const proItem = readMainProduct.find(
+                    (x) => normName(x.name) === "Pro Online Ordering System"
+                );
+                if (!proItem) { return; }
+
+                readMainProduct.forEach((x) => {
+                    const n = normName(x.name);
+                    if (!/^Pro\s*\+/.test(n)) { return; }
+                    const partName = normName(n.replace(/^Pro\s*\+\s*/, ""));
+                    if (!(partName in soloPrice)) { return; }
+                    const separate = proItem.amount + soloPrice[partName];
+                    const saving = separate - x.amount;
+                    //โชว์เฉพาะตอนที่ซื้อรวมถูกกว่าจริง
+                    if (saving > 0) { bundleSaving[x.price_id] = saving; }
+                });
+            })();
+
+            // 5. วนลูปแสดงผล (เหมือนเดิม)
+            let currentType = "";
 
       readMainProduct.forEach((item) => {
         let ran = Math.random();
@@ -179,16 +208,18 @@ function getProductList(country) {
               headerLabel.charAt(0).toUpperCase() + headerLabel.slice(1);
           }
 
-          // สร้าง Header
-          $(`<div class='text-warning mt-4'>${headerLabel}</div>`).appendTo(
-            "#products2",
-          );
+                    // สร้าง Header
+                    $(`<div class='text-warning addon-category'>${headerLabel}</div>`).appendTo("#products2");
 
           currentType = itemType;
         }
         // -------------------------------------
 
-        let productHTML = `<div class="form-check">
+                let savingText = bundleSaving[product_id]
+                    ? `<b class="text-success">(save ${currencySign}${(bundleSaving[product_id] / 100).toFixed(2)} vs buying separately)</b>`
+                    : "";
+
+                let productHTML = `<div class="form-check">
                         <input 
                             class="form-check-input" 
                             type="radio" 
@@ -199,6 +230,7 @@ function getProductList(country) {
                         >
                         <label class="form-check-label" for="product${ran}" >
                             ${name} <b class="text-primary"> - ${currencySign}${price} ${special}${ext}</b>
+                            ${savingText}
                         </label>
                     </div>`;
 
@@ -267,25 +299,78 @@ function getProductList(country) {
       $("#setUpFeeList").html(textMainProduct);
     }
 
-    if (readAddonProduct.length > 0) {
-      $("#addon2").empty();
-      $("#addon3").empty();
-      let didItFlyer = false;
-      let didItFridge = false;
-      let newLine = false;
-      let addonCheck2 = readAddonProduct.map((item) => {
-        let name = "";
-        let special = item.gst ? " + GST " : "";
-        let price = 0;
-        let addText = "";
-        let discountValue = Math.round((item.amount * 15) / 100) / 100;
-        let cartPrice = item.amount - Math.round((item.amount * 15) / 100);
-        if (formCountry === "US" || formCountry === "CA") {
-          cartPrice = item.amount;
-        }
-        let realPrice = cartPrice / 100;
-        let ext = item.ext;
-        //let setup_fee = item.setup_fee;
+        if(readAddonProduct.length > 0){
+            $("#addon2").empty();
+            $("#addon3").empty();
+            let didItFlyer = false;
+            let didItFridge = false;
+            let newLine = false;
+
+            // จัดกลุ่ม Add-on ที่ไม่ใช่ Flyer/Fridge แทนที่จะกองรวมกันใต้หัวข้อ "Others"
+            // เดียว โดยอิงจาก item.type ที่มีอยู่แล้วในไฟล์ราคา (ไม่ต้องแก้ข้อมูล)
+            // type ที่สะกดต่างกันแต่หมายถึงของอย่างเดียวกัน (mail/email, mob/mobile,
+            // promotion/promotions, webmail) ถูกยุบมาไว้กลุ่มเดียวกัน
+            const addonCategoryConfig = {
+                "pos":           { order: 1, label: "POS & Hardware" },
+                "addonPOS":      { order: 1, label: "POS & Hardware" },
+                "printer":       { order: 1, label: "POS & Hardware" },
+                "cashdrawer":    { order: 1, label: "POS & Hardware" },
+                "wifiextension": { order: 1, label: "POS & Hardware" },
+
+                "website":       { order: 2, label: "Website & Domain" },
+                "domain":        { order: 2, label: "Website & Domain" },
+                "webmail":       { order: 2, label: "Website & Domain" },
+
+                "marketing":     { order: 3, label: "Marketing & Ads" },
+                "posting":       { order: 3, label: "Marketing & Ads" },
+                "promotion":     { order: 3, label: "Marketing & Ads" },
+                "promotions":    { order: 3, label: "Marketing & Ads" },
+                "yelp":          { order: 3, label: "Marketing & Ads" },
+                "mail":          { order: 3, label: "Marketing & Ads" },
+                "email":         { order: 3, label: "Marketing & Ads" },
+
+                "ai":            { order: 4, label: "AI & Apps" },
+                "mob":           { order: 4, label: "AI & Apps" },
+                "mobile":        { order: 4, label: "AI & Apps" },
+
+                "menu":          { order: 5, label: "Design & Print" }
+            };
+            // type "email" ถูกใช้ปนกันระหว่าง Website Hosting กับ Email Marketing แล้วแต่
+            // ประเทศ จึงต้องดูจากชื่อสินค้าเพิ่มเพื่อจัดให้เข้าหมวดที่ถูกต้อง
+            const addonCategoryOf = (type, name) => {
+                if (type === "email" && (name || "").search("Hosting") > -1) {
+                    return "Website & Domain";
+                }
+                return addonCategoryConfig[type] ? addonCategoryConfig[type].label : "Others";
+            };
+
+            // เรียงสินค้าให้ของกลุ่มเดียวกันอยู่ติดกัน มิฉะนั้นหัวข้อจะโผล่ซ้ำ
+            // Flyer/Fridge ต้องคงลำดับเดิมไว้ข้างบนสุด เพราะมี logic ส่วนลดของตัวเอง
+            readAddonProduct.sort((a, b) => {
+                const rank = (it) => {
+                    const n = it.name || "";
+                    if (n.search("A6|Fridge|Flyers 5") > -1) { return 0; }
+                    if (it.type === "email" && n.search("Hosting") > -1) { return 2; } //จัดเข้า Website
+                    const cfg = addonCategoryConfig[it.type];
+                    return cfg ? cfg.order : 98;
+                };
+                return rank(a) - rank(b);
+            });
+
+            let currentAddonCategory = "";
+            let addonCheck2 = readAddonProduct.map((item) => {
+                let name = "";
+                let special = (item.gst)?" + GST ":"";
+                let price = 0;
+                let addText = "";
+                let discountValue = Math.round((item.amount*15)/100)/100;
+                let cartPrice = (item.amount-Math.round((item.amount*15)/100));
+                if(formCountry==="US" || formCountry==="CA"){
+                    cartPrice = item.amount;
+                }
+                let realPrice = cartPrice/100;
+                let ext = item.ext;
+                //let setup_fee = item.setup_fee;
 
         name = `${item.name}`;
         price = addDotToPrice(item.amount);
@@ -342,9 +427,9 @@ function getProductList(country) {
           classType = "";
         }
 
-        if (position > -1 && !didItFlyer) {
-          if (formCountry === "US" || formCountry === "CA") {
-            addText = `<div class='text-warning'>
+                if((position>-1) && (!didItFlyer)){
+                    if((formCountry==="US") || (formCountry==="CA")){
+                        addText = `<div class='text-warning addon-category'>
                                         Add-on Flyer
                                         <span class="mytooltip tooltip-effect-1">
                                             <span class="tooltip-item"><i class="fa-solid fa-star text-primary"></i></span>
@@ -356,8 +441,7 @@ function getProductList(country) {
                                             </span>
                                         </span>
                                    </div>`;
-          } else {
-            addText = `<div class='text-warning'>
+                    }else{ addText = `<div class='text-warning addon-category'>
                                            Special Add-on Flyer buy now got 15% discount (Recommend)
                                            <span class="mytooltip tooltip-effect-1">
                                                 <span class="tooltip-item"><i class="fa-solid fa-star text-primary"></i></span>
@@ -368,12 +452,11 @@ function getProductList(country) {
                                                     </span>
                                                 </span>
                                            </span>
-                                      </div>`;
-          }
-          didItFlyer = true;
-        }
-        if (position2 > -1 && !didItFridge) {
-          addText = `<div class='text-warning mt-4'>
+                                      </div>`; }
+                    didItFlyer = true;
+                }
+                if((position2>-1) && (!didItFridge)){
+                    addText = `<div class='text-warning addon-category'>
                                     Special Add-on Fridge Magnet buy now got 15% discount (Recommend)
                                     <span class="mytooltip tooltip-effect-1">
                                         <span class="tooltip-item"><i class="fa-solid fa-star text-primary"></i></span>
@@ -395,22 +478,23 @@ function getProductList(country) {
           } else {
             discountText = `<b class="text-success">(will save ${currencySign}${discountValue.toFixed(2)})</b>
                                 = <b class="text-primary">${currencySign}${realPrice.toFixed(2)}${special}<b/>`;
-            leadDiscountText = " From ";
-          }
-        } else {
-          if (findInfluencer > -1) {
-            discountText = "";
-          } else {
-            discountText = `<b class="text-primary">${ext}</b>`;
-          }
-          leadDiscountText = "";
-          if (!newLine) {
-            addText = "<div class='text-warning mt-4'>Others</div>";
-          }
-          newLine = true;
-          realPrice = price;
-          cartPrice = amount;
-        }
+                        leadDiscountText = " From ";
+                    }
+                }else {
+                    if(findInfluencer>-1){
+                        discountText = "";
+                    }else { discountText = `<b class="text-primary">${ext}</b>`; }
+                    leadDiscountText = "";
+                    // ขึ้นหัวข้อใหม่เมื่อเปลี่ยนหมวด แทนหัวข้อ "Others" อันเดียวแบบเดิม
+                    let thisCategory = addonCategoryOf(item.type, name);
+                    if (currentAddonCategory !== thisCategory) {
+                        addText = `<div class='text-warning addon-category'>${thisCategory}</div>`;
+                        currentAddonCategory = thisCategory;
+                    }
+                    newLine = true;
+                    realPrice = price;
+                    cartPrice = amount;
+                }
 
         /*const boxName = {
                     'A6 Flyers x 1,000 pcs' : 'addonFlyers',
@@ -762,43 +846,32 @@ function requestToPay() {
   paymentTimestamp();
   /////
 
-  cloneCart.subscription = cloneCart.subscription.reduce(function (
-    acc,
-    cur,
-    i,
-  ) {
-    //convert an array to object
-    acc[i] = cur;
-    return acc;
-  }, {});
-  cloneCart.add_on = cloneCart.add_on.reduce(function (acc, cur, i) {
-    //convert an array to object
-    acc[i] = cur;
-    return acc;
-  }, {});
-  /////
-  if (Object.keys(couponObjectList).length <= 0) {
-    loadCouponObject();
-  } //if empty couponObjectList then load it via ajax
-  const objCode = $("#couponCode");
-  let inputCode = objCode.val().trim().toUpperCase();
-  let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
-  let textDiscount2 = couponCode2.val().trim().toUpperCase();
-  let Payment_Coupon_Obj = {};
-  let Payment_Coupon_Obj2 = {};
+    cloneCart.subscription = cloneCart.subscription.reduce(function(acc, cur, i) { //convert an array to object
+        acc[i] = cur;
+        return acc;
+    }, {});
+    cloneCart.add_on = cloneCart.add_on.reduce(function(acc, cur, i) { //convert an array to object
+        acc[i] = cur;
+        return acc;
+    }, {});
+    /////
+    if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
+    const objCode = $("#couponCode");
+    let inputCode = (objCode.val() || "").trim().toUpperCase();
+    let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
+    let textDiscount2 = (couponCode2.val() || "").trim().toUpperCase();
+    let Payment_Coupon_Obj = {};
+    let Payment_Coupon_Obj2 = {};
 
-  try {
-    //try to create discountList form JSON file *this will error if nothing filled in the main coupon code field
-    let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
-    let discountObject = discountList[formData.formCountry];
-    let textDiscount = couponCode.val().trim().toUpperCase();
-    Payment_Coupon_Obj = discountObject;
-    Payment_Coupon_Obj2 = discountObject;
-  } catch (error) {
-    console.log("--This is catch case --");
-    console.error("JSON parsing error:", error.message);
-    console.log("--End catch case --");
-  }
+    try { //try to read the Main coupon from the JSON file *this will error if nothing was selected in the main coupon field
+        let discountObject = couponObjectList.Coupon.Main[inputCode][formTypeJsonKey][formData.formCountry];
+        Payment_Coupon_Obj = discountObject;
+        Payment_Coupon_Obj2 = discountObject;
+    } catch (error) {
+        console.log("--This is catch case --");
+        console.error('JSON parsing error:', error.message);
+        console.log("--End catch case --");
+    }
 
   let codeDiscount = {};
 
@@ -836,19 +909,16 @@ function requestToPay() {
     codeDiscount = { [pid]: cid }; // set the main coupon code
   }
 
-  let addOnDiscountCode = {};
-  let materialDiscountCode =
-    formCountry === "US" || formCountry === "CA" || formCountry === "TH"
-      ? ""
-      : "";
-  let freewebDiscountCode = "Freeweb";
+    let addOnDiscountCode = {};
+    let materialDiscountCode = (formCountry==="US" || formCountry==="CA" || formCountry==="TH") ? "" : "";
 
-  let applyAddonCode = "";
-  if (textDiscount2 === "FREEWEB") {
-    applyAddonCode = freewebDiscountCode;
-  } else {
-    applyAddonCode = materialDiscountCode;
-  }
+    //the Addon coupon code comes from the Addons group of the JSON file
+    let applyAddonCode = materialDiscountCode;
+    try {
+        applyAddonCode = couponObjectList.Coupon.Addons[textDiscount2][formTypeJsonKey][formCountry].code;
+    } catch (error) {
+        applyAddonCode = materialDiscountCode; //no addon coupon selected, or it is not offered for this country
+    }
 
   let addonArray = cloneCart["add_on"];
   //----------------
@@ -1196,20 +1266,32 @@ const sendMailToL4UTeam = () => {
   });
   let txtCuisine = cuisineSelected.join();
 
-  let checkProduct = $("input[name='product']:checked").val();
-  let toTeam = "";
+    let checkProduct = $("input[name='product']:checked").val();
+    let toTeam = "";
 
-  if (!checkProduct) {
-    toTeam = "All";
-  } else if (checkProduct.includes("Bundle")) {
-    toTeam = "All";
-  } else if (checkProduct.includes("Solo") || checkProduct.includes("Yelp")) {
-    toTeam = "AM";
-  } else if (checkProduct.includes("System")) {
-    toTeam = "CS";
-  } else {
-    toTeam = "All";
-  }
+    //ดูจากชื่อสินค้าหลักว่ามีของทีมไหนอยู่บ้าง  CS = ทีม CS, AM = ทีม AC, All = ทั้งสองทีม
+    //เทียบจากต้นคำ (\b) เพื่อให้ "YelpBoost Pro" เข้าคำว่า Yelp และ "Booking+ Social" เข้าคำว่า Booking ได้
+    //ส่วน Pro กับ Local ต้องตรงทั้งคำ กัน "Promotions Add-on" กับ "Localforyou Booking System" เข้าผิดทีม
+    const csKeyword = [/\bPro\b/i, /\bBooking/i, /\bPOS\b/i, /\bPrinter/i ,/\bMassage AI\b/i];
+    const acKeyword = [/\bSocial/i, /\bVisibility/i, /\bLocal\b/i, /\bYelp/i];
+
+    if(!checkProduct){
+        toTeam = "All";
+    }else{
+        let isAC = acKeyword.some(word => word.test(checkProduct));
+        //"YelpBoost Pro" เป็นสินค้าของทีม AC ล้วน คำว่า Pro ในชื่อไม่ได้แปลว่าเป็นงานของทีม CS
+        let isCS = !/\bYelp/i.test(checkProduct) && csKeyword.some(word => word.test(checkProduct));
+
+        if(isCS && isAC){
+            toTeam = "All";
+        }else if(isCS){
+            toTeam = "CS";
+        }else if(isAC){
+            toTeam = "AM";
+        }else{
+            toTeam = "All";
+        }
+    }
 
   console.log(toTeam);
 
@@ -1391,8 +1473,9 @@ const sendMailToL4UTeam = () => {
       "input:checkbox[name='addonPOSDeviceZeller']:checked",
     ).val(),
 
-    ///AI ///
-    addonARAYA: $("input:checkbox[name='addonAI']:checked").val(),
+        ///AI ///
+        addonARAYA: $("input:checkbox[name='addonAI']:checked").val(),
+        arayaAccept: $("input:checkbox[name='arayaAccept']:checked").val(),
 
     //END NEW//
     testMail: CheckedBoxTestmailValue,
@@ -2273,89 +2356,82 @@ const saveToDB = (stripePayload, stripeRes) => {
   });
   let MainAddons = mainAddonsList.join(", ");
 
-  let payload = {
-    Country: formData.formCountry,
-    CustomerType: formData.formType,
-    FirstName: formData.owner.firstName.trim(),
-    LastName: formData.owner.lastName.trim(),
-    Mobile: $("#ownerMobile").val(),
-    Email: $("#email").val().trim().toLowerCase(),
-    BestTimeToContact: $("#bestTimeContact").val(),
-    ShopName: $("#shopName").val().trim(),
-    ABN: $("#businessNumber").val(),
-    TradingName: $("#company").val().trim(),
-    ShopNumber: $("#shopPhoneFormatted").val(),
-    Website: $("#webURL").val().trim(),
-    Language: $(".supportLanguage:checked").val(),
-    ShopNumber2: $("#physicalShopNumber").val(),
-    Address1: $("#streetAddress1").val().trim(),
-    Address2: $("#streetAddress2").val(),
-    City: $("#city").val().trim(),
-    State: $("#state").val(),
-    PostelCode: $("#zip").val().trim(),
-    CountryText: $(".countryName").text(),
-    ShipNumber: $("#shipNumber").val(),
-    ShippingAddress: $("#shipAddress1").val(),
-    Cuisine: txtCuisine,
-    OtherCuisine: $("#cuisineOther").val(),
-    MainProduct: $("input[name='product']:checked").val(),
-    MainAddons: MainAddons,
-    LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
-    Service: txtServices,
-    Delivery: $("input[name='serviceCheck']:checked").val(),
-    TableNumber: $("#tableNumber").val(),
-    TableSize: $("#sizeOption").val(),
-    Payment: txtPayment,
-    Facebook: $("#box_Facebook").val().trim(),
-    TikTok: $("#box_TikTok").val().trim(),
-    Instagram: $("#box_Instagram").val().trim(),
-    Yelp: $("#box_Yelp").val().trim(),
-    WebsiteURL: $("#websiteDomainName").val().trim(),
-    NewDomain: $("input:checkbox[name='keepWebsite']:checked").val(),
-    KeepWebsite: $("input:checkbox[name='ownDomain']:checked").val(),
-    OwnDomain: $("#newDomain").val().trim(),
-    domainUser: domainUser.val().trim(),
-    domainPass: domainPass.val().trim(),
-    domainComment: domainComment.val().trim(),
-    domainRegister: domainRegister.val(),
-    Flyer: $("input:checkbox[name='addonFlyers']:checked").val(),
-    FridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
-    AddOn1: $("input:checkbox[name='addonAdvPromo']:checked").val(),
-    AddOn2: $("input:checkbox[name='addonSocialMedia']:checked").val(),
-    AddOn3: $("input:checkbox[name='addonInfluencer']:checked").val(),
-    AddOn4: $("input:checkbox[name='addonDineInDual']:checked").val(),
-    AddOn5: $("input:checkbox[name='addonPricingDesign']:checked").val(),
-    AddOn6: $("input:checkbox[name='addonWebsiteMakeover']:checked").val(),
-    AddOn7: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
-    AddOn8: $("input:checkbox[name='addonMobApp']:checked").val(),
-    AddOn9: $("input:checkbox[name='addonGoogleReview']:checked").val(),
-    AddOn10: $("input:checkbox[name='addonPOS']:checked").val(),
-    AddOn11: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
-    AddOn12: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
-    POSDeviceDuelScreen: $(
-      "input:checkbox[name='addonPOSDeviceDuelScreen']:checked",
-    ).val(),
-    POSDevicePrinter: $(
-      "input:checkbox[name='addonPOSDevicePrinter']:checked",
-    ).val(),
-    POSDeviceCashDrawer: $(
-      "input:checkbox[name='addonPOSDeviceCashDrawer']:checked",
-    ).val(),
-    POSDeviceWifi: $("input:checkbox[name='addonPOSDeviceWifi']:checked").val(),
-    POSDeviceZeller: $(
-      "input:checkbox[name='addonPOSDeviceZeller']:checked",
-    ).val(),
-    OrderDiscount: $("input[name='discount']:checked").val(),
-    OtherDiscount: $("#discountOther").val(),
-    mainDiscountCode: $("#couponCode").val(),
-    addonDiscountCode: $("#couponCode2").val(),
-    usageMainDiscountCode: JSON.stringify($("#usageMainDiscountCode").val()),
-    usageAddonDiscountCode: JSON.stringify($("#usageAddonDiscountCode").val()),
-    SubTotal: $("#subTotal").val(),
-    GST: $("#GST").val(),
-    Total: $("#grandTotal").val(),
-    PaymentMethod: $("#paymentMethod").val(),
-    /*CardNumber: $("#creditCardNumber").val(),
+    let payload = {
+        Country: formData.formCountry,
+        CustomerType: formData.formType,
+        NewOrExistingCustomer: $("#formCustomerType").val() || "",
+        FirstName: formData.owner.firstName.trim(),
+        LastName: formData.owner.lastName.trim(),
+        Mobile: $("#ownerMobile").val(),
+        Email: $("#email").val().trim().toLowerCase(),
+        BestTimeToContact: $("#bestTimeContact").val(),
+        ShopName: $("#shopName").val().trim(),
+        ABN: $("#businessNumber").val(),
+        TradingName: $("#company").val().trim(),
+        ShopNumber: $("#shopPhoneFormatted").val(),
+        Website: $("#webURL").val().trim(),
+        Language: $(".supportLanguage:checked").val(),
+        ShopNumber2: $("#physicalShopNumber").val(),
+        Address1: $("#streetAddress1").val().trim(),
+        Address2: $("#streetAddress2").val(),
+        City: $("#city").val().trim(),
+        State: $("#state").val(),
+        PostelCode: $("#zip").val().trim(),
+        CountryText: $(".countryName").text(),
+        ShipNumber: $("#shipNumber").val(),
+        ShippingAddress: $("#shipAddress1").val(),
+        Cuisine: txtCuisine,
+        OtherCuisine: $("#cuisineOther").val(),
+        MainProduct: $("input[name='product']:checked").val(),
+        MainAddons: MainAddons,
+        LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
+        Service: txtServices,
+        Delivery: $("input[name='serviceCheck']:checked").val(),
+        TableNumber: $("#tableNumber").val(),
+        TableSize: $("#sizeOption").val(),
+        Payment: txtPayment,
+        Facebook: $("#box_Facebook").val().trim(),
+        TikTok: $("#box_TikTok").val().trim(),
+        Instagram: $("#box_Instagram").val().trim(),
+        Yelp: $("#box_Yelp").val().trim(),
+        WebsiteURL: $("#websiteDomainName").val().trim(),
+        NewDomain: $("input:checkbox[name='keepWebsite']:checked").val(),
+        KeepWebsite: $("input:checkbox[name='ownDomain']:checked").val(),
+        OwnDomain: $("#newDomain").val().trim(),
+        domainUser: domainUser.val().trim(),
+        domainPass: domainPass.val().trim(),
+        domainComment: domainComment.val().trim(),
+        domainRegister: domainRegister.val(),
+        Flyer: $("input:checkbox[name='addonFlyers']:checked").val(),
+        FridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
+        AddOn1: $("input:checkbox[name='addonAdvPromo']:checked").val(),
+        AddOn2: $("input:checkbox[name='addonSocialMedia']:checked").val(),
+        AddOn3: $("input:checkbox[name='addonInfluencer']:checked").val(),
+        AddOn4: $("input:checkbox[name='addonDineInDual']:checked").val(),
+        AddOn5: $("input:checkbox[name='addonPricingDesign']:checked").val(),
+        AddOn6: $("input:checkbox[name='addonWebsiteMakeover']:checked").val(),
+        AddOn7: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
+        AddOn8: $("input:checkbox[name='addonMobApp']:checked").val(),
+        AddOn9: $("input:checkbox[name='addonGoogleReview']:checked").val(),
+        AddOn10: $("input:checkbox[name='addonPOS']:checked").val(),
+        AddOn11: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
+        AddOn12: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
+        POSDeviceDuelScreen: $("input:checkbox[name='addonPOSDeviceDuelScreen']:checked").val(),
+        POSDevicePrinter: $("input:checkbox[name='addonPOSDevicePrinter']:checked").val(),
+        POSDeviceCashDrawer: $("input:checkbox[name='addonPOSDeviceCashDrawer']:checked").val(),
+        POSDeviceWifi: $("input:checkbox[name='addonPOSDeviceWifi']:checked").val(),
+        POSDeviceZeller: $("input:checkbox[name='addonPOSDeviceZeller']:checked").val(),
+        OrderDiscount: $("input[name='discount']:checked").val(),
+        OtherDiscount: $("#discountOther").val(),
+        mainDiscountCode: $("#couponCode").val(),
+        addonDiscountCode: $("#couponCode2").val(),
+        usageMainDiscountCode: JSON.stringify($("#usageMainDiscountCode").val()),
+        usageAddonDiscountCode: JSON.stringify($("#usageAddonDiscountCode").val()),
+        SubTotal: $("#subTotal").val(),
+        GST: $("#GST").val(),
+        Total: $("#grandTotal").val(),
+        PaymentMethod: $("#paymentMethod").val(),
+        /*CardNumber: $("#creditCardNumber").val(),
         ExpDate: $("#creditExpireDate").val(),
         CVV: $("#creditCCV").val(),
         CardName: $("#creditFullName").val(),*/
@@ -2532,131 +2608,124 @@ const createLogs = (stripePayload) => {
   });
   let MainAddons = mainAddonsList.join(", ");
 
-  let tempData = {
-    Country: formData.formCountry,
-    CustomerType: formData.formType,
-    FirstName: formData.owner.firstName.trim(),
-    LastName: formData.owner.lastName.trim(),
-    Mobile: $("#ownerMobile").val(),
-    Email: $("#email").val().trim().toLowerCase(),
-    BestTimeToContact: $("#bestTimeContact").val(),
-    ShopName: $("#shopName").val().trim(),
-    ABN: $("#businessNumber").val(),
-    TradingName: $("#company").val().trim(),
-    ShopNumber: $("#shopPhoneFormatted").val(),
-    Website: $("#webURL").val().trim(),
-    Language: $(".supportLanguage:checked").val(),
-    ShopNumber2: $("#physicalShopNumber").val(),
-    Address1: $("#streetAddress1").val().trim(),
-    Address2: $("#streetAddress2").val(),
-    City: $("#city").val().trim(),
-    State: $("#state").val(),
-    PostelCode: $("#zip").val().trim(),
-    CountryText: $(".countryName").text(),
-    ShipNumber: $("#shipNumber").val(),
-    ShippingAddress: $("#shipAddress1").val(),
-    Cuisine: txtCuisine,
-    OtherCuisine: $("#cuisineOther").val(),
-    MainProduct: $("input[name='product']:checked").val(),
-    MainAddons: MainAddons,
-    LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
-    Service: txtServices,
-    Delivery: $("input[name='serviceCheck']:checked").val(),
-    TableNumber: $("#tableNumber").val(),
-    TableSize: $("#sizeOption").val(),
-    Payment: txtPayment,
-    Facebook: $("#box_Facebook").val().trim(),
-    TikTok: $("#box_TikTok").val().trim(),
-    Instagram: $("#box_Instagram").val().trim(),
-    Yelp: $("#box_Yelp").val().trim(),
-    WebsiteURL: $("#websiteDomainName").val().trim(),
-    NewDomain: $("input:checkbox[name='keepWebsite']:checked").val(),
-    KeepWebsite: $("input:checkbox[name='ownDomain']:checked").val(),
-    OwnDomain: $("#newDomain").val().trim(),
-    domainUser: domainUser.val().trim(),
-    domainPass: domainPass.val().trim(),
-    domainComment: domainComment.val().trim(),
-    domainRegister: domainRegister.val(),
-    Flyer: $("input:checkbox[name='addonFlyers']:checked").val(),
-    FridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
-    AddOn1: $("input:checkbox[name='addonAdvPromo']:checked").val(),
-    AddOn2: $("input:checkbox[name='addonSocialMedia']:checked").val(),
-    AddOn3: $("input:checkbox[name='addonInfluencer']:checked").val(),
-    AddOn4: $("input:checkbox[name='addonDineInDual']:checked").val(),
-    AddOn5: $("input:checkbox[name='addonPricingDesign']:checked").val(),
-    AddOn6: $("input:checkbox[name='addonWebsiteMakeover']:checked").val(),
-    AddOn7: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
-    AddOn8: $("input:checkbox[name='addonMobApp']:checked").val(),
-    AddOn9: $("input:checkbox[name='addonGoogleReview']:checked").val(),
-    AddOn10: $("input:checkbox[name='addonPOS']:checked").val(),
-    AddOn11: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
-    AddOn12: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
-    POSDeviceDuelScreen: $(
-      "input:checkbox[name='addonPOSDeviceDuelScreen']:checked",
-    ).val(),
-    POSDevicePrinter: $(
-      "input:checkbox[name='addonPOSDevicePrinter']:checked",
-    ).val(),
-    POSDeviceCashDrawer: $(
-      "input:checkbox[name='addonPOSDeviceCashDrawer']:checked",
-    ).val(),
-    POSDeviceWifi: $("input:checkbox[name='addonPOSDeviceWifi']:checked").val(),
-    POSDeviceZeller: $(
-      "input:checkbox[name='addonPOSDeviceZeller']:checked",
-    ).val(),
-    OrderDiscount: $("input[name='discount']:checked").val(),
-    OtherDiscount: $("#discountOther").val(),
-    mainDiscountCode: $("#couponCode").val(),
-    addonDiscountCode: $("#couponCode2").val(),
-    usageMainDiscountCode: JSON.stringify($("#usageMainDiscountCode").val()),
-    usageAddonDiscountCode: JSON.stringify($("#usageAddonDiscountCode").val()),
-    SubTotal: $("#subTotal").val(),
-    GST: $("#GST").val(),
-    Total: $("#grandTotal").val(),
-    PaymentMethod: $("#paymentMethod").val(),
-    // CardNumber: $("#creditCardNumber").val(),
-    // ExpDate: $("#creditExpireDate").val(),
-    // CVV: $("#creditCCV").val(),
-    // CardName: $("#creditFullName").val(),
-    // EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
-    // BSB: $("#bsbDirectDebit").val(),
-    EmailInvoice: $("#emailInvoiceOther").val().trim().toLowerCase(),
-    Routing_number: $("#routingDirectDebit").val(),
-    AccountNumber: $("#acnDirectDebit").val(),
-    acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
-    AdditionNote: $("#additionComment").val().trim(),
-    ShopAgent: shopAgent,
-    ReferredByPerson: $("#byPerson").val().trim(),
-    formRefPartner: $("#byPartner").val(),
-    ReferredByShop: $("#byRestaurant").val().trim(),
-    CustomerStripeID: $("#customerStripeID").val(),
-    formProduct: $("#currentlyPackage option:selected").text(),
-    formInitialProductOffering: $("#initialProductOffering").val(),
-    formSalesAgent: shopAgent,
-    formContractPeriod: $("#ContractPeriod").val(),
-    formFirstTimePayment: $("#firstTimePayment").val(),
-    formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
-    formstartProjectOther: $("#dateproject").val(),
-    formstartprojectNote: $("#startprojectNote").val().trim(),
-    formPOSUsing: $("#posSystem").val(),
-    formPOSUsingOther: $("#posOtherDate").val(),
-    formYesPOSProvider: $("#endDatePOS").val(),
-    adsBudget: $("#adsBudget").val(),
-    // Attach Customer ID & Store ID to logs **Comebank Change**
-    // StoreID: generatedStoreID,
-    // CustomerID: generatedCustomerID
-  };
-  // TODO : Build Logs File
-  const ajaxSendLog = $.ajax({
-    url: settings.url_logs,
-    method: "POST",
-    async: false,
-    cache: false,
-    dataType: "json",
-    data: {
-      allData: tempData,
-    },
-  });
+    let tempData = {
+        Country: formData.formCountry,
+        CustomerType: formData.formType,
+        NewOrExistingCustomer: $("#formCustomerType").val() || "",
+        FirstName: formData.owner.firstName.trim(),
+        LastName: formData.owner.lastName.trim(),
+        Mobile: $("#ownerMobile").val(),
+        Email: $("#email").val().trim().toLowerCase(),
+        BestTimeToContact: $("#bestTimeContact").val(),
+        ShopName: $("#shopName").val().trim(),
+        ABN: $("#businessNumber").val(),
+        TradingName: $("#company").val().trim(),
+        ShopNumber: $("#shopPhoneFormatted").val(),
+        Website: $("#webURL").val().trim(),
+        Language: $(".supportLanguage:checked").val(),
+        ShopNumber2: $("#physicalShopNumber").val(),
+        Address1: $("#streetAddress1").val().trim(),
+        Address2: $("#streetAddress2").val(),
+        City: $("#city").val().trim(),
+        State: $("#state").val(),
+        PostelCode: $("#zip").val().trim(),
+        CountryText: $(".countryName").text(),
+        ShipNumber: $("#shipNumber").val(),
+        ShippingAddress: $("#shipAddress1").val(),
+        Cuisine: txtCuisine,
+        OtherCuisine: $("#cuisineOther").val(),
+        MainProduct: $("input[name='product']:checked").val(),
+        MainAddons: MainAddons,
+        LoginEmail: $("#emailShoppingCart").val().trim().toLowerCase(),
+        Service: txtServices,
+        Delivery: $("input[name='serviceCheck']:checked").val(),
+        TableNumber: $("#tableNumber").val(),
+        TableSize: $("#sizeOption").val(),
+        Payment: txtPayment,
+        Facebook: $("#box_Facebook").val().trim(),
+        TikTok: $("#box_TikTok").val().trim(),
+        Instagram: $("#box_Instagram").val().trim(),
+        Yelp: $("#box_Yelp").val().trim(),
+        WebsiteURL: $("#websiteDomainName").val().trim(),
+        NewDomain: $("input:checkbox[name='keepWebsite']:checked").val(),
+        KeepWebsite: $("input:checkbox[name='ownDomain']:checked").val(),
+        OwnDomain: $("#newDomain").val().trim(),
+        domainUser: domainUser.val().trim(),
+        domainPass: domainPass.val().trim(),
+        domainComment: domainComment.val().trim(),
+        domainRegister: domainRegister.val(),
+        Flyer: $("input:checkbox[name='addonFlyers']:checked").val(),
+        FridgeMagnet: $("input:checkbox[name='addonFridgeMagnet']:checked").val(),
+        AddOn1: $("input:checkbox[name='addonAdvPromo']:checked").val(),
+        AddOn2: $("input:checkbox[name='addonSocialMedia']:checked").val(),
+        AddOn3: $("input:checkbox[name='addonInfluencer']:checked").val(),
+        AddOn4: $("input:checkbox[name='addonDineInDual']:checked").val(),
+        AddOn5: $("input:checkbox[name='addonPricingDesign']:checked").val(),
+        AddOn6: $("input:checkbox[name='addonWebsiteMakeover']:checked").val(),
+        AddOn7: $("input:checkbox[name='addonWebsiteHosting']:checked").val(),
+        AddOn8: $("input:checkbox[name='addonMobApp']:checked").val(),
+        AddOn9: $("input:checkbox[name='addonGoogleReview']:checked").val(),
+        AddOn10: $("input:checkbox[name='addonPOS']:checked").val(),
+        AddOn11: $("input:checkbox[name='addonYelpAdSpend']:checked").val(),
+        AddOn12: $("input:checkbox[name='addonSocialMediaSetup']:checked").val(),
+        POSDeviceDuelScreen: $("input:checkbox[name='addonPOSDeviceDuelScreen']:checked").val(),
+        POSDevicePrinter: $("input:checkbox[name='addonPOSDevicePrinter']:checked").val(),
+        POSDeviceCashDrawer: $("input:checkbox[name='addonPOSDeviceCashDrawer']:checked").val(),
+        POSDeviceWifi: $("input:checkbox[name='addonPOSDeviceWifi']:checked").val(),
+        POSDeviceZeller: $("input:checkbox[name='addonPOSDeviceZeller']:checked").val(),
+        OrderDiscount: $("input[name='discount']:checked").val(),
+        OtherDiscount: $("#discountOther").val(),
+        mainDiscountCode: $("#couponCode").val(),
+        addonDiscountCode: $("#couponCode2").val(),
+        usageMainDiscountCode: JSON.stringify($("#usageMainDiscountCode").val()),
+        usageAddonDiscountCode: JSON.stringify($("#usageAddonDiscountCode").val()),
+        SubTotal: $("#subTotal").val(),
+        GST: $("#GST").val(),
+        Total: $("#grandTotal").val(),
+        PaymentMethod: $("#paymentMethod").val(),
+        // CardNumber: $("#creditCardNumber").val(),
+        // ExpDate: $("#creditExpireDate").val(),
+        // CVV: $("#creditCCV").val(),
+        // CardName: $("#creditFullName").val(),
+        // EmailDirectDebit: $("#emailDirectDebit").val().trim().toLowerCase(),
+        // BSB: $("#bsbDirectDebit").val(),
+        EmailInvoice: $("#emailInvoiceOther").val().trim().toLowerCase(),
+        Routing_number: $("#routingDirectDebit").val(),
+        AccountNumber: $("#acnDirectDebit").val(),
+        acceptAutoPilotAI: $("#acceptAutoPilotAI").val(),
+        AdditionNote: $("#additionComment").val().trim(),
+        ShopAgent: shopAgent,
+        ReferredByPerson: $("#byPerson").val().trim(),
+        formRefPartner: $("#byPartner").val(),
+        ReferredByShop: $("#byRestaurant").val().trim(),
+        CustomerStripeID: $("#customerStripeID").val(),
+        formProduct: $("#currentlyPackage option:selected").text(),
+        formInitialProductOffering: $("#initialProductOffering").val(),
+        formSalesAgent: shopAgent,
+        formContractPeriod: $("#ContractPeriod").val(),
+        formFirstTimePayment: $("#firstTimePayment").val(),
+        formstartProjectAs: $("input[id='startProjectAs']:checked").val(),
+        formstartProjectOther: $("#dateproject").val(),
+        formstartprojectNote: $("#startprojectNote").val().trim(),
+        formPOSUsing: $("#posSystem").val(),
+        formPOSUsingOther: $("#posOtherDate").val(),
+        formYesPOSProvider: $("#endDatePOS").val(),
+        adsBudget: $("#adsBudget").val(),
+        // Attach Customer ID & Store ID to logs **Comebank Change**
+        // StoreID: generatedStoreID,
+        // CustomerID: generatedCustomerID
+    };
+// TODO : Build Logs File
+    const ajaxSendLog = $.ajax({
+        url: settings.url_logs,
+        method: 'POST',
+        async: false,
+        cache: false,
+        dataType: 'json',
+        data: {
+            "allData" : tempData
+        }
+    });
 
   ajaxSendLog.done(function (res) {
     console.log(res);

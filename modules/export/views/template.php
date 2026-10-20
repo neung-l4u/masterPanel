@@ -5,6 +5,7 @@ header('Content-Type: application/json');
 include '../assets/db/db.php';
 include "../assets/db/initDB.php";
 include_once "../assets/php/share_function.php";
+include_once "../../templates/assets/php/brief.php";
 //
 date_default_timezone_set("Asia/Bangkok");
 $date = date("y-m-d");
@@ -48,7 +49,9 @@ $folderName = "upload/". $param['id'] . "-" . sanitizeFolderName($projects["proj
 $projects['country'] = $projects['country'];
 $projects['PO'] = $projects['PO'];
 $projects['projectName'] = $projects['projectName'];
-$projects['selectedTemplate'] = "Thai ".$projects['projectType']." No. ".$projects['selectedTemplate'];
+$projects['selectedTemplate'] = isCustomTemplate($projects['selectedTemplate'])
+    ? "Thai ".$projects['projectType']." Fully custom"
+    : "Thai ".$projects['projectType']." No. ".$projects['selectedTemplate'];
 $projects['shopType'] = "Thai ".$projects['projectType'];
 $projects['template'] = $projects['selectedTemplate'];
 $projects['projectID'] = $param['id'];
