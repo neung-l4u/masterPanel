@@ -108,6 +108,7 @@ if ($brief) {
         .araya-brief .stat .n { font-size: 2rem; font-weight: 800; line-height: 1; }
         .araya-brief .stat .l { font-size: .78rem; color: #6c757d; text-transform: uppercase; letter-spacing: .04em; margin-top: 6px; }
         .araya-brief .panel-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.08); height: 100%; }
+        .araya-brief .panel-card.urgent { border: 2px solid #dc3545; }
         .araya-brief .panel-card h2 { font-size: 1rem; font-weight: 700; margin: 0; padding: 14px 18px; border-bottom: 1px solid #eef0f3; }
         .araya-brief .panel-card .body { padding: 0; }
         .araya-brief .table { margin: 0; font-size: .86rem; }
@@ -250,6 +251,61 @@ if ($brief) {
     </div>
     <?php } ?>
 
+    <?php // The two lists someone acts on first: shops to ring today, and
+          // shops that will run dry before their allowance refreshes. ?>
+    <?php if ($brief['atRisk'] || $brief['runningOut']) { ?>
+    <div class="row g-3 mb-4">
+        <?php if ($brief['atRisk']) { ?>
+        <div class="col-lg-6">
+            <div class="panel-card urgent">
+                <h2>&#128680; Needs a call today <span class="note fw-normal">(out of minutes, or <?php echo ARAYA_AT_RISK_MINUTES; ?> or fewer left)</span></h2>
+                <div class="body table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Shop</th><th class="text-end">Minutes</th><th class="text-end">Refresh in</th><th>Owner</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($brief['atRisk'] as $r) { ?>
+                            <tr>
+                                <td class="fw-semibold"><?php echo arayaH($r['name']); ?>
+                                    <?php if ($r['overdrawn']) { ?><span class="badge bg-danger ms-1">overdrawn</span><?php } ?></td>
+                                <td class="text-end"><?php echo arayaMinsCell($r['remaining_minutes']); ?></td>
+                                <td class="text-end"><?php echo $r['days_until_refresh'] === null ? '-' : arayaH($r['days_until_refresh']) . ' d'; ?></td>
+                                <td><?php echo arayaOwner($r['po']); ?></td>
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <?php } ?>
+
+        <?php if ($brief['runningOut']) { ?>
+        <div class="col-lg-6">
+            <div class="panel-card">
+                <h2>&#9203; Will run out before the refresh <span class="note fw-normal">(projected from this period's own usage)</span></h2>
+                <div class="body table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Shop</th><th class="text-end">Minutes</th><th class="text-end">Per day</th><th class="text-end">Empty in</th><th class="text-end">Refresh in</th><th>Owner</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($brief['runningOut'] as $r) { ?>
+                            <tr>
+                                <td class="fw-semibold"><?php echo arayaH($r['name']); ?></td>
+                                <td class="text-end"><?php echo arayaMinsCell($r['remaining_minutes']); ?></td>
+                                <td class="text-end"><?php echo arayaH($r['per_day']); ?></td>
+                                <td class="text-end fw-semibold"><?php echo $r['days_until_empty'] === null ? '-' : arayaH($r['days_until_empty']) . ' d'; ?></td>
+                                <td class="text-end"><?php echo arayaH($r['days_until_refresh']); ?> d</td>
+                                <td><?php echo arayaOwner($r['po']); ?></td>
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <?php } ?>
+    </div>
+    <?php } ?>
+
     <div class="panel-card mb-4">
         <h2>Live shops <span class="note fw-normal">(least minutes first; <span class="money">&#128176;</span> = also an upsell candidate)</span></h2>
         <div class="body table-responsive">
@@ -307,7 +363,7 @@ if ($brief) {
         </div>
         <div class="col-lg-6">
             <div class="panel-card">
-                <h2>&#128201; Live but idle</h2>
+                <h2>&#128201; Live but barely using it</h2>
                 <div class="body table-responsive">
                     <table class="table align-middle">
                         <thead><tr><th>Shop</th><th>Why</th><th class="text-end">Minutes left</th><th>Owner</th></tr></thead>

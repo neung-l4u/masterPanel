@@ -184,6 +184,32 @@ function arayaRenderChat(array $brief): string
         $S[] = $B;
     }
 
+    // The two lists someone rings about. They lead, before upsell, because a
+    // shop that is already out of minutes is losing calls right now while an
+    // upsell is only an opportunity.
+    if (!empty($brief['atRisk'])) {
+        $B = ['🚨 ต้องโทรวันนี้ (นาทีหมดหรือใกล้หมด)'];
+        foreach ($brief['atRisk'] as $r) {
+            $B[] = '• ' . arayaChatName($r) . ' ' . arayaChatMins($r['remaining_minutes'] ?? null)
+                 . ($r['overdrawn'] ? ' ⚠️ ใช้เกินโควตาแล้ว' : '')
+                 . ($r['days_until_refresh'] === null ? '' : ' · รีเฟรชอีก ' . (int)$r['days_until_refresh'] . ' วัน')
+                 . arayaChatOwner($r['po'] ?? '');
+        }
+        $S[] = $B;
+    }
+
+    if (!empty($brief['runningOut'])) {
+        $B = ['⏳ นาทีจะหมดก่อนรอบรีเฟรช'];
+        foreach ($brief['runningOut'] as $r) {
+            $B[] = '• ' . arayaChatName($r) . ' ' . arayaChatMins($r['remaining_minutes'] ?? null)
+                 . ' · ใช้ราว ' . $r['per_day'] . ' นาที/วัน'
+                 . ($r['days_until_empty'] === null ? '' : ' → หมดในอีกราว ' . (int)$r['days_until_empty'] . ' วัน')
+                 . ' (รีเฟรชอีก ' . (int)$r['days_until_refresh'] . ' วัน)'
+                 . arayaChatOwner($r['po'] ?? '');
+        }
+        $S[] = $B;
+    }
+
     // Upsell: always printed
     // The thresholds come from the constants the rule itself uses. Spelling
     // them out as literals here would let the heading keep announcing "<70"
@@ -208,7 +234,7 @@ function arayaRenderChat(array $brief): string
 
     // Idle, new
     if (!empty($brief['idleNew'])) {
-        $B = ['📉 ไลฟ์แล้วแต่ไม่มีการใช้งาน'];
+        $B = ['📉 ไลฟ์แล้วแต่แทบไม่ได้ใช้'];
         foreach ($brief['idleNew'] as $r) {
             $B[] = arayaChatName($r) . ' (ใช้ ' . $r['used_pct'] . '% · live มา ' . (int)$r['days_live']
                 . ' วัน · เหลือ ' . arayaChatMins($r['remaining_minutes'] ?? null) . ')' . arayaChatOwner($r['po'] ?? '');
@@ -218,7 +244,7 @@ function arayaRenderChat(array $brief): string
 
     // Idle, quiet
     if (!empty($brief['idleQuiet'])) {
-        $B = ['📉 เคยใช้แล้วเงียบไป'];
+        $B = ['📉 เคยใช้แล้วหายไป'];
         foreach ($brief['idleQuiet'] as $r) {
             $B[] = arayaChatName($r) . ' (รอบล่าสุดใช้ ' . $r['latest_used'] . ' นาที · เฉลี่ยก่อนหน้า '
                 . round($r['prior_mean'], 1) . ')' . arayaChatOwner($r['po'] ?? '');

@@ -390,5 +390,64 @@ test("filler-only names do not all collapse together",
      !arayaLooseMatch(arayaLooseKey('Thai Massage Spa'), arayaLooseKey('Wellness Centre')));
 test("an empty key never matches", !arayaLooseMatch('', ''));
 
+echo "== at risk: call these today ==" . PHP_EOL;
+$b = arayaBuildBrief(res([
+    mk(['name' => 'Overdrawn'],   ['remaining_minutes' => -109]),
+    mk(['name' => 'AlmostEmpty'], ['remaining_minutes' => 22]),
+    mk(['name' => 'Borderline'],  ['remaining_minutes' => 30]),
+    mk(['name' => 'Fine'],        ['remaining_minutes' => 31]),
+]), TODAY);
+test("overdrawn and nearly-empty shops are at risk", count($b['atRisk']) === 3);
+test("the worst balance leads", $b['atRisk'][0]['name'] === 'Overdrawn');
+test("30 minutes is at risk (inclusive)",
+     in_array('Borderline', array_column($b['atRisk'], 'name'), true));
+test("31 minutes is not", !in_array('Fine', array_column($b['atRisk'], 'name'), true));
+test("an overdrawn shop is marked as such", $b['atRisk'][0]['overdrawn'] === true);
+test("a positive balance is not marked overdrawn",
+     $b['atRisk'][1]['overdrawn'] === false);
+
+// A shop that gave notice is not an at-risk sales call.
+$b = arayaBuildBrief(res([mk(['live_status' => 'Waiting to cancel'], ['remaining_minutes' => 5])]), TODAY);
+test("a cancelling shop is never in the at-risk list", count($b['atRisk']) === 0);
+
+echo "== running out: burn rate, not a fixed number ==" . PHP_EOL;
+// 60 left of 250 with 11 days to go: 190 used in 19 days is 10/day, so the
+// balance is gone in 6 days and the shop runs dry before the refresh.
+$b = arayaBuildBrief(res([mk([], ['remaining_minutes' => 60, 'allocation' => 250, 'days_until_refresh' => 11])]), TODAY);
+test("a shop burning faster than its refresh is flagged", count($b['runningOut']) === 1);
+test("it reports a per-day rate", $b['runningOut'][0]['per_day'] === 10.0);
+test("it reports days until empty", $b['runningOut'][0]['days_until_empty'] === 6);
+test("it projects a negative balance", $b['runningOut'][0]['projected_balance'] < 0);
+
+// 120 left of 250 with 10 days to go projects to +55: not a problem.
+$b = arayaBuildBrief(res([mk([], ['remaining_minutes' => 120, 'allocation' => 250, 'days_until_refresh' => 10])]), TODAY);
+test("a shop that will make it is not flagged", count($b['runningOut']) === 0);
+
+// Proportionality: the same balance on a bigger allowance is a different story.
+$small = arayaBuildBrief(res([mk([], ['remaining_minutes' => 60, 'allocation' => 250, 'days_until_refresh' => 11])]), TODAY);
+$big   = arayaBuildBrief(res([mk([], ['remaining_minutes' => 60, 'allocation' => 1000, 'days_until_refresh' => 11])]), TODAY);
+test("the rule is proportional to the allowance, not a fixed balance",
+     count($small['runningOut']) === 1 && count($big['runningOut']) === 1);
+
+echo "== running out: when not to guess ==" . PHP_EOL;
+foreach ([
+    [60, 250, 28, 'too early in the period to trust a rate'],
+    [60, 0,   11, 'no allowance recorded'],
+    [-5, 250, 11, 'already overdrawn, which is an at-risk case instead'],
+    [250, 250, 11, 'nothing spent yet'],
+    [60, 250, 0,  'refresh is today'],
+] as [$mins, $alloc, $days, $case]) {
+    $b = arayaBuildBrief(res([mk([], ['remaining_minutes' => $mins, 'allocation' => $alloc, 'days_until_refresh' => $days])]), TODAY);
+    test("not flagged when {$case}", count($b['runningOut']) === 0);
+}
+
+// The two lists must not both claim the same shop.
+$b = arayaBuildBrief(res([mk([], ['remaining_minutes' => 10, 'allocation' => 250, 'days_until_refresh' => 11])]), TODAY);
+test("a shop at risk is not also listed as running out",
+     count($b['atRisk']) === 1 && count($b['runningOut']) === 0);
+
+test("both sections are always present as arrays",
+     is_array($b['atRisk']) && is_array($b['runningOut']));
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

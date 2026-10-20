@@ -26,6 +26,15 @@ const ARAYA_IDLE_MAX_USED_PCT = 0.15;
 const ARAYA_QUIET_MAX_PCT_OF_MEAN = 0.30;
 // Idle rule C: number of prior closed periods required before the rule is evaluated.
 const ARAYA_QUIET_MIN_PRIOR_PERIODS = 3;
+// Running out: flagged when the projected balance at the refresh date is below
+// this (inclusive, <=). Zero means the shop is predicted to hit empty exactly.
+const ARAYA_RUNOUT_MIN_PROJECTED = 0;
+// Running out: at least this many days of the period must have elapsed before a
+// burn rate is trusted. Two days of heavy use is not a trend.
+const ARAYA_RUNOUT_MIN_DAYS_ELAPSED = 5;
+// At risk: a balance at or below this many minutes is urgent whatever the
+// burn rate, because one long call ends it.
+const ARAYA_AT_RISK_MINUTES = 30;
 
 /**
  * Trim a string safely for UTF-8. Never use trim() here, for two reasons:
@@ -165,6 +174,57 @@ function arayaLooseMatch(string $a, string $b): bool
     return $pct >= 82.0;
 }
 
+/**
+ * Will this shop run out of minutes before its allowance refreshes?
+ *
+ * Burn rate comes from what the shop has already spent this period, not from a
+ * fixed number: a shop on 250 minutes a month and one on 1000 are not in the
+ * same danger at the same balance. Days elapsed is derived from the refresh
+ * date and the period length rather than guessed.
+ *
+ * Returns null when there is nothing trustworthy to say -- too early in the
+ * period, no allowance recorded, or a balance that is already negative, which
+ * is a different conversation and is reported as at-risk instead.
+ */
+function arayaRunoutFinding(?int $minutes, ?int $alloc, ?int $daysToRefresh): ?array
+{
+    if ($minutes === null || $alloc === null || $daysToRefresh === null) {
+        return null;
+    }
+    if ($alloc <= 0 || $minutes < 0 || $daysToRefresh <= 0) {
+        return null;
+    }
+
+    // A monthly cycle; days elapsed is what has already passed of it.
+    $periodDays = 30;
+    $daysElapsed = $periodDays - $daysToRefresh;
+    if ($daysElapsed < ARAYA_RUNOUT_MIN_DAYS_ELAPSED) {
+        return null;   // Two busy days is not a trend.
+    }
+
+    $used = $alloc - $minutes;
+    if ($used <= 0) {
+        return null;   // Spent nothing; the idle rules cover this shop.
+    }
+
+    $perDay = $used / $daysElapsed;
+    $projectedUse = $perDay * $daysToRefresh;
+    $projectedBalance = (int) round($minutes - $projectedUse);
+    if ($projectedBalance > ARAYA_RUNOUT_MIN_PROJECTED) {
+        return null;
+    }
+
+    // How many days from now the balance reaches zero at this rate.
+    $daysLeft = $perDay > 0 ? (int) floor($minutes / $perDay) : null;
+
+    return [
+        'per_day' => round($perDay, 1),
+        'days_until_empty' => $daysLeft,
+        'days_until_refresh' => $daysToRefresh,
+        'projected_balance' => $projectedBalance,
+    ];
+}
+
 /** Rule C test. Returns the finding, or null when not flagged or not evaluable. */
 function arayaQuietFinding(array $periods): ?array
 {
@@ -203,6 +263,7 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
     $overview = ['total' => 0, 'live' => 0, 'pendingCancel' => 0, 'setup' => 0,
                  'cancelled' => 0, 'canceledAfterLive' => 0, 'cancelBeforeLive' => 0];
     $live = $upsell = $upsellExcluded = $idleNew = $idleQuiet = $setup = $cancelling = [];
+    $atRisk = $runningOut = [];
 
     // Unmatched Monday rows count in the total and appear in `live`: Monday is the
     // authority on who is a customer, so one is real even when we cannot find its
@@ -286,6 +347,27 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
             }
             if ($g !== null && $minutes === null) {
                 arayaGap($gaps, 'no_remaining_minutes', $name, 'Remaining minutes are missing or not a number in gcal; the upsell and idle checks could not run for this shop.');
+            }
+
+            $daysToRefresh = $g ? arayaNum($g['days_until_refresh'] ?? null) : null;
+
+            // At risk: already overdrawn, or so close to empty that one long
+            // call ends it. This is the "call them today" list.
+            if ($minutes !== null && $minutes <= ARAYA_AT_RISK_MINUTES) {
+                $atRisk[] = [
+                    'name' => $name, 'po' => $po,
+                    'remaining_minutes' => $minutes, 'allocation' => $alloc,
+                    'days_until_refresh' => $daysToRefresh,
+                    'overdrawn' => $minutes < 0,
+                ];
+            }
+
+            // Running out: not low yet, but spending fast enough that it will
+            // be before the allowance refreshes.
+            $runout = arayaRunoutFinding($minutes, $alloc, $daysToRefresh);
+            if ($runout !== null && $minutes > ARAYA_AT_RISK_MINUTES) {
+                $runningOut[] = ['name' => $name, 'po' => $po,
+                                 'remaining_minutes' => $minutes, 'allocation' => $alloc] + $runout;
             }
         } elseif ($isPending) {
             $overview['pendingCancel']++;
@@ -438,6 +520,10 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
         }));
     }
 
+    // Most urgent first in both new lists: the worst balance leads.
+    usort($atRisk, fn($a, $b) => $a['remaining_minutes'] <=> $b['remaining_minutes']);
+    usort($runningOut, fn($a, $b) => ($a['days_until_empty'] ?? PHP_INT_MAX) <=> ($b['days_until_empty'] ?? PHP_INT_MAX));
+
     // Most urgent first; unknown minutes last.
     usort($live, function ($a, $b) {
         if ($a['remaining_minutes'] === null || $b['remaining_minutes'] === null) {
@@ -461,6 +547,8 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
         'upsellExcluded' => $upsellExcluded,
         'idleNew' => $idleNew,
         'idleQuiet' => $idleQuiet,
+        'atRisk' => $atRisk,
+        'runningOut' => $runningOut,
         'setup' => $setup,
         'cancelling' => $cancelling,
         'gaps' => $gaps,
