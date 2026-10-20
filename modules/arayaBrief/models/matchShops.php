@@ -96,46 +96,70 @@ function arayaMatchShops(array $mondayShops, array $gcalShops): array
         }
     }
 
-    $matched = [];
-    $unmatchedMonday = [];
-    $claimed = [];
+    // Three full passes, strongest key first. A gcal shop is claimed only inside
+    // the pass that pairs it, so a weak key on an earlier row can never take a
+    // shop that a later row's stronger key points at.
+    $hits = [];     // Monday index => ['i' => gcal index, 'by' => tier]
+    $claimed = [];  // gcal index => true
 
-    foreach ($mondayShops as $m) {
-        $hit = null;
-
+    // Pass 1: calendar id.
+    foreach ($mondayShops as $mi => $m) {
         $cal = arayaNormalizeKey($m['calendar_id'] ?? '');
         if ($cal !== '' && isset($byCalendar[$cal]) && !isset($claimed[$byCalendar[$cal]])) {
-            $hit = ['i' => $byCalendar[$cal], 'by' => 'calendar'];
+            $hits[$mi] = ['i' => $byCalendar[$cal], 'by' => 'calendar'];
+            $claimed[$byCalendar[$cal]] = true;
         }
+    }
 
-        if ($hit === null) {
-            $email = arayaNormalizeKey($m['email'] ?? '');
-            if ($email !== '' && isset($byEmail[$email]) && !isset($claimed[$byEmail[$email]])) {
-                $hit = ['i' => $byEmail[$email], 'by' => 'email'];
+    // Pass 2: email.
+    foreach ($mondayShops as $mi => $m) {
+        if (isset($hits[$mi])) {
+            continue;
+        }
+        $email = arayaNormalizeKey($m['email'] ?? '');
+        if ($email !== '' && isset($byEmail[$email]) && !isset($claimed[$byEmail[$email]])) {
+            $hits[$mi] = ['i' => $byEmail[$email], 'by' => 'email'];
+            $claimed[$byEmail[$email]] = true;
+        }
+    }
+
+    // Pass 3: normalized name. A non-empty calendar id or email that disagrees
+    // between the two sides proves they are different shops, so it vetoes the
+    // pairing. An empty value carries no information and never vetoes.
+    foreach ($mondayShops as $mi => $m) {
+        if (isset($hits[$mi])) {
+            continue;
+        }
+        $name = arayaNormalizeShopName($m['name'] ?? '');
+        if ($name === '' || ($mondayNameCounts[$name] ?? 0) !== 1
+            || !isset($byName[$name]) || isset($claimed[$byName[$name]])) {
+            continue;
+        }
+        $gi = $byName[$name];
+        $g = $gcalShops[$gi];
+        foreach ([['calendar_id', 'calendar_id'], ['email', 'shop_email']] as [$mk, $gk]) {
+            $mv = arayaNormalizeKey($m[$mk] ?? '');
+            $gv = arayaNormalizeKey($g[$gk] ?? '');
+            if ($mv !== '' && $gv !== '' && $mv !== $gv) {
+                continue 2;
             }
         }
+        $hits[$mi] = ['i' => $gi, 'by' => 'name'];
+        $claimed[$gi] = true;
+    }
 
-        if ($hit === null) {
-            $name = arayaNormalizeShopName($m['name'] ?? '');
-            $unambiguous = $name !== ''
-                && ($mondayNameCounts[$name] ?? 0) === 1
-                && isset($byName[$name])
-                && !isset($claimed[$byName[$name]]);
-            if ($unambiguous) {
-                $hit = ['i' => $byName[$name], 'by' => 'name'];
-            }
-        }
-
-        if ($hit === null) {
+    // Rebuild in Monday input order, not pass order.
+    $matched = [];
+    $unmatchedMonday = [];
+    foreach ($mondayShops as $mi => $m) {
+        if (!isset($hits[$mi])) {
             $unmatchedMonday[] = $m;
             continue;
         }
-
-        $claimed[$hit['i']] = true;
         $matched[] = [
             'monday'     => $m,
-            'gcal'       => $gcalShops[$hit['i']],
-            'matched_by' => $hit['by'],
+            'gcal'       => $gcalShops[$hits[$mi]['i']],
+            'matched_by' => $hits[$mi]['by'],
         ];
     }
 
