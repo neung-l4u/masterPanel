@@ -56,7 +56,9 @@ $useFixture = ($_GET['fixture'] ?? '') === 'sample';
 $useCache = empty($_GET['nocache']);
 
 $brief = null;
-$error = null;
+$error = null;      // Headline: what went wrong.
+$errorHint = null;  // What the reader should do about it.
+$notConfigured = false;
 try {
     $brief = arayaLoadBrief($useFixture, $useCache);
 } catch (Throwable $e) {
@@ -65,9 +67,24 @@ try {
     // body would publish it to whoever opened the page. A failure also must not
     // answer 200, or monitoring reads a broken report as a healthy one.
     error_log('[arayaBrief] dashboard load failed: ' . $e->getMessage());
-    $error = 'Could not build the brief. The Monday API is the likely cause; '
-        . 'the details are in the PHP error log.';
     http_response_code(502);
+
+    // "No config file yet" and "Monday is down" are different problems with
+    // different fixes, and before first setup the first is far likelier.
+    // Blaming Monday for a missing file sends the reader to the wrong place.
+    $notConfigured = str_contains($e->getMessage(), 'config.php');
+    if ($notConfigured) {
+        $error = 'This report is not configured yet.';
+        $errorHint = 'Copy assets/config.example.php to assets/config.php and '
+            . 'fill in the Monday token, the gcal URL and the admin key. Until '
+            . 'then, add ?fixture=sample to the URL to see the report with '
+            . 'sample data.';
+    } else {
+        $error = 'The brief could not be built.';
+        $errorHint = 'Monday is the source of truth for who is a customer, so '
+            . 'without it there is no report to show. The details are in the '
+            . 'PHP error log.';
+    }
 }
 
 $refreshQuery = http_build_query(array_filter(['fixture' => $useFixture ? 'sample' : null, 'nocache' => 1]));
@@ -156,10 +173,14 @@ if ($brief) {
     </div>
 
 <?php if ($error !== null) { ?>
-    <div class="alert alert-danger">
-        <strong>The brief could not be built.</strong> Monday is the source of truth for who is a customer,
-        so without it there is no report to show.
-        <div class="note mt-1"><?php echo arayaH($error); ?></div>
+    <div class="alert <?php echo $notConfigured ? 'alert-warning' : 'alert-danger'; ?>">
+        <strong><?php echo arayaH($error); ?></strong>
+        <div class="mt-1"><?php echo arayaH($errorHint); ?></div>
+        <?php if ($notConfigured) { ?>
+        <a class="btn btn-sm btn-primary mt-2" href="?fixture=sample">
+            <i class="bi bi-eye"></i> View with sample data
+        </a>
+        <?php } ?>
     </div>
 <?php } else { ?>
 
