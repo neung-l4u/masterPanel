@@ -45,6 +45,11 @@ const MONDAY_COLS = ['stage3', 'color1', 'domain_name', 'website', 'text67'];
 const PIPELINE_BOARD = '5029892180';   // IT : Website Tasks (New)
 const PIPELINE_COLS = ['status' => 'color_mm58m4mk', 'due' => 'date_mm58d58r', 'qt' => 'boolean_mm58vj6m', 'brief' => 'link_mm58qk0e', 'task' => 'color_mm58jka'];   // Site Status, Due date, IT QT Web, Brief, Status (task)
 const PIPELINE_ACTIVE_GROUPS = ['New Request', 'Task Queue', 'Working On It'];
+const ARAYA_BOARD = '2032016220';   // AI Receptionist – Client Tracker
+// Live Status, Set up Status, Register Date, Live Date (mirror from the Projects boards; the board's own Live Date column is empty)
+const ARAYA_COLS = ['live' => 'color_mks6nf9m', 'setup' => 'status', 'register' => 'date4', 'live_date' => 'lookup_mm34p9e4'];
+// Same buckets as ARAYA_SETUP_STATUSES in modules/arayaBrief/models/buildBrief.php — change both together.
+const ARAYA_WAITING_STATUSES = ['Not Live', 'Testing', 'Ready to LIVE', 'Waiting to onboard', 'Stuck', 'Ghosted', 'Pause'];
 // Links that are not the shop's own domain (social pages, third-party ordering/booking hosts).
 const NOT_A_SHOP_DOMAIN = '/facebook|instagram|google|foodbooking|gloriafood|tiktok|yelp|ubereats|doordash|menulog|localforyou\.com$|toasttab|vagaro|squareup|spoton|chowbus|glossgenius|blizzfull|smiledining|acuityscheduling|fresha\.com$|linktr\.ee|wixsite\.com$/';
 const CLOUDFLARE_PREFIXES = ['104.16.', '104.17.', '104.18.', '104.19.', '104.20.', '104.21.', '104.22.', '104.23.', '104.24.', '104.25.',
@@ -191,6 +196,22 @@ function monday_pipeline($token) {
     return array_values($out);
 }
 
+// AI Araya shops from their Monday board. Test items ("Beam Test hello") are left out by name.
+// Mirror columns return no `text`, so values are read through MirrorValue.display_value.
+function monday_araya($token) {
+    $q = '{ boards(ids:[' . ARAYA_BOARD . ']) { items_page(limit:500) { items { name column_values(ids: ' . json_encode(array_values(ARAYA_COLS))
+       . ') { id text ... on MirrorValue { display_value } } } } } }';
+    $out = [];
+    foreach (monday_call($token, $q)['boards'][0]['items_page']['items'] as $it) {
+        if (preg_match('/\btest\b/i', $it['name'])) continue;
+        $v = [];
+        foreach ($it['column_values'] as $c) $v[$c['id']] = trim((string) ($c['display_value'] ?? $c['text'] ?? ''));
+        $out[] = ['name' => $it['name'], 'live' => $v[ARAYA_COLS['live']], 'setup' => $v[ARAYA_COLS['setup']] ?: '-',
+            'register' => $v[ARAYA_COLS['register']], 'live_date' => substr($v[ARAYA_COLS['live_date']], 0, 10)];
+    }
+    return $out;
+}
+
 function dreamscape_domains() {
     require_once __DIR__ . '/DreamscapeAPI.php';
     $api = new DreamscapeAPI(); $out = [];
@@ -328,6 +349,7 @@ function run_scan() {
 
     logmsg('monday…');      $projects = monday_projects($CFG['monday_token']);
     logmsg('pipeline…');    $pipeline = monday_pipeline($CFG['monday_token']);
+    logmsg('araya…');       $araya = monday_araya($CFG['monday_token']);
     logmsg('dreamscape…');  $ds = dreamscape_domains();
     $servers = []; $serverByIp = []; $serverName = [];
     foreach ($db->query("SELECT svID, svName, svIP FROM L4UServers WHERE svStatus = 1")->fetchAll() as $s) {
@@ -455,6 +477,15 @@ function run_scan() {
     $overdue = count($noDraftLate) + count(array_filter(array_merge($sent, $goingLive), fn($p) => $p['late'] > 0));
     $n['pipeline'] = count($pipeline); $n['pipeline_overdue'] = $overdue;
 
+    // ---- AI Araya (AI Receptionist board)
+    $aiBy = fn($st) => array_values(array_filter($araya, fn($a) => is_array($st) ? in_array($a['live'], $st, true) : $a['live'] === $st));
+    $aiLive = $aiBy('LIVE'); $aiWaiting = $aiBy(ARAYA_WAITING_STATUSES); $aiCancelling = $aiBy('Waiting to cancel');
+    usort($aiWaiting, fn($x, $y) => strcmp($x['register'] ?: '9999', $y['register'] ?: '9999'));   // longest wait first
+    usort($aiLive, fn($x, $y) => strcmp($x['live_date'] ?: '9999', $y['live_date'] ?: '9999'));
+    $n['ai_total'] = count($araya); $n['ai_live'] = count($aiLive); $n['ai_waiting'] = count($aiWaiting);
+    $n['ai_waiting_cancel'] = count($aiCancelling);
+    $n['ai_canceled'] = count($aiBy('Canceled')); $n['ai_cancel_before_live'] = count($aiBy('Cancel Before LIVE'));
+
     // wp_offline keeps its old meaning (down + unpublished) for the dashboard chart and annual_summary.
     $n['wp_offline'] = $n['wp_down'] + $n['wp_unpublished'];
 
@@ -547,6 +578,18 @@ function run_scan() {
             $liveLines ? ['', '*🚀 Going live - in progress (Total : ' . count($liveLines) . ')*'] : [], $liveLines,
             $sentLines ? ['', '*Draft sent - Waiting to go live (Total : ' . count($sentLines) . ')*', '_Sorted by waiting time (from longest to shortest)_'] : [], $sentLines,
             $upcomingLines ? ['', '*Upcoming draft (Total : ' . count($upcomingLines) . ')*'] : [], $upcomingLines,
+        )),
+        implode("\n", array_merge(
+            ["*5. AI Araya (Total : {$n['ai_total']})*  <https://local-for-you.monday.com/boards/" . ARAYA_BOARD . '|View board>',
+             "*Status summary :* 🟢 LIVE : {$n['ai_live']}" . $delta('ai_live') . " | 🟡 Waiting to go live : {$n['ai_waiting']}" . $delta('ai_waiting')
+             . " | 🟠 Waiting to cancel : {$n['ai_waiting_cancel']} | ⚫ Canceled : " . ($n['ai_canceled'] + $n['ai_cancel_before_live'])
+             . " (Canceled {$n['ai_canceled']} · Before LIVE {$n['ai_cancel_before_live']})"],
+            $aiWaiting ? ['', '*🟡 Waiting to go live (Total : ' . count($aiWaiting) . ')*', '_Sorted by waiting time (from longest to shortest)_'] : [],
+            $numbered($aiWaiting, fn($a) => "Live Status : {$a['live']} | Setup : {$a['setup']} | Registered : " . ($a['register'] !== '' ? $dm($a['register']) . ' | Waiting : ' . $days($a['register'], $today) . ' days' : 'not recorded')),
+            $aiLive ? ['', '*🟢 LIVE (Total : ' . count($aiLive) . ')*'] : [],
+            $numbered($aiLive, fn($a) => $a['live_date'] !== '' ? 'Live date : ' . $dm($a['live_date']) . ' | Live for : ' . $days($a['live_date'], $today) . ' days' : 'Live date : not recorded'),
+            $aiCancelling ? ['', '*🟠 Waiting to cancel (Total : ' . count($aiCancelling) . ')*'] : [],
+            $numbered($aiCancelling, fn($a) => 'Live date : ' . ($a['live_date'] !== '' ? $dm($a['live_date']) : 'not recorded')),
         )),
         '📈 *' . $view('daily_summary', 'View all (dashboard)') . '*',
     ];
