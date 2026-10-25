@@ -87,6 +87,11 @@ if (empty($custRows[0])) {
 $cust       = $custRows[0];
 $customerId = (int)$cust['id'];
 
+// ชื่อร้านตามที่ PO เห็นบน monday (ชื่อ item บน Past billing) ให้หน้า Receipt Thailand แสดงคู่กับ Trading Name
+if ($pulseName !== '') {
+    $db->query('UPDATE `thCustomer` SET `shopName` = ? WHERE `id` = ?', $pulseName, $customerId);
+}
+
 // --- กันออกบิลซ้ำ: รอบเดียวกัน (project item + billingDate) ออกได้ใบเดียว เผื่อ Make retry ---
 $dupRows = $db->query(
     'SELECT i.`id`, i.`invoiceID`, i.`billingSeq`, i.`amount`, r.`id` AS receipt_id

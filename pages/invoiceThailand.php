@@ -39,7 +39,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label mb-1"><i class="bi bi-search"></i> Search</label>
-                                <input type="text" id="filterSearch" class="form-control form-control-sm" placeholder="Name / Email / Invoice ID">
+                                <input type="text" id="filterSearch" class="form-control form-control-sm" placeholder="Shop / Trading Name / Email / Invoice ID">
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label mb-1">&nbsp;</label>
@@ -58,7 +58,8 @@
                                         <tr>
                                             <th>Date</th>
                                             <th>Receipt ID</th>
-                                            <th>Name</th>
+                                            <th>Shop Name</th>
+                                            <th>Trading Name</th>
                                             <th>Email</th>
                                             <th>Client</th>
                                             <th>Amount</th>
@@ -207,8 +208,8 @@ let invoiceThTable = $('#invoiceThTable').DataTable({
     order: [[0, 'desc']],
     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
     columnDefs: [
-        { targets: [0,1,2,3], className: 'dt-left' },
-        { targets: [4,5,6,7,8], className: 'dt-center', orderable: false }
+        { targets: [0,1,2,3,4], className: 'dt-left' },
+        { targets: [5,6,7,8,9], className: 'dt-center', orderable: false }
     ]
 });
 

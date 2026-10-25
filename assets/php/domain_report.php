@@ -43,7 +43,8 @@ const CURRENT_STAGES = ['Completed', 'Cancellation Req', 'Pause', 'Suspend'];
 const MONDAY_BOARDS = ['AU' => '1943203246', 'NZ' => '1943203264', 'UK' => '1943203305', 'US' => '1940392927', 'TH' => '1943203205', 'CA' => '1943203287'];
 const MONDAY_COLS = ['stage3', 'color1', 'domain_name', 'website', 'text67'];
 const PIPELINE_BOARD = '5029892180';   // IT : Website Tasks (New)
-const PIPELINE_COLS = ['status' => 'color_mm58m4mk', 'due' => 'date_mm58d58r', 'qt' => 'boolean_mm58vj6m', 'brief' => 'link_mm58qk0e', 'task' => 'color_mm58jka'];   // Site Status, Due date, IT QT Web, Brief, Status (task)
+const PIPELINE_COLS = ['status' => 'color_mm58m4mk', 'due' => 'date_mm58d58r', 'qt' => 'boolean_mm58vj6m', 'brief' => 'link_mm58qk0e', 'task' => 'color_mm58jka',
+    'po' => 'multiple_person_mm58gy3g'];   // Site Status, Due date, IT QT Web, Brief, Status (task), Project Owner
 const PIPELINE_ACTIVE_GROUPS = ['New Request', 'Task Queue', 'Working On It'];
 const ARAYA_BOARD = '2032016220';   // AI Receptionist – Client Tracker
 // Live Status, Set up Status, Register Date, Live Date (mirror from the Projects boards; the board's own Live Date column is empty)
@@ -186,7 +187,7 @@ function monday_pipeline($token) {
         if ((string) $v[PIPELINE_COLS['brief']] === '') continue;   // only website builds (they have a Brief), not edit tasks
         if (!(in_array($st, ['Draft', 'Pre Live'], true) || ($active && in_array($st, ['', 'Wait shop owner'], true)))) continue;
         $out[$it['id']] = ['id' => $it['id'], 'name' => $it['name'], 'group' => $it['group']['title'], 'status' => $st ?: 'Not started',
-            'due' => (string) $v[PIPELINE_COLS['due']], 'qt' => $v[PIPELINE_COLS['qt']] !== '', 'task' => (string) $v[PIPELINE_COLS['task']], 'draft_sent' => ''];
+            'due' => (string) $v[PIPELINE_COLS['due']], 'qt' => $v[PIPELINE_COLS['qt']] !== '', 'task' => (string) $v[PIPELINE_COLS['task']], 'po' => trim((string) $v[PIPELINE_COLS['po']]), 'draft_sent' => ''];
     }
     foreach (array_chunk(array_keys($out), 50) as $ids) {
         foreach (monday_call($token, '{ items(ids:[' . implode(',', $ids) . ']) { id updates(limit:100) { created_at text_body } } }')['items'] as $it) {
@@ -582,7 +583,7 @@ function run_scan() {
     $dueTxt = fn($p) => $p['due'] !== '' ? $dm($p['due']) : 'not set';
     $numbered = function (array $items, callable $detail) {
         $out = []; $i = 1;
-        foreach ($items as $p) $out[] = ($i++) . ". {$p['name']}\n   • " . $detail($p);
+        foreach ($items as $p) $out[] = ($i++) . ". {$p['name']}\n   PO : " . ($p['po'] !== '' ? $p['po'] : '-') . "\n   • " . $detail($p);
         return $out;
     };
     $sentLines = $numbered($sent, fn($p) => ($p['late'] ? '🔴 ' : '') . "Status : {$p['status']} | Sent : " . ($p['draft_sent'] !== '' ? $dm($p['draft_sent']) : 'IT QT ✓')
@@ -676,8 +677,10 @@ function run_scan() {
                         . round(100 * ($a['gcal']['allocation'] - $a['gcal']['remaining_minutes']) / $a['gcal']['allocation']) . '%) | Live for : ' . $days($a['live_date'], $today) . ' days'),
                 $aiBlock("*⏱️ Live overviews total balance : {$n['ai_balance']} mins*", $aiBalance,
                     fn($a) => "Remaining : {$a['gcal']['remaining_minutes']} / {$a['gcal']['allocation']} mins | Refresh in : " . ($a['gcal']['days_until_refresh'] ?? '-') . ' days'),
-            ],
-            [$aiBlock('*Incomplete informations (Total : ' . count($aiGaps) . ')*', $aiGaps, fn($a) => "Live Status : {$a['live']} | Missing : {$a['missing']}")])),
+            ])),
+            // Incomplete informations is held back for now ($aiGaps is still built): add
+            // $aiBlock('*Incomplete informations (Total : ' . count($aiGaps) . ')*', $aiGaps, fn($a) => "Live Status : {$a['live']} | Missing : {$a['missing']}")
+            // as a last item above to show it again.
     ];
     $messageAi = implode("\n\n", $aiSections);
 

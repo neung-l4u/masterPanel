@@ -116,8 +116,9 @@ if ($act === "add") {
         $customerCode .= $chars[random_int(0, strlen($chars) - 1)];
     }
     $db->query(
-        'INSERT INTO `thCustomer`(`customerCode`, `name`, `address`, `taxNumber`, `email`, `phone`, `type`, `sale`, `bankName`, `bankNumber`, `bankAccName`) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-        $customerCode, $nameQuotation, $addressQuotation, $taxNumberQuotation, $emailQuotation, $phoneQuotation, $taxType, $shopAgent, $bankName, $bankThaiNumber, $bankThaiName
+        // shopName = ชื่อร้านจากฟอร์มไว้ก่อน แล้ว createSubTH จะเขียนทับเป็นชื่อแบบ monday ตอนออกบิลรอบแรก
+        'INSERT INTO `thCustomer`(`customerCode`, `name`, `shopName`, `address`, `taxNumber`, `email`, `phone`, `type`, `sale`, `bankName`, `bankNumber`, `bankAccName`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+        $customerCode, $nameQuotation, ($signupPayload['shopName'] ?? '') ?: null, $addressQuotation, $taxNumberQuotation, $emailQuotation, $phoneQuotation, $taxType, $shopAgent, $bankName, $bankThaiNumber, $bankThaiName
     );
     $customerId = $db->lastInsertID();
 
