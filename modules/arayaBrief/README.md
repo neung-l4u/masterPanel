@@ -12,8 +12,50 @@ outputs from one data path (`models/loadBrief.php`):
 - **Monday** (board 2032016220) is authoritative for *who is a customer*. Without
   it there is no report; the brief fails rather than post an empty one.
 - **gcal** (`gcal-booking-api`, `/api/admin/araya-summary`) is authoritative for
-  *live usage* (minutes, activity). If gcal is down the brief is still produced
-  from Monday alone and flagged `gcal_unavailable`; gap noise is suppressed.
+  *live usage* (minutes, activity, call quality). If gcal is down the brief is
+  still produced from Monday alone and flagged `gcal_unavailable`; gap noise is
+  suppressed.
+
+## Call quality and conversion
+
+Per shop, for the last 7 and 30 days: calls, forwarded, short (under 15 s),
+silent, booked, bookings that failed, and minutes. Three rates are derived from
+those counts, and four findings from the rates. All findings are judged on one
+window (`ARAYA_RATE_WINDOW`, currently `d7`), so nothing in a section is a
+7-day rate sitting next to a 30-day one.
+
+| Finding | Rule | Judged against |
+|---|---|---|
+| Bookings that failed | at least `ARAYA_BOOKING_FAILED_ALERT` failed attempts | nothing: a failure is a bug, not a rate |
+| Conversion below the fleet | `ARAYA_CONVERSION_ALERT_MARGIN_PTS` points or more under | the fleet |
+| Callers hanging up early | `ARAYA_SHORT_ALERT_PCT`% or more of calls under 15 s | a fixed threshold |
+| Forwarding above the fleet | `ARAYA_RATE_ALERT_MARGIN_PTS` points or more over | the fleet |
+
+Three rules that are easy to get wrong, and are pinned by
+`tests/test_call_rates.php`:
+
+- **A rate off a small sample is not shown at all.** Under
+  `ARAYA_RATE_MIN_CALLS` calls, the rate is null and the shop is never flagged:
+  one forwarded call out of three is 33% and would outrank a shop with a real
+  problem. The dashboard prints `–` for it.
+- **Conversion is a share of the calls that could have booked**, not of every
+  call, and calls whose booking outcome gcal does not know (`booked_unknown`)
+  leave the denominator. Counting misdials as lost bookings, or counting calls
+  from before the booking instrumentation as failures, would report the whole
+  fleet as collapsing.
+- **Short hang-ups use a fixed threshold, the other two use the fleet.** The
+  fleet's own short-call rate is high enough that comparing with it would
+  excuse every shop.
+
+The fleet baseline comes from `fleet_calls` in the gcal response, summed over
+exactly the shops in that response. A gcal that does not send it (an older
+deploy) yields no baseline: the two fleet-relative findings are then simply not
+produced, and the dashboard says so rather than comparing against zeros. The
+same applies during a gcal outage, when no shop has call figures at all.
+
+The booking figures require `scripts/add_booking_outcome_tracking.py` to have
+been run on the gcal side. Calls recorded before that have no known booking
+outcome and count towards `booked_unknown`, not towards failures.
 
 ## Setup
 
@@ -60,7 +102,10 @@ Each file must end `Failed: 0`.
 
 ## Dashboard parameters
 
-- `?fixture=sample` - render canned sample data (no network).
+- `?fixture=sample` - render canned sample data (no network). The fixture is
+  built so that all four call-quality findings have at least one shop in them;
+  `tests/test_outage_noise.php` pins that, since a finding with no example in
+  the sample data is one nobody would notice had stopped rendering.
 - `?nocache=1` - bypass the 5-minute cache. The cron always reads live.
 
 ## Diagnosing a bad or silent morning

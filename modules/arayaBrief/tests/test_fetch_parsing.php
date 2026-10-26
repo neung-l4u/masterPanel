@@ -278,5 +278,29 @@ try { arayaParseCallErrorsResponse(200, json_encode(['generated_at' => 'x'])); }
 catch (RuntimeException $e) { $threw = true; }
 test("a response with no call list throws", $threw);
 
+echo "== gcal: the fleet block ==\n";
+// The fleet figures are the baseline every per-shop rate is compared with, so
+// the one thing that must not happen is an absent block reading as a fleet
+// that took no calls: every shop would then look worse than the fleet.
+$fleet = ['d7' => ['total' => 1000, 'forwarded' => 124, 'short' => 200, 'silent' => 40,
+                   'errors' => 2, 'minutes' => 1800, 'booked' => 300,
+                   'booking_failed' => 5, 'long' => 500, 'booked_unknown' => 0],
+          'd30' => ['total' => 4000, 'forwarded' => 500, 'short' => 820, 'silent' => 150,
+                    'errors' => 9, 'minutes' => 7200, 'booked' => 1200,
+                    'booking_failed' => 18, 'long' => 2000, 'booked_unknown' => 60]];
+$withFleet = json_encode(['generated_at' => 'x', 'shops' => [$shop], 'fleet_calls' => $fleet]);
+test("the fleet block is passed through intact", arayaParseGcalFleet($withFleet) === $fleet);
+// An older gcal does not send it at all. Null, so the dashboard shows no
+// comparison rather than comparing against zeros.
+test("a response without a fleet block gives null", arayaParseGcalFleet($body) === null);
+test("a non-array fleet block gives null",
+     arayaParseGcalFleet('{"shops":[],"fleet_calls":"none"}') === null);
+test("a non-JSON body gives null, not a crash", arayaParseGcalFleet('<html>oops</html>') === null);
+test("an empty body gives null", arayaParseGcalFleet('') === null);
+// Shops and fleet are read from the same response, so they cannot disagree
+// about which fetch they came from.
+test("the shops still parse from a response carrying a fleet block",
+     arayaParseGcalResponse(200, $withFleet) === [$shop]);
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

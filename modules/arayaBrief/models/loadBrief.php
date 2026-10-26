@@ -79,7 +79,7 @@ function arayaLoadBrief(bool $useFixture = false, bool $useCache = true): array
     if ($useFixture) {
         $raw = json_decode(file_get_contents(__DIR__ . '/../assets/fixtures/sample.json'), true);
         $match = arayaMatchShops($raw['monday'], $raw['gcal']);
-        return arayaBuildBrief($match, $today, $raw['call_errors'] ?? [])
+        return arayaBuildBrief($match, $today, $raw['call_errors'] ?? [], $raw['fleet_calls'] ?? null)
             + ['gcal_unavailable' => false, 'call_errors_unavailable' => false];
     }
 
@@ -89,8 +89,14 @@ function arayaLoadBrief(bool $useFixture = false, bool $useCache = true): array
     $monday = arayaFetchMonday($config, $useCache);
 
     $gcalFailed = false;
+    $fleetCalls = null;
     try {
         $gcal = arayaFetchGcal($config, $useCache);
+        // Read from the same cached response the shops came from, so the fleet
+        // baseline and the per-shop figures are always the same fetch. A gcal
+        // without this block returns null, and the rates that depend on a
+        // comparison are then simply not computed.
+        $fleetCalls = arayaCachedGcalFleet();
     } catch (Throwable $e) {
         error_log('[arayaBrief] gcal fetch failed: ' . $e->getMessage());
         $gcal = [];
@@ -101,7 +107,7 @@ function arayaLoadBrief(bool $useFixture = false, bool $useCache = true): array
     // spend another timeout. The gcal banner already tells the reader.
     $callErrors = $gcalFailed ? null : arayaTryFetchCallErrors($config, $useCache);
 
-    $brief = arayaBuildBrief(arayaMatchShops($monday, $gcal), $today, $callErrors);
+    $brief = arayaBuildBrief(arayaMatchShops($monday, $gcal), $today, $callErrors, $fleetCalls);
     $brief['gcal_unavailable'] = $gcalFailed;
     $brief['call_errors_unavailable'] = $callErrors === null;
     return arayaSuppressOutageNoise($brief);

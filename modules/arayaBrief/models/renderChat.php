@@ -72,6 +72,24 @@ function arayaChatOwner($po): string
     return $po === '' ? '' : ' · @' . $po;
 }
 
+/** A percentage for the message, or the unknown marker. */
+function arayaChatPct($pct): string
+{
+    return $pct === null ? '?' : number_format((float)$pct, 1) . '%';
+}
+
+/**
+ * "(ภาพรวมระบบ 12.4%)", or nothing when there is no fleet figure.
+ *
+ * The comparison is the whole finding -- 13.5% means nothing without knowing
+ * what normal is -- so when there is no baseline to quote the message says
+ * nothing rather than implying one.
+ */
+function arayaChatFleetNote($fleetPct): string
+{
+    return $fleetPct === null ? '' : ' (ภาพรวมระบบ ' . arayaChatPct($fleetPct) . ')';
+}
+
 /**
  * Why a shop that met the numeric upsell test is not being pitched, in Thai.
  *
@@ -289,6 +307,70 @@ function arayaRenderChat(array $brief): string
         if ($more > 0) {
             $B[] = '(อีก ' . $more . ' สาย — ดูทั้งหมดและไฟล์เสียงในแดชบอร์ด)';
         }
+        $S[] = $B;
+    }
+
+    // Call-quality findings. Beside the failed-call list rather than further
+    // down because these are the ones someone is expected to act on today,
+    // and each line carries the baseline it was judged against: a rate with
+    // no "normal" beside it is a number nobody can act on.
+    //
+    // Each section is absent on a day with no findings. An empty heading every
+    // morning is what teaches people to scroll past a section.
+    $rateWindowLabel = ($brief['rateWindow'] ?? 'd7') === 'd7' ? '7 วันล่าสุด' : '30 วันล่าสุด';
+
+    if (!empty($brief['bookingBroken'])) {
+        // First of the four: the only one that is a bug rather than a trend.
+        // The caller asked to book and the system said no.
+        $B = ['🔧 จองไม่ติด (ระบบจองตอบว่าไม่สำเร็จ) — ' . $rateWindowLabel];
+        foreach ($brief['bookingBroken'] as $r) {
+            $B[] = '• *' . arayaChatName($r) . '* — ล้มเหลว ' . (int)$r['failed'] . ' สาย'
+                 . (($r['booked'] ?? null) === null ? '' : ' · จองสำเร็จ ' . (int)$r['booked'] . ' สาย')
+                 . arayaChatOwner($r['po'] ?? '');
+        }
+        $B[] = '    เช็ก log ฝั่ง booking API ของร้านเหล่านี้';
+        $S[] = $B;
+    }
+
+    if (!empty($brief['conversionLow'])) {
+        $B = ['📉 Conversion ต่ำกว่าภาพรวม (ต่ำกว่าอย่างน้อย '
+            . ARAYA_CONVERSION_ALERT_MARGIN_PTS . ' จุด) — ' . $rateWindowLabel];
+        foreach ($brief['conversionLow'] as $r) {
+            // The denominator is quoted so a rate off a thin base reads as
+            // thin rather than as a verdict.
+            $B[] = '• *' . arayaChatName($r) . '* — ' . arayaChatPct($r['pct'])
+                 . arayaChatFleetNote($r['fleet_pct'])
+                 . ' · จาก ' . (int)($r['base'] ?? 0) . ' สายที่คุยนานพอจะจองได้'
+                 . arayaChatOwner($r['po'] ?? '');
+        }
+        $B[] = '    ฟังสายย้อนหลังดูว่าติดตรงไหน';
+        $S[] = $B;
+    }
+
+    if (!empty($brief['hangupHigh'])) {
+        $B = ['✂️ วางสายเร็ว (<15 วินาที, ตั้งแต่ ' . ARAYA_SHORT_ALERT_PCT
+            . '% ขึ้นไป) — ' . $rateWindowLabel];
+        foreach ($brief['hangupHigh'] as $r) {
+            $B[] = '• *' . arayaChatName($r) . '* — ' . arayaChatPct($r['pct'])
+                 . arayaChatFleetNote($r['fleet_pct'])
+                 . ' · จาก ' . (int)($r['total'] ?? 0) . ' สาย'
+                 . arayaChatOwner($r['po'] ?? '');
+        }
+        $B[] = '    วัดกับเกณฑ์คงที่ ไม่ใช่ภาพรวม เพราะภาพรวมของเรื่องนี้สูงพอที่จะทำให้ทุกร้านดูปกติ';
+        $B[] = '    ส่วนใหญ่อยู่ที่ greeting — เช็กว่าออกเสียงชื่อร้านถูกไหม';
+        $S[] = $B;
+    }
+
+    if (!empty($brief['forwardingHigh'])) {
+        $B = ['📞 อัตราโอนสายสูงกว่าภาพรวม (สูงกว่าอย่างน้อย '
+            . ARAYA_RATE_ALERT_MARGIN_PTS . ' จุด) — ' . $rateWindowLabel];
+        foreach ($brief['forwardingHigh'] as $r) {
+            $B[] = '• *' . arayaChatName($r) . '* — ' . arayaChatPct($r['pct'])
+                 . arayaChatFleetNote($r['fleet_pct'])
+                 . ' · จาก ' . (int)($r['total'] ?? 0) . ' สาย'
+                 . arayaChatOwner($r['po'] ?? '');
+        }
+        $B[] = '    ทุกสายที่โอนออกคือสายที่ Araya คุยไม่จบ';
         $S[] = $B;
     }
 
