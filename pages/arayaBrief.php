@@ -40,6 +40,22 @@ function arayaOwner($po): string
     return $po === '' ? '<span class="text-muted">-</span>' : arayaH($po);
 }
 
+/**
+ * One call-quality figure.
+ *
+ * A missing figure prints "?" rather than 0: "gcal sent us nothing for this
+ * shop" and "this shop had no calls" are different facts, and showing both as
+ * zero would quietly invent data.
+ */
+function arayaCallCell($v, string $extra = ''): string
+{
+    $cls = 'text-end' . ($extra === '' ? '' : ' ' . $extra);
+    if ($v === null) {
+        return '<td class="' . $cls . '"><span class="num mins-unknown" title="No figure from gcal">?</span></td>';
+    }
+    return '<td class="' . $cls . '"><span class="num">' . arayaH($v) . '</span></td>';
+}
+
 $useFixture = ($_GET['fixture'] ?? '') === 'sample';
 $useCache = empty($_GET['nocache']);
 
@@ -200,6 +216,12 @@ if ($brief) {
 .araya-brief .panel-card:hover { box-shadow: var(--shadow-lift); }
 .araya-brief .panel-card.urgent { border-left: 3px solid var(--danger-rail); }
 .araya-brief .panel-card.soon   { border-left: 3px solid var(--warn); }
+
+/* The call-quality table carries two windows side by side, so each window
+   needs a visible edge -- without it the ten numeric columns read as one run
+   and nobody can tell 7-day from 30-day at a glance. */
+.araya-brief .calls th.grp { text-align: center; font-weight: 700; color: var(--ink-2); }
+.araya-brief .calls .win { border-left: 1px solid var(--line); }
 .araya-brief .panel-card h2 { font-size: .92rem; font-weight: 600; letter-spacing: -.005em;
     margin: 0; padding: 14px 17px 13px; border-bottom: 1px solid var(--line-2);
     display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
@@ -311,6 +333,15 @@ if ($brief) {
     <div class="alert alert-warning">
         <i class="bi bi-exclamation-triangle"></i> Minute data from gcal could not be fetched. This view uses Monday only;
         do not read the minutes as current.
+    </div>
+    <?php } ?>
+
+    <?php // Said plainly, because an absent "Calls with errors" panel otherwise
+          // reads as "there were none" -- the one wrong conclusion to draw. ?>
+    <?php if (!empty($brief['call_errors_unavailable']) && empty($brief['gcal_unavailable'])) { ?>
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i> The failed-call list could not be fetched, so a missing
+        &ldquo;Calls with errors&rdquo; panel does not mean there were none.
     </div>
     <?php } ?>
 
@@ -455,6 +486,31 @@ if ($brief) {
     </div>
     <?php } ?>
 
+    <?php // Failed calls sit with the urgent panels: a call that errored is a
+          // customer who got nothing, and the recording link is what saves
+          // someone hunting for it in the VAPI dashboard call by call. ?>
+    <?php if (!empty($brief['callErrors'])) { ?>
+    <div class="panel-card urgent mb-4" id="callErrors">
+        <h2>&#128222; Calls with errors <span class="note fw-normal">(last 30 days, newest first; <?php echo count($brief['callErrors']); ?> shown)</span></h2>
+        <div class="body table-responsive">
+            <table class="table align-middle">
+                <thead><tr><th>Shop</th><th>When (Bangkok)</th><th>What went wrong</th><th class="text-end">Length</th><th>Recording</th></tr></thead>
+                <tbody>
+                <?php foreach ($brief['callErrors'] as $e) { ?>
+                    <tr>
+                        <td class="fw-semibold"><?php echo arayaH(arayaClean($e['shop_name'] ?? '')); ?></td>
+                        <td><?php echo arayaH(arayaChatWhen($e['started_at'] ?? '')); ?></td>
+                        <td class="note"><?php echo ($e['outcome'] ?? '') === '' ? '<span class="text-muted">not stated</span>' : arayaH($e['outcome']); ?></td>
+                        <td class="text-end"><?php echo ($e['duration_sec'] ?? null) === null ? '<span class="num mins-unknown">?</span>' : '<span class="num">' . arayaH($e['duration_sec']) . ' s</span>'; ?></td>
+                        <td><?php if (($e['recording_url'] ?? null) !== null) { ?><a href="<?php echo arayaH($e['recording_url']); ?>" target="_blank" rel="noopener noreferrer"><i class="bi bi-play-circle"></i> Listen</a><?php } else { ?><span class="text-muted">no recording</span><?php } ?></td>
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php } ?>
+
     <div class="panel-card mb-4">
         <h2>Live shops <span class="note fw-normal">(least minutes first; <span class="money">&#128176;</span> = also an upsell candidate)</span></h2>
         <div class="body table-responsive">
@@ -475,6 +531,46 @@ if ($brief) {
                     </tr>
                 <?php } ?>
                 <?php if (!$brief['live']) { ?><tr><td colspan="5" class="empty">No live shops.</td></tr><?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <?php // Reference data, so it sits below the lists someone acts on. Both
+          // windows in one table: 7 days alone cannot tell a bad week from a
+          // bad month, and that is usually the question being asked. ?>
+    <div class="panel-card mb-4" id="callQuality">
+        <h2>Call quality <span class="note fw-normal">(<strong>?</strong> = gcal sent no figure, which is not the same as 0 &middot; short = under 15 s &middot; silent = caller said nothing and it timed out)</span></h2>
+        <div class="body table-responsive">
+            <table class="table table-hover align-middle calls">
+                <thead>
+                    <tr><th rowspan="2">Shop</th><th class="grp win" colspan="5">Last 7 days</th><th class="grp win" colspan="5">Last 30 days</th></tr>
+                    <tr>
+                        <?php foreach (ARAYA_CALL_WINDOWS as $ignored) { ?>
+                        <th class="text-end win">Calls</th><th class="text-end">Forwarded</th><th class="text-end">Short</th><th class="text-end">Silent</th><th class="text-end">Minutes</th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($brief['live'] as $r) { ?>
+                    <tr>
+                        <td class="fw-semibold"><?php echo arayaH($r['name']); ?></td>
+                        <?php if (!is_array($r['calls'] ?? null)) { ?>
+                        <td colspan="10" class="win note"><?php echo !empty($r['gcal_missing']) ? 'Not in gcal &ndash; no call data' : 'gcal sent no call data for this shop'; ?></td>
+                        <?php } else { foreach (ARAYA_CALL_WINDOWS as $w) {
+                            $win = $r['calls'][$w] ?? null;
+                            if (!is_array($win)) { ?>
+                        <td colspan="5" class="win note">no figures for this window</td>
+                            <?php } else {
+                                echo arayaCallCell($win['total'] ?? null, 'win');
+                                foreach (['forwarded', 'short', 'silent', 'minutes'] as $k) {
+                                    echo arayaCallCell($win[$k] ?? null);
+                                }
+                            }
+                        } } ?>
+                    </tr>
+                <?php } ?>
+                <?php if (!$brief['live']) { ?><tr><td colspan="11" class="empty">No live shops.</td></tr><?php } ?>
                 </tbody>
             </table>
         </div>
