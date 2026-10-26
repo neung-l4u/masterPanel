@@ -4,7 +4,10 @@
  *
  * Plain text, not a card: long cards get truncated by Chat and card text cannot be
  * copied out. Deferred sections (revenue, per-shop call quality, Respond.io
- * ghosting, Stripe status, contract expiry) emit no heading at all.
+ * ghosting, Stripe status, contract expiry) emit no heading at all. The one
+ * call-quality item that does appear is the failed-call list, and only on a day
+ * that has failures; the per-shop figures table stays on the dashboard, where a
+ * table survives.
  */
 require_once __DIR__ . '/buildBrief.php';
 
@@ -101,6 +104,29 @@ function arayaChatName($row): string
 {
     $n = arayaClean($row['name'] ?? '');
     return $n === '' ? '(unnamed shop)' : $n;
+}
+
+// The message lists at most this many failed calls; the dashboard has them all.
+const ARAYA_CHAT_ERRORS_MAX = 5;
+
+/**
+ * "2026-10-21T04:12:00+00:00" -> "21 Oct 11:12" in Bangkok time.
+ *
+ * Upstream sends UTC offsets; the team reads Bangkok. Unparseable input is
+ * shown as given rather than dropped.
+ */
+function arayaChatWhen($iso): string
+{
+    $iso = arayaClean($iso);
+    if ($iso === '') {
+        return '?';
+    }
+    try {
+        $d = new DateTimeImmutable($iso);
+    } catch (Throwable $e) {
+        return $iso;
+    }
+    return $d->setTimezone(new DateTimeZone('Asia/Bangkok'))->format('j M H:i');
 }
 
 const ARAYA_CHAT_SEP = '━━━━━━━━━━━━━━━━━━━━━━━━';
@@ -243,6 +269,25 @@ function arayaRenderChat(array $brief): string
                  . ($r['days_until_empty'] === null ? '' : ' → หมดในอีกราว ' . (int)$r['days_until_empty'] . ' วัน')
                  . ' (รีเฟรชอีก ' . (int)$r['days_until_refresh'] . ' วัน)'
                  . arayaChatOwner($r['po'] ?? '');
+        }
+        $S[] = $B;
+    }
+
+    // Failed calls: urgent, so beside the other two; absent entirely on a day
+    // with none, since an empty heading every morning teaches people to skip it.
+    if (!empty($brief['callErrors'])) {
+        $B = ['📞 สายที่เกิด error (30 วันล่าสุด)'];
+        $shown = array_slice($brief['callErrors'], 0, ARAYA_CHAT_ERRORS_MAX);
+        foreach ($shown as $e) {
+            $dur = ($e['duration_sec'] ?? null) === null ? '?' : (int)$e['duration_sec'];
+            $outcome = arayaClean($e['outcome'] ?? '');
+            $B[] = '• *' . arayaChatName(['name' => $e['shop_name'] ?? '']) . '* — ' . arayaChatWhen($e['started_at'] ?? '')
+                 . ' · ' . $dur . ' วินาที';
+            $B[] = '    ' . ($outcome === '' ? '(ไม่ระบุสาเหตุ)' : $outcome);
+        }
+        $more = count($brief['callErrors']) - count($shown);
+        if ($more > 0) {
+            $B[] = '(อีก ' . $more . ' สาย — ดูทั้งหมดและไฟล์เสียงในแดชบอร์ด)';
         }
         $S[] = $B;
     }
