@@ -53,6 +53,25 @@ function arayaSuppressOutageNoise(array $brief): array
     return $brief;
 }
 
+/**
+ * The failed-call list, or null when it could not be fetched.
+ *
+ * Null, not an empty array: "gcal says there were no errors" and "we could not
+ * ask" must stay distinguishable until the last moment. The brief is still
+ * produced either way; only the error section depends on this. The log line
+ * carries the exception message alone, and those never contain the admin key,
+ * the URL or the response body.
+ */
+function arayaTryFetchCallErrors(array $config, bool $useCache): ?array
+{
+    try {
+        return arayaFetchCallErrors($config, $useCache);
+    } catch (Throwable $e) {
+        error_log('[arayaBrief] call-errors fetch failed: ' . $e->getMessage());
+        return null;
+    }
+}
+
 function arayaLoadBrief(bool $useFixture = false, bool $useCache = true): array
 {
     $today = (new DateTimeImmutable('now'))->format('Y-m-d');
@@ -60,7 +79,8 @@ function arayaLoadBrief(bool $useFixture = false, bool $useCache = true): array
     if ($useFixture) {
         $raw = json_decode(file_get_contents(__DIR__ . '/../assets/fixtures/sample.json'), true);
         $match = arayaMatchShops($raw['monday'], $raw['gcal']);
-        return arayaBuildBrief($match, $today) + ['gcal_unavailable' => false];
+        return arayaBuildBrief($match, $today, $raw['call_errors'] ?? [])
+            + ['gcal_unavailable' => false, 'call_errors_unavailable' => false];
     }
 
     $config = arayaLoadConfig();
@@ -77,7 +97,12 @@ function arayaLoadBrief(bool $useFixture = false, bool $useCache = true): array
         $gcalFailed = true;
     }
 
-    $brief = arayaBuildBrief(arayaMatchShops($monday, $gcal), $today);
+    // Same host as gcal: if the summary just failed, asking again would only
+    // spend another timeout. The gcal banner already tells the reader.
+    $callErrors = $gcalFailed ? null : arayaTryFetchCallErrors($config, $useCache);
+
+    $brief = arayaBuildBrief(arayaMatchShops($monday, $gcal), $today, $callErrors);
     $brief['gcal_unavailable'] = $gcalFailed;
+    $brief['call_errors_unavailable'] = $callErrors === null;
     return arayaSuppressOutageNoise($brief);
 }

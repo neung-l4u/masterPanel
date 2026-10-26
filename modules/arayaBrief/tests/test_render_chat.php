@@ -216,7 +216,7 @@ test("no_live_date for a LIVE shop mentions the idle check", str_contains($out, 
 
 echo "== the allowlist of headings ==\n";
 $headingAllow = ['📊 OVERVIEW', '✅ ร้านที่ LIVE (นาทีคงเหลือ · อยู่กับเรามานาน)',
-    '🚨 ต้องโทรวันนี้ (นาทีหมดหรือใกล้หมด)', '⏳ นาทีจะหมดก่อนรอบรีเฟรช',
+    '🚨 ต้องโทรวันนี้ (นาทีหมดหรือใกล้หมด)', '⏳ นาทีจะหมดก่อนรอบรีเฟรช', '📞 สายที่เกิด error (30 วันล่าสุด)',
     '💰 โอกาสอัพเซลล์ (นาที <70 และรีเฟรชอีก ≤15 วัน)',
     '📉 ไลฟ์แล้วแต่แทบไม่ได้ใช้', '📉 เคยใช้แล้วหายไป', '🚧 ทำไมยังไม่ไลฟ์ (Setup ค้าง)', '❌ แจ้งยกเลิก', '⚠️ ข้อมูลไม่ครบ'];
 // A heading is the first non-blank line of each block after a rule (the header block excluded).
@@ -387,6 +387,42 @@ test("no block starts with a blank line after a rule", !str_contains($out, "━
 
 
 "));
+
+echo "== call errors section ==\n";
+const ERR_HEAD = '📞 สายที่เกิด error (30 วันล่าสุด)';
+function errRow(string $shop, string $at = '2026-10-21T04:12:00+00:00', ?string $rec = 'https://example.com/r.wav'): array {
+    return ['shop_id' => 's', 'shop_name' => $shop, 'started_at' => $at,
+            'outcome' => 'call.in-progress.error-vapifault-worker-not-available', 'duration_sec' => 12, 'recording_url' => $rec];
+}
+function errRender(array $errors): string {
+    return arayaRenderChat(arayaBuildBrief(res([mk()]), TODAY, $errors));
+}
+$quiet = errRender([]);
+test("no errors: no heading at all", !str_contains($quiet, ERR_HEAD) && !str_contains($quiet, '📞'));
+test("no errors: the message is identical to one built without the argument",
+     $quiet === arayaRenderChat(arayaBuildBrief(res([mk()]), TODAY)));
+test("no errors: nothing about errors leaks into the text", !str_contains($quiet, 'error'));
+
+$withErr = errRender([errRow('Lotus Thai Spa'), errRow('Jasmine Wellness', '2026-10-20T23:30:00+00:00', null)]);
+test("errors: the heading appears exactly once", substr_count($withErr, ERR_HEAD) === 1);
+test("errors: heading is verbatim on its own line", str_contains($withErr, "\n" . ERR_HEAD . "\n"));
+test("errors: bold-name bullet format", str_contains($withErr, '• *Lotus Thai Spa* — '));
+test("errors: time is shown in Bangkok time", str_contains($withErr, '21 Oct 11:12'));
+test("errors: Bangkok conversion crosses midnight", str_contains($withErr, '21 Oct 06:30'));
+test("errors: the cause is on its own indented line", str_contains($withErr, "\n    call.in-progress.error-vapifault-worker-not-available\n"));
+test("errors: a null recording does not break the message", str_contains($withErr, 'Jasmine Wellness'));
+test("errors: no URL in the phone message", !str_contains($withErr, 'https://'));
+test("errors: it sits after the overview and before upsell",
+     strpos($withErr, ERR_HEAD) < strpos($withErr, '💰') && strpos($withErr, '📊 OVERVIEW') < strpos($withErr, ERR_HEAD));
+test("errors: no call-quality table in the message", !str_contains($withErr, 'Forwarded') && !str_contains($withErr, 'Silent'));
+
+$many = array_map(fn($i) => errRow("Shop {$i}"), range(1, 8));
+$out = errRender($many);
+test("errors: capped at 5 entries for the phone", substr_count($out, 'error-vapifault') === 5);
+test("errors: the overflow is counted, not hidden", str_contains($out, '(อีก 3 สาย'));
+test("errors: exactly at the cap has no overflow line", !str_contains(errRender(array_slice($many, 0, 5)), '(อีก'));
+test("errors: an unparseable time is shown as given", str_contains(errRender([errRow('X', 'yesterday-ish?')]), 'yesterday-ish?'));
+test("errors: an unnamed shop does not render an empty name", str_contains(errRender([errRow('')]), '(unnamed shop)'));
 
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

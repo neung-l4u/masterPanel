@@ -37,9 +37,9 @@ function arayaParseGcalResponse(int $status, string $body): array
 }
 
 /** The single GET. Returns [status, body]; throws on a transport error. */
-function arayaGcalHttpGet(array $config): array
+function arayaGcalHttpGet(array $config, string $path = '/api/admin/araya-summary'): array
 {
-    $ch = curl_init($config['gcal_base_url'] . '/api/admin/araya-summary');
+    $ch = curl_init($config['gcal_base_url'] . $path);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPGET        => true,
@@ -72,4 +72,61 @@ function arayaFetchGcal(array $config, bool $useCache = true): array
 
     arayaCachePut('gcal', ['shops' => $shops]);
     return $shops;
+}
+
+/**
+ * Parse the call-errors response into error rows. No network.
+ *
+ * Unlike the shop list, an empty list is a legitimate answer here: a quiet
+ * month has no failed calls. What must never pass for it is a failure, so a
+ * non-200, a body that is not JSON, or a payload without an `errors` array all
+ * throw. Rows are passed through; arayaBuildBrief normalises them.
+ */
+function arayaParseCallErrorsResponse(int $status, string $body): array
+{
+    if ($status !== 200) {
+        throw new RuntimeException("gcal araya-call-errors returned HTTP {$status}.");
+    }
+    $decoded = json_decode($body, true);
+    // The endpoint names the list "calls"; this consumer was written expecting
+    // "errors", so every fetch failed and the panel silently never appeared --
+    // the failure mode the call_errors_unavailable flag exists to expose.
+    // Both names are accepted now: one of the two is the deployed contract and
+    // the other costs nothing to tolerate.
+    $list = null;
+    foreach (['calls', 'errors'] as $key) {
+        if (is_array($decoded) && array_key_exists($key, $decoded) && is_array($decoded[$key])) {
+            $list = $decoded[$key];
+            break;
+        }
+    }
+    if ($list === null) {
+        throw new RuntimeException('gcal araya-call-errors response has no call list.');
+    }
+    $errors = [];
+    foreach ($list as $i => $row) {
+        if (!is_array($row)) {
+            throw new RuntimeException("gcal araya-call-errors row #{$i} is not an object.");
+        }
+        $errors[] = $row;
+    }
+    return $errors;
+}
+
+/** Failed calls from the last 30 days, newest first. Throws on any failure; cached 5 minutes. */
+function arayaFetchCallErrors(array $config, bool $useCache = true): array
+{
+    if ($useCache) {
+        $cached = arayaCacheGet('gcal_call_errors', 300);
+        // An empty list is a valid cached answer, unlike the shop list.
+        if ($cached !== null && isset($cached['errors']) && is_array($cached['errors'])) {
+            return $cached['errors'];
+        }
+    }
+
+    [$status, $body] = arayaGcalHttpGet($config, '/api/admin/araya-call-errors');
+    $errors = arayaParseCallErrorsResponse($status, $body);
+
+    arayaCachePut('gcal_call_errors', ['errors' => $errors]);
+    return $errors;
 }

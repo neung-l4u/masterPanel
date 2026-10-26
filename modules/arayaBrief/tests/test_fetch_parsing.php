@@ -230,5 +230,53 @@ test("a transport failure on a later page propagates", $caught !== null && $caug
 echo "== monday: arayaFetchMonday ==\n";
 test("arayaFetchMonday is callable", is_callable('arayaFetchMonday'));
 
+echo "== gcal call errors: good response ==\n";
+$err = ['shop_id' => 'g1', 'shop_name' => 'Sabai Thai', 'started_at' => '2026-10-21T04:12:00+00:00',
+        'outcome' => 'call.in-progress.error-vapifault-worker-not-available', 'duration_sec' => 12,
+        'recording_url' => 'https://example.com/r.wav'];
+$noRec = ['recording_url' => null] + $err;
+$rows = arayaParseCallErrorsResponse(200, json_encode(['errors' => [$err, $noRec]]));
+test("both rows come back, in upstream order", count($rows) === 2 && $rows[0] === $err && $rows[1] === $noRec);
+test("a null recording_url survives parsing as null", $rows[1]['recording_url'] === null);
+test("an empty errors list is a valid answer, not a failure",
+     arayaParseCallErrorsResponse(200, '{"errors":[]}') === []);
+
+echo "== gcal call errors: every failure throws ==\n";
+test("a 500 throws", throwsRuntime(fn() => arayaParseCallErrorsResponse(500, '{"errors":[]}')));
+test("a 401 throws", throwsRuntime(fn() => arayaParseCallErrorsResponse(401, '{"detail":"no"}')));
+test("a non-JSON body throws", throwsRuntime(fn() => arayaParseCallErrorsResponse(200, '<html>oops</html>')));
+test("an empty body throws", throwsRuntime(fn() => arayaParseCallErrorsResponse(200, '')));
+test("a body without errors throws", throwsRuntime(fn() => arayaParseCallErrorsResponse(200, '{"shops":[]}')));
+test("errors that is not an array throws", throwsRuntime(fn() => arayaParseCallErrorsResponse(200, '{"errors":"none"}')));
+test("a non-object row throws", throwsRuntime(fn() => arayaParseCallErrorsResponse(200, '{"errors":["x"]}')));
+throwsRuntime(fn() => arayaParseCallErrorsResponse(200, '<html>secret-body</html>'), $m);
+test("the response body never reaches the message", strpos($m, 'secret-body') === false);
+test("arayaFetchCallErrors is callable", is_callable('arayaFetchCallErrors'));
+
+echo "== the call-errors list key ==" . PHP_EOL;
+// The deployed endpoint names this list "calls"; this consumer was first
+// written expecting "errors", so every fetch threw and the panel silently
+// never rendered. Both names are accepted, and both are pinned here so the
+// mismatch cannot come back from either side.
+$row = ['shop_id' => 's1', 'shop_name' => 'A', 'started_at' => '2026-10-25T04:00:00+00:00',
+        'outcome' => 'pipeline-error-openai-llm-failed', 'duration_sec' => 12,
+        'recording_url' => 'https://example.test/r.mp3'];
+foreach (['calls', 'errors'] as $key) {
+    $body = json_encode(['generated_at' => '2026-10-26T02:00:00+00:00', $key => [$row]]);
+    $out = arayaParseCallErrorsResponse(200, $body);
+    test("a list under {$key} is read", count($out) === 1);
+    test("the row survives under {$key}", ($out[0]['outcome'] ?? '') === 'pipeline-error-openai-llm-failed');
+}
+
+// An empty list is a real answer -- no errors today -- not a failure.
+$out = arayaParseCallErrorsResponse(200, json_encode(['generated_at' => 'x', 'calls' => []]));
+test("an empty list parses as no errors", $out === []);
+
+// A body carrying neither name is a contract break and must be loud.
+$threw = false;
+try { arayaParseCallErrorsResponse(200, json_encode(['generated_at' => 'x'])); }
+catch (RuntimeException $e) { $threw = true; }
+test("a response with no call list throws", $threw);
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

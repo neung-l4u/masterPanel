@@ -449,5 +449,50 @@ test("a shop at risk is not also listed as running out",
 test("both sections are always present as arrays",
      is_array($b['atRisk']) && is_array($b['runningOut']));
 
+echo "== call quality: figures reach the live row ==\n";
+$calls = ['d7'  => ['total' => 178, 'forwarded' => 24, 'short' => 41, 'silent' => 12, 'errors' => 1, 'minutes' => 305],
+          'd30' => ['total' => 612, 'forwarded' => 88, 'short' => 140, 'silent' => 40, 'errors' => 3, 'minutes' => 1120]];
+$b = arayaBuildBrief(res([mk([], ['calls' => $calls])]), TODAY);
+test("the calls block survives onto the live row unchanged", $b['live'][0]['calls'] === $calls);
+test("both windows and all six figures are present",
+     array_keys($b['live'][0]['calls']) === ['d7', 'd30']
+     && array_keys($b['live'][0]['calls']['d7']) === ['total', 'forwarded', 'short', 'silent', 'errors', 'minutes']);
+
+echo "== call quality: absent data is not zero ==\n";
+$b = arayaBuildBrief(res([mk()]), TODAY);
+test("a gcal row with no calls block gives null, not zeros", $b['live'][0]['calls'] === null);
+$b = arayaBuildBrief(res([], [['name' => 'Ghost', 'live_status' => 'LIVE', 'live_date' => '2026-06-01']]), TODAY);
+test("a shop with no gcal match gives null and does not crash", $b['live'][0]['calls'] === null && $b['live'][0]['gcal_missing'] === true);
+$b = arayaBuildBrief(res([mk([], ['calls' => 'broken'])]), TODAY);
+test("a malformed calls value gives null", $b['live'][0]['calls'] === null);
+$b = arayaBuildBrief(res([mk([], ['calls' => ['d30' => $calls['d30']]])]), TODAY);
+test("a missing window is null and the other survives",
+     $b['live'][0]['calls']['d7'] === null && $b['live'][0]['calls']['d30']['total'] === 612);
+$b = arayaBuildBrief(res([mk([], ['calls' => ['d7' => ['total' => 5], 'd30' => $calls['d30']]])]), TODAY);
+test("a missing figure is null, not 0", $b['live'][0]['calls']['d7']['minutes'] === null && $b['live'][0]['calls']['d7']['total'] === 5);
+$b = arayaBuildBrief(res([mk([], ['calls' => ['d7' => ['total' => 0, 'forwarded' => 0, 'short' => 0, 'silent' => 0, 'errors' => 0, 'minutes' => 0], 'd30' => $calls['d30']]])]), TODAY);
+test("a real zero stays 0", $b['live'][0]['calls']['d7']['total'] === 0);
+$b = arayaBuildBrief(res([mk(['live_status' => 'Stuck'], ['calls' => $calls])]), TODAY);
+test("non-live shops add no live row to carry calls", $b['live'] === []);
+
+echo "== call errors in the brief ==\n";
+$e1 = ['shop_id' => 's1', 'shop_name' => "  Lotus Thai Spa\u{00A0}", 'started_at' => '2026-10-21T04:12:00+00:00',
+       'outcome' => 'call.in-progress.error-vapifault-worker-not-available', 'duration_sec' => 12,
+       'recording_url' => 'https://example.com/r.wav'];
+$e2 = ['recording_url' => null, 'shop_name' => 'Jasmine'] + $e1;
+$b = arayaBuildBrief(res([mk()]), TODAY, [$e1, $e2]);
+test("callErrors carries every error, order kept", count($b['callErrors']) === 2 && $b['callErrors'][1]['shop_name'] === 'Jasmine');
+test("shop names are trimmed with the NBSP-safe idiom", $b['callErrors'][0]['shop_name'] === 'Lotus Thai Spa');
+test("a recording URL is kept", $b['callErrors'][0]['recording_url'] === 'https://example.com/r.wav');
+test("a null recording_url stays null", $b['callErrors'][1]['recording_url'] === null);
+test("duration is numeric", $b['callErrors'][0]['duration_sec'] === 12);
+$b = arayaBuildBrief(res([mk()]), TODAY, [['recording_url' => 'javascript:alert(1)'] + $e1, ['recording_url' => ''] + $e1]);
+test("a non-http recording URL becomes null", $b['callErrors'][0]['recording_url'] === null);
+test("an empty recording URL becomes null", $b['callErrors'][1]['recording_url'] === null);
+$b = arayaBuildBrief(res([mk()]), TODAY, [$e1, 'junk', null]);
+test("a non-array entry is skipped, not fatal", count($b['callErrors']) === 1);
+test("callErrors is an empty array when none were passed", arayaBuildBrief(res([mk()]), TODAY)['callErrors'] === []);
+test("callErrors is an empty array for an empty list", arayaBuildBrief(res([mk()]), TODAY, [])['callErrors'] === []);
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);
