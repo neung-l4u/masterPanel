@@ -43,8 +43,17 @@ const CURRENT_STAGES = ['Completed', 'Cancellation Req', 'Pause', 'Suspend'];
 const MONDAY_BOARDS = ['AU' => '1943203246', 'NZ' => '1943203264', 'UK' => '1943203305', 'US' => '1940392927', 'TH' => '1943203205', 'CA' => '1943203287'];
 const MONDAY_COLS = ['stage3', 'color1', 'domain_name', 'website', 'text67'];
 const PIPELINE_BOARD = '5029892180';   // IT : Website Tasks (New)
-const PIPELINE_COLS = ['status' => 'color_mm58m4mk', 'due' => 'date_mm58d58r', 'qt' => 'boolean_mm58vj6m', 'brief' => 'link_mm58qk0e', 'task' => 'color_mm58jka'];   // Site Status, Due date, IT QT Web, Brief, Status (task)
+const PIPELINE_COLS = ['status' => 'color_mm58m4mk', 'due' => 'date_mm58d58r', 'qt' => 'boolean_mm58vj6m', 'brief' => 'link_mm58qk0e', 'task' => 'color_mm58jka',
+    'po' => 'multiple_person_mm58gy3g'];   // Site Status, Due date, IT QT Web, Brief, Status (task), Project Owner
 const PIPELINE_ACTIVE_GROUPS = ['New Request', 'Task Queue', 'Working On It'];
+const ARAYA_BOARD = '2032016220';   // AI Receptionist – Client Tracker
+// Live Status, Set up Status, Register Date, Live Date (mirror from the Projects boards; the board's own Live Date column is empty)
+const ARAYA_COLS = ['live' => 'color_mks6nf9m', 'setup' => 'status', 'register' => 'date4', 'live_date' => 'lookup_mm34p9e4',
+    'po' => 'multiple_person_mm1jwyxn', 'q48' => 'color_mm33p54s',   // PO, Qualify for 48 Hrs
+    'calendar' => 'text_mm2y84v4', 'email' => 'text_mks6asn5',        // keys to pair a shop with its gcal row
+    'cancel_reason' => 'lookup_mm38gqdd', 'cancel_date' => 'lookup_mm38nmag'];   // mirrors from the Projects boards
+// Same buckets as ARAYA_SETUP_STATUSES in modules/arayaBrief/models/buildBrief.php — change both together.
+const ARAYA_WAITING_STATUSES = ['Not Live', 'Testing', 'Ready to LIVE', 'Waiting to onboard', 'Stuck', 'Ghosted', 'Pause'];
 // Links that are not the shop's own domain (social pages, third-party ordering/booking hosts).
 const NOT_A_SHOP_DOMAIN = '/facebook|instagram|google|foodbooking|gloriafood|tiktok|yelp|ubereats|doordash|menulog|localforyou\.com$|toasttab|vagaro|squareup|spoton|chowbus|glossgenius|blizzfull|smiledining|acuityscheduling|fresha\.com$|linktr\.ee|wixsite\.com$/';
 const CLOUDFLARE_PREFIXES = ['104.16.', '104.17.', '104.18.', '104.19.', '104.20.', '104.21.', '104.22.', '104.23.', '104.24.', '104.25.',
@@ -178,7 +187,7 @@ function monday_pipeline($token) {
         if ((string) $v[PIPELINE_COLS['brief']] === '') continue;   // only website builds (they have a Brief), not edit tasks
         if (!(in_array($st, ['Draft', 'Pre Live'], true) || ($active && in_array($st, ['', 'Wait shop owner'], true)))) continue;
         $out[$it['id']] = ['id' => $it['id'], 'name' => $it['name'], 'group' => $it['group']['title'], 'status' => $st ?: 'Not started',
-            'due' => (string) $v[PIPELINE_COLS['due']], 'qt' => $v[PIPELINE_COLS['qt']] !== '', 'task' => (string) $v[PIPELINE_COLS['task']], 'draft_sent' => ''];
+            'due' => (string) $v[PIPELINE_COLS['due']], 'qt' => $v[PIPELINE_COLS['qt']] !== '', 'task' => (string) $v[PIPELINE_COLS['task']], 'po' => trim((string) $v[PIPELINE_COLS['po']]), 'draft_sent' => ''];
     }
     foreach (array_chunk(array_keys($out), 50) as $ids) {
         foreach (monday_call($token, '{ items(ids:[' . implode(',', $ids) . ']) { id updates(limit:100) { created_at text_body } } }')['items'] as $it) {
@@ -189,6 +198,36 @@ function monday_pipeline($token) {
         }
     }
     return array_values($out);
+}
+
+// AI Araya shops from their Monday board. Test items ("Beam Test hello") are left out by name.
+// Mirror columns return no `text`, so values are read through MirrorValue.display_value.
+function monday_araya($token) {
+    $q = '{ boards(ids:[' . ARAYA_BOARD . ']) { items_page(limit:500) { items { name column_values(ids: ' . json_encode(array_values(ARAYA_COLS))
+       . ') { id text ... on MirrorValue { display_value } } } } } }';
+    $out = [];
+    foreach (monday_call($token, $q)['boards'][0]['items_page']['items'] as $it) {
+        if (preg_match('/\btest\b/i', $it['name'])) continue;
+        $v = [];
+        foreach ($it['column_values'] as $c) $v[$c['id']] = trim((string) ($c['display_value'] ?? $c['text'] ?? ''));
+        $out[] = ['name' => $it['name'], 'live' => $v[ARAYA_COLS['live']], 'setup' => $v[ARAYA_COLS['setup']] ?: '-',
+            'register' => $v[ARAYA_COLS['register']], 'live_date' => substr($v[ARAYA_COLS['live_date']], 0, 10),
+            'po' => $v[ARAYA_COLS['po']], 'q48' => $v[ARAYA_COLS['q48']],
+            'calendar' => strtolower($v[ARAYA_COLS['calendar']]), 'email' => strtolower($v[ARAYA_COLS['email']]),
+            'cancel_reason' => preg_replace('/\\s+/', ' ', $v[ARAYA_COLS['cancel_reason']]), 'cancel_date' => substr($v[ARAYA_COLS['cancel_date']], 0, 10)];
+    }
+    return $out;
+}
+
+// Minutes per AI shop from gcal-booking-api (GET /api/admin/araya-summary, X-Admin-Key).
+// Returns null when not configured or not reachable: the report then goes out without the minutes sections.
+function gcal_araya() {
+    global $CFG;
+    if (empty($CFG['gcal_base_url']) || empty($CFG['gcal_admin_key'])) return null;
+    [$code, $r] = http_json(rtrim($CFG['gcal_base_url'], '/') . '/api/admin/araya-summary', [CURLOPT_TIMEOUT => 60,
+        CURLOPT_HTTPHEADER => ['X-Admin-Key: ' . $CFG['gcal_admin_key']]]);
+    if ($code !== 200 || !isset($r['shops'])) { logmsg("gcal araya-summary HTTP $code"); return null; }
+    return $r['shops'];
 }
 
 function dreamscape_domains() {
@@ -328,6 +367,7 @@ function run_scan() {
 
     logmsg('monday…');      $projects = monday_projects($CFG['monday_token']);
     logmsg('pipeline…');    $pipeline = monday_pipeline($CFG['monday_token']);
+    logmsg('araya…');       $araya = monday_araya($CFG['monday_token']); $gcal = gcal_araya();
     logmsg('dreamscape…');  $ds = dreamscape_domains();
     $servers = []; $serverByIp = []; $serverName = [];
     foreach ($db->query("SELECT svID, svName, svIP FROM L4UServers WHERE svStatus = 1")->fetchAll() as $s) {
@@ -455,6 +495,54 @@ function run_scan() {
     $overdue = count($noDraftLate) + count(array_filter(array_merge($sent, $goingLive), fn($p) => $p['late'] > 0));
     $n['pipeline'] = count($pipeline); $n['pipeline_overdue'] = $overdue;
 
+    // ---- AI Araya (AI Receptionist board)
+    $aiBy = fn($st) => array_values(array_filter($araya, fn($a) => is_array($st) ? in_array($a['live'], $st, true) : $a['live'] === $st));
+    $aiLive = $aiBy('LIVE'); $aiWaiting = $aiBy(ARAYA_WAITING_STATUSES); $aiCancelling = $aiBy('Waiting to cancel');
+    usort($aiWaiting, fn($x, $y) => strcmp($x['register'] ?: '9999', $y['register'] ?: '9999'));   // longest wait first
+    usort($aiLive, fn($x, $y) => strcmp($x['live_date'] ?: '9999', $y['live_date'] ?: '9999'));
+    $n['ai_total'] = count($araya); $n['ai_live'] = count($aiLive); $n['ai_waiting'] = count($aiWaiting);
+    $n['ai_waiting_cancel'] = count($aiCancelling);
+    $n['ai_canceled'] = count($aiBy('Canceled')); $n['ai_cancel_before_live'] = count($aiBy('Cancel Before LIVE'));
+    // cancelled this calendar month, by the Cancel Date the team records (shops without one are not counted)
+    $n['ai_canceled_month'] = count(array_filter($aiBy(['Canceled', 'Cancel Before LIVE']), fn($a) => substr($a['cancel_date'], 0, 7) === date('Y-m')));
+    // Pair each Monday shop with its gcal row by Google Calendar ID, then email. No name guessing: names differ
+    // between the two ("KLR Massage Croydon"), and a wrong pair would show one branch's minutes on another.
+    foreach ($araya as &$a) {
+        $a['gcal'] = null;
+        foreach ($gcal ?? [] as $g) {
+            $cal = strtolower(trim((string) ($g['calendar_id'] ?? ''))); $mail = strtolower(trim((string) ($g['shop_email'] ?? '')));
+            if (($a['calendar'] !== '' && $a['calendar'] === $cal) || ($a['email'] !== '' && $a['email'] === $mail)) { $a['gcal'] = $g; break; }
+        }
+    }
+    unset($a);
+    $aiLive = array_values(array_filter($araya, fn($a) => $a['live'] === 'LIVE'));   // again: $aiBy holds the list from before pairing
+    usort($aiLive, fn($x, $y) => strcmp($x['live_date'] ?: '9999', $y['live_date'] ?: '9999'));
+    // Follow up, same thresholds as the Araya brief spec: upsell = refresh within 15 days and under 70 minutes left;
+    // not using = live 10+ days and under 15% of the allocation used.
+    $aiUpsell = array_values(array_filter($aiLive, fn($a) => $a['gcal'] && ($a['gcal']['days_until_refresh'] ?? null) !== null
+        && $a['gcal']['days_until_refresh'] <= 15 && $a['gcal']['remaining_minutes'] < 70));
+    $aiNotUse = array_values(array_filter($aiLive, fn($a) => $a['gcal'] && $a['gcal']['allocation'] > 0 && $a['live_date'] !== ''
+        && $days($a['live_date'], $today) >= 10 && ($a['gcal']['allocation'] - $a['gcal']['remaining_minutes']) / $a['gcal']['allocation'] < 0.15));
+    $aiBalance = array_values(array_filter($aiLive, fn($a) => $a['gcal']));
+    usort($aiBalance, fn($x, $y) => $x['gcal']['remaining_minutes'] <=> $y['gcal']['remaining_minutes']);   // least left first
+    $n['ai_upsell'] = count($aiUpsell); $n['ai_not_use'] = count($aiNotUse);
+    $n['ai_balance'] = array_sum(array_map(fn($a) => $a['gcal']['remaining_minutes'], $aiBalance));
+
+    // Over due = setup not done in time, as the team marks it in "Qualify for 48 Hrs" ("No (over 24 hrs)"); cancelled shops left out
+    $aiActive = array_values(array_filter($araya, fn($a) => !in_array($a['live'], ['Canceled', 'Cancel Before LIVE'], true)));
+    $aiOverdue = array_values(array_filter($aiActive, fn($a) => stripos($a['q48'], 'No') === 0));
+    $n['ai_overdue'] = count($aiOverdue);
+    // Incomplete information on active shops: what the board should have and does not
+    $aiGaps = [];
+    foreach ($aiActive as $a) {
+        $miss = array_keys(array_filter(['PO' => $a['po'] === '', 'Register Date' => $a['register'] === '', 'Qualify for 48 Hrs' => $a['q48'] === '',
+            'Live Date' => $a['live_date'] === '' && in_array($a['live'], ['LIVE', 'Waiting to cancel'], true), 'Live Status' => $a['live'] === '',
+            'not found in gcal (Calendar ID / email do not match)' => $gcal !== null && !$a['gcal'],
+            'allocation in gcal' => $a['live'] === 'LIVE' && $a['gcal'] && !$a['gcal']['allocation'],
+            'billing day in gcal' => $a['live'] === 'LIVE' && $a['gcal'] && ($a['gcal']['days_until_refresh'] ?? null) === null]));
+        if ($miss) $aiGaps[] = $a + ['missing' => implode(', ', $miss)];
+    }
+
     // wp_offline keeps its old meaning (down + unpublished) for the dashboard chart and annual_summary.
     $n['wp_offline'] = $n['wp_down'] + $n['wp_unpublished'];
 
@@ -495,7 +583,7 @@ function run_scan() {
     $dueTxt = fn($p) => $p['due'] !== '' ? $dm($p['due']) : 'not set';
     $numbered = function (array $items, callable $detail) {
         $out = []; $i = 1;
-        foreach ($items as $p) $out[] = ($i++) . ". {$p['name']}\n   • " . $detail($p);
+        foreach ($items as $p) $out[] = ($i++) . ". {$p['name']}\n   PO : " . ($p['po'] !== '' ? $p['po'] : '-') . "\n   • " . $detail($p);
         return $out;
     };
     $sentLines = $numbered($sent, fn($p) => ($p['late'] ? '🔴 ' : '') . "Status : {$p['status']} | Sent : " . ($p['draft_sent'] !== '' ? $dm($p['draft_sent']) : 'IT QT ✓')
@@ -550,9 +638,53 @@ function run_scan() {
         )),
         '📈 *' . $view('daily_summary', 'View all (dashboard)') . '*',
     ];
+
     $message = implode("\n\n", $sections);
 
-    if (DRY_RUN) { echo $message, "\n"; return; }
+    // AI Araya: its own report, sent as a second message right after the website one
+    $aiList = function (array $items, callable $detail) {
+        $out = []; $i = 1;
+        foreach ($items as $a) $out[] = ($i++) . ". {$a['name']}\n   PO : " . ($a['po'] !== '' ? $a['po'] : '-') . "\n   • " . $detail($a);
+        return $out;
+    };
+    $aiBlock = fn($title, array $items, callable $detail, $note = null) => implode("\n", array_merge([$title], $note && $items ? [$note] : [], $aiList($items, $detail)));
+    $aiSections = [
+        '🤖 *AI Araya Report* · ' . date('d/m/Y'),
+        implode("\n", [
+            "*1. AI customers (Total : {$n['ai_total']})*  <https://local-for-you.monday.com/boards/" . ARAYA_BOARD . '|View board>',
+            "*Status summary :* 🟢 LIVE : {$n['ai_live']}" . $delta('ai_live') . " | 🟡 Waiting to go live : {$n['ai_waiting']}" . $delta('ai_waiting')
+            . " | 🟠 Waiting to cancel : {$n['ai_waiting_cancel']} | ⚫ Canceled : " . ($n['ai_canceled'] + $n['ai_cancel_before_live'])
+            . " (Canceled {$n['ai_canceled']} · Before LIVE {$n['ai_cancel_before_live']})",
+            "❌ Canceled this month (" . date('M Y') . ") : {$n['ai_canceled_month']}" . $delta('ai_canceled_month')]),
+        $aiBlock('*2. Waiting to go live (Total : ' . count($aiWaiting) . ')*', $aiWaiting,
+            fn($a) => "Live Status : {$a['live']} | Setup : {$a['setup']} | Registered : " . ($a['register'] !== '' ? $dm($a['register']) . ' | Waiting : ' . $days($a['register'], $today) . ' days' : 'not recorded'),
+            '_Sorted by waiting time (from longest to shortest)_'),
+        $aiBlock('*3. LIVE (Total : ' . count($aiLive) . ')*', $aiLive,
+            fn($a) => $a['live_date'] !== '' ? 'Live date : ' . $dm($a['live_date']) . ' | Live for : ' . $days($a['live_date'], $today) . ' days' : 'Live date : not recorded'),
+        $aiBlock('*4. Waiting to cancel (Total : ' . count($aiCancelling) . ')*', $aiCancelling,
+            fn($a) => 'Live date : ' . ($a['live_date'] !== '' ? $dm($a['live_date']) : 'not recorded')
+                . ' | Cancel date : ' . ($a['cancel_date'] !== '' ? $dm($a['cancel_date']) : 'not recorded')
+                . "\n   • Reason : " . ($a['cancel_reason'] !== '' ? mb_strimwidth($a['cancel_reason'], 0, 160, '…') : 'not recorded')),
+        $aiBlock('*5. 🔴 Over due date (Total : ' . count($aiOverdue) . ')*' . $delta('ai_overdue'), $aiOverdue,
+            fn($a) => "Live Status : {$a['live']} | Qualify for 48 Hrs : {$a['q48']}"),
+        '______________________________',
+        implode("\n\n", array_merge(['*Follow up & Up sales*'],
+            $gcal === null ? ['_Minutes from gcal are unavailable today — Up sales, Live but not use and balance are not shown._'] : [
+                $aiBlock('*💰 Up sales (Total : ' . count($aiUpsell) . ')*', $aiUpsell,
+                    fn($a) => "Remaining : {$a['gcal']['remaining_minutes']} / {$a['gcal']['allocation']} mins | Refresh in : {$a['gcal']['days_until_refresh']} days"),
+                $aiBlock('*💤 Live but not use (Total : ' . count($aiNotUse) . ')*', $aiNotUse,
+                    fn($a) => 'Used this period : ' . ($a['gcal']['allocation'] - $a['gcal']['remaining_minutes']) . " / {$a['gcal']['allocation']} mins ("
+                        . round(100 * ($a['gcal']['allocation'] - $a['gcal']['remaining_minutes']) / $a['gcal']['allocation']) . '%) | Live for : ' . $days($a['live_date'], $today) . ' days'),
+                $aiBlock("*⏱️ Live overviews total balance : {$n['ai_balance']} mins*", $aiBalance,
+                    fn($a) => "Remaining : {$a['gcal']['remaining_minutes']} / {$a['gcal']['allocation']} mins | Refresh in : " . ($a['gcal']['days_until_refresh'] ?? '-') . ' days'),
+            ])),
+            // Incomplete informations is held back for now ($aiGaps is still built): add
+            // $aiBlock('*Incomplete informations (Total : ' . count($aiGaps) . ')*', $aiGaps, fn($a) => "Live Status : {$a['live']} | Missing : {$a['missing']}")
+            // as a last item above to show it again.
+    ];
+    $messageAi = implode("\n\n", $aiSections);
+
+    if (DRY_RUN) { echo $message, "\n\n", $messageAi, "\n"; return; }
 
     // ---- daily_summary: one row per day (re-running the same day replaces that day's row)
     // Columns are never renamed or reordered (the dashboard charts and Data Studio point at them);
@@ -560,6 +692,7 @@ function run_scan() {
     $today_row = ['Date' => $today] + $n;
     foreach ($byCountry as $cc => $v) $today_row["domains_$cc"] = $v;
     $today_row['message'] = $message;
+    $today_row['message_ai'] = $messageAi;
     $hdr = $sheet[0] ?? [];
     foreach (array_keys($today_row) as $k) if (!in_array($k, $hdr, true)) $hdr[] = $k;
     $hist = [];
@@ -589,21 +722,25 @@ function run_send() {
     global $CFG;
     $hist = sheet_read('daily_summary');
     $last = end($hist);
+    $fresh = count($hist) >= 2 && $last[0] === date('Y-m-d');
+    // two messages per space: the website report, then the AI Araya report (a day without one skips it)
+    $texts = [];
+    foreach (['message', 'message_ai'] as $colName) {
+        $col = array_search($colName, $hist[0] ?? [], true);
+        if ($fresh && $col !== false && !empty($last[$col])) $texts[] = $last[$col];
+    }
+    // Report what was observed, not why.
+    if (!$texts) $texts[] = 'Domain report: no scan result for ' . date('d/m/Y') . ' (latest row: ' . ($last[0] ?? 'none') . ')';
     $ok = true;
     // every config key that starts with chat_webhook gets the same report (add a space = add a key, no code change)
     foreach (array_filter(array_keys($CFG), fn($k) => str_starts_with($k, 'chat_webhook')) as $hook) {
         if (empty($CFG[$hook])) { logmsg("chat $hook: not set in config/domain_report.php, skipped"); continue; }
-        $col = array_search('message', $hist[0] ?? [], true);
-        if (count($hist) < 2 || $last[0] !== date('Y-m-d') || $col === false || empty($last[$col])) {
-            // Report what was observed, not why.
-            $text = 'Domain report: no scan result for ' . date('d/m/Y') . ' (latest row: ' . ($last[0] ?? 'none') . ')';
-        } else {
-            $text = $last[$col];
+        foreach ($texts as $i => $text) {
+            [$code] = http_json($CFG[$hook], [CURLOPT_POST => 1, CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=UTF-8'],
+                CURLOPT_POSTFIELDS => json_encode(['text' => $text], JSON_UNESCAPED_UNICODE)]);
+            logmsg("chat $hook message " . ($i + 1) . " HTTP $code");
+            $ok = $ok && $code === 200;
         }
-        [$code] = http_json($CFG[$hook], [CURLOPT_POST => 1, CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=UTF-8'],
-            CURLOPT_POSTFIELDS => json_encode(['text' => $text], JSON_UNESCAPED_UNICODE)]);
-        logmsg("chat $hook HTTP $code");
-        $ok = $ok && $code === 200;
     }
     if (!$ok) exit(1);
 }

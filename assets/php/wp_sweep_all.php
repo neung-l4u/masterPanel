@@ -7,6 +7,7 @@
 //   php wp_sweep_all.php                 — every account on every server in whm_tokens.json
 //   php wp_sweep_all.php 3               — only svID 3
 //   php wp_sweep_all.php 3 user1 user2   — only these accounts (for a quick test)
+//   php wp_sweep_all.php --php-only      — only the PHP version / PHP2Shell column, skips the file checks (fast)
 //
 // CSV to config/wp_sweep_YYYY-MM-DD.csv. Nothing is written to the client accounts.
 date_default_timezone_set('Asia/Bangkok');
@@ -22,15 +23,19 @@ const SIG = '/wp_enqueue_async_script|wp_generate_dynamic_cache|wp_schedule_even
          . '|eval\s*\(\s*\$_(SERVER|GET|POST|REQUEST|COOKIE)|eval\s*\(\s*curl_exec|Tiny File Manager/';
 // the kit hid its hidden-admin PHP at the top of this stylesheet on chariceatsquare
 const STASH = ['wp-content/plugins/elementor/assets/lib/font-awesome/css/font-awesome.min.css'];
+// first patch release of each branch for PHP2Shell (CVE-2026-109618 / 109619, 21 Oct 2026); older branches got no fix
+const PHP2SHELL_FIXED = ['8.2' => 35, '8.3' => 36, '8.4' => 27, '8.5' => 12];
 
-[$svOnly, $users] = [$argv[1] ?? '', array_slice($argv, 2)];
+$phpOnly = in_array('--php-only', $argv, true);
+$args = array_values(array_diff(array_slice($argv, 1), ['--php-only']));
+[$svOnly, $users] = [$args[0] ?? '', array_slice($args, 1)];
 $servers = whmServers();
 if (!$servers) exit("No whm_tokens.json configured.\n");
 
 $file = __DIR__ . '/../../config/wp_sweep_' . date('Y-m-d') . '.csv';
 $out = fopen($file, 'w');
-fputcsv($out, ['Result', 'svID', 'cPanel user', 'Domain', 'Docroot', 'Findings', 'Hardening'], ',', '"', '');
-$count = ['SUSPECT' => 0, 'Clean' => 0, 'No WordPress' => 0, 'Not reachable' => 0];
+fputcsv($out, ['Result', 'svID', 'cPanel user', 'Domain', 'Docroot', 'Findings', 'Hardening', 'PHP (PHP2Shell)'], ',', '"', '');
+$count = ['SUSPECT' => 0, 'Clean' => 0, 'No WordPress' => 0, 'Not reachable' => 0, 'PHP UNPATCHED' => 0, 'PHP unknown' => 0];
 
 foreach ($servers as $svID => $s) {
     if ($svOnly !== '' && $svOnly !== (string) $svID) continue;
@@ -52,14 +57,45 @@ foreach ($servers as $svID => $s) {
         foreach ($roots as $root => $domain) {
             if (!in_array('wp-config.php', names($s, $u, $root), true)) continue;
             $wp++;
-            [$find, $hard] = checkSite($s, $u, $root, $a);
-            row($out, $count, $find ? 'SUSPECT' : 'Clean', $svID, $u, $domain, $root, implode(' | ', $find), implode(' | ', $hard));
+            [$find, $hard] = $phpOnly ? [[], []] : checkSite($s, $u, $root, $a);
+            $php = phpStatus($s, $u, $domain, $a);
+            if (str_contains($php, 'UNPATCHED')) $count['PHP UNPATCHED']++;
+            elseif (str_contains($php, 'unknown')) $count['PHP unknown']++;
+            row($out, $count, $find ? 'SUSPECT' : 'Clean', $svID, $u, $domain, $root, implode(' | ', $find), implode(' | ', $hard), $php);
         }
         if (!$wp) row($out, $count, 'No WordPress', $svID, $u, $a['domain'] ?? '', '', '', '');
     }
     fwrite(STDERR, "\n");
 }
 fwrite(STDERR, json_encode($count) . "\nCSV: config/wp_sweep_" . date('Y-m-d') . ".csv\n");
+
+/**
+ * PHP version serving the site and whether it carries the PHP2Shell fix. Our tokens cannot run `php -v`, so:
+ * the X-Powered-By header gives the exact version; failing that, CloudLinux PHP Selector's per-account
+ * defaults.cfg gives the branch only (patch level unknown, server-wide: check it once per server by hand).
+ */
+function phpStatus(array $s, string $u, string $domain, array $acct): string {
+    $ch = curl_init("https://$domain/");
+    curl_setopt_array($ch, [CURLOPT_NOBODY => true, CURLOPT_HEADER => true, CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true, CURLOPT_MAXREDIRS => 3, CURLOPT_TIMEOUT => 15, CURLOPT_SSL_VERIFYPEER => false]);
+    $hdr = (string) curl_exec($ch);
+    $src = 'header';
+    if (!preg_match('~X-Powered-By:\s*PHP/(\d+)\.(\d+)(?:\.(\d+))?~i', $hdr, $m)) {
+        $cfg = content($s, $u, rtrim($acct['partition'] ?? '/home', '/') . "/$u/.cl.selector/defaults.cfg");
+        if ($cfg === null || !preg_match('~^\s*php\s*=\s*(\d+)\.(\d+)~mi', $cfg, $m)) return 'unknown';
+        $src = 'selector';
+    }
+    return php2shellVerdict((int) $m[1], (int) $m[2], isset($m[3]) && $m[3] !== '' ? (int) $m[3] : null) . " ($src)";
+}
+
+/** "8.3.36 patched" / "8.3.30 UNPATCHED" / "7.4 UNPATCHED (no fix for this branch)" / "8.3 patch level unknown". */
+function php2shellVerdict(int $maj, int $min, ?int $patch): string {
+    $branch = "$maj.$min";
+    $v = $patch === null ? $branch : "$branch.$patch";
+    if (!isset(PHP2SHELL_FIXED[$branch])) return "$v UNPATCHED (no fix for this branch, upgrade to 8.2+)";
+    if ($patch === null) return "$v patch level unknown";
+    return $patch >= PHP2SHELL_FIXED[$branch] ? "$v patched" : "$v UNPATCHED (needs $branch." . PHP2SHELL_FIXED[$branch] . '+)';
+}
 
 /** Findings point at the kit; hardening is just the state of wp-config. */
 function checkSite(array $s, string $u, string $root, array $acct): array {

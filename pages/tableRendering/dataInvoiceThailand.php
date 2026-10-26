@@ -14,7 +14,7 @@ $searchVal  = $_POST['search_val'] ?? '';
 $params = [];
 $query = "SELECT r.`id` AS receiptId, i.`id` AS id, r.`receiptID`, r.`amount_paid`, r.`status` AS receiptStatus, r.`slip`, r.`sentAt`,
                  i.`invoiceID`, i.`product`, i.`amount` AS invoiceAmount, i.`status` AS invoiceStatus, i.`wantGM`, i.`createdAt`,
-                 c.`name`, c.`email` AS customerEmail, c.`phone` AS customerPhone,
+                 c.`name`, c.`shopName`, c.`email` AS customerEmail, c.`phone` AS customerPhone,
                  c.`type`, c.`clientType`, c.`bankName`, c.`bankNumber` AS bankThaiNumber
           FROM `thInvoice` i
           LEFT JOIN `thReceipt` r ON r.`id` = (
@@ -33,7 +33,8 @@ if (!empty($dateEnd) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateEnd)) {
 }
 if (!empty($searchVal)) {
     $s = '%' . strip_tags(trim($searchVal)) . '%';
-    $query .= ' AND (c.`name` LIKE ? OR c.`email` LIKE ? OR i.`invoiceID` LIKE ? OR r.`receiptID` LIKE ?)';
+    $query .= ' AND (c.`name` LIKE ? OR c.`shopName` LIKE ? OR c.`email` LIKE ? OR i.`invoiceID` LIKE ? OR r.`receiptID` LIKE ?)';
+    $params[] = $s;
     $params[] = $s;
     $params[] = $s;
     $params[] = $s;
@@ -50,6 +51,7 @@ foreach ($rows as $row) {
     $id       = $row['id'];
     $invID    = htmlspecialchars($row['receiptID'] ?? $row['invoiceID'] ?? '-');
     $name     = htmlspecialchars($row['name'] ?? '-');
+    $shopName = htmlspecialchars($row['shopName'] ?? '') ?: '-';
     $email    = htmlspecialchars($row['customerEmail'] ?? '-');
     $phone    = htmlspecialchars($row['customerPhone'] ?? '-');
     $amount = number_format((float)($row['amount_paid'] ?? $row['invoiceAmount'] ?? 0), 2) . ' ฿';
@@ -111,6 +113,7 @@ foreach ($rows as $row) {
     $data['data'][] = [
         $date,
         $invID,
+        $shopName,
         $name,
         $email,
         $clientBadge,

@@ -114,6 +114,30 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Tools Management & Logs";
         break;
+    case "userTools":
+        $showPage = "toolsUser.php";
+        $activeMenu["lv1"] = "userTools";
+        $activeMenu["lv2"] = "userToolsHome";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : User Tools";
+        break;
+    case "qrGenerator":
+        $showPage = "toolsUser/qrGenerator.php";
+        $activeMenu["lv1"] = "userTools";
+        $activeMenu["lv2"] = "qrGenerator";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : QR Generator";
+        break;
+    case "imageResizer":
+        $showPage = "toolsUser/imageResizer.php";
+        $activeMenu["lv1"] = "userTools";
+        $activeMenu["lv2"] = "imageResizer";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Image Resizer";
+        break;
     case "coin":
         $showPage = "coin.php";
         $activeMenu["lv1"] = "rewardsCoin";
@@ -189,6 +213,16 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataSignupLogs.php";
         $title = "Master panel : SignUp Logs (Staff)";
         break;
+    case "paymentPassword":
+        $showPage = "paymentPassword.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "paymentPassword";
+        // หน้านี้ init DataTable เอง (ต้องเรียงใหม่->เก่า และมีปุ่มในตาราง)
+        // ถ้าปล่อยให้ main.php init ให้ ค่า order/pageLength ที่ตั้งไว้จะไม่ถูกใช้
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Payment Password";
+        break;
     case "formASAPLogs":
         $showPage = "formASAPLogs.php";
         $activeMenu["lv1"] = "logs";
@@ -228,6 +262,14 @@ switch ($menuPage){
         $datatable["show"] = "true";
         $datatable["src"] = "pages/tableRendering/dataZoomExt.php";
         $title = "Master panel : Zoom Extension";
+        break;
+    case "aiManagement":
+        $showPage = "aiManagement.php";
+        $activeMenu["lv1"] = "formMgmt";
+        $activeMenu["lv2"] = "aiManagement";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataAiLogs.php";
+        $title = "Master panel : AI Management";
         break;
     case "rewardCoin":
         $showPage = "rewardCoin.php";
@@ -309,6 +351,14 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Revenue Report";
         break;
+    case "arayaBrief":
+        $showPage = "arayaBrief.php";
+        $activeMenu["lv1"] = "report";
+        $activeMenu["lv2"] = "arayaBrief";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Araya Daily Brief";
+        break;
     case "reportDeliveries":
         $showPage = "reportDeliveries.php";
         $activeMenu["lv1"] = "report";
@@ -357,13 +407,21 @@ switch ($menuPage){
         $datatable["src"] = "";
         $title = "Master panel : Monitor";
         break;
+    case "managerWebhook":
+        $showPage = "managerWebhook.php";
+        $activeMenu["lv1"] = "monitor";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Manage Text Website Down";
+        break;
     case "invoiceThailand":
         $showPage = "invoiceThailand.php";
         $activeMenu["lv1"] = "formMgmt";
         $activeMenu["lv2"] = "invoiceThailand";
         $datatable["show"] = "false";
         $datatable["src"] = "";
-        $title = "Master panel : Invoice Thailand";
+        $title = "Master panel : Customer Thailand";
         break;
     case "slipSubmission":
         $showPage = "slipSubmission.php";
@@ -371,14 +429,23 @@ switch ($menuPage){
         $activeMenu["lv2"] = "slipSubmission";
         $datatable["show"] = "false";
         $datatable["src"] = "";
-        $title = "Master panel : ส่งหลักฐานการชำระเงิน";
+        $title = "Master panel : ส่งหลักฐานชำระเงิน";
         break;
-    case "billingTH":
-        $showPage = "billingTH.php";
+    case "dataCustomer":
+        $showPage = "dataCustomer.php";
         $activeMenu["lv1"] = "formMgmt";
-        $activeMenu["lv2"] = "billingTH";
+        $activeMenu["lv2"] = "dataCustomer";
         $datatable["show"] = "false";
         $datatable["src"] = "";
-        $title = "Master panel : Billing TH";
+        $title = "Master panel : Data Customer";
         break;
+    // [HIDDEN] billingTH — ซ่อนไว้ก่อน เนื่องจาก invoiceThailand ครอบคลุม feature เดียวกัน
+    // case "billingTH":
+    //     $showPage = "billingTH.php";
+    //     $activeMenu["lv1"] = "formMgmt";
+    //     $activeMenu["lv2"] = "billingTH";
+    //     $datatable["show"] = "false";
+    //     $datatable["src"] = "";
+    //     $title = "Master panel : Billing TH — ตรวจสลิป";
+    //     break;
 }
