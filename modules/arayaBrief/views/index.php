@@ -46,6 +46,16 @@ function arayaLifespanText($l): string
     return is_array($l) ? (int)$l['months'] . ' mo ' . (int)$l['days'] . ' d' : 'not recorded';
 }
 
+/** One call-quality figure. Null is "gcal sent nothing", never shown as 0. */
+function arayaCallCell($v, string $extra = ''): string
+{
+    $cls = 'text-end' . ($extra === '' ? '' : ' ' . $extra);
+    if ($v === null) {
+        return '<td class="' . $cls . '"><span class="mins mins-unknown" title="No figure from gcal">?</span></td>';
+    }
+    return '<td class="' . $cls . '"><span class="mins">' . arayaH($v) . '</span></td>';
+}
+
 function arayaOwner($po): string
 {
     $po = arayaClean($po);
@@ -138,6 +148,10 @@ if ($brief) {
         .mins-amber { color: #b36b00; }
         .mins-green { color: #198754; }
         .mins-unknown { color: #6c757d; }
+        .urgent { border-left: 4px solid #dc3545; background: #fff5f5; }
+        .urgent h2 { color: #842029; border-bottom-color: #f1c9cd; }
+        .calls th.grp { text-align: center; }
+        .calls .win { border-left: 2px solid #dee2e6; }
         .gaps { border: 2px solid #dc3545; border-radius: 12px; background: #fff5f5; }
         .gaps .head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; width: 100%; background: none; border: 0; text-align: left; color: #842029; font-weight: 700; }
         .gaps .count { background: #dc3545; color: #fff; border-radius: 999px; padding: 2px 12px; font-size: .95rem; }
@@ -191,6 +205,13 @@ if ($brief) {
     </div>
     <?php } ?>
 
+    <?php if (!empty($brief['call_errors_unavailable']) && empty($brief['gcal_unavailable'])) { ?>
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i> The failed-call list could not be fetched, so a missing
+        "Calls with errors" panel does not mean there were none.
+    </div>
+    <?php } ?>
+
     <?php $o = $brief['overview']; ?>
     <div class="row g-3 mb-3">
         <?php foreach ([
@@ -233,6 +254,28 @@ if ($brief) {
         <?php } ?>
     </div>
 
+    <?php if (!empty($brief['callErrors'])) { ?>
+    <div class="panel-card urgent mb-4" id="callErrors">
+        <h2>&#128222; Calls with errors <span class="note fw-normal">(last 30 days, newest first; <?php echo count($brief['callErrors']); ?> shown)</span></h2>
+        <div class="body table-responsive">
+            <table class="table align-middle">
+                <thead><tr><th>Shop</th><th>When (Bangkok)</th><th>What went wrong</th><th class="text-end">Length</th><th>Recording</th></tr></thead>
+                <tbody>
+                <?php foreach ($brief['callErrors'] as $e) { ?>
+                    <tr>
+                        <td class="fw-semibold"><?php echo arayaH(arayaChatName(['name' => $e['shop_name']])); ?></td>
+                        <td><?php echo arayaH(arayaChatWhen($e['started_at'])); ?></td>
+                        <td class="note"><?php echo $e['outcome'] === '' ? '<span class="text-muted">not stated</span>' : arayaH($e['outcome']); ?></td>
+                        <td class="text-end"><?php echo $e['duration_sec'] === null ? '<span class="mins mins-unknown">?</span>' : '<span class="mins">' . arayaH($e['duration_sec']) . ' s</span>'; ?></td>
+                        <td><?php if ($e['recording_url'] !== null) { ?><a href="<?php echo arayaH($e['recording_url']); ?>" target="_blank" rel="noopener noreferrer"><i class="bi bi-play-circle"></i> Listen</a><?php } else { ?><span class="text-muted">no recording</span><?php } ?></td>
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php } ?>
+
     <div class="panel-card mb-4">
         <h2>Live shops <span class="note fw-normal">(least minutes first; <span class="money">&#128176;</span> = also an upsell candidate)</span></h2>
         <div class="body table-responsive">
@@ -253,6 +296,43 @@ if ($brief) {
                     </tr>
                 <?php } ?>
                 <?php if (!$brief['live']) { ?><tr><td colspan="5" class="text-muted">No live shops.</td></tr><?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel-card mb-4" id="callQuality">
+        <h2>Call quality <span class="note fw-normal">(<strong>?</strong> = gcal sent no figure, which is not the same as 0; short = under 15 s; silent = caller said nothing and it timed out)</span></h2>
+        <div class="body table-responsive">
+            <table class="table table-hover align-middle calls">
+                <thead>
+                    <tr><th rowspan="2">Shop</th><th class="grp win" colspan="5">Last 7 days</th><th class="grp win" colspan="5">Last 30 days</th></tr>
+                    <tr>
+                        <?php foreach ([7, 30] as $days) { ?>
+                        <th class="text-end win">Calls</th><th class="text-end">Forwarded</th><th class="text-end">Short</th><th class="text-end">Silent</th><th class="text-end">Minutes</th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($brief['live'] as $r) { ?>
+                    <tr>
+                        <td class="fw-semibold"><?php echo arayaH($r['name']); ?></td>
+                        <?php if (!is_array($r['calls'] ?? null)) { ?>
+                        <td colspan="10" class="win text-muted"><?php echo !empty($r['gcal_missing']) ? 'Not in gcal - no call data' : 'gcal sent no call data for this shop'; ?></td>
+                        <?php } else { foreach (ARAYA_CALL_WINDOWS as $w) {
+                            $win = $r['calls'][$w] ?? null;
+                            if (!is_array($win)) { ?>
+                        <td colspan="5" class="win text-muted">no figures for this window</td>
+                            <?php } else {
+                                echo arayaCallCell($win['total'], 'win');
+                                foreach (['forwarded', 'short', 'silent', 'minutes'] as $k) {
+                                    echo arayaCallCell($win[$k]);
+                                }
+                            }
+                        } } ?>
+                    </tr>
+                <?php } ?>
+                <?php if (!$brief['live']) { ?><tr><td colspan="11" class="text-muted">No live shops.</td></tr><?php } ?>
                 </tbody>
             </table>
         </div>
