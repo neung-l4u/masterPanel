@@ -257,7 +257,69 @@ function arayaQuietFinding(array $periods): ?array
     return null;
 }
 
-function arayaBuildBrief(array $matchResult, string $todayYmd): array
+/** The two reporting windows gcal sends, and the six figures in each. Exact upstream keys. */
+const ARAYA_CALL_WINDOWS = ['d7', 'd30'];
+const ARAYA_CALL_FIGURES = ['total', 'forwarded', 'short', 'silent', 'errors', 'minutes'];
+
+/**
+ * A shop's call-quality figures, or null when we have none.
+ *
+ * Null and zero are different statements: a shop with no gcal match, or one
+ * whose row carries no calls block, is a shop we know nothing about, while a
+ * shop with total 0 really took no calls. Collapsing the first into the second
+ * would show a shop whose line may be broken as having a quiet week. So a
+ * missing window is null, a missing figure inside a window is null, and only
+ * a figure gcal actually sent is a number.
+ */
+function arayaCallsBlock(?array $g): ?array
+{
+    if ($g === null || !is_array($g['calls'] ?? null)) {
+        return null;
+    }
+    $out = [];
+    $any = false;
+    foreach (ARAYA_CALL_WINDOWS as $w) {
+        $win = $g['calls'][$w] ?? null;
+        if (!is_array($win)) {
+            $out[$w] = null;
+            continue;
+        }
+        $any = true;
+        foreach (ARAYA_CALL_FIGURES as $k) {
+            $out[$w][$k] = arayaNum($win[$k] ?? null);
+        }
+    }
+    return $any ? $out : null;
+}
+
+/**
+ * Failed calls, cleaned for display. Upstream order (newest first) is kept.
+ *
+ * recording_url may be null, and it ends up in an href, so only an http(s)
+ * URL survives: anything else (a javascript: URI, a bare word) becomes null
+ * and renders as plain text rather than a broken or hostile link.
+ */
+function arayaCleanCallErrors(?array $errors): array
+{
+    $out = [];
+    foreach ($errors ?? [] as $e) {
+        if (!is_array($e)) {
+            continue;
+        }
+        $url = arayaClean($e['recording_url'] ?? null);
+        $out[] = [
+            'shop_id' => arayaClean($e['shop_id'] ?? ''),
+            'shop_name' => arayaClean($e['shop_name'] ?? ''),
+            'started_at' => arayaClean($e['started_at'] ?? ''),
+            'outcome' => arayaClean($e['outcome'] ?? ''),
+            'duration_sec' => arayaNum($e['duration_sec'] ?? null),
+            'recording_url' => preg_match('~^https?://\S+$~i', $url) === 1 ? $url : null,
+        ];
+    }
+    return $out;
+}
+
+function arayaBuildBrief(array $matchResult, string $todayYmd, ?array $callErrors = null): array
 {
     $gaps = [];
     $overview = ['total' => 0, 'live' => 0, 'pendingCancel' => 0, 'setup' => 0,
@@ -341,6 +403,7 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
                 'remaining_minutes' => $minutes, 'allocation' => $alloc,
                 'days_until_refresh' => $g ? arayaNum($g['days_until_refresh'] ?? null) : null,
                 'gcal_missing' => $g === null,
+                'calls' => arayaCallsBlock($g),
             ];
             if ($lifespan === null) {
                 arayaGap($gaps, 'no_live_date', $name, 'No usable date: the tracker Live Date is empty and gcal has no signup date either, so lifespan and the idle rules cannot be evaluated.');
@@ -552,6 +615,7 @@ function arayaBuildBrief(array $matchResult, string $todayYmd): array
         'setup' => $setup,
         'cancelling' => $cancelling,
         'gaps' => $gaps,
+        'callErrors' => arayaCleanCallErrors($callErrors),
         // Split once here so the dashboard and the Chat message cannot
         // disagree about which gaps are worth acting on.
         'gapsNeedingAction' => count(array_filter($gaps, fn($g) => empty($g['expected']))),

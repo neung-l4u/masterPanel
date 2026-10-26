@@ -157,7 +157,25 @@
             "billing_day": 3,
             "days_until_refresh": 18,
             "currency": "AUD",
-            "closed_periods": []
+            "closed_periods": [],
+            "calls": {
+                "d7": {
+                    "total": 178,
+                    "forwarded": 24,
+                    "short": 41,
+                    "silent": 12,
+                    "errors": 1,
+                    "minutes": 305
+                },
+                "d30": {
+                    "total": 612,
+                    "forwarded": 88,
+                    "short": 140,
+                    "silent": 40,
+                    "errors": 3,
+                    "minutes": 1120
+                }
+            }
         },
         {
             "shop_id": "g2",
@@ -169,7 +187,25 @@
             "billing_day": 8,
             "days_until_refresh": 22,
             "currency": "AUD",
-            "closed_periods": []
+            "closed_periods": [],
+            "calls": {
+                "d7": {
+                    "total": 90,
+                    "forwarded": 10,
+                    "short": 50,
+                    "silent": 2,
+                    "errors": 0,
+                    "minutes": 120
+                },
+                "d30": {
+                    "total": 400,
+                    "forwarded": 40,
+                    "short": 160,
+                    "silent": 9,
+                    "errors": 1,
+                    "minutes": 520
+                }
+            }
         },
         {
             "shop_id": "g3",
@@ -181,7 +217,25 @@
             "billing_day": 10,
             "days_until_refresh": 20,
             "currency": "AUD",
-            "closed_periods": []
+            "closed_periods": [],
+            "calls": {
+                "d7": {
+                    "total": 0,
+                    "forwarded": 0,
+                    "short": 0,
+                    "silent": 0,
+                    "errors": 0,
+                    "minutes": 0
+                },
+                "d30": {
+                    "total": 12,
+                    "forwarded": 1,
+                    "short": 3,
+                    "silent": 0,
+                    "errors": 0,
+                    "minutes": 18
+                }
+            }
         },
         {
             "shop_id": "g4",
@@ -205,7 +259,25 @@
             "billing_day": 1,
             "days_until_refresh": 12,
             "currency": "AUD",
-            "closed_periods": []
+            "closed_periods": [],
+            "calls": {
+                "d7": {
+                    "total": 60,
+                    "forwarded": 8,
+                    "short": 9,
+                    "silent": 3,
+                    "errors": 2,
+                    "minutes": 140
+                },
+                "d30": {
+                    "total": 250,
+                    "forwarded": 30,
+                    "short": 40,
+                    "silent": 10,
+                    "errors": 5,
+                    "minutes": 610
+                }
+            }
         },
         {
             "shop_id": "g6",
@@ -234,7 +306,17 @@
                     "period_end": "2026-07-01",
                     "used_minutes": 180
                 }
-            ]
+            ],
+            "calls": {
+                "d30": {
+                    "total": 120,
+                    "forwarded": 12,
+                    "short": 66,
+                    "silent": 4,
+                    "errors": 0,
+                    "minutes": 170
+                }
+            }
         },
         {
             "shop_id": "g7",
@@ -246,7 +328,25 @@
             "billing_day": 0,
             "days_until_refresh": 0,
             "currency": "AUD",
-            "closed_periods": []
+            "closed_periods": [],
+            "calls": {
+                "d7": {
+                    "total": 140,
+                    "forwarded": 30,
+                    "short": 12,
+                    "silent": 5,
+                    "errors": 0,
+                    "minutes": 260
+                },
+                "d30": {
+                    "total": 520,
+                    "forwarded": 95,
+                    "short": 50,
+                    "silent": 22,
+                    "errors": 2,
+                    "minutes": 980
+                }
+            }
         },
         {
             "shop_id": "g8",
@@ -258,7 +358,25 @@
             "billing_day": 0,
             "days_until_refresh": 0,
             "currency": "AUD",
-            "closed_periods": []
+            "closed_periods": [],
+            "calls": {
+                "d7": {
+                    "total": 178,
+                    "forwarded": 24,
+                    "short": 41,
+                    "silent": 12,
+                    "errors": 1,
+                    "minutes": 305
+                },
+                "d30": {
+                    "total": 612,
+                    "forwarded": 88,
+                    "short": 140,
+                    "silent": 40,
+                    "errors": 3,
+                    "minutes": 1120
+                }
+            }
         },
         {
             "shop_id": "g9",
@@ -270,7 +388,25 @@
             "billing_day": 23,
             "days_until_refresh": 3,
             "currency": "AUD",
-            "closed_periods": []
+            "closed_periods": [],
+            "calls": {
+                "d7": {
+                    "total": 90,
+                    "forwarded": 10,
+                    "short": 50,
+                    "silent": 2,
+                    "errors": 0,
+                    "minutes": 120
+                },
+                "d30": {
+                    "total": 400,
+                    "forwarded": 40,
+                    "short": 160,
+                    "silent": 9,
+                    "errors": 1,
+                    "minutes": 520
+                }
+            }
         },
         {
             "shop_id": "g10",
@@ -282,7 +418,25 @@
             "billing_day": 5,
             "days_until_refresh": 15,
             "currency": "AUD",
-            "closed_periods": []
+            "closed_periods": [],
+            "calls": {
+                "d7": {
+                    "total": 0,
+                    "forwarded": 0,
+                    "short": 0,
+                    "silent": 0,
+                    "errors": 0,
+                    "minutes": 0
+                },
+                "d30": {
+                    "total": 12,
+                    "forwarded": 1,
+                    "short": 3,
+                    "silent": 0,
+                    "errors": 0,
+                    "minutes": 18
+                }
+            }
         },
         {
             "shop_id": "g11",
@@ -294,7 +448,25 @@
             "billing_day": 6,
             "days_until_refresh": 16,
             "currency": "AUD",
-            "closed_periods": []
+            "closed_periods": [],
+            "calls": {
+                "d7": {
+                    "total": 60,
+                    "forwarded": 8,
+                    "short": 9,
+                    "silent": 3,
+                    "errors": 2,
+                    "minutes": 140
+                },
+                "d30": {
+                    "total": 250,
+                    "forwarded": 30,
+                    "short": 40,
+                    "silent": 10,
+                    "errors": 5,
+                    "minutes": 610
+                }
+            }
         },
         {
             "shop_id": "g12",
@@ -306,7 +478,51 @@
             "billing_day": 6,
             "days_until_refresh": 16,
             "currency": "AUD",
-            "closed_periods": []
+            "closed_periods": [],
+            "calls": {
+                "d7": {
+                    "total": 33,
+                    "forwarded": 3,
+                    "short": 20,
+                    "silent": 1,
+                    "errors": 0,
+                    "minutes": 41
+                },
+                "d30": {
+                    "total": 120,
+                    "forwarded": 12,
+                    "short": 66,
+                    "silent": 4,
+                    "errors": 0,
+                    "minutes": 170
+                }
+            }
+        }
+    ],
+    "call_errors": [
+        {
+            "shop_id": "g1",
+            "shop_name": "Lotus Thai Spa",
+            "started_at": "2026-10-25T04:12:00+00:00",
+            "outcome": "call.in-progress.error-vapifault-worker-not-available",
+            "duration_sec": 12,
+            "recording_url": "https://example.com/recordings/sample-1.wav"
+        },
+        {
+            "shop_id": "g2",
+            "shop_name": "Jasmine Wellness",
+            "started_at": "2026-10-24T09:30:00+00:00",
+            "outcome": "call.in-progress.error-sip-telephony-provider-failed-to-connect-call",
+            "duration_sec": 3,
+            "recording_url": null
+        },
+        {
+            "shop_id": "g4",
+            "shop_name": "Siam Orchid Therapy <b>&</b>",
+            "started_at": "2026-10-20T14:05:00+00:00",
+            "outcome": "pipeline-error-openai-llm-failed",
+            "duration_sec": 47,
+            "recording_url": "https://example.com/recordings/sample-3.wav"
         }
     ]
 }

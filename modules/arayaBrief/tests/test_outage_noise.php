@@ -86,5 +86,25 @@ $noKeys = ['gcal_unavailable' => true];
 $r = arayaSuppressOutageNoise($noKeys);
 test("absent keys do not raise a warning", is_array($r));
 
+echo "== call errors: degrading without the credential leaking ==\n";
+$errLog = tempnam(sys_get_temp_dir(), 'araya');
+$oldLog = ini_set('error_log', $errLog);
+$got = arayaTryFetchCallErrors(['gcal_base_url' => 'http://127.0.0.1:9', 'gcal_admin_key' => 'SECRET-KEY-123'], false);
+ini_set('error_log', $oldLog === false ? '' : $oldLog);
+$logged = (string) file_get_contents($errLog);
+@unlink($errLog);
+test("an unreachable endpoint gives null, not an exception", $got === null);
+test("null, not [], so 'could not ask' differs from 'no errors'", $got !== []);
+test("the failure is logged", str_contains($logged, 'call-errors fetch failed'));
+test("the admin key is not in the log", !str_contains($logged, 'SECRET-KEY-123'));
+test("the host is not in the log", !str_contains($logged, '127.0.0.1'));
+
+echo "== call errors: the fixture path ==\n";
+$fx = arayaLoadBrief(true);
+test("the fixture brief carries call errors", count($fx['callErrors']) >= 2);
+test("the fixture includes a null recording", in_array(null, array_column($fx['callErrors'], 'recording_url'), true));
+test("the fixture is not flagged unavailable", $fx['call_errors_unavailable'] === false);
+test("the fixture has a shop without calls data", in_array(null, array_column($fx['live'], 'calls'), true));
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);
