@@ -88,11 +88,23 @@ function arayaParseCallErrorsResponse(int $status, string $body): array
         throw new RuntimeException("gcal araya-call-errors returned HTTP {$status}.");
     }
     $decoded = json_decode($body, true);
-    if (!is_array($decoded) || !array_key_exists('errors', $decoded) || !is_array($decoded['errors'])) {
-        throw new RuntimeException('gcal araya-call-errors response has no errors array.');
+    // The endpoint names the list "calls"; this consumer was written expecting
+    // "errors", so every fetch failed and the panel silently never appeared --
+    // the failure mode the call_errors_unavailable flag exists to expose.
+    // Both names are accepted now: one of the two is the deployed contract and
+    // the other costs nothing to tolerate.
+    $list = null;
+    foreach (['calls', 'errors'] as $key) {
+        if (is_array($decoded) && array_key_exists($key, $decoded) && is_array($decoded[$key])) {
+            $list = $decoded[$key];
+            break;
+        }
+    }
+    if ($list === null) {
+        throw new RuntimeException('gcal araya-call-errors response has no call list.');
     }
     $errors = [];
-    foreach ($decoded['errors'] as $i => $row) {
+    foreach ($list as $i => $row) {
         if (!is_array($row)) {
             throw new RuntimeException("gcal araya-call-errors row #{$i} is not an object.");
         }
