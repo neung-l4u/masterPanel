@@ -110,6 +110,41 @@ $password = "Localeats#".date("Y");
     div.dataTables_wrapper div.dataTables_length select {
         width: 100%;
     }
+
+    /* Form Website modal: tabbed layout */
+    #formModal .modal-dialog{ max-width: 760px; }
+    #formModal .nav-tabs{ border-bottom: 1px solid #dee2e6; }
+    #formModal .nav-tabs .nav-link{
+        font-size: 0.85rem;
+        color: #6c757d;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding: .6rem .9rem;
+    }
+    #formModal .nav-tabs .nav-link.active{
+        color: #0d6efd;
+        border-bottom-color: #0d6efd;
+        background: transparent;
+    }
+    #formModal .nav-tabs .nav-link .bi{ margin-right: .3rem; }
+    #formModal .tab-content{ padding-top: 1.25rem; }
+    #formModal .form-group label{
+        font-size: .8rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: .25rem;
+    }
+    #formModal section.formSection + section.formSection{ margin-top: 1.5rem; }
+    #formModal section.formSection > .sectionTitle{
+        font-size: .75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: #8a93a2;
+        margin-bottom: .75rem;
+        padding-bottom: .35rem;
+        border-bottom: 1px dashed #e3e6eb;
+    }
 </style>
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/css/bootstrap.css">
 <link rel="stylesheet" href="assets/libs/bootstrap-5.3.3-dist/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
@@ -177,6 +212,7 @@ $password = "Localeats#".date("Y");
                                     <option value="GF">Gloria Food</option>
                                     <option value="AM">Amelia</option>
                                     <option value="VC">Voucher</option>
+                                    <option value="CW">Cloudwaitress</option>
                                 </select>
                             </div>
                             <div class="filterCol">
@@ -284,247 +320,305 @@ $password = "Localeats#".date("Y");
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="container py-4">
-                            <form>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputProject">Project</label>
-                                        <input type="text" class="form-control" id="inputProject" maxlength="255" placeholder="e.g. Hoon Hay">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputCountry">Country</label>
-                                        <select class="form-select inputCountry" id="inputCountry">
-                                            <option value="" selected>-- None --</option>
-                                            <?php
-                                            $dbCountries = $db->query('SELECT id, code, name FROM Countries ORDER BY id;')->fetchAll();
-                                            foreach ($dbCountries as $row){
-                                                ?>
-                                                <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
-                                            <?php }//foreach ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputLocation">Location</label>
-                                        <textarea class="form-control" id="inputLocation" rows="5" placeholder="e.g. Hoon Hay"> </textarea>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <div class="form-group">
-                                            <label for="inputOwner">Owner</label>
-                                            <input type="text" class="form-control" id="inputOwner" maxlength="255" placeholder="e.g. John Doe">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="inputOwnerEmail">Owner Email</label>
-                                            <input type="email" class="form-control" id="inputOwnerEmail" maxlength="255" placeholder="e.g. johndoe@gmail.com">
-                                        </div>
-                                    </div>
-                                </div>
+                        <ul class="nav nav-tabs" id="formModalTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="tab-general-btn" data-toggle="tab" data-target="#tab-general" type="button" role="tab"><i class="bi bi-info-circle"></i>General</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-hosting-btn" data-toggle="tab" data-target="#tab-hosting" type="button" role="tab"><i class="bi bi-key"></i>Hosting &amp; Login</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-integrations-btn" data-toggle="tab" data-target="#tab-integrations" type="button" role="tab"><i class="bi bi-plug"></i>Integrations</button>
+                            </li>
+                        </ul>
 
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputDomain">Domain</label>
-                                        <input type="text" class="form-control" id="inputDomain" maxlength="255" placeholder="e.g. www.hoonhaythaimassage.com">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputDomainProvider">Domain Provider</label>
-                                        <select id="inputDomainProvider" class="form-control">
-                                            <option value="" selected>-- None --</option>
-                                            <?php
-                                            $dbDomainProviders = $db->query('SELECT id, name FROM DomainProviders WHERE status=1 ORDER BY id;')->fetchAll();
-                                            foreach ($dbDomainProviders as $row){
-                                                ?>
-                                                <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
-                                            <?php }//foreach ?>
-                                        </select>
-                                    </div>
-                                </div>
+                        <form>
+                            <div class="tab-content" id="formModalTabsContent">
 
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputPublishedDate">Published Date</label>
-                                        <input type="date" class="form-control" id="inputPublishedDate">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputLiveStatus">Live Status</label>
-                                        <select id="inputLiveStatus" class="form-control">
-                                            <?php
-                                                $row = $db->query("SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'websiteList' AND COLUMN_NAME = 'wLiveStatus'")->fetchArray();;
-                                                $enum = str_replace(["enum(", ")", "'"], "", $row['COLUMN_TYPE']);
-                                                $options = explode(",", $enum);
-                                            ?>
-                                            <option value="" selected>-- None --</option>
-                                            <?php foreach($options as $liveStatus): ?>
-                                                <option value="<?php echo $liveStatus ?>"><?php echo $liveStatus ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputShopType">Shop Type</label>
-                                        <select id="inputShopType" class="form-control">
-                                            <option value="" selected>-- None --</option>
-                                            <?php
-                                            $dbShoptype = $db->query('SELECT id, name FROM tb_shopType WHERE status=1 ORDER BY id;')->fetchAll();
-                                            foreach ($dbShoptype as $row){
-                                                ?>
-                                                <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
-                                            <?php }//foreach ?>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputTemplate">Template</label>
-                                        <select id="inputTemplate" class="form-control">
-                                            <option value="" selected>-- None --</option>
-                                            <?php
-                                            $dbWebsiteTemplate = $db->query('SELECT id, template FROM WebsiteTemplate ORDER BY id;')->fetchAll();
-                                            foreach ($dbWebsiteTemplate as $row){
-                                                ?>
-                                                <option value="<?php echo $row['id']; ?>"><?php echo $row['template']; ?></option>
-                                            <?php }//foreach ?>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="inputServer">L4U Server</label>
-                                    <select id="inputServer" class="form-control">
-                                        <option value="" selected>-- None --</option>
-                                        <?php
-                                        $dbl4uServers = $db->query('SELECT svID, svName FROM L4UServers ORDER BY svID;')->fetchAll();
-                                        foreach ($dbl4uServers as $row){
-                                            ?>
-                                            <option value="<?php echo $row['svID']; ?>"><?php echo $row['svName']; ?></option>
-                                        <?php }//foreach ?>
-                                    </select>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputCPanelUser">CPanel User</label>
-                                        <input type="text" class="form-control" id="inputCPanelUser" placeholder="Hoonhay">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputCPanelPass">CPanel Pass</label>
-                                        <input type="text" class="form-control" id="inputCPanelPass" placeholder="bXWR8r&8Vb">
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputWordpressUser">Wordpress User</label>
-                                        <input type="text" class="form-control" id="inputWordpressUser" placeholder="Hoonhay">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputWordpressPass">Wordpress Pass</label>
-                                        <input type="text" class="form-control" id="inputWordpressPass" placeholder="99U@VFe~Ypm+">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="inputWordpressURL">Wordpress URL</label>
-                                    <input type="text" class="form-control" id="inputWordpressURL" placeholder="https://www.hoonhay.com/wp-admin/">
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputSMTPUser">SMTP Email User</label>
-                                        <input type="text" class="form-control" id="inputSMTPUser" placeholder="noreply@hoonhay.com">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputSMTPPass">SMTP Email Pass</label>
-                                        <input type="text" class="form-control" id="inputSMTPPass" placeholder="L4U@Notifications">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="inputSMTPRemark">SMTP Remark</label>
-                                    <input type="text" class="form-control" id="inputSMTPRemark" placeholder="e.g. SMTP for Hoonhay">
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="inputContactEmailUser">Contact Email User</label>
-                                        <input type="text" class="form-control" id="inputContactEmailUser" placeholder="info@hoonhay.com">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inputContactEmailPass">Contact Email Pass</label>
-                                        <input type="text" class="form-control" id="inputContactEmailPass" placeholder="hoonhay@123">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="inputContactEmailRemark">Contact Email Remark</label>
-                                    <input type="text" class="form-control" id="inputContactEmailRemark" placeholder="e.g. Email for Hoonhay">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="d-block mb-2">Google Tag Manager / Google Analytics (Example)</label>
-                                    <div class="border rounded p-3 bg-light">
-                                        <div class="form-row align-items-end mb-3">
-                                            <div class="col-md-7">
-                                                <label for="inputGtmContainerId" class="mb-1"><strong>GTM Container ID</strong></label>
-                                                <input type="text" class="form-control" id="inputGtmContainerId" placeholder="GTM-NMCF5CZF" autocomplete="off">
+                                <!-- General: what the site is, who owns it, where it lives -->
+                                <div class="tab-pane fade show active" id="tab-general" role="tabpanel">
+                                    <section class="formSection">
+                                        <div class="sectionTitle">Project</div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="inputProject">Project</label>
+                                                <input type="text" class="form-control" id="inputProject" maxlength="255" placeholder="e.g. Hoon Hay">
                                             </div>
-                                            <div class="col-md-5">
-                                                <small class="text-muted d-block">ใส่ Container ID ของเว็บที่กำลังติดตั้ง แล้วโค้ดด้านล่างจะเปลี่ยนตามอัตโนมัติ</small>
+                                            <div class="form-group col-md-6">
+                                                <label for="inputCountry">Country</label>
+                                                <select class="form-select inputCountry" id="inputCountry">
+                                                    <option value="" selected>-- None --</option>
+                                                    <?php
+                                                    $dbCountries = $db->query('SELECT id, code, name FROM Countries ORDER BY id;')->fetchAll();
+                                                    foreach ($dbCountries as $row){
+                                                        ?>
+                                                        <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                                    <?php }//foreach ?>
+                                                </select>
                                             </div>
                                         </div>
-
-                                        <p class="mb-1"><strong>Google Analytics (GA4)</strong></p>
-                                        <p class="mb-1 text-muted">Measurement ID : G-G8J517F780</p>
-                                        <p class="mb-3 text-muted">Google Tag ID : GT-T9H36C6Z</p>
-
-                                        <hr class="my-3">
-
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <strong>1. Paste this code as high in the &lt;head&gt; of the page as possible:</strong>
-                                            <button type="button" class="btn btn-sm btn-outline-primary ml-2" data-copy-target="gtmHeadCode">Copy</button>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="inputLocation">Location</label>
+                                                <textarea class="form-control" id="inputLocation" rows="5" placeholder="e.g. Hoon Hay"> </textarea>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <div class="form-group">
+                                                    <label for="inputOwner">Owner</label>
+                                                    <input type="text" class="form-control" id="inputOwner" maxlength="255" placeholder="e.g. John Doe">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="inputOwnerEmail">Owner Email</label>
+                                                    <input type="email" class="form-control" id="inputOwnerEmail" maxlength="255" placeholder="e.g. johndoe@gmail.com">
+                                                </div>
+                                            </div>
                                         </div>
-                                        <pre id="gtmHeadCode" class="bg-white border rounded p-2 mb-3" style="font-size:12px; white-space:pre-wrap; word-break:break-all;"></pre>
+                                    </section>
 
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <strong>2. Paste this code immediately after the opening &lt;body&gt; tag:</strong>
-                                            <button type="button" class="btn btn-sm btn-outline-primary ml-2" data-copy-target="gtmBodyCode">Copy</button>
+                                    <section class="formSection">
+                                        <div class="sectionTitle">Domain &amp; Status</div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="inputDomain">Domain</label>
+                                                <input type="text" class="form-control" id="inputDomain" maxlength="255" placeholder="e.g. www.hoonhaythaimassage.com">
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="inputDomainProvider">Domain Provider</label>
+                                                <select id="inputDomainProvider" class="form-control">
+                                                    <option value="" selected>-- None --</option>
+                                                    <?php
+                                                    $dbDomainProviders = $db->query('SELECT id, name FROM DomainProviders WHERE status=1 ORDER BY id;')->fetchAll();
+                                                    foreach ($dbDomainProviders as $row){
+                                                        ?>
+                                                        <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                                    <?php }//foreach ?>
+                                                </select>
+                                            </div>
                                         </div>
-                                        <pre id="gtmBodyCode" class="bg-white border rounded p-2 mb-0" style="font-size:12px; white-space:pre-wrap; word-break:break-all;"></pre>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inputGloriaFood">
-                                        <label class="form-check-label" for="inputGloriaFood">Gloria Food</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inputAmelia">
-                                        <label class="form-check-label" for="inputAmelia">Amelia</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inputVoucher">
-                                        <label class="form-check-label" for="inputVoucher">Voucher</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inputCloudwaitress">
-                                        <label class="form-check-label" for="inputCloudwaitress">Cloudwaitress</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inputOtherCheck" onchange="toggleOtherInput()">
-                                        <label class="form-check-label" for="inputOtherCheck">Other</label>
-                                    </div>
-                                </div>
-                                <div class="form-group" id="otherInputGroup" style="display:none;">
-                                    <label for="inputOther">Other (details)</label>
-                                    <span id="inputOtherDisplay" class="form-control" style="display:none; cursor:pointer; min-height:38px;" ondblclick="editOtherInput()"></span>
-                                    <textarea class="form-control" id="inputOther" rows="2" maxlength="300" placeholder="e.g. OpenTable, Resy ..."></textarea>
-                                    <small class="text-muted"><span id="inputOtherCount">0</span>/300</small>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="inputPublishedDate">Published Date</label>
+                                                <input type="date" class="form-control" id="inputPublishedDate">
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="inputLiveStatus">Live Status</label>
+                                                <select id="inputLiveStatus" class="form-control">
+                                                    <?php
+                                                        $row = $db->query("SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'websiteList' AND COLUMN_NAME = 'wLiveStatus'")->fetchArray();;
+                                                        $enum = str_replace(["enum(", ")", "'"], "", $row['COLUMN_TYPE']);
+                                                        $options = explode(",", $enum);
+                                                    ?>
+                                                    <option value="" selected>-- None --</option>
+                                                    <?php foreach($options as $liveStatus): ?>
+                                                        <option value="<?php echo $liveStatus ?>"><?php echo $liveStatus ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="inputShopType">Shop Type</label>
+                                                <select id="inputShopType" class="form-control">
+                                                    <option value="" selected>-- None --</option>
+                                                    <?php
+                                                    $dbShoptype = $db->query('SELECT id, name FROM tb_shopType WHERE status=1 ORDER BY id;')->fetchAll();
+                                                    foreach ($dbShoptype as $row){
+                                                        ?>
+                                                        <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+                                                    <?php }//foreach ?>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="inputTemplate">Template</label>
+                                                <select id="inputTemplate" class="form-control">
+                                                    <option value="" selected>-- None --</option>
+                                                    <?php
+                                                    $dbWebsiteTemplate = $db->query('SELECT id, template FROM WebsiteTemplate ORDER BY id;')->fetchAll();
+                                                    foreach ($dbWebsiteTemplate as $row){
+                                                        ?>
+                                                        <option value="<?php echo $row['id']; ?>"><?php echo $row['template']; ?></option>
+                                                    <?php }//foreach ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </section>
                                 </div>
 
-                                <input type="hidden" name="editID" id="editID" value="">
-                                <input type="hidden" name="formAction" id="formAction" value="add">
-                            </form>
-                        </div>
+                                <!-- Hosting & Login: server + every credential field -->
+                                <div class="tab-pane fade" id="tab-hosting" role="tabpanel">
+                                    <section class="formSection">
+                                        <div class="sectionTitle">Server</div>
+                                        <div class="form-group">
+                                            <label for="inputServer">L4U Server</label>
+                                            <select id="inputServer" class="form-control">
+                                                <option value="" selected>-- None --</option>
+                                                <?php
+                                                $dbl4uServers = $db->query('SELECT svID, svName FROM L4UServers ORDER BY svID;')->fetchAll();
+                                                foreach ($dbl4uServers as $row){
+                                                    ?>
+                                                    <option value="<?php echo $row['svID']; ?>"><?php echo $row['svName']; ?></option>
+                                                <?php }//foreach ?>
+                                            </select>
+                                        </div>
+                                    </section>
+
+                                    <section class="formSection">
+                                        <div class="sectionTitle">CPanel</div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="inputCPanelUser">CPanel User</label>
+                                                <input type="text" class="form-control" id="inputCPanelUser" placeholder="Hoonhay">
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="inputCPanelPass">CPanel Pass</label>
+                                                <input type="text" class="form-control" id="inputCPanelPass" placeholder="bXWR8r&8Vb">
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <section class="formSection">
+                                        <div class="sectionTitle">Wordpress</div>
+                                        <div class="form-group">
+                                            <label for="inputWordpressURL">Wordpress URL</label>
+                                            <input type="text" class="form-control" id="inputWordpressURL" placeholder="https://www.hoonhay.com/wp-admin/">
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="inputWordpressUser">Wordpress User</label>
+                                                <input type="text" class="form-control" id="inputWordpressUser" placeholder="Hoonhay">
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="inputWordpressPass">Wordpress Pass</label>
+                                                <input type="text" class="form-control" id="inputWordpressPass" placeholder="99U@VFe~Ypm+">
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <section class="formSection">
+                                        <div class="sectionTitle">Admin Support</div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="inputAdminSupportUser">Admin Support User</label>
+                                                <input type="text" class="form-control" id="inputAdminSupportUser" value="admin@localforyou.com" readonly>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="inputAdminSupportPass">Admin Support Pass</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="inputAdminSupportPass" placeholder="auto-generated">
+                                                    <button type="button" class="btn btn-outline-secondary" id="btnGenAdminSupportPass" title="สุ่มรหัสใหม่">
+                                                        <i class="bi bi-arrow-repeat"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <div class="form-row d-none">
+                                        <div class="form-group col-md-6">
+                                            <label for="inputSMTPUser">SMTP Email User</label>
+                                            <input type="text" class="form-control" id="inputSMTPUser" placeholder="noreply@hoonhay.com">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inputSMTPPass">SMTP Email Pass</label>
+                                            <input type="text" class="form-control" id="inputSMTPPass" placeholder="L4U@Notifications">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group d-none">
+                                        <label for="inputSMTPRemark">SMTP Remark</label>
+                                        <input type="text" class="form-control" id="inputSMTPRemark" placeholder="e.g. SMTP for Hoonhay">
+                                    </div>
+
+                                    <div class="form-row d-none">
+                                        <div class="form-group col-md-6">
+                                            <label for="inputContactEmailUser">Contact Email User</label>
+                                            <input type="text" class="form-control" id="inputContactEmailUser" placeholder="info@hoonhay.com">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inputContactEmailPass">Contact Email Pass</label>
+                                            <input type="text" class="form-control" id="inputContactEmailPass" placeholder="hoonhay@123">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group d-none">
+                                        <label for="inputContactEmailRemark">Contact Email Remark</label>
+                                        <input type="text" class="form-control" id="inputContactEmailRemark" placeholder="e.g. Email for Hoonhay">
+                                    </div>
+                                </div>
+
+                                <!-- Integrations: GTM/GA + third-party systems used on the site -->
+                                <div class="tab-pane fade" id="tab-integrations" role="tabpanel">
+                                    <section class="formSection">
+                                        <div class="sectionTitle">Google Tag Manager / Google Analytics (Example)</div>
+                                        <div class="border rounded p-3 bg-light">
+                                            <div class="form-row align-items-end mb-3">
+                                                <div class="col-md-7">
+                                                    <label for="inputGtmContainerId" class="mb-1"><strong>GTM Container ID</strong></label>
+                                                    <input type="text" class="form-control" id="inputGtmContainerId" placeholder="GTM-NMCF5CZF" autocomplete="off">
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <small class="text-muted d-block">ใส่ Container ID ของเว็บที่กำลังติดตั้ง แล้วโค้ดด้านล่างจะเปลี่ยนตามอัตโนมัติ</small>
+                                                </div>
+                                            </div>
+
+                                            <p class="mb-1"><strong>Google Analytics (GA4)</strong></p>
+                                            <p class="mb-1 text-muted">Measurement ID : G-G8J517F780</p>
+                                            <p class="mb-3 text-muted">Google Tag ID : GT-T9H36C6Z</p>
+
+                                            <hr class="my-3">
+
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <strong>1. Paste this code as high in the &lt;head&gt; of the page as possible:</strong>
+                                                <button type="button" class="btn btn-sm btn-outline-primary ml-2" data-copy-target="gtmHeadCode">Copy</button>
+                                            </div>
+                                            <pre id="gtmHeadCode" class="bg-white border rounded p-2 mb-3" style="font-size:12px; white-space:pre-wrap; word-break:break-all;"></pre>
+
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <strong>2. Paste this code immediately after the opening &lt;body&gt; tag:</strong>
+                                                <button type="button" class="btn btn-sm btn-outline-primary ml-2" data-copy-target="gtmBodyCode">Copy</button>
+                                            </div>
+                                            <pre id="gtmBodyCode" class="bg-white border rounded p-2 mb-0" style="font-size:12px; white-space:pre-wrap; word-break:break-all;"></pre>
+                                        </div>
+                                    </section>
+
+                                    <section class="formSection">
+                                        <div class="sectionTitle">Systems Used</div>
+                                        <div class="form-group">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="inputGloriaFood">
+                                                <label class="form-check-label" for="inputGloriaFood">Gloria Food</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="inputAmelia">
+                                                <label class="form-check-label" for="inputAmelia">Amelia</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="inputVoucher">
+                                                <label class="form-check-label" for="inputVoucher">Voucher</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="inputCloudwaitress">
+                                                <label class="form-check-label" for="inputCloudwaitress">Cloudwaitress</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="inputOtherCheck" onchange="toggleOtherInput()">
+                                                <label class="form-check-label" for="inputOtherCheck">Other</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="otherInputGroup" style="display:none;">
+                                            <label for="inputOther">Other (details)</label>
+                                            <span id="inputOtherDisplay" class="form-control" style="display:none; cursor:pointer; min-height:38px;" ondblclick="editOtherInput()"></span>
+                                            <textarea class="form-control" id="inputOther" rows="2" maxlength="300" placeholder="e.g. OpenTable, Resy ..."></textarea>
+                                            <small class="text-muted"><span id="inputOtherCount">0</span>/300</small>
+                                        </div>
+                                    </section>
+                                </div>
+
+                            </div>
+
+                            <input type="hidden" name="editID" id="editID" value="">
+                            <input type="hidden" name="formAction" id="formAction" value="add">
+                        </form>
 
                     </div> <!-- modal-body -->
 
@@ -762,6 +856,7 @@ $password = "Localeats#".date("Y");
     const inputCPanelPass = $("#inputCPanelPass");
     const inputWordpressUser = $("#inputWordpressUser");
     const inputWordpressPass = $("#inputWordpressPass");
+    const inputAdminSupportPass = $("#inputAdminSupportPass");
     const inputWordpressURL = $("#inputWordpressURL");
     const inputSMTPUser = $("#inputSMTPUser");
     const inputSMTPPass = $("#inputSMTPPass");
@@ -914,7 +1009,48 @@ $password = "Localeats#".date("Y");
     let iconLink = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"/><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"/></svg>';
 
     function openFormModal() {
+        resetFormTabs();
         newModalForm.show();
+    }
+
+    // กลับไปแท็บแรกทุกครั้งที่เปิดฟอร์ม (ทั้ง New Item และ Edit) จะได้ไม่งงว่าหายไปอยู่แท็บไหน
+    // สลับ class เองแทน .tab('show') เพราะหน้านี้โหลดทั้ง BS4 (main.php) และ BS5 (ไฟล์นี้) แล้ว BS5 ทับ $.fn.tab
+    // ตอน DOMContentLoaded — Tab ของ BS5 หา pane จาก data-bs-target ไม่เจอ (ปุ่มใช้ data-target แบบ BS4)
+    // ผลคือปุ่ม General active แต่เนื้อหาค้างอยู่แท็บเดิม
+    function resetFormTabs() {
+        $("#formModal .nav-tabs .nav-link").removeClass("active").attr("aria-selected", "false");
+        $("#formModal .tab-content > .tab-pane").removeClass("active show");
+        $("#tab-general-btn").addClass("active").attr("aria-selected", "true");
+        $("#tab-general").addClass("active show");
+    }
+
+    // ตอนเพิ่มเว็บใหม่ สุ่มรหัส admin support ใหม่ทุกครั้งที่พิมพ์ชื่อโปรเจกต์ (ชื่อยังว่างตอนเปิดฟอร์ม)
+    inputProject.on("input", () => {
+        if (formAction.val() !== "edit") {
+            inputAdminSupportPass.val(genAdminSupportPass(inputProject.val()));
+        }
+    });
+
+    // ปุ่มสุ่มรหัสใหม่ด้วยมือ (ใช้ได้ทั้งตอน Add และ Edit เช่นเว็บเก่าที่ยังไม่มีรหัส)
+    $("#btnGenAdminSupportPass").on("click", () => {
+        inputAdminSupportPass.val(genAdminSupportPass(inputProject.val()));
+    });
+
+    // สูตรเดียวกับ Excel ที่ฝ่ายบัญชีใช้สุ่มรหัส admin support เดิม:
+    // 7 ตัวแรกของชื่อร้าน (lowercase, ตัด space, แทน a/e/i/o/s ด้วย @/3/1/0/$) + ชดด้วย "Xy9!bZ#" ถ้าสั้นกว่า 7
+    // ตามด้วยรหัสสุ่ม 10 ตัวจาก A-Za-z0-9 + @#$%^&*
+    function genAdminSupportPass(projectName) {
+        const leet = { a: "@", e: "3", i: "1", o: "0", s: "$" };
+        let prefix = (projectName || "").toLowerCase().replace(/\s/g, "")
+            .replace(/[aeios]/g, (ch) => leet[ch]);
+        prefix = (prefix + "Xy9!bZ#").substring(0, 7);
+
+        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*";
+        let rand = "";
+        for (let i = 0; i < 10; i++) {
+            rand += charset[Math.floor(Math.random() * charset.length)];
+        }
+        return prefix + rand;
     }
 
     const viewDetail = (id) => {
@@ -1008,6 +1144,7 @@ $password = "Localeats#".date("Y");
             inputCPanelPass.val(res.wCPanelPass);
             inputWordpressUser.val(res.wWordpressUser);
             inputWordpressPass.val(res.wWordpressPass);
+            inputAdminSupportPass.val(res.wAdminSupportPass);
             inputWordpressURL.val(res.wWordpressURL);
             inputSMTPUser.val(res.wSMTPEmailUser);
             inputSMTPPass.val(res.wSMTPEmailPass);
@@ -1062,6 +1199,7 @@ $password = "Localeats#".date("Y");
                 inputCPanelPass: inputCPanelPass.val(),
                 inputWordpressUser: inputWordpressUser.val(),
                 inputWordpressPass: inputWordpressPass.val(),
+                inputAdminSupportPass: inputAdminSupportPass.val(),
                 inputWordpressURL: inputWordpressURL.val(),
                 inputSMTPUser: inputSMTPUser.val(),
                 inputSMTPPass: inputSMTPPass.val(),
@@ -1119,6 +1257,7 @@ $password = "Localeats#".date("Y");
         inputCPanelPass.val('');
         inputWordpressUser.val('');
         inputWordpressPass.val('');
+        inputAdminSupportPass.val('');
         inputWordpressURL.val('');
         inputSMTPUser.val('');
         inputSMTPPass.val('');
@@ -1183,6 +1322,7 @@ $password = "Localeats#".date("Y");
     function newModalFormAction(action) {
         console.log("goNew = " + action);
         if (action === "open") {
+            resetFormTabs();
             newModalForm.show();
         } else {
             newModalForm.hide();
