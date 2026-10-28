@@ -244,18 +244,43 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
         $buttons.prop('disabled', true);
         $results.empty();
 
-        var i = 0;
+        var i        = 0;
+        var anyOk    = false;
+        var lastFail = '';
 
         function next() {
-            if (i >= countries.length) { return runSubscriptions(); }
+            if (i >= countries.length) {
+                // Every country failed the same way -- almost always an unset
+                // sync_token or an unreachable script, never something the
+                // subscriptions pass would survive. Firing it anyway just adds
+                // an identical red row under the ones that already explain it.
+                if (!anyOk) {
+                    finish('Nothing synced. ' + (lastFail || 'See the rows above.'));
+                    return;
+                }
+                return runSubscriptions();
+            }
 
             var country = countries[i++];
             var $tr     = addRow(country);
 
             postSync({ country: country })
-                .done(function (data) { finishRow($tr, data || { ok: false }); })
+                .done(function (data) {
+                    var d = data || { ok: false };
+                    if (d.ok) { anyOk = true; }
+                    else      { lastFail = d.message || ''; }
+                    finishRow($tr, d);
+                })
                 .fail(function (xhr) { failed($tr, xhr); })
                 .always(next);
+        }
+
+        // Shared end-of-run state, so a run that stops early cannot leave the
+        // buttons disabled.
+        function finish(note) {
+            running = false;
+            $buttons.prop('disabled', false);
+            $note.text(note);
         }
 
         // Skipped on every country request and run once here: it reads the
@@ -268,9 +293,7 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
                 .done(function (data) { finishRow($tr, data || { ok: false }); })
                 .fail(function (xhr) { failed($tr, xhr); })
                 .always(function () {
-                    running = false;
-                    $buttons.prop('disabled', false);
-                    $note.text('Done. Reload the page to update the counts above.');
+                    finish('Done. Reload the page to update the counts above.');
                 });
         }
 
