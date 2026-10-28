@@ -118,6 +118,14 @@ if ($isCli && $argc > 1) {
 } elseif (!$isCli && !empty($_GET['countries']) && is_string($_GET['countries'])) {
     $only = explode(',', $_GET['countries']);
 }
+
+// ?subsonly=1 means "no countries, just the subscriptions pass", so it has to
+// set the filter to an empty list. Leaving $only at null would mean "no filter
+// given", which upDownRunSync reads as ALL SIX COUNTRIES -- the heaviest run
+// there is, from a parameter whose whole meaning is "none of them".
+if ($subsOnly) {
+    $only = [];
+}
 if ($only !== null) {
     $codes = array_values(array_filter(array_map(
         function ($c) { return preg_replace('/[^A-Z]/', '', strtoupper(trim((string) $c))); },

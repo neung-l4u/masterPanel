@@ -156,6 +156,85 @@ test("all three switches have CLI defaults declared outside the HTTP block",
 test("SUBSONLY is not honoured as a country code anywhere",
      strpos($code, 'SUBSONLY') === false);
 
+// Needed from here on for UP_DOWN_PROJECT_BOARDS; mondayMirror.php is pulled
+// in further down, where the upDownRunSync signature is checked.
+require_once __DIR__ . '/../sync/mondayClient.php';
+
+echo "== ?subsonly=1 resolves to NO countries ==\n";
+
+// The regression this pins, and it is the dangerous direction: $subsOnly was
+// only read inside `if ($only !== null)`, and $only stays null when no
+// countries parameter is sent. So ?subsonly=1 on its own fell through to
+// upDownRunSync($db, null, ...), which treats null as "no filter" and syncs
+// ALL SIX COUNTRIES -- the heaviest run there is, from the one parameter whose
+// entire meaning is "none of them". The admin page sends exactly that request
+// after syncing each country individually, so every full run would have ended
+// by silently re-syncing everything.
+//
+// Asserted on the source, because reaching this branch for real costs a live
+// Monday sync. The assignment must sit OUTSIDE the `if ($only !== null)` block
+// -- that is the whole fix.
+$subsOnlyAssign = preg_match('/if\s*\(\$subsOnly\)\s*\{\s*\$only\s*=\s*\[\];\s*\}/', $code, $mm, PREG_OFFSET_CAPTURE);
+test("subsonly forces an empty country filter", $subsOnlyAssign === 1);
+
+if ($subsOnlyAssign === 1) {
+    $assignAt = $mm[0][1];
+    $filterAt = strpos($code, 'if ($only !== null) {');
+    test("it is assigned BEFORE the filter block, not inside it",
+         $filterAt !== false && $assignAt < $filterAt);
+} else {
+    test("it is assigned BEFORE the filter block, not inside it", false);
+}
+
+// Behavioural cover for the same rule. The script's resolution lines are
+// replayed here against fake $_GET inputs, so what reaches upDownRunSync is
+// asserted directly rather than inferred from a grep. Kept deliberately
+// literal: if the script's logic changes, this copy must be updated with it,
+// and the grep above is what notices.
+$resolveOnly = static function (array $get): string {
+    $subsOnly = isset($get['subsonly']) && $get['subsonly'] === '1';
+
+    $only = null;
+    if (!empty($get['countries']) && is_string($get['countries'])) {
+        $only = explode(',', $get['countries']);
+    }
+    if ($subsOnly) {
+        $only = [];
+    }
+
+    // null is what upDownRunSync turns into every configured country.
+    if ($only === null) {
+        return 'ALL';
+    }
+
+    $codes = array_values(array_filter(array_map(
+        static function ($c) {
+            return preg_replace('/[^A-Z]/', '', strtoupper(trim((string) $c)));
+        },
+        $only
+    )));
+    $ok = array_values(array_filter(
+        $codes,
+        static function ($c) { return isset(UP_DOWN_PROJECT_BOARDS[$c]); }
+    ));
+
+    if ($ok === [] && !$subsOnly) {
+        return 'FATAL';
+    }
+    return $ok === [] ? 'SUBS_ONLY' : implode(',', $ok);
+};
+
+test("?subsonly=1 alone syncs no countries",
+     $resolveOnly(['subsonly' => '1']) === 'SUBS_ONLY');
+test("?subsonly=1&subs=1 (what the page sends) syncs no countries",
+     $resolveOnly(['subsonly' => '1', 'subs' => '1']) === 'SUBS_ONLY');
+test("a country parameter still selects that country",
+     $resolveOnly(['countries' => 'TH']) === 'TH');
+test("no parameters at all still means every country",
+     $resolveOnly([]) === 'ALL');
+test("an unknown country still fatals",
+     $resolveOnly(['countries' => 'ZZ']) === 'FATAL');
+
 echo "== upDownRunSync honours the subscriptions flag ==\n";
 
 require_once __DIR__ . '/../sync/mondayClient.php';
