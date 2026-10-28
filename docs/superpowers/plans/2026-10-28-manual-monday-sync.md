@@ -8,6 +8,13 @@
 
 **Tech Stack:** PHP 7.4+ (procedural, matching the module), jQuery 3.7 + Bootstrap 5.3 (already loaded by `main.php`), MySQL via the module's `$db` wrapper.
 
+> **Tasks 1 and 2 are built and committed.** Their code blocks below are the
+> original plan text and no longer match what shipped: the sync script also
+> validates country codes against the board list and takes `?subsonly=1`
+> (never a magic country code), and `upDownMirrorStatus()` judges freshness by
+> the **oldest** country and returns an extra `newestSync`. Read the committed
+> files, not these blocks, when you need their behaviour. Tasks 3–5 are current.
+
 ## Global Constraints
 
 - **The CLI contract is frozen.** `php sync/syncMondayMirror.php [COUNTRIES...]` must keep its exact current stdout, log format, and exit codes. The documented cron line in `sync/README.md` depends on it byte for byte. Every change in Task 1 is gated behind `!$isCli` or an opt-in query parameter.
@@ -870,15 +877,22 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
           <?php elseif ($status['stale']): ?>
             <div class="alert alert-warning">
               <i class="bi bi-exclamation-triangle-fill"></i>
-              Last sync <strong><?php echo htmlspecialchars($status['lastSync']); ?></strong>
+              Oldest country last synced
+              <strong><?php echo htmlspecialchars($status['lastSync']); ?></strong>
               — <?php echo number_format($status['ageHours'] / 24, 1); ?> days ago.
-              Customers are being shown a "may be out of date" warning.
+              Customers of those shops are being shown a "may be out of date" warning.
+              <?php if ($status['newestSync'] !== $status['lastSync']): ?>
+                <br><small>Most recent country:
+                <?php echo htmlspecialchars($status['newestSync']); ?>. Per-country
+                dates are listed below.</small>
+              <?php endif; ?>
             </div>
           <?php else: ?>
             <div class="alert alert-success">
               <i class="bi bi-check-circle-fill"></i>
-              Last sync <strong><?php echo htmlspecialchars($status['lastSync']); ?></strong>
-              — <?php echo number_format($status['ageHours'], 1); ?> hours ago.
+              Every country synced within
+              <?php echo number_format($status['ageHours'], 1); ?> hours
+              (oldest: <strong><?php echo htmlspecialchars($status['lastSync']); ?></strong>).
             </div>
           <?php endif; ?>
 
@@ -893,11 +907,24 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
                 <label class="d-flex align-items-center gap-2 mb-0">
                   <input type="checkbox" class="ud-country"
                          value="<?php echo htmlspecialchars($row['country']); ?>">
+                  <?php
+                    // Each country carries its own date, because that is where
+                    // the actionable signal is: one country weeks behind while
+                    // the rest are current is the normal failure here, and a
+                    // single summary line cannot show it.
+                    $rowStale = $row['lastSync'] === null
+                        || strtotime($row['lastSync']) < time() - UP_DOWN_STALE_AFTER_HOURS * 3600;
+                  ?>
                   <span>
                     <strong><?php echo htmlspecialchars($row['country']); ?></strong>
-                    <small class="text-muted">
+                    <small class="<?php echo $rowStale ? 'text-danger' : 'text-muted'; ?>">
                       <?php echo number_format($row['shops']); ?> shops,
                       <?php echo number_format($row['withEmail']); ?> with email
+                      <?php if ($row['lastSync'] === null): ?>
+                        — never synced
+                      <?php else: ?>
+                        — <?php echo htmlspecialchars(substr($row['lastSync'], 0, 10)); ?>
+                      <?php endif; ?>
                     </small>
                   </span>
                 </label>
