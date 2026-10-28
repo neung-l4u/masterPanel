@@ -42,8 +42,11 @@ echo "== CLI contract is preserved ==\n";
 $out = runCli(['123']);
 test("a filter with no usable code still fatals",
      strpos($out, 'country filter given but no valid country codes') !== false);
-test("fatal output is not JSON",
-     strpos(trim($out), '{') !== 0);
+// Asserted as the exact CLI line cron greps, not merely "does not start with
+// {". The weaker form could not fail: a fatal always begins with its "[" stamp.
+test("the CLI fatal keeps its exact timestamped format",
+     preg_match('/^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} \+07\] ud mirror sync FATAL: /m',
+                $out) === 1);
 
 echo "== an unknown country is rejected before any Monday call ==\n";
 
@@ -66,28 +69,92 @@ test("it returns immediately rather than syncing", $elapsed < 15);
 
 // A partially valid filter must be refused outright: syncing the valid subset
 // would quietly do less than the caller asked for.
-$out = runCli(['TH', 'ZZ']);
-test("a mix of known and unknown codes fatals",
+//
+// Deliberately NOT ['TH', 'ZZ']: if this guard ever regresses, that fixture
+// runs a real TH sync plus the subscriptions pass, so the test would do
+// production writes on the very run that reports it is broken. Two unknown
+// codes exercise the same branch and can never sync anything.
+$out = runCli(['ZZ', 'QQ']);
+test("a filter of unknown codes fatals",
      strpos($out, 'unknown country code') !== false);
-test("the mixed-filter fatal names the offending code",
-     strpos($out, 'ZZ') !== false);
-test("a mixed filter syncs nothing",
+test("the fatal names every offending code",
+     strpos($out, 'ZZ') !== false && strpos($out, 'QQ') !== false);
+test("an unknown-code filter syncs nothing",
      strpos($out, 'ud mirror sync ok') === false
      && strpos($out, 'ud mirror sync with errors') === false);
+
+// The mixed case (one real country, one typo) is what staff actually hit, and
+// it is the one fixture here that WOULD write if the guard regressed -- AU is
+// the largest board. Timed, so a regression shows up as a failure in seconds
+// rather than as a silent live sync nobody notices until the log is read.
+$started = microtime(true);
+$out     = runCli(['AU', 'ZZ']);
+$elapsed = microtime(true) - $started;
+
+test("a mix of known and unknown codes is refused, not partially synced",
+     strpos($out, 'unknown country code(s): ZZ') !== false
+     && strpos($out, 'ud mirror sync ok') === false);
+test("the mixed filter is refused before any Monday call", $elapsed < 15);
 
 echo "== HTTP affordances are present and gated ==\n";
 
 $src = file_get_contents($script);
 
-test("sets a time limit on the HTTP path",
-     preg_match('/set_time_limit\(\s*300\s*\)/', $src) === 1);
-test("json output is opt-in via ?format",
-     strpos($src, "\$_GET['format']") !== false);
-test("subscriptions pass is opt-out, not opt-in",
-     strpos($src, "\$_GET['subs']") !== false
-     && preg_match('/\$withSubs\s*=\s*!\(/', $src) === 1);
-test("both switches are declared outside the HTTP block so CLI has defaults",
-     preg_match('/\$wantsJson\s*=\s*false;\s*\n\s*\$withSubs\s*=\s*true;/', $src) === 1);
+// Strip comments before asserting anything about the source: a bare
+// strpos/preg_match over the raw file passes just as happily when the thing it
+// is looking for sits in a comment, which makes the whole block decorative.
+$code = preg_replace('!/\*.*?\*/!s', '', $src);
+$code = preg_replace('!//.*!', '', $code);
+
+// Everything the HTTP path may change has to live inside `if (!$isCli) { ... }`.
+// Isolate that block so presence and GATING are tested together -- the earlier
+// version of these tests would have passed with the switches at top level,
+// which is exactly the bug that would leak them to the CLI.
+$httpBlock = '';
+if (preg_match('/if\s*\(!\$isCli\)\s*\{/', $code, $m, PREG_OFFSET_CAPTURE)) {
+    $start = $m[0][1] + strlen($m[0][0]);
+    $depth = 1;
+    for ($i = $start; $i < strlen($code) && $depth > 0; $i++) {
+        if ($code[$i] === '{') { $depth++; }
+        elseif ($code[$i] === '}') { $depth--; }
+        if ($depth > 0) { $httpBlock .= $code[$i]; }
+    }
+}
+test("the !\$isCli block was located", $httpBlock !== '');
+
+// Outside the HTTP block: everything the CLI path executes.
+$outsideHttp = str_replace($httpBlock, '', $code);
+
+test("set_time_limit(300) is inside the HTTP block",
+     preg_match('/set_time_limit\(\s*300\s*\)/', $httpBlock) === 1);
+test("set_time_limit is NOT reachable from the CLI path",
+     preg_match('/set_time_limit\s*\(/', $outsideHttp) === 0);
+
+test("?format is read only inside the HTTP block",
+     strpos($httpBlock, "\$_GET['format']") !== false
+     && strpos($outsideHttp, "\$_GET['format']") === false);
+test("?subs is read only inside the HTTP block",
+     strpos($httpBlock, "\$_GET['subs']") !== false
+     && strpos($outsideHttp, "\$_GET['subs']") === false);
+test("?subsonly is read only inside the HTTP block",
+     strpos($httpBlock, "\$_GET['subsonly']") !== false
+     && strpos($outsideHttp, "\$_GET['subsonly']") === false);
+
+test("the subscriptions pass is opt-OUT, so omitting ?subs still runs it",
+     preg_match('/\$withSubs\s*=\s*!\(/', $httpBlock) === 1);
+test("all three switches have CLI defaults declared outside the HTTP block",
+     preg_match('/\$wantsJson\s*=\s*false;/', $outsideHttp) === 1
+     && preg_match('/\$withSubs\s*=\s*true;/', $outsideHttp) === 1
+     && preg_match('/\$subsOnly\s*=\s*false;/', $outsideHttp) === 1);
+
+// The regression this pins: SUBSONLY was briefly a magic country code, which
+// meant `php syncMondayMirror.php SUBSONLY` -- one typo away from a real
+// country argument -- ran a live subscriptions pass and rewrote the table.
+// The subscriptions-only run must be reachable over HTTP and nowhere else.
+// Case-sensitive and bounded: the ?subsonly=1 PARAMETER is the replacement and
+// must survive, while the all-caps magic country code must not come back.
+test("SUBSONLY is not honoured as a country code anywhere",
+     strpos($code, 'SUBSONLY') === false);
 
 echo "== upDownRunSync honours the subscriptions flag ==\n";
 

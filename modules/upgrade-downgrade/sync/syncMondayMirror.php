@@ -25,6 +25,9 @@ $isCli = (php_sapi_name() === 'cli');
 // the full run, so the documented cron command behaves exactly as before.
 $wantsJson = false;
 $withSubs  = true;
+// HTTP only: run the subscriptions pass with no countries. Declared here so
+// the CLI path has a definite false and no command-line argument can set it.
+$subsOnly  = false;
 
 if (!$isCli) {
     $configFile = __DIR__ . '/../assets/config.php';
@@ -47,6 +50,16 @@ if (!$isCli) {
     // Opt-out: a caller syncing one country at a time runs this pass once at
     // the end rather than repeating it per country.
     $withSubs  = !(isset($_GET['subs']) && $_GET['subs'] === '0');
+    $subsOnly  = isset($_GET['subsonly']) && $_GET['subsonly'] === '1';
+
+    // Asking for the subscriptions-only run and then switching the
+    // subscriptions pass off leaves nothing to do, and the run would report
+    // "ok" having synced nothing -- the same healthy-looking no-op the empty
+    // country filter is rejected for.
+    if ($subsOnly && !$withSubs) {
+        http_response_code(400);
+        upDownSyncFatal('subsonly=1 cannot be combined with subs=0', $isCli);
+    }
 
     header('Content-Type: ' . ($wantsJson ? 'application/json' : 'text/plain') . '; charset=utf-8');
 }
@@ -124,23 +137,24 @@ if ($only !== null) {
 
     // An empty filter would otherwise sync no countries at all and still report
     // success, which reads as a healthy run that did nothing.
-    if ($only === []) {
-        // "SUBSONLY" asks for the subscriptions pass with no countries, which
-        // is how the admin page runs it once after syncing each country in its
-        // own request. Anything else is a typo and still fatals.
-        $subsOnly = ($given === ['SUBSONLY']);
-        if (!$subsOnly) {
-            // Two different mistakes, two different messages: "AU,ZZ" is a
-            // misspelled country, while "123" is a filter with nothing in it.
-            // Reporting both as "no valid codes" sends the reader looking for
-            // the wrong thing.
-            upDownSyncFatal(
-                $unknown !== []
-                    ? 'unknown country code(s): ' . implode(',', $unknown)
-                    : 'country filter given but no valid country codes in it',
-                $isCli
-            );
-        }
+    //
+    // $subsOnly (set on the HTTP path only, from ?subsonly=1) is the one case
+    // where no countries is legitimate: the admin page syncs each country in
+    // its own request, then asks for the subscriptions pass by itself. It is a
+    // separate parameter rather than a magic country code so that no CLI
+    // argument can ever reach it -- a mistyped country must stay a cheap exit,
+    // never a live write to the subscriptions table.
+    if ($only === [] && !$subsOnly) {
+        // Two different mistakes, two different messages: "AU,ZZ" is a
+        // misspelled country, while "123" is a filter with nothing in it.
+        // Reporting both as "no valid codes" sends the reader looking for the
+        // wrong thing.
+        upDownSyncFatal(
+            $unknown !== []
+                ? 'unknown country code(s): ' . implode(',', $unknown)
+                : 'country filter given but no valid country codes in it',
+            $isCli
+        );
     } elseif ($unknown !== []) {
         // Some valid, some not. Refuse rather than silently syncing the subset:
         // a caller who asked for five countries and got four would have no
