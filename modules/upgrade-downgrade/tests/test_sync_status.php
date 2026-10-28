@@ -26,7 +26,7 @@ set_exception_handler(function ($e) {
 echo "== upDownMirrorStatus ==\n";
 $status = upDownMirrorStatus($db);
 
-foreach (['lastSync', 'stale', 'ageHours', 'totalShops', 'totalSubs'] as $k) {
+foreach (['lastSync', 'newestSync', 'stale', 'ageHours', 'totalShops', 'totalSubs'] as $k) {
     test("returns key {$k}", array_key_exists($k, $status));
 }
 test("stale is a bool", is_bool($status['stale']));
@@ -51,8 +51,49 @@ if ($status['lastSync'] !== null) {
     test("ageHours is null when there is no data", $status['ageHours'] === null);
 }
 
+echo "== freshness follows the OLDEST country, not the newest ==\n";
+
+// The regression this pins: the first version used MAX(synced_at) over the
+// whole table, so syncing one country made the whole mirror look fresh. With
+// the real data at the time -- TH synced today, the other five on 2026-10-09 --
+// the page would have shown a green "all fresh" banner over 2453 stale shops,
+// which is the exact condition it exists to catch.
+$counts    = upDownMirrorCountryCounts($db);
+$perSynced = array_values(array_filter(array_map(
+    static function ($r) { return $r['lastSync']; },
+    $counts
+)));
+
+if (count($perSynced) > 1) {
+    sort($perSynced);
+    $oldestSeen = $perSynced[0];
+    $newestSeen = $perSynced[count($perSynced) - 1];
+
+    test("lastSync reports the oldest country's timestamp",
+         $status['lastSync'] === $oldestSeen);
+    test("newestSync reports the most recent country's timestamp",
+         $status['newestSync'] === $newestSeen);
+
+    // Only meaningful while the countries actually disagree, which is the
+    // situation the bug hid.
+    if ($oldestSeen !== $newestSeen) {
+        $oldestAge = (time() - strtotime($oldestSeen)) / 3600;
+        test("a mirror whose oldest country is past the threshold reads stale",
+             $status['stale'] === ($oldestAge > UP_DOWN_STALE_AFTER_HOURS));
+        test("ageHours measures the oldest country, so it is never flattering",
+             abs($status['ageHours'] - round($oldestAge, 1)) < 0.2);
+    } else {
+        test("all countries share a timestamp; oldest/newest split not exercised", true);
+        test("all countries share a timestamp; age check not exercised", true);
+    }
+} else {
+    test("fewer than two synced countries; oldest/newest split not exercised", true);
+    test("fewer than two synced countries; newestSync not exercised", true);
+    test("fewer than two synced countries; staleness not exercised", true);
+    test("fewer than two synced countries; ageHours not exercised", true);
+}
+
 echo "== upDownMirrorCountryCounts ==\n";
-$counts = upDownMirrorCountryCounts($db);
 
 test("returns one row per configured country",
      count($counts) === count(UP_DOWN_PROJECT_BOARDS));

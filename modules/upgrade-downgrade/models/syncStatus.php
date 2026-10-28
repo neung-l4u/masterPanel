@@ -12,39 +12,65 @@
  */
 
 /**
- * Overall mirror freshness.
+ * Overall mirror freshness, judged by the OLDEST country.
  *
- * @return array{lastSync: ?string, stale: bool, ageHours: ?float,
- *               totalShops: int, totalSubs: int}
+ * `lastSync` and `ageHours` describe the country that was synced longest ago,
+ * not the most recent one, so a mirror where five of six countries are weeks
+ * behind cannot report itself fresh. `newestSync` carries the other end of the
+ * range for a page that wants to show both.
+ *
+ * @return array{lastSync: ?string, newestSync: ?string, stale: bool,
+ *               ageHours: ?float, totalShops: int, totalSubs: int}
  */
 function upDownMirrorStatus($db): array
 {
+    // Freshness is judged per country and then taken from the OLDEST one.
+    //
+    // MAX(synced_at) over the whole table is the obvious query and it is wrong:
+    // syncing one country stamps only that country's rows, so a single TH run
+    // would make MAX() today while CA/AU/NZ/UK/US sat weeks behind, and the
+    // page would show "all fresh" over a mirror that is mostly stale. The admin
+    // page exists to catch exactly that, and the customer-facing banner judges
+    // each shop by its own row, so the summary must not be cheerier than the
+    // worst country.
     $row = $db->query(
-        "SELECT MAX(synced_at) AS last_sync, COUNT(*) AS total FROM l4u_up_down_shops"
+        "SELECT MIN(last_sync) AS oldest, MAX(last_sync) AS newest, SUM(n) AS total
+         FROM (
+             SELECT MAX(synced_at) AS last_sync, COUNT(*) AS n
+             FROM l4u_up_down_shops
+             GROUP BY country
+         ) AS per_country"
     )->fetchArray();
 
     $subs = $db->query(
         "SELECT COUNT(*) AS total FROM l4u_up_down_subscriptions"
     )->fetchArray();
 
-    $lastSync = !empty($row['last_sync']) ? (string) $row['last_sync'] : null;
+    $oldest = !empty($row['oldest']) ? (string) $row['oldest'] : null;
+    $newest = !empty($row['newest']) ? (string) $row['newest'] : null;
 
     // No rows means the sync has never run here. That is the case most worth
     // flagging, so it reports stale rather than falling through as fresh.
-    if ($lastSync === null) {
+    if ($oldest === null) {
         return [
-            'lastSync'   => null,
-            'stale'      => true,
-            'ageHours'   => null,
-            'totalShops' => 0,
-            'totalSubs'  => (int) ($subs['total'] ?? 0),
+            'lastSync'    => null,
+            'newestSync'  => null,
+            'stale'       => true,
+            'ageHours'    => null,
+            'totalShops'  => 0,
+            'totalSubs'   => (int) ($subs['total'] ?? 0),
         ];
     }
 
-    $ageSeconds = time() - strtotime($lastSync);
+    $ageSeconds = time() - strtotime($oldest);
 
     return [
-        'lastSync'   => $lastSync,
+        // The oldest country's timestamp: what the page headlines, because it
+        // is the one that tells staff whether the mirror can be trusted.
+        'lastSync'   => $oldest,
+        // The newest, so the page can say "TH is current, the rest are not"
+        // instead of implying every country is as old as the worst.
+        'newestSync' => $newest,
         'stale'      => $ageSeconds > UP_DOWN_STALE_AFTER_HOURS * 3600,
         'ageHours'   => (float) round($ageSeconds / 3600, 1),
         'totalShops' => (int) ($row['total'] ?? 0),
