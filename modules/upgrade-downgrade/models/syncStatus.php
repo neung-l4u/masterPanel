@@ -12,53 +12,73 @@
  */
 
 /**
- * Overall mirror freshness, judged by the OLDEST country.
+ * Overall mirror freshness, judged by the WORST configured country.
  *
  * `lastSync` and `ageHours` describe the country that was synced longest ago,
  * not the most recent one, so a mirror where five of six countries are weeks
  * behind cannot report itself fresh. `newestSync` carries the other end of the
  * range for a page that wants to show both.
  *
+ * A configured country with no rows at all counts as worse than any date:
+ * `stale` is true and `missingCountries` names them.
+ *
  * @return array{lastSync: ?string, newestSync: ?string, stale: bool,
- *               ageHours: ?float, totalShops: int, totalSubs: int}
+ *               ageHours: ?float, totalShops: int, totalSubs: int,
+ *               missingCountries: list<string>}
  */
 function upDownMirrorStatus($db): array
 {
-    // Freshness is judged per country and then taken from the OLDEST one.
+    // Built from the per-country list rather than its own aggregate query, so
+    // that a configured country with NO rows is counted.
     //
-    // MAX(synced_at) over the whole table is the obvious query and it is wrong:
-    // syncing one country stamps only that country's rows, so a single TH run
-    // would make MAX() today while CA/AU/NZ/UK/US sat weeks behind, and the
-    // page would show "all fresh" over a mirror that is mostly stale. The admin
-    // page exists to catch exactly that, and the customer-facing banner judges
-    // each shop by its own row, so the summary must not be cheerier than the
-    // worst country.
-    $row = $db->query(
-        "SELECT MIN(last_sync) AS oldest, MAX(last_sync) AS newest, SUM(n) AS total
-         FROM (
-             SELECT MAX(synced_at) AS last_sync, COUNT(*) AS n
-             FROM l4u_up_down_shops
-             GROUP BY country
-         ) AS per_country"
-    )->fetchArray();
+    // Two wrong versions preceded this, each a weaker form of the same
+    // mistake -- letting a healthy part of the mirror speak for the whole:
+    //   1. MAX(synced_at) over the table. Syncing one country stamps only its
+    //      rows, so a single TH run read "fresh" while the other five sat
+    //      weeks behind.
+    //   2. MIN over the countries that HAVE rows. A country that has never
+    //      synced forms no group, so a mirror holding only TH -- five
+    //      countries missing entirely -- still read fresh.
+    // The page exists to catch exactly these, and the customer-facing banner
+    // judges each shop by its own row, so this summary must never be cheerier
+    // than the worst country.
+    $counts = upDownMirrorCountryCounts($db);
 
     $subs = $db->query(
         "SELECT COUNT(*) AS total FROM l4u_up_down_subscriptions"
     )->fetchArray();
 
-    $oldest = !empty($row['oldest']) ? (string) $row['oldest'] : null;
-    $newest = !empty($row['newest']) ? (string) $row['newest'] : null;
+    $oldest     = null;
+    $newest     = null;
+    $totalShops = 0;
+    $missing    = [];
 
-    // No rows means the sync has never run here. That is the case most worth
-    // flagging, so it reports stale rather than falling through as fresh.
+    foreach ($counts as $row) {
+        $totalShops += $row['shops'];
+
+        if ($row['lastSync'] === null) {
+            $missing[] = $row['country'];
+            continue;
+        }
+        if ($oldest === null || strtotime($row['lastSync']) < strtotime($oldest)) {
+            $oldest = $row['lastSync'];
+        }
+        if ($newest === null || strtotime($row['lastSync']) > strtotime($newest)) {
+            $newest = $row['lastSync'];
+        }
+    }
+
+    // Nothing anywhere: the sync has never run here, which is the case most
+    // worth flagging, so it reports stale rather than falling through as fresh.
     if ($oldest === null) {
         return [
-            'lastSync'    => null,
-            'newestSync'  => null,
-            'stale'       => true,
-            'ageHours'    => null,
-            'totalShops'  => 0,
-            'totalSubs'   => (int) ($subs['total'] ?? 0),
+            'lastSync'         => null,
+            'newestSync'       => null,
+            'stale'            => true,
+            'ageHours'         => null,
+            'totalShops'       => 0,
+            'totalSubs'        => (int) ($subs['total'] ?? 0),
+            'missingCountries' => $missing,
         ];
     }
 
@@ -71,10 +91,14 @@ function upDownMirrorStatus($db): array
         // The newest, so the page can say "TH is current, the rest are not"
         // instead of implying every country is as old as the worst.
         'newestSync' => $newest,
-        'stale'      => $ageSeconds > UP_DOWN_STALE_AFTER_HOURS * 3600,
+        // A missing country has no date to age, and waiting 48 hours to warn
+        // about data that does not exist would be the wrong way round.
+        'stale'      => $missing !== []
+                        || $ageSeconds > UP_DOWN_STALE_AFTER_HOURS * 3600,
         'ageHours'   => (float) round($ageSeconds / 3600, 1),
-        'totalShops' => (int) ($row['total'] ?? 0),
+        'totalShops' => $totalShops,
         'totalSubs'  => (int) ($subs['total'] ?? 0),
+        'missingCountries' => $missing,
     ];
 }
 
