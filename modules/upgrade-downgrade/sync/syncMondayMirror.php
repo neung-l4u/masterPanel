@@ -119,7 +119,7 @@ if ($isCli && $argc > 1) {
     $only = explode(',', $_GET['countries']);
 }
 if ($only !== null) {
-    $given = array_values(array_filter(array_map(
+    $codes = array_values(array_filter(array_map(
         function ($c) { return preg_replace('/[^A-Z]/', '', strtoupper(trim((string) $c))); },
         $only
     )));
@@ -129,11 +129,11 @@ if ($only !== null) {
     // per-country AFTER the run has already queried Monday and rewritten the
     // subscriptions table. A typo must cost nothing, so it is caught here.
     $only = array_values(array_filter(
-        $given,
+        $codes,
         function ($c) { return isset(UP_DOWN_PROJECT_BOARDS[$c]); }
     ));
 
-    $unknown = array_values(array_diff($given, $only));
+    $unknown = array_values(array_diff($codes, $only));
 
     // An empty filter would otherwise sync no countries at all and still report
     // success, which reads as a healthy run that did nothing.

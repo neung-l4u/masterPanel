@@ -636,7 +636,7 @@ if ($subsRun) {
     $scope = 'subscriptions';
     // No countries, subscriptions on: the script treats an absent country
     // filter as "all", so the filter is given explicitly as an empty list.
-    $query = ['token' => $token, 'format' => 'json', 'countries' => 'SUBSONLY', 'subs' => '1'];
+    $query = ['token' => $token, 'format' => 'json', 'subsonly' => '1', 'subs' => '1'];
 } else {
     if (!isset(UP_DOWN_PROJECT_BOARDS[$country])) {
         echo json_encode([
@@ -729,8 +729,16 @@ better, and the code is already committed:
   reported as "unknown country" *after* a full live sync had queried Monday and
   rewritten the subscriptions table — about 90 seconds of API calls to answer a
   typo.
-- `SUBSONLY` is the agreed token for "subscriptions pass, no countries", and it
-  works on the CLI as well as over HTTP. Step 1's `$query` already uses it.
+- `?subsonly=1` is the parameter for "subscriptions pass, no countries". It is
+  read inside the `!$isCli` block only, so no CLI argument can reach it — an
+  earlier attempt used a magic country code and made
+  `php syncMondayMirror.php SUBSONLY` run a live write. Step 1's `$query`
+  already uses the parameter. Combining it with `subs=0` is refused.
+- **A fatal is plain text even under `?format=json`.** `upDownSyncFatal` writes
+  its timestamped line and exits, after the `application/json` header is
+  already sent. Step 1's endpoint handles this (`json_decode` returns null, and
+  it reports `sync_failed` with the first line of the body) — keep that branch;
+  it is not defensive padding.
 - A filter mixing valid and invalid codes is refused outright rather than
   silently syncing the subset.
 
