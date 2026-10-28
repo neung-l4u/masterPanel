@@ -20,7 +20,7 @@ global $db;
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../assets/libs/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/libs/DataTables/datatables.min.css" rel="stylesheet">
-    <link href="../assets/css/websiteList.css" rel="stylesheet">
+    <link href="../assets/css/websiteList.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/websiteList.css'); ?>" rel="stylesheet">
     <title>L4U - CS : Website List</title>
     <style>
         body{
@@ -459,7 +459,8 @@ global $db;
 
 <script src="../assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
-<script src="../controllers/websiteList.js"></script>
+<!-- ?v= เวลาแก้ไฟล์ล่าสุด กัน browser ของทีมใช้ JS ตัวเก่าที่ cache ไว้ -->
+<script src="../controllers/websiteList.js?v=<?php echo filemtime(__DIR__ . '/../controllers/websiteList.js'); ?>"></script>
 <script src="../assets/libs/DataTables/datatables.min.js"></script>
 </body>
 </html>
