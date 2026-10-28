@@ -21,6 +21,11 @@ date_default_timezone_set("Asia/Bangkok");
 // triggerable by anyone who can reach the web server.
 $isCli = (php_sapi_name() === 'cli');
 
+// Defaults that only the HTTP path can change. The CLI keeps text output and
+// the full run, so the documented cron command behaves exactly as before.
+$wantsJson = false;
+$withSubs  = true;
+
 if (!$isCli) {
     $configFile = __DIR__ . '/../assets/config.php';
     $config     = is_file($configFile) ? include $configFile : [];
@@ -33,7 +38,17 @@ if (!$isCli) {
         echo "Forbidden\n";
         exit(1);
     }
-    header('Content-Type: text/plain; charset=utf-8');
+
+    // A full country can take minutes; the default limit would kill the
+    // largest board partway and leave the caller with no summary at all.
+    set_time_limit(300);
+
+    $wantsJson = isset($_GET['format']) && $_GET['format'] === 'json';
+    // Opt-out: a caller syncing one country at a time runs this pass once at
+    // the end rather than repeating it per country.
+    $withSubs  = !(isset($_GET['subs']) && $_GET['subs'] === '0');
+
+    header('Content-Type: ' . ($wantsJson ? 'application/json' : 'text/plain') . '; charset=utf-8');
 }
 
 $started = microtime(true);
@@ -91,14 +106,46 @@ if ($isCli && $argc > 1) {
     $only = explode(',', $_GET['countries']);
 }
 if ($only !== null) {
-    $only = array_values(array_filter(array_map(
+    $given = array_values(array_filter(array_map(
         function ($c) { return preg_replace('/[^A-Z]/', '', strtoupper(trim((string) $c))); },
         $only
     )));
+
+    // Keep only codes that name a real board. Stripping to A-Z is not enough on
+    // its own: "ZZ" survives it, reaches upDownRunSync, and is only rejected
+    // per-country AFTER the run has already queried Monday and rewritten the
+    // subscriptions table. A typo must cost nothing, so it is caught here.
+    $only = array_values(array_filter(
+        $given,
+        function ($c) { return isset(UP_DOWN_PROJECT_BOARDS[$c]); }
+    ));
+
+    $unknown = array_values(array_diff($given, $only));
+
     // An empty filter would otherwise sync no countries at all and still report
     // success, which reads as a healthy run that did nothing.
     if ($only === []) {
-        upDownSyncFatal('country filter given but no valid country codes in it', $isCli);
+        // "SUBSONLY" asks for the subscriptions pass with no countries, which
+        // is how the admin page runs it once after syncing each country in its
+        // own request. Anything else is a typo and still fatals.
+        $subsOnly = ($given === ['SUBSONLY']);
+        if (!$subsOnly) {
+            // Two different mistakes, two different messages: "AU,ZZ" is a
+            // misspelled country, while "123" is a filter with nothing in it.
+            // Reporting both as "no valid codes" sends the reader looking for
+            // the wrong thing.
+            upDownSyncFatal(
+                $unknown !== []
+                    ? 'unknown country code(s): ' . implode(',', $unknown)
+                    : 'country filter given but no valid country codes in it',
+                $isCli
+            );
+        }
+    } elseif ($unknown !== []) {
+        // Some valid, some not. Refuse rather than silently syncing the subset:
+        // a caller who asked for five countries and got four would have no
+        // reason to look at the log.
+        upDownSyncFatal('unknown country code(s): ' . implode(',', $unknown), $isCli);
     }
 }
 
@@ -106,7 +153,7 @@ $lines    = [];
 $hadError = false;
 
 try {
-    $summary = upDownRunSync($db, $only);
+    $summary = upDownRunSync($db, $only, $withSubs);
 } catch (Throwable $e) {
     upDownSyncFatal($e->getMessage(), $isCli);
 }
@@ -125,7 +172,11 @@ foreach ($summary['countries'] as $c) {
 }
 
 $s = $summary['subscriptions'];
-if ($s['error'] !== null) {
+if ($s === null) {
+    // Skipped by ?subs=0. Say so rather than printing a zero line, which would
+    // read as "no subscriptions found".
+    $lines[] = "  subscriptions: skipped";
+} elseif ($s['error'] !== null) {
     $hadError = true;
     $lines[] = "  subscriptions: ERROR {$s['error']} (rows left untouched)";
 } else {
@@ -147,9 +198,21 @@ $status  = $hadError ? 'with errors' : 'ok';
 
 $output = "[{$stamp} +07] ud mirror sync {$status} ({$elapsed}s)\n"
         . implode("\n", $lines) . "\n";
-echo $output;
 
-// Keep a log so an overnight failure is still visible in the morning.
+// The log gets the human-readable form either way: an HTTP-triggered run must
+// leave the same audit trail a cron run does.
 upDownSyncLog($output);
 
+if ($wantsJson) {
+    echo json_encode([
+        'ok'            => !$hadError,
+        'elapsed'       => $elapsed,
+        'syncedAt'      => $summary['syncedAt'],
+        'countries'     => $summary['countries'],
+        'subscriptions' => $summary['subscriptions'],
+    ], JSON_UNESCAPED_UNICODE);
+    exit($hadError ? 1 : 0);
+}
+
+echo $output;
 exit($hadError ? 1 : 0);
