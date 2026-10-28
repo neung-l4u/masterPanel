@@ -95,10 +95,17 @@ $opts = [
     // A redirect could carry the token off-host.
     CURLOPT_FOLLOWLOCATION => false,
 ];
-$serverAddr = $_SERVER['SERVER_ADDR'] ?? '';
-if ($serverAddr !== '' && filter_var($serverAddr, FILTER_VALIDATE_IP)) {
-    $opts[CURLOPT_RESOLVE] = [$hostName . ':' . $port . ':' . $serverAddr];
-}
+// Pin the connection to loopback so a forged Host header cannot make us carry
+// the token to another server: the name in the URL is whatever the caller
+// sent, but the socket always goes to this machine.
+//
+// Loopback rather than SERVER_ADDR, and unconditional rather than best-effort.
+// The target script is always on this same host, so loopback is always right;
+// SERVER_ADDR is not, behind a proxy or load balancer. And leaving the pin
+// unset whenever a candidate address looked unusable would mean the one
+// environment that cannot resolve it is also the one that resolves the forged
+// Host through real DNS, with the token attached.
+$opts[CURLOPT_RESOLVE] = [$hostName . ':' . $port . ':127.0.0.1'];
 curl_setopt_array($ch, $opts);
 $body     = curl_exec($ch);
 $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
