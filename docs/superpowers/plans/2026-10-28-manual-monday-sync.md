@@ -874,6 +874,16 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
               <strong>Never synced.</strong>
               The mirror is empty, so no customer can be found by email.
             </div>
+          <?php elseif ($status['missingCountries']): ?>
+            <div class="alert alert-danger">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+              <strong>No data at all for
+              <?php echo htmlspecialchars(implode(', ', $status['missingCountries'])); ?>.</strong>
+              No customer in
+              <?php echo count($status['missingCountries']) === 1 ? 'that country' : 'those countries'; ?>
+              can be found by email. Sync
+              <?php echo count($status['missingCountries']) === 1 ? 'it' : 'them'; ?> below.
+            </div>
           <?php elseif ($status['stale']): ?>
             <div class="alert alert-warning">
               <i class="bi bi-exclamation-triangle-fill"></i>
