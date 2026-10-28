@@ -14,17 +14,44 @@ session_start();
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
-/** Emit one JSON response and stop. Never receives the token or the URL. */
+/**
+ * Emit one JSON response and stop. Never receives the token or the URL.
+ *
+ * Releases the sync lock first where one is held. PHP would drop it at script
+ * end anyway, but every reply below exits from a different depth and relying
+ * on teardown order is how a lock survives the request that owns it.
+ */
 function mondaySyncReply(array $payload, int $status = 200): void
 {
+    global $lock;
+
+    if (isset($lock) && is_resource($lock)) {
+        flock($lock, LOCK_UN);
+        fclose($lock);
+        $lock = null;
+    }
+
     http_response_code($status);
     echo json_encode($payload);
     exit;
 }
 
-// This file is reachable by URL on its own, so it repeats the guard from
-// main.php rather than assuming it ran.
-if (!isset($_SESSION['id']) && !isset($_COOKIE['id'])) {
+// This file is reachable by URL on its own, so it carries its own guard rather
+// than assuming main.php's ran.
+//
+// Deliberately STRICTER than main.php, which accepts `!isset($_SESSION['id'])
+// && !isset($_COOKIE['id'])`. That passes on any request carrying a bare
+// `Cookie: id=<anything>`: the cookie holds an unsigned staff id, so it is
+// trivially forged. Elsewhere that buys an attacker a page view; here it would
+// buy unauthenticated multi-minute Monday syncs, repeatable in a loop, each
+// rewriting mirror tables and spending API quota.
+//
+// So: a real server-side session is required, and the id behind it must still
+// be an active staff row -- the same check index.php makes on the cookie, which
+// main.php skips. A session for a disabled or deleted account cannot sync.
+$staffId = $_SESSION['id'] ?? null;
+
+if ($staffId === null || $staffId === '') {
     mondaySyncReply(['ok' => false, 'error' => 'auth', 'message' => 'Not signed in.'], 403);
 }
 
@@ -34,13 +61,27 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     mondaySyncReply(['ok' => false, 'error' => 'bad_request', 'message' => 'POST required.'], 405);
 }
 
-// Release the session lock: the sync below runs for minutes and would block
-// every other request from this staff member.
-session_write_close();
-
 $moduleDir = __DIR__ . '/../../modules/upgrade-downgrade';
 
 require_once $moduleDir . '/sync/mondayClient.php';   // UP_DOWN_PROJECT_BOARDS
+
+// The staff row is checked against the panel's own database, not the module's.
+require_once __DIR__ . '/../../assets/db/db.php';
+require_once __DIR__ . '/../../assets/db/initDB.php';
+
+$staff = $db->query(
+    'SELECT sID FROM `staffs` WHERE sID = ? AND sStatus = 1 AND sDeleteAt IS NULL',
+    $staffId
+)->fetchArray();
+
+if (empty($staff)) {
+    mondaySyncReply(['ok' => false, 'error' => 'auth', 'message' => 'Not signed in.'], 403);
+}
+
+// Release the session lock only once the request is authorised: the sync below
+// runs for minutes and would otherwise block every other request from this
+// staff member.
+session_write_close();
 
 $configFile = $moduleDir . '/assets/config.php';
 $config     = is_file($configFile) ? include $configFile : [];
@@ -85,6 +126,39 @@ if (!preg_match('/^[A-Za-z0-9.\-]+$/', $hostName)) {
 $base = rtrim(str_replace(chr(92), '/',dirname($_SERVER['SCRIPT_NAME'], 3)), '/');
 $url  = $scheme . '://' . $hostName . ':' . $port . $base
       . '/modules/upgrade-downgrade/sync/syncMondayMirror.php?' . http_build_query($query);
+
+// One sync per scope at a time. A run takes minutes, so a double-clicked
+// button, an impatient retry after a browser-side timeout, or two staff on the
+// page together would otherwise have several passes writing the same mirror
+// rows at once, each with its own synced_at -- and the loser's timestamp
+// decides which rows the next run deletes as stale.
+$lockDir = $moduleDir . '/assets/logs';
+if (!is_dir($lockDir)) {
+    @mkdir($lockDir, 0700, true);
+}
+$lockFile = $lockDir . '/.sync-' . preg_replace('/[^A-Za-z]/', '', $scope) . '.lock';
+$lock     = @fopen($lockFile, 'c');
+
+if ($lock === false) {
+    mondaySyncReply([
+        'ok'      => false,
+        'scope'   => $scope,
+        'error'   => 'sync_failed',
+        'message' => 'Could not acquire the sync lock. Check that '
+                   . 'modules/upgrade-downgrade/assets/logs is writable.',
+    ]);
+}
+
+if (!flock($lock, LOCK_EX | LOCK_NB)) {
+    fclose($lock);
+    mondaySyncReply([
+        'ok'      => false,
+        'scope'   => $scope,
+        'error'   => 'already_running',
+        'message' => 'A sync for ' . $scope . ' is already running. Wait for it '
+                   . 'to finish rather than starting a second one.',
+    ]);
+}
 
 $ch = curl_init($url);
 $opts = [
@@ -149,4 +223,6 @@ if (!is_array($decoded)) {
 }
 
 $decoded['scope'] = $scope;
-echo json_encode($decoded);
+
+// Through the helper like every other exit, so the lock is released here too.
+mondaySyncReply($decoded);
