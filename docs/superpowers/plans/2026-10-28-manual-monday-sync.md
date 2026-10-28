@@ -636,7 +636,7 @@ if ($subsRun) {
     $scope = 'subscriptions';
     // No countries, subscriptions on: the script treats an absent country
     // filter as "all", so the filter is given explicitly as an empty list.
-    $query = ['token' => $token, 'format' => 'json', 'countries' => 'NONE', 'subs' => '1'];
+    $query = ['token' => $token, 'format' => 'json', 'countries' => 'SUBSONLY', 'subs' => '1'];
 } else {
     if (!isset(UP_DOWN_PROJECT_BOARDS[$country])) {
         echo json_encode([
@@ -718,30 +718,25 @@ $decoded['scope'] = $scope;
 echo json_encode($decoded);
 ```
 
-- [ ] **Step 2: Handle the subscriptions-only run in the sync script**
+- [ ] **Step 2: (already done in Task 1 — no code to write)**
 
-The proxy asks for `countries=NONE` when it wants the subscriptions pass alone. The script currently fatals on a filter with no valid codes, which is right for CLI typos but would block this. In `modules/upgrade-downgrade/sync/syncMondayMirror.php`, replace:
+This step originally asked you to teach the script a `countries=NONE` escape
+hatch. **Do not do that.** Task 1 solved the same problem differently and
+better, and the code is already committed:
 
-```php
-    if ($only === []) {
-        upDownSyncFatal('country filter given but no valid country codes in it', $isCli);
-    }
-```
+- The filter now validates each code against `UP_DOWN_PROJECT_BOARDS`. Before
+  that, `ZZ` passed the A-Z strip, reached `upDownRunSync`, and was only
+  reported as "unknown country" *after* a full live sync had queried Monday and
+  rewritten the subscriptions table — about 90 seconds of API calls to answer a
+  typo.
+- `SUBSONLY` is the agreed token for "subscriptions pass, no countries", and it
+  works on the CLI as well as over HTTP. Step 1's `$query` already uses it.
+- A filter mixing valid and invalid codes is refused outright rather than
+  silently syncing the subset.
 
-with:
-
-```php
-    if ($only === []) {
-        // "NONE" is how the admin page asks for the subscriptions pass on its
-        // own, having already synced each country in its own request. Any
-        // other unrecognised filter is a typo and still fatals, so a mistyped
-        // cron argument cannot silently sync nothing and report success.
-        $askedForNoneOnly = (!$isCli && isset($_GET['countries']) && $_GET['countries'] === 'NONE');
-        if (!$askedForNoneOnly) {
-            upDownSyncFatal('country filter given but no valid country codes in it', $isCli);
-        }
-    }
-```
+Read `modules/upgrade-downgrade/sync/syncMondayMirror.php` around the `$only`
+filter to see the committed behaviour before writing Step 1's endpoint, and
+confirm the token you send matches it. Write no code for this step.
 
 - [ ] **Step 3: Verify the auth guard rejects an anonymous request**
 
@@ -752,28 +747,29 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST \
 ```
 Expected: `403`
 
-- [ ] **Step 4: Verify the CLI typo guard still fatals**
+- [ ] **Step 4: Verify the country guard still fatals cheaply**
 
-Run:
+Run both, and time them:
 ```bash
-php modules/upgrade-downgrade/sync/syncMondayMirror.php NONE
+php modules/upgrade-downgrade/sync/syncMondayMirror.php ZZ
+php modules/upgrade-downgrade/sync/syncMondayMirror.php 123
 ```
-Expected: `ud mirror sync FATAL: country filter given but no valid country codes in it`, exit 1. The CLI must not get the page's escape hatch.
+Expected: `ud mirror sync FATAL: unknown country code(s): ZZ` for the first,
+`ud mirror sync FATAL: country filter given but no valid country codes in it`
+for the second, exit 1 for both, and **each returning in under a second**. A
+run that takes ~90 seconds means the membership check is gone and the script
+is syncing Monday to answer a typo.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add pages/api/mondaySyncRun.php modules/upgrade-downgrade/sync/syncMondayMirror.php
+git add pages/api/mondaySyncRun.php
 git commit -m "feat(masterPanel): add authenticated proxy for Monday mirror sync
 
 Holds sync_token server-side so it never reaches the browser: the page can ask
 to sync a country but never learns the secret that authorises it. Repeats
 main.php's session guard because this file is reachable by URL on its own, and
 refuses GET so a prefetch cannot start a three-minute Monday run.
-
-The sync script gains one narrow escape hatch so the subscriptions pass can be
-run alone over HTTP. A CLI filter with no valid codes still fatals, so a
-mistyped cron argument cannot sync nothing and report success.
 
 Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
 ```
