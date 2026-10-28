@@ -662,7 +662,11 @@ if ($subsRun) {
 // including it would terminate this response instead.
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$base   = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']))), '/');
+// dirname(..., 3), NOT dirname(dirname(...)): this file sits at
+// /masterPanel/pages/api/, so two levels stops at /masterPanel/pages and
+// every call 404s. Verified: the wrong path returns 404, the right one
+// reaches the script.
+$base   = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'], 3)), '/');
 $url    = $scheme . '://' . $host . $base
         . '/modules/upgrade-downgrade/sync/syncMondayMirror.php?' . http_build_query($query);
 
