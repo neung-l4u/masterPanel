@@ -141,7 +141,11 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
 </div>
 
 <script>
-(function () {
+// Deferred to DOMContentLoaded. main.php includes this page inside
+// .content-wrapper and loads plugins/jquery/jquery.min.js AFTER it, so running
+// at parse time throws "$ is not defined", aborts before a single handler is
+// bound, and leaves every button on this page silently dead.
+document.addEventListener('DOMContentLoaded', function () {
     // Every country the page offers, in board order, so "Sync all" and the
     // checkbox list cannot disagree about what "all" means.
     var ALL_COUNTRIES = <?php echo json_encode($countries); ?>;
@@ -165,6 +169,12 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
 
     // Values are written with .text(), never .html(): every one of them comes
     // from Monday or from a PHP error message, and neither is trusted markup.
+    // A count that is missing from the reply shows as "?" rather than
+    // "undefined" or a thrown TypeError.
+    function num(v) {
+        return (typeof v === 'number') ? String(v) : '?';
+    }
+
     function finishRow($tr, data) {
         var $cell = $tr.children().eq(1).empty();
         var $time = $tr.children().eq(2);
@@ -188,8 +198,9 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
                 parts.push(c.country + ': ' + c.error + ' (previous data kept)');
             } else {
                 parts.push(
-                    c.shops + ' shops (' + c.inserted + ' new, ' + c.updated +
-                    ' updated, ' + c.deleted + ' removed), ' + c.withEmail + ' with email'
+                    num(c.shops) + ' shops (' + num(c.inserted) + ' new, ' +
+                    num(c.updated) + ' updated, ' + num(c.deleted) + ' removed), ' +
+                    num(c.withEmail) + ' with email'
                 );
             }
         });
@@ -200,9 +211,16 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
                 $tr.addClass('table-danger');
                 parts.push('subscriptions: ' + s.error + ' (previous data kept)');
             } else {
+                // matched is read defensively: a reply shaped slightly
+                // differently would otherwise throw here, and an exception in a
+                // .done callback stops jQuery running the rest of that
+                // callback list -- including the .always that re-enables the
+                // buttons. One odd response would freeze the page until reload.
+                var m = s.matched || {};
                 parts.push(
-                    s.subscriptions + ' active (' + s.matched.relation + ' by relation, ' +
-                    s.matched.name + ' by name, ' + s.matched.none + ' unmatched)'
+                    num(s.subscriptions) + ' active (' + num(m.relation) +
+                    ' by relation, ' + num(m.name) + ' by name, ' +
+                    num(m.none) + ' unmatched)'
                 );
             }
         }
@@ -246,12 +264,13 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
 
         var i        = 0;
         var anyOk    = false;
+        var anyFail  = false;
         var lastFail = '';
 
         function next() {
             if (i >= countries.length) {
                 // Every country failed the same way -- almost always an unset
-                // sync_token or an unreachable script, never something the
+                // configuration or an unreachable script, never something the
                 // subscriptions pass would survive. Firing it anyway just adds
                 // an identical red row under the ones that already explain it.
                 if (!anyOk) {
@@ -267,11 +286,28 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
             postSync({ country: country })
                 .done(function (data) {
                     var d = data || { ok: false };
-                    if (d.ok) { anyOk = true; }
-                    else      { lastFail = d.message || ''; }
+                    // ok:true can still carry a per-country error, and the
+                    // sync leaves that country's rows untouched when it does.
+                    // Counting it as a success would run the subscriptions
+                    // pass and finish on "Done." over a run that changed
+                    // nothing -- the reassuring-but-wrong ending this check
+                    // exists to prevent.
+                    var countryFailed = (d.countries || []).some(function (c) {
+                        return !!c.error;
+                    });
+
+                    if (d.ok && !countryFailed) {
+                        anyOk = true;
+                    } else {
+                        anyFail  = true;
+                        lastFail = d.message || lastFail;
+                    }
                     finishRow($tr, d);
                 })
-                .fail(function (xhr) { failed($tr, xhr); })
+                .fail(function (xhr) {
+                    anyFail = true;
+                    failed($tr, xhr);
+                })
                 .always(next);
         }
 
@@ -290,10 +326,23 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
             var $tr = addRow('subscriptions');
 
             postSync({ subs: '1' })
-                .done(function (data) { finishRow($tr, data || { ok: false }); })
-                .fail(function (xhr) { failed($tr, xhr); })
+                .done(function (data) {
+                    var d = data || { ok: false };
+                    if (!d.ok || (d.subscriptions && d.subscriptions.error)) {
+                        anyFail = true;
+                    }
+                    finishRow($tr, d);
+                })
+                .fail(function (xhr) {
+                    anyFail = true;
+                    failed($tr, xhr);
+                })
                 .always(function () {
-                    finish('Done. Reload the page to update the counts above.');
+                    // "Done." over a table with red rows in it reads as
+                    // success to anyone who does not scroll back up.
+                    finish(anyFail
+                        ? 'Finished with errors — see the rows above. Reload the page to update the counts.'
+                        : 'Done. Reload the page to update the counts above.');
                 });
         }
 
@@ -316,5 +365,5 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
     $('#udSyncAll').on('click', function () {
         runQueue(ALL_COUNTRIES);
     });
-})();
+});
 </script>
