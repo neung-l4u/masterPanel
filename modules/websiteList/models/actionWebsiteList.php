@@ -44,6 +44,7 @@ if ($params ["action"] == "setStatus"){
     $params["wSystemGloriaFood"] = dash($row["wSystemGloriaFood"]);
     $params["wSystemAmelia"] = dash($row["wSystemAmelia"]);
     $params["wSystemVoucher"] = dash($row["wSystemVoucher"]);
+    $params["wSystemCloudwaitress"] = dash($row["wSystemCloudwaitress"]);
     $params["wDomain"] = dash($row["wDomain"]);
     $params["wDomainProviderID"] = dash($row["wDomainProviderID"]);
     $params["wPublishDate"] = dash($row["wPublishDate"]);
@@ -51,8 +52,8 @@ if ($params ["action"] == "setStatus"){
     $params["wCPanelUser"] = dash($row["wCPanelUser"]);
     $params["wCPanelPass"] = dash($row["wCPanelPass"]);
     $params["wWordpressURL"] = dash($row["wWordpressURL"]);
-    $params["wWordpressUser"] = dash($row["wWordpressUser"]);
-    $params["wWordpressPass"] = dash($row["wWordpressPass"]);
+    // หน้า support ไม่แสดง WP User/Pass ของลูกค้า (ใช้ Admin Support แทน) จึงไม่ส่งออกไปด้วย
+    $params["wAdminSupportPass"] = dash($row["wAdminSupportPass"]);
     $params["wSMTPEmailUser"] = dash($row["wSMTPEmailUser"]);
     $params["wSMTPEmailPass"] = dash($row["wSMTPEmailPass"]);
     $params["wSMTPRemark"] = dash($row["wSMTPRemark"]);
