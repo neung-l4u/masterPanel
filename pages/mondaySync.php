@@ -100,11 +100,11 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
                   // instead of sitting beside the country code. The small top
                   // margin lines it up with the first line's text.
                 ?>
-                <label class="d-flex gap-2 mb-0" style="cursor:pointer;">
-                  <input type="checkbox" class="ud-country flex-shrink-0"
-                         style="margin-top:.25rem;"
+                <label class="d-flex align-items-start mb-0" style="cursor:pointer;">
+                  <input type="checkbox" class="ud-country flex-shrink-0 mr-2"
+                         style="margin-top:.3rem;"
                          value="<?php echo htmlspecialchars($row['country']); ?>">
-                  <span class="lh-sm">
+                  <span style="line-height:1.3;">
                     <strong><?php echo htmlspecialchars($row['country']); ?></strong>
                     <small class="text-muted">
                       <?php echo number_format($row['shops']); ?> shops,
@@ -129,7 +129,7 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
             <button id="udSyncAll" class="btn btn-outline-primary">
               <i class="bi bi-globe"></i> Sync all
             </button>
-            <span id="udSyncNote" class="text-muted small ms-2"></span>
+            <span id="udSyncNote" class="text-muted small ml-2"></span>
           </div>
 
           <hr>
@@ -140,7 +140,7 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
               <tr>
                 <th style="width:120px">Scope</th>
                 <th>Result</th>
-                <th style="width:90px" class="text-end">Time</th>
+                <th style="width:90px" class="text-right">Time</th>
               </tr>
             </thead>
             <tbody id="udSyncResults">
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var $tr = $('<tr>').append(
             $('<td>').text(scope),
             $('<td>').html('<span class="spinner-border spinner-border-sm"></span> syncing…'),
-            $('<td>').addClass('text-end').text('')
+            $('<td>').addClass('text-right').text('')
         );
         $results.append($tr);
         return $tr;
