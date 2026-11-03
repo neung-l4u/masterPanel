@@ -85,21 +85,36 @@ $countries = array_keys(UP_DOWN_PROJECT_BOARDS);
 
           <div class="row">
             <?php foreach ($counts as $row): ?>
-              <div class="col-md-4 col-sm-6 mb-2">
-                <label class="d-flex align-items-center gap-2 mb-0">
-                  <input type="checkbox" class="ud-country"
+              <div class="col-md-4 col-sm-6 mb-3">
+                <?php
+                  // Each country carries its own date, because that is where
+                  // the actionable signal is: one country weeks behind while
+                  // the rest are current is the normal failure here, and a
+                  // single summary line cannot show it.
+                  $rowStale = $row['lastSync'] === null
+                      || strtotime($row['lastSync']) < time() - UP_DOWN_STALE_AFTER_HOURS * 3600;
+                ?>
+                <?php
+                  // No align-items-center here: the body is two lines tall, so
+                  // centring floats the checkbox to mid-height between them
+                  // instead of sitting beside the country code. The small top
+                  // margin lines it up with the first line's text.
+                ?>
+                <label class="d-flex gap-2 mb-0" style="cursor:pointer;">
+                  <input type="checkbox" class="ud-country flex-shrink-0"
+                         style="margin-top:.25rem;"
                          value="<?php echo htmlspecialchars($row['country']); ?>">
-                  <span>
+                  <span class="lh-sm">
                     <strong><?php echo htmlspecialchars($row['country']); ?></strong>
                     <small class="text-muted">
                       <?php echo number_format($row['shops']); ?> shops,
                       <?php echo number_format($row['withEmail']); ?> with email
                     </small>
                     <br>
-                    <small class="text-muted">
+                    <small class="<?php echo $rowStale ? 'text-danger' : 'text-muted'; ?>">
                       <?php echo $row['lastSync'] === null
-                          ? '<span class="text-danger">never synced</span>'
-                          : 'synced ' . htmlspecialchars($row['lastSync']); ?>
+                          ? 'never synced'
+                          : 'synced ' . htmlspecialchars(substr($row['lastSync'], 0, 16)); ?>
                     </small>
                   </span>
                 </label>
