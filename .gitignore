@@ -184,3 +184,6 @@ config/domain_report.php
 config/*.json
 config/*.csv
 api/stripe/cache/*/
+
+# Local docs (plans, migrations) - not pushed
+/docs/
