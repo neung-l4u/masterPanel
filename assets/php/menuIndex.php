@@ -82,6 +82,7 @@ function buildMenuIndex()
         $add('Feedback Monday', 'Logs', 'main.php?p=feedbackMonday', 'bi bi-chat-left-text', false, 'ฟีดแบค comment');
         $add('Printers Log', 'Logs', 'main.php?p=printersLog', 'bi bi-printer', false, 'เครื่องพิมพ์ printer');
         $add('SignUp Logs (Staff)', 'Logs', 'main.php?p=signupLogs', 'bi bi-person-plus', false, 'สมัคร log');
+        $add('Payment Password', 'Logs', 'main.php?p=paymentPassword', 'bi bi-key', false, 'รหัสผ่าน ลูกค้า payment password stripe');
         $add('Upgrade to New System', 'Logs', 'main.php?p=formASAPLogs', 'bi bi-calendar-check', false, 'asap booking changes อัปเกรด');
         $add('AI Araya Logs', 'Logs', 'https://report.localforyou.com/modules/aiAraya/views/entries.php', 'AI', true, 'ai araya');
         $add('Change Logs', 'Logs', 'modules/changeLog/changelog.php', 'bi bi-clock-history', true, 'changelog version อัปเดต');

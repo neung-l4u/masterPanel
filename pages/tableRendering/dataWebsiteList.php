@@ -25,6 +25,7 @@ $qb->eq('w.wIndustry', $params["shopType"]);
 if ($params["system"] === "AM")      $qb->raw("AND w.wSystemAmelia = 1");
 elseif ($params["system"] === "GF")  $qb->raw("AND w.wSystemGloriaFood = 1");
 elseif ($params["system"] === "VC")  $qb->raw("AND w.wSystemVoucher = 1");
+elseif ($params["system"] === "CW")  $qb->raw("AND w.wSystemCloudwaitress = 1");
 
 $qb->eq('w.wLiveStatus', $params["liveStatus"])
    ->eq('w.wTemplateUsed', $params["template"])

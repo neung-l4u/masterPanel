@@ -181,6 +181,22 @@ switch ($menuPage){
         $datatable["src"] = "pages/tableRendering/dataPassword.php";
         $title = "Master panel : L4U Password Management";
         break;
+    case "paymentPassword":
+        $showPage = "paymentPassword.php";
+        $activeMenu["lv1"] = "logs";
+        $activeMenu["lv2"] = "paymentPassword";
+        $datatable["show"] = "true";
+        $datatable["src"] = "pages/tableRendering/dataPaymentPassword.php";
+        $title = "Master panel : Payment Password";
+        break;
+    case "dataCustomer":
+        $showPage = "dataCustomer.php";
+        $activeMenu["lv1"] = "formMgmt";
+        $activeMenu["lv2"] = "dataCustomer";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $title = "Master panel : Data Customer";
+        break;
     case "viewLogs":
         $showPage = "viewLogs.php";
         $activeMenu["lv1"] = "";

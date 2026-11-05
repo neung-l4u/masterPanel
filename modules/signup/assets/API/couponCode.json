@@ -406,6 +406,60 @@
             "code": "Freeweb"
           }
         }
+      },
+      "FULLY50": {
+        "Restaurant": {
+          "AU": {
+            "discount": 49750,
+            "code": "FULLY50"
+          },
+          "NZ": {
+            "discount": 49750,
+            "code": "FULLY50"
+          },
+          "UK": {
+            "discount": 29950,
+            "code": "FULLY50"
+          },
+          "US": {
+            "discount": 49750,
+            "code": "FULLY50"
+          },
+          "CA": {
+            "discount": 49750,
+            "code": "FULLY50"
+          },
+          "TH": {
+            "discount": 1450000,
+            "code": "FULLY50"
+          }
+        },
+        "Massage": {
+          "AU": {
+            "discount": 49750,
+            "code": "FULLY50"
+          },
+          "NZ": {
+            "discount": 49750,
+            "code": "FULLY50"
+          },
+          "UK": {
+            "discount": 29950,
+            "code": "FULLY50"
+          },
+          "US": {
+            "discount": 49750,
+            "code": "FULLY50"
+          },
+          "CA": {
+            "discount": 49750,
+            "code": "FULLY50"
+          },
+          "TH": {
+            "discount": 1450000,
+            "code": "FULLY50"
+          }
+        }
       }
     }
   }
