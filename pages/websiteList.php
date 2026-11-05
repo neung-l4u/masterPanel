@@ -513,16 +513,19 @@ $password = "Localeats#".date("Y");
                                         </div>
                                     </section>
 
-                                    <div class="form-row d-none">
-                                        <div class="form-group col-md-6">
-                                            <label for="inputSMTPUser">SMTP Email User</label>
-                                            <input type="text" class="form-control" id="inputSMTPUser" placeholder="noreply@hoonhay.com">
+                                    <section class="formSection">
+                                        <div class="sectionTitle">SMTP</div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="inputSMTPUser">SMTP Email User</label>
+                                                <input type="text" class="form-control" id="inputSMTPUser" placeholder="noreply@hoonhay.com">
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="inputSMTPPass">SMTP Email Pass</label>
+                                                <input type="text" class="form-control" id="inputSMTPPass" placeholder="L4U@Notifications">
+                                            </div>
                                         </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="inputSMTPPass">SMTP Email Pass</label>
-                                            <input type="text" class="form-control" id="inputSMTPPass" placeholder="L4U@Notifications">
-                                        </div>
-                                    </div>
+                                    </section>
 
                                     <div class="form-group d-none">
                                         <label for="inputSMTPRemark">SMTP Remark</label>
