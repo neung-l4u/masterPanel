@@ -262,13 +262,17 @@ function site_host($w) {
 function host_of($x) { return preg_replace('/^www\./', '', preg_split('#[/?\#:]#', preg_replace('#^[a-z]+://#', '', strtolower(trim((string) $x))))[0]); }
 
 // ---------------------------------------------------------------- Site scan
-// Fetch every host's home page in parallel. Returns host => [http, body, ip].
+// Fetch every host's home page in parallel. Returns host => [http, facts, ip].
+// The page body is reduced to page_facts() as soon as it arrives and is not kept: the cPanel account has 1G of
+// memory in total, and holding ~1080 bodies got the scan killed by CloudLinux with no error (06/11/2026).
+const MAX_PAGE_BYTES = 3 * 1024 * 1024;   // a home page bigger than this is cut off; the start of the page is enough for page_facts()
 function scan_sites(array $hosts) {
     $res = []; $queue = array_values($hosts); $mh = curl_multi_init(); $active = [];
     $add = function ($h, $scheme) use ($mh, &$active) {
         $ch = curl_init("$scheme://$h/");
         curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => 1, CURLOPT_FOLLOWLOCATION => 1, CURLOPT_MAXREDIRS => 5, CURLOPT_TIMEOUT => 20,
-            CURLOPT_CONNECTTIMEOUT => 10, CURLOPT_USERAGENT => 'Mozilla/5.0 (Macintosh) Chrome/124', CURLOPT_ENCODING => '']);
+            CURLOPT_CONNECTTIMEOUT => 10, CURLOPT_USERAGENT => 'Mozilla/5.0 (Macintosh) Chrome/124', CURLOPT_ENCODING => '',
+            CURLOPT_NOPROGRESS => 0, CURLOPT_XFERINFOFUNCTION => fn($c, $dlTotal, $dl) => $dl > MAX_PAGE_BYTES ? 1 : 0]);
         curl_multi_add_handle($mh, $ch); $active[(int) $ch] = [$ch, $h, $scheme];
     };
     while ($queue || $active) {
@@ -280,7 +284,8 @@ function scan_sites(array $hosts) {
             curl_multi_remove_handle($mh, $ch); curl_close($ch);
             if ($code === 0 && $scheme === 'https') { $add($h, 'http'); continue; }
             $a = @dns_get_record($h, DNS_A);
-            $res[$h] = ['http' => $code, 'body' => (string) $body, 'ip' => $a[0]['ip'] ?? ''];
+            $res[$h] = ['http' => $code, 'facts' => page_facts((string) $body), 'ip' => $a[0]['ip'] ?? ''];
+            unset($body);
         }
     }
     curl_multi_close($mh);
@@ -395,7 +400,7 @@ function run_scan() {
     $retry = array_keys(array_filter($scan, fn($s) => $s['http'] !== 200));
     logmsg('re-checking ' . count($retry) . ' sites…');
     $scan = array_merge($scan, scan_sites($retry));
-    $facts = array_map(fn($s) => page_facts($s['body']), $scan);
+    $facts = array_map(fn($s) => $s['facts'], $scan);
 
     $outside = [];
     foreach ($customers as $c) foreach ($c['domains'] as $d) if (!isset($ds[$d])) $outside[$d] = 1;
@@ -712,7 +717,7 @@ function run_scan() {
     sheet_replace('annual_summary', array_merge([array_merge(['Month', 'Snapshot date'], $keys, [$updated])],
         array_map(fn($m, $r) => array_merge([$m, $r[0]], array_map(fn($k) => (int) $r[$col[$k]], $keys)), array_keys($months), $months)));
 
-    logmsg('done: ' . json_encode($n));
+    logmsg('done: ' . json_encode($n) . ' peak_mem=' . round(memory_get_peak_usage(true) / 1048576) . 'M');
 }
 
 function sort_by(array $a, callable $key) { usort($a, fn($x, $y) => strcmp((string) $key($x), (string) $key($y))); return $a; }
