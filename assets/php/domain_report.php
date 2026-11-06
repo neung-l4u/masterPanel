@@ -741,9 +741,15 @@ function run_send() {
     foreach (array_filter(array_keys($CFG), fn($k) => str_starts_with($k, 'chat_webhook')) as $hook) {
         if (empty($CFG[$hook])) { logmsg("chat $hook: not set in config/domain_report.php, skipped"); continue; }
         foreach ($texts as $i => $text) {
-            [$code] = http_json($CFG[$hook], [CURLOPT_POST => 1, CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=UTF-8'],
-                CURLOPT_POSTFIELDS => json_encode(['text' => $text], JSON_UNESCAPED_UNICODE)]);
-            logmsg("chat $hook message " . ($i + 1) . " HTTP $code");
+            // Google Chat answers 429 when two messages reach the same space too close together; space them out, and wait and resend on 429.
+            if ($i) sleep(2);
+            for ($try = 1; $try <= 4; $try++) {
+                [$code] = http_json($CFG[$hook], [CURLOPT_POST => 1, CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=UTF-8'],
+                    CURLOPT_POSTFIELDS => json_encode(['text' => $text], JSON_UNESCAPED_UNICODE)]);
+                logmsg("chat $hook message " . ($i + 1) . " HTTP $code" . ($try > 1 ? " (try $try)" : ''));
+                if ($code !== 429) break;
+                sleep(15 * $try);
+            }
             $ok = $ok && $code === 200;
         }
     }
