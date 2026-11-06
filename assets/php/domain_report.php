@@ -742,7 +742,7 @@ function run_send() {
         if (empty($CFG[$hook])) { logmsg("chat $hook: not set in config/domain_report.php, skipped"); continue; }
         foreach ($texts as $i => $text) {
             // Google Chat answers 429 when two messages reach the same space too close together; space them out, and wait and resend on 429.
-            if ($i) sleep(2);
+            if ($i) sleep(3);   // the documented limit is 1 message/second per space; 3s leaves room if Google tightens it
             for ($try = 1; $try <= 4; $try++) {
                 [$code] = http_json($CFG[$hook], [CURLOPT_POST => 1, CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=UTF-8'],
                     CURLOPT_POSTFIELDS => json_encode(['text' => $text], JSON_UNESCAPED_UNICODE)]);
