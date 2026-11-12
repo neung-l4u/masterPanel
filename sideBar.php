@@ -314,6 +314,14 @@ include ('assets/api/checkSession.php');
                                 <p>Change Logs &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
                             </a>
                         </li>
+                        <?php if($_SESSION['level'] < 4){ ?>
+                        <li class="nav-item pl-2">
+                            <a href="modules/competitorScan/views/index.php" target="_blank" class="nav-link">
+                                <i class="nav-icon mr-3 bi bi-binoculars"></i>
+                                <p>Competitor Scan &nbsp; <i class="bi bi-box-arrow-up-right"></i></p>
+                            </a>
+                        </li>
+                        <?php } ?>
                     </ul>
                 </li>
                 <?php } ?> <!-- End Role = Guest -->

@@ -166,6 +166,12 @@ assets/php/whm_tokens.json
 /modules/viewcreditmake/config.php
 /modules/viewcreditmake/cache/
 
+# Unused DB config that carried the production DB password (do not commit)
+/modules/cancellation/assets/db/initDB2.php
+
+# Lost customer scan results: customer names, reasons, sites (do not commit)
+/modules/competitorScan/cache/
+
 # Payments API secret (credential, do not commit)
 assets/db/payments_secret.txt
 
