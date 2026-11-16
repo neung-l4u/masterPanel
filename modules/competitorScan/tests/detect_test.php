@@ -123,7 +123,34 @@ $r = cs_classify($shop, [[0, '', '']], []);
 check('unreachable site is Unknown, not Not Detected', [$r['site_status'], $r['system']['status'], $r['marketing']['status']],
     ['Not reachable (DNS / timeout)', 'Unknown', 'Unknown']);
 $r = cs_classify(['scope' => ['marketing' => true, 'system' => false]] + $shop, [[200, 'https://x/', $nina]], []);
+check('competitor found outside the package still shows', $r['system']['status'], 'Confirmed');
+$r = cs_classify(['scope' => ['marketing' => true, 'system' => false]] + $shop, [[200, 'https://x/', '<p>hello</p>']], []);
 check('system outside the package', $r['system']['status'], 'Not in package');
+
+// ---- agency hints
+$child = "/*\n Theme Name: Astra Child\n Author: Spice Digital\n Author URI: https://spicedigital.com.au\n Template: astra\n*/";
+check('child theme author', cs_theme_author($child), ['name' => 'Spice Digital', 'url' => 'https://spicedigital.com.au']);
+check('stock theme (no Template:) is not an agency', cs_theme_author("/*\nTheme Name: Astra\nAuthor: Brainstorm Force\n*/"), null);
+check('child theme by a theme vendor is not an agency', cs_theme_author("/*\nAuthor: Brainstorm Force\nTemplate: astra\n*/"), null);
+check('meta author', cs_meta_author('<meta content="Acme Web" name="author">'), 'Acme Web');
+$r = cs_classify($shop, [[200, 'https://x/', '<meta name="author" content="Acme Web"><p>hi</p>']], [], [], [$child]);
+check('theme author beats meta author', [$r['agency']['status'], $r['agency']['name']], ['Likely', 'Spice Digital']);
+$r = cs_classify($shop, [[200, 'https://x/', '<meta name="author" content="Nina Thai Massage"><p>hi</p>']], []);
+check('meta author = the shop itself is not an agency', $r['agency']['status'], 'Unknown');
+$r = cs_classify(['name' => 'Mango Thai Restaurant (Colac) - BR.Colac'] + $shop, [[200, 'https://x/', '<meta name="author" content="Mango Colac Colac">']], []);
+check('meta author with the shop\'s branch name is not an agency', $r['agency']['status'], 'Unknown');
+$r = cs_classify($shop, [[200, 'https://x/', '<title>SITUS TOTO WIN4D Bandar Toto</title><meta name="author" content="SLOT GACOR">']], []);
+check('gambling spam on the old domain', [$r['site_status'], $r['agency']['status']], ['Gambling spam on domain', 'Unknown']);
+check('Toast-hosted CNAME maps to Toast', systems_in('sites.toasttab.com')['ordering'] ?? [], ['Toast']);
+$mk = fn($d, $ids) => ['domain' => $d, 'agency' => ['status' => 'Unknown', 'name' => '', 'url' => ''], 'marketing' => ['ids' => ['gtm' => $ids]]];
+$g = cs_shared_ids([$mk('a.com.au', ['GTM-AAAA1']), $mk('b.com', ['GTM-AAAA1']), $mk('x.tuckerfox.com.au', ['GTM-PLAT1']),
+    $mk('y.tuckerfox.com.au', ['GTM-PLAT1']), $mk('c.com', ['GTM-XXXXXX']), $mk('d.com', ['GTM-XXXXXX'])]);
+check('shared GTM → agency Likely', [$g[0]['agency']['status'], $g[0]['agency']['shared_with']], ['Likely', ['b.com']]);
+$x = cs_shared_ids([['cc' => 'AU'] + $mk('a.com.au', ['GTM-CC1']), ['cc' => 'US'] + $mk('b.com', ['GTM-CC1'])]);
+check('same id across countries is not an agency', $x[0]['agency']['status'], 'Unknown');
+check('platform-wide id and placeholder ignored', [$g[2]['agency']['status'], $g[4]['agency']['status']], ['Unknown', 'Unknown']);
+require_once __DIR__ . '/../models/places.php';
+check('places: utm_source kept', cs_places_entry(['id' => '1', 'cc' => 'AU', 'name' => 'Bangkok Bay'], ['name' => 'Bangkok Bay', 'website' => 'https://bangkokbay.com.au/?utm_source=acmeweb', 'phone' => ''])['utm'] ?? '', 'utm_source=acmeweb');
 
 // ---- selection rules
 $P = fn($id, $name, $stage, $extra = []) => ['id' => $id, 'cc' => 'AU', 'name' => $name, 'group' => '', 'v' => $extra + ['stage3' => $stage, 'color1' => 'Thai Massage']];
@@ -139,19 +166,27 @@ $projects = [
     $P('18', 'Golf Thai', 'Test Data'),
     $P('19', 'Hotel Thai', 'Cancelled', ['text' => 'Promotion - Social Media Marketing Solo - $199.00 /Month']),
     $P('20', 'India Thai', 'Completed', ['date_mm26kg00' => '2026-02-01', 'color_mks7j57k' => 'Upgrade to Social Media Bundle']),   // plan change
-    $P('21', 'Juliet Thai', 'Completed', ['date_mm26kg00' => '2026-02-01', 'color_mks7j57k' => 'Downgrade / Do by themselve']),   // real loss
+    $P('21', 'Juliet Thai', 'Completed', ['date_mm26kg00' => '2026-02-01', 'color_mks7j57k' => 'Downgrade / Do by themselve',
+        'text_mks7rcqh' => 'Running ads in-house now', 'live_date' => '2025-02-01', 'date_mkzs3896' => '2024-02-02']),   // real loss
 ];
 $projects[] = $P('22', 'Kilo Thai', 'Completed', ['date_mm26kg00' => '2026-02-01']);   // upgrade reason only on the subscription
 $projects[] = $P('23', 'Lima Spa - TH', 'Cancelled', ['text' => 'Add-on Only - ฿0.00']);
+$projects[] = $P('24', 'Mike Noodle House - BR.X', 'Cancelled', ['cancel_date' => '2026-05-10', 'email' => 'Owner@Mike.com']);   // form found by email
+$projects[] = $P('25', 'DeSPresso Thai and Brasserie - BR.Darlinghurst', 'Cancelled', ['cancel_date' => '2025-05-25']);       // form found by name words
+$projects[] = $P('26', 'Star Thai Massage - BR.Cardiff', 'Cancelled', ['cancel_date' => '2025-05-25']);                       // one distinctive word: no guess
 $subs = [$S('k', '22', 'Cancelled Subscription', 'Social Media Marketing Solo'), $S('a', '10', 'Cancelled Subscription', 'Social Media Marketing Solo'), $S('b', '10', 'Cancelled Subscription', 'Pro Online Ordering System'),
     $S('c', '10', 'Cancelled Subscription', 'Website Hosting', '2023-01-01'), $S('d', '11', 'Active Subscriptions', 'Booking System')];
 $subs[0]['v']['text_mks62r3g'] = 'New Package 2026';
+$subs[1]['v'] += ['numbers' => '199', 'status0' => 'aud']; $subs[2]['v'] += ['numbers' => '149.5', 'status0' => 'aud']; $subs[3]['v'] += ['numbers' => '50', 'status0' => 'aud'];
 $rejoins = [['id' => 'r', 'cc' => '', 'name' => 'Alpha Thai : Rejoin', 'group' => '', 'v' => ['connect_boards_mkkskqcf' => ['10']]],
     ['id' => 'r2', 'cc' => '', 'name' => 'Fox : Rejoin Domain is due for renewal', 'group' => '', 'v' => ['x' => ['16']]]];
-$form = [['county' => 'AU', 'shopname' => 'Alpha Thai', 'reason' => 'Found something better', 'other' => 'We do it ourselves', 'lastdate' => '', 'timestamp' => '2026-03-02']];
+$form = [['county' => 'AU', 'shopname' => 'Alpha Thai', 'reason' => 'Found something better', 'other' => 'We do it ourselves', 'lastdate' => '', 'timestamp' => '2026-03-02'],
+    ['county' => 'AU', 'shopname' => 'mike noodles', 'email' => 'owner@mike.com ', 'reason' => 'other', 'other' => 'Moving overseas', 'lastdate' => '', 'timestamp' => '2026-04-01'],
+    ['county' => 'AU', 'shopname' => 'DESPRESSO THAI&BRASSERIE ', 'reason' => 'Cost too much', 'other' => 'NULL', 'lastdate' => '', 'timestamp' => '2025-05-23'],
+    ['county' => 'AU', 'shopname' => 'Star Massage & Spa', 'reason' => 'Cost too much', 'other' => '', 'lastdate' => '', 'timestamp' => '2025-05-20']];
 $shops = [];
 foreach (cs_build_shops($projects, $subs, $rejoins, $form, ['AU|limaspa' => 'Add-on Only (Website Hosting)']) as $s) $shops[$s['id']] = $s;
-check('lost shops (upgrade excluded, downgrade kept)', array_map('strval', array_keys($shops)), ['10', '12', '17', '19', '21', '23']);
+check('lost shops (upgrade excluded, downgrade kept)', array_map('strval', array_keys($shops)), ['10', '12', '17', '19', '21', '23', '24', '25', '26']);
 check('latest cancelled subs only (old hosting dropped)', $shops['10']['package'], 'Social Media Marketing Solo / Pro Online Ordering System');
 check('solo + ordering → both scanned', $shops['10']['scope'], ['marketing' => true, 'system' => true]);
 check('reason from cancellation form', [$shops['10']['reason'], $shops['10']['reason_src']], ['Found something better — We do it ourselves', 'form']);
@@ -162,8 +197,23 @@ check('duplicate keeps latest', [$shops['17']['cancel_date'], $shops['17']['dup_
 check('unknown package scans both', [$shops['17']['package'], $shops['17']['scope']], ['Unknown', ['marketing' => true, 'system' => true]]);
 check('package from project text column', [$shops['19']['package'], $shops['19']['scope']],
     ['Promotion - Social Media Marketing Solo - $199.00 /Month', ['marketing' => true, 'system' => false]]);
+check('reason details win over the reason label', $shops['21']['reason'], 'Running ads in-house now');
+check('lifespan from the earlier live date', [$shops['21']['live_date'], $shops['21']['lifespan']], ['2024-02-02', 730]);
+check('balance = last cancelled subs only', $shops['10']['balance'], ['AUD' => 348.5]);
+
+check('form by email; "other" shows the typed answer', [$shops['24']['reason'], $shops['24']['reason_src']], ['Moving overseas', 'form']);
+check('form by shop name words + date', $shops['25']['reason'], 'Cost too much');
+check('one shared word is not a match', $shops['26']['reason'], '');
 
 check('add-on only gets its add-ons named', [$shops['23']['package'], $shops['23']['addon_only']], ['Add-on Only (Website Hosting)', true]);
+
+// ---- Google Places result → links.json entry
+require_once __DIR__ . '/../models/places.php';
+$sh = ['id' => '1', 'cc' => 'AU', 'name' => 'Bangkok Bay Thai Restaurant - BR.Toronto'];
+check('places: provider site → link to check', cs_places_entry($sh, ['name' => 'Bangkok Bay Thai', 'website' => 'https://bangkokbay.mobi-order.com/?utm=g', 'phone' => '+61 2 1'])['urls'], ['https://bangkokbay.mobi-order.com/']);
+check('places: own site → new domain', cs_places_entry($sh, ['name' => 'Bangkok Bay', 'website' => 'https://www.bangkokbay.com.au/', 'phone' => ''])['website'], 'bangkokbay.com.au');
+check('places: facebook is not a website', cs_places_entry($sh, ['name' => 'Bangkok Bay', 'website' => 'https://facebook.com/bb', 'phone' => ''])['website'], '');
+check('places: other shop on top is ignored', cs_places_entry($sh, ['name' => 'Siam Orchid Thai', 'website' => 'https://siam.com/', 'phone' => '+61'])['match'], false);
 
 echo $fail ? "\n$fail failed\n" : "\nall passed\n";
 exit($fail ? 1 : 0);

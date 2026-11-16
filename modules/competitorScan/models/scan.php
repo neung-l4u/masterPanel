@@ -118,13 +118,21 @@ function cs_learn_lfy_ids(array $domains) {
 
 /** Fetch one chunk of shops (home page, http fallback, up to 3 own order/book/menu pages) and classify. */
 function cs_scan_chunk(array $shops, array $lfyIds) {
+    // links found outside the shop's own site (Google listing etc., see cs_apply_links)
+    $known = cs_read('links.json');
+    // no domain in monday, or monday's is dead: use the website on the shop's Google listing (models/places.php)
+    foreach ($shops as &$s) {
+        $w = $known[$s['id']]['website'] ?? '';
+        if ($w !== '' && $w !== $s['domain']) { $s['monday_domain'] = $s['domain']; $s['domain'] = $w; }
+    }
+    unset($s);
     $withDomain = array_filter($shops, fn($s) => $s['domain'] !== '');
     $home = fetch_all(array_map(fn($s) => "https://{$s['domain']}/", $withDomain), CS_CHUNK, CS_TIMEOUT);
     $retry = [];
     foreach ($home as $u => $r) if ($r[0] === 0) $retry[] = 'http://' . substr($u, 8);   // GloriaFood-hosted sites answer on http only
     foreach ($retry ? fetch_all($retry, CS_CHUNK, CS_TIMEOUT) : [] as $u => $r) if ($r[0] !== 0) $home['https://' . substr($u, 7)] = $r;
 
-    $subs = []; $js = [];
+    $subs = []; $js = []; $css = [];
     foreach ($withDomain as $s) {
         [$code, $final, $body] = $home["https://{$s['domain']}/"] ?? [0, '', ''];
         if ($code !== 200) continue;
@@ -142,12 +150,13 @@ function cs_scan_chunk(array $shops, array $lfyIds) {
         // JavaScript-app sites keep the order / booking link in a script: read those when the HTML shows no system
         $f = systems_in(strtolower($body));
         if (empty($f['ordering']) && empty($f['booking']) && empty($f['ours'])) $js[$s['domain']] = cs_app_scripts($body, $final);
+        // WordPress themes (child theme first: it is listed last): style.css names the theme's author
+        if (preg_match_all('#/wp-content/themes/([a-z0-9_-]+)/#i', $body, $t))
+            $css[$s['domain']] = array_map(fn($x) => "https://$base/wp-content/themes/$x/style.css", array_slice(array_reverse(array_unique($t[1])), 0, 2));
     }
-    // links found outside the shop's own site (Google listing etc., see cs_apply_links): fetched with the rest
-    $known = cs_read('links.json');
-    $ext = [];
+    $ext = [];   // fetched with the rest
     foreach ($shops as $s) $ext[$s['id']] = array_slice($known[$s['id']]['urls'] ?? [], 0, 5);
-    $more = array_merge(...array_values($subs), ...array_values($js ?? []), ...array_values($ext));
+    $more = array_merge(...array_values($subs), ...array_values($js ?? []), ...array_values($css), ...array_values($ext));
     $subRes = $more ? fetch_all($more, CS_CHUNK, CS_TIMEOUT) : [];
 
     $out = [];
@@ -160,7 +169,19 @@ function cs_scan_chunk(array $shops, array $lfyIds) {
             }
             $scripts = [];
             foreach ($js[$s['domain']] ?? [] as $u) if (($subRes[$u][0] ?? 0) === 200) $scripts[] = $subRes[$u][2];
-            $r = cs_classify($s, $pages, $lfyIds, $scripts);
+            $themes = [];
+            foreach ($css[$s['domain']] ?? [] as $u) if (($subRes[$u][0] ?? 0) === 200) $themes[] = $subRes[$u][2];
+            $r = cs_classify($s, $pages, $lfyIds, $scripts, $themes);
+            if (isset($s['monday_domain'])) $r['notes'][] = 'Website from Google listing (monday: ' . ($s['monday_domain'] ?: 'none') . ')';
+            if (!empty($known[$s['id']]['utm'])) $r['notes'][] = 'Google listing link tagged ' . $known[$s['id']]['utm'];
+            // a site we could not open (bot check / error page): public DNS still says which platform hosts it
+            if ($s['domain'] !== '' && ($r['site_status'] === 'Bot check (not checked)' || $r['http'] >= 400) && ($t = cs_cname($s['domain']))) {
+                $f = systems_in($t);
+                $r['builder'] = array_values(array_unique(array_merge($r['builder'], $f['builder'] ?? [])));
+                $sysF = array_merge($f['ordering'] ?? [], $f['booking'] ?? []);
+                if ($sysF && in_array($r['system']['status'], ['Unknown', 'Not Detected', 'Not in package'], true)) $r['system'] = ['status' => 'Likely', 'providers' => $sysF];
+                if ($sysF || !empty($f['builder'])) { $r['notes'][] = "Site hosted on $t (DNS)"; $r = cs_scope_system($r); }
+            }
             $linkPages = [];
             foreach ($ext[$s['id']] as $u) $linkPages[$u] = $subRes[$u] ?? [0, $u, ''];
             $out[] = $linkPages ? cs_apply_links($r, $linkPages, $known[$s['id']]['phone'] ?? '') : $r;
@@ -216,11 +237,9 @@ function cs_apply_links(array $r, array $linkPages, $phone = '') {
     $r['evidence'] = array_values(array_unique(array_merge($r['evidence'], $urls)));
     $r['notes'][] = 'From Google listing: ' . implode(', ', $found) . ($verified ? '' : ' (shop not confirmed on the page)');
     $onlyLfy = $r['system']['providers'] && !array_filter($r['system']['providers'], fn($p) => !str_contains($p, 'still LFY'));
-    if (in_array($r['system']['status'], ['Unknown', 'Not Detected', 'Likely'], true) || ($r['system']['status'] === 'Confirmed' && $onlyLfy && array_filter($found, fn($p) => !str_contains($p, 'still LFY'))))
+    if (in_array($r['system']['status'], ['Unknown', 'Not Detected', 'Likely', 'Not in package'], true) || ($r['system']['status'] === 'Confirmed' && $onlyLfy && array_filter($found, fn($p) => !str_contains($p, 'still LFY'))))
         $r['system'] = ['status' => $verified ? 'Confirmed' : 'Likely', 'providers' => $found];
-    elseif ($r['system']['status'] === 'Not in package')
-        $r['system']['providers'] = array_values(array_unique(array_merge($r['system']['providers'], $found)));
-    return $r;
+    return cs_scope_system($r);
 }
 
 /**
@@ -228,13 +247,14 @@ function cs_apply_links(array $r, array $linkPages, $phone = '') {
  * Confirmed / Likely / Not Detected (looked, found nothing — NOT "stopped") / Unknown (could not look).
  * Parts outside the customer's package are "Not in package".
  */
-function cs_classify(array $s, array $pages, array $lfyIds, array $scripts = []) {
+function cs_classify(array $s, array $pages, array $lfyIds, array $scripts = [], array $themeCss = []) {
     [$code, $final, $body] = $pages[0] ?? [0, '', ''];
     $low = strtolower($body);
     if ($s['domain'] === '') $site = 'No domain in monday';
     elseif ($code === 0) $site = 'Not reachable (DNS / timeout)';
     elseif (preg_match('/one moment, please|just a moment\.\.\.|cf-chl-/', $low)) $site = 'Bot check (not checked)';
     elseif (preg_match(PARKED, $low)) $site = 'Parked / for sale';
+    elseif (preg_match_all(CS_GAMBLING, substr($low, 0, 200000)) >= 2) $site = 'Gambling spam on domain';
     elseif ($code >= 400) $site = "HTTP $code";
     else $site = 'Online';
 
@@ -283,13 +303,74 @@ function cs_classify(array $s, array $pages, array $lfyIds, array $scripts = [])
         $r['marketing'] = ['status' => $ch ? 'Likely' : 'Not Detected', 'channels' => $ch, 'ids' => $ids];
 
         $credits = cs_agency_credits($raw);
+        // the shop naming itself is not an agency: any distinctive word of the shop name (or branch) in the author
+        $shopWords = array_filter(preg_split('/[^a-z0-9]+/', strtolower($s['name'])), fn($w) => strlen($w) >= 4
+            && !in_array($w, ['thai', 'restaurant', 'massage', 'kitchen', 'cuisine', 'street', 'food', 'spa', 'cafe', 'therapy'], true));
+        $isShop = fn($x) => (bool) array_filter($shopWords, fn($w) => str_contains(cs_norm($x), $w));
+        $theme = null;
+        foreach ($themeCss as $css) if (($t = cs_theme_author($css)) && !$isShop($t['name'])) { $theme = $t; break; }
+        $author = cs_meta_author($raw);
+        $authorN = cs_norm($author);
         if ($credits) $r['agency'] = ['status' => 'Confirmed', 'name' => $credits[0]['name'], 'url' => $credits[0]['url']];
+        elseif ($theme) $r['agency'] = ['status' => 'Likely', 'name' => $theme['name'], 'url' => $theme['url'], 'via' => 'theme author'];
+        elseif ($author !== '' && !preg_match(CS_NOT_AGENCY, $author) && !preg_match(CS_THEME_VENDORS, $author)
+            && !array_filter($shopWords, fn($w) => str_contains($authorN, $w)))
+            $r['agency'] = ['status' => 'Likely', 'name' => $author, 'url' => '', 'via' => 'meta author'];
         elseif ($p = array_values(array_intersect($r['builder'], CS_AGENCY_PLATFORMS)))
             $r['agency'] = ['status' => 'Likely', 'name' => $p[0] . ' (platform + marketing)', 'url' => ''];
     }
-    if (!$s['scope']['system']) $r['system'] = ['status' => 'Not in package', 'providers' => $r['system']['providers']];
+    $r = cs_scope_system($r);
     if (!$s['scope']['marketing']) $r['marketing']['status'] = 'Not in package';
     return $r;
+}
+
+/**
+ * Shops that bought no LFY system keep "Not in package", unless a known competitor system was found:
+ * a shop that never took our system but runs Toast / Fresha is still worth knowing about.
+ */
+function cs_scope_system(array $r) {
+    if ($r['scope']['system'] ?? true) return $r;
+    $named = array_filter($r['system']['providers'], fn($p) => !str_contains($p, '.') && !str_contains($p, 'still LFY') && !str_contains($p, '(chat)'));
+    if ($named && in_array($r['system']['status'], ['Confirmed', 'Likely'], true)) {
+        $note = 'Competitor system found (LFY package had no system)';
+        if (!in_array($note, $r['notes'], true)) $r['notes'][] = $note;
+        return $r;
+    }
+    $r['system']['status'] = 'Not in package';
+    return $r;
+}
+
+/** Registrable part of a host: shop.tuckerfox.com.au → tuckerfox.com.au. */
+function cs_base_domain($h) {
+    $p = explode('.', $h);
+    return implode('.', array_slice($p, preg_match('/\.(?:com|net|org|co|gov|edu|asn|id)\.[a-z]{2}$/', $h) ? -3 : -2));
+}
+
+/**
+ * Agency hint from tracking IDs shared across shops: one GTM container / Pixel / Ads account on several unrelated
+ * shops' sites means one person or company runs them (an agency, or an owner with several shops → Likely only).
+ * IDs shared by subdomains of one platform (tuckerfox, booknorder…) are the platform's own, placeholders are skipped.
+ * Recomputed over the whole list each time; only fills agencies that are still Unknown.
+ */
+function cs_shared_ids(array $shops) {
+    $by = [];
+    foreach ($shops as $i => $s) {
+        if (($s['agency']['via'] ?? '') === 'shared id') $shops[$i]['agency'] = ['status' => 'Unknown', 'name' => '', 'url' => ''];
+        foreach (array_merge(...array_values($s['marketing']['ids'] ?? [] ?: [[]])) as $id)
+            if (!preg_match('/X{4,}|^GTM-0+$/', $id) && ($s['domain'] ?? '') !== '') { $by[$id][$s['domain']][] = $i; $cc[$id][$s['cc'] ?? ''] = 1; }
+    }
+    foreach ($by as $id => $doms) {
+        $bases = array_map('cs_base_domain', array_keys($doms));
+        // one agency serves one market: the same id across countries is a theme / widget default, not a person
+        if (count($doms) < 2 || count($doms) > 8 || count(array_unique($bases)) < count($bases) || count($cc[$id]) > 1) continue;
+        foreach ($doms as $dom => $idx) foreach ($idx as $i) {
+            if ($shops[$i]['agency']['status'] !== 'Unknown') continue;
+            $others = array_values(array_diff(array_keys($doms), [$dom]));
+            $shops[$i]['agency'] = ['status' => 'Likely', 'name' => "Shared ID $id", 'url' => '', 'via' => 'shared id',
+                'shared_with' => $others];
+        }
+    }
+    return $shops;
 }
 
 /** End of run: replace current.json, append changed shops to history.jsonl, write errors and meta. */
@@ -308,9 +389,10 @@ function cs_finish(array $run) {
         }
         if (($r['site_status'] ?? '') === 'Error') $errors[] = ['shop' => $r['id'], 'name' => $r['name'], 'error' => $r['error'] ?? ''];
     }
-    cs_write('current.json', $run['results']);
+    cs_write('current.json', cs_shared_ids($run['results']));
     if ($lines !== '') file_put_contents(cs_cache('history.jsonl'), $lines, FILE_APPEND);
     cs_write('errors.json', $errors);
+    cs_write('lfy_ids.json', $run['lfy_ids'] ?? []);   // reused by places.php re-scans between runs
     cs_write('meta.json', ['last_started_at' => $run['started_at'], 'last_finished_at' => date('c'),
         'shops' => count($run['results']), 'lfy_ids' => count($run['lfy_ids'] ?? [])]);
     @unlink(cs_cache('run.json'));

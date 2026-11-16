@@ -42,3 +42,13 @@ lock กันไม่ให้หน้าเว็บกับ cron ทำง
 ```bash
 php modules/competitorScan/tests/detect_test.php
 ```
+
+## Google Places lookup (shops whose own site can't be checked)
+
+`places.php` looks up each such shop's Google listing once (Places API (New) Text Search) and stores its website /
+phone in `cache/links.json`; scans then check that page. Key: `config/competitor_scan.php` (gitignored)
+`<?php return ['places_key' => '...'];`. The website field is billed as Text Search Enterprise (1,000 free / month):
+the script stops at 1,000 a month (`CS_PLACES_MONTHLY`) and 40 a day, counted in `cache/places_usage.json`.
+
+    php modules/competitorScan/places.php --dry   # who is next, no API calls
+    php modules/competitorScan/places.php         # daily from cron

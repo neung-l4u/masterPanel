@@ -84,6 +84,8 @@ const SYSTEMS = [
     // chat used to take orders / bookings (common in Thailand); only reported when no real system is found
     'LINE (chat)'           => ['chat', 'lin\.ee/|line\.me/(?:r/|ti/|R/)|page\.line\.me'],
 ];
+// Expired domain re-registered by an (Indonesian) gambling spam site: not the shop's site any more
+const CS_GAMBLING = '~slot ?gacor|\\btogel\\b|situs (?:toto|slot|judi|hiburan)|\\bjudi\\b|pragmatic ?play|\\bmaxwin\\b|bandar (?:toto|togel|slot)|deposit slot|\\bslot (?:online|pulsa|depo|dana)\\b|\\b4d resmi~i';
 const PARKED = '~domain (?:is )?for sale|buy this domain|parked free|sedoparking|this domain (?:has expired|is parked)|domain parking|hugedomains|dan\.com/|afternic|related searches|links to advertisements|website under redevelopment~';
 
 function host_of($x) { return preg_replace('/^www\./', '', preg_split('#[/?\#:]#', preg_replace('#^[a-z]+://#', '', strtolower(trim((string) $x))))[0]); }
@@ -183,7 +185,7 @@ function cs_tracking_ids($html) {
 }
 
 // Builders, platforms and L4U itself are not the shop's agency.
-const CS_NOT_AGENCY = '#wordpress|wix|squarespace|godaddy|elementor|shopify|weebly|astra|wpbakery|divi|duda|jimdo|webflow|hostinger|google|facebook|meta\b|fresha|gloria|foodbooking|localforyou|local for you|cloudwaitress|mindbody|vagaro|square|toast|clover|owner\.com|theme|plugin|^(the|our|us|me|you)$#i';
+const CS_NOT_AGENCY = '#wordpress|wix|squarespace|godaddy|elementor|shopify|weebly|astra|wpbakery|divi|duda|jimdo|webflow|hostinger|google|facebook|meta\b|fresha|gloria|foodbooking|localforyou|local for you|cloudwaitress|mindbody|vagaro|square|toast|clover|owner\.com|tucker ?fox|theme|plugin|^(the|our|us|me|you)$#i';
 
 // Builders whose company also sells marketing / ads management. Being on one is a hint, not proof, of an agency.
 const CS_AGENCY_PLATFORMS = ['ReadyPlanet'];
@@ -209,6 +211,40 @@ function cs_agency_credits($html) {
         $out[strtolower($name)] = ['name' => $name, 'url' => $url];
     }
     return array_values($out);
+}
+
+// Theme shops / theme tools: the author of a theme from these is not who built the shop's site
+const CS_THEME_VENDORS = '#brainstorm|themeisle|themefusion|elegant ?themes|generatepress|kadence|oceanwp|ux-themes|flatsome|envato|themeforest|child theme configurator|automattic|wordpress\.org|hello elementor|themeum|stylemix|qode|mikado|select-themes|muffin|kriesi|swift ?ideas|xpeedstudio|blockskit|beaver builder|^x+\b#i';
+
+/**
+ * Author of a WordPress child theme's style.css ("Template:" line = child theme). A child theme is made by whoever
+ * built the site, so its "Author / Author URI" names the agency; a stock theme's author is just the theme vendor.
+ */
+function cs_theme_author($css) {
+    $head = substr((string) $css, 0, 4000);
+    if (!preg_match('/^[\s*]*Template:\s*\S/mi', $head)) return null;
+    $name = preg_match('/^[\s*]*Author:\s*(.+?)\s*$/mi', $head, $m) ? trim($m[1]) : '';
+    $url = preg_match('/^[\s*]*Author URI:\s*(\S+)/mi', $head, $m) ? trim($m[1]) : '';
+    if ($name === '' && $url === '') return null;
+    if (preg_match(CS_NOT_AGENCY, "$name $url") || preg_match(CS_THEME_VENDORS, "$name $url")) return null;
+    return ['name' => $name ?: host_of($url), 'url' => $url];
+}
+
+/** <meta name="author" content="…">, in either attribute order. */
+function cs_meta_author($html) {
+    if (preg_match('#<meta\s+name=["\']author["\']\s+content=["\']([^"\']{3,80})["\']#i', $html, $m)
+        || preg_match('#<meta\s+content=["\']([^"\']{3,80})["\']\s+name=["\']author["\']#i', $html, $m)) return trim(html_entity_decode($m[1]));
+    return '';
+}
+
+/** www / apex CNAME target ("sites.toasttab.com"): says which platform hosts a site we could not open. */
+function cs_cname($domain) {
+    foreach (["www.$domain", $domain] as $h) {
+        $r = @dns_get_record($h, DNS_CNAME);
+        $t = strtolower(rtrim($r[0]['target'] ?? '', '.'));
+        if ($t !== '' && $t !== $domain && !str_ends_with($t, '.' . $domain)) return $t;
+    }
+    return '';
 }
 
 /**

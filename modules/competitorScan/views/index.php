@@ -77,30 +77,30 @@ $staffName = $_SESSION['nickName'] ?? $_SESSION['name'] ?? '';
     <div class="card mb-3">
         <div class="card-body">
             <div class="row g-2 align-items-end">
-                <div class="col-6 col-md-2"><label class="form-label small mb-1">ค้นหา</label>
-                    <input class="form-control form-control-sm" id="fText" placeholder="ชื่อร้าน / โดเมน / agency"></div>
-                <div class="col-6 col-md-1"><label class="form-label small mb-1">ประเทศ</label>
-                    <select class="form-select form-select-sm" id="fCc"><option value="">ทั้งหมด</option></select></div>
-                <div class="col-6 col-md-1"><label class="form-label small mb-1">ประเภทร้าน</label>
-                    <select class="form-select form-select-sm" id="fType"><option value="">ทั้งหมด</option></select></div>
+                <div class="col-6 col-md-2"><label class="form-label small mb-1">Search</label>
+                    <input class="form-control form-control-sm" id="fText" placeholder="Shop / domain / agency"></div>
+                <div class="col-6 col-md-1"><label class="form-label small mb-1">Country</label>
+                    <select class="form-select form-select-sm" id="fCc"><option value="">All</option></select></div>
+                <div class="col-6 col-md-1"><label class="form-label small mb-1">Shop type</label>
+                    <select class="form-select form-select-sm" id="fType"><option value="">All</option></select></div>
                 <div class="col-6 col-md-2"><label class="form-label small mb-1">Package</label>
                     <select class="form-select form-select-sm" id="fPkg">
-                        <option value="">ทั้งหมด</option><option value="marketing">มี Marketing</option><option value="system">มี System</option>
-                        <option value="addon">Add-on only</option><option value="unknown">ไม่ทราบ package</option><option value="partial">ยกเลิกบางส่วน</option>
+                        <option value="">All</option><option value="marketing">Has Marketing</option><option value="system">Has System</option>
+                        <option value="addon">Add-on only</option><option value="unknown">Unknown package</option><option value="partial">Partial cancel</option>
                     </select></div>
-                <div class="col-6 col-md-2"><label class="form-label small mb-1">วันที่ยกเลิก</label>
+                <div class="col-6 col-md-2"><label class="form-label small mb-1">Cancel date</label>
                     <div class="input-group input-group-sm">
                         <input type="date" class="form-control" id="fFrom"><input type="date" class="form-control" id="fTo">
                     </div></div>
                 <div class="col-6 col-md-1"><label class="form-label small mb-1">Marketing</label>
                     <select class="form-select form-select-sm" id="fMkt">
-                        <option value="">ทั้งหมด</option><option value="Google Ads">Google Ads</option>
-                        <option value="Meta (Facebook / Instagram)">Meta</option><option value="none">ไม่พบ</option>
+                        <option value="">All</option><option value="Google Ads">Google Ads</option>
+                        <option value="Meta (Facebook / Instagram)">Meta</option><option value="none">None found</option>
                     </select></div>
                 <div class="col-6 col-md-2"><label class="form-label small mb-1">Competitor / System</label>
-                    <select class="form-select form-select-sm" id="fComp"><option value="">ทั้งหมด</option></select></div>
-                <div class="col-6 col-md-1"><label class="form-label small mb-1">สถานะเว็บ</label>
-                    <select class="form-select form-select-sm" id="fSite"><option value="">ทั้งหมด</option></select></div>
+                    <select class="form-select form-select-sm" id="fComp"><option value="">All</option></select></div>
+                <div class="col-6 col-md-1"><label class="form-label small mb-1">Site status</label>
+                    <select class="form-select form-select-sm" id="fSite"><option value="">All</option></select></div>
             </div>
         </div>
     </div>
@@ -109,22 +109,25 @@ $staffName = $_SESSION['nickName'] ?? $_SESSION['name'] ?? '';
         <div class="card-body">
             <div class="d-flex justify-content-between small text-secondary mb-2">
                 <span id="countInfo"></span>
-                <span>Likely = เจอร่องรอย (tag / pixel / ลิงก์) แต่ยังไม่ยืนยัน · Not Detected = ไม่พบหลักฐาน (ไม่ได้แปลว่าหยุดใช้) · Unknown = ตรวจไม่ได้</span>
+                <span>Likely = trace found (tag / pixel / link), not confirmed · Not Detected = no evidence (does not mean stopped) · Unknown = could not check</span>
             </div>
             <div class="tbl-scroll table-responsive">
                 <table class="table table-sm table-hover mb-0" id="tbl">
                     <thead class="table-light sticky-head">
                     <tr>
-                        <th class="sortable" data-key="name">ร้าน <i class="bi bi-arrow-down-up"></i></th>
-                        <th class="sortable" data-key="cc">ประเทศ <i class="bi bi-arrow-down-up"></i></th>
-                        <th>Package ก่อนยกเลิก</th>
-                        <th class="sortable active" data-key="cancel_date">ยกเลิก <i class="bi bi-arrow-down"></i></th>
+                        <th class="sortable" data-key="name">Shop <i class="bi bi-arrow-down-up"></i></th>
+                        <th class="sortable" data-key="cc">Country <i class="bi bi-arrow-down-up"></i></th>
+                        <th>Package Before Cancel</th>
+                        <th class="sortable active" data-key="cancel_date">Cancelled <i class="bi bi-arrow-down"></i></th>
+                        <th class="sortable" data-key="days_gone">Days Since Cancel <i class="bi bi-arrow-down-up"></i></th>
+                        <th class="sortable" data-key="lifespan" title="Days live with us (earliest live date → cancel date)">Lifespan <i class="bi bi-arrow-down-up"></i></th>
+                        <th class="sortable" data-key="balance_total" title="Amount of the subscriptions cancelled last (monday Active Subscriptions)">Total Balance <i class="bi bi-arrow-down-up"></i></th>
                         <th>Reason</th>
-                        <th>Marketing ที่ยัง active</th>
+                        <th>Active Marketing</th>
                         <th>Agency</th>
                         <th>System Provider</th>
-                        <th>เว็บ / Evidence</th>
-                        <th class="sortable" data-key="scanned_at">Scan ล่าสุด <i class="bi bi-arrow-down-up"></i></th>
+                        <th>Website / Evidence</th>
+                        <th class="sortable" data-key="scanned_at">Last Scan <i class="bi bi-arrow-down-up"></i></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -157,6 +160,6 @@ $staffName = $_SESSION['nickName'] ?? $_SESSION['name'] ?? '';
 
 <script src="../../../assets/libs/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../../assets/libs/jQuery-v3.7.1/jquery-3.7.1.min.js"></script>
-<script src="../controllers/index.js?v=1.0.2"></script>
+<script src="../controllers/index.js?v=1.0.6"></script>
 </body>
 </html>

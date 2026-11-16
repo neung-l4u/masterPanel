@@ -9,12 +9,14 @@
 require_once __DIR__ . '/detect.php';
 
 const CS_PROJECT_BOARDS = ['AU' => '1943203246', 'NZ' => '1943203264', 'UK' => '1943203305', 'US' => '1940392927', 'TH' => '1943203205', 'CA' => '1943203287'];
+const CS_MKT_LIVE_COLS = ['date_mkzs3896', 'date_mkzs82rp', 'date_mkzswq7q', 'date_mkzs790g', 'date_mkzsde4j', 'date_mkzs7czr'];   // Marketing Live Date (a different id on each country board)
 const CS_PROJECT_COLS = ['stage3', 'color1', 'domain_name', 'website', 'text67',
     'text', 'marketing_package8', 'text_mm2f4zq5',                 // Initial Product Offering, Marketing Package, Main Products
     'cancel_date', 'date_mm26gw5p', 'date_mm26kg00',               // Cancel Date, System Cancel Date, Marketing Cancel Date
-    'color_mks7j57k', 'text_mks7rcqh', 'color_mks76fr6'];          // Cancellation Reason, Reason Details, Cancel Type
+    'color_mks7j57k', 'text_mks7rcqh', 'color_mks76fr6',           // Cancellation Reason, Reason Details, Cancel Type
+    'live_date', 'project_currency', 'email', ...CS_MKT_LIVE_COLS]; // System Live Date, Project Currency, Email, Marketing Live Date
 const CS_SUBS_BOARD = '1881439330';   // Active Subscriptions (groups: Active Subscriptions / Cancelled Subscription)
-const CS_SUBS_COLS = ['status', 'lookup_mkwgjt31', 'date', 'date4', 'connect_boards', 'text_mks62r3g'];
+const CS_SUBS_COLS = ['status', 'lookup_mkwgjt31', 'date', 'date4', 'connect_boards', 'text_mks62r3g', 'numbers', 'status0'];   // + Amount, Currency
 const CS_REJOIN_BOARDS = ['1878448050', '1902864036'];   // Tasks Board, Unsubscription Board
 const CS_PAGE = 100;   // 500 per page timed out on the project boards (many columns)
 
@@ -87,7 +89,7 @@ function cs_cancellation_rows() {
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     require_once __DIR__ . '/../../../assets/db/db.php';
     require __DIR__ . '/../../../assets/db/initDB.php';
-    return $db->query('SELECT county, shopname, reason, other, lastdate, `timestamp` FROM Cancellation WHERE test = 0')->fetchAll();
+    return $db->query('SELECT county, shopname, email, reason, other, lastdate, `timestamp` FROM Cancellation WHERE test = 0')->fetchAll();
 }
 
 /**
@@ -157,6 +159,25 @@ function cs_norm($name) { return preg_replace('/[^a-z0-9]/', '', strtolower((str
 /** "Nina Thai Massage - BR.South Melbourne (cancel…)" → "ninathaimassage": the shop without branch / notes */
 function cs_base($name) { return cs_norm(preg_split('/\s+[-–|]\s+|\s*\(/u', (string) $name)[0]); }
 
+/**
+ * Form row whose shop name shares 2+ distinctive words with the project's (generic words like "thai" / "massage"
+ * ignored) and that was sent from 120 days before to 30 days after the cancel date. Names on the form are typed by
+ * the customer ("DESPRESSO THAI&BRASSERIE" for "DeSPresso Thai and Brasserie - BR.Darlinghurst").
+ */
+function cs_form_by_name($name, $cancelDate, array $rows) {
+    static $generic = ['thai', 'the', 'and', 'restaurant', 'massage', 'spa', 'cafe', 'kitchen', 'bar', 'food', 'beauty', 'day', 'traditional'];
+    $words = fn($n) => array_unique(array_diff(preg_split('/[^a-z0-9]+/', strtolower(preg_replace('/\s*-?\s*BR\..*$/i', '', $n)), -1, PREG_SPLIT_NO_EMPTY), $generic));
+    $mine = array_filter($words($name), fn($w) => strlen($w) > 2);
+    if (count($mine) < 2 || $cancelDate === '') return null;
+    $best = null; $gap = PHP_INT_MAX;
+    foreach ($rows as $r) {
+        $d = (strtotime($cancelDate) - strtotime($r['timestamp'])) / 86400;
+        if ($d < -30 || $d > 120 || count(array_intersect($mine, $words($r['shopname']))) < 2) continue;
+        if (abs($d) < $gap) { $gap = abs($d); $best = $r; }
+    }
+    return $best;
+}
+
 /** First host in monday's domain / website / links text that is the shop's own site (not social, not a platform). */
 function cs_domain_of(array $v) {
     $text = implode(' ', [$v['domain_name'] ?? '', $v['website'] ?? '', $v['text67'] ?? '']);
@@ -189,10 +210,14 @@ function cs_build_shops(array $projects, array $subs, array $rejoins, array $can
         if (preg_match('/due for renewal|unable to rejoin/i', $r['name'])) continue;
         foreach ($r['v'] as $ids) if (is_array($ids)) foreach ($ids as $pid) $rejoined[$pid] = true;
     }
-    $form = [];   // country + base name => latest form row
+    $form = []; $formByEmail = []; $formByCc = [];   // country + base name / email => latest form row; country => rows
     foreach ($cancelForm as $c) {
-        $k = strtoupper(substr(str_replace('Australia', 'AU', (string) $c['county']), 0, 2)) . '|' . cs_base($c['shopname']);
+        $c['cc'] = strtoupper(substr(str_replace('Australia', 'AU', (string) $c['county']), 0, 2));
+        $k = $c['cc'] . '|' . cs_base($c['shopname']);
         if (!isset($form[$k]) || $c['timestamp'] > $form[$k]['timestamp']) $form[$k] = $c;
+        $e = strtolower(trim((string) ($c['email'] ?? '')));
+        if ($e !== '' && (!isset($formByEmail[$e]) || $c['timestamp'] > $formByEmail[$e]['timestamp'])) $formByEmail[$e] = $c;
+        $formByCc[$c['cc']][] = $c;
     }
     $running = [];   // shops (country + full name) that still have a non-cancelled project
     foreach ($projects as $p) {
@@ -222,8 +247,14 @@ function cs_build_shops(array $projects, array $subs, array $rejoins, array $can
         $subDate = fn($s) => max($s['v']['date'] ?? '', $s['v']['date4'] ?? '');
         $last = $mine ? max(array_map($subDate, $mine)) : '';
         $names = [];
-        foreach ($mine as $s) if ($last === '' || $subDate($s) === '' || strtotime($subDate($s)) >= strtotime($last) - 31 * 86400)
+        $balance = [];   // currency => what the subscriptions cancelled last were billing
+        foreach ($mine as $s) if ($last === '' || $subDate($s) === '' || strtotime($subDate($s)) >= strtotime($last) - 31 * 86400) {
             $names[] = trim(($s['v']['lookup_mkwgjt31'] ?? '') ?: $s['name']);
+            if (is_numeric($s['v']['numbers'] ?? '')) {
+                $cur = strtoupper($s['v']['status0'] ?? '') ?: ($v['project_currency'] ?? '');
+                $balance[$cur] = ($balance[$cur] ?? 0) + (float) $s['v']['numbers'];
+            }
+        }
         if (!$names) foreach (['text_mm2f4zq5', 'text', 'marketing_package8'] as $col) if (trim($v[$col] ?? '') !== '') { $names[] = trim($v[$col]); break; }
         $names = array_values(array_unique($names));
         // "Add-on Only - $0.00" says nothing; name the add-ons from the signup form when we can
@@ -240,12 +271,19 @@ function cs_build_shops(array $projects, array $subs, array $rejoins, array $can
         $cancelDate = $partial === 'Marketing' ? ($v['date_mm26kg00'] ?? '') : ($partial === 'System' ? ($v['date_mm26gw5p'] ?? '')
             : max($v['cancel_date'] ?? '', $last, $v['date_mm26kg00'] ?? '', $v['date_mm26gw5p'] ?? ''));
 
-        $reason = trim(($v['color_mks7j57k'] ?? '') . (($v['text_mks7rcqh'] ?? '') !== '' ? ' — ' . $v['text_mks7rcqh'] : ''), ' —');
+        // Cancellation Reason Details first (what actually happened); the reason label only when there are no details
+        $reason = trim($v['text_mks7rcqh'] ?? '') ?: trim($v['color_mks7j57k'] ?? '');
         $reasonSrc = $reason !== '' ? 'monday' : '';
-        $f = $form[$p['cc'] . '|' . cs_base($p['name'])] ?? null;
-        if ($reason === '' && $f) {
+        // first day live with us: the earlier of System and Marketing Live Date
+        $lives = array_filter(array_map(fn($c) => $v[$c] ?? '', ['live_date', ...CS_MKT_LIVE_COLS]));
+        $liveDate = $lives ? min($lives) : '';
+        $f = $reason === '' ? ($form[$p['cc'] . '|' . cs_base($p['name'])] ?? $formByEmail[strtolower(trim($v['email'] ?? ''))]
+            ?? cs_form_by_name($p['name'], $cancelDate, $formByCc[$p['cc']] ?? [])) : null;
+        if ($f) {
             $other = trim((string) $f['other']);
-            $reason = trim($f['reason'] . ($other !== '' && $other !== 'NULL' ? ' — ' . $other : ''));
+            $other = $other === 'NULL' ? '' : $other;
+            // "other" on the form means the answer is in the free-text box
+            $reason = strcasecmp(trim($f['reason']), 'other') === 0 ? ($other ?: 'Other') : trim($f['reason'] . ($other !== '' ? ' — ' . $other : ''));
             $reasonSrc = 'form';
         }
         if ($reason === '') foreach ($mine as $s) if (trim($s['v']['text_mks62r3g'] ?? '') !== '') { $reason = trim($s['v']['text_mks62r3g']); $reasonSrc = 'subscription'; break; }
@@ -258,6 +296,8 @@ function cs_build_shops(array $projects, array $subs, array $rejoins, array $can
             'addon_only' => $names && $kinds === ['addon'], 'scope' => $scope, 'partial' => $partial,
             'cancel_date' => $cancelDate, 'reason' => $reason, 'reason_src' => $reasonSrc,
             'rejoined' => !empty($rejoined[$p['id']]), 'domain' => cs_domain_of($v),
+            'live_date' => $liveDate, 'lifespan' => $liveDate && $cancelDate && $cancelDate >= $liveDate ? (int) round((strtotime($cancelDate) - strtotime($liveDate)) / 86400) : null,   // live after cancel = re-signed; no span
+            'balance' => $balance,
         ];
     }
 

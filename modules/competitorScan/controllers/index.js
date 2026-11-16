@@ -22,7 +22,10 @@ function hostLink(u) {
 /* ---------- load ---------- */
 function load() {
     $.getJSON(API, { act: 'list' }).done((res) => {
-        shops = res.shops || [];
+        const today = Date.parse(new Date().toISOString().slice(0, 10));
+        shops = (res.shops || []).map((s) => ({ ...s,
+            days_gone: s.cancel_date ? Math.round((today - Date.parse(s.cancel_date)) / 86400000) : null,   // negative = cancel date still ahead
+            balance_total: Object.values(s.balance || {}).reduce((a, b) => a + b, 0) || null }));
         fillFilters();
         render();
         showStatus(res.status || {});
@@ -35,8 +38,8 @@ function load() {
 
 function showStatus(st) {
     $('#lastRun').text(st.last_finished_at
-        ? `Scan เสร็จล่าสุด ${st.last_finished_at.slice(0, 16).replace('T', ' ')} · ${st.shops} ร้าน · ตัด ID ของ LFY ออก ${st.lfy_ids} รายการ`
-        : 'ยังไม่เคย scan — กด Scan now');
+        ? `Last scan ${st.last_finished_at.slice(0, 16).replace('T', ' ')} · ${st.shops} shops · ${st.lfy_ids} LFY IDs excluded`
+        : 'Not scanned yet — click Scan now');
 }
 
 function showError(xhr) {
@@ -103,13 +106,13 @@ function filtered() {
 /* ---------- render ---------- */
 function render() {
     const rows = filtered().sort((a, b) => {
-        const x = a[sort.key] || '', y = b[sort.key] || '';
+        const x = a[sort.key] ?? '', y = b[sort.key] ?? '';
         return (x < y ? -1 : x > y ? 1 : 0) * (sort.dir === 'asc' ? 1 : -1);
     });
     renderKpis(rows);
-    $('#countInfo').text(`${rows.length} จาก ${shops.length} ร้าน`);
+    $('#countInfo').text(`${rows.length} of ${shops.length} shops`);
     $('#tbl tbody').html(rows.map((s) => {
-        const flags = [s.partial && `ยกเลิกบางส่วน: ${s.partial}`, s.rejoined && 'เคย Rejoin', s.addon_only && 'Add-on only', s.dup_rows > 1 && `${s.dup_rows} project`]
+        const flags = [s.partial && `Partial cancel: ${s.partial}`, s.rejoined && 'Rejoined', s.addon_only && 'Add-on only', s.dup_rows > 1 && `${s.dup_rows} project`]
             .filter(Boolean).map((f) => `<span class="badge text-bg-info st">${esc(f)}</span>`).join(' ');
         const notInPkg = s.marketing.status === 'Not in package';
         return `<tr data-id="${esc(s.id)}">
@@ -117,12 +120,15 @@ function render() {
             <td>${esc(s.cc)}</td>
             <td>${esc(s.package)}</td>
             <td class="text-nowrap">${esc(s.cancel_date)}</td>
-            <td>${(s.reason || '').length > REASON_MAX ? `${esc(s.reason.slice(0, REASON_MAX))}… <a href="#" class="small">Read more</a>` : esc(s.reason)}${s.reason_src === 'form' ? ' <span class="text-secondary">(ฟอร์มยกเลิก)</span>' : ''}</td>
+            <td class="text-nowrap">${s.days_gone === null ? '' : s.days_gone < 0 ? `in ${-s.days_gone} days` : `${s.days_gone} days`}</td>
+            <td class="text-nowrap">${s.lifespan === null || s.lifespan === undefined ? '' : `${s.lifespan.toLocaleString('en')} days`}</td>
+            <td class="text-nowrap">${esc(money(s.balance))}</td>
+            <td>${(s.reason || '').length > REASON_MAX ? `${esc(s.reason.slice(0, REASON_MAX))}… <a href="#" class="small">Read more</a>` : esc(s.reason)}${s.reason_src === 'form' ? ' <span class="text-secondary">(cancel form)</span>' : ''}</td>
             <td>${badge(s.marketing.status)}<div>${notInPkg ? '' : esc(channels(s).join(', '))}</div></td>
-            <td>${s.agency.name ? `${badge(s.agency.status)}<div>${s.agency.url ? hostLink(s.agency.url).replace(/>[^<]*</, `>${esc(s.agency.name)}<`) : esc(s.agency.name)}</div>` : badge(s.agency.status)}</td>
+            <td>${s.agency.name ? `${badge(s.agency.status)}<div>${s.agency.url ? hostLink(s.agency.url).replace(/>[^<]*</, `>${esc(s.agency.name)}<`) : esc(s.agency.name)}</div>${s.agency.via ? `<div class="small text-muted" title="${esc((s.agency.shared_with || []).join(', '))}">${esc(s.agency.via)}${s.agency.shared_with ? ': ' + esc(s.agency.shared_with.slice(0, 2).join(', ')) + (s.agency.shared_with.length > 2 ? ' +' + (s.agency.shared_with.length - 2) : '') : ''}</div>` : ''}` : badge(s.agency.status)}</td>
             <td>${badge(s.system.status)}<div>${esc(providers(s).join(', '))}</div></td>
             <td><div class="text-secondary">${esc(s.site_status)}</div>${(s.evidence || []).slice(0, 2).map(hostLink).join('<br>')}
-                ${(s.builder || []).length ? `<div class="text-secondary">เว็บ: ${esc(s.builder.join(', '))}</div>` : ''}
+                ${(s.builder || []).length ? `<div class="text-secondary">Builder: ${esc(s.builder.join(', '))}</div>` : ''}
                 ${(s.notes || []).map((n) => `<div class="text-warning-emphasis">${esc(n)}</div>`).join('')}</td>
             <td class="text-nowrap">${esc(s.scanned_at)}</td></tr>`;
     }).join(''));
@@ -131,12 +137,12 @@ function render() {
 function renderKpis(rows) {
     const n = (f) => rows.filter(f).length;
     const k = [
-        ['ร้านที่ยกเลิก (ตาม filter)', rows.length],
-        ['ยังมีร่องรอยทำ Marketing', n((s) => channels(s).length && s.marketing.status !== 'Not in package')],
-        ['ย้ายไปใช้ระบบอื่น (Confirmed)', n((s) => s.system.status === 'Confirmed' && !providers(s).some((p) => p.includes('still LFY')))],
-        ['ยังใช้ระบบ LFY อยู่', n((s) => providers(s).some((p) => p.includes('still LFY')))],
-        ['ระบุ Agency ได้', n((s) => s.agency.status === 'Confirmed')],
-        ['ตรวจเว็บไม่ได้', n((s) => s.site_status !== 'Online')],
+        ['Cancelled Shops (filtered)', rows.length],
+        ['Still Doing Marketing', n((s) => channels(s).length && s.marketing.status !== 'Not in package')],
+        ['Moved to Competitor (Confirmed)', n((s) => s.system.status === 'Confirmed' && !providers(s).some((p) => p.includes('still LFY')))],
+        ['Still Using LFY System', n((s) => providers(s).some((p) => p.includes('still LFY')))],
+        ['Agency Identified', n((s) => s.agency.status === 'Confirmed')],
+        ['Site Not Checkable', n((s) => s.site_status !== 'Online')],
     ];
     $('#kpis').html(k.map(([l, v]) => `<div class="col-6 col-md-2"><div class="card"><div class="card-body py-2">
         <div class="kpi-label">${l}</div><div class="kpi-value">${v}</div></div></div></div>`).join(''));
@@ -148,12 +154,12 @@ const REASON_MAX = 40;
 function showHistory(id) {
     const s = shops.find((x) => x.id === id);
     $('#histTitle').text(s ? s.name : id);
-    $('#histReason').html(s && s.reason ? `<div class="fw-semibold">Reason${s.reason_src === 'form' ? ' (ฟอร์มยกเลิก)' : ''}</div><div style="white-space:pre-wrap">${esc(s.reason)}</div>` : '');
+    $('#histReason').html(s && s.reason ? `<div class="fw-semibold">Reason${s.reason_src === 'form' ? ' (cancel form)' : ''}</div><div style="white-space:pre-wrap">${esc(s.reason)}</div>` : '');
     $('#histBody').text('กำลังโหลด…');
     bootstrap.Modal.getOrCreateInstance('#histModal').show();
     $.getJSON(API, { act: 'history', id }).done((h) => {
         if (!h.length) { $('#histBody').text('ยังไม่มีประวัติ'); return; }
-        $('#histBody').html(`<table class="table table-sm"><thead><tr><th>วันที่</th><th>เว็บ</th><th>Marketing</th><th>Agency</th><th>System</th><th>Evidence</th></tr></thead><tbody>${
+        $('#histBody').html(`<table class="table table-sm"><thead><tr><th>Date</th><th>Website</th><th>Marketing</th><th>Agency</th><th>System</th><th>Evidence</th></tr></thead><tbody>${
             h.reverse().map((x) => `<tr><td class="text-nowrap">${esc(x.date)}</td><td>${esc(x.site_status)}</td>
                 <td>${esc(x.marketing && x.marketing.status)} ${esc(((x.marketing && x.marketing.channels) || []).join(', '))}</td>
                 <td>${esc(x.agency && x.agency.name || x.agency && x.agency.status)}</td>
@@ -162,13 +168,16 @@ function showHistory(id) {
     }).fail(showError);
 }
 
+const CUR = { AUD: 'A$', NZD: 'NZ$', USD: 'US$', CAD: 'C$', GBP: '£', THB: '฿' };
+const money = (b) => Object.entries(b || {}).map(([c, v]) => `${CUR[c] || c + ' '}${v.toLocaleString('en', { maximumFractionDigits: 2 })}`).join(' + ');
+
 /* ---------- CSV (what is on screen, filters applied) ---------- */
 function exportCsv() {
-    const head = ['Customer Name', 'Country', 'Shop Type', 'Previous Package', 'Cancellation Date', 'Cancellation Reason', 'Partial Cancel', 'Rejoined',
+    const head = ['Customer Name', 'Country', 'Shop Type', 'Previous Package', 'Cancellation Date', 'Days Since Cancel', 'Lifespan (Days)', 'Total Balance', 'Cancellation Reason', 'Partial Cancel', 'Rejoined',
         'Marketing Status', 'Marketing Channels', 'Agency Status', 'Agency', 'System Status', 'System Provider', 'Website Builder',
         'Site Status', 'Evidence URL', 'Notes', 'Last Scan Date'];
     const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-    const lines = filtered().map((s) => [s.name, s.cc, s.type, s.package, s.cancel_date, s.reason, s.partial, s.rejoined ? 'Yes' : '',
+    const lines = filtered().map((s) => [s.name, s.cc, s.type, s.package, s.cancel_date, s.days_gone, s.lifespan, money(s.balance), s.reason, s.partial, s.rejoined ? 'Yes' : '',
         s.marketing.status, channels(s).join(' / '), s.agency.status, s.agency.name, s.system.status, providers(s).join(' / '),
         (s.builder || []).join(' / '), s.site_status, (s.evidence || []).join(' '), (s.notes || []).join(' / '), s.scanned_at].map(q).join(','));
     const blob = new Blob(['﻿' + [head.map(q).join(','), ...lines].join('\n')], { type: 'text/csv;charset=utf-8' });
