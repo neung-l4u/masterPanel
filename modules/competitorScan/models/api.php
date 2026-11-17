@@ -18,7 +18,8 @@ require_once __DIR__ . '/scan.php';
 $act = $_GET['act'] ?? 'list';
 try {
     if ($act === 'list') {
-        echo json_encode(['status' => cs_status(), 'shops' => cs_read('current.json'), 'errors' => cs_read('errors.json')],
+        $shops = array_map(fn($x) => $x + ['reason_group' => cs_reason_group($x['reason'] ?? '')], cs_read('current.json'));
+        echo json_encode(['status' => cs_status(), 'shops' => $shops, 'errors' => cs_read('errors.json')],
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     } elseif ($act === 'step') {
         echo json_encode(cs_step(20, ($_GET['start'] ?? '') === '1'), JSON_UNESCAPED_UNICODE);

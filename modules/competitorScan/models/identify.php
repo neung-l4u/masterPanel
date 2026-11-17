@@ -18,6 +18,10 @@ const CS_PROJECT_COLS = ['stage3', 'color1', 'domain_name', 'website', 'text67',
 const CS_SUBS_BOARD = '1881439330';   // Active Subscriptions (groups: Active Subscriptions / Cancelled Subscription)
 const CS_SUBS_COLS = ['status', 'lookup_mkwgjt31', 'date', 'date4', 'connect_boards', 'text_mks62r3g', 'numbers', 'status0'];   // + Amount, Currency
 const CS_REJOIN_BOARDS = ['1878448050', '1902864036'];   // Tasks Board, Unsubscription Board
+// Customer Period Log (Marketing), Account Manager workspace: one row per Marketing cancel / downgrade, linked to the project.
+// Used for: reason (+ note) when we have none, the Marketing status (Unsubscribe / Downgrade / Cancel Before Live), its End Date.
+const CS_MKT_LOG_BOARD = '1952241070';
+const CS_MKT_LOG_COLS = ['status_mkkypzz0', 'label_mkm51b52', 'text_mkrcgt9h', 'date_mm7nt23h', 'date_mm1g8ym4', 'connect_boards_mkky34t8'];
 const CS_PAGE = 100;   // 500 per page timed out on the project boards (many columns)
 
 function cs_monday_token() {
@@ -55,6 +59,7 @@ function cs_monday_tasks() {
     $t = [];
     foreach (CS_PROJECT_BOARDS as $cc => $b) $t[] = ['kind' => 'projects', 'cc' => $cc, 'board' => $b, 'cols' => CS_PROJECT_COLS, 'rules' => ''];
     $t[] = ['kind' => 'subs', 'cc' => '', 'board' => CS_SUBS_BOARD, 'cols' => CS_SUBS_COLS, 'rules' => ''];
+    $t[] = ['kind' => 'mktlog', 'cc' => '', 'board' => CS_MKT_LOG_BOARD, 'cols' => CS_MKT_LOG_COLS, 'rules' => ''];
     foreach (CS_REJOIN_BOARDS as $b) $t[] = ['kind' => 'rejoin', 'cc' => '', 'board' => $b, 'cols' => null,
         'rules' => ', query_params:{rules:[{column_id:"name",compare_value:["rejoin"],operator:contains_text}]}'];
     return array_map(fn($x) => $x + ['cursor' => null, 'started' => false, 'done' => false], $t);
@@ -309,4 +314,29 @@ function cs_build_shops(array $projects, array $subs, array $rejoins, array $can
         else $byShop[$k]['dup_rows']++;
     }
     return array_values($byShop);
+}
+
+/**
+ * Add the Marketing log to built shops: `mkt_log` (latest row for the project) and, when we have no reason at all,
+ * its reason (+ note) with reason_src 'marketing log'. Never overwrites a reason or a date we already have.
+ */
+function cs_apply_mkt_log(array $shops, array $log) {
+    $of = [];
+    foreach ($log as $r) foreach ($r['v']['connect_boards_mkky34t8'] ?? [] as $pid) {
+        $when = max($r['v']['date_mm7nt23h'] ?? '', $r['v']['date_mm1g8ym4'] ?? '');
+        if (!isset($of[$pid]) || $when >= $of[$pid]['when']) $of[$pid] = ['when' => $when, 'v' => $r['v']];
+    }
+    foreach ($shops as &$s) {
+        $v = $of[$s['id']]['v'] ?? null;
+        if (!$v) { $s['mkt_log'] = null; continue; }
+        $reason = trim($v['label_mkm51b52'] ?? '');
+        $reason = strcasecmp($reason, 'No Reason') === 0 ? '' : $reason;
+        $note = trim($v['text_mkrcgt9h'] ?? '');
+        $s['mkt_log'] = ['status' => trim($v['status_mkkypzz0'] ?? ''), 'reason' => $reason, 'note' => $note, 'end_date' => trim($v['date_mm7nt23h'] ?? '')];
+        if (trim($s['reason'] ?? '') === '' && $reason !== '') {
+            $s['reason'] = $reason . ($note !== '' ? ' — ' . $note : '');
+            $s['reason_src'] = 'marketing log';
+        }
+    }
+    return $shops;
 }

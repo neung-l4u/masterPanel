@@ -206,8 +206,10 @@ function cs_agency_credits($html) {
         $text = '';
         foreach (preg_split('/[|\n\r©•·]|\s{3,}/u', html_entity_decode(preg_replace('#<[^>]*>#', '|', $seg), ENT_QUOTES | ENT_HTML5, 'UTF-8')) as $part)
             if (($text = trim($part, " \t:-–.,")) !== '') break;
-        $name = mb_substr($text, 0, 60) ?: host_of($url);
-        if (mb_strlen($name) < 3 || preg_match(CS_NOT_AGENCY, $name . ' ' . $url)) continue;
+            $text = trim(preg_replace('/["\'<>\/]+$/', '', $text));   // href="tahner.com"/> leftovers
+    $name = trim(preg_split('/,|\s+powered by\b|\s+[-–]\s+/i', mb_substr($text, 0, 60))[0]) ?: host_of($url);   // "SereneSolution, powered by …" → SereneSolution
+        // a sentence ("a team of professional therapists as a place you go to relax") is not a company name
+        if (mb_strlen($name) < 3 || str_word_count($name) > 5 || preg_match(CS_NOT_AGENCY, $name . ' ' . $url)) continue;
         $out[strtolower($name)] = ['name' => $name, 'url' => $url];
     }
     return array_values($out);
@@ -263,4 +265,31 @@ function cs_package_kinds($name) {
     if (preg_match('/ai receptionist|araya/', $n)) $k[] = 'araya';
     if (!$k && preg_match('/hosting|makeover|website build|ad credit|ad spend|yelp|add-?on|promotion|menu design|flyer|sticker|email/', $n)) $k[] = 'addon';
     return array_values(array_unique($k));
+}
+
+/**
+ * Cancellation reason → one group for the Summary tab. First match wins, so the order matters
+ * ("pause (save cost)" is a pause, "closing down + arrears" is a closure). Draft groups: tune with the team.
+ */
+const CS_REASON_GROUPS = [
+    'Moved to competitor / agency' => '/found something better|other agency|another agency|another (?:service|system|provider)|switched to|move[ds]? to|transition(?:ing)? to|signed (?:up )?(?:a contract )?with|join(?:ed)? other|pos agency|\bpos\b|next ?order|fresha|square|external marketing|own system|new website|launch a new website|another (?:advanced system|marketing)|different strategy|currently managed by|ถูกกว่า/',
+    'Closing down'                 => '/clos(?:e|ed|ing)|shut ?down|permanently|sell(?:ing)? (?:the )?bus|relocate/',
+    'Ownership change'             => '/owner|ownership|onwer|company structure|management|partner disagree|merger/',
+    'Paused / downgraded'          => '/pause|downgrade|back to basic|take a break|stop marketing|change (?:to solo|package)|new package|ลองหยุด/',
+    'Payment / arrears'            => '/payment fail|failed payment|bad debt|arrear|wrong billing|not even pay|arreas|double charge/',
+    'Cost'                         => '/cost|price|budget|expensive|discount|afford|financial/',
+    'Not enough orders / results'  => '/not (?:getting )?enough|low customer|not often used|very few|less than \$|few achievements|no booking through|noticeable progress|online market impact|no (?:longer )?(?:need|want)s? (?:online|booking)|slow|no result/',
+    'Staff / health / personal'    => '/staff|พนักงานไม่พอ|health|hospital|ผ่าตัด|travel|legal|certificate/',
+    'Goal reached'                 => '/reach(?:ed)? (?:the )?goal|satisfied with (?:the )?result|อยู่ตัว/',
+    'Doing it themselves'          => '/by themselve|themselves|myself|friend will|manage (?:the|it) (?:mas|them)|brother|in.house/',
+    'Unhappy / system not suitable' => '/unhappy|not satisfied|not what (?:the )?customer expected|hard to contact|complicate|scammed|not work|not (?:meet|suitable|support)|does not support|doesn.t support|requirement/',
+    'Contract ended'               => '/contract (?:ends?|expired)|end (?:of )?contract|contact ends|renew/',
+    'No longer want'               => '/no longer want|not interest|^no need|(?:doesn|don).t want/',
+];
+
+function cs_reason_group($reason) {
+    $r = strtolower(trim((string) $reason));
+    if ($r === '') return 'No reason recorded';
+    foreach (CS_REASON_GROUPS as $g => $re) if (preg_match($re, $r)) return $g;
+    return 'Other';
 }

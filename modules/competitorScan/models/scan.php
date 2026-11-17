@@ -69,7 +69,7 @@ function cs_step($budgetSec = 20, $start = false) {
                     $signups = cs_signup_addons();
                     $labels = cs_addon_labels($signups, cs_price_names(array_merge([], ...array_column($signups, 'codes'))));
                 } catch (Throwable $e) { $labels = []; $run['errors'][] = ['shop' => '', 'name' => 'logssignup', 'error' => 'อ่าน add-on จาก logssignup ไม่ได้ (Add-on Only จะไม่มีรายละเอียด)']; }
-                $run['queue'] = cs_build_shops($run['raw']['projects'] ?? [], $run['raw']['subs'] ?? [], $run['raw']['rejoin'] ?? [], $form, $labels);
+                $run['queue'] = cs_apply_mkt_log(cs_build_shops($run['raw']['projects'] ?? [], $run['raw']['subs'] ?? [], $run['raw']['rejoin'] ?? [], $form, $labels), $run['raw']['mktlog'] ?? []);
                 $run['lfy_domains'] = cs_live_domains($run['raw']['projects'] ?? [], $run['raw']['subs'] ?? []);
                 unset($run['raw'], $run['tasks']);
                 $run['phase'] = 'lfy'; $run['pos'] = 0; $run['results'] = [];
@@ -352,12 +352,13 @@ function cs_base_domain($h) {
  * IDs shared by subdomains of one platform (tuckerfox, booknorder…) are the platform's own, placeholders are skipped.
  * Recomputed over the whole list each time; only fills agencies that are still Unknown.
  */
+const CS_ID_LABEL = ['meta_pixel' => 'Meta Pixel', 'google_ads' => 'Google Ads', 'gtm' => 'Google Tag Manager'];   // names people know
 function cs_shared_ids(array $shops) {
     $by = [];
     foreach ($shops as $i => $s) {
         if (($s['agency']['via'] ?? '') === 'shared id') $shops[$i]['agency'] = ['status' => 'Unknown', 'name' => '', 'url' => ''];
-        foreach (array_merge(...array_values($s['marketing']['ids'] ?? [] ?: [[]])) as $id)
-            if (!preg_match('/X{4,}|^GTM-0+$/', $id) && ($s['domain'] ?? '') !== '') { $by[$id][$s['domain']][] = $i; $cc[$id][$s['cc'] ?? ''] = 1; }
+        foreach ($s['marketing']['ids'] ?? [] as $kind => $list) foreach ($list as $id)
+            if (!preg_match('/X{4,}|^GTM-0+$/', $id) && ($s['domain'] ?? '') !== '') { $by[$id][$s['domain']][] = $i; $cc[$id][$s['cc'] ?? ''] = 1; $type[$id] = $kind; }
     }
     foreach ($by as $id => $doms) {
         $bases = array_map('cs_base_domain', array_keys($doms));
@@ -366,7 +367,7 @@ function cs_shared_ids(array $shops) {
         foreach ($doms as $dom => $idx) foreach ($idx as $i) {
             if ($shops[$i]['agency']['status'] !== 'Unknown') continue;
             $others = array_values(array_diff(array_keys($doms), [$dom]));
-            $shops[$i]['agency'] = ['status' => 'Likely', 'name' => "Shared ID $id", 'url' => '', 'via' => 'shared id',
+            $shops[$i]['agency'] = ['status' => 'Likely', 'name' => "Shared " . (CS_ID_LABEL[$type[$id]] ?? 'ID') . " $id", 'url' => '', 'via' => 'shared id',
                 'shared_with' => $others];
         }
     }

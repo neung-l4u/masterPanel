@@ -24,6 +24,8 @@ check('Google Ads + GTM ids', cs_tracking_ids($hiddenWp), ['google_ads' => ['AW-
 check('agency credit with "Designed and Developed by"', cs_agency_credits($hiddenWp), [['name' => 'cantydigital.com.au', 'url' => '']]);
 check('credit pointing at a builder is not an agency', cs_agency_credits('<footer>Website by <a href="https://www.wix.com">Wix</a></footer>'), []);
 check('credit inside a script is ignored', cs_agency_credits('<script>var t="Powered by Acme Digital";</script>'), []);
+check('a sentence after "created by" is not an agency', cs_agency_credits('<p>Created by a team of professional therapists as a place you go to relax</p>'), []);
+check('"X, powered by Y" credit keeps X', cs_agency_credits('<p>Designed by SereneSolution, powered by Annie Bennett Academy</p>'), [['name' => 'SereneSolution', 'url' => '']]);
 check('credit link url captured', cs_agency_credits('<footer>Site by <a href="https://acme.com.au/">Acme Digital</a> | ©</footer>'),
     [['name' => 'Acme Digital', 'url' => 'https://acme.com.au/']]);
 
@@ -86,6 +88,14 @@ check('area listing pages dropped even when the shop name has the suburb', cs_li
 $stillLfy = ['name' => 'Sticky Rice - BR.Weston Creek', 'evidence' => [], 'notes' => [], 'system' => ['status' => 'Confirmed', 'providers' => ['CloudWaitress (L4U) — still LFY']]];
 $r = cs_apply_links($stillLfy, ['https://stickyricethailao.werafoods.com/' => [200, 'https://stickyricethailao.werafoods.com/', 'Sticky Rice Thai Lao']], '');
 check('listing competitor beats an old site that still shows LFY', [$r['system']['status'], $r['system']['providers']], ['Confirmed', ['Wera Foods']]);
+
+// ---- reason groups (Summary tab)
+check('reason: select box value', cs_reason_group('Found something better'), 'Moved to competitor / agency');
+check('reason: pause beats cost', cs_reason_group('Pause (save cost)'), 'Paused / downgraded');
+check('reason: closing beats arrears', cs_reason_group('Closing down + arreare'), 'Closing down');
+check('reason: Thai text', cs_reason_group('ราคาถูกกว่าแต่ไม่บอกว่าที่ไหน'), 'Moved to competitor / agency');
+check('reason: empty', cs_reason_group('  '), 'No reason recorded');
+check('reason: unmatched', cs_reason_group('change email'), 'Other');
 
 // ---- add-on names
 check('add-on name from signup form', cs_addon_name('Website Hosting + Email included - U$ 39.00 '), 'Website Hosting + Email included');
