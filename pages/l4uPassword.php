@@ -519,9 +519,8 @@ $loginID = $_SESSION['id'];
         }, 1000);
     }
 
-    function copyText(elementId) {
-        var copyText = document.getElementById(elementId);
-        navigator.clipboard.writeText(copyText.value).then(function () {
+    function copyText(btn) {
+        navigator.clipboard.writeText(btn.previousElementSibling.value).then(function () {
             showCopy();
         }).catch(function (error) {
             console.error("Error copying text: ", error);

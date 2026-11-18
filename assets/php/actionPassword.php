@@ -85,8 +85,8 @@ if ($params ["action"] == "loadUpdate"){
 
 }elseif ($params ["action"] == "setDelete"){
     $delete = $db->query('UPDATE `passwordmanager` SET 
-                            `pwType` = 0, `pwDeleteAt` = NOW(), `pwDeleteBy` = ? WHERE id = ? ;'
-        ,$params["by"],
+                            `pwDeleteAt` = NOW(), `pwDeleteBy` = ? WHERE id = ? ;'
+        ,$myID,
         $params["id"]
     );
     $params["success"] = $delete->affectedRows() > 0;
