@@ -18,25 +18,13 @@
                     <label class="form-check-label" for="CheckedBoxTestmail">Test mode</label>
                 </div>
             </div>
-            <!--
-            ===== Skip email check (ปิดใช้งานชั่วคราว) =====
-            ปิดไว้ตามที่ร้องขอ ถ้าจะเปิดใช้ใหม่ให้ uncomment บล็อกนี้
-            และต้อง uncomment โค้ดฝั่ง JS ที่คู่กันด้วย มิฉะนั้นจะไม่ทำงาน:
-              assets/js/bootstrap-multi-step-form.js
-                - บล็อก $("#CheckedBoxSkipEmailCheck").on("change", ...)
-                - เงื่อนไข skip ในฟังก์ชัน checkEmailUsed()
-                - เงื่อนไข skip ในด่านตอน submit (cmdSubmit.on("click", ...))
-
-            หมายเหตุ: value="1" ไม่มีผลต่อการทำงาน เพราะโค้ดอ่านด้วย
-            .is(":checked") อย่างเดียว และ input นี้ไม่มี name จึงไม่ถูก submit
-
+            <!-- Skip email check: ใช้คู่กับ checkEmailUsed() และด่าน submit ใน assets/js/bootstrap-multi-step-form.js -->
             <div class="modal-body">
                 <div class="form-check form-switch">
                     <input class="form-check-input" value="1" type="checkbox" id="CheckedBoxSkipEmailCheck">
                     <label class="form-check-label" for="CheckedBoxSkipEmailCheck">Skip email check</label>
                 </div>
             </div>
-            -->
 
             <div class="modal-body">
                 <div class="d-flex align-items-center gap-3">

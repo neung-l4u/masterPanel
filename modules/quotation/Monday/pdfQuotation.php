@@ -1,12 +1,13 @@
 <?php
-global $db;
-include '../assets/db/db.php';
-include "../assets/db/initDB_stripe.php";
 
 date_default_timezone_set("Asia/Bangkok");
 $date = date("Y-m-d");
 $timestamp = date("Y-m-d H:i:s");
 $dateThai = date("d/m/Y");
+
+global $db;
+include '../assets/db/db.php';
+include "../assets/db/initDB_stripe.php";
 
 $quotationID = !empty($_GET["quotationID"]) ? $_GET["quotationID"] : null;
 
@@ -51,16 +52,52 @@ $grandtotal  = number_format($grandtotalRaw, 2);
 $withholding = number_format($withholdingRaw, 2);
 $netPayable  = number_format($netPayableRaw, 2);
 
+// --- ประเทศ: ใบเสนอราคาเก่าไม่มี country = TH ---
+$country = $data['country'] ?? 'TH';
+$isTH = ($country === 'TH');
+$contact = $customer['contact'] ?? '';
+$currencySymbol = ['AU' => 'A$', 'NZ' => 'NZ$', 'UK' => '£', 'US' => 'US$', 'CA' => 'CA$', 'TH' => '฿'][$country] ?? '';
+$money = fn($n) => ($n < 0 ? '-' : '') . $currencySymbol . number_format(abs($n), 2);
+
+// ผู้ออกใบเสนอราคา ตาม modules/signup/assets/docs/contract_2024_V02.php (CA ใช้ LLC เพราะเก็บเงินผ่าน Stripe US)
+$sellerAU = ['name' => 'Manaexito Pty Ltd T/as Local For You Pty Ltd', 'address' => '9/204 Alice Street, Brisbane, QLD 4000, Australia', 'idLabel' => 'ABN', 'id' => '60 606 095 943'];
+$sellerUS = ['name' => 'Local For You LLC', 'address' => '8 The Green STE R, Dover, DE 19901 USA', 'idLabel' => 'EIN', 'id' => '35-2789835'];
+$seller = in_array($country, ['US', 'CA'], true) ? $sellerUS : $sellerAU;
+//แบบใบแจ้งหนี้ Stripe: "GST – Australia (10% on A$149.50)"
+$taxLabel = ($country === 'AU') ? 'GST – Australia (10% on ' . $money($subtotalRaw) . ')' : 'Tax';
+
+// ใบเก่าเก็บส่วนลดเป็นสินค้า "Discount (CODE)" -> แปลงเป็นแถวส่วนลด "CODE (50% off)" / "CODE (A$198.00 off)"
+// % ดูจาก couponCode.json ของ signup (ไฟล์เดียวกับที่ฟอร์มใช้)
+$couponJson = json_decode(@file_get_contents(__DIR__ . '/../../signup/assets/API/couponCode.json'), true);
+$couponPercent = function ($code) use ($couponJson, $country) {
+    foreach (['Main', 'Addons'] as $group) {
+        foreach (($couponJson['Coupon'][$group][$code] ?? []) as $byType) {
+            if (is_array($byType) && !empty($byType[$country]['percent'])) {
+                return $byType[$country]['percent'];
+            }
+        }
+    }
+    return null;
+};
+foreach ($tableData as &$it) {
+    if (isset($it['product']) && preg_match('/^Discount \((.+)\)$/', $it['product'], $m)) {
+        $percent = $couponPercent($m[1]);
+        $off = $percent ? $percent . '% off' : ($isTH ? number_format(abs((float)$it['amount']), 2) . ' บาท' : $money(abs((float)$it['amount']))) . ' off';
+        $it = ['discount' => $m[1] . ' (' . $off . ')', 'qyt' => $it['qyt'], 'amount' => $it['amount']];
+    }
+}
+unset($it);
+
 
 ?>
 
 <!DOCTYPE html>
-<html lang="th">
+<html lang="<?php echo $isTH ? 'th' : 'en'; ?>">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ใบเสนอราคา</title>
+    <title><?php echo $isTH ? 'ใบเสนอราคา' : 'Quotation'; ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@100..900&display=swap" rel="stylesheet">
@@ -72,12 +109,24 @@ $netPayable  = number_format($netPayableRaw, 2);
             /*background-color: #f0f2f5;*/
         }
 
+        /* บนจอแสดงเป็นแผ่น A4 (กว้าง 210mm) กลางหน้า เหมือนเอกสารจริง */
+        html {
+            background-color: #e9ecef;
+        }
+
         .invoice-container {
-            /*width: 800px;*/
-            margin: 0 auto;
-            padding: 40px 40px;
+            box-sizing: border-box;
+            width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            padding: 15mm;
             background-color: #fff;
-            /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
         }
 
         .header {
@@ -215,6 +264,42 @@ $netPayable  = number_format($netPayableRaw, 2);
             padding: 5px 0;
         }
 
+        /* ต่างประเทศ: ตารางรายการ + สรุปยอดแบบใบแจ้งหนี้ Stripe */
+        .items-table td {
+            vertical-align: top;
+        }
+
+        /* เส้นตารางเข้มขึ้น (เดิม #ddd จางเกินไปตอนพิมพ์) */
+        .items-table th,
+        .items-table td,
+        .stripe-totals td {
+            border-bottom: 1px solid #888;
+        }
+
+
+        .stripe-totals {
+            width: 55%;
+            margin-top: 0;
+        }
+
+        .stripe-totals td {
+            padding: 6px 0;
+            color: #333;
+        }
+
+        .stripe-totals td.label {
+            text-align: left;
+        }
+
+        .stripe-totals td.amount {
+            width: 110px;
+        }
+
+        .stripe-totals tr.amount-due td {
+            font-weight: bold;
+            border-bottom: none;
+        }
+
         .grand-total {
             font-weight: bold;
         }
@@ -265,7 +350,17 @@ $netPayable  = number_format($netPayableRaw, 2);
         }
 
         .print-button-container {
-            text-align: center;
+            width: 210mm;
+            margin: 20px auto 0;
+            text-align: right;
+        }
+
+        .discount-row td {
+            color: #555;
+        }
+
+        .discount-label {
+            padding-left: 24px !important;
         }
 
         #printButton {
@@ -280,6 +375,15 @@ $netPayable  = number_format($netPayableRaw, 2);
         }
 
         @media print {
+            html {
+                background-color: #fff;
+            }
+
+            .invoice-container {
+                margin: 0;
+                box-shadow: none;
+            }
+
             .no-print {
                 display: none !important;
             }
@@ -291,20 +395,36 @@ $netPayable  = number_format($netPayableRaw, 2);
 
 
 
+<!-- ปุ่มพิมพ์อยู่นอกแผ่นเอกสาร (ไม่ติดไปตอนพิมพ์) -->
+<div class="print-button-container no-print">
+    <button id="printButton"><?php echo $isTH ? '🖨️ พิมพ์ใบเสนอราคา' : '🖨️ Print quotation'; ?></button>
+</div>
 <div class="invoice-container">
     <div class="header">
         <div class="logo-section">
             <img src="https://report.localforyou.com/modules/signup/assets/img/localforyouwithwording.png" alt="Company logo" height="70" />
         </div>
         <div class="invoice-title-section">
-            <div class="print-button-container no-print">
-                <button id="printButton">🖨️ พิมพ์ใบเสนอราคา</button>
-            </div>
-            <h3 class="primary">ใบเสนอราคา</h3>
+            <h3 class="primary"><?php echo $isTH ? 'ใบเสนอราคา' : 'Quotation'; ?></h3>
         </div>
     </div>
 
     <div class="invoice-details">
+        <?php if (!$isTH): ?>
+        <div class="customer-info">
+            <p><strong><?php echo htmlspecialchars($seller['name']); ?></strong></p>
+            <p><?php echo htmlspecialchars($seller['address']); ?></p>
+            <p><strong class="black"><?php echo $seller['idLabel']; ?>:</strong> <?php echo $seller['id']; ?></p>
+            <p><strong class="black">Email:</strong> admin@localforyou.com</p>
+        </div>
+        <div class="invoice-info">
+            <hr style="border-top: 1px solid #ccc; margin-bottom: 20px;">
+            <div class="invoice-div"><strong>No.:</strong> <?php echo $quotationNumber;?></div>
+            <div class="invoice-div"><strong>Date:</strong> <?php echo date('j M Y');?></div>
+            <div class="invoice-div"><strong>Sales:</strong> <?php echo htmlspecialchars($saleName);?></div>
+            <hr style="border-top: 1px solid #ccc; margin-top: 20px;">
+        </div>
+        <?php else: ?>
         <div class="customer-info">
             <p><strong>บริษัท โลคอล อีทส์ จำกัด</strong></p>
             <p>216/61 อาคารเลควิว คอนโดมิเนียม อาคารสงขลา (เดอะเลค)</p>
@@ -321,9 +441,21 @@ $netPayable  = number_format($netPayableRaw, 2);
             <div class="invoice-div"><strong>ผู้ขาย:</strong> <?php echo $saleName;?></div>
             <hr style="border-top: 1px solid #ccc; margin-top: 20px;">
         </div>
+        <?php endif; ?>
     </div>
 
 
+    <?php if (!$isTH): ?>
+    <div class="customer-info">
+        <p><strong>Customer</strong></p>
+        <p><?php echo htmlspecialchars($companyName);?></p>
+        <?php if ($contact !== ''): ?><p>Attn: <?php echo htmlspecialchars($contact);?></p><?php endif; ?>
+        <p><?php echo htmlspecialchars($address);?></p>
+        <?php if ($tax_id !== ''): ?><p><strong class="black">Tax ID:</strong> <?php echo htmlspecialchars($tax_id);?></p><?php endif; ?>
+        <p><strong class="black">Email:</strong> <?php echo htmlspecialchars($email);?></p>
+        <p><strong class="black">Phone:</strong> <?php echo htmlspecialchars($phone);?></p>
+    </div>
+    <?php else: ?>
     <div class="customer-info">
         <p><strong>ลูกค้า</strong></p>
         <p><?php echo $companyName;?></p>
@@ -332,35 +464,101 @@ $netPayable  = number_format($netPayableRaw, 2);
         <p><strong class="black">อีเมล:</strong> <?php echo $email;?></p>
         <p><strong class="black">เบอร์โทร:</strong> <?php echo $phone?></p>
     </div>
+    <?php endif; ?>
     <div class="horizontal-divider"></div>
 
 
 
+    <?php if (!$isTH):
+        $showTax = ($country === 'AU'); // GST 10% ต่อบรรทัด เฉพาะ AU
+    ?>
+    <!-- รายการแบบใบแจ้งหนี้ Stripe: ส่วนลดเป็นแถวย่อยใต้สินค้า, AU มีคอลัมน์ Tax ต่อบรรทัด -->
+    <table class="items-table">
+        <thead>
+        <tr>
+            <th>Description</th>
+            <th class="text-right" style="width: 8%;">Qty</th>
+            <th class="text-right" style="width: 16%;">Unit price</th>
+            <?php if ($showTax): ?><th class="text-right" style="width: 16%;">Tax</th><?php endif; ?>
+            <th class="text-right" style="width: 16%;">Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        foreach ($tableData as $i => $item) {
+            $qyt    = (float)$item['qyt'];
+            $amount = (float)$item['amount'];
+
+            if (isset($item['discount'])) {
+                echo "<tr class='discount-row'>";
+                echo "<td class='discount-label'>" . htmlspecialchars($item['discount']) . "</td>";
+                echo "<td></td><td></td>" . ($showTax ? "<td></td>" : "");
+                echo "<td class='text-right'>" . $money($amount) . "</td>";
+                echo "</tr>";
+                continue;
+            }
+
+            $description = $item['product'] ?? $item['setupfee'] ?? $item['addon'] ?? '';
+            $lineTotal = $qyt * $amount;
+
+            echo "<tr class='item-row'>";
+            echo "<td>" . htmlspecialchars($description) . "</td>";
+            echo "<td class='text-right'>" . number_format($qyt) . "</td>";
+            echo "<td class='text-right'>" . $money($amount) . "</td>";
+            if ($showTax) {
+                // ฐานภาษี = ราคาบรรทัดนี้ หักส่วนลดที่อยู่ใต้บรรทัดนี้ (แถว discount ที่ตามมาติดกัน)
+                $taxBase = $lineTotal;
+                for ($j = $i + 1; isset($tableData[$j]['discount']); $j++) {
+                    $taxBase += (float)$tableData[$j]['amount'];
+                }
+                echo "<td class='text-right'>10% (on " . $money($taxBase) . ")</td>";
+            }
+            echo "<td class='text-right'>" . $money($lineTotal) . "</td>";
+            echo "</tr>";
+        }
+        ?>
+        </tbody>
+    </table>
+    <?php else: ?>
     <table>
         <thead>
         <tr>
             <th style="width: 5%;">#</th>
-            <th style="width: 50%;">รายละเอียด</th>
-            <th style="width: 15%;" class="text-right">จำนวน</th>
-            <th style="width: 15%;" class="text-right">ราคาต่อหน่วย</th>
-            <th style="width: 15%;" class="text-right">ยอดรวม</th>
+            <th style="width: 50%;"><?php echo $isTH ? 'รายละเอียด' : 'Description'; ?></th>
+            <th style="width: 15%;" class="text-right"><?php echo $isTH ? 'จำนวน' : 'Qty'; ?></th>
+            <th style="width: 15%;" class="text-right"><?php echo $isTH ? 'ราคาต่อหน่วย' : 'Unit price'; ?></th>
+            <th style="width: 15%;" class="text-right"><?php echo $isTH ? 'ยอดรวม' : 'Amount'; ?></th>
         </tr>
         </thead>
         <tbody>
 
         <?php
-        foreach ($tableData as $index => $item) {
+        $lineNo = 0;
+        foreach ($tableData as $item) {
             $qyt    = $item['qyt'];
             $amount = $item['amount'];
+
+            // ส่วนลด: แถวย่อยใต้สินค้า ไม่มีลำดับ/จำนวน/ราคาต่อหน่วย (แบบใบแจ้งหนี้ Stripe)
+            if (isset($item['discount'])) {
+                echo "<tr class='discount-row'>";
+                echo "<td></td>";
+                echo "<td class='discount-label'>" . htmlspecialchars($item['discount']) . "</td>";
+                echo "<td></td><td></td>";
+                echo "<td class='text-right'>" . ($isTH ? number_format($amount, 2) : $money($amount)) . "</td>";
+                echo "</tr>";
+                continue;
+            }
+
             // ชื่อสินค้าอาจอยู่ในคีย์ที่ต่างกัน (product, setupfee, addon)
             $description = $item['product'] ?? $item['setupfee'] ?? $item['addon'] ?? '';
+            $lineNo++;
 
             echo "<tr>";
-            echo "<td>" . ($index + 1) . "</td>";
+            echo "<td>" . $lineNo . "</td>";
             echo "<td>" . htmlspecialchars($description) . "</td>";
             echo "<td class='text-right'>" . number_format($qyt) . "</td>";
-            echo "<td class='text-right'>" . number_format($amount, 2) . "</td>";
-            echo "<td class='text-right'>" . number_format($qyt * $amount, 2) . "</td>";
+            echo "<td class='text-right'>" . ($isTH ? number_format($amount, 2) : $money($amount)) . "</td>";
+            echo "<td class='text-right'>" . ($isTH ? number_format($qyt * $amount, 2) : $money($qyt * $amount)) . "</td>";
             echo "</tr>";
         }
         ?>
@@ -374,9 +572,39 @@ $netPayable  = number_format($netPayableRaw, 2);
         </tr>-->
         </tbody>
     </table>
+    <?php endif; ?>
 
     <!-- <div class="total"> -->
 
+    <?php if (!$isTH): ?>
+    <!-- สรุปยอดแบบใบแจ้งหนี้ Stripe -->
+    <table class="totals-table stripe-totals">
+        <tbody>
+        <tr>
+            <td class="label">Subtotal</td>
+            <td class="text-right amount"><?php echo $money($subtotalRaw);?></td>
+        </tr>
+        <tr>
+            <td class="label">Total excluding tax</td>
+            <td class="text-right amount"><?php echo $money($subtotalRaw);?></td>
+        </tr>
+        <?php if ($taxRaw > 0): ?>
+        <tr>
+            <td class="label"><?php echo htmlspecialchars($taxLabel); ?></td>
+            <td class="text-right amount"><?php echo $money($taxRaw);?></td>
+        </tr>
+        <?php endif; ?>
+        <tr>
+            <td class="label">Total</td>
+            <td class="text-right amount"><?php echo $money($grandtotalRaw);?></td>
+        </tr>
+        <tr class="amount-due">
+            <td class="label">Amount due</td>
+            <td class="text-right amount"><?php echo $money($grandtotalRaw);?></td>
+        </tr>
+        </tbody>
+    </table>
+    <?php else: ?>
     <table class="totals-table">
         <tbody>
         <tr>
@@ -408,19 +636,28 @@ $netPayable  = number_format($netPayableRaw, 2);
         </tr>
         </tbody>
     </table>
+    <?php endif; ?>
     <!-- </div> -->
 
     <div style="clear:both;"></div>
-    <p class="thai-amount">(<?php echo $thaiPrice;?>)</p>
+    <?php if ($isTH): ?><p class="thai-amount">(<?php echo $thaiPrice;?>)</p><?php endif; ?>
 
     <div class="footer">
         <figure>
+            <?php if (!$isTH): ?>
+            <figcaption>Notes</figcaption>
+            <ul class="dash">
+                <li><?php echo ($country === 'AU') ? 'All prices are in AUD. GST 10% is added to the subtotal as shown above.' : 'Prices are in ' . htmlspecialchars($data['currency'] ?? '') . ' and exclude any applicable taxes unless shown above.'; ?></li>
+                <li>Monthly subscription prices apply for the selected contract period.</li>
+            </ul>
+            <?php else: ?>
             <figcaption>หมายเหตุ</figcaption>
             <ul class="dash">
                 <li>ราคานี้ได้รวมภาษีมูลค่าเพิ่ม 7% แล้ว</li>
                 <li>เอกสารฉบับนี้สามารถแก้ไขได้ภายในวันที่ซื้อสินค้าเท่านั้น</li>
                 <li>หากมีข้อผิดพลาดประการใดหรือประสงค์ขอคืนเงิน กรุณาแจ้งภายใน 7 วันหลังชำระเงิน มิฉะนั้นบริษัทขอสงวนสิทธิ์ไม่รับผิดชอบต่อกรณีดังกล่าว</li>
             </ul>
+            <?php endif; ?>
         </figure>
     </div>
 </div>

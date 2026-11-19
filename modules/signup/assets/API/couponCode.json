@@ -350,6 +350,25 @@
             "code": "AIUS100"
           }
         }
+      },
+      "SOLOBUNDLE50": {
+        "newCustomerOnly": true,
+        "Restaurant": {
+          "AU": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" },
+          "NZ": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" },
+          "UK": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" },
+          "US": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" },
+          "CA": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" },
+          "TH": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" }
+        },
+        "Massage": {
+          "AU": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" },
+          "NZ": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" },
+          "UK": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" },
+          "US": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" },
+          "CA": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" },
+          "TH": { "discount": 0, "percent": 50, "code": "SOLOBUNDLE50" }
+        }
       }
     },
     "Addons": {

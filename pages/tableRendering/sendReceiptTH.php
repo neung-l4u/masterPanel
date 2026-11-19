@@ -5,6 +5,7 @@ session_start();
 include '../../assets/db/db.php';
 include '../../assets/db/initDB.php';
 require_once dirname(__DIR__, 2) . '/api/invoice/convertToBahtText.php';
+require_once dirname(__DIR__, 2) . '/api/invoice/invoiceDiscount.php';
 ob_clean();
 header('Content-Type: application/json');
 
@@ -108,6 +109,7 @@ $payload = [
     'withholdingTax' => $summary['withholdingTax']     ?? '',
     'net_payment'    => $summary['net_payment']        ?? '',
     'items'          => $tableItems,
+] + invoiceDiscount($tableItems, $summary['grandtotal_inc_vat'] ?? 0, $productJson ?? []) + [
     'quotation'      => $quotation,
     'receipt_url'    => $receiptUrl,
     'slip_url'       => $slipUrl,

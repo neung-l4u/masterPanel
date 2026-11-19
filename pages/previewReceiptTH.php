@@ -188,6 +188,7 @@ function fmt($n) { return number_format((float)$n, 2, '.', ','); }
                     ? (float)$item['fullamount']
                     : round((float)($item['amount'] ?? 0) * 1.07, 2);
                 $lineTotal = $unitPrice * $qyt;
+                $fullTotal = ($fullTotal ?? 0) + $lineTotal;
                 ?>
                 <tr>
                     <td><?= $i + 1 ?></td>
@@ -203,6 +204,21 @@ function fmt($n) { return number_format((float)$n, 2, '.', ','); }
     <!-- Totals -->
     <table class="totals-table">
         <tbody>
+            <?php
+            // รายการเป็นราคาเต็ม แต่ยอดรวมหักคูปองแล้ว ต้องโชว์ส่วนลดให้ตัวเลขต่อกันได้
+            $discount = round(($fullTotal ?? 0) - $grandTotal, 2);
+            if ($discount >= 0.01):
+                $coupon = trim((string)($productJson['coupon'] ?? ''));
+            ?>
+            <tr>
+                <td class="text-right"><strong>ราคาเต็ม</strong></td>
+                <td class="text-right"><?= fmt($fullTotal) ?> บาท</td>
+            </tr>
+            <tr>
+                <td class="text-right"><strong>ส่วนลด<?= $coupon !== '' ? ' (' . htmlspecialchars($coupon) . ')' : '' ?></strong></td>
+                <td class="text-right">-<?= fmt($discount) ?> บาท</td>
+            </tr>
+            <?php endif; ?>
             <tr>
                 <td class="text-right"><strong>รวมเป็นเงิน</strong></td>
                 <td class="text-right"><?= fmt($grandTotal) ?> บาท</td>

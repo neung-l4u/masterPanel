@@ -8,7 +8,7 @@
     <div class="float-end">
         <span class="paymentResult"></span>
         <button type="submit" class="action submit btn btn-sm btn-outline-success"
-                id="cmdSubmit" style="display: none" onclick="quotationToPDF()" disabled>Submit your application
+                id="cmdSubmit" style="display: none" disabled>Submit your application
         </button>
     </div>
 </div>

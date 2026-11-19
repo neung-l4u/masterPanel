@@ -103,11 +103,11 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         <select id="formCountry" class="form-select" name="country_code">
 
                                             <option  value="" >Please select Country</option>
-<!--                                            <option value="AU">Australia</option>
+                                            <option value="AU">Australia</option>
                                             <option value="CA">Canada</option>
                                             <option value="NZ">New Zealand</option>
                                             <option value="UK">United Kingdom</option>
-                                            <option value="US">United States</option>-->
+                                            <option value="US">United States</option>
                                             <option value="TH" >Thailand</option>
                                         </select>
                                         <input type="hidden" name="countryTextOnly" id="countryTextOnly">
@@ -139,6 +139,19 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                         </span>
                                     </div>
                                 </div>
+                                <!-- ใช้กรองคูปองที่ตั้ง "newCustomerOnly": true ใน couponCode.json (เหมือนฟอร์ม signup) -->
+                                <div class="form-group row pt-2 firstStepForm" style="display: none;">
+                                    <div class="col-2">
+                                        <label for="formCustomerType">Type Customer</label>
+                                    </div>
+                                    <div class="col-6">
+                                        <select id="formCustomerType" class="form-select" name="formCustomerType">
+                                            <option selected value="" disabled>Please select Customer Type</option>
+                                            <option value="New Customer">New Customer</option>
+                                            <option value="Existing Customer">Existing Customer</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Step 2-->
@@ -160,8 +173,8 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 <label class="form-check-label" for="radioContract0">No contract</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="contractPeriod" id="radioContract3" value="3" onclick="getProductList();">
-                                                                <label class="form-check-label" for="radioContract3">3 Months</label>
+                                                                <input class="form-check-input" type="radio" name="contractPeriod" id="radioContract6" value="6" onclick="getProductList();">
+                                                                <label class="form-check-label" for="radioContract6">6 Months</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="radio" name="contractPeriod" id="radioContract12" value="12" onclick="getProductList();">
@@ -288,17 +301,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <div class="col">
                                                         <div class="d-flex flex-row align-items-center">
                                                             <span class="input-group pe-2">
-                                                             <span class="input-group-text">#</span>
-                                                             <input
-                                                                     type="text"
-                                                                     class="form-control"
+                                                             <select
+                                                                     class="form-select"
                                                                      id="couponCode"
                                                                      name="couponCode"
-                                                                     maxlength="30"
-                                                                     autocomplete="off"
-                                                                     placeholder="1trial"
-                                                                     onkeyup="applyCoupon();"
-                                                             />
+                                                                     onchange="applyCoupon();"
+                                                             >
+                                                                 <option value="">-- No coupon --</option>
+                                                             </select>
                                                              </span>
                                                             <!--                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">-->
                                                             <!--                                                                <i class="fa-solid fa-magnifying-glass"></i>-->
@@ -315,17 +325,14 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                     <div class="col">
                                                         <div class="d-flex flex-row align-items-center">
                                                             <span class="input-group pe-2">
-                                                             <span class="input-group-text">#</span>
-                                                             <input
-                                                                     type="text"
-                                                                     class="form-control"
+                                                             <select
+                                                                     class="form-select"
                                                                      id="couponCode2"
                                                                      name="couponCode2"
-                                                                     maxlength="30"
-                                                                     autocomplete="off"
-                                                                     placeholder="freeweb"
-                                                                     onkeyup="applyCoupon2();"
-                                                             />
+                                                                     onchange="applyCoupon2();"
+                                                             >
+                                                                 <option value="">-- No coupon --</option>
+                                                             </select>
                                                              </span>
                                                             <!--                                                            <a href="coupon_code.php" target="_blank" tabindex="-1">-->
                                                             <!--                                                                <i class="fa-solid fa-magnifying-glass"></i>-->
@@ -362,7 +369,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                             <input class="form-check-input" type="checkbox" value="yes"
                                                                    id="quotationYes" onclick="wantTax();" checked>
                                                             <label class="form-check-label quotationYes" for="quotationYes">
-                                                                ต้องการใบเสนอราคา
+                                                                Quotation details / ต้องการใบเสนอราคา
                                                             </label>
                                                         </div>
                                                     </div>
@@ -370,7 +377,8 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
 
                                                 <div id="quotationContact">
 
-                                                    <div class="row">
+                                                    <!-- นิติบุคคล/บุคคลธรรมดา ใช้กับ TH เท่านั้น (หัก ณ ที่จ่าย 3%) ประเทศอื่นซ่อนไว้ -->
+                                                    <div class="row" id="taxTypeRow">
                                                         <div class="col-md-4">
                                                             <div class="form-check">
                                                                 <input type="radio" id="individual" class="form-check-input" name="taxType" value="นิติบุคคล" onclick="quolegalEntity();">
@@ -390,7 +398,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         <div class="row mb-2">
                                                             <div class="col">
                                                                 <label for="quotationShopName">
-                                                                    <span>ชื่อบริษัท</span>
+                                                                    <span>Company / ชื่อบริษัท</span>
                                                                 </label>
                                                                 <input
                                                                         type="text"
@@ -405,7 +413,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         <div class="row mb-2" id="nameQuotation">
                                                             <div class="col">
                                                                 <label for="quotationName">
-                                                                    <span>ชื่อ</span>
+                                                                    <span>Contact name / ชื่อ</span>
                                                                 </label>
                                                                 <input
                                                                         type="text"
@@ -420,7 +428,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         <div class="row mb-2">
                                                             <div class="col">
                                                                 <label for="quotationPhone">
-                                                                    <span>เบอร์โทร</span>
+                                                                    <span>Phone / เบอร์โทร</span>
                                                                 </label>
                                                                 <input
                                                                         type="text"
@@ -443,7 +451,7 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                         <div class="row mb-2">
                                                             <div class="col">
                                                                 <label for="quotationEmail">
-                                                                    <span>อีเมล</span>
+                                                                    <span>Email / อีเมล</span>
                                                                 </label>
                                                                 <input
                                                                         type="email"
@@ -459,26 +467,57 @@ $dateProject = date('Y-m-d', strtotime('+14 day', strtotime(date('Y/m/d'))));
                                                                 >
                                                             </div>
                                                         </div>
-
+                                                        <!-- ที่อยู่แบบเดียวกับ Physical Address ในฟอร์ม signup (State / City / Street / Postal code) -->
+                                                        <div class="row mb-2 selectState">
+                                                            <div class="col">
+                                                                <label for="state"><span>State / จังหวัด</span></label>
+                                                                <select id="state" class="form-select optionState" name="state_codexxx"
+                                                                        onchange="setShipAddress(); optionCity(false);" onblur="setShipAddress();">
+                                                                    <option value="">Please select Country</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                         <div class="row mb-2">
                                                             <div class="col">
-                                                                <label for="quotationAddress">
-                                                                    <span>ที่อยู่</span>
-                                                                </label>
-                                                                <textarea
-                                                                        class="form-control w-100"
-                                                                        id="quotationAddress"
-                                                                        rows="3"
-                                                                        name="quotationAddress"
-
-                                                                ></textarea>
+                                                                <label for="citySelect" class="cityLabel"><span>City/Suburb / เขต-อำเภอ</span></label>
+                                                                <select id="citySelect" class="form-select optionCity" onchange="onCitySelectChange();">
+                                                                    <option value="">Please select State</option>
+                                                                </select>
+                                                                <input type="hidden" id="city" name="city" value=""/>
+                                                                <input type="text" id="cityOther" class="form-control mt-2" style="display: none;"
+                                                                       onkeyup="syncCityOther();"
+                                                                       onblur="this.value = sanitizeInput(this.value); syncCityOther();"
+                                                                       autocomplete="off" placeholder="Type your city / district"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col">
+                                                                <label for="streetAddress1"><span>Street Address / ที่อยู่</span></label>
+                                                                <textarea class="form-control w-100" id="streetAddress1" name="street" rows="3"
+                                                                          onkeyup="setShipAddress();"
+                                                                          onblur="this.value = sanitizeInput(this.value); setShipAddress();"
+                                                                          placeholder="11/200 Golden Village"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-4">
+                                                                <label for="zip" class="zipLabel">Postal Code</label>
+                                                                <input type="text" id="zip" class="form-control" name="zip"
+                                                                       onkeyup="setShipAddress();" onblur="setShipAddress(); checkZipField();"
+                                                                       placeholder="3000" maxlength="10"
+                                                                       oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                                            </div>
+                                                            <div class="col d-flex align-items-end pb-2">
+                                                                <span>Country :&nbsp;</span>
+                                                                <input type="hidden" name="shopCountry" id="shopCountry" class="countryValue">
+                                                                <label class="countryName font-weight-bold">please select country</label>
                                                             </div>
                                                         </div>
 
                                                         <div class="row mb-2">
                                                             <div class="col">
                                                                 <label for="quotationTaxNumber">
-                                                                    <span>เลขประจำตัวผู้เสียภาษี</span>
+                                                                    <span>Tax ID (ABN / EIN / VAT) / เลขประจำตัวผู้เสียภาษี</span>
                                                                 </label>
                                                                 <input
                                                                         type="text"

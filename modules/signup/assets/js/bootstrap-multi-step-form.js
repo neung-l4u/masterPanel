@@ -377,20 +377,9 @@ function checkAcceptAgreement() {
 
 // ON CLICK Submit BUTTON
 cmdSubmit.on("click", async function () {
-  /*
-  ===== Skip email check (ปิดใช้งานชั่วคราว) =====
-  ตอนเปิดใช้ฟีเจอร์นี้ ให้ใช้บรรทัดนี้แทนบรรทัดด้านล่าง เพื่อให้ด่านนี้
-  เช็ค checkbox โดยตรง ไม่พึ่ง #emailExist อย่างเดียว กันกรณีค่าเก่าค้าง
-  จากตอนที่ blur ช่องอีเมลไปก่อนแล้วค่อยติ๊ก
-
+  //ด่านตรวจอีเมลซ้ำตอน submit (ทำงานคู่กับ checkEmailUsed())
+  //เช็ค checkbox Skip email check โดยตรง กันค่า "used" เก่าค้างจากตอน blur ก่อนติ๊ก
   if (!$("#CheckedBoxSkipEmailCheck").is(":checked") && $("#emailExist").val() === "used") {
-  */
-
-  //ปิดด่านตรวจอีเมลซ้ำตอน submit ควบคู่กับ checkEmailUsed() ที่ปิดไว้แล้ว
-  //ถ้าจะเปิดใช้ใหม่ ให้ uncomment บล็อก if ด้านล่างนี้กลับมา
-  //และลบ return false ที่ต้นฟังก์ชัน checkEmailUsed() ออก
-  /*
-  if ($("#emailExist").val() === "used") {
     alert(
       "This email is already in use. The form cannot be submitted with this email.",
     );
@@ -407,7 +396,6 @@ cmdSubmit.on("click", async function () {
 
     return false; // กัน submit ต่อ
   }
-  */
 
   let paymentResponse = await requestToPay();
 });
@@ -798,7 +786,8 @@ function quolegalEntity() {
   if (checkLeg === "นิติบุคคล") {
     $("#forIndividual").show();
     $("#nameQuotation").hide();
-    $("#forThaiBank").show();
+    // ไม่เก็บข้อมูลธนาคารลูกค้าแล้ว ซ่อนไว้ทุกกรณี
+    $("#forThaiBank").hide();
     $('label[for="quotationShopName"] span').text("ชื่อบริษัท");
   } else if (checkLeg === "บุคคลธรรมดา") {
     $("#forIndividual").show();
@@ -1751,9 +1740,15 @@ function couponGroup(group) {
 }//couponGroup
 
 //Find the discount object of one coupon code for this shop type + country, or undefined when it is not offered there
+//coupon with "newCustomerOnly": true in couponCode.json is offered only when Type Customer = New Customer
+function couponAllowedForCustomer(byCode) {
+  return !byCode.newCustomerOnly || $("#formCustomerType").val() === "New Customer";
+}//couponAllowedForCustomer
+
 function couponDiscountObject(group, code, formTypeJsonKey, country) {
   const byCode = couponGroup(group)[code];
   if (typeof byCode === "undefined") { return undefined; }
+  if (!couponAllowedForCustomer(byCode)) { return undefined; }
   const byType = byCode[formTypeJsonKey];
   if (typeof byType === "undefined") { return undefined; }
   return byType[country];
@@ -1763,6 +1758,7 @@ function couponDiscountObject(group, code, formTypeJsonKey, country) {
 function couponOptionsHtml(couponList, formTypeJsonKey, country) {
   let options = "";
   Object.keys(couponList).forEach(function(code) {
+    if (!couponAllowedForCustomer(couponList[code])) { return; }
     const byType = couponList[code][formTypeJsonKey];
     if (typeof byType === "undefined") { return; }
     if (typeof byType[country] === "undefined") { return; }
@@ -1790,6 +1786,8 @@ function loadCouponOptions() {
   addonSelect.removeAttr('disabled');
   applyCoupon();
 }//loadCouponOptions
+
+$("#formCustomerType").on("change", loadCouponOptions); //some coupons are New Customer only
 
 function applyCoupon() {
   if (Object.keys(couponObjectList).length <= 0) {
@@ -2544,6 +2542,12 @@ const calShowPrice = () => {
   }, 0);
   //ราคา setup fee product หลัก
   Summary.MainDiscount = discountNumber.val();
+  //percent coupon (e.g. SOLOBUNDLE50): discount = % of the main product price
+  const mainCoupon = couponDiscountObject("Main", ($("#couponCode").val() || "").trim().toUpperCase(), formTypeJsonKey, formCountry);
+  if (mainCoupon && mainCoupon.percent) {
+    Summary.MainDiscount = Math.round(Summary.Product * mainCoupon.percent / 100);
+    discountNumber.val(Summary.MainDiscount);
+  }
 
   //คำนวนราคารวม
   if (formData.formCountry === "TH") {
@@ -2692,15 +2696,7 @@ $("#posSystem").change(function () {
   }
 })
 
-/*
-===== Skip email check (ปิดใช้งานชั่วคราว) =====
-ปิดไว้พร้อมกับ checkbox ใน modules/signup/modalSecretSetup.php
-ถ้าจะเปิดใช้ใหม่ ต้อง uncomment ทั้ง 3 จุดในไฟล์นี้ (บล็อกนี้, ในฟังก์ชัน
-checkEmailUsed() ด้านล่าง, และด่านตอน submit ที่ cmdSubmit.on("click", ...))
-พร้อมกับ uncomment checkbox ใน modalSecretSetup.php ด้วย
-
-ฟีเจอร์นี้ใช้ได้กับทุกประเทศ ไม่มีเงื่อนไขผูกกับ country
-
+//Skip email check (checkbox ใน modalSecretSetup.php) ใช้ได้ทุกประเทศ
 $("#CheckedBoxSkipEmailCheck").on("change", function () {
   if ($(this).is(":checked")) {
     $("#emailUsed").hide();
@@ -2708,29 +2704,15 @@ $("#CheckedBoxSkipEmailCheck").on("change", function () {
     $("#emailExist").val("");
   }
 });
-*/
 
 function checkEmailUsed(email) {
-  /*
-  ===== Skip email check (ปิดใช้งานชั่วคราว) =====
-  เวอร์ชันนี้แก้บั๊กค่าเก่าค้างแล้ว คือล้าง #emailExist กับป้ายสถานะทิ้งด้วย
-  ไม่ใช่แค่ return เฉย ๆ เพราะถ้าติ๊กแล้วพิมพ์อีเมลใหม่ ค่า "used" เดิม
-  จะยังค้างอยู่และไปบล็อกตอน submit (เจอบ่อยกับ TH ที่มีช่องอีเมล 2 ช่อง
-  คือ #email กับ #quotationEmail ในบล็อก .quotationDetail)
-
+  //ติ๊ก skip ไว้: ล้างค่าเก่าทิ้งด้วย กัน "used" ค้างไปบล็อกตอน submit (TH มี 2 ช่อง #email / #quotationEmail)
   if ($("#CheckedBoxSkipEmailCheck").is(":checked")) {
     $("#emailExist").val("");
     $("#emailUsed").hide();
     $("#emailunUsed").hide();
     return false;
   }
-  */
-
-  //ปิดการตรวจอีเมลซ้ำทั้งหมด ไม่ยิง query ไป database และไม่แสดงป้ายสถานะ
-  //(#emailUsed / #emailunUsed ใน index.php) ถ้าจะเปิดใช้ใหม่ ให้ลบ return
-  //บรรทัดนี้ออก แล้วโค้ดด้านล่างจะกลับมาทำงานเหมือนเดิม
-  //หมายเหตุ: ต้องปลดด่านตอน submit ที่ cmdSubmit.on("click", ...) ควบคู่กันด้วย
-  return false;
 
   if (email.length<5){ return false; }
   const checkEmail = email;

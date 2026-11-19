@@ -522,8 +522,17 @@ $('#formCountry').change(function() {
       // domainHelpAU.show();
       // domainHelpUS.hide();
   }
+  //นิติบุคคล/บุคคลธรรมดา (หัก ณ ที่จ่าย 3%) ใช้กับ TH เท่านั้น ประเทศอื่นกรอกชื่อบริษัท/ผู้ติดต่อได้เลย
+  const isTH = formData.formCountry === "TH";
+  $("#taxTypeRow").toggle(isTH);
+  $("#forIndividual, #nameQuotation").toggle(!isTH);
+  if (isTH) { quolegalEntity(); }
   optionState();
+  applyZipRule(formData.formCountry); //zip length depends on the country
+  loadCouponOptions(); //the coupon lists depend on the country
 });
+
+$("#formCustomerType").on("change", loadCouponOptions); //some coupons are New Customer only
 
 //set selected Payment Method
 function setMethod(arg) {
@@ -615,16 +624,157 @@ $('#formType').change(function() {
   let findMassage = formData.formType.search("Massage");
   let tmpType = (findMassage>=0) ? "Massage" : "Restaurant"; //find exactly shop type
   $(".stripeFee").html(settings.PaymentFee[formData.formCountry][tmpType]); //set stripe fee value for shop type
+  loadCouponOptions(); //the coupon lists depend on the shop type
 });
+
+//State / City / Postal code: copied from the signup form (modules/signup/assets/js/bootstrap-multi-step-form.js)
+//The form's country code for the United Kingdom is "UK", but the reference data
+//(postcode rules, states.json, cities.json) is keyed by the ISO code "GB".
+//Every lookup into that data has to go through here or it silently misses.
+function dataCountryCode(country){
+  return country === "UK" ? "GB" : country;
+}
+
+//Only the maximum length per country; the format itself is not validated.
+const zipRules = {
+  AU: { maxlength: 4 },
+  NZ: { maxlength: 4 },
+  TH: { maxlength: 5 },
+  US: { maxlength: 10 },
+  CA: { maxlength: 7 },
+  GB: { maxlength: 8 }
+};
+
+//Apply the zip rule for a country to the zip input (maxlength + allowed characters)
+function applyZipRule(country){
+  const inputZip = $("#zip");
+  const rule = zipRules[dataCountryCode(country)];
+  inputZip.removeClass("is-invalid");
+  $(".zip-validate-error").remove();
+  if (!rule) {
+    inputZip.attr("maxlength", 10);
+    return;
+  }
+  inputZip.attr("maxlength", rule.maxlength);
+  //Trim any value carried over from a previously selected country
+  if (inputZip.val().length > rule.maxlength) {
+    inputZip.val(inputZip.val().slice(0, rule.maxlength));
+  }
+}
+
+//Postal code format is no longer enforced: the real-world formats vary too much
+//to block a signup on. The field is still required, and maxlength still comes from
+//zipRules above. Kept as a no-op so the onblur handler in index.php keeps working.
+function checkZipField(){
+  $(".zip-validate-error").remove();
+  $("#zip").removeClass("is-invalid");
+}
 
 //Generate all state options from selected country
 function optionState(){
-  let shopCountry = formData.formCountry;
+  let shopCountry = dataCountryCode(formData.formCountry);
   let optionState = $('.optionState');
   let allState = {};
 
   const reqState = $.ajax({
     url: settings.url_getStates,
+    method: "POST",
+    async: true,
+    dataType: "json",
+    crossDomain: true,
+    data: { token: Math.random() },
+  });
+
+  reqState.done(function (res) {
+    allState = res[shopCountry];
+    optionState.empty().show();
+    if (!allState || !allState.state) {
+      //No data for this country: don't throw, just leave a usable prompt.
+      optionState.append("<option value=''>Please select Country</option>");
+      return;
+    }
+    optionState.append("<option value=''>Please select State</option>");
+    jQuery.each( allState.state, function( i, val ) {
+      optionState.append("<option value='"+val.text+"'>"+val.code+" : "+val.text+"</option>");
+    });
+    //The state list just changed, so the city list below it is stale.
+    optionCity();
+  });
+
+  reqState.fail(function (xhr, status, error) {
+    console.log("ajax request State fail!!");
+    console.log(status + ": " + error);
+  });
+
+}//optionState
+
+//Cities are loaded once and cached, then filtered by the selected state.
+let allCities = null;
+
+//Generate the city options for the currently selected state.
+//The list holds the main cities/districts only, so an "Other" option always
+//follows it and reveals a free-text box for anywhere not listed.
+//keepExisting = true  -> พยายามคงค่า city เดิมไว้ (ตอนโหลดรายการ State เสร็จ / prefill)
+//keepExisting = false -> ผู้ใช้เปลี่ยน State เอง ค่าเมืองเดิมใช้ไม่ได้แล้ว ต้องล้าง
+function optionCity(keepExisting){
+  if (keepExisting === undefined) { keepExisting = true; }
+  const shopCountry = dataCountryCode(formData.formCountry);
+  const selectedState = $("#state").val();
+  const optionCity = $(".optionCity");
+
+  function render(){
+    //ค่าที่มีอยู่ก่อน: อาจมาจาก prefill ตอนโหลดฟอร์ม หรือจากที่ผู้ใช้เลือกไว้แล้ว
+    //ต้องเก็บไว้ก่อน empty() เพราะการล้าง option ทำให้ค่าที่เลือกหายไป
+    const previousCity = keepExisting ? ($("#city").val() || "").trim() : "";
+
+    optionCity.empty();
+
+    const list = (allCities && allCities[shopCountry] && allCities[shopCountry][selectedState])
+      ? allCities[shopCountry][selectedState]
+      : [];
+
+    if (!selectedState) {
+      optionCity.append("<option value=''>Please select State</option>");
+    } else {
+      optionCity.append("<option value=''>Please select City</option>");
+      jQuery.each( list, function( i, val ) {
+        optionCity.append("<option value='"+val+"'>"+val+"</option>");
+      });
+      optionCity.append("<option value='__other__'>Other (type it in)</option>");
+    }
+
+    //พยายามคงค่าเดิมไว้ ไม่ล้างทิ้งทันที มิฉะนั้นข้อมูลที่ prefill มาจะหาย
+    const matched = previousCity && list.some(
+      (c) => c.toLowerCase() === previousCity.toLowerCase()
+    );
+
+    if (!selectedState) {
+      //ยังไม่ได้เลือก State ก็ยังไม่มีรายการให้จับคู่ ปล่อยค่าเดิมค้างไว้ก่อน
+      $("#cityOther").val("").hide();
+    } else if (matched) {
+      //ตรงกับรายการที่มี เลือกให้เลย
+      const exact = list.find((c) => c.toLowerCase() === previousCity.toLowerCase());
+      optionCity.val(exact);
+      $("#city").val(exact);
+      $("#cityOther").val("").hide();
+    } else if (previousCity) {
+      //ไม่มีในรายการ (เช่น เมืองเล็กที่ prefill มา) ให้ไปอยู่ช่อง Other แทนการทิ้งค่า
+      optionCity.val("__other__");
+      $("#cityOther").val(previousCity).show();
+      $("#city").val(previousCity);
+    } else {
+      //ไม่มีค่าเดิมจริง ๆ ค่อยเคลียร์
+      $("#city").val("");
+      $("#cityOther").val("").hide();
+    }
+
+    setShipAddress();
+  }
+
+  if (allCities) { render(); return; }
+
+  const reqCity = $.ajax({
+    url: settings.url_getCities,
     method: 'POST',
     async: true,
     dataType: 'json',
@@ -632,20 +782,45 @@ function optionState(){
     data: { "token": Math.random() }
   });
 
-  reqState.done(function(res) {
-    allState = res[shopCountry];
-    optionState.empty().show();
-    jQuery.each( allState.state, function( i, val ) {
-      optionState.append("<option value='"+val.text+"'>"+val.code+" : "+val.text+"</option>");
-    });
+  reqCity.done(function(res) {
+    allCities = res;
+    render();
   });
 
-  reqState.fail(function(xhr, status, error) {
-    console.log("ajax request State fail!!");
+  reqCity.fail(function(xhr, status, error) {
+    console.log("ajax request City fail!!");
     console.log(status + ': ' + error);
+    //Fall back to a free-text box so a failed load never blocks the signup.
+    //ค่าเดิมที่ prefill มาต้องไม่หาย จึงย้ายไปไว้ในช่องกรอกเองแทน
+    const previousCity = keepExisting ? ($("#city").val() || "").trim() : "";
+    optionCity.empty().append("<option value='__other__'>Other (type it in)</option>").val("__other__");
+    $("#cityOther").val(previousCity).show();
+    $("#city").val(previousCity);
   });
 
-}//optionState
+}//optionCity
+
+//Show the free-text box when "Other" is picked, otherwise submit the option.
+function onCitySelectChange(){
+  const selected = $("#citySelect").val();
+  const inputOther = $("#cityOther");
+
+  if (selected === "__other__") {
+    inputOther.show().focus();
+    $("#city").val(inputOther.val().trim());
+  } else {
+    inputOther.hide().val("");
+    $("#city").val(selected);
+  }
+  setShipAddress();
+}
+
+//Keep the submitted value in step with the free-text box.
+function syncCityOther(){
+  $("#city").val($("#cityOther").val().trim());
+  setShipAddress();
+}
+
 
 //Generate cuisines checkbox from array
 function addCuisines(){
@@ -1213,7 +1388,7 @@ const loadCouponObject = () => {
   };
 
   const loadCoupon = $.ajax({
-    url: "assets/API/couponCode.json",
+    url: settings.url_couponCode, //couponCode.json ของ signup (ไฟล์เดียวกัน)
     method: 'POST',
     async: false,
     cache: false,
@@ -1234,6 +1409,58 @@ const loadCouponObject = () => {
   });
 }//loadCouponObject
 
+//Read one group ("Main" or "Addons") out of the coupon JSON
+function couponGroup(group) {
+  const list = (couponObjectList && couponObjectList.Coupon) ? couponObjectList.Coupon : {};
+  return (typeof list[group] !== "undefined") ? list[group] : {};
+}//couponGroup
+
+//coupon with "newCustomerOnly": true is offered only when Type Customer = New Customer
+function couponAllowedForCustomer(byCode) {
+  return !byCode.newCustomerOnly || $("#formCustomerType").val() === "New Customer";
+}//couponAllowedForCustomer
+
+//Find the discount object of one coupon code for this shop type + country, or undefined when it is not offered there
+function couponDiscountObject(group, code, formTypeJsonKey, country) {
+  const byCode = couponGroup(group)[code];
+  if (typeof byCode === "undefined") { return undefined; }
+  if (!couponAllowedForCustomer(byCode)) { return undefined; }
+  const byType = byCode[formTypeJsonKey];
+  if (typeof byType === "undefined") { return undefined; }
+  return byType[country];
+}//couponDiscountObject
+
+//Build the <option> list of every coupon in a group that is offered for this shop type + country
+function couponOptionsHtml(couponList, formTypeJsonKey, country) {
+  let options = "";
+  Object.keys(couponList).forEach(function(code) {
+    if (!couponAllowedForCustomer(couponList[code])) { return; }
+    const byType = couponList[code][formTypeJsonKey];
+    if (typeof byType === "undefined") { return; }
+    if (typeof byType[country] === "undefined") { return; }
+    options += '<option value="' + code + '">' + code + '</option>';
+  });
+  return options;
+}//couponOptionsHtml
+
+//Build the coupon dropdown lists for the chosen country / shop type / customer type (same as signup form)
+function loadCouponOptions() {
+  if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
+
+  const country = formData.formCountry;
+  const formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
+  const mainSelect = $("#couponCode");
+  const addonSelect = $("#couponCode2");
+  const blankOption = '<option value="">-- No coupon --</option>';
+
+  mainSelect.html(blankOption + couponOptionsHtml(couponGroup("Main"), formTypeJsonKey, country)).val("");
+  addonSelect.html(blankOption + couponOptionsHtml(couponGroup("Addons"), formTypeJsonKey, country)).val("");
+
+  mainSelect.removeAttr('disabled');
+  addonSelect.removeAttr('disabled');
+  applyCoupon();
+}//loadCouponOptions
+
 function applyCoupon() {
   if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
   const objCode = $("#couponCode");
@@ -1250,9 +1477,7 @@ function applyCoupon() {
   //formData.formCountry << AU NZ CA UK US
   let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
 
-  let Settings_Coupon_Obj = settings.Payment_Detail.coupon_Code[formData.formCountry];
   let discountValue = 0;
-  let gstDecimal = 0;
 
   //ถ้าไม่ได้กรอกอะไรมา
   if (inputCode.length<1){
@@ -1263,20 +1488,17 @@ function applyCoupon() {
     $("#couponCode2").removeAttr('disabled');
     cal = 0;
     discountNumber.val(cal);
+    setShowPrice(); //clear the discount from the totals
     return false;
   }else{
     $("#couponCode2").attr('disabled', 'disabled');
   }
 
-  const availableCoupon = new Set(["1TRIAL", "1SMILE", "WAWIO", "FREEWEB", "PARTNER96", "PARTNER98", "PARTNER195", "PARTNER198", "PARTNER246", "PARTNER268", "PARTNER118"]);
-
-
-  inputCode = inputCode.toUpperCase();
-  const foundCoupon = availableCoupon.has(inputCode)
+  //รายชื่อคูปองมาจาก Coupon.Main ใน couponCode.json ของ signup
+  const foundCoupon = typeof couponGroup("Main")[inputCode] !== "undefined";
 
   if(foundCoupon) {
-    let discountList = couponObjectList.Coupon[inputCode][formTypeJsonKey];
-    let discountObject = discountList[formData.formCountry];
+    let discountObject = couponDiscountObject("Main", inputCode, formTypeJsonKey, formData.formCountry);
 
     if (typeof discountObject !== "undefined") { //Check if this coupon code is available in your settings list.
       discountFlag = true;
@@ -1301,6 +1523,7 @@ function applyCoupon() {
 }//function applyCoupon
 
 function applyCoupon2() {
+  if(Object.keys(couponObjectList).length<=0){ loadCouponObject(); } //if empty couponObjectList then load it via ajax
 
   const objCode = $("#couponCode2");
   let inputCode = objCode.val().trim().toUpperCase();
@@ -1313,9 +1536,8 @@ function applyCoupon2() {
 
   let discountFlag = false;
   let cal = 0;
-  let Settings_Coupon_Obj = settings.Payment_Detail.coupon_Code[formData.formCountry];
+  let formTypeJsonKey = typeJsonKey(formData.formType); //"Massage" : "Restaurant"
   let discountValue = 0;
-  let gstDecimal = 0;
 
   //ถ้าไม่ได้กรอกอะไรมา
   if (inputCode.length<1){
@@ -1326,14 +1548,16 @@ function applyCoupon2() {
     $("#couponCode").removeAttr('disabled');
     cal = 0;
     discountNumber.val(cal);
+    setShowPrice(); //clear the discount from the totals
     return false;
   }else{
     $("#couponCode").attr('disabled', 'disabled');
   }
 
-  if (typeof Settings_Coupon_Obj[inputCode] !== "undefined") { //check this coupon code is exist in a setting list
+  const discountObject = couponDiscountObject("Addons", inputCode, formTypeJsonKey, formData.formCountry);
+  if (typeof discountObject !== "undefined") { //coupon อยู่ใน Coupon.Addons ของ couponCode.json
     discountFlag = true;
-    discountValue =  Settings_Coupon_Obj[inputCode].discount; //get the discount value of this coupon
+    discountValue = discountObject.discount; //get the discount value of this coupon
   }
   //
 
@@ -1586,8 +1810,8 @@ const genLinkPDF = () => {
     case "0":
       contractPeriod = 0;
       break;
-    case "3":
-      contractPeriod = 3;
+    case "6":
+      contractPeriod = 6;
       break;
     case "12":
       contractPeriod = 12;
@@ -1634,9 +1858,7 @@ const calShowPrice = () => {
   let formTypeJsonKey = typeJsonKey(formType);
   let contractPeriod = $("input[name='contractPeriod']:checked").val();
   setPeriodSelectBox(contractPeriod);
-  const loadingAjax = $("#loadingAjax");
-  const loadGif = "<img alt='Loading' src='assets/img/loading.gif'>";
-  loadingAjax.html(loadGif);
+  //ไม่แสดง loading gif ตรงนี้: calShowPrice ไม่มีจุดเคลียร์ gif ทำให้ค้างทับเครื่องหมายถูกของ getProductList
   const reqProductList = $.ajax({
     url: settings.url_getProductList,
     method: 'POST',
@@ -1663,7 +1885,7 @@ const calShowPrice = () => {
       case "0":
         contractPeriodKeyIndex = 0;
         break;
-      case "3":
+      case "6":
         contractPeriodKeyIndex = 1;
         break;
       case "12":
@@ -1700,7 +1922,7 @@ const calShowPrice = () => {
 
   let gstMultiply = 0;
   if(formData.formCountry === "AU"){
-    gstMultiply = 0.07;
+    gstMultiply = 0.1; //GST 10% (เดิมใส่ 0.07 ผิด)
   }else if(formData.formCountry === "TH"){
     gstMultiply = 0.07;
   }
@@ -1708,7 +1930,7 @@ const calShowPrice = () => {
   //รวมราคาจากช่อง amount ของ addon ทุกตัวใน selectedAddOnList
   let Summary = {};
   //ราคา product หลัก
-  Summary.Product = selectedProductList[0].amount;
+  Summary.Product = (selectedProductList.length > 0) ? selectedProductList[0].amount : 0;
 
   //ราคารวมของ addon ทั้งหมด
   Summary.Addon = selectedAddOnList.reduce((accumulator, object) => {
@@ -1716,6 +1938,12 @@ const calShowPrice = () => {
   }, 0);
   //ราคา setup fee product หลัก
   Summary.MainDiscount = discountNumber.val();
+  //percent coupon (e.g. SOLOBUNDLE50): discount = % of the main product price
+  const mainCoupon = couponDiscountObject("Main", ($("#couponCode").val() || "").trim().toUpperCase(), formTypeJsonKey, formCountry);
+  if (mainCoupon && mainCoupon.percent) {
+    Summary.MainDiscount = Math.round(Summary.Product * mainCoupon.percent / 100);
+    discountNumber.val(Summary.MainDiscount);
+  }
 
 
   //คำนวนราคารวม
