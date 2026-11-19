@@ -127,13 +127,13 @@ include ('assets/api/checkSession.php');
                                 <p>AI Management</p>
                             </a>
                         </li>
-                        <?php if($_SESSION['level'] < 4 || $_SESSION['id'] == 83){ ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=invoiceThailand" class="nav-link <?php echo $activeMenu["lv2"] == "invoiceThailand" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-receipt"></i>
                                 <p>Customer Thailand</p>
                             </a>
                         </li>
+                        <?php if($_SESSION['level'] < 4 || $_SESSION['id'] == 83){ ?>
                         <li class="nav-item pl-2">
                             <a href="main.php?p=dataCustomer" class="nav-link <?php echo $activeMenu["lv2"] == "dataCustomer" ? "active":""; ?>">
                                 <i class="nav-icon mr-3 bi bi-person-vcard"></i>

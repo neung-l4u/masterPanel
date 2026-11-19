@@ -54,8 +54,8 @@ function buildMenuIndex()
         $add('Unsubscribe Form', 'Form Management', 'modules/unsub2/views/index.php?id=123', 'bi bi-file-earmark-excel', true, 'ยกเลิก cancel unsub');
         $add('Template Submissions', 'Form Management', 'modules/templates/views/main.php', 'bi bi-file-earmark-break', true, 'เทมเพลต');
         $add('AI Management', 'Form Management', 'main.php?p=aiManagement', 'bi bi-robot', false, 'ai araya');
+        $add('Customer Thailand', 'Form Management', 'main.php?p=invoiceThailand', 'bi bi-receipt', false, 'invoice ไทย บิล billing th ลูกค้า');
         if ($userLevel < 4 || $myID == 83) {
-            $add('Customer Thailand', 'Form Management', 'main.php?p=invoiceThailand', 'bi bi-receipt', false, 'invoice ไทย บิล billing th ลูกค้า');
             $add('Data Customer', 'Form Management', 'main.php?p=dataCustomer', 'bi bi-person-vcard', false, 'ข้อมูลลูกค้า customer data');
         }
         $add('ส่งหลักฐานชำระเงิน', 'Form Management', 'main.php?p=slipSubmission', 'bi bi-upload', false, 'slip submission payment สลิป โอนเงิน');
