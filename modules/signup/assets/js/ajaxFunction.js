@@ -1915,39 +1915,7 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
       hasError = true;
     }
 
-    // ธนาคาร (เฉพาะนิติบุคคล)
-    if (taxType === "นิติบุคคล") {
-      if (!$("#bankName").val() || $("#bankName").val().trim() === "") {
-        $("#bankName").after(
-          '<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกชื่อธนาคาร</span>',
-        );
-        if (!hasError) {
-          $("#bankName").focus();
-        }
-        hasError = true;
-      }
-      if (
-        !$("#bankThaiNumber").val() ||
-        $("#bankThaiNumber").val().trim() === ""
-      ) {
-        $("#bankThaiNumber").after(
-          '<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกเลขที่บัญชีธนาคาร</span>',
-        );
-        if (!hasError) {
-          $("#bankThaiNumber").focus();
-        }
-        hasError = true;
-      }
-      if (!$("#bankThaiName").val() || $("#bankThaiName").val().trim() === "") {
-        $("#bankThaiName").after(
-          '<span class="tax-validate-error" style="color:red;font-size:12px;">กรุณากรอกชื่อบัญชี</span>',
-        );
-        if (!hasError) {
-          $("#bankThaiName").focus();
-        }
-        hasError = true;
-      }
-    }
+    // ไม่เก็บข้อมูลธนาคารลูกค้าแล้ว (หัก ณ ที่จ่ายในบิลเรียบร้อย) จึงไม่ validate
     if (hasError) return false;
   }
 

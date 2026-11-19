@@ -786,7 +786,8 @@ function quolegalEntity() {
   if (checkLeg === "นิติบุคคล") {
     $("#forIndividual").show();
     $("#nameQuotation").hide();
-    $("#forThaiBank").show();
+    // ไม่เก็บข้อมูลธนาคารลูกค้าแล้ว ซ่อนไว้ทุกกรณี
+    $("#forThaiBank").hide();
     $('label[for="quotationShopName"] span').text("ชื่อบริษัท");
   } else if (checkLeg === "บุคคลธรรมดา") {
     $("#forIndividual").show();
