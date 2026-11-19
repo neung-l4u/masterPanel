@@ -498,6 +498,13 @@ if ($response) {
               'thBathRe'      => $thBathRe,
           ];
 
+          // ส่วนลดคูปอง: table เป็นราคาเต็ม แต่ summary หักคูปองแล้ว
+          require_once dirname(__DIR__, 3) . '/api/invoice/invoiceDiscount.php';
+          $thPayload += invoiceDiscount(array_map(fn($it) => [
+              'qyt'    => $it['qyt'] ?? 1,
+              'amount' => $it['fullamount'] ?? round((float)($it['amount'] ?? 0) * 1.07, 2),
+          ], $rawItems), $summary['grandtotal_inc_vat'] ?? 0, $productArr);
+
           $thWebhookUrl = 'https://hook.us1.make.com/gnxfafua86k6mutxg8tr65cuxmrk3v2k';
           $thCh = curl_init($thWebhookUrl);
           curl_setopt($thCh, CURLOPT_POST, 1);

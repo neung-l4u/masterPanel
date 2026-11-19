@@ -5,6 +5,7 @@ session_start();
 include '../../assets/db/db.php';
 include '../../assets/db/initDB.php';
 require_once dirname(__DIR__, 2) . '/api/invoice/convertToBahtText.php';
+require_once dirname(__DIR__, 2) . '/api/invoice/invoiceDiscount.php';
 ob_clean();
 header('Content-Type: application/json');
 
@@ -62,6 +63,9 @@ $tableItems = array_map(function($item) {
             : number_format(round((float)($item['amount'] ?? 0) * 1.07, 2), 2, '.', ''),
     ];
 }, $rawItems);
+// template ใน Make ใช้ fullamount โชว์ราคา (ชื่อเดียวกับ payload ตอน signup)
+foreach ($tableItems as &$ti) { $ti['fullamount'] = $ti['amount']; }
+unset($ti);
 
 // --- receiptID = invoiceID (same document) ---
 $generatedReceiptID = $row['invoiceID'];
@@ -113,6 +117,7 @@ $payload = [
     'withholdingTax' => $summary['withholdingTax']     ?? '',
     'net_payment'    => $summary['net_payment']        ?? '',
     'items'          => $tableItems,
+] + invoiceDiscount($tableItems, $summary['grandtotal_inc_vat'] ?? 0, $productJson ?? []) + [
     'quotation'      => $quotation,
     'receiptID'      => $generatedReceiptID,
     'receipt_url'    => $receiptUrl,

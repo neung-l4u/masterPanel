@@ -2092,6 +2092,8 @@ const saveTaxToDB = (stripePayload, stripeRes) => {
         ],
       },
     ],
+    // เก็บคูปองไว้ให้อีเมล/ใบเสร็จโชว์แถวส่วนลด (summary หักคูปองแล้ว แต่ table เป็นราคาเต็ม)
+    coupon: ($("#couponCode").val() || "").trim(),
     table: tableData,
     summary: {
       subtotal: subTotalFormatted,

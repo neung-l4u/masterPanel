@@ -16,6 +16,7 @@ $docRoot = dirname(__DIR__, 2);
 include $docRoot . '/assets/db/db.php';
 include $docRoot . '/assets/db/initDB.php';
 require_once $docRoot . '/api/invoice/convertToBahtText.php';
+require_once $docRoot . '/api/invoice/invoiceDiscount.php';
 ob_clean();
 header('Content-Type: application/json');
 
@@ -127,6 +128,9 @@ $response = [
                 : number_format(round((float)($item['amount'] ?? 0) * 1.07, 2), 2, '.', ''),
         ];
     }, $items),
+];
+$response += invoiceDiscount($response['items'], $summary['grandtotal_inc_vat'] ?? 0, $productJson);
+$response += [
     'quotation' => array_map(function($q) {
         $detail = $q['detail'] ?? [];
         return [

@@ -144,9 +144,11 @@ if ($act === "add") {
     $netPayment = isset($productArr['summary']['net_payment']) ? (float)str_replace(',', '', $productArr['summary']['net_payment']) : (float)$grandTotal;
 
     $thBathIn = convertToBahtText($netPayment);
+    // ใบแรกจาก signup ไม่ต้องรอ GM proof จึง wantGM = 1 ตั้งแต่สร้าง
+    // ไม่งั้นพอลูกค้ากลายเป็น subscription ใบนี้จะหายจากหน้า Receipt Thailand
     $db->query(
-        'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `type`, `product`, `amount`, `thBathIn`, `status`, `source`) VALUES (?,?,?,?,?,?,?,?)',
-        $customerId, $generatedInvoiceID, 'one_time', $productQuotation, $netPayment, $thBathIn, 'pending', 'signup'
+        'INSERT INTO `thInvoice`(`customer_id`, `invoiceID`, `type`, `product`, `amount`, `thBathIn`, `status`, `source`, `wantGM`) VALUES (?,?,?,?,?,?,?,?,?)',
+        $customerId, $generatedInvoiceID, 'one_time', $productQuotation, $netPayment, $thBathIn, 'pending', 'signup', '1'
     );
 
     $lastInsertId = $db->lastInsertID();
