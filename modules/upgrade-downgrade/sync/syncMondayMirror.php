@@ -21,6 +21,14 @@ date_default_timezone_set("Asia/Bangkok");
 // triggerable by anyone who can reach the web server.
 $isCli = (php_sapi_name() === 'cli');
 
+// Defaults that only the HTTP path can change. The CLI keeps text output and
+// the full run, so the documented cron command behaves exactly as before.
+$wantsJson = false;
+$withSubs  = true;
+// HTTP only: run the subscriptions pass with no countries. Declared here so
+// the CLI path has a definite false and no command-line argument can set it.
+$subsOnly  = false;
+
 if (!$isCli) {
     $configFile = __DIR__ . '/../assets/config.php';
     $config     = is_file($configFile) ? include $configFile : [];
@@ -33,7 +41,27 @@ if (!$isCli) {
         echo "Forbidden\n";
         exit(1);
     }
-    header('Content-Type: text/plain; charset=utf-8');
+
+    // A full country can take minutes; the default limit would kill the
+    // largest board partway and leave the caller with no summary at all.
+    set_time_limit(300);
+
+    $wantsJson = isset($_GET['format']) && $_GET['format'] === 'json';
+    // Opt-out: a caller syncing one country at a time runs this pass once at
+    // the end rather than repeating it per country.
+    $withSubs  = !(isset($_GET['subs']) && $_GET['subs'] === '0');
+    $subsOnly  = isset($_GET['subsonly']) && $_GET['subsonly'] === '1';
+
+    // Asking for the subscriptions-only run and then switching the
+    // subscriptions pass off leaves nothing to do, and the run would report
+    // "ok" having synced nothing -- the same healthy-looking no-op the empty
+    // country filter is rejected for.
+    if ($subsOnly && !$withSubs) {
+        http_response_code(400);
+        upDownSyncFatal('subsonly=1 cannot be combined with subs=0', $isCli);
+    }
+
+    header('Content-Type: ' . ($wantsJson ? 'application/json' : 'text/plain') . '; charset=utf-8');
 }
 
 $started = microtime(true);
@@ -90,15 +118,56 @@ if ($isCli && $argc > 1) {
 } elseif (!$isCli && !empty($_GET['countries']) && is_string($_GET['countries'])) {
     $only = explode(',', $_GET['countries']);
 }
+
+// ?subsonly=1 means "no countries, just the subscriptions pass", so it has to
+// set the filter to an empty list. Leaving $only at null would mean "no filter
+// given", which upDownRunSync reads as ALL SIX COUNTRIES -- the heaviest run
+// there is, from a parameter whose whole meaning is "none of them".
+if ($subsOnly) {
+    $only = [];
+}
 if ($only !== null) {
-    $only = array_values(array_filter(array_map(
+    $codes = array_values(array_filter(array_map(
         function ($c) { return preg_replace('/[^A-Z]/', '', strtoupper(trim((string) $c))); },
         $only
     )));
+
+    // Keep only codes that name a real board. Stripping to A-Z is not enough on
+    // its own: "ZZ" survives it, reaches upDownRunSync, and is only rejected
+    // per-country AFTER the run has already queried Monday and rewritten the
+    // subscriptions table. A typo must cost nothing, so it is caught here.
+    $only = array_values(array_filter(
+        $codes,
+        function ($c) { return isset(UP_DOWN_PROJECT_BOARDS[$c]); }
+    ));
+
+    $unknown = array_values(array_diff($codes, $only));
+
     // An empty filter would otherwise sync no countries at all and still report
     // success, which reads as a healthy run that did nothing.
-    if ($only === []) {
-        upDownSyncFatal('country filter given but no valid country codes in it', $isCli);
+    //
+    // $subsOnly (set on the HTTP path only, from ?subsonly=1) is the one case
+    // where no countries is legitimate: the admin page syncs each country in
+    // its own request, then asks for the subscriptions pass by itself. It is a
+    // separate parameter rather than a magic country code so that no CLI
+    // argument can ever reach it -- a mistyped country must stay a cheap exit,
+    // never a live write to the subscriptions table.
+    if ($only === [] && !$subsOnly) {
+        // Two different mistakes, two different messages: "AU,ZZ" is a
+        // misspelled country, while "123" is a filter with nothing in it.
+        // Reporting both as "no valid codes" sends the reader looking for the
+        // wrong thing.
+        upDownSyncFatal(
+            $unknown !== []
+                ? 'unknown country code(s): ' . implode(',', $unknown)
+                : 'country filter given but no valid country codes in it',
+            $isCli
+        );
+    } elseif ($unknown !== []) {
+        // Some valid, some not. Refuse rather than silently syncing the subset:
+        // a caller who asked for five countries and got four would have no
+        // reason to look at the log.
+        upDownSyncFatal('unknown country code(s): ' . implode(',', $unknown), $isCli);
     }
 }
 
@@ -106,7 +175,7 @@ $lines    = [];
 $hadError = false;
 
 try {
-    $summary = upDownRunSync($db, $only);
+    $summary = upDownRunSync($db, $only, $withSubs);
 } catch (Throwable $e) {
     upDownSyncFatal($e->getMessage(), $isCli);
 }
@@ -125,7 +194,11 @@ foreach ($summary['countries'] as $c) {
 }
 
 $s = $summary['subscriptions'];
-if ($s['error'] !== null) {
+if ($s === null) {
+    // Skipped by ?subs=0. Say so rather than printing a zero line, which would
+    // read as "no subscriptions found".
+    $lines[] = "  subscriptions: skipped";
+} elseif ($s['error'] !== null) {
     $hadError = true;
     $lines[] = "  subscriptions: ERROR {$s['error']} (rows left untouched)";
 } else {
@@ -147,9 +220,21 @@ $status  = $hadError ? 'with errors' : 'ok';
 
 $output = "[{$stamp} +07] ud mirror sync {$status} ({$elapsed}s)\n"
         . implode("\n", $lines) . "\n";
-echo $output;
 
-// Keep a log so an overnight failure is still visible in the morning.
+// The log gets the human-readable form either way: an HTTP-triggered run must
+// leave the same audit trail a cron run does.
 upDownSyncLog($output);
 
+if ($wantsJson) {
+    echo json_encode([
+        'ok'            => !$hadError,
+        'elapsed'       => $elapsed,
+        'syncedAt'      => $summary['syncedAt'],
+        'countries'     => $summary['countries'],
+        'subscriptions' => $summary['subscriptions'],
+    ], JSON_UNESCAPED_UNICODE);
+    exit($hadError ? 1 : 0);
+}
+
+echo $output;
 exit($hadError ? 1 : 0);

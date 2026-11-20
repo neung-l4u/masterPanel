@@ -449,8 +449,13 @@ function upDownSyncSubscriptions($db, string $token, string $syncedAt): array
 /**
  * Full run. One timestamp for the whole run, so "not refreshed by this run"
  * is a single unambiguous comparison.
+ *
+ * @param bool $withSubscriptions Run the subscriptions pass. The admin page
+ *        syncs one country per request and would otherwise repeat this pass
+ *        once per country; it passes false and runs it once at the end.
+ *        When false, $summary['subscriptions'] is null.
  */
-function upDownRunSync($db, ?array $onlyCountries = null): array
+function upDownRunSync($db, ?array $onlyCountries = null, bool $withSubscriptions = true): array
 {
     $config   = upDownLoadConfig();
     $token    = $config['monday_token'];
@@ -463,7 +468,9 @@ function upDownRunSync($db, ?array $onlyCountries = null): array
         $summary['countries'][] = upDownSyncCountry($db, $token, $country, $syncedAt);
     }
 
-    $summary['subscriptions'] = upDownSyncSubscriptions($db, $token, $syncedAt);
+    if ($withSubscriptions) {
+        $summary['subscriptions'] = upDownSyncSubscriptions($db, $token, $syncedAt);
+    }
 
     return $summary;
 }

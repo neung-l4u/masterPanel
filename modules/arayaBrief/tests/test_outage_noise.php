@@ -106,5 +106,37 @@ test("the fixture includes a null recording", in_array(null, array_column($fx['c
 test("the fixture is not flagged unavailable", $fx['call_errors_unavailable'] === false);
 test("the fixture has a shop without calls data", in_array(null, array_column($fx['live'], 'calls'), true));
 
+echo "== call quality: the fixture exercises all four findings ==\n";
+// A finding with no example in the sample data is a finding nobody can look
+// at without live credentials, which is how one quietly stops rendering.
+foreach (['forwardingHigh', 'hangupHigh', 'conversionLow', 'bookingBroken'] as $k) {
+    test("the fixture produces at least one {$k} finding", count($fx[$k]) >= 1);
+}
+test("the fixture carries a fleet baseline", is_array($fx['fleetCalls']));
+test("the fleet baseline has a forwarded rate", $fx['fleetCalls']['d7']['forwarded_pct'] !== null);
+// Summed from the shops, not averaged from their rates, so the fleet total
+// must be at least as big as any one shop's.
+$maxShop = 0;
+foreach ($fx['live'] as $r) {
+    $t = is_array($r['calls'] ?? null) ? (int)($r['calls']['d7']['total'] ?? 0) : 0;
+    $maxShop = max($maxShop, $t);
+}
+test("the fleet total covers the shops", $fx['fleetCalls']['d7']['total'] >= $maxShop);
+
+echo "== call quality: a gcal outage flags nothing ==\n";
+// With gcal down every shop arrives with no call figures. Flagging on absent
+// data would fill the report with findings on the one morning nobody can
+// check them -- the same failure the gap suppression above exists to prevent.
+$down = arayaSuppressOutageNoise(arayaBuildBrief(
+    ['matched' => [], 'unmatchedGcal' => [], 'unmatchedMonday' => [
+        ['name' => 'A Shop', 'live_status' => 'LIVE', 'live_date' => '2026-01-01'],
+    ]],
+    '2026-10-20', null, null
+) + ['gcal_unavailable' => true]);
+foreach (['forwardingHigh', 'hangupHigh', 'conversionLow', 'bookingBroken'] as $k) {
+    test("{$k} is empty during an outage", $down[$k] === []);
+}
+test("the fleet baseline is null during an outage", $down['fleetCalls'] === null);
+
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

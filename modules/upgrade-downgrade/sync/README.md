@@ -75,16 +75,65 @@ A full run takes about 3 minutes (183s on the first run).
   part keeps its previous rows), or the script hit a fatal (cannot reach the
   database, bad country filter).
 
+> **Behaviour change: country filters are checked before the run starts.**
+> Each code in the filter is now checked against the project boards before
+> anything is queried. Previously an unknown code was passed through, and the
+> run only reported it as a per-country error after a full live sync, which
+> still rewrote the subscriptions table. Now:
+>
+> - `php modules/upgrade-downgrade/sync/syncMondayMirror.php ZZ` exits at once,
+>   in about 0.15 seconds, and syncs nothing:
+>
+>       [2026-10-28 14:56:09 +07] ud mirror sync FATAL: unknown country code(s): ZZ
+>
+> - A filter that mixes valid and invalid codes, such as `AU ZZ`, is refused as
+>   a whole. The valid part is not synced. The message names the bad codes.
+> - A filter with nothing usable in it, such as `123`, still gives
+>   `country filter given but no valid country codes in it`.
+>
+> A typo in a cron line used to cost a real sync and now costs nothing. The
+> other side of that is that a cron line whose country list is partly wrong now
+> does nothing at all, rather than syncing part of it. Check
+> `assets/logs/mirror-sync.log` after changing a filter, because cron discards
+> stdout.
+
 It is CLI-only unless `sync_token` is set in `assets/config.php`. Over HTTP it
 returns 403 while `sync_token` is empty, or when `?token=` does not match.
+
+### From the admin page
+
+Staff can run the sync from `main.php?p=mondaySync` in the master panel. The
+page lists every country with its current mirrored row count, syncs the ones
+that are ticked (or all six), and reports each result as it lands.
+
+It syncs **one country per request**, then runs the subscriptions pass once at
+the end. A full run through the page therefore makes seven requests rather than
+one: six country requests and a final subscriptions request, which is skipped if
+no country succeeded. The subscriptions pass reads the whole Active
+Subscriptions board, so repeating it per country would be six times the work for
+the same result.
+
+Only one sync per scope runs at a time. A second request for the same country
+(or for the subscriptions pass) is refused while the first is still running.
+
+The page requires `sync_token` to be set in `assets/config.php`. The token is
+read server-side by `pages/api/mondaySyncRun.php` and is never sent to the
+browser — do not move it into the page's JavaScript, or anyone who can load the
+page can trigger unlimited multi-minute Monday runs.
+
+Closing the browser does not stop a run in progress. If a request times out,
+check `assets/logs/mirror-sync.log` before retrying: the server-side sync is
+probably still going, and a retry would start a second one for the same country.
 
 Output goes to stdout and to a rolling log, `assets/logs/mirror-sync.log`.
 
 ## Schedule
 
-> **NOT YET REGISTERED.** No scheduled task exists for this. It must be set up
-> when this branch is deployed. Until then the mirror only holds whatever the
-> last manual run wrote, and after 48 hours lookups are marked stale.
+> **STILL NOT REGISTERED.** No scheduled task exists for this. The admin page
+> (above) lets staff sync on demand, which is not a substitute: without cron the
+> mirror only updates when somebody remembers to press the button. Register the
+> cron below at deploy, and treat the page as the tool for when staff need data
+> sooner than the next scheduled run.
 
 Twice daily. A customer who signed up one to three days ago is not using the
 upgrade form yet, so twelve-hour-old data is accurate enough for the people who
@@ -196,6 +245,13 @@ hashed email and its outcome). The directory is gitignored.
 - `assets/logs/.htaccess` denies web access to them. **It is Apache-only.** An
   nginx deployment ignores it and would serve the logs publicly, so it needs an
   equivalent `location` deny added separately.
+- **The web server's access log records `sync_token`.** The admin page runs the
+  sync by calling the script over loopback with `?token=` in the query string,
+  and Apache's access log records the full request line, query string included.
+  Whoever deploys this must confirm that the web server's access logs are not
+  readable over the web, in the same way as the `.htaccess` note above. Anyone
+  who can read those logs can trigger a sync, so if they have ever been exposed,
+  change `sync_token`.
 - Because the directory is gitignored, the `.htaccess` had to be force-added
   (`git add -f modules/upgrade-downgrade/assets/logs/.htaccess`). Anyone
   recreating it must do the same, or the deny silently never deploys.

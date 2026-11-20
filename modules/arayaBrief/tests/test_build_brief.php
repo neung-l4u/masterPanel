@@ -450,13 +450,30 @@ test("both sections are always present as arrays",
      is_array($b['atRisk']) && is_array($b['runningOut']));
 
 echo "== call quality: figures reach the live row ==\n";
-$calls = ['d7'  => ['total' => 178, 'forwarded' => 24, 'short' => 41, 'silent' => 12, 'errors' => 1, 'minutes' => 305],
-          'd30' => ['total' => 612, 'forwarded' => 88, 'short' => 140, 'silent' => 40, 'errors' => 3, 'minutes' => 1120]];
+// Every figure the current gcal sends. A window gcal sends in full must
+// arrive on the live row in full: a figure dropped here is a column that
+// silently reads "?" on the dashboard forever.
+$calls = ['d7'  => ['total' => 178, 'forwarded' => 24, 'short' => 41, 'silent' => 12, 'errors' => 1,
+                    'minutes' => 305, 'booked' => 60, 'booking_failed' => 2, 'long' => 90, 'booked_unknown' => 5],
+          'd30' => ['total' => 612, 'forwarded' => 88, 'short' => 140, 'silent' => 40, 'errors' => 3,
+                    'minutes' => 1120, 'booked' => 210, 'booking_failed' => 7, 'long' => 320, 'booked_unknown' => 18]];
 $b = arayaBuildBrief(res([mk([], ['calls' => $calls])]), TODAY);
 test("the calls block survives onto the live row unchanged", $b['live'][0]['calls'] === $calls);
-test("both windows and all six figures are present",
+test("both windows and every figure are present",
      array_keys($b['live'][0]['calls']) === ['d7', 'd30']
-     && array_keys($b['live'][0]['calls']['d7']) === ['total', 'forwarded', 'short', 'silent', 'errors', 'minutes']);
+     && array_keys($b['live'][0]['calls']['d7']) === ARAYA_CALL_FIGURES);
+
+// An older gcal that sends only the original six must still work: the four
+// booking figures come back null, which the dashboard shows as "?" rather
+// than as zero bookings.
+$sixOnly = ['d7' => ['total' => 10, 'forwarded' => 1, 'short' => 2, 'silent' => 0, 'errors' => 0, 'minutes' => 30]];
+$b = arayaBuildBrief(res([mk([], ['calls' => $sixOnly])]), TODAY);
+test("a gcal without the booking figures gives null for them, not zero",
+     $b['live'][0]['calls']['d7']['total'] === 10
+     && $b['live'][0]['calls']['d7']['booked'] === null
+     && $b['live'][0]['calls']['d7']['booking_failed'] === null
+     && $b['live'][0]['calls']['d7']['long'] === null
+     && $b['live'][0]['calls']['d7']['booked_unknown'] === null);
 
 echo "== call quality: absent data is not zero ==\n";
 $b = arayaBuildBrief(res([mk()]), TODAY);

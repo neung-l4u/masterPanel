@@ -257,9 +257,41 @@ function arayaQuietFinding(array $periods): ?array
     return null;
 }
 
-/** The two reporting windows gcal sends, and the six figures in each. Exact upstream keys. */
+/** The two reporting windows gcal sends, and the figures in each. Exact upstream keys. */
 const ARAYA_CALL_WINDOWS = ['d7', 'd30'];
-const ARAYA_CALL_FIGURES = ['total', 'forwarded', 'short', 'silent', 'errors', 'minutes'];
+const ARAYA_CALL_FIGURES = ['total', 'forwarded', 'short', 'silent', 'errors', 'minutes',
+                            'booked', 'booking_failed', 'long', 'booked_unknown'];
+
+// Which window the headline rates and the alert sections are judged on. The
+// 7-day figure is what a conversation about "this week" means, and a 30-day
+// window would take a month to show a problem that started on Monday.
+const ARAYA_RATE_WINDOW = 'd7';
+
+// A rate computed from fewer calls than this is arithmetic, not evidence: one
+// forwarded call out of three is 33% and means nothing. Such a shop still
+// shows its counts; it is simply not flagged and not compared with the fleet.
+const ARAYA_RATE_MIN_CALLS = 10;
+
+// Flagged when the shop's rate is at least this many percentage points above
+// the fleet's. Points, not a ratio: a shop at 13.5% against a fleet at 12.4%
+// is doing roughly what everyone else does, and chasing it would bury the
+// shop sitting twice as high.
+const ARAYA_RATE_ALERT_MARGIN_PTS = 5.0;
+
+// Short-hangup rate flagged from here up whatever the fleet does. The fleet
+// average for this is itself high enough that comparing with it would excuse
+// every shop, which is exactly how a problem this size goes unnoticed.
+const ARAYA_SHORT_ALERT_PCT = 20.0;
+
+// Conversion flagged below here, again against the fleet rather than an
+// absolute: what counts as a good booking rate differs by country and by
+// service, and the fleet is the only honest baseline we have.
+const ARAYA_CONVERSION_ALERT_MARGIN_PTS = 5.0;
+
+// Booking failures are a broken system, not a trend: this many in a window on
+// one shop is worth naming. Not a rate, because the whole point is that two
+// failed bookings out of two calls and two out of fifty are both bugs.
+const ARAYA_BOOKING_FAILED_ALERT = 1;
 
 /**
  * A shop's call-quality figures, or null when we have none.
@@ -293,6 +325,92 @@ function arayaCallsBlock(?array $g): ?array
 }
 
 /**
+ * One rate as a percentage, or null when there is nothing honest to report.
+ *
+ * Null covers three different situations, and all three must stay out of a
+ * displayed percentage: a figure gcal never sent, a denominator of zero, and a
+ * denominator too small to mean anything. The third is the one that matters in
+ * practice -- one forwarded call out of three is 33% and would put a quiet
+ * shop at the top of an alert list ahead of a shop with a real problem.
+ *
+ * $minDenominator of 0 computes the rate whatever the sample size, for the
+ * fleet figure, where the sample is every call the fleet took.
+ */
+function arayaRate($numerator, $denominator, int $minDenominator = ARAYA_RATE_MIN_CALLS): ?float
+{
+    $n = arayaNum($numerator);
+    $d = arayaNum($denominator);
+    if ($n === null || $d === null || $d <= 0 || $d < $minDenominator) {
+        return null;
+    }
+    return round(($n / $d) * 100, 1);
+}
+
+/**
+ * The rates for one call window: forwarded, short, and conversion.
+ *
+ * Forwarded and short are shares of every call. Conversion is a share of the
+ * calls long enough to have booked, minus the ones whose booked state is
+ * unknown: dividing by every call would count misdials as lost bookings, and
+ * counting unknowns as failures would report the whole pre-instrumentation
+ * call history as a conversion collapse.
+ *
+ * Every rate can be null, and null never means zero. The window is passed
+ * through untouched alongside them so a reader can always see the counts the
+ * rates came from.
+ */
+function arayaWindowRates(?array $win, int $minDenominator = ARAYA_RATE_MIN_CALLS): array
+{
+    if (!is_array($win)) {
+        return ['forwarded_pct' => null, 'short_pct' => null, 'conversion_pct' => null,
+                'conversion_base' => null];
+    }
+
+    $long = arayaNum($win['long'] ?? null);
+    $unknown = arayaNum($win['booked_unknown'] ?? null);
+    // Calls we actually know the booking outcome for. Null propagates: without
+    // both figures there is no denominator we can defend.
+    $known = ($long === null || $unknown === null) ? null : max($long - $unknown, 0);
+
+    return [
+        'forwarded_pct' => arayaRate($win['forwarded'] ?? null, $win['total'] ?? null, $minDenominator),
+        'short_pct' => arayaRate($win['short'] ?? null, $win['total'] ?? null, $minDenominator),
+        'conversion_pct' => arayaRate($win['booked'] ?? null, $known, $minDenominator),
+        'conversion_base' => $known,
+    ];
+}
+
+/**
+ * The fleet's own figures and rates, or null when gcal sent none.
+ *
+ * The fleet rates use no minimum sample: the denominator is every call the
+ * fleet took, so there is no small-sample problem to guard against, and a
+ * minimum would silently switch the comparison off on a quiet fleet.
+ */
+function arayaFleetRates(?array $fleet): ?array
+{
+    if (!is_array($fleet)) {
+        return null;
+    }
+    $out = [];
+    $any = false;
+    foreach (ARAYA_CALL_WINDOWS as $w) {
+        $win = $fleet[$w] ?? null;
+        if (!is_array($win)) {
+            $out[$w] = null;
+            continue;
+        }
+        $any = true;
+        $figures = [];
+        foreach (ARAYA_CALL_FIGURES as $k) {
+            $figures[$k] = arayaNum($win[$k] ?? null);
+        }
+        $out[$w] = $figures + arayaWindowRates($win, 0);
+    }
+    return $any ? $out : null;
+}
+
+/**
  * Failed calls, cleaned for display. Upstream order (newest first) is kept.
  *
  * recording_url may be null, and it ends up in an href, so only an http(s)
@@ -319,13 +437,17 @@ function arayaCleanCallErrors(?array $errors): array
     return $out;
 }
 
-function arayaBuildBrief(array $matchResult, string $todayYmd, ?array $callErrors = null): array
+function arayaBuildBrief(array $matchResult, string $todayYmd, ?array $callErrors = null, ?array $fleetCalls = null): array
 {
     $gaps = [];
     $overview = ['total' => 0, 'live' => 0, 'pendingCancel' => 0, 'setup' => 0,
                  'cancelled' => 0, 'canceledAfterLive' => 0, 'cancelBeforeLive' => 0];
     $live = $upsell = $upsellExcluded = $idleNew = $idleQuiet = $setup = $cancelling = [];
     $atRisk = $runningOut = [];
+    $forwardingHigh = $hangupHigh = $conversionLow = $bookingBroken = [];
+
+    $fleet = arayaFleetRates($fleetCalls);
+    $fleetWindow = is_array($fleet) ? ($fleet[ARAYA_RATE_WINDOW] ?? null) : null;
 
     // Unmatched Monday rows count in the total and appear in `live`: Monday is the
     // authority on who is a customer, so one is real even when we cannot find its
@@ -397,14 +519,70 @@ function arayaBuildBrief(array $matchResult, string $todayYmd, ?array $callError
 
         if ($isLive) {
             $overview['live']++;
+            $callsBlock = arayaCallsBlock($g);
+            // Rates for every window, so the table can show whichever it
+            // displays, and the alert sections below read one of them.
+            $rates = [];
+            foreach (ARAYA_CALL_WINDOWS as $w) {
+                $rates[$w] = arayaWindowRates(is_array($callsBlock) ? ($callsBlock[$w] ?? null) : null);
+            }
             $live[] = [
                 'name' => $name, 'po' => $po, 'live_date' => $liveDate, 'lifespan' => $lifespan,
                 'date_source' => $dateSource,
                 'remaining_minutes' => $minutes, 'allocation' => $alloc,
                 'days_until_refresh' => $g ? arayaNum($g['days_until_refresh'] ?? null) : null,
                 'gcal_missing' => $g === null,
-                'calls' => arayaCallsBlock($g),
+                'calls' => $callsBlock,
+                'rates' => $rates,
             ];
+
+            // Call-quality findings, all judged on one window so a reader is
+            // never comparing a 7-day rate with a 30-day one.
+            $win = is_array($callsBlock) ? ($callsBlock[ARAYA_RATE_WINDOW] ?? null) : null;
+            $rate = $rates[ARAYA_RATE_WINDOW];
+            $row = ['name' => $name, 'po' => $po,
+                    'total' => is_array($win) ? ($win['total'] ?? null) : null];
+
+            // Forwarding and conversion are compared with the fleet, because
+            // what counts as normal differs by country and by service and the
+            // fleet is the only baseline we have. Without a fleet figure
+            // neither is flagged: an absolute threshold invented here would be
+            // a guess presented as a finding.
+            $fleetForwarded = is_array($fleetWindow) ? ($fleetWindow['forwarded_pct'] ?? null) : null;
+            if ($rate['forwarded_pct'] !== null && $fleetForwarded !== null
+                && $rate['forwarded_pct'] >= $fleetForwarded + ARAYA_RATE_ALERT_MARGIN_PTS) {
+                $forwardingHigh[] = $row + ['pct' => $rate['forwarded_pct'],
+                                            'fleet_pct' => $fleetForwarded,
+                                            'forwarded' => $win['forwarded'] ?? null];
+            }
+
+            // Short hang-ups use an absolute threshold instead. The fleet
+            // average for this is itself high, so comparing with it would
+            // excuse every shop -- which is how a problem twice the size of
+            // the forwarding one stays invisible.
+            if ($rate['short_pct'] !== null && $rate['short_pct'] >= ARAYA_SHORT_ALERT_PCT) {
+                $hangupHigh[] = $row + ['pct' => $rate['short_pct'],
+                                        'fleet_pct' => is_array($fleetWindow) ? ($fleetWindow['short_pct'] ?? null) : null,
+                                        'short' => $win['short'] ?? null];
+            }
+
+            $fleetConversion = is_array($fleetWindow) ? ($fleetWindow['conversion_pct'] ?? null) : null;
+            if ($rate['conversion_pct'] !== null && $fleetConversion !== null
+                && $rate['conversion_pct'] <= $fleetConversion - ARAYA_CONVERSION_ALERT_MARGIN_PTS) {
+                $conversionLow[] = $row + ['pct' => $rate['conversion_pct'],
+                                           'fleet_pct' => $fleetConversion,
+                                           'booked' => $win['booked'] ?? null,
+                                           'base' => $rate['conversion_base']];
+            }
+
+            // Booking failures are counted, not rated: two failures out of two
+            // calls and two out of fifty are the same bug. Not gated on the
+            // sample size either, for the same reason.
+            $failed = is_array($win) ? arayaNum($win['booking_failed'] ?? null) : null;
+            if ($failed !== null && $failed >= ARAYA_BOOKING_FAILED_ALERT) {
+                $bookingBroken[] = $row + ['failed' => $failed,
+                                           'booked' => $win['booked'] ?? null];
+            }
             if ($lifespan === null) {
                 arayaGap($gaps, 'no_live_date', $name, 'No usable date: the tracker Live Date is empty and gcal has no signup date either, so lifespan and the idle rules cannot be evaluated.');
             }
@@ -583,6 +761,14 @@ function arayaBuildBrief(array $matchResult, string $todayYmd, ?array $callError
         }));
     }
 
+    // Worst first in each call-quality list, so the shop to look at leads.
+    // Conversion sorts ascending (lowest rate is the worst); the rest sort
+    // descending. Booking failures sort on the count, which is the finding.
+    usort($forwardingHigh, fn($a, $b) => $b['pct'] <=> $a['pct']);
+    usort($hangupHigh, fn($a, $b) => $b['pct'] <=> $a['pct']);
+    usort($conversionLow, fn($a, $b) => $a['pct'] <=> $b['pct']);
+    usort($bookingBroken, fn($a, $b) => $b['failed'] <=> $a['failed']);
+
     // Most urgent first in both new lists: the worst balance leads.
     usort($atRisk, fn($a, $b) => $a['remaining_minutes'] <=> $b['remaining_minutes']);
     usort($runningOut, fn($a, $b) => ($a['days_until_empty'] ?? PHP_INT_MAX) <=> ($b['days_until_empty'] ?? PHP_INT_MAX));
@@ -612,6 +798,16 @@ function arayaBuildBrief(array $matchResult, string $todayYmd, ?array $callError
         'idleQuiet' => $idleQuiet,
         'atRisk' => $atRisk,
         'runningOut' => $runningOut,
+        // Call-quality findings, all on the ARAYA_RATE_WINDOW window.
+        'forwardingHigh' => $forwardingHigh,
+        'hangupHigh' => $hangupHigh,
+        'conversionLow' => $conversionLow,
+        'bookingBroken' => $bookingBroken,
+        // The baseline the first three were judged against, so the dashboard
+        // can show it rather than asserting a comparison the reader cannot
+        // check. Null when gcal sent no fleet figures.
+        'fleetCalls' => $fleet,
+        'rateWindow' => ARAYA_RATE_WINDOW,
         'setup' => $setup,
         'cancelling' => $cancelling,
         'gaps' => $gaps,

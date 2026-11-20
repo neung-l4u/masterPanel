@@ -54,6 +54,8 @@ function arayaChatFixtureBrief(array $sections = []): array {
         'live' => [], 'upsell' => [], 'upsellExcluded' => [],
         'idleNew' => [], 'idleQuiet' => [], 'setup' => [], 'cancelling' => [],
         'gaps' => [],
+        'forwardingHigh' => [], 'hangupHigh' => [], 'conversionLow' => [],
+        'bookingBroken' => [], 'fleetCalls' => null, 'rateWindow' => ARAYA_RATE_WINDOW,
     ], $sections);
 }
 
@@ -338,8 +340,7 @@ echo "== setup notes stay readable ==" . PHP_EOL;
 $longNote = str_repeat('เนื้อหายาวมาก ', 40);
 $out = render(res([mk(['name' => 'Wall Of Text', 'live_status' => 'Not Live',
                        'register_date' => '2026-01-01', 'note' => $longNote])]));
-$noteLines = array_values(array_filter(explode("
-", $out), fn($l) => str_starts_with($l, '    ')));
+$noteLines = array_values(array_filter(explode("\n", $out), fn($l) => str_starts_with($l, '    ')));
 test("a long note is cut to one line", count($noteLines) === 1);
 test("the cut note is marked with an ellipsis", str_contains($noteLines[0], '…'));
 test("the cut note is not longer than the limit plus the ellipsis",
@@ -351,8 +352,7 @@ $out = render(res([mk(['name' => 'Multi', 'live_status' => 'Not Live',
 
 line two
 line three"])]));
-$noteLines = array_values(array_filter(explode("
-", $out), fn($l) => str_starts_with($l, '    ')));
+$noteLines = array_values(array_filter(explode("\n", $out), fn($l) => str_starts_with($l, '    ')));
 test("a multi-paragraph note collapses to one line", count($noteLines) === 1);
 test("its words survive the collapse",
      str_contains($noteLines[0], 'line one') && str_contains($noteLines[0], 'line three'));
@@ -423,6 +423,83 @@ test("errors: the overflow is counted, not hidden", str_contains($out, '(อี�
 test("errors: exactly at the cap has no overflow line", !str_contains(errRender(array_slice($many, 0, 5)), '(อีก'));
 test("errors: an unparseable time is shown as given", str_contains(errRender([errRow('X', 'yesterday-ish?')]), 'yesterday-ish?'));
 test("errors: an unnamed shop does not render an empty name", str_contains(errRender([errRow('')]), '(unnamed shop)'));
+
+echo "== call-quality sections ==\n";
+// Each line has to carry the baseline it was judged against: a rate with no
+// "normal" beside it is a number nobody can act on, which is the state the
+// message was in before these sections existed.
+$out = arayaRenderChat(arayaChatFixtureBrief([
+    'forwardingHigh' => [['name' => 'Me Ya Wi', 'po' => 'Sai', 'pct' => 13.5,
+                          'fleet_pct' => 12.4, 'total' => 200, 'forwarded' => 27]],
+]));
+test("forwarding: the shop and its rate appear", str_contains($out, 'Me Ya Wi* — 13.5%'));
+test("forwarding: the fleet figure appears beside it", str_contains($out, 'ภาพรวมระบบ 12.4%'));
+test("forwarding: the call count appears", str_contains($out, 'จาก 200 สาย'));
+test("forwarding: the owner is tagged", str_contains($out, '@Sai'));
+
+// Without a fleet figure the message says nothing rather than implying one.
+$out = arayaRenderChat(arayaChatFixtureBrief([
+    'hangupHigh' => [['name' => 'Repose', 'po' => 'Noey', 'pct' => 31.0,
+                      'fleet_pct' => null, 'total' => 100, 'short' => 31]],
+]));
+test("hang-ups: the rate appears", str_contains($out, 'Repose* — 31.0%'));
+test("hang-ups: no fleet figure is invented", !str_contains($out, 'ภาพรวมระบบ'));
+test("hang-ups: the greeting hint is there", str_contains($out, 'greeting'));
+
+$out = arayaRenderChat(arayaChatFixtureBrief([
+    'conversionLow' => [['name' => 'Tableland', 'po' => 'Sai', 'pct' => 9.2,
+                         'fleet_pct' => 60.0, 'total' => 120, 'booked' => 9, 'base' => 98]],
+]));
+test("conversion: the rate appears", str_contains($out, 'Tableland* — 9.2%'));
+// The denominator is quoted so a rate off a thin base reads as thin.
+test("conversion: the denominator is quoted", str_contains($out, 'จาก 98 สายที่คุยนานพอจะจองได้'));
+test("conversion: the follow-up action is there", str_contains($out, 'ฟังสายย้อนหลัง'));
+
+$out = arayaRenderChat(arayaChatFixtureBrief([
+    'bookingBroken' => [['name' => 'Me Ya Wi', 'po' => 'Mark', 'failed' => 3,
+                         'booked' => 10, 'total' => 50]],
+]));
+test("booking failures: the count appears", str_contains($out, 'ล้มเหลว 3 สาย'));
+test("booking failures: successful bookings give context", str_contains($out, 'จองสำเร็จ 10 สาย'));
+test("booking failures: the action names the booking API", str_contains($out, 'booking API'));
+
+// A null booked count must not render as "0 สาย": those are different claims.
+$out = arayaRenderChat(arayaChatFixtureBrief([
+    'bookingBroken' => [['name' => 'X', 'po' => '', 'failed' => 1, 'booked' => null, 'total' => 5]],
+]));
+test("booking failures: an unknown booked count is omitted, not shown as 0",
+     !str_contains($out, 'จองสำเร็จ 0 สาย'));
+
+// An empty heading every morning is what teaches people to skip a section.
+$out = arayaRenderChat(arayaChatFixtureBrief());
+foreach (['อัตราโอนสายสูงกว่าภาพรวม', 'วางสายเร็ว', 'Conversion ต่ำกว่าภาพรวม', 'จองไม่ติด'] as $h) {
+    test("no heading '{$h}' on a day with no findings", !str_contains($out, $h));
+}
+
+// All four at once: the separator count must keep up, or the message runs
+// together into one block.
+$out = arayaRenderChat(arayaChatFixtureBrief([
+    'forwardingHigh' => [['name' => 'A', 'po' => '', 'pct' => 20.0, 'fleet_pct' => 12.4, 'total' => 100, 'forwarded' => 20]],
+    'hangupHigh' => [['name' => 'B', 'po' => '', 'pct' => 30.0, 'fleet_pct' => 25.0, 'total' => 100, 'short' => 30]],
+    'conversionLow' => [['name' => 'C', 'po' => '', 'pct' => 10.0, 'fleet_pct' => 60.0, 'total' => 100, 'booked' => 10, 'base' => 100]],
+    'bookingBroken' => [['name' => 'D', 'po' => '', 'failed' => 2, 'booked' => 1, 'total' => 50]],
+]));
+test("all four sections render together",
+     str_contains($out, 'A* — 20.0%') && str_contains($out, 'B* — 30.0%')
+     && str_contains($out, 'C* — 10.0%') && str_contains($out, 'ล้มเหลว 2 สาย'));
+// Overview + upsell are always printed, plus the four here: 6 sections, so 5
+// rules between them and 1 under the header.
+test("the separators keep up with the new sections", substr_count($out, ARAYA_CHAT_SEP) === 6);
+test("it is still one message", substr_count($out, 'ARAYA DAILY BRIEF') === 1);
+
+// The window label follows the constant rather than being written out, so it
+// cannot keep saying "7 วันล่าสุด" after someone changes the rule.
+test("the window label matches the configured window",
+     str_contains($out, ARAYA_RATE_WINDOW === 'd7' ? '7 วันล่าสุด' : '30 วันล่าสุด'));
+
+// The thresholds are read from the constants, for the same reason.
+test("the hang-up heading quotes the real threshold",
+     str_contains($out, (string)ARAYA_SHORT_ALERT_PCT . '%'));
 
 echo "\nPassed: {$passed}  Failed: {$failed}\n";
 exit($failed > 0 ? 1 : 0);

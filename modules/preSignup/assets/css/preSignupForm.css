@@ -1,0 +1,30 @@
+body {
+    background-color: #f7f8fa;
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+.card-header {
+    border-bottom: 1px solid #eceef1;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #222;
+    margin-bottom: 0.25rem;
+}
+
+.form-control::placeholder {
+    color: #aaa;
+}
+
+/* The generated link is the thing the rep came here for: it should read as
+   something to be copied, not as another editable field. */
+#preleadLink {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background-color: #f8f9fa;
+}

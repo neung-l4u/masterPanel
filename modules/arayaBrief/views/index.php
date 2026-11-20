@@ -62,6 +62,44 @@ function arayaOwner($po): string
     return $po === '' ? '<span class="text-muted">-</span>' : arayaH($po);
 }
 
+/**
+ * One rate as a cell. Null is "not enough calls to say", never 0%.
+ *
+ * A shop with three calls has no meaningful percentage, and showing one would
+ * put it at the top of a sorted column ahead of the shops that matter. The
+ * title says which of the two reasons applies so the dash is not a mystery.
+ *
+ * $worseWhenHigh flips the colouring for conversion, where low is the problem.
+ */
+function arayaRateCell(?float $pct, ?float $fleetPct, bool $worseWhenHigh = true,
+                       float $margin = ARAYA_RATE_ALERT_MARGIN_PTS): string
+{
+    if ($pct === null) {
+        return '<td class="text-end"><span class="mins mins-unknown" '
+            . 'title="Fewer than ' . ARAYA_RATE_MIN_CALLS . ' calls in this window, or no figure from gcal">&ndash;</span></td>';
+    }
+    $class = 'mins';
+    if ($fleetPct !== null) {
+        $off = $worseWhenHigh ? $pct - $fleetPct : $fleetPct - $pct;
+        if ($off >= $margin) {
+            $class .= ' mins-red';
+        } elseif ($off > 0) {
+            $class .= ' mins-amber';
+        }
+    }
+    $title = $fleetPct === null
+        ? 'No fleet figure to compare with'
+        : 'Fleet ' . number_format($fleetPct, 1) . '%';
+    return '<td class="text-end"><span class="' . $class . '" title="' . arayaH($title) . '">'
+        . arayaH(number_format($pct, 1)) . '%</span></td>';
+}
+
+/** A percentage for prose, or a dash when there is none. */
+function arayaPct(?float $pct): string
+{
+    return $pct === null ? '&ndash;' : arayaH(number_format($pct, 1)) . '%';
+}
+
 $useFixture = ($_GET['fixture'] ?? '') === 'sample';
 $useCache = empty($_GET['nocache']);
 
@@ -254,6 +292,143 @@ if ($brief) {
         <?php } ?>
     </div>
 
+<?php
+    // Call-quality findings, above the full table: the table is for looking a
+    // shop up, these are for being told which shop to look at. Each panel
+    // states the rule it applied and the baseline it used, so a reader can
+    // disagree with the finding instead of having to trust it.
+    $windowLabel = ($brief['rateWindow'] ?? 'd7') === 'd7' ? 'last 7 days' : 'last 30 days';
+    $callFindings = count($brief['bookingBroken']) + count($brief['conversionLow'])
+        + count($brief['forwardingHigh']) + count($brief['hangupHigh']);
+?>
+    <?php if ($callFindings > 0) { ?>
+    <div class="row g-3 mb-4">
+        <?php if (!empty($brief['bookingBroken'])) { ?>
+        <!-- First, because it is the only one of the four that is a bug rather
+             than a trend: the caller wanted to book and the system refused. -->
+        <div class="col-lg-6">
+            <div class="panel-card urgent">
+                <h2>&#128296; Bookings that failed
+                    <span class="note fw-normal">(<?php echo arayaH($windowLabel); ?>; a booking was attempted and did not go through)</span>
+                </h2>
+                <div class="body table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Shop</th><th class="text-end">Failed</th><th class="text-end">Booked</th><th>Owner</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($brief['bookingBroken'] as $r) { ?>
+                            <tr>
+                                <td class="fw-semibold"><?php echo arayaH($r['name']); ?></td>
+                                <td class="text-end"><span class="mins mins-red"><?php echo arayaH($r['failed']); ?></span></td>
+                                <td class="text-end"><?php echo $r['booked'] === null ? '<span class="mins mins-unknown">?</span>' : '<span class="mins">' . arayaH($r['booked']) . '</span>'; ?></td>
+                                <td><?php echo arayaOwner($r['po']); ?></td>
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 note border-top">
+                    These are calls where a booking tool ran and returned a failure, so the
+                    caller was told no. Worth checking the booking API log for these shops.
+                </div>
+            </div>
+        </div>
+        <?php } ?>
+
+        <?php if (!empty($brief['conversionLow'])) { ?>
+        <div class="col-lg-6">
+            <div class="panel-card">
+                <h2>&#128201; Conversion below the fleet
+                    <span class="note fw-normal">(<?php echo arayaH($windowLabel); ?>; at least <?php echo ARAYA_CONVERSION_ALERT_MARGIN_PTS; ?> points under)</span>
+                </h2>
+                <div class="body table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Shop</th><th class="text-end">Conv. %</th><th class="text-end">Fleet</th><th class="text-end">Of calls</th><th>Owner</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($brief['conversionLow'] as $r) { ?>
+                            <tr>
+                                <td class="fw-semibold"><?php echo arayaH($r['name']); ?></td>
+                                <td class="text-end"><span class="mins mins-red"><?php echo arayaPct($r['pct']); ?></span></td>
+                                <td class="text-end note"><?php echo arayaPct($r['fleet_pct']); ?></td>
+                                <!-- The denominator, so a rate off a thin base
+                                     is visibly thin rather than quietly wrong. -->
+                                <td class="text-end note"><?php echo arayaH($r['base']); ?></td>
+                                <td><?php echo arayaOwner($r['po']); ?></td>
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 note border-top">
+                    Counted over calls long enough to have booked, so misdials and hang-ups are
+                    not held against the shop. Worth listening back to a few of these calls.
+                </div>
+            </div>
+        </div>
+        <?php } ?>
+
+        <?php if (!empty($brief['hangupHigh'])) { ?>
+        <div class="col-lg-6">
+            <div class="panel-card">
+                <h2>&#9986; Callers hanging up early
+                    <span class="note fw-normal">(<?php echo arayaH($windowLabel); ?>; <?php echo ARAYA_SHORT_ALERT_PCT; ?>% or more of calls under 15 s)</span>
+                </h2>
+                <div class="body table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Shop</th><th class="text-end">Short %</th><th class="text-end">Fleet</th><th class="text-end">Of calls</th><th>Owner</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($brief['hangupHigh'] as $r) { ?>
+                            <tr>
+                                <td class="fw-semibold"><?php echo arayaH($r['name']); ?></td>
+                                <td class="text-end"><span class="mins mins-red"><?php echo arayaPct($r['pct']); ?></span></td>
+                                <td class="text-end note"><?php echo arayaPct($r['fleet_pct']); ?></td>
+                                <td class="text-end note"><?php echo arayaH($r['total']); ?></td>
+                                <td><?php echo arayaOwner($r['po']); ?></td>
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 note border-top">
+                    Judged against a fixed threshold, not the fleet: the fleet average for this
+                    is high enough that comparing with it would excuse every shop. Often the
+                    greeting &mdash; worth checking the shop name is pronounced correctly.
+                </div>
+            </div>
+        </div>
+        <?php } ?>
+
+        <?php if (!empty($brief['forwardingHigh'])) { ?>
+        <div class="col-lg-6">
+            <div class="panel-card">
+                <h2>&#128222; Forwarding above the fleet
+                    <span class="note fw-normal">(<?php echo arayaH($windowLabel); ?>; at least <?php echo ARAYA_RATE_ALERT_MARGIN_PTS; ?> points over)</span>
+                </h2>
+                <div class="body table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Shop</th><th class="text-end">Fwd %</th><th class="text-end">Fleet</th><th class="text-end">Of calls</th><th>Owner</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($brief['forwardingHigh'] as $r) { ?>
+                            <tr>
+                                <td class="fw-semibold"><?php echo arayaH($r['name']); ?></td>
+                                <td class="text-end"><span class="mins mins-red"><?php echo arayaPct($r['pct']); ?></span></td>
+                                <td class="text-end note"><?php echo arayaPct($r['fleet_pct']); ?></td>
+                                <td class="text-end note"><?php echo arayaH($r['total']); ?></td>
+                                <td><?php echo arayaOwner($r['po']); ?></td>
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 note border-top">
+                    Every forwarded call is one Araya could not finish. Compared with the fleet
+                    because what counts as normal differs by shop and by service.
+                </div>
+            </div>
+        </div>
+        <?php } ?>
+    </div>
+    <?php } ?>
+
     <?php if (!empty($brief['callErrors'])) { ?>
     <div class="panel-card urgent mb-4" id="callErrors">
         <h2>&#128222; Calls with errors <span class="note fw-normal">(last 30 days, newest first; <?php echo count($brief['callErrors']); ?> shown)</span></h2>
@@ -301,41 +476,110 @@ if ($brief) {
         </div>
     </div>
 
+<?php
+    // The three rates and the counts behind them, per window. Each rate sits
+    // next to its own count rather than in a table of its own, so nobody
+    // reads a percentage without seeing how many calls produced it.
+    $fleetWin = is_array($brief['fleetCalls'] ?? null)
+        ? ($brief['fleetCalls'][$brief['rateWindow']] ?? null) : null;
+    $callColumns = 10;   // per window, for the colspans below
+?>
     <div class="panel-card mb-4" id="callQuality">
-        <h2>Call quality <span class="note fw-normal">(<strong>?</strong> = gcal sent no figure, which is not the same as 0; short = under 15 s; silent = caller said nothing and it timed out)</span></h2>
+        <h2>Call quality
+            <span class="note fw-normal">
+                (<strong>?</strong> = gcal sent no figure, which is not the same as 0.
+                <strong>&ndash;</strong> = under <?php echo ARAYA_RATE_MIN_CALLS; ?> calls, too few for a percentage.
+                Short = under 15 s; silent = caller said nothing and it timed out.
+                Conv. % = of the calls long enough to have booked, the share that did.
+                Hover a percentage for the fleet figure it is coloured against.)
+            </span>
+        </h2>
         <div class="body table-responsive">
             <table class="table table-hover align-middle calls">
                 <thead>
-                    <tr><th rowspan="2">Shop</th><th class="grp win" colspan="5">Last 7 days</th><th class="grp win" colspan="5">Last 30 days</th></tr>
+                    <tr><th rowspan="2">Shop</th><th class="grp win" colspan="<?php echo $callColumns; ?>">Last 7 days</th><th class="grp win" colspan="<?php echo $callColumns; ?>">Last 30 days</th></tr>
                     <tr>
-                        <?php foreach ([7, 30] as $days) { ?>
-                        <th class="text-end win">Calls</th><th class="text-end">Forwarded</th><th class="text-end">Short</th><th class="text-end">Silent</th><th class="text-end">Minutes</th>
+                        <?php foreach (ARAYA_CALL_WINDOWS as $w) { ?>
+                        <th class="text-end win">Calls</th>
+                        <th class="text-end">Fwd</th><th class="text-end">Fwd %</th>
+                        <th class="text-end">Short</th><th class="text-end">Short %</th>
+                        <th class="text-end">Silent</th>
+                        <th class="text-end">Booked</th><th class="text-end">Conv. %</th>
+                        <th class="text-end">Book fail</th>
+                        <th class="text-end">Minutes</th>
                         <?php } ?>
                     </tr>
                 </thead>
                 <tbody>
+                <?php if ($fleetWin !== null) { ?>
+                    <tr class="table-light fw-semibold">
+                        <td>Whole fleet<div class="note fw-normal">the baseline the shops below are coloured against</div></td>
+                        <?php foreach (ARAYA_CALL_WINDOWS as $w) {
+                            $fw = is_array($brief['fleetCalls'][$w] ?? null) ? $brief['fleetCalls'][$w] : null;
+                            if ($fw === null) { ?>
+                        <td colspan="<?php echo $callColumns; ?>" class="win text-muted">no fleet figures for this window</td>
+                            <?php } else {
+                                // The fleet row is never coloured: it is the
+                                // thing being compared against, so colouring
+                                // it against itself would say nothing.
+                                echo arayaCallCell($fw['total'], 'win');
+                                echo arayaCallCell($fw['forwarded']);
+                                echo arayaRateCell($fw['forwarded_pct'], null);
+                                echo arayaCallCell($fw['short']);
+                                echo arayaRateCell($fw['short_pct'], null);
+                                echo arayaCallCell($fw['silent']);
+                                echo arayaCallCell($fw['booked']);
+                                echo arayaRateCell($fw['conversion_pct'], null);
+                                echo arayaCallCell($fw['booking_failed']);
+                                echo arayaCallCell($fw['minutes']);
+                            }
+                        } ?>
+                    </tr>
+                <?php } ?>
                 <?php foreach ($brief['live'] as $r) { ?>
                     <tr>
                         <td class="fw-semibold"><?php echo arayaH($r['name']); ?></td>
                         <?php if (!is_array($r['calls'] ?? null)) { ?>
-                        <td colspan="10" class="win text-muted"><?php echo !empty($r['gcal_missing']) ? 'Not in gcal - no call data' : 'gcal sent no call data for this shop'; ?></td>
+                        <td colspan="<?php echo $callColumns * 2; ?>" class="win text-muted"><?php echo !empty($r['gcal_missing']) ? 'Not in gcal - no call data' : 'gcal sent no call data for this shop'; ?></td>
                         <?php } else { foreach (ARAYA_CALL_WINDOWS as $w) {
                             $win = $r['calls'][$w] ?? null;
+                            $rate = $r['rates'][$w] ?? null;
+                            // The fleet row for THIS window, so a 30-day rate
+                            // is never coloured against a 7-day baseline.
+                            $fwin = is_array($brief['fleetCalls'][$w] ?? null) ? $brief['fleetCalls'][$w] : null;
                             if (!is_array($win)) { ?>
-                        <td colspan="5" class="win text-muted">no figures for this window</td>
+                        <td colspan="<?php echo $callColumns; ?>" class="win text-muted">no figures for this window</td>
                             <?php } else {
                                 echo arayaCallCell($win['total'], 'win');
-                                foreach (['forwarded', 'short', 'silent', 'minutes'] as $k) {
-                                    echo arayaCallCell($win[$k]);
-                                }
+                                echo arayaCallCell($win['forwarded']);
+                                echo arayaRateCell($rate['forwarded_pct'] ?? null, $fwin['forwarded_pct'] ?? null);
+                                echo arayaCallCell($win['short']);
+                                // Short hang-ups are judged against an absolute
+                                // threshold, not the fleet: the fleet's own
+                                // figure for this is high enough to excuse
+                                // every shop, which is how a problem this size
+                                // goes unnoticed.
+                                echo arayaRateCell($rate['short_pct'] ?? null, ARAYA_SHORT_ALERT_PCT, true, 0.0);
+                                echo arayaCallCell($win['silent']);
+                                echo arayaCallCell($win['booked']);
+                                echo arayaRateCell($rate['conversion_pct'] ?? null, $fwin['conversion_pct'] ?? null, false, ARAYA_CONVERSION_ALERT_MARGIN_PTS);
+                                echo arayaCallCell($win['booking_failed']);
+                                echo arayaCallCell($win['minutes']);
                             }
                         } } ?>
                     </tr>
                 <?php } ?>
-                <?php if (!$brief['live']) { ?><tr><td colspan="11" class="text-muted">No live shops.</td></tr><?php } ?>
+                <?php if (!$brief['live']) { ?><tr><td colspan="<?php echo $callColumns * 2 + 1; ?>" class="text-muted">No live shops.</td></tr><?php } ?>
                 </tbody>
             </table>
         </div>
+        <?php if ($fleetWin === null && !empty($brief['live'])) { ?>
+        <div class="p-3 note border-top">
+            gcal sent no fleet totals, so nothing above is compared with a baseline and the only
+            shops flagged below are the ones an absolute rule catches. This is what a gcal
+            without fleet reporting looks like, not a fleet that took no calls.
+        </div>
+        <?php } ?>
     </div>
 
     <div class="row g-3 mb-4">

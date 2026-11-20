@@ -58,6 +58,24 @@ function arayaGcalHttpGet(array $config, string $path = '/api/admin/araya-summar
     return [$status, (string) $body];
 }
 
+/**
+ * The fleet-wide call figures from a gcal response, or null when absent.
+ *
+ * Null, not an array of zeros. The dashboard compares a shop with the fleet,
+ * and zeros would make every shop look worse than a fleet that takes no calls
+ * -- so an older gcal that does not send this block has to be distinguishable
+ * from one reporting a genuinely quiet fleet. Figures are passed through;
+ * arayaBuildBrief normalises them.
+ */
+function arayaParseGcalFleet(string $body): ?array
+{
+    $decoded = json_decode($body, true);
+    if (!is_array($decoded) || !is_array($decoded['fleet_calls'] ?? null)) {
+        return null;
+    }
+    return $decoded['fleet_calls'];
+}
+
 function arayaFetchGcal(array $config, bool $useCache = true): array
 {
     if ($useCache) {
@@ -70,8 +88,28 @@ function arayaFetchGcal(array $config, bool $useCache = true): array
     [$status, $body] = arayaGcalHttpGet($config);
     $shops = arayaParseGcalResponse($status, $body);
 
-    arayaCachePut('gcal', ['shops' => $shops]);
+    arayaCachePut('gcal', ['shops' => $shops, 'fleet' => arayaParseGcalFleet($body)]);
     return $shops;
+}
+
+/**
+ * The fleet figures for the response arayaFetchGcal just cached.
+ *
+ * Read from the cache rather than returned alongside the shops so that
+ * arayaFetchGcal keeps its signature and its many existing callers and tests
+ * stay as they are. Must be called after arayaFetchGcal in the same request;
+ * on its own it would only report whatever the last fetch left behind.
+ *
+ * Returns null when the cached response carried no fleet block, which is what
+ * a gcal deployment without this feature looks like.
+ */
+function arayaCachedGcalFleet(): ?array
+{
+    $cached = arayaCacheGet('gcal', 300);
+    if ($cached === null || !is_array($cached['fleet'] ?? null)) {
+        return null;
+    }
+    return $cached['fleet'];
 }
 
 /**

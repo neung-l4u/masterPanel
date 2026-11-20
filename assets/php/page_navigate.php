@@ -12,6 +12,17 @@ $datatable["showDatatableStats"] = "false";
 $title = "Home";
 
 switch ($menuPage){
+    case "mondaySync":
+        $showPage = "mondaySync.php";
+        $activeMenu["lv1"] = "mondaySync";
+        $activeMenu["lv2"] = "";
+        $datatable["show"] = "false";
+        $datatable["src"] = "";
+        $datatable2["show"] = "false";
+        $datatable2["src"] = "";
+        $datatable["showDatatableStats"] = "false";
+        $title = "Master panel : Monday Mirror Sync";
+        break;
     case "home":
         $showPage = "home.php";
         $activeMenu["lv1"] = "home";

@@ -1,528 +1,638 @@
 {
-    "_comment": "Sample data for ?fixture=sample. Names are invented except the two KLR branches, which are real and normalize identically on purpose.",
-    "monday": [
-        {
-            "name": "Lotus Thai Spa",
-            "live_status": "LIVE",
-            "setup_status": "",
-            "po": "Aim",
-            "register_date": "2025-10-01",
-            "live_date": "2025-11-03",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "cal-lotus",
-            "email": "lotus@example.com"
+  "_comment": "Sample data for ?fixture=sample. Names are invented except the two KLR branches, which are real and normalize identically on purpose.",
+  "monday": [
+    {
+      "name": "Lotus Thai Spa",
+      "live_status": "LIVE",
+      "setup_status": "",
+      "po": "Aim",
+      "register_date": "2025-10-01",
+      "live_date": "2025-11-03",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "cal-lotus",
+      "email": "lotus@example.com"
+    },
+    {
+      "name": "Jasmine Wellness ",
+      "live_status": "LIVE",
+      "setup_status": "",
+      "po": "Nok",
+      "register_date": "2025-10-01",
+      "live_date": "2026-01-12",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "cal-jasmine",
+      "email": "jasmine@example.com"
+    },
+    {
+      "name": "Bangkok Garden Massage",
+      "live_status": "LIVE",
+      "setup_status": "",
+      "po": "Aim",
+      "register_date": "2025-10-01",
+      "live_date": "2025-12-01",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "cal-garden",
+      "email": "garden@example.com"
+    },
+    {
+      "name": "Siam Orchid Therapy",
+      "live_status": "LIVE",
+      "setup_status": "",
+      "po": "Nok",
+      "register_date": "2025-10-01",
+      "live_date": "2026-02-20",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "cal-orchid",
+      "email": "orchid@example.com"
+    },
+    {
+      "name": "Pearl Thai Massage",
+      "live_status": "LIVE",
+      "setup_status": "",
+      "po": "Fon",
+      "register_date": "2025-10-01",
+      "live_date": "2026-08-01",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "cal-pearl",
+      "email": "pearl@example.com"
+    },
+    {
+      "name": "Sunrise Thai Spa",
+      "live_status": "LIVE",
+      "setup_status": "",
+      "po": "Fon",
+      "register_date": "2025-10-01",
+      "live_date": "2025-06-15",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "cal-sunrise",
+      "email": "sunrise@example.com"
+    },
+    {
+      "name": "Mango Tree Massage",
+      "live_status": "Testing",
+      "setup_status": "Waiting for client",
+      "po": "Aim",
+      "register_date": "2026-08-15",
+      "live_date": "",
+      "reason_for_cancel": "",
+      "note": "Client has not sent opening hours",
+      "calendar_id": "cal-mango",
+      "email": "mango@example.com"
+    },
+    {
+      "name": "Orchid Day Spa (Amelia)",
+      "live_status": "Waiting to onboard",
+      "setup_status": "Not started",
+      "po": "Nok",
+      "register_date": "2026-09-10",
+      "live_date": "",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "cal-daySpa",
+      "email": "dayspa@example.com"
+    },
+    {
+      "name": "Old Town Massage",
+      "live_status": "Waiting to cancel",
+      "setup_status": "",
+      "po": "Fon",
+      "register_date": "2025-10-01",
+      "live_date": "2025-04-02",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "cal-oldtown",
+      "email": "oldtown@example.com"
+    },
+    {
+      "name": "Ghost Shop Thai Massage",
+      "live_status": "LIVE",
+      "setup_status": "",
+      "po": "Aim",
+      "register_date": "2025-10-01",
+      "live_date": "2026-03-01",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "",
+      "email": ""
+    },
+    {
+      "name": "KLR Massage Therapy ( Croydon )",
+      "live_status": "LIVE",
+      "setup_status": "",
+      "po": "Nok",
+      "register_date": "2025-10-01",
+      "live_date": "2026-05-10",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "",
+      "email": ""
+    },
+    {
+      "name": "KLR Massage Therapy (Purley)",
+      "live_status": "LIVE",
+      "setup_status": "",
+      "po": "Nok",
+      "register_date": "2025-10-01",
+      "live_date": "2026-05-10",
+      "reason_for_cancel": "",
+      "note": "",
+      "calendar_id": "",
+      "email": ""
+    }
+  ],
+  "gcal": [
+    {
+      "shop_id": "g1",
+      "shop_name": "Lotus Thai Spa",
+      "calendar_id": "cal-lotus",
+      "shop_email": "lotus@example.com",
+      "remaining_minutes": 240,
+      "allocation": 300,
+      "billing_day": 3,
+      "days_until_refresh": 18,
+      "currency": "AUD",
+      "closed_periods": [],
+      "calls": {
+        "d7": {
+          "total": 178,
+          "forwarded": 24,
+          "short": 41,
+          "silent": 12,
+          "errors": 1,
+          "minutes": 305,
+          "booked": 9,
+          "booking_failed": 2,
+          "long": 100,
+          "booked_unknown": 2
         },
-        {
-            "name": "Jasmine Wellness ",
-            "live_status": "LIVE",
-            "setup_status": "",
-            "po": "Nok",
-            "register_date": "2025-10-01",
-            "live_date": "2026-01-12",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "cal-jasmine",
-            "email": "jasmine@example.com"
-        },
-        {
-            "name": "Bangkok Garden Massage",
-            "live_status": "LIVE",
-            "setup_status": "",
-            "po": "Aim",
-            "register_date": "2025-10-01",
-            "live_date": "2025-12-01",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "cal-garden",
-            "email": "garden@example.com"
-        },
-        {
-            "name": "Siam Orchid Therapy",
-            "live_status": "LIVE",
-            "setup_status": "",
-            "po": "Nok",
-            "register_date": "2025-10-01",
-            "live_date": "2026-02-20",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "cal-orchid",
-            "email": "orchid@example.com"
-        },
-        {
-            "name": "Pearl Thai Massage",
-            "live_status": "LIVE",
-            "setup_status": "",
-            "po": "Fon",
-            "register_date": "2025-10-01",
-            "live_date": "2026-08-01",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "cal-pearl",
-            "email": "pearl@example.com"
-        },
-        {
-            "name": "Sunrise Thai Spa",
-            "live_status": "LIVE",
-            "setup_status": "",
-            "po": "Fon",
-            "register_date": "2025-10-01",
-            "live_date": "2025-06-15",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "cal-sunrise",
-            "email": "sunrise@example.com"
-        },
-        {
-            "name": "Mango Tree Massage",
-            "live_status": "Testing",
-            "setup_status": "Waiting for client",
-            "po": "Aim",
-            "register_date": "2026-08-15",
-            "live_date": "",
-            "reason_for_cancel": "",
-            "note": "Client has not sent opening hours",
-            "calendar_id": "cal-mango",
-            "email": "mango@example.com"
-        },
-        {
-            "name": "Orchid Day Spa (Amelia)",
-            "live_status": "Waiting to onboard",
-            "setup_status": "Not started",
-            "po": "Nok",
-            "register_date": "2026-09-10",
-            "live_date": "",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "cal-daySpa",
-            "email": "dayspa@example.com"
-        },
-        {
-            "name": "Old Town Massage",
-            "live_status": "Waiting to cancel",
-            "setup_status": "",
-            "po": "Fon",
-            "register_date": "2025-10-01",
-            "live_date": "2025-04-02",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "cal-oldtown",
-            "email": "oldtown@example.com"
-        },
-        {
-            "name": "Ghost Shop Thai Massage",
-            "live_status": "LIVE",
-            "setup_status": "",
-            "po": "Aim",
-            "register_date": "2025-10-01",
-            "live_date": "2026-03-01",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "",
-            "email": ""
-        },
-        {
-            "name": "KLR Massage Therapy ( Croydon )",
-            "live_status": "LIVE",
-            "setup_status": "",
-            "po": "Nok",
-            "register_date": "2025-10-01",
-            "live_date": "2026-05-10",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "",
-            "email": ""
-        },
-        {
-            "name": "KLR Massage Therapy (Purley)",
-            "live_status": "LIVE",
-            "setup_status": "",
-            "po": "Nok",
-            "register_date": "2025-10-01",
-            "live_date": "2026-05-10",
-            "reason_for_cancel": "",
-            "note": "",
-            "calendar_id": "",
-            "email": ""
+        "d30": {
+          "total": 612,
+          "forwarded": 88,
+          "short": 140,
+          "silent": 40,
+          "errors": 3,
+          "minutes": 1120,
+          "booked": 31,
+          "booking_failed": 7,
+          "long": 340,
+          "booked_unknown": 7
         }
-    ],
-    "gcal": [
-        {
-            "shop_id": "g1",
-            "shop_name": "Lotus Thai Spa",
-            "calendar_id": "cal-lotus",
-            "shop_email": "lotus@example.com",
-            "remaining_minutes": 240,
-            "allocation": 300,
-            "billing_day": 3,
-            "days_until_refresh": 18,
-            "currency": "AUD",
-            "closed_periods": [],
-            "calls": {
-                "d7": {
-                    "total": 178,
-                    "forwarded": 24,
-                    "short": 41,
-                    "silent": 12,
-                    "errors": 1,
-                    "minutes": 305
-                },
-                "d30": {
-                    "total": 612,
-                    "forwarded": 88,
-                    "short": 140,
-                    "silent": 40,
-                    "errors": 3,
-                    "minutes": 1120
-                }
-            }
+      }
+    },
+    {
+      "shop_id": "g2",
+      "shop_name": "Jasmine Wellness",
+      "calendar_id": "cal-jasmine",
+      "shop_email": "jasmine@example.com",
+      "remaining_minutes": 150,
+      "allocation": 250,
+      "billing_day": 8,
+      "days_until_refresh": 22,
+      "currency": "AUD",
+      "closed_periods": [],
+      "calls": {
+        "d7": {
+          "total": 90,
+          "forwarded": 10,
+          "short": 50,
+          "silent": 2,
+          "errors": 0,
+          "minutes": 120,
+          "booked": 40,
+          "booking_failed": 0,
+          "long": 60,
+          "booked_unknown": 0
         },
-        {
-            "shop_id": "g2",
-            "shop_name": "Jasmine Wellness",
-            "calendar_id": "cal-jasmine",
-            "shop_email": "jasmine@example.com",
-            "remaining_minutes": 150,
-            "allocation": 250,
-            "billing_day": 8,
-            "days_until_refresh": 22,
-            "currency": "AUD",
-            "closed_periods": [],
-            "calls": {
-                "d7": {
-                    "total": 90,
-                    "forwarded": 10,
-                    "short": 50,
-                    "silent": 2,
-                    "errors": 0,
-                    "minutes": 120
-                },
-                "d30": {
-                    "total": 400,
-                    "forwarded": 40,
-                    "short": 160,
-                    "silent": 9,
-                    "errors": 1,
-                    "minutes": 520
-                }
-            }
-        },
-        {
-            "shop_id": "g3",
-            "shop_name": "Bangkok Garden Massage",
-            "calendar_id": "cal-garden",
-            "shop_email": "garden@example.com",
-            "remaining_minutes": -109,
-            "allocation": 250,
-            "billing_day": 10,
-            "days_until_refresh": 20,
-            "currency": "AUD",
-            "closed_periods": [],
-            "calls": {
-                "d7": {
-                    "total": 0,
-                    "forwarded": 0,
-                    "short": 0,
-                    "silent": 0,
-                    "errors": 0,
-                    "minutes": 0
-                },
-                "d30": {
-                    "total": 12,
-                    "forwarded": 1,
-                    "short": 3,
-                    "silent": 0,
-                    "errors": 0,
-                    "minutes": 18
-                }
-            }
-        },
-        {
-            "shop_id": "g4",
-            "shop_name": "Siam Orchid Therapy",
-            "calendar_id": "cal-orchid",
-            "shop_email": "orchid@example.com",
-            "remaining_minutes": 40,
-            "allocation": 250,
-            "billing_day": 25,
-            "days_until_refresh": 5,
-            "currency": "AUD",
-            "closed_periods": []
-        },
-        {
-            "shop_id": "g5",
-            "shop_name": "Pearl Thai Massage",
-            "calendar_id": "cal-pearl",
-            "shop_email": "pearl@example.com",
-            "remaining_minutes": 240,
-            "allocation": 250,
-            "billing_day": 1,
-            "days_until_refresh": 12,
-            "currency": "AUD",
-            "closed_periods": [],
-            "calls": {
-                "d7": {
-                    "total": 60,
-                    "forwarded": 8,
-                    "short": 9,
-                    "silent": 3,
-                    "errors": 2,
-                    "minutes": 140
-                },
-                "d30": {
-                    "total": 250,
-                    "forwarded": 30,
-                    "short": 40,
-                    "silent": 10,
-                    "errors": 5,
-                    "minutes": 610
-                }
-            }
-        },
-        {
-            "shop_id": "g6",
-            "shop_name": "Sunrise Thai Spa",
-            "calendar_id": "cal-sunrise",
-            "shop_email": "sunrise@example.com",
-            "remaining_minutes": 150,
-            "allocation": 250,
-            "billing_day": 14,
-            "days_until_refresh": 17,
-            "currency": "AUD",
-            "closed_periods": [
-                {
-                    "period_end": "2026-10-01",
-                    "used_minutes": 20
-                },
-                {
-                    "period_end": "2026-09-01",
-                    "used_minutes": 200
-                },
-                {
-                    "period_end": "2026-08-01",
-                    "used_minutes": 220
-                },
-                {
-                    "period_end": "2026-07-01",
-                    "used_minutes": 180
-                }
-            ],
-            "calls": {
-                "d30": {
-                    "total": 120,
-                    "forwarded": 12,
-                    "short": 66,
-                    "silent": 4,
-                    "errors": 0,
-                    "minutes": 170
-                }
-            }
-        },
-        {
-            "shop_id": "g7",
-            "shop_name": "Mango Tree Massage",
-            "calendar_id": "cal-mango",
-            "shop_email": "mango@example.com",
-            "remaining_minutes": 250,
-            "allocation": 250,
-            "billing_day": 0,
-            "days_until_refresh": 0,
-            "currency": "AUD",
-            "closed_periods": [],
-            "calls": {
-                "d7": {
-                    "total": 140,
-                    "forwarded": 30,
-                    "short": 12,
-                    "silent": 5,
-                    "errors": 0,
-                    "minutes": 260
-                },
-                "d30": {
-                    "total": 520,
-                    "forwarded": 95,
-                    "short": 50,
-                    "silent": 22,
-                    "errors": 2,
-                    "minutes": 980
-                }
-            }
-        },
-        {
-            "shop_id": "g8",
-            "shop_name": "Orchid Day Spa",
-            "calendar_id": "cal-daySpa",
-            "shop_email": "dayspa@example.com",
-            "remaining_minutes": 250,
-            "allocation": 250,
-            "billing_day": 0,
-            "days_until_refresh": 0,
-            "currency": "AUD",
-            "closed_periods": [],
-            "calls": {
-                "d7": {
-                    "total": 178,
-                    "forwarded": 24,
-                    "short": 41,
-                    "silent": 12,
-                    "errors": 1,
-                    "minutes": 305
-                },
-                "d30": {
-                    "total": 612,
-                    "forwarded": 88,
-                    "short": 140,
-                    "silent": 40,
-                    "errors": 3,
-                    "minutes": 1120
-                }
-            }
-        },
-        {
-            "shop_id": "g9",
-            "shop_name": "Old Town Massage",
-            "calendar_id": "cal-oldtown",
-            "shop_email": "oldtown@example.com",
-            "remaining_minutes": 35,
-            "allocation": 250,
-            "billing_day": 23,
-            "days_until_refresh": 3,
-            "currency": "AUD",
-            "closed_periods": [],
-            "calls": {
-                "d7": {
-                    "total": 90,
-                    "forwarded": 10,
-                    "short": 50,
-                    "silent": 2,
-                    "errors": 0,
-                    "minutes": 120
-                },
-                "d30": {
-                    "total": 400,
-                    "forwarded": 40,
-                    "short": 160,
-                    "silent": 9,
-                    "errors": 1,
-                    "minutes": 520
-                }
-            }
-        },
-        {
-            "shop_id": "g10",
-            "shop_name": "Orphan Calendar Spa",
-            "calendar_id": "cal-orphan",
-            "shop_email": "orphan@example.com",
-            "remaining_minutes": 120,
-            "allocation": 250,
-            "billing_day": 5,
-            "days_until_refresh": 15,
-            "currency": "AUD",
-            "closed_periods": [],
-            "calls": {
-                "d7": {
-                    "total": 0,
-                    "forwarded": 0,
-                    "short": 0,
-                    "silent": 0,
-                    "errors": 0,
-                    "minutes": 0
-                },
-                "d30": {
-                    "total": 12,
-                    "forwarded": 1,
-                    "short": 3,
-                    "silent": 0,
-                    "errors": 0,
-                    "minutes": 18
-                }
-            }
-        },
-        {
-            "shop_id": "g11",
-            "shop_name": "KLR Massage Therapy",
-            "calendar_id": "cal-klr-1",
-            "shop_email": "klr1@example.com",
-            "remaining_minutes": 200,
-            "allocation": 250,
-            "billing_day": 6,
-            "days_until_refresh": 16,
-            "currency": "AUD",
-            "closed_periods": [],
-            "calls": {
-                "d7": {
-                    "total": 60,
-                    "forwarded": 8,
-                    "short": 9,
-                    "silent": 3,
-                    "errors": 2,
-                    "minutes": 140
-                },
-                "d30": {
-                    "total": 250,
-                    "forwarded": 30,
-                    "short": 40,
-                    "silent": 10,
-                    "errors": 5,
-                    "minutes": 610
-                }
-            }
-        },
-        {
-            "shop_id": "g12",
-            "shop_name": "KLR Massage Therapy",
-            "calendar_id": "cal-klr-2",
-            "shop_email": "klr2@example.com",
-            "remaining_minutes": 90,
-            "allocation": 250,
-            "billing_day": 6,
-            "days_until_refresh": 16,
-            "currency": "AUD",
-            "closed_periods": [],
-            "calls": {
-                "d7": {
-                    "total": 33,
-                    "forwarded": 3,
-                    "short": 20,
-                    "silent": 1,
-                    "errors": 0,
-                    "minutes": 41
-                },
-                "d30": {
-                    "total": 120,
-                    "forwarded": 12,
-                    "short": 66,
-                    "silent": 4,
-                    "errors": 0,
-                    "minutes": 170
-                }
-            }
+        "d30": {
+          "total": 400,
+          "forwarded": 40,
+          "short": 160,
+          "silent": 9,
+          "errors": 1,
+          "minutes": 520,
+          "booked": 136,
+          "booking_failed": 0,
+          "long": 204,
+          "booked_unknown": 0
         }
-    ],
-    "call_errors": [
-        {
-            "shop_id": "g1",
-            "shop_name": "Lotus Thai Spa",
-            "started_at": "2026-10-25T04:12:00+00:00",
-            "outcome": "call.in-progress.error-vapifault-worker-not-available",
-            "duration_sec": 12,
-            "recording_url": "https://example.com/recordings/sample-1.wav"
+      }
+    },
+    {
+      "shop_id": "g3",
+      "shop_name": "Bangkok Garden Massage",
+      "calendar_id": "cal-garden",
+      "shop_email": "garden@example.com",
+      "remaining_minutes": -109,
+      "allocation": 250,
+      "billing_day": 10,
+      "days_until_refresh": 20,
+      "currency": "AUD",
+      "closed_periods": [],
+      "calls": {
+        "d7": {
+          "total": 0,
+          "forwarded": 0,
+          "short": 0,
+          "silent": 0,
+          "errors": 0,
+          "minutes": 0,
+          "booked": 0,
+          "booking_failed": 0,
+          "long": 0,
+          "booked_unknown": 0
         },
-        {
-            "shop_id": "g2",
-            "shop_name": "Jasmine Wellness",
-            "started_at": "2026-10-24T09:30:00+00:00",
-            "outcome": "call.in-progress.error-sip-telephony-provider-failed-to-connect-call",
-            "duration_sec": 3,
-            "recording_url": null
-        },
-        {
-            "shop_id": "g4",
-            "shop_name": "Siam Orchid Therapy <b>&</b>",
-            "started_at": "2026-10-20T14:05:00+00:00",
-            "outcome": "pipeline-error-openai-llm-failed",
-            "duration_sec": 47,
-            "recording_url": "https://example.com/recordings/sample-3.wav"
+        "d30": {
+          "total": 12,
+          "forwarded": 1,
+          "short": 3,
+          "silent": 0,
+          "errors": 0,
+          "minutes": 18,
+          "booked": 12,
+          "booking_failed": 12,
+          "long": 12,
+          "booked_unknown": 0
         }
-    ]
+      }
+    },
+    {
+      "shop_id": "g4",
+      "shop_name": "Siam Orchid Therapy",
+      "calendar_id": "cal-orchid",
+      "shop_email": "orchid@example.com",
+      "remaining_minutes": 40,
+      "allocation": 250,
+      "billing_day": 25,
+      "days_until_refresh": 5,
+      "currency": "AUD",
+      "closed_periods": []
+    },
+    {
+      "shop_id": "g5",
+      "shop_name": "Pearl Thai Massage",
+      "calendar_id": "cal-pearl",
+      "shop_email": "pearl@example.com",
+      "remaining_minutes": 240,
+      "allocation": 250,
+      "billing_day": 1,
+      "days_until_refresh": 12,
+      "currency": "AUD",
+      "closed_periods": [],
+      "calls": {
+        "d7": {
+          "total": 60,
+          "forwarded": 15,
+          "short": 9,
+          "silent": 3,
+          "errors": 2,
+          "minutes": 140,
+          "booked": 19,
+          "booking_failed": 0,
+          "long": 33,
+          "booked_unknown": 0
+        },
+        "d30": {
+          "total": 250,
+          "forwarded": 60,
+          "short": 40,
+          "silent": 10,
+          "errors": 5,
+          "minutes": 610,
+          "booked": 82,
+          "booking_failed": 0,
+          "long": 137,
+          "booked_unknown": 0
+        }
+      }
+    },
+    {
+      "shop_id": "g6",
+      "shop_name": "Sunrise Thai Spa",
+      "calendar_id": "cal-sunrise",
+      "shop_email": "sunrise@example.com",
+      "remaining_minutes": 150,
+      "allocation": 250,
+      "billing_day": 14,
+      "days_until_refresh": 17,
+      "currency": "AUD",
+      "closed_periods": [
+        {
+          "period_end": "2026-10-01",
+          "used_minutes": 20
+        },
+        {
+          "period_end": "2026-09-01",
+          "used_minutes": 200
+        },
+        {
+          "period_end": "2026-08-01",
+          "used_minutes": 220
+        },
+        {
+          "period_end": "2026-07-01",
+          "used_minutes": 180
+        }
+      ],
+      "calls": {
+        "d30": {
+          "total": 120,
+          "forwarded": 12,
+          "short": 66,
+          "silent": 4,
+          "errors": 0,
+          "minutes": 170,
+          "booked": 39,
+          "booking_failed": 0,
+          "long": 66,
+          "booked_unknown": 0
+        }
+      }
+    },
+    {
+      "shop_id": "g7",
+      "shop_name": "Mango Tree Massage",
+      "calendar_id": "cal-mango",
+      "shop_email": "mango@example.com",
+      "remaining_minutes": 250,
+      "allocation": 250,
+      "billing_day": 0,
+      "days_until_refresh": 0,
+      "currency": "AUD",
+      "closed_periods": [],
+      "calls": {
+        "d7": {
+          "total": 140,
+          "forwarded": 30,
+          "short": 12,
+          "silent": 5,
+          "errors": 0,
+          "minutes": 260,
+          "booked": 46,
+          "booking_failed": 0,
+          "long": 77,
+          "booked_unknown": 0
+        },
+        "d30": {
+          "total": 520,
+          "forwarded": 95,
+          "short": 50,
+          "silent": 22,
+          "errors": 2,
+          "minutes": 980,
+          "booked": 171,
+          "booking_failed": 0,
+          "long": 286,
+          "booked_unknown": 0
+        }
+      }
+    },
+    {
+      "shop_id": "g8",
+      "shop_name": "Orchid Day Spa",
+      "calendar_id": "cal-daySpa",
+      "shop_email": "dayspa@example.com",
+      "remaining_minutes": 250,
+      "allocation": 250,
+      "billing_day": 0,
+      "days_until_refresh": 0,
+      "currency": "AUD",
+      "closed_periods": [],
+      "calls": {
+        "d7": {
+          "total": 178,
+          "forwarded": 24,
+          "short": 41,
+          "silent": 12,
+          "errors": 1,
+          "minutes": 305,
+          "booked": 58,
+          "booking_failed": 0,
+          "long": 97,
+          "booked_unknown": 0
+        },
+        "d30": {
+          "total": 612,
+          "forwarded": 88,
+          "short": 140,
+          "silent": 40,
+          "errors": 3,
+          "minutes": 1120,
+          "booked": 201,
+          "booking_failed": 0,
+          "long": 336,
+          "booked_unknown": 0
+        }
+      }
+    },
+    {
+      "shop_id": "g9",
+      "shop_name": "Old Town Massage",
+      "calendar_id": "cal-oldtown",
+      "shop_email": "oldtown@example.com",
+      "remaining_minutes": 35,
+      "allocation": 250,
+      "billing_day": 23,
+      "days_until_refresh": 3,
+      "currency": "AUD",
+      "closed_periods": [],
+      "calls": {
+        "d7": {
+          "total": 90,
+          "forwarded": 10,
+          "short": 50,
+          "silent": 2,
+          "errors": 0,
+          "minutes": 120,
+          "booked": 29,
+          "booking_failed": 0,
+          "long": 49,
+          "booked_unknown": 0
+        },
+        "d30": {
+          "total": 400,
+          "forwarded": 40,
+          "short": 160,
+          "silent": 9,
+          "errors": 1,
+          "minutes": 520,
+          "booked": 132,
+          "booking_failed": 0,
+          "long": 220,
+          "booked_unknown": 0
+        }
+      }
+    },
+    {
+      "shop_id": "g10",
+      "shop_name": "Orphan Calendar Spa",
+      "calendar_id": "cal-orphan",
+      "shop_email": "orphan@example.com",
+      "remaining_minutes": 120,
+      "allocation": 250,
+      "billing_day": 5,
+      "days_until_refresh": 15,
+      "currency": "AUD",
+      "closed_periods": [],
+      "calls": {
+        "d7": {
+          "total": 0,
+          "forwarded": 0,
+          "short": 0,
+          "silent": 0,
+          "errors": 0,
+          "minutes": 0,
+          "booked": 0,
+          "booking_failed": 0,
+          "long": 0,
+          "booked_unknown": 0
+        },
+        "d30": {
+          "total": 12,
+          "forwarded": 1,
+          "short": 3,
+          "silent": 0,
+          "errors": 0,
+          "minutes": 18,
+          "booked": 3,
+          "booking_failed": 0,
+          "long": 6,
+          "booked_unknown": 0
+        }
+      }
+    },
+    {
+      "shop_id": "g11",
+      "shop_name": "KLR Massage Therapy",
+      "calendar_id": "cal-klr-1",
+      "shop_email": "klr1@example.com",
+      "remaining_minutes": 200,
+      "allocation": 250,
+      "billing_day": 6,
+      "days_until_refresh": 16,
+      "currency": "AUD",
+      "closed_periods": [],
+      "calls": {
+        "d7": {
+          "total": 60,
+          "forwarded": 8,
+          "short": 9,
+          "silent": 3,
+          "errors": 2,
+          "minutes": 140,
+          "booked": 19,
+          "booking_failed": 0,
+          "long": 33,
+          "booked_unknown": 0
+        },
+        "d30": {
+          "total": 250,
+          "forwarded": 30,
+          "short": 40,
+          "silent": 10,
+          "errors": 5,
+          "minutes": 610,
+          "booked": 82,
+          "booking_failed": 0,
+          "long": 137,
+          "booked_unknown": 0
+        }
+      }
+    },
+    {
+      "shop_id": "g12",
+      "shop_name": "KLR Massage Therapy",
+      "calendar_id": "cal-klr-2",
+      "shop_email": "klr2@example.com",
+      "remaining_minutes": 90,
+      "allocation": 250,
+      "billing_day": 6,
+      "days_until_refresh": 16,
+      "currency": "AUD",
+      "closed_periods": [],
+      "calls": {
+        "d7": {
+          "total": 33,
+          "forwarded": 3,
+          "short": 20,
+          "silent": 1,
+          "errors": 0,
+          "minutes": 41,
+          "booked": 10,
+          "booking_failed": 0,
+          "long": 18,
+          "booked_unknown": 0
+        },
+        "d30": {
+          "total": 120,
+          "forwarded": 12,
+          "short": 66,
+          "silent": 4,
+          "errors": 0,
+          "minutes": 170,
+          "booked": 39,
+          "booking_failed": 0,
+          "long": 66,
+          "booked_unknown": 0
+        }
+      }
+    }
+  ],
+  "call_errors": [
+    {
+      "shop_id": "g1",
+      "shop_name": "Lotus Thai Spa",
+      "started_at": "2026-10-25T04:12:00+00:00",
+      "outcome": "call.in-progress.error-vapifault-worker-not-available",
+      "duration_sec": 12,
+      "recording_url": "https://example.com/recordings/sample-1.wav"
+    },
+    {
+      "shop_id": "g2",
+      "shop_name": "Jasmine Wellness",
+      "started_at": "2026-10-24T09:30:00+00:00",
+      "outcome": "call.in-progress.error-sip-telephony-provider-failed-to-connect-call",
+      "duration_sec": 3,
+      "recording_url": null
+    },
+    {
+      "shop_id": "g4",
+      "shop_name": "Siam Orchid Therapy <b>&</b>",
+      "started_at": "2026-10-20T14:05:00+00:00",
+      "outcome": "pipeline-error-openai-llm-failed",
+      "duration_sec": 47,
+      "recording_url": "https://example.com/recordings/sample-3.wav"
+    }
+  ],
+  "fleet_calls": {
+    "d7": {
+      "total": 829,
+      "forwarded": 124,
+      "short": 232,
+      "silent": 40,
+      "errors": 6,
+      "minutes": 1431,
+      "booked": 230,
+      "booking_failed": 2,
+      "long": 467,
+      "booked_unknown": 2
+    },
+    "d30": {
+      "total": 3308,
+      "forwarded": 467,
+      "short": 868,
+      "silent": 148,
+      "errors": 20,
+      "minutes": 5856,
+      "booked": 928,
+      "booking_failed": 19,
+      "long": 1810,
+      "booked_unknown": 7
+    }
+  }
 }
