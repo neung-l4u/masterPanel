@@ -55,7 +55,7 @@ function getProductList(country) {
             case "0":
                 contractPeriodKeyIndex = 0;
                 break;
-            case "3":
+            case "6":
                 contractPeriodKeyIndex = 1;
                 break;
             case "12":
@@ -74,7 +74,7 @@ function getProductList(country) {
         let bundleHeader = false;
 
         readMainProduct = jsonMainProduct;
-        readAddonProduct = jsonAddonsMaterials.concat(jsonAddonsSubscriptions).concat(jsonAddonsOnetime).concat(jsonAddonsOthers);
+        readAddonProduct = jsonAddonsMaterials.concat(jsonAddonsSubscriptions).concat(jsonAddonsOnetime).concat(jsonAddonsOthers).concat(jsonSetupFee);
 
         let brBundle = {
             "type" : "",
@@ -395,14 +395,14 @@ function getProductList(country) {
                 /////////
 
 
-                if(formCountry==="US"){
+                //template เดียวใช้ได้ทุกประเทศ (เดิมมีแค่ US/UK/TH ทำให้ AU/NZ/CA ไม่ขึ้น add-on)
                 return `${addText}<div class="form-check">
                     <input 
                         class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
                         type="checkbox" 
                         name=${boxName[name]}
                         id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}$ ${price} ${special}"
+                        value="${name} - ${formData.formCurrency.charAt(0)}${currencySign} ${price} ${special}"
                         onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
                     >
                     <label class="form-check-label" for="addon-${product_id}" >
@@ -410,37 +410,6 @@ function getProductList(country) {
                         ${discountText}
                     </label>
                 </div>`;
-                }else if(formCountry==="UK"){
-                    return `${addText}<div class="form-check">
-                    <input 
-                        class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
-                        type="checkbox" 
-                        name=${boxName[name]} 
-                        id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}£ ${price} ${special}"
-                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
-                    >
-                    <label class="form-check-label" for="addon-${product_id}" >
-                        ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
-                        ${discountText}
-                    </label>
-                </div>`;
-                }else if(formCountry==="TH"){
-                    return `${addText}<div class="form-check">
-                    <input 
-                        class="form-check-input ${classType} ${checkIsOptionWebHosting}" 
-                        type="checkbox" 
-                        name=${boxName[name]} 
-                        id="addon-${product_id}" 
-                        value="${name} - ${formData.formCurrency.charAt(0)}฿ ${price} ${special}"
-                        onclick="addAddonCart('${name}', '${realPrice}', '${cartPrice}', '${special}', '${product_id}', 'addon-${product_id}', '${classType}');"
-                    >
-                    <label class="form-check-label" for="addon-${product_id}" >
-                        ${name} <b class="text-primary"> -${leadDiscountText} ${currencySign}${price} ${special}</b>
-                        ${discountText}
-                    </label>
-                </div>`;
-                }
 
             });
 
@@ -893,8 +862,8 @@ const setPeriodSelectBox = (month) => {
         case "0" :
             boxContractPeriod.val('No contract');
             break;
-        case "3" :
-            boxContractPeriod.val('3 months');
+        case "6" :
+            boxContractPeriod.val('6 months');
             break;
         case "12" :
             boxContractPeriod.val('12 months');
@@ -956,9 +925,8 @@ function getPriceBeforeVAT(priceWithVAT) {
     // หารด้วย 1.07 เพื่อหาราคาตั้งต้น (ราคาก่อน VAT)
     return parseFloat((priceWithVAT / 1.07).toFixed(2));
 }
-$("#cmdSubmit").click(function(e){
-    e.preventDefault();
-
+//รวบรวมข้อมูลใบเสนอราคาจากฟอร์ม (คืน null ถ้ายังไม่เลือกแพ็กเกจ)
+function buildQuotationData() {
     // --- ส่วนของการดึงข้อมูลจากฟอร์ม (เหมือนเดิม) ---
     let checkBoxWantTAX = $("input:checkbox[id='quotationYes']:checked").val();
     let taxType = $("input:radio[name='taxType']:checked").val();
@@ -966,49 +934,21 @@ $("#cmdSubmit").click(function(e){
     let shopNameQuotation = $("#quotationShopName").val();
     let phoneQuotation = $("#shopPhoneQuotationFormatted").val();
     let emailQuotation = $("#quotationEmail").val();
-    let addressQuotation = $("#quotationAddress").val();
+    //Street, City, State Postal code, Country (same fields as the signup Physical Address)
+    let addressQuotation = [
+        ($("#streetAddress1").val() || "").trim(),
+        ($("#city").val() || "").trim(),
+        [$("#state").val() || "", ($("#zip").val() || "").trim()].filter(Boolean).join(" "),
+        $("#formCountry").find(":selected").text()
+    ].filter(Boolean).join(", ");
     let taxNumberQuotation = $("#quotationTaxNumber").val();
     let subTotal = $("#subTotal").val();
     let tax = $("#GST").val();
     let grandTotal = $("#grandTotal").val();
     let realNameQuotation = "";
-    let selectedInputId = $("input[name='product']:checked").attr("id");
-    let product = $("label[for='" + selectedInputId + "']").text().trim().replace(/\n/g, '');
-    let setupFee = $("input[name='setup']:checked").val();
-    let addonSelect = $("input[name='addonSocialMediaSetup']:checked").val();
     let shopAgent = $("#byAgent").val();
     if (shopAgent === "Other") {
         shopAgent = $("#otherAgent").val();
-    }
-
-    // --- ส่วนของการคำนวณราคาที่ถูกต้อง (ที่คุณแก้ไขมาแล้ว) ---
-    //// product /////
-    let partsPro = product.split(" - ");
-    let nameProduct = partsPro[0];
-    let priceProduct = partsPro[1] || "฿0.00";
-    let priceOnly = parseFloat(priceProduct.match(/[\d,.]+/)[0].replace(/,/g, ''));
-    let productAmountBeforeVAT = getPriceBeforeVAT(priceOnly);
-
-    //// setupFee /////
-    let nameSetup = "Setup Fee (No Contract)";
-    let setupFeeAmountBeforeVAT = 0;
-    if (setupFee && setupFee.trim() !== "") {
-        let partsSetupFee = setupFee.split(" - ");
-        nameSetup = partsSetupFee[0];
-        let priceSetup = partsSetupFee[1] || "฿0.00";
-        let priceSetupOnly = parseFloat(priceSetup.match(/[\d,.]+/)[0].replace(/,/g, ''));
-        setupFeeAmountBeforeVAT = getPriceBeforeVAT(priceSetupOnly);
-    }
-
-    //// addon /////
-    let nameAddon = "No Addon";
-    let addonAmountBeforeVAT = 0;
-    if (addonSelect && addonSelect.trim() !== "") {
-        let partsAddon = addonSelect.split(" - T฿ ");
-        nameAddon = partsAddon[0];
-        let priceAddon = partsAddon[1] || "0.00";
-        let priceAddonOnly = parseFloat(priceAddon.match(/[\d,.]+/)[0].replace(/,/g, ''));
-        addonAmountBeforeVAT = getPriceBeforeVAT(priceAddonOnly);
     }
 
     // --- ส่วนของการสร้างข้อมูลสำหรับส่งไปเซิร์ฟเวอร์ (แก้ไขแล้ว) ---
@@ -1018,27 +958,47 @@ $("#cmdSubmit").click(function(e){
     let year = today.getFullYear();
     let currentDate = `${day}/${month}/${year}`;
 
-    if(taxType === "นิติบุคคล"){
+    const isTH = formData.formCountry === "TH";
+    if (!isTH) {
+        taxType = ""; //นิติบุคคล/บุคคลธรรมดา + หัก ณ ที่จ่าย ใช้กับ TH เท่านั้น
+        realNameQuotation = shopNameQuotation;
+    } else if(taxType === "นิติบุคคล"){
         realNameQuotation = shopNameQuotation;
     }else{
         realNameQuotation = shopNameQuotation + " โดย " + nameQuotation;
     }
 
-    // ✅ 1. เปิดใช้งานบรรทัดนี้ และลบโค้ดชุดเก่าที่ซ้ำซ้อนทิ้งไป
-    let tableData = [];
+    //รายการในใบเสนอราคา: ดึงจาก cart (price_id) + ราคาใน price JSON โดยตรง ไม่ parse จาก label
+    //TH ราคาใน JSON รวม VAT แล้วจึงถอด VAT ออก, ประเทศอื่นราคาใน JSON ยังไม่รวม GST/tax
+    const toUnitPrice = (cents) => isTH ? getPriceBeforeVAT(cents / 100) : cents / 100;
+    const allItems = readMainProduct.concat(readAddonProduct);
+    const itemRow = (priceId) => {
+        const item = allItems.find((i) => i.price_id === priceId);
+        return item ? { "product": item.name, "qyt": 1, "amount": toUnitPrice(item.amount) } : null;
+    };
 
-    tableData.push({
-        "product": nameProduct,
-        "qyt": 1,
-        "amount": productAmountBeforeVAT
-    });
-
-    if (setupFeeAmountBeforeVAT > 0) {
-        tableData.push({ "setupfee": nameSetup, "qyt": 1, "amount": setupFeeAmountBeforeVAT });
+    //ส่วนลดแสดงแบบใบแจ้งหนี้ Stripe: แถวย่อยใต้สินค้า เช่น "SOLOBUNDLE50 (50% off)  -$99.50"
+    //Main coupon อยู่ใต้แพ็กเกจหลัก, Addon coupon อยู่ท้ายรายการ add-on
+    let discountRow = null;
+    const discountCents = Number(Price.MainDiscount) || 0;
+    const mainCode = ($("#couponCode").val() || "").trim().toUpperCase();
+    const addonCode = ($("#couponCode2").val() || "").trim().toUpperCase();
+    if (discountCents > 0 && (mainCode || addonCode)) {
+        const group = mainCode ? "Main" : "Addons";
+        const code = mainCode || addonCode;
+        const coupon = couponDiscountObject(group, code, typeJsonKey(formData.formType), formData.formCountry) || {};
+        const sign = { AUD: "A$", NZD: "NZ$", GBP: "£", USD: "US$", CAD: "CA$", THB: "฿" }[formData.formCurrency] || "";
+        const off = coupon.percent ? coupon.percent + "% off" : sign + (discountCents / 100).toFixed(2) + " off";
+        discountRow = { "discount": code + " (" + off + ")", "qyt": 1, "amount": -toUnitPrice(discountCents) };
     }
 
-    if (addonAmountBeforeVAT > 0) {
-        tableData.push({ "addon": nameAddon, "qyt": 1, "amount": addonAmountBeforeVAT });
+    let tableData = cart.subscription.map(itemRow).filter(Boolean);
+    if (discountRow && mainCode) { tableData.push(discountRow); }
+    tableData = tableData.concat(cart.add_on.map(itemRow).filter(Boolean));
+    if (discountRow && !mainCode) { tableData.push(discountRow); }
+    if (tableData.length === 0) {
+        alert("Please select a package first.");
+        return null;
     }
 
     // ✅ 2. สร้าง object หลักด้วย tableData ที่ถูกต้องเพียงชุดเดียว
@@ -1053,26 +1013,36 @@ $("#cmdSubmit").click(function(e){
                         "tax_id": taxNumberQuotation,
                         "email": emailQuotation,
                         "phone": phoneQuotation,
-                        "taxType": taxType
+                        "taxType": taxType,
+                        "contact": nameQuotation
                     }
                 ]
             }
         ],
         "table": tableData,
+        "country": formData.formCountry,
+        "currency": formData.formCurrency,
         "summary": {
             "subtotal": subTotal,
             "tax": tax,
             "grandtotal": grandTotal
         }
     };
+    return { productQuotation, shopAgent, grandTotal };
+}//buildQuotationData
 
-
+$("#cmdSubmit").click(function(e){
+    e.preventDefault();
+    const q = buildQuotationData();
+    if (!q) { return false; }
+    const { productQuotation, shopAgent, grandTotal } = q;
 
     $.ajax({
         url: "assets/function/detailQuotation.php",
         type: "POST",
         data: {
             shopAgent: shopAgent,
+            country: formData.formCountry,
             act: "add",
             price: productQuotation,
             finalPrice: grandTotal
@@ -1080,7 +1050,14 @@ $("#cmdSubmit").click(function(e){
         success: function(result) {
             console.log("Raw result:", result);
 
-            let res = (typeof result === "object") ? result : JSON.parse(result);
+            //PHP error (e.g. DB connection) returns HTML, not JSON: show it instead of failing silently
+            let res;
+            try {
+                res = (typeof result === "object") ? result : JSON.parse(result);
+            } catch (e) {
+                alert("Save quotation failed (server did not return JSON). See console for details.");
+                return;
+            }
 
             if (res.result === "success") {
                 let quotationID = res.quotationID;
@@ -1092,6 +1069,7 @@ $("#cmdSubmit").click(function(e){
                     type: "POST",
                     data: {
                         act: "update",
+                        country: formData.formCountry,
                         quotationID: quotationID,
                         shopAgent: shopAgent
                     },

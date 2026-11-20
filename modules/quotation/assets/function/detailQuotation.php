@@ -16,6 +16,8 @@ $shopAgent = !empty($_POST["shopAgent"]) ? $_POST["shopAgent"] : null;
 $price = !empty($_POST["price"]) ? $_POST["price"] : null;
 $finalPrice = !empty($_POST["finalPrice"]) ? $_POST["finalPrice"] : null;
 $quotationID = !empty($_POST["quotationID"]) ? $_POST["quotationID"] : null;
+$allowedCountries = ["AU", "NZ", "UK", "US", "CA", "TH"];
+$country = in_array($_POST["country"] ?? "", $allowedCountries, true) ? $_POST["country"] : "TH"; //ไม่ส่งมา = TH (ฟอร์มเดิม)
 
 $price = json_encode($price);
 
@@ -74,7 +76,7 @@ function ReadNumber($number)
     return $ret;
 }
 
-$thaiPrice = ThaiRead($finalPrice);
+$thaiPrice = ($country === "TH") ? ThaiRead($finalPrice) : ""; //ตัวอักษรภาษาไทยใช้กับใบเสนอราคา TH เท่านั้น
 
 $codeId = "";
 
@@ -98,6 +100,10 @@ if ($shopAgent == "ปิยะกร จ้อยเอม"){
     $codeId = "QTLCETH-I";
 }else{
     $codeId = "QTLCETH-Z";
+}
+//ประเทศอื่นไม่ใช่ Local Eats (TH) จึงใช้ prefix QTL4U + ประเทศ เช่น QTL4UAU-Z0001
+if ($country !== "TH") {
+    $codeId = str_replace("QTLCETH", "QTL4U" . $country, $codeId);
 }
 
 

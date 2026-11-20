@@ -38,13 +38,13 @@
 <script src="assets/js/date_format.js"></script>
 <script src="assets/js/getUserAgent.js"></script>
 <script src="assets/js/util.js?v=2.0.25"></script>
-<script src="assets/js/ajaxFunction.js?v=2.0.68"></script>
+<script src="assets/js/ajaxFunction.js?v=2.0.71"></script>
 <script src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
 <script src="assets/js/popper.2.11.5.min.js"></script>
-<script src="assets/js/bootstrap-multi-step-form.js?v=2.0.71"></script>
+<script src="assets/js/bootstrap-multi-step-form.js?v=2.0.74"></script>
 <!-- Fills the form in from a pre sign-up when opened as ?prelead=0000001.
      Loaded last so the form's own init has already revealed the fields and
      bound the handlers that each prefilled value needs to trigger. -->
 <script src="assets/js/preleadPrefill.js?v=1.0.0"></script>
 
-<input type="hidden" id="signupFormVersion" name="signupFormVersion" value="2.12.08" />
+<input type="hidden" id="signupFormVersion" name="signupFormVersion" value="2.12.11" />
